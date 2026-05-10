@@ -1,0 +1,159 @@
+<div class="dashboard-prof">
+  <!-- En-tête -->
+  <div class="dp-header">
+    <div>
+      <h1>👨‍🏫 Bonjour, {{ professeur().nom }}</h1>
+      <p>{{ professeur().matiere }} — {{ classes().length }} classes cette année</p>
+    </div>
+    <div class="dp-actions">
+      <button class="btn-action" (click)="naviguer('/professeur/notes')">
+        📝 Saisir des notes
+      </button>
+      <button class="btn-messages" (click)="naviguer('/professeur/messagerie')">
+        ✉️ Messages
+        @if (messagesNonLus() > 0) {
+          <span class="msg-badge">{{ messagesNonLus() }}</span>
+        }
+      </button>
+    </div>
+  </div>
+
+  <!-- KPIs -->
+  <div class="kpis-grid">
+    @for (k of kpis(); track k.label) {
+      <div class="kpi-card" [class]="'kpi-' + k.couleur">
+        <span class="kpi-ico">{{ k.ico }}</span>
+        <div class="kpi-info">
+          <span class="kpi-val">{{ k.val }}</span>
+          <span class="kpi-lbl">{{ k.label }}</span>
+          <span class="kpi-detail">{{ k.detail }}</span>
+        </div>
+      </div>
+    }
+  </div>
+
+  <!-- Grille principale 2 colonnes -->
+  <div class="dp-grid">
+    <!-- Colonne gauche -->
+    <div class="dp-col">
+      <!-- Emploi du temps du jour -->
+      <div class="card">
+        <div class="card-head">
+          <h2>🕐 Emploi du temps du jour</h2>
+        </div>
+        <div class="edt-list">
+          @for (c of edtJour(); track c.heure) {
+            <div class="edt-item" [class]="getStatutCoursCls(c.statut)">
+              <div class="edt-time">
+                <span class="edt-heure">{{ c.heure }}</span>
+                <span class="edt-statut">{{ getStatutCoursLabel(c.statut) }}</span>
+              </div>
+              <div class="edt-info">
+                <span class="edt-classe">{{ c.classe }}</span>
+                <span class="edt-detail">{{ c.salle }} · {{ c.duree }}</span>
+              </div>
+              <span class="edt-duree">{{ c.duree }}</span>
+            </div>
+          }
+        </div>
+      </div>
+
+      <!-- Notes à remplir -->
+      <div class="card">
+        <div class="card-head">
+          <h2>📝 Notes à saisir</h2>
+          <button class="card-link" (click)="naviguer('/professeur/notes')">Tout voir →</button>
+        </div>
+        @for (n of notesARemplir(); track n.evaluation) {
+          <div class="note-item">
+            <div class="note-info">
+              <span class="note-eval">{{ n.evaluation }}</span>
+              <span class="note-classe">{{ n.classe }} · {{ n.date }}</span>
+            </div>
+            <div class="note-progress">
+              <div class="progress-mini">
+                <div class="progress-fill" [style.width.%]="n.progression"></div>
+              </div>
+              <span class="note-stats">{{ n.nbNotes }}/{{ n.nbEleves }} notes</span>
+            </div>
+          </div>
+        }
+      </div>
+    </div>
+
+    <!-- Colonne droite -->
+    <div class="dp-col">
+      <!-- Élèves remarquables -->
+      <div class="card">
+        <div class="card-head">
+          <h2>👥 Élèves à suivre</h2>
+        </div>
+        <div class="eleves-list">
+          @for (e of elevesRemarquables(); track e.nom) {
+            <div class="eleve-item" [class]="getTypeEleveCls(e.type)">
+              <span class="eleve-ico">{{ getTypeEleveIcone(e.type) }}</span>
+              <div class="eleve-info">
+                <span class="eleve-nom">{{ e.nom }}</span>
+                <span class="eleve-classe">{{ e.classe }}</span>
+              </div>
+              <div class="eleve-note">
+                <span class="eleve-score">{{ e.note }}/20</span>
+                <span class="eleve-type">{{ getTypeEleveLabel(e.type) }}</span>
+              </div>
+            </div>
+          }
+        </div>
+      </div>
+
+      <!-- Absences du jour -->
+      <div class="card">
+        <div class="card-head">
+          <h2>📌 Absences du jour</h2>
+          <button class="card-link" (click)="naviguer('/professeur/absences')">
+            Faire l'appel →
+          </button>
+        </div>
+        @for (a of absencesJour(); track a.classe) {
+          <div class="absence-item">
+            <div class="absence-info">
+              <span class="absence-classe">{{ a.classe }}</span>
+              <span class="absence-date">{{ a.date }}</span>
+            </div>
+            <div class="absence-stats">
+              <span class="absence-nb">{{ a.nbAbsents }} absents</span>
+              <span class="absence-total">/ {{ a.nbEleves }} élèves</span>
+            </div>
+            <div class="absence-bar">
+              <div
+                class="absence-fill"
+                [style.width.%]="formatPourcentage(a.nbAbsents, a.nbEleves)"
+              ></div>
+            </div>
+          </div>
+        }
+      </div>
+
+      <!-- Messages récents -->
+      <div class="card">
+        <div class="card-head">
+          <h2>📬 Messages récents</h2>
+        </div>
+        @for (m of messages(); track m.id) {
+          <div class="msg-item" [class.non-lu]="m.nonLu">
+            <div class="msg-exp">
+              <span>{{ m.expediteur }}</span>
+              <small>{{ m.role }}</small>
+            </div>
+            <div class="msg-content">
+              <span class="msg-sujet">{{ m.sujet }}</span>
+              <span class="msg-date">{{ m.date }}</span>
+            </div>
+            @if (m.nonLu) {
+              <span class="msg-dot"></span>
+            }
+          </div>
+        }
+      </div>
+    </div>
+  </div>
+</div>

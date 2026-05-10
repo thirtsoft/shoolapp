@@ -25,6 +25,13 @@ export class MainLayoutProprietaireCompoment {
   sidebarOpen = signal(false);
   today = new Date();
 
+  professeur = {
+    nom: 'M. Sall',
+    matiere: 'Mathématiques',
+    classes: ['Terminale S2', 'Première S1', 'Seconde S2'],
+    avatar: '👨‍🏫'
+  };
+
   readonly todayStr = new Date().toLocaleDateString('fr-FR', {
     weekday: 'long',
     day: 'numeric',
@@ -34,42 +41,28 @@ export class MainLayoutProprietaireCompoment {
 
 
   nav: NavItem[] = [
-    { route: '/proprietaire/dashboard', ico: '📊', label: "Vue d'ensemble" },
-    { route: '/proprietaire/boulangeries', ico: '🏪', label: 'Mes boulangeries' },
-    { route: '/proprietaire/comptes', ico: '👤', label: 'Comptes gérants' },
-    { route: '/proprietaire/approvisionnements', ico: '📦', label: 'Approvisionnements' },
-    { route: '/proprietaire/commandes', ico: '📦', label: 'Commandes' },
-    { route: '/proprietaire/historique-commandes', ico: '📜', label: 'Historique commandes' },
-
+    { route: '/professeur/dashboard', ico: '📊', label: 'Tableau de bord' },
+    { route: '/professeur/classes', ico: '🏫', label: 'Mes classes' },
+    { route: '/professeur/notes', ico: '📝', label: 'Saisie des notes' },
+    { route: '/professeur/bulletins', ico: '📋', label: 'Bulletins' },
+    { route: '/professeur/emploi-temps', ico: '🕐', label: 'Emploi du temps' },
+    { route: '/professeur/cours', ico: '📚', label: 'Cours & Ressources' },
+    { route: '/professeur/absences', ico: '📌', label: 'Appel & Absences' },
+    { route: '/professeur/messagerie', ico: '✉️', label: 'Messagerie' },
   ];
 
   get sectionLabel(): string {
     const url = this.router.url;
-
-    if (url.includes('historique-commandes')) return 'Historique commandes';
-
-
-    if (url.includes('dashboard')) return 'Aperçu';
-    if (url.includes('boulangeries')) return 'Mes boulangeries';
-    if (url.includes('comptes')) return 'Comptes gérants';
-    if (url.includes('approvisionnements')) return 'Approvisionnements';
-    if (url.includes('commandes')) return 'Commandes';
-    return "Vue d'ensemble";
+    if (url.includes('dashboard')) return 'Tableau de bord';
+    if (url.includes('classes')) return 'Mes classes';
+    if (url.includes('notes')) return 'Saisie des notes';
+    if (url.includes('bulletins')) return 'Bulletins';
+    if (url.includes('emploi-temps')) return 'Emploi du temps';
+    if (url.includes('cours')) return 'Cours & Ressources';
+    if (url.includes('absences')) return 'Appel & Absences';
+    if (url.includes('messagerie')) return 'Messagerie';
+    return 'Professeur';
   }
-
-  /*
-
-  getCurrentSection(): string {
-    const url = this.router.url;
-    if (url.includes('dashboard')) return "Vue d'ensemble";
-    if (url.includes('boulangeries')) return 'Mes boulangeries';
-    if (url.includes('comptes')) return 'Comptes gérants';
-    if (url.includes('approvisionnements')) return 'Approvisionnement';
-    if (url.includes('commandes')) return 'Commandes';
-    if (url.includes('investissements')) return 'Investissements';
-    if (url.includes('depenses')) return 'Depenses';
-    return "Vue d'ensemble";
-  }*/
 
   isActive(route: string): boolean {
     const segment = route.split('/').pop() ?? '';
@@ -87,7 +80,5 @@ export class MainLayoutProprietaireCompoment {
   onSidebarClose(): void {
     this.sidebarOpen.set(false);
   }
-
-
 
 }

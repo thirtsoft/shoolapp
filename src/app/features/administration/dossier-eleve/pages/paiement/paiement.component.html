@@ -1,0 +1,77 @@
+<div class="page-wrapper">
+  <div class="content container-fluid">
+    <div class="page-header">
+      <div class="row">
+        <div class="col-sm-7 col-auto">
+          <h3 class="page-title">Paiements</h3>
+          <ul class="breadcrumb">
+            <li class="breadcrumb-item"><a [routerLink]="'/admin/'">Tableau de bord</a></li>
+            <li class="breadcrumb-item active">Liste paiements</li>
+          </ul>
+        </div>
+        <div class="col-sm-5 col">
+          <a
+            class="btn btn-primary float-right mt-2"
+            data-toggle="modal"
+            (click)="ajouterPaiement()"
+          >
+            <i class="fa fa-plus-circle"></i>
+            Ajouter
+          </a>
+        </div>
+      </div>
+    </div>
+    <!-- /Page Header -->
+    <div *ngIf="paiements.length == 0" class="text-center bg-danger-light">
+      <h3>Pas d'enregistrement</h3>
+    </div>
+    <div class="row" *ngIf="paiements.length > 0">
+      <div class="col-sm-12">
+        <div class="card">
+          <div class="card-body">
+            <div class="table-responsive">
+              <table class="datatable table table-hover table-center mb-0">
+                <thead>
+                  <tr>
+                    <th>Code</th>
+                    <th>Eleve</th>
+                    <th>Montant total</th>
+                    <th>Mois</th>
+                    <th>Date</th>
+                    <th class="text-right">Actions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr *ngFor="let pay of paiements">
+                    <td>{{ pay.code }}</td>
+                    <td>{{ pay.eleveDTO.prenom }} - {{ pay.eleveDTO.nom }}</td>
+                    <td>{{ pay.montant }}</td>
+                    <td>{{ pay.mois }}</td>
+                    <td>{{ pay.datePaiement }}</td>
+                    <td class="text-right">
+                      <div class="actions">
+                        <a class="btn btn-sm bg-primary-light" (click)="imprimerFichePaiement(pay)">
+                          <i class="fe fe-print"></i> imprimer
+                        </a>
+                        <a
+                          class="btn btn-sm bg-success-light"
+                          data-toggle="modal"
+                          (click)="editerPaiement(pay.id)"
+                        >
+                          <i class="fe fe-pencil"></i> Edit
+                        </a>
+                        <a data-toggle="modal" class="btn btn-sm bg-danger-light">
+                          <i class="fe fe-trash"></i> Delete
+                        </a>
+                      </div>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

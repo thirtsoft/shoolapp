@@ -1,0 +1,70 @@
+<div class="page-wrapper">
+  <div class="content container-fluid">
+    <div class="row justify-content-center">
+      <div class="col-md-12 col-lg-12 col-xl-12">
+        <div class="card">
+          <h3 class="page-title text-center" style="margin-top: 50px">
+            {{ title }}
+          </h3>
+
+          <div class="card-body">
+            <form [formGroup]="noteInformationFormGroup">
+              <input
+                type="text"
+                readonly="true"
+                hidden="true"
+                formControlName="id"
+              />
+
+              <div class="row form-row">
+                <div class="col-12 col-sm-12">
+                  <div class="form-group">
+                    <label
+                      >Description <span class="text-danger">*</span></label
+                    >
+                    <textarea
+                      name=""
+                      type="text"
+                      formControlName="description"
+                      class="form-control"
+                      rows="10"
+                      cols="10"
+                    ></textarea>
+                  </div>
+                </div>
+              </div>
+
+              <div class="row mt-3">
+                <div class="col-12 d-flex justify-content-between">
+                  <button
+                    type="button"
+                    class="btn btn-danger si_accept_cancel"
+                    (click)="goBack()"
+                  >
+                    Annuler
+                  </button>
+                  <button
+                    type="button"
+                    class="upload-text text-white"
+                    style="
+                      align-items: center;
+                      border: 1px solid #028ee1;
+                      box-shadow: 0 1px 2px rgba(16, 24, 40, 0.05);
+                      background-color: #028ee1;
+                      min-height: 44px;
+                      padding: 10px 16px;
+                      cursor: pointer;
+                    "
+                    (click)="ajoutereditNoteInformation()"
+                  >
+                    Enregistrer
+                  </button>
+                </div>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

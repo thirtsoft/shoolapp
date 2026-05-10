@@ -1,102 +1,136 @@
 import { CommonModule } from '@angular/common';
-import { Component, signal } from '@angular/core';
-import { FormsModule } from '@angular/forms';
+import { Component, Input, OnInit } from '@angular/core';
+import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
-
-type Role = 'vendeur' | 'gerant' | 'proprietaire';
-
-interface Compte {
-  email: string;
-  pwd: string;
-  route: string;
-}
+import { LocalStorageService } from '../../../../core/services/local-storage.service';
+import { AuthenticationService } from '../../services/authentication.service';
+import { UtilsService } from '../../services/utils.service';
 
 @Component({
   selector: 'app-login-component',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, ReactiveFormsModule],
   templateUrl: './login-component.html',
   styleUrl: './login-component.css',
 })
-export class LoginComponent {
+export class LoginComponent implements OnInit {
 
-  constructor(private router: Router) { }
+  errorEmail = 'L\'adresse e-mail est obligatoire';
+  errorPassword = 'Le mot de passe est obligatoire';
 
-  roles = [
-    { id: 'vendeur' as Role, ico: '🏪', nom: 'Vendeur', desc: 'Caisse & POS' },
-    { id: 'gerant' as Role, ico: '🚚', nom: 'Gérant', desc: 'Opérations' },
-    { id: 'proprietaire' as Role, ico: '👑', nom: 'Propriétaire', desc: 'Direction' },
-  ];
+  signInForm: FormGroup;
+  hidePassword: boolean = true;
 
+  @Input() urlNavigation = '';
+
+  isClicked: boolean = false;
+  loading = false;
+  succes = false;
+  erreur = '';
+
+  constructor(
+    private readonly formBuilder: FormBuilder,
+    private readonly authService: AuthenticationService,
+    private readonly localStorage: LocalStorageService,
+    private readonly utilsUser: UtilsService,
+    private readonly router: Router
+  ) {
+    this.signInForm = this.formBuilder.group({
+  //    username: ['', [Validators.required, Validators.email]],
+  //    password: ['', [Validators.required, Validators.minLength(6)]],
+
+      username: ['', [Validators.required]],
+      password: ['', [Validators.required]],
+    });
+  }
+
+  ngOnInit(): void { }
+
+  // Données conservées pour le design du panneau gauche
   stats = [
-    { val: '4', lbl: 'Restaurants' },
-    { val: '3', lbl: 'Rôles' },
+    { val: '1 200', lbl: 'Élèves' },
+    { val: '85', lbl: 'Professeurs' },
     { val: '24/7', lbl: 'Disponible' },
     { val: '🇸🇳', lbl: 'Dakar' },
   ];
 
   features = [
-    { ico: '🏪', txt: 'Caisse & encaissement POS' },
-    { ico: '🚚', txt: 'Gestion des livraisons en temps réel' },
-    { ico: '📊', txt: 'Tableau de bord propriétaire' },
+    { ico: '📚', txt: 'Gestion des classes et emplois du temps' },
+    { ico: '📝', txt: 'Saisie des notes et bulletins' },
+    { ico: '📱', txt: 'Suivi en temps réel pour les parents' },
   ];
 
-  // Identifiants de démo — remplacer par votre service d'authentification
-  private comptes: Record<Role, Compte> = {
-    vendeur: { email: 'vendeur@rose.sn', pwd: 'vendeur123', route: '/vendeur' },
-    gerant: { email: 'gerant@rose.sn', pwd: 'gerant123', route: '/gerant' },
-    proprietaire: { email: 'proprio@rose.sn', pwd: 'proprio123', route: '/proprietaire' },
-  };
-
-  // ── Signals ────────────────────────────────────────────
-  roleActif = signal<Role>('vendeur');
-  email = signal('');
-  password = signal('');
-  remember = signal(false);
-  showPwd = signal(false);
-  loading = signal(false);
-  succes = signal(false);
-  erreur = signal('');
-
-  selectRole(id: Role) {
-    this.roleActif.set(id);
-    this.erreur.set('');
+  togglePasswordVisibility() {
+    this.hidePassword = !this.hidePassword;
   }
 
-  togglePwd() {
-    this.showPwd.set(!this.showPwd());
-  }
-
-  forgotPwd() {
+  goToForgotPassword() {
     this.router.navigate(['auth/mot-de-passe-oublie']);
   }
 
+  get username() {
+    return this.signInForm.get('username');
+  }
+
+  get password() {
+    return this.signInForm.get('password');
+  }
+
+  get passwordType(): string {
+    return this.hidePassword ? 'password' : 'text';
+  }
+
   onSubmit() {
-    this.erreur.set('');
-
-    const email = this.email().trim().toLowerCase();
-    const pwd = this.password();
-
-    if (!email || !pwd) {
-      this.erreur.set('Veuillez remplir tous les champs.');
+    if (this.isClicked || this.loading) {
       return;
     }
+    /*
+    if (!this.signInForm.valid) {
+      if (this.username?.hasError('required')) {
+        this.erreur = 'Veuillez saisir votre adresse e-mail.';
+      } else if (this.username?.hasError('email')) {
+        this.erreur = 'Veuillez saisir une adresse e-mail valide.';
+      } else if (this.password?.hasError('required')) {
+        this.erreur = 'Veuillez saisir votre mot de passe.';
+      } else if (this.password?.hasError('minlength')) {
+        this.erreur = 'Le mot de passe doit contenir au moins 6 caractères.';
+      } else {
+        this.erreur = 'Veuillez remplir tous les champs obligatoires.';
+      }
+      return;
+    }*/
 
-    const compte = this.comptes[this.roleActif()];
+    this.erreur = '';
+    this.isClicked = true;
+    this.loading = true;
 
-    if (email === compte.email && pwd === compte.pwd) {
-      this.loading.set(true);
-      // Simuler un appel API — remplacer par votre AuthService
-      setTimeout(() => {
-        this.loading.set(false);
-        this.succes.set(true);
-        setTimeout(() => this.router.navigate([compte.route]), 800);
-      }, 1000);
-    } else {
-      this.erreur.set(
-        'Identifiants incorrects pour le rôle « ' + this.roleActif() + ' ».'
-      );
-    }
+    const signInRequest = {
+      username: this.username!.value.trim().toLowerCase(),
+      password: this.password!.value
+    };
+
+    console.log("Tentative de connexion...");
+
+    this.authService.signIn(signInRequest).subscribe({
+      next: (response) => {
+        console.log("Connexion réussie");
+        this.succes = true;
+        this.loading = false;
+
+        setTimeout(() => {
+          this.utilsUser.afterLoginSuccessful(response, this.urlNavigation);
+        }, 1000);
+      },
+      error: (error) => {
+        console.error("Erreur de connexion");
+        this.isClicked = false;
+        this.loading = false;
+        this.succes = false;
+
+        this.erreur = 'Identifiants invalides. Veuillez réessayer.';
+
+        this.signInForm.patchValue({ password: '' });
+      }
+    });
   }
 }
-

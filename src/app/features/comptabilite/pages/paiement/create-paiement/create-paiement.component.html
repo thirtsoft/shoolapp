@@ -1,0 +1,139 @@
+<div class="page-wrapper">
+  <div class="content container-fluid">
+    <div class="page-header">
+      <div class="row">
+        <div class="col-sm-7 col-auto">
+          <h3 class="page-title"></h3>
+          <ul class="breadcrumb"></ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="row justify-content-center">
+      <div class="col-md-8 col-lg-8 col-xl-8">
+        <div class="card">
+          <h3 class="page-title text-center" style="margin-top: 22px">
+            {{ title }}
+          </h3>
+          <div class="card-body">
+            <form [formGroup]="paiementFormGroup">
+              <input
+                type="text"
+                readonly="true"
+                hidden="true"
+                formControlName="id"
+              />
+
+              <div class="row form-row">
+                <div class="col-12">
+                  <div class="form-group">
+                    <label>Facture <span class="text-danger">*</span></label>
+                    <select
+                      class="form-control select"
+                      formControlName="facture"
+                      required=""
+                      (change)="onFactureSelected($event)"
+                    >
+                      <option>Selectionnez</option>
+                      <option
+                        *ngFor="let item of factureList"
+                        [value]="item.id"
+                      >
+                        N° {{ item.numeroFacture }} - {{ item.dateFacture }}
+                      </option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+
+              <div class="row form-row">
+                <div class="col-12">
+                  <div class="form-group">
+                    <label
+                      >Moyen paiement <span class="text-danger">*</span></label
+                    >
+                    <select
+                      class="form-control select"
+                      formControlName="moyenPaiement"
+                      required=""
+                    >
+                      <option>Selectionnez</option>
+                      <option
+                        *ngFor="let item of moyenPayementList"
+                        [value]="item.id"
+                      >
+                        {{ item.libelle }}
+                      </option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+
+              <div class="row form-row">
+                <div class="col-12">
+                  <div class="form-group">
+                    <label
+                      >Montant facture <span class="text-danger">*</span></label
+                    >
+                    <input
+                      type="text"
+                      formControlName="montantFacture"
+                      class="form-control"
+                      readonly
+                    />
+                  </div>
+                </div>
+              </div>
+
+              <div class="row form-row">
+                <div class="col-12">
+                  <div class="form-group">
+                    <label
+                      >Montant reçu <span class="text-danger">*</span></label
+                    >
+                    <input
+                      type="text"
+                      formControlName="montant"
+                      placeholder="saisir le montant reçu"
+                      required
+                      class="form-control"
+                    />
+                  </div>
+                </div>
+              </div>
+
+              <div class="row mt-3">
+                <div class="col-12 d-flex justify-content-between">
+                  <button
+                    type="button"
+                    class="btn btn-danger si_accept_cancel"
+                    (click)="goBack()"
+                  >
+                    Annuler
+                  </button>
+                  <button
+                    type="button"
+                    class="upload-text text-white"
+                    style="
+                      align-items: center;
+                      border: 1px solid #028ee1;
+                      box-shadow: 0 1px 2px rgba(16, 24, 40, 0.05);
+                      background-color: #028ee1;
+                      min-height: 44px;
+                      padding: 10px 16px;
+                      cursor: pointer;
+                    "
+                    [disabled]="!paiementFormGroup.valid"
+                    (click)="ajouteditUnPaiement()"
+                  >
+                    Enregistrer
+                  </button>
+                </div>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

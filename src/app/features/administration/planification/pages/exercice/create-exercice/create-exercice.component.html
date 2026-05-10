@@ -1,0 +1,281 @@
+<div class="page-wrapper">
+  <div class="content container-fluid">
+    <div class="page-header">
+      <div class="row">
+        <div class="col-sm-7 col-auto">
+          <h3 class="page-title"></h3>
+          <ul class="breadcrumb"></ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="row justify-content-center">
+      <div class="col-md-12 col-lg-12 col-xl-12">
+        <div class="card">
+          <h3 class="page-title text-center">{{ title }}</h3>
+          <div class="card-body">
+            <form [formGroup]="exerciceFormGroup">
+              <input
+                type="text"
+                readonly="true"
+                hidden="true"
+                formControlName="id"
+              />
+
+              <div class="row form-row">
+                <div class="col-12">
+                  <div class="form-group">
+                    <label>Titre <span class="text-danger">*</span></label>
+                    <input
+                      type="text"
+                      formControlName="titre"
+                      required
+                      class="form-control"
+                    />
+                  </div>
+                </div>
+              </div>
+
+              <div class="row form-row">
+                <div class="col-6 col-sm-6">
+                  <div class="form-group">
+                    <label>Classe <span class="text-danger">*</span></label>
+                    <select
+                      class="form-control select"
+                      formControlName="classe"
+                      required=""
+                    >
+                      <option>Selectionnez</option>
+                      <option *ngFor="let item of classeList" [value]="item.id">
+                        {{ item.libelle }}
+                      </option>
+                    </select>
+                  </div>
+                </div>
+
+                <div class="col-6 col-sm-6">
+                  <div class="form-group">
+                    <label>Enseignant <span class="text-danger">*</span></label>
+                    <select
+                      class="form-control select"
+                      formControlName="enseignant"
+                      required=""
+                    >
+                      <option>Selectionnez</option>
+                      <option
+                        *ngFor="let item of enseigantList"
+                        [value]="item.id"
+                      >
+                        {{ item.nomComplet }}
+                      </option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+
+              <div class="row form-row">
+                <div class="col-3">
+                  <div class="form-group">
+                    <label>Livre </label>
+                    <select class="form-control select" formControlName="livre">
+                      <option>Selectionnez</option>
+                      <option *ngFor="let item of livreList" [value]="item.id">
+                        {{ item.titre }}
+                      </option>
+                    </select>
+                  </div>
+                </div>
+
+                <div class="col-3">
+                  <div class="form-group">
+                    <label>Page </label>
+                    <input
+                      type="text"
+                      formControlName="page"
+                      class="form-control"
+                    />
+                  </div>
+                </div>
+
+                <div class="col-3">
+                  <div class="form-group">
+                    <label>Numero exercice </label>
+                    <input
+                      type="number"
+                      formControlName="numeroExercice"
+                      class="form-control"
+                    />
+                  </div>
+                </div>
+
+                <div class="col-3">
+                  <div class="form-group">
+                    <label>Lien </label>
+                    <input
+                      type="text"
+                      formControlName="url"
+                      class="form-control"
+                    />
+                  </div>
+                </div>
+              </div>
+
+              <div class="row form-row">
+                <div class="col-6">
+                  <div class="form-group">
+                    <label>Date début <span class="text-danger">*</span></label>
+                    <input
+                      type="date"
+                      formControlName="dateDebut"
+                      class="form-control"
+                      required=""
+                    />
+                  </div>
+                </div>
+
+                <div class="col-6">
+                  <div class="form-group">
+                    <label>Date fin </label>
+                    <input
+                      type="date"
+                      formControlName="dateFin"
+                      class="form-control"
+                    />
+                  </div>
+                </div>
+              </div>
+
+              <div class="row form-row">
+                <div class="col-12">
+                  <div class="form-group">
+                    <label
+                      >Description <span class="text-danger">*</span></label
+                    >
+                    <textarea
+                      name=""
+                      type="text"
+                      formControlName="description"
+                      class="form-control"
+                      required=""
+                    ></textarea>
+                  </div>
+                </div>
+              </div>
+
+              <ng-container>
+                <div class="entete">
+                  <div class="upload-container">
+                    <label class="upload-button">
+                      <i class="fas fa-plus"></i>
+                      <input
+                        type="file"
+                        multiple
+                        (change)="onFileSelected($event)"
+                      />
+                      Ajouter une pièce jointe
+                    </label>
+                  </div>
+                </div>
+
+                <div *ngIf="errorMessage" class="error-message">
+                  {{ errorMessage }}
+                </div>
+
+                <div class="file-preview">
+                  <!-- Fichiers déjà enregistrés sur l'API -->
+                  <div
+                    class="file-item"
+                    *ngIf="this.exercice?.piecesJointesDTO"
+                  >
+                   <!--  <p
+                      class="file-title"
+                      [title]="this.exercice?.piecesJointesDTO?.nomFichier"
+                    >
+                      {{
+                        this.exercice.piecesJointesDTO.nomFichier > 10
+                          ? (this.exercice?.piecesJointesDTO?.nomFichier
+                              | slice : 0 : 10) + "..."
+                          : this.exercice?.piecesJointesDTO?.nomFichier
+                      }}
+                    </p>
+ -->
+                    <img
+                      alt="File icon"
+                      [src]="
+                        getFileIcon(
+                          this.exercice?.piecesJointesDTO!.nomTechnique!
+                        )
+                      "
+                      class="file-icon"
+                      [title]="this.exercice?.piecesJointesDTO?.nomFichier"
+                    />
+
+                    <p
+                      class="file-name"
+                      [title]="this.exercice?.piecesJointesDTO?.nomFichier"
+                    >
+                     
+                    </p>
+                  </div>
+
+                  <!-- Fichiers sélectionnés mais pas encore envoyés -->
+                  <div class="file-item newItem" *ngIf="currentFile">
+                    <img
+                      [src]="getFileIcon(currentFile!.name)"
+                      alt="File icon"
+                      class="file-icon"
+                      [title]="currentFile!.name"
+                    />
+                    <p class="file-name" [title]="currentFile!.name">
+                      {{
+                        currentFile!.name.length > 10
+                          ? (currentFile!.name | slice : 0 : 10) + "..."
+                          : currentFile!.name
+                      }}
+                    </p>
+                    <span class="file-status new-file">Nouveau</span>
+                    <button
+                      class="remove-button"
+                      (click)="removeFileNoApi(false)"
+                    >
+                      <i class="fa fa-trash"></i>
+                    </button>
+                  </div>
+                </div>
+              </ng-container>
+
+              <div class="row mt-3">
+                <div class="col-12 d-flex justify-content-between">
+                  <button
+                    type="button"
+                    class="btn btn-danger si_accept_cancel"
+                    (click)="goBack()"
+                  >
+                    Annuler
+                  </button>
+                  <button
+                    type="button"
+                    class="upload-text text-white"
+                    style="
+                      align-items: center;
+                      border: 1px solid #028ee1;
+                      box-shadow: 0 1px 2px rgba(16, 24, 40, 0.05);
+                      background-color: #028ee1;
+                      min-height: 44px;
+                      padding: 10px 16px;
+                      cursor: pointer;
+                    "
+                    [disabled]="!exerciceFormGroup.valid"
+                    (click)="ajouteditExerciceWithFiles()"
+                  >
+                    Enregistrer
+                  </button>
+                </div>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

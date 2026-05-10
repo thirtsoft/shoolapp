@@ -1,0 +1,364 @@
+<div class="page-wrapper">
+  <div class="content container-fluid">
+    <div class="row">
+      <div class="col-sm-12">
+        <h3 class="page-title text-center mb-2">{{ title }}</h3>
+        <div class="card">
+          <div class="card-body">
+            <form [formGroup]="enseignantFormGroup">
+              <div style="margin-top: 5px">
+                <input
+                  type="text"
+                  readonly="true"
+                  hidden="true"
+                  formControlName="id"
+                />
+                <div class="row">
+                  <div class="col-lg-6 col-md-6 col-sm-12">
+                    <div class="form-group">
+                      <label>Civilité <span class="text-danger">*</span></label>
+                      <select
+                        class="form-control select"
+                        name="civilite"
+                        formControlName="civilite"
+                      >
+                        <option>Selectionnez</option>
+                        <option *ngFor="let item of civilites" [value]="item">
+                          {{ item }}
+                        </option>
+                      </select>
+                    </div>
+
+                    <div class="form-group">
+                      <label>Prénom <span class="text-danger">*</span></label>
+                      <input
+                        type="text"
+                        formControlName="prenom"
+                        required
+                        placeholder="prénom"
+                        class="form-control"
+                      />
+                    </div>
+
+                    <div class="form-group">
+                      <label>Nom <span class="text-danger">*</span></label>
+                      <input
+                        type="text"
+                        formControlName="nom"
+                        required
+                        placeholder="nom"
+                        class="form-control"
+                      />
+                    </div>
+                  </div>
+
+                  <div class="col-lg-6 col-md-6 col-sm-12">
+                    <div class="image-preview-container">
+                      <img
+                        *ngIf="preview"
+                        [src]="preview"
+                        class="preview"
+                        alt="Photo de profil de l'élève"
+                        style="max-width: 200px; max-height: 200px"
+                      />
+
+                      <div *ngIf="!preview" class="preview-placeholder">
+                        <i class="fas fa-user fa-5x"></i>
+                        <p>Aucune photo</p>
+                      </div>
+
+                      <input
+                        id="imageUpload"
+                        type="file"
+                        accept="image/*"
+                        (change)="selectFile($event)"
+                      />
+
+                      <div class="instructions">
+                        <p class="mb-1">Formats acceptés: JPG, PNG</p>
+                        <p class="mb-0">Taille maximale: 2MB</p>
+                      </div>
+
+                      <div *ngIf="message" class="error-message">
+                        {{ message }}
+                      </div>
+                      <div
+                        *ngIf="currentFile && !message"
+                        class="success-message"
+                      >
+                        Image sélectionnée: {{ currentFile!.name }}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="row form-row">
+                  <div class="col-lg-2 col-sm-2">
+                    <div class="form-group">
+                      <label>Address <span class="text-danger">*</span></label>
+                      <input
+                        type="text"
+                        formControlName="address"
+                        required
+                        placeholder="address"
+                        class="form-control"
+                      />
+                    </div>
+                  </div>
+                  <div class="col-lg-2 col-sm-2">
+                    <div class="form-group">
+                      <label
+                        >Téléphone <span class="text-danger">*</span></label
+                      >
+                      <input
+                        type="text"
+                        formControlName="telephone"
+                        required
+                        placeholder="telephone"
+                        class="form-control"
+                      />
+                    </div>
+                  </div>
+
+                  <div class="col-lg-2 col-sm-2">
+                    <div class="form-group">
+                      <label>Email <span class="text-danger">*</span></label>
+                      <input
+                        type="text"
+                        formControlName="email"
+                        required
+                        placeholder="email"
+                        class="form-control"
+                      />
+                    </div>
+                  </div>
+
+                  <div class="col-lg-6 col-sm-6">
+                    <div class="form-group" style="margin-top: 35px">
+                      <h3 class="text-center">Enseignements</h3>
+                    </div>
+                     <input
+                      type="text"
+                      readonly="true"
+                      hidden="true"
+                      formControlName="idEnseignement"
+                    />
+                  </div>
+                </div>
+
+                <div class="row form-row">
+                  <div class="col-lg-2 col-sm-2">
+                    <div class="form-group">
+                      <label
+                        >Carte d'identité / Passeport
+                        <span class="text-danger">*</span></label
+                      >
+                      <input
+                        type="text"
+                        formControlName="cni"
+                        required
+                        placeholder="cni"
+                        class="form-control"
+                      />
+                    </div>
+                  </div>
+
+                  <div class="col-lg-2 col-sm-2">
+                    <div class="form-group">
+                      <label
+                        >Situation matrimoniale
+                        <span class="text-danger">*</span></label
+                      >
+                      <input
+                        type="text"
+                        formControlName="situationMatrimoniale"
+                        placeholder="situation matrimoniale"
+                        class="form-control"
+                      />
+                    </div>
+                  </div>
+
+                  <div class="col-lg-2 col-sm-2">
+                    <div class="form-group">
+                      <label
+                        >Profession <span class="text-danger">*</span></label
+                      >
+                      <input
+                        type="text"
+                        formControlName="profession"
+                        placeholder="profession"
+                        class="form-control"
+                      />
+                    </div>
+                  </div>
+
+                  <div class="col-lg-6 col-sm-6">
+                    <div class="form-group">
+                      <label
+                        >Classe enseigné
+                        <span class="text-danger">*</span></label
+                      >
+                      <select
+                        class="form-control select"
+                        formControlName="classe"
+                        required=""
+                      >
+                        <option>Selectionnez</option>
+                        <option
+                          *ngFor="let item of classeList"
+                          [value]="item.id"
+                        >
+                          {{ item.libelle }}
+                        </option>
+                      </select>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="row form-row">
+                  <div class="col-lg-3 col-sm-3">
+                    <div class="form-group">
+                      <label
+                        >Nom utilisateur
+                        <span class="text-danger">*</span></label
+                      >
+                      <input
+                        type="text"
+                        formControlName="username"
+                        required
+                        placeholder="username"
+                        class="form-control"
+                      />
+                    </div>
+                  </div>
+
+                  <div class="col-lg-3 col-sm-3">
+                    <div class="form-group">
+                      <label
+                        >Niveau éducation
+                        <span class="text-danger">*</span></label
+                      >
+                      <select
+                        class="form-control select"
+                        name="niveauEducation"
+                        formControlName="niveauEducation"
+                        required=""
+                      >
+                        <option>Selectionnez</option>
+                        <option
+                          *ngFor="let item of listEducations"
+                          [value]="item.id"
+                        >
+                          {{ item.libelle }}
+                        </option>
+                      </select>
+                    </div>
+                  </div>
+
+                  <div class="col-lg-3 col-sm-3">
+                    <div class="form-group">
+                      <label
+                        >Année scolaire
+                        <span class="text-danger">*</span></label
+                      >
+                      <select
+                        class="form-control select"
+                        formControlName="anneeScolaire"
+                        required=""
+                      >
+                        <option>Selectionnez</option>
+                        <option
+                          *ngFor="let item of anneeScolaireList"
+                          [value]="item.id"
+                        >
+                          {{ item?.libelle }}
+                        </option>
+                      </select>
+                    </div>
+                  </div>
+
+                  <div class="col-lg-3 col-sm-3">
+                    <div class="form-group">
+                      <label
+                        >Date début enseignement
+                        <span class="text-danger">*</span></label
+                      >
+                      <input
+                        type="date"
+                        formControlName="dateDebutEnseignement"
+                        required
+                        class="form-control"
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                <div class="row">
+                  <div class="col-lg-6 col-sm-6">
+                    <div class="form-group">
+                      <label
+                        >Date début service
+                        <span class="text-danger">*</span></label
+                      >
+                      <input
+                        type="date"
+                        formControlName="dateDebut"
+                        required
+                        class="form-control"
+                      />
+                    </div>
+                  </div>
+
+                  <div class="col-lg-6 col-sm-6">
+                    <div class="form-group">
+                      <label
+                        >Description <span class="text-danger">*</span></label
+                      >
+                      <textarea
+                        name=""
+                        type="text"
+                        formControlName="description"
+                        class="form-control"
+                      ></textarea>
+                    </div>
+                  </div>
+
+                  <div class="col-lg-6 col-sm-6">
+                    <div class="form-group">
+                      <label
+                        >Date fin service
+                        <span class="text-danger">*</span></label
+                      >
+                      <input
+                        type="date"
+                        formControlName="dateFin"
+                        class="form-control"
+                      />
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </form>
+            <div style="margin-top: 75px col-sm-12">
+              <button
+                type="button"
+                class="btn btn-primary si_accept_confirm float-lg-right"
+                id="btn-yes"
+                (click)="ajoutereditEnseignant()"
+              >
+                Enregistrer
+              </button>
+              <button
+                type="button"
+                class="btn btn-danger si_accept_cancel float-left"
+                routerLink="/admin/utilisateur/enseignant"
+              >
+                Annuler
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

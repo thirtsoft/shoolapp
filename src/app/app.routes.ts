@@ -28,10 +28,31 @@ export const routes: Routes = [
   },
 
   {
-    path: 'referentiels',
+    path: 'admin',
     loadChildren: () =>
-      import('./features/produit/produit.routes')
-        .then(m => m.PRODUCT_ROUTES)
+      import('./features/administration/administration.routes')
+        .then(m => m.ADMIN_ROUTES)
+  },
+
+    {
+    path: 'comptabilite',
+    loadChildren: () =>
+      import('./features/comptabilite/comptabilite.routes')
+        .then(m => m.COMPTA_ROUTES)
+  },
+
+  {
+    path: 'professeur',
+    loadChildren: () =>
+      import('./features/professeur/professeur.routes')
+        .then(m => m.PROFESSEUR_ROUTES)
+  },
+
+  {
+    path: 'parent',
+    loadChildren: () =>
+      import('./features/parent/parent.routes')
+        .then(m => m.PARENT_ROUTES)
   },
 
   {

@@ -1,0 +1,136 @@
+<div class="page-wrapper">
+  <div class="content container-fluid">
+    <div class="page-header">
+      <div class="row">
+        <div class="col">
+          <h3 class="page-title">Profile</h3>
+          <ul class="breadcrumb">
+            <li class="breadcrumb-item">
+              <a [routerLink]="'/admin/'">Tableau de bord</a>
+            </li>
+            <li class="breadcrumb-item active">Mon profile</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-md-12">
+        <div class="profile-header">
+          <div class="row align-items-center">
+            <div class="col-auto profile-image">
+              <a href="javascript:void(0);">
+                <img
+                  class="rounded-circle"
+                  alt="User Image"
+                  src="assets/admin/img/profiles/admin.png"
+                />
+              </a>
+            </div>
+            <div class="col ml-md-n2 profile-user-info">
+              <h4 class="user-name mb-0">
+                {{ utilisateur?.civility }} {{ utilisateur?.prenom }}
+                {{ utilisateur?.nom }}
+              </h4>
+            </div>
+            <div class="col-auto profile-btn">
+              <a href="javascript:void(0);" class="btn btn-primary"> Edit </a>
+            </div>
+          </div>
+        </div>
+        <div class="profile-menu">
+          <ul class="nav nav-tabs nav-tabs-solid">
+            <li class="nav-item">
+              <a
+                class="nav-link active"
+                id="about"
+                style="cursor: pointer"
+                >A Propos</a
+              >
+            </li>
+            <li class="nav-item">
+              <a
+                class="nav-link"
+                id="pass"
+                (click)="changerPasswordDialog()"
+                style="cursor: pointer"
+                >Changer Mot de Passe</a
+              >
+            </li>
+          </ul>
+        </div>
+        <div class="tab-content profile-tab-cont">
+          <div class="tab-pane fade show active" id="prof_about">
+            <div class="row">
+              <div class="col-lg-12">
+                <div class="card" *ngIf="utilisateur">
+                  <div class="card-body">
+                    <h5 class="card-title d-flex justify-content-between">
+                      <span>Information personnelles </span>
+                      <a
+                        class="edit-link"
+                        data-toggle="modal"
+                        href="javascript:void(0)"
+                        ><i class="fa fa-edit mr-1"></i>Edit</a
+                      >
+                    </h5>
+                    <div class="row">
+                      <p class="col-sm-2 text-muted text-sm-right mb-0 mb-sm-3">
+                        Nom complet
+                      </p>
+                      <p class="col-sm-10">
+                        {{ utilisateur.nom }} {{ utilisateur.prenom }}
+                      </p>
+                    </div>
+                    <div class="row">
+                      <p class="col-sm-2 text-muted text-sm-right mb-0 mb-sm-3">
+                        Profession
+                      </p>
+                      <p class="col-sm-10">{{ utilisateur.profession }}</p>
+                    </div>
+                    <div class="row">
+                      <p class="col-sm-2 text-muted text-sm-right mb-0 mb-sm-3">
+                        Email
+                      </p>
+                      <p class="col-sm-10">{{ utilisateur.email }}</p>
+                    </div>
+                    <div class="row">
+                      <p class="col-sm-2 text-muted text-sm-right mb-0 mb-sm-3">
+                        Téléphone
+                      </p>
+                      <p class="col-sm-10">{{ utilisateur.telephone }}</p>
+                    </div>
+                    <div class="row">
+                      <p class="col-sm-2 text-muted text-sm-right mb-0">
+                        Address
+                      </p>
+                      <p class="col-sm-10 mb-0">
+                        {{ utilisateur.address }}<br />
+                      </p>
+                    </div>
+                    <div class="row">
+                      <p class="col-sm-2 text-muted text-sm-right mb-0">
+                        Nom utilisateur
+                      </p>
+                      <p class="col-sm-10 mb-0">
+                        {{ utilisateur.username }}<br />
+                      </p>
+                    </div>
+                    <div class="row">
+                      <p class="col-sm-2 text-muted text-sm-right mb-0">
+                        Profile
+                      </p>
+                      <p class="col-sm-10 mb-0">
+                        {{ utilisateur.profilDTO?.libelle }}<br />
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

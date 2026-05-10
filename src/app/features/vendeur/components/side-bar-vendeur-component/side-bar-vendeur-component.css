@@ -1,7 +1,11 @@
-.vd-sidebar {
-  width: 240px;
+/* ═══════════════════════════════════════════════
+   SIDEBAR PARENT — Suivi scolaire
+   ═══════════════════════════════════════════════ */
+
+.parent-sidebar {
+  width: 260px;
   flex-shrink: 0;
-  background: linear-gradient(170deg, var(--pain-deep) 0%, #A0452F 100%);
+  background: linear-gradient(170deg, var(--blue-deep, #1e3a5f) 0%, var(--blue-ocean, #2c5282) 100%);
   color: white;
   display: flex;
   flex-direction: column;
@@ -9,6 +13,23 @@
   gap: 18px;
   overflow-y: auto;
   height: 100%;
+  
+  /* Scrollbar personnalisée */
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255, 255, 255, 0.2) transparent;
+}
+
+.parent-sidebar::-webkit-scrollbar {
+  width: 4px;
+}
+
+.parent-sidebar::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.parent-sidebar::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 99px;
 }
 
 .sidebar-close {
@@ -25,122 +46,120 @@
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
+  transition: background 0.2s;
 }
 
-.vs-brand {
+.sidebar-close:hover {
+  background: rgba(255, 255, 255, 0.25);
+}
+
+/* ── Profil élève ─────────────────────────────── */
+.ps-header {
   display: flex;
   align-items: center;
   gap: 12px;
-}
-
-.vs-logo {
-  font-size: 26px;
-  background: rgba(255, 255, 255, .15);
-  width: 44px;
-  height: 44px;
-  border-radius: 12px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.vs-nom {
-  font-family: var(--font-display);
-  font-size: 20px;
-  font-weight: 700;
-}
-
-.vs-sub {
-  font-size: 10px;
-  opacity: .65;
-  text-transform: uppercase;
-  letter-spacing: 1px;
-}
-
-.vs-profil {
-  display: flex;
-  align-items: center;
-  gap: 10px;
   background: rgba(255, 255, 255, .1);
-  border-radius: var(--radius-md);
-  padding: 12px;
+  border-radius: 14px;
+  padding: 14px;
 }
 
-.vs-ava {
-  width: 36px;
-  height: 36px;
+.ps-ava {
+  font-size: 36px;
+  width: 50px;
+  height: 50px;
+  background: rgba(255, 255, 255, .15);
   border-radius: 50%;
-  background: rgba(255, 255, 255, .25);
   display: flex;
   align-items: center;
   justify-content: center;
-  font-weight: 700;
-  font-size: 16px;
   flex-shrink: 0;
+  border: 2px solid var(--blue-sky, #63b3ed);
 }
 
-.vs-pnom {
-  font-weight: 600;
-  font-size: 13px;
+.ps-info {
+  flex: 1;
+  overflow: hidden;
 }
 
-.vs-role {
+.ps-nom {
+  font-weight: 700;
+  font-size: 15px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.ps-classe {
   font-size: 11px;
-  opacity: .7;
+  opacity: .75;
   margin-top: 2px;
 }
 
-.vs-kpis {
+.ps-moyenne {
+  font-size: 11px;
+  color: #68d391;
+  font-weight: 600;
+  margin-top: 3px;
+}
+
+/* ── Statistiques ─────────────────────────────── */
+.ps-stats {
   display: flex;
   flex-direction: column;
   gap: 8px;
 }
 
-.vsk-card {
+.pss-card {
   background: rgba(255, 255, 255, .12);
-  border-radius: var(--radius-sm);
+  border-radius: 10px;
   padding: 12px;
 }
 
-.vsk-val {
+.pss-val {
   display: block;
-  font-family: var(--font-display);
-  font-size: 16px;
+  font-family: 'Playfair Display', serif;
+  font-size: 18px;
   font-weight: 700;
 }
 
-.vsk-lbl {
+.pss-lbl {
   display: block;
   font-size: 11px;
   opacity: .7;
   margin-top: 2px;
 }
 
-.vsk-row {
+.pss-row {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 8px;
 }
 
-.vsk-pill {
+.pss-pill {
   background: rgba(255, 255, 255, .1);
-  border-radius: var(--radius-sm);
+  border-radius: 10px;
   padding: 10px 8px;
   display: flex;
   align-items: center;
   gap: 6px;
-  font-size: 12px;
+  font-size: 11px;
   font-weight: 600;
 }
 
-.vs-nav {
+.pss-pill.warning {
+  background: rgba(214, 158, 46, 0.25);
+  color: #fbd38d;
+}
+
+/* ── Navigation ────────────────────────────────── */
+.ps-nav {
   display: flex;
   flex-direction: column;
   gap: 3px;
-  margin-top: auto;
+  flex: 1;
 }
 
-.vsn-item {
+.psn-item {
   display: flex;
   align-items: center;
   gap: 10px;
@@ -148,36 +167,63 @@
   border: none;
   background: transparent;
   color: rgba(255, 255, 255, .75);
-  border-radius: var(--radius-sm);
+  border-radius: 10px;
   cursor: pointer;
-  font-size: 14px;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 13px;
   transition: all .2s;
   text-align: left;
   width: 100%;
+  position: relative;
 }
 
-.vsn-ico {
+.psn-ico {
   font-size: 18px;
+  width: 24px;
+  text-align: center;
+  flex-shrink: 0;
 }
 
-.vsn-item:hover {
+.psn-label {
+  flex: 1;
+}
+
+.psn-badge {
+  background: #e53e3e;
+  color: white;
+  font-size: 10px;
+  font-weight: 700;
+  padding: 2px 7px;
+  border-radius: 99px;
+  min-width: 20px;
+  text-align: center;
+}
+
+.psn-item:hover {
   background: rgba(255, 255, 255, .08);
   color: white;
 }
 
-.vsn-item.active {
+.psn-item.active {
   background: rgba(255, 255, 255, .2);
   color: white;
   font-weight: 700;
+  box-shadow: inset 3px 0 0 var(--blue-sky, #63b3ed);
 }
 
-/* ── Footer — Déconnexion ───────────────────────── */
-.sb-footer {
-  padding: 10px;
+.psn-item.active .psn-badge {
+  background: white;
+  color: var(--blue-ocean, #2c5282);
+}
+
+/* ── Footer — Déconnexion ─────────────────────── */
+.ps-footer {
+  padding-top: 8px;
   border-top: 1px solid rgba(255, 255, 255, 0.1);
+  flex-shrink: 0;
 }
 
-.sb-deconnexion {
+.ps-deconnexion {
   display: flex;
   align-items: center;
   gap: 11px;
@@ -186,21 +232,31 @@
   border: none;
   background: rgba(255, 255, 255, 0.08);
   color: rgba(255, 255, 255, 0.8);
-  border-radius: var(--radius-sm);
+  border-radius: 10px;
   cursor: pointer;
-  font-family: var(--font-body);
-  font-size: 14px;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 13px;
   transition: all 0.2s;
   text-align: left;
 }
 
-.sb-deconnexion:hover {
-  background: rgba(255, 60, 60, 0.28);
+.ps-deconnexion:hover {
+  background: rgba(255, 80, 80, 0.28);
   color: white;
 }
 
+.ps-ico {
+  font-size: 16px;
+  width: 24px;
+  text-align: center;
+  flex-shrink: 0;
+}
+
+/* ══════════════════════════════════════════════════
+   MOBILE — drawer depuis la gauche
+   ══════════════════════════════════════════════════ */
 @media (max-width: 768px) {
-  .vd-sidebar {
+  .parent-sidebar {
     position: fixed;
     top: 0;
     left: 0;
@@ -212,9 +268,9 @@
     padding-top: 16px;
   }
 
-  .vd-sidebar.is-open {
+  .parent-sidebar.is-open {
     transform: translateX(0);
-    box-shadow: 8px 0 40px rgba(44, 31, 26, .35);
+    box-shadow: 8px 0 40px rgba(26, 32, 44, .35);
   }
 
   .sidebar-close {

@@ -1,8 +1,6 @@
 import { CommonModule } from '@angular/common';
-import { Component, inject, input, output, signal } from '@angular/core';
+import { Component, inject, input, output } from '@angular/core';
 import { Router, RouterLink, RouterLinkActive } from '@angular/router';
-
-
 
 export interface NavItem {
   id: string;
@@ -11,8 +9,6 @@ export interface NavItem {
   icon: string;
   badge?: string;
 }
-
-
 
 @Component({
   selector: 'app-side-bar-proprietaire-component',
@@ -25,44 +21,30 @@ export class SideBarProprietaireComponent {
 
   collapsed = input.required<boolean>();
   open = input.required<boolean>();
+  professeur = input<any>({});
 
   toggleCollapse = output<void>();
   close = output<void>();
 
   readonly router = inject(Router);
 
-  /*
   readonly navItems: NavItem[] = [
-    { id: 'dashboard', route: '/proprietaire/dashboard', label: "Vue d'ensemble", icon: '📊' },
-    { id: 'boulangeries', route: '/proprietaire/boulangeries', label: 'Mes boulangeries', icon: '🏪', badge: '4' },
-    { id: 'comptes', route: '/proprietaire/comptes', label: 'Comptes gérants', icon: '👤', badge: '4' },
-    { id: 'approvisionnements', route: '/proprietaire/approvisionnements', label: 'Approvisionnements', icon: '📦' },
-    { id: 'commandes', route: '/proprietaire/commandes', label: 'Commandes', icon: '📦' },
-  ];*/
-
-  readonly navItems: NavItem[] = [
-    { id: 'dashboard', route: '/proprietaire/dashboard', label: 'Vue d\'ensemble', icon: '📊' },
-    { id: 'finances', route: '/proprietaire/finances', label: 'Finances', icon: '💰' },
-    { id: 'ventes', route: '/proprietaire/ventes', label: 'Ventes', icon: '🧾' },
-    { id: 'commandes', route: '/proprietaire/commandes', label: 'Commandes', icon: '📋' },
-    { id: 'stocks', route: '/proprietaire/stocks', label: 'Stocks', icon: '📦' },
-    { id: 'menu', route: '/proprietaire/menu', label: 'Menu', icon: '📖' },
-    { id: 'personnel', route: '/proprietaire/personnel', label: 'Personnel', icon: '👥', badge: '8' },
-    { id: 'tables', route: '/proprietaire/tables', label: 'Tables', icon: '🪑', badge: '8' },
-    { id: 'depenses', route: '/proprietaire/depenses', label: 'Dépenses', icon: '💸' },
-    { id: 'rapports', route: '/proprietaire/rapports', label: 'Rapports', icon: '📈' },
-    { id: 'parametres', route: '/proprietaire/parametres', label: 'Paramètres', icon: '⚙️' },
+    { id: 'dashboard', route: '/professeur/dashboard', label: 'Tableau de bord', icon: '📊' },
+    { id: 'classes', route: '/professeur/classes', label: 'Mes classes', icon: '🏫', badge: '3' },
+    { id: 'notes', route: '/professeur/notes', label: 'Saisie des notes', icon: '📝', badge: 'À faire' },
+    { id: 'bulletins', route: '/professeur/bulletins', label: 'Bulletins', icon: '📋' },
+    { id: 'emploi-temps', route: '/professeur/emploi-temps', label: 'Emploi du temps', icon: '🕐' },
+    { id: 'cours', route: '/professeur/cours', label: 'Cours & Ressources', icon: '📚' },
+    { id: 'absences', route: '/professeur/absences', label: 'Appel & Absences', icon: '📌' },
+    { id: 'messagerie', route: '/professeur/messagerie', label: 'Messagerie', icon: '✉️', badge: '3' },
   ];
 
-  // Statistiques du restaurant
-  nbEmployes = signal(8);
-  nbTables = signal(8);
-
-
+  nbClasses = 3;
+  nbEleves = 120;
+  prochainCours = '08:00 - Maths Tle S2';
 
   deconnecter(): void {
     this.router.navigate(['/auth/login']);
   }
-
 
 }

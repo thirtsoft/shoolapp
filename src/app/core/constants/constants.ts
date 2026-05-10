@@ -1,0 +1,7 @@
+
+export const Constants = {
+  TYPE_PHOTO_PROFILE: 1,
+  TYPE_PHOTO_ELEVE: 2,
+  TYPE_PHOTO_ENSEIGNANT: 3,
+  TYPE_DOCUMETNT_EXERCICE: 4
+};

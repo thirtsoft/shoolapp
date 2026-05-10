@@ -7,6 +7,7 @@ interface NavItem {
   route: string;
   ico: string;
   label: string;
+  badge?: string;
 }
 
 @Component({
@@ -25,17 +26,18 @@ export class MainLayoutGerantCompoment {
   readonly router = inject(Router);
 
   nav: NavItem[] = [
-    { route: '/gerant/dashboard', ico: '📊', label: 'Aperçu' },
-    { route: '/gerant/commandes', ico: '📋', label: 'Commandes' },
-    { route: '/gerant/tables', ico: '🍽️', label: 'Tables' },
-    { route: '/gerant/menu', ico: '📖', label: 'Menu' },
-    { route: '/gerant/cuisine', ico: '👨‍🍳', label: 'Cuisine' },
-    { route: '/gerant/stocks', ico: '📦', label: 'Stocks' },
-    { route: '/gerant/ventes', ico: '💰', label: 'Ventes' },
-    { route: '/gerant/livreurs', ico: '👷', label: 'Livreurs' },
-    { route: '/gerant/personnels', ico: '👥', label: 'Personnel' },
-    //  { route: '/gerant/depenses', ico: '💼', label: 'Dépenses' },
-    //  { route: '/gerant/fournisseurs', ico: '🚛', label: 'Fournisseurs' },
+    { route: '/administration/dashboard', ico: '📊', label: 'Tableau de bord' },
+    { route: '/administration/eleves', ico: '🎒', label: 'Élèves', badge: '1 200' },
+    { route: '/administration/inscriptions', ico: '📝', label: 'Inscriptions' },
+    { route: '/administration/parents', ico: '👪', label: 'Parents' },
+    { route: '/administration/classes', ico: '🏫', label: 'Classes' },
+    { route: '/administration/enseignants', ico: '👨‍🏫', label: 'Enseignants', badge: '85' },
+    { route: '/administration/bulletins', ico: '📋', label: 'Bulletins' },
+    { route: '/administration/emplois-temps', ico: '🕐', label: 'Emplois du temps' },
+    { route: '/administration/factures', ico: '💰', label: 'Factures' },
+    { route: '/administration/comptabilite', ico: '💼', label: 'Comptabilité' },
+    { route: '/administration/messagerie', ico: '✉️', label: 'Messagerie' },
+    { route: '/administration/parametres', ico: '⚙️', label: 'Paramètres' },
   ];
 
 
@@ -45,17 +47,19 @@ export class MainLayoutGerantCompoment {
 
   get sectionLabel(): string {
     const url = this.router.url;
-    if (url.includes('dashboard')) return 'Aperçu';
-    if (url.includes('tables')) return 'Tables';
-    if (url.includes('menu')) return 'Menu';
-    if (url.includes('stocks')) return 'Stock';
-    if (url.includes('ventes')) return 'Ventes';
-    if (url.includes('commandes')) return 'Commandes';
-    if (url.includes('cuisine')) return 'Cuisine';
-    if (url.includes('livreurs')) return 'Livreurs';
-    if (url.includes('personnels')) return 'Personnels';
-
-    return 'Gérant';
+    if (url.includes('dashboard')) return 'Tableau de bord';
+    if (url.includes('eleves')) return 'Élèves';
+    if (url.includes('inscriptions')) return 'Inscriptions';
+    if (url.includes('parents')) return 'Parents';
+    if (url.includes('classes')) return 'Classes';
+    if (url.includes('enseignants')) return 'Enseignants';
+    if (url.includes('bulletins')) return 'Bulletins';
+    if (url.includes('emplois-temps')) return 'Emplois du temps';
+    if (url.includes('factures')) return 'Factures';
+    if (url.includes('comptabilite')) return 'Comptabilité';
+    if (url.includes('messagerie')) return 'Messagerie';
+    if (url.includes('parametres')) return 'Paramètres';
+    return 'Administration';
   }
 
   isActive(route: string): boolean {
@@ -75,4 +79,6 @@ export class MainLayoutGerantCompoment {
     this.sidebarOpen.set(false);
   }
 }
+
+
 

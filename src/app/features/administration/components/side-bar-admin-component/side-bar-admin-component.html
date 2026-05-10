@@ -1,0 +1,127 @@
+<!-- <div class="sidebar" [class.collapsed]="collapsed()" [class.drawer-open]="open()">
+  <div class="sb-brand">
+    <div class="sb-logo">🎓</div>
+    <div class="sb-brand-text">
+      <span class="sb-name">EduSchool</span>
+      <span class="sb-sub">Administration</span>
+    </div>
+    <button class="sb-toggle" (click)="toggleCollapse.emit()" title="Réduire">
+      {{ collapsed() ? '→' : '←' }}
+    </button>
+  </div>
+
+  <nav class="sb-nav">
+    @for (item of nav; track item.route; let i = $index) {
+      @if (item.section) {
+        <div class="sb-section">
+          <span class="sb-section-title">{{ item.section }}</span>
+        </div>
+      }
+
+      <button
+        class="sb-item"
+        [class.active]="isActive(item.route)"
+        (click)="naviguer(item.route)"
+        [title]="item.label"
+      >
+        <span class="sb-ico">{{ item.ico }}</span>
+        <span class="sb-label">{{ item.label }}</span>
+        @if (item.badge) {
+          <span class="sb-badge">{{ item.badge }}</span>
+        }
+      </button>
+    }
+  </nav>
+
+  <div class="sb-footer">
+    <button class="sb-deconnexion" (click)="deconnecter()">
+      <span class="sb-ico">🚪</span>
+      <span class="sb-label">Déconnexion</span>
+    </button>
+  </div>
+</div>
+ -->
+
+<div class="sidebar" [class.collapsed]="collapsed()" [class.drawer-open]="open()">
+  <!-- Brand -->
+  <div class="sb-brand">
+    <div class="sb-logo">🎓</div>
+    <div class="sb-brand-text">
+      <span class="sb-name">EduSchool</span>
+      <span class="sb-sub">Administration</span>
+    </div>
+    <button class="sb-toggle" (click)="toggleCollapse.emit()" title="Réduire">
+      {{ collapsed() ? '→' : '←' }}
+    </button>
+  </div>
+
+  <!-- Navigation -->
+  <nav class="sb-nav">
+    @for (item of nav; track item.label; let i = $index) {
+      <!-- Section header -->
+      @if (item.section) {
+        <div class="sb-section">
+          <span class="sb-section-title">{{ item.section }}</span>
+        </div>
+      }
+
+      <!-- Item simple (sans enfants) -->
+      @if (!hasChildren(item)) {
+        <button
+          class="sb-item"
+          [class.active]="isActive(item.route)"
+          (click)="naviguer(item.route)"
+          [title]="item.label"
+        >
+          <span class="sb-ico">{{ item.ico }}</span>
+          <span class="sb-label">{{ item.label }}</span>
+          @if (item.badge) {
+            <span class="sb-badge">{{ item.badge }}</span>
+          }
+        </button>
+      }
+
+      <!-- Item dropdown (avec enfants) -->
+      @if (hasChildren(item)) {
+        <div class="sb-dropdown-group">
+          <button
+            class="sb-item sb-dropdown-toggle"
+            [class.active]="isParentActive(item)"
+            [class.expanded]="isExpanded(item.label)"
+            (click)="toggleDropdown(item.label)"
+            [title]="item.label"
+          >
+            <span class="sb-ico">{{ item.ico }}</span>
+            <span class="sb-label">{{ item.label }}</span>
+            <span class="sb-chevron">{{ isExpanded(item.label) ? '▾' : '▸' }}</span>
+          </button>
+
+          <!-- Sous-menu -->
+          @if (isExpanded(item.label)) {
+            <div class="sb-submenu">
+              @for (child of item.children; track child.label) {
+                <button
+                  class="sb-item sb-subitem"
+                  [class.active]="isActive(child.route)"
+                  (click)="naviguer(child.route)"
+                  [title]="child.label"
+                >
+                  <span class="sb-ico">{{ child.ico }}</span>
+                  <span class="sb-label">{{ child.label }}</span>
+                </button>
+              }
+            </div>
+          }
+        </div>
+      }
+    }
+  </nav>
+
+  <!-- Footer — Déconnexion -->
+  <div class="sb-footer">
+    <button class="sb-deconnexion" (click)="deconnecter()">
+      <span class="sb-ico">🚪</span>
+      <span class="sb-label">Déconnexion</span>
+    </button>
+  </div>
+</div>

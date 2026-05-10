@@ -1,0 +1,114 @@
+<div class="page-wrapper">
+  <div class="content container-fluid">
+    <div class="data">
+      <h1 class="titlePage">Détails {{ detailsEcoleAdmin.nom }}</h1>
+
+      <div class="block_button">
+        <button class="custom-btn btn-1" (click)="goBack()">
+          <i class="fa fa-arrow-left"></i>
+          <b style="margin-left: 5px">Retour</b>
+        </button>
+      </div>
+
+      <div class="profile-container">
+        <div class="profile-card">
+          <div class="card-header">
+            <img src="../../../assets/img/ecole.png" alt="" class="img-section" />
+
+            <h1 style="color: #000000">Details école</h1>
+          </div>
+          <div class="info-row">
+            <span class="label"> Logo</span>
+            <div *ngIf="logoPreview" class="logo-preview">
+              <img [src]="logoPreview" alt="Logo aperçu" width="150" />
+            </div>
+          </div>
+
+          <div class="info-row">
+            <span class="label"> Nom</span>
+            <span class="value">{{ detailsEcoleAdmin.nom }}</span>
+          </div>
+
+          <div class="info-row">
+            <span class="label">Code </span>
+            <span class="value">{{ detailsEcoleAdmin.code }}</span>
+          </div>
+          <div class="info-row">
+            <span class="label">Ville </span>
+            <span class="value">{{ detailsEcoleAdmin.ville }}</span>
+          </div>
+          <div class="info-row">
+            <span class="label">Adresse </span>
+            <span class="value">{{ detailsEcoleAdmin.adresse }}</span>
+          </div>
+
+          <div class="info-row">
+            <span class="label">Téléphone </span>
+            <span class="value">{{ detailsEcoleAdmin.telephone }} </span>
+          </div>
+
+          <div class="info-row">
+            <span class="label">Email </span>
+            <span class="value">{{ detailsEcoleAdmin.email }}</span>
+          </div>
+
+          <div class="info-row">
+            <span class="label">Slogan </span>
+            <span class="value">{{ detailsEcoleAdmin.slogan }}</span>
+          </div>
+          <div class="info-row">
+            <span class="label">Nom de domaine </span>
+            <span class="value">{{ detailsEcoleAdmin.subdomain }}</span>
+          </div>
+          <div class="info-row">
+            <span class="label">Schéma base de donnée </span>
+            <span class="value">{{ detailsEcoleAdmin.schemaName }}</span>
+          </div>
+          <div class="info-row">
+            <span class="label">date création </span>
+            <span class="value">{{ detailsEcoleAdmin.createdAt }}</span>
+          </div>
+        </div>
+
+        <div class="profile-card">
+          <div class="card-header">
+            <img src="../../../assets/img/adminecole.png" alt="" class="img-section" />
+
+            <h1 style="color: #000000">Adminstrateur école</h1>
+          </div>
+          <div class="info-row">
+            <span class="label">Civilité </span>
+            <span class="value">{{ detailsEcoleAdmin.civilityAdmin }}</span>
+          </div>
+          <div class="info-row">
+            <span class="label">Prénom </span>
+            <span class="value">{{ detailsEcoleAdmin.prenomAdmin }}</span>
+          </div>
+          <div class="info-row">
+            <span class="label">Nom </span>
+            <span class="value">{{ detailsEcoleAdmin.nomAdmin }}</span>
+          </div>
+          <div class="info-row">
+            <span class="label">Téléphone </span>
+            <span class="value">{{ detailsEcoleAdmin.telephoneAdmin }} </span>
+          </div>
+          <div class="info-row">
+            <span class="label">Email </span>
+            <span class="value">{{ detailsEcoleAdmin.emailAdmin }} </span>
+          </div>
+          <div class="info-row">
+            <span class="label">Nom utilisateur </span>
+            <span class="value">{{ detailsEcoleAdmin.usernameAdmin }} </span>
+          </div>
+          <div class="info-row">
+            <span class="label">Profil </span>
+            <span class="value">{{ detailsEcoleAdmin.profilAdminEcole }} </span>
+          </div>
+        </div>
+      </div>
+
+      <div class="centerModal"></div>
+      <div></div>
+    </div>
+  </div>
+</div>

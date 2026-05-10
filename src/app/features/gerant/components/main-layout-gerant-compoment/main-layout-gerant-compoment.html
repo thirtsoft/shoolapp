@@ -1,4 +1,4 @@
-<!-- main-layout-gerant.html -->
+<!-- main-layout-admin.html -->
 <div class="layout-shell" [class.sidebar-collapsed]="sidebarCollapsed()">
   <!-- Backdrop mobile -->
   @if (sidebarOpen()) {
@@ -6,6 +6,15 @@
   }
 
   <!-- ══ SIDEBAR ══ -->
+  <!--
+  <app-side-bar-admin-component
+    [collapsed]="sidebarCollapsed()"
+    [open]="sidebarOpen()"
+    (toggleCollapse)="onToggleCollapse()"
+    (close)="onSidebarClose()"
+  >
+  </app-side-bar-admin-component> -->
+
   <app-side-bar-gerant-component
     [collapsed]="sidebarCollapsed()"
     [open]="sidebarOpen()"
@@ -25,7 +34,7 @@
           <span></span>
         </button>
         <div class="lt-breadcrumb">
-          <span class="lt-brand-m">🍽️</span>
+          <span class="lt-brand-m">🎓</span>
           <span class="lt-sep">/</span>
           <span class="lt-section">{{ sectionLabel }}</span>
         </div>
@@ -33,8 +42,8 @@
       <div class="lt-right">
         <span class="lt-date">{{ dateAuj }}</span>
         <div class="lt-user">
-          <div class="lt-ava">G</div>
-          <span class="lt-uname">Modou Seck</span>
+          <div class="lt-ava">A</div>
+          <span class="lt-uname">Mme Diop</span>
         </div>
       </div>
     </header>

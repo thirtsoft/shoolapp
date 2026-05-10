@@ -1,0 +1,165 @@
+<div class="page-wrapper">
+  <div class="content container-fluid">
+    <div class="page-header">
+      <div class="row">
+        <div class="col-sm-7 col-auto">
+          <h3 class="page-title">Détails enseignant</h3>
+          <ul class="breadcrumb">
+            <li class="breadcrumb-item">
+              <a [routerLink]="'/admin/'">Tableau de bord</a>
+            </li>
+            <li class="breadcrumb-item active">{{ title }}</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-sm-12">
+        <div class="card">
+          <div class="card-body">
+            <!-- Page Content -->
+
+            <div class="invoice-item">
+              <div class="row">
+                <div class="col-md-6">
+                  <div class="invoice-logo">
+                    <h3 class="text-left">Informations personnelles</h3>
+                    <div class="infoPerso">
+                      Nom complet :
+                      <label for="">
+                        {{ enseignant?.civilite }} {{ enseignant?.prenom }}
+                        {{ enseignant?.nom }}
+                      </label>
+                      <br />
+                      Adresse :
+                      <label for="">
+                        {{ enseignant?.address }},
+                        {{ enseignant?.telephone }}
+                      </label>
+
+                      <br />
+                      Email:
+                      <label for="">
+                        {{ enseignant?.email }}
+                      </label>
+
+                      <br />
+                      Nom utilisateur:
+                      <label for="">
+                        {{ enseignant?.username }}
+                      </label>
+
+                      <br />
+                    </div>
+                    <h3 class="text-left">Enseignements</h3>
+
+                    <div class="infoEnseignement">
+                      Classe :
+                      <label for="">
+                        {{ enseignement?.classe }}
+                      </label>
+                      <br />
+                      Année scolaire :
+                      <label for="">
+                        {{ enseignement?.anneeScolaire }}
+                      </label>
+
+                      <br />
+                      Date début:
+                      <label for="">
+                        {{ enseignement?.dateDebut }}
+                      </label>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-md-6">
+                  <div class="image-preview-container">
+                    <img
+                      *ngIf="preview"
+                      [src]="preview"
+                      class="preview"
+                      alt="Photo de profil de l'élève"
+                      style="max-width: 200px; max-height: 200px"
+                    />
+
+                    <img
+                      *ngIf="!preview"
+                      src="assets/img/logo-dauphin.png"
+                      class="preview"
+                      alt="Photo de profil de l'élève"
+                      style="width: 200px; height: 200px"
+                    />
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <hr />
+
+            <div class="row">
+              <div class="col-md-12">
+                <div class="table-responsive">
+                  <table class="invoice-table table table-bordered">
+                    <thead>
+                      <tr>
+                        <th>Libellé</th>
+                        <th class="text-center">Matiere</th>
+                        <th class="text-center">Salle</th>
+
+                        <th class="text-right">Date cours</th>
+                        <th class="text-right">Heure début</th>
+                        <th class="text-right">Heure fin</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr *ngFor="let cours of listCours">
+                        <td>{{ cours?.libelle }}</td>
+                        <td class="text-right">{{ cours?.matiere }}</td>
+                        <td class="center">{{ cours?.salle }}</td>
+
+                        <td class="text-right">{{ cours?.dateDebut }}</td>
+                        <td class="text-right">{{ cours?.heureDebut }}</td>
+                        <td class="text-right">{{ cours?.heureFin }}</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+
+            <!-- /Invoice Item -->
+
+            <!-- Invoice Information -->
+            <div class="other-info">
+              <button
+                type="button"
+                class="btn btn-primary float-lg-right"
+                id="btn-yes"
+                style="
+                  align-items: center;
+                  border: 1px solid #028ee1;
+                  box-shadow: 0 1px 2px rgba(16, 24, 40, 0.05);
+                  background-color: #028ee1;
+                  min-height: 44px;
+                  padding: 10px 16px;
+                  cursor: pointer;
+                "
+              >
+                <i class="fa fa-print"></i>
+                Imprimer
+              </button>
+              <button
+                type="button"
+                class="btn btn-danger si_accept_cancel float-left"
+                routerLink="/admin/comptabilite/facture"
+              >
+                Retour
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

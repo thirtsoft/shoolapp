@@ -1,0 +1,290 @@
+/* ═══════════════════════════════════════════════
+   MAIN LAYOUT ADMIN — VERSION FINALE
+   ═══════════════════════════════════════════════ */
+:host {
+  --blue-deep: #1e3a5f;
+  --blue-ocean: #2c5282;
+  --blue-light: #4299e1;
+  --blue-sky: #63b3ed;
+  --blue-pale: #ebf4ff;
+  --blue-ghost: #f7faff;
+  --gris-fonce: #2d3748;
+  --gris-moyen: #718096;
+  --gris-doux: #f7fafc;
+  --font-display: 'Playfair Display', serif;
+  --font-body: 'DM Sans', sans-serif;
+
+  display: block;
+  width: 100%;
+  height: 100vh;
+  height: 100dvh;
+  overflow: hidden;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+.layout-shell {
+  display: grid;
+  grid-template-columns: 260px 1fr;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  background: var(--gris-doux);
+  animation: fadeIn 0.4s ease;
+  transition: grid-template-columns 0.3s ease;
+}
+
+.layout-shell.sidebar-collapsed {
+  grid-template-columns: 64px 1fr;
+}
+
+.sidebar-backdrop {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(26, 32, 44, 0.6);
+  z-index: 299;
+  backdrop-filter: blur(3px);
+  animation: fadeIn 0.2s ease;
+}
+
+.layout-main {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  overflow: hidden;
+  min-width: 0;
+}
+
+.layout-topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 24px;
+  height: 64px;
+  min-height: 64px;
+  background: white;
+  border-bottom: 1px solid var(--blue-pale);
+  flex-shrink: 0;
+  box-shadow: 0 1px 8px rgba(30, 58, 95, 0.06);
+}
+
+.lt-left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.lt-right {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.hamburger {
+  display: none;
+  flex-direction: column;
+  justify-content: space-between;
+  width: 26px;
+  height: 20px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 2px 0;
+  flex-shrink: 0;
+}
+
+.hamburger span {
+  display: block;
+  height: 2.5px;
+  background: var(--gris-fonce);
+  border-radius: 3px;
+}
+
+.lt-breadcrumb {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.lt-brand-m {
+  display: none;
+  font-family: var(--font-display);
+  font-weight: 700;
+  color: var(--blue-ocean);
+  font-size: 15px;
+}
+
+.lt-sep {
+  color: var(--gris-moyen);
+}
+
+.lt-section {
+  font-family: var(--font-display);
+  font-size: 17px;
+  font-weight: 700;
+  color: var(--gris-fonce);
+}
+
+.lt-date {
+  font-size: 12px;
+  color: var(--gris-moyen);
+}
+
+.lt-user {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.lt-ava {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--blue-light), var(--blue-ocean));
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 800;
+  font-size: 14px;
+}
+
+.lt-uname {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--gris-fonce);
+}
+
+/* ═══ LE SCROLL EST ICI ═══ */
+.layout-content {
+  flex: 1 1 0;
+  min-height: 0;
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+.bottom-nav {
+  display: none;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.bn-btn {
+  flex: 1 0 auto;
+  min-width: 64px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  border: none;
+  background: none;
+  cursor: pointer;
+  color: #9E9E9E;
+  border-top: 3px solid transparent;
+  transition: color 0.15s, background 0.15s;
+  font-family: var(--font-body);
+  padding: 6px 4px;
+}
+
+.bn-ico {
+  font-size: 20px;
+  line-height: 1;
+}
+
+.bn-lbl {
+  font-size: 10px;
+  font-weight: 500;
+  text-align: center;
+  white-space: nowrap;
+}
+
+.bn-btn.active {
+  color: var(--blue-ocean);
+  border-top-color: var(--blue-ocean);
+  background: var(--blue-pale);
+}
+
+.bn-btn.active .bn-lbl {
+  font-weight: 700;
+}
+
+@media (max-width: 1024px) {
+  .layout-shell {
+    grid-template-columns: 200px 1fr;
+  }
+
+  .lt-date {
+    display: none;
+  }
+}
+
+@media (max-width: 768px) {
+  .layout-shell {
+    grid-template-columns: 1fr;
+  }
+
+  .sidebar-backdrop {
+    display: block;
+  }
+
+  .hamburger {
+    display: flex;
+  }
+
+  .lt-brand-m {
+    display: block;
+  }
+
+  .lt-uname {
+    display: none;
+  }
+
+  .lt-date {
+    display: none;
+  }
+
+  .layout-topbar {
+    padding: 0 16px;
+    height: 56px;
+    min-height: 56px;
+  }
+
+  .bottom-nav {
+    display: flex;
+    flex-shrink: 0;
+    height: 64px;
+    background: white;
+    border-top: 1.5px solid var(--blue-pale);
+    box-shadow: 0 -3px 16px rgba(30, 58, 95, 0.1);
+  }
+
+  @supports (padding-bottom: env(safe-area-inset-bottom)) {
+    .bottom-nav {
+      height: calc(64px + env(safe-area-inset-bottom));
+      padding-bottom: env(safe-area-inset-bottom);
+    }
+  }
+}
+
+.layout-shell>app-side-bar-admin-component {
+  height: 100%;
+  overflow: hidden;
+  /* Pour le mobile, la sidebar est en fixed, donc pas besoin de cette règle */
+}
+
+@media (max-width: 768px) {
+  .layout-shell>app-side-bar-admin-component {
+    height: auto;
+    overflow: visible;
+  }
+}

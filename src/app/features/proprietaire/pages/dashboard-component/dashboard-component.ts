@@ -1,187 +1,181 @@
 import { CommonModule } from '@angular/common';
-import { Component, inject, signal } from '@angular/core';
-import { DataService } from '../../../../shared/data.service';
-import { KpiCardComponent } from '../../components/shared/kpi-card-component/kpi-card-component';
-import { Periode, PeriodeSelectorComponent } from '../../components/shared/periode-selector-component/periode-selector-component';
-import { BoulangerieService } from '../../services/boulangerie.service';
-import { GerantService } from '../../services/gerant.service';
-import { InvestissementService } from '../../services/investissement.service';
+import { Component, computed, inject, signal } from '@angular/core';
+import { Router } from '@angular/router';
 
-
-type PeriodeType = 'jour' | 'semaine' | 'mois';
-
-interface StatsRestaurant {
-  ventesJour: number;
-  commandesJour: number;
-  clientsJour: number;
-  panierMoyen: number;
-  tablesOccupees: number;
-  tauxOccupation: number;
-  tendance: 'hausse' | 'baisse' | 'stable';
-  evolution: number;
+interface ClasseProfesseur {
+  id: number;
+  nom: string;
+  niveau: string;
+  effectif: number;
+  moyenne: number;
+  prochainCours: string;
+  nbElevesRetard: number;
 }
 
-interface PerformanceSection {
-  nom: string;
-  icone: string;
-  ventesJour: number;
-  objectifJour: number;
-  taux: number;
-  tendance: string;
-  items?: number;
+interface CoursJour {
+  heure: string;
+  classe: string;
+  matiere: string;
+  salle: string;
+  duree: string;
+  statut: 'termine' | 'en_cours' | 'a_venir';
 }
 
-interface TopPlat {
-  nom: string;
-  icone: string;
-  ventes: number;
-  montant: number;
-  quantite: number;
+interface NoteARemplir {
+  classe: string;
+  evaluation: string;
+  date: string;
+  nbNotes: number;
+  nbEleves: number;
+  progression: number;
 }
 
-interface AlerteStock {
+interface EleveRemarquable {
   nom: string;
-  icone: string;
-  quantite: number;
-  seuil: number;
+  classe: string;
+  note: number;
+  type: 'excellent' | 'difficulte' | 'progres';
+}
+
+interface MessageProfesseur {
+  id: string;
+  expediteur: string;
+  role: string;
+  sujet: string;
+  date: string;
+  nonLu: boolean;
+}
+
+interface AbsenceClasse {
+  classe: string;
+  nbAbsents: number;
+  nbEleves: number;
+  date: string;
 }
 
 @Component({
   selector: 'app-dashboard-component',
   standalone: true,
-  imports: [CommonModule, KpiCardComponent, PeriodeSelectorComponent],
+  imports: [CommonModule],
   templateUrl: './dashboard-component.html',
   styleUrl: './dashboard-component.css',
 })
 export class DashboardComponent {
 
-  private boulangerieService = inject(BoulangerieService);
-  private gerantService = inject(GerantService);
-  private investissementService = inject(InvestissementService);
-  private dataService = inject(DataService);
+  private readonly router = inject(Router);
 
-  periode = signal<Periode>('jour');
-  protected readonly Math = Math;
-
-  // Données - on garde les signaux
-  readonly boulangeries = this.boulangerieService.boulangeries;
-  readonly statsBoulangeries = this.boulangerieService.getStats();
-  readonly statsGerants = this.gerantService.stats; // C'est un Signal<GerantStats>
-  readonly statsInvestissements = this.investissementService.stats; // C'est un Signal<InvestissementStats>
-  readonly ventesHebdo = this.dataService.ventesHebdo;
-
-  // Computed
-  readonly ventesMaxHebdo = () => Math.max(...this.ventesHebdo.map(v => v.ventes));
-  readonly getMaxVenteBoulangerie = () => Math.max(...this.boulangeries().map(b => b.objectifJour));
-
-  // ── Stats principales ────────────────────────────
-  stats = signal<StatsRestaurant>({
-    ventesJour: 458000,
-    commandesJour: 42,
-    clientsJour: 68,
-    panierMoyen: 6750,
-    tablesOccupees: 6,
-    tauxOccupation: 75,
-    tendance: 'hausse',
-    evolution: 12.5
+  // ── Informations professeur ────────────────────────
+  professeur = signal({
+    nom: 'M. Sall',
+    matiere: 'Mathématiques',
+    avatar: '👨‍🏫'
   });
 
-  // ── Performance par section ──────────────────────
-  sections = signal<PerformanceSection[]>([
-    { nom: 'Salle', icone: '🪑', ventesJour: 245000, objectifJour: 300000, taux: 82, tendance: 'hausse', items: 28 },
-    { nom: 'Terrasse', icone: '🌿', ventesJour: 138000, objectifJour: 150000, taux: 92, tendance: 'stable', items: 14 },
-    { nom: 'VIP', icone: '⭐', ventesJour: 75000, objectifJour: 50000, taux: 150, tendance: 'hausse', items: 6 },
+  // ── KPIs principaux ────────────────────────────────
+  kpis = signal([
+    { label: 'Mes classes', val: '3', ico: '🏫', detail: '120 élèves', couleur: 'bleu' },
+    { label: 'Moyenne générale', val: '13.8/20', ico: '📊', detail: 'Toutes classes', couleur: 'vert' },
+    { label: 'Cours aujourd\'hui', val: '4', ico: '🕐', detail: '8h de cours', couleur: 'or' },
+    { label: 'Notes à saisir', val: '28', ico: '📝', detail: '3 évaluations', couleur: 'rouge' },
   ]);
 
-  // ── Top plats du jour ────────────────────────────
-  topPlats = signal<TopPlat[]>([
-    { nom: 'Poulet Yassa', icone: '🍗', ventes: 12, montant: 42000, quantite: 15 },
-    { nom: 'Thieboudienne', icone: '🍚', ventes: 10, montant: 40000, quantite: 10 },
-    { nom: 'Nems Poulet', icone: '🥟', ventes: 8, montant: 16000, quantite: 20 },
-    { nom: 'Jus Bissap', icone: '🍷', ventes: 7, montant: 5600, quantite: 25 },
+  // ── Emploi du temps du jour ────────────────────────
+  edtJour = signal<CoursJour[]>([
+    { heure: '08:00 - 10:00', classe: 'Terminale S2', matiere: 'Mathématiques', salle: 'Salle 12', duree: '2h', statut: 'termine' },
+    { heure: '10:15 - 12:15', classe: 'Première S1', matiere: 'Mathématiques', salle: 'Salle 8', duree: '2h', statut: 'en_cours' },
+    { heure: '14:00 - 16:00', classe: 'Seconde S2', matiere: 'Mathématiques', salle: 'Salle 5', duree: '2h', statut: 'a_venir' },
+    { heure: '16:00 - 18:00', classe: 'Terminale S2', matiere: 'Soutien', salle: 'Salle 12', duree: '2h', statut: 'a_venir' },
   ]);
 
-  // ── Alertes stock ────────────────────────────────
-  alertesStock = signal<AlerteStock[]>([
-    { nom: 'Huile végétale', icone: '🫒', quantite: 0, seuil: 5 },
-    { nom: 'Beurre', icone: '🧈', quantite: 3, seuil: 5 },
-    { nom: 'Tomates', icone: '🍅', quantite: 5, seuil: 10 },
+  // ── Mes classes ────────────────────────────────────
+  classes = signal<ClasseProfesseur[]>([
+    { id: 1, nom: 'Terminale S2', niveau: 'Terminale', effectif: 38, moyenne: 14.5, prochainCours: 'Auj. 16:00', nbElevesRetard: 3 },
+    { id: 2, nom: 'Première S1', niveau: 'Première', effectif: 42, moyenne: 12.8, prochainCours: 'Demain 08:00', nbElevesRetard: 5 },
+    { id: 3, nom: 'Seconde S2', niveau: 'Seconde', effectif: 40, moyenne: 13.2, prochainCours: 'Auj. 14:00', nbElevesRetard: 2 },
   ]);
 
-
-  // ── Ventes de la semaine ─────────────────────────
-  ventesSemaine = signal([
-    { jour: 'Lun', ventes: 380000 },
-    { jour: 'Mar', ventes: 420000 },
-    { jour: 'Mer', ventes: 395000 },
-    { jour: 'Jeu', ventes: 458000 },
-    { jour: 'Ven', ventes: 520000 },
-    { jour: 'Sam', ventes: 610000 },
-    { jour: 'Dim', jours: 'Auj', ventes: 245000 },
+  // ── Notes à remplir ────────────────────────────────
+  notesARemplir = signal<NoteARemplir[]>([
+    { classe: 'Terminale S2', evaluation: 'DS n°4 - Fonctions', date: '15 Mars', nbNotes: 12, nbEleves: 38, progression: 32 },
+    { classe: 'Première S1', evaluation: 'Interro - Dérivées', date: '12 Mars', nbNotes: 8, nbEleves: 42, progression: 19 },
+    { classe: 'Seconde S2', evaluation: 'DM - Géométrie', date: '10 Mars', nbNotes: 8, nbEleves: 40, progression: 20 },
   ]);
 
-
-  // ── Commandes récentes ───────────────────────────
-  commandesRecent = signal([
-    { table: 'Table 1', serveur: 'Aminata', plats: 3, montant: 12500, temps: '5 min', statut: 'En cours' },
-    { table: 'Table 3', serveur: 'Moussa', plats: 2, montant: 8000, temps: '12 min', statut: 'Prêt' },
-    { table: 'VIP 1', serveur: 'Fatou', plats: 4, montant: 18500, temps: '3 min', statut: 'En cours' },
-    { table: 'Table 4', serveur: 'Aminata', plats: 1, montant: 2000, temps: '20 min', statut: 'Servi' },
+  // ── Élèves remarquables ────────────────────────────
+  elevesRemarquables = signal<EleveRemarquable[]>([
+    { nom: 'Moussa Diop', classe: 'Tle S2', note: 18.5, type: 'excellent' },
+    { nom: 'Fatou Sow', classe: '1ère S1', note: 7.5, type: 'difficulte' },
+    { nom: 'Ibrahima Fall', classe: '2nde S2', note: 14, type: 'progres' },
+    { nom: 'Aïssatou Bah', classe: 'Tle S2', note: 17, type: 'excellent' },
   ]);
 
-  // ── Computed ─────────────────────────────────────
-  readonly ventesMax = () => Math.max(...this.ventesSemaine().map(v => v.ventes));
+  // ── Absences du jour ───────────────────────────────
+  absencesJour = signal<AbsenceClasse[]>([
+    { classe: 'Terminale S2', nbAbsents: 2, nbEleves: 38, date: 'Aujourd\'hui' },
+    { classe: 'Première S1', nbAbsents: 4, nbEleves: 42, date: 'Aujourd\'hui' },
+    { classe: 'Seconde S2', nbAbsents: 1, nbEleves: 40, date: 'Aujourd\'hui' },
+  ]);
 
-  readonly totalPlatsVendus = () => this.topPlats().reduce((s, p) => s + p.quantite, 0);
+  // ── Messages récents ───────────────────────────────
+  messages = signal<MessageProfesseur[]>([
+    { id: '1', expediteur: 'Mme Diop', role: 'Administration', sujet: 'Conseil de classe - Planning', date: '15 Mars', nonLu: true },
+    { id: '2', expediteur: 'M. Ndiaye', role: 'Prof. SVT', sujet: 'Projet interdisciplinaire', date: '14 Mars', nonLu: true },
+    { id: '3', expediteur: 'Parent élève', role: 'M. Diallo', sujet: 'Suivi de Moussa Diop', date: '12 Mars', nonLu: false },
+  ]);
 
-  // ── Méthodes utilitaires ─────────────────────────
-  getTauxCls(taux: number): string {
-    return taux >= 100 ? 'success' : taux >= 75 ? 'warning' : 'danger';
-  }
+  messagesNonLus = computed(() => this.messages().filter(m => m.nonLu).length);
 
-  getTendanceCls(tendance: string): string {
+  // ── Méthodes ───────────────────────────────────────
+  getStatutCoursCls(statut: string): string {
     const classes: Record<string, string> = {
-      hausse: 'success',
-      baisse: 'danger',
-      stable: 'info'
+      termine: 'termine',
+      en_cours: 'en-cours',
+      a_venir: 'a-venir'
     };
-    return classes[tendance] || '';
+    return classes[statut] || '';
   }
 
-  getTendanceIco(tendance: string): string {
-    const icons: Record<string, string> = {
-      hausse: '↑',
-      baisse: '↓',
-      stable: '→'
+  getStatutCoursLabel(statut: string): string {
+    const labels: Record<string, string> = {
+      termine: 'Terminé',
+      en_cours: 'En cours',
+      a_venir: 'À venir'
     };
-    return icons[tendance] || '';
+    return labels[statut] || statut;
   }
 
-  getStatutCommandeCls(statut: string): string {
+  getTypeEleveCls(type: string): string {
     const classes: Record<string, string> = {
-      'En cours': 'warning',
-      'Prêt': 'success',
-      'Servi': 'info',
-      'En attente': 'danger'
+      excellent: 'excellent',
+      difficulte: 'difficulte',
+      progres: 'progres'
     };
-    return classes[statut] || 'info';
+    return classes[type] || '';
   }
 
-  formatCFA(n: number): string {
-    return n >= 1_000_000
-      ? (n / 1_000_000).toFixed(1) + 'M FCFA'
-      : n >= 1_000
-        ? (n / 1_000).toFixed(0) + 'k FCFA'
-        : n + ' FCFA';
+  getTypeEleveLabel(type: string): string {
+    const labels: Record<string, string> = {
+      excellent: '🌟 Excellent',
+      difficulte: '⚠️ Difficulté',
+      progres: '📈 Progrès'
+    };
+    return labels[type] || type;
   }
 
-  formatCFAFull(n: number): string {
-    return new Intl.NumberFormat('fr-FR').format(n) + ' FCFA';
+  getTypeEleveIcone(type: string): string {
+    const icones: Record<string, string> = {
+      excellent: '🌟',
+      difficulte: '⚠️',
+      progres: '📈'
+    };
+    return icones[type] || '📌';
   }
 
-  onPeriodeChange(periode: Periode): void {
-    console.log('Période changée:', periode);
-    // Charger les données selon la période
+  formatPourcentage(nb: number, total: number): number {
+    return Math.round((nb / total) * 100);
   }
 
+  naviguer(route: string): void {
+    this.router.navigate([route]);
+  }
 }

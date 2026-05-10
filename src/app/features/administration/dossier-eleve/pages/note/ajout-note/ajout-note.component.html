@@ -1,0 +1,157 @@
+<div class="page-wrapper">
+  <div class="content container-fluid">
+    <div class="row">
+      <div class="col-sm-12">
+        <div class="card">
+          <div class="card-body">
+            <h3 class="page-title text-center mb-2">{{ title }}</h3>
+            <form [formGroup]="noteFormGroup">
+              <div style="margin-top: 5px">
+                <input
+                  type="text"
+                  readonly="true"
+                  hidden="true"
+                  formControlName="id"
+                />
+                <div class="row form-row">
+                  <div class="col-lg-6 col-sm-6">
+                    <div class="form-group">
+                      <label>Classe <span class="text-danger">*</span></label>
+                      <select
+                        class="form-control select"
+                        name="classe"
+                        formControlName="classe"
+                        required=""
+                        [(ngModel)]="selectedClass"
+                        (change)="onClasseSelected()"
+                      >
+                        <option>Selectionnez</option>
+                        <option
+                          *ngFor="let item of classeList"
+                          [value]="item.id"
+                        >
+                          {{ item.libelle }}
+                        </option>
+                      </select>
+                    </div>
+                  </div>
+                  <div class="col-lg-6 col-sm-6">
+                    <div class="form-group">
+                      <label>Elève <span class="text-danger">*</span></label>
+                      <select
+                        class="form-control select"
+                        name="eleve"
+                        formControlName="eleve"
+                        required=""
+                      >
+                        <option>Selectionnez</option>
+                        <option
+                          *ngFor="let item of eleveList"
+                          [value]="item.eleve"
+                        >
+                          {{ item.prenomEleve }} - {{ item.nomEleve }}
+                        </option>
+                      </select>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="row form-row">
+                  <div class="col-lg-4 col-sm-4">
+                    <div class="form-group">
+                      <label
+                        >Evaluation <span class="text-danger">*</span></label
+                      >
+                      <select
+                        class="form-control select"
+                        name="evaluation"
+                        formControlName="evaluation"
+                        required=""
+                      >
+                        <option value="">Selectionnez une évaluation</option>
+                        <option
+                          *ngFor="let item of evaluationList"
+                          [value]="item.id"
+                        >
+                          {{ item.matiere }}
+                        </option>
+                      </select>
+                    </div>
+                  </div>
+
+                  <div class="col-lg-4 col-sm-4">
+                    <div class="form-group">
+                      <label
+                        >Type note <span class="text-danger">*</span></label
+                      >
+                      <select
+                        class="form-control select"
+                        name="type"
+                        formControlName="type"
+                        required=""
+                      >
+                        <option value="">Selectionnez une type note</option>
+                        <option
+                          *ngFor="let item of typeNoteList"
+                          [value]="item"
+                        >
+                          {{ item }}
+                        </option>
+                      </select>
+                    </div>
+                  </div>
+                  <div class="col-lg-4 col-sm-4">
+                    <div class="form-group">
+                      <label>Note <span class="text-danger">*</span></label>
+                      <input
+                        type="number"
+                        formControlName="note"
+                        required
+                        class="form-control"
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                <div class="row form-row">
+                  <div class="col-lg-12 col-sm-12">
+                    <div class="form-group">
+                      <label
+                        >Appréciation <span class="text-danger">*</span></label
+                      >
+
+                      <textarea
+                        formControlName="appreciation"
+                        class="form-control"
+                        name=""
+                        id=""
+                      ></textarea>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </form>
+            <div style="margin-top: 75px col-sm-12">
+              <button
+                type="button"
+                class="btn btn-primary si_accept_confirm float-lg-right"
+                id="btn-yes"
+                (click)="ajoutereditNote()"
+              >
+                Enregistrer
+              </button>
+              <button
+                type="button"
+                class="btn btn-danger si_accept_cancel float-left"
+
+                (click)="goBack()"
+              >
+                Annuler
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

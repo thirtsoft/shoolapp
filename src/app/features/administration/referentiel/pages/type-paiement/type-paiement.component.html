@@ -1,0 +1,59 @@
+<div class="page-wrapper">
+  <div class="content container-fluid">
+    <div class="page-header">
+      <div class="row">
+        <div class="col-sm-7 col-auto">
+          <h3 class="page-title">Type paiement</h3>
+          <ul class="breadcrumb">
+            <li class="breadcrumb-item"><a [routerLink]="'/admin/'">Tableau de bord</a></li>
+            <li class="breadcrumb-item active">Liste type paiement</li>
+          </ul>
+        </div>
+        <div class="col-sm-5 col">
+          <a class="btn btn-primary float-right mt-2" data-toggle="modal">
+            <i class="fa fa-plus-circle"></i>
+            Ajouter
+          </a>
+        </div>
+      </div>
+    </div>
+    <!-- /Page Header -->
+    <div class="row">
+      <div class="col-sm-12">
+        <div class="card">
+          <div class="card-body">
+            <div class="table-responsive">
+              <table class="datatable table table-hover table-center mb-0">
+                <thead>
+                  <tr>
+                    <th>Libellé</th>
+                    <th>Montant</th>
+                    <th class="text-right">Actions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr *ngFor="let typePay of typePaiements">
+                    <td>{{ typePay.libelle }}</td>
+                    <td>{{ typePay.montant }}</td>
+
+                    <td class="text-right">
+                      <div class="actions">
+                        <a class="btn btn-sm bg-success-light" data-toggle="modal">
+                          <i class="fe fe-pencil"></i> Edit
+                        </a>
+                        <a data-toggle="modal" class="btn btn-sm bg-danger-light">
+                          <i class="fe fe-trash"></i> Delete
+                        </a>
+                      </div>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+

@@ -1,0 +1,89 @@
+<div class="page-wrapper">
+  <div class="content container-fluid">
+    <div class="data">
+      <h1 class="titlePage">{{ title }}</h1>
+
+      <div class="block_button">
+        <button class="custom-btn btn-1" (click)="goBack()">
+          <i class="fa fa-arrow-left"></i>
+          <b style="margin-left: 5px">Retour</b>
+        </button>
+        <button
+          *ngIf="['Programmé'].includes(detailsEvenement?.etat)"
+          class="custom-btn btn-1"
+          (click)="openConfirmationDialog('publier')"
+        >
+          <i class="fa fa-paper-plane"></i>
+          <b style="margin-left: 5px">Publier</b>
+        </button>
+
+        <button
+          *ngIf="['Publié'].includes(detailsEvenement?.etat)"
+          class="custom-btn btn-1"
+          (click)="openConfirmationDialog('depublier')"
+        >
+          <i class="fa fa-paper-plane"></i>
+          <b style="margin-left: 5px">Dépublier</b>
+        </button>
+
+      </div>
+
+      <div class="profile-container">
+        <div class="profile-card">
+          <div class="card-header">
+            <img
+              src="../../../assets/img/chapitre.png"
+              alt=""
+              class="img-section"
+            />
+
+            <h1 style="color: #000000">Details évaluation</h1>
+          </div>
+          <div class="info-row">
+            <span class="label"> Titre</span>
+            <span class="value">{{ detailsEvenement?.libelle }}</span>
+          </div>
+          <div class="info-row">
+            <span class="label">Date événement </span>
+            <span class="value">{{ detailsEvenement?.dateEvenement }}</span>
+          </div>
+          <div class="info-row">
+            <span class="label">Heure début </span>
+            <span class="value">{{ detailsEvenement?.heureDebut }}</span>
+          </div>
+          <div class="info-row">
+            <span class="label">Heure fin </span>
+            <span class="value">{{ detailsEvenement?.heureFin }}</span>
+          </div>
+          <div
+            class="info-row"
+            *ngIf="['Publié'].includes(detailsEvenement?.etat)"
+          >
+            <span class="label">Date publication </span>
+            <span class="value">{{ detailsEvenement?.datePublication }}</span>
+          </div>
+
+          <div
+            class="info-row"
+            *ngIf="['Publié', 'Dépublié'].includes(detailsEvenement?.etat)"
+          >
+            <span class="label">Date dépublication </span>
+            <span class="value">{{ detailsEvenement?.dateDepublication }}</span>
+          </div>
+
+          <div class="info-row">
+            <span class="label">Etat </span>
+            <span class="value">{{ detailsEvenement?.etat }} </span>
+          </div>
+          <div class="info-row">
+            <span class="label">Description </span>
+            <span class="value">{{ detailsEvenement?.description }}</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="centerModal"></div>
+      <div></div>
+    </div>
+  </div>
+</div>

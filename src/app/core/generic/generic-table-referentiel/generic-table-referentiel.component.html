@@ -1,0 +1,309 @@
+<div class="page-wrapper">
+  <div class="content container-fluid">
+    <div class="row">
+      <div class="col-sm-12">
+        <div class="card">
+          <div class="card-body">
+            <h1 class="text-center">{{ title }}</h1>
+            <div class="export-section">
+              <button class="export-button" aria-label="Export to PDF file" (click)="exportToPDF()">
+                <img
+                  loading="lazy"
+                  src="../../assets/img/pdf.png"
+                  alt="PDF export icon"
+                  class="export-icon"
+                />
+                <span class="export-text">Exporter en fichier PDF</span>
+              </button>
+              <button
+                class="export-button"
+                aria-label="Export to Excel file"
+                (click)="exportToExcel()"
+                title="exporter sous excel"
+              >
+                <img
+                  loading="lazy"
+                  src="../../assets/img/excel.png"
+                  alt="Excel export icon"
+                  class="export-icon"
+                />
+                <span class="export-text">Exporter en fichier Excel</span>
+              </button>
+            </div>
+            <div class="search-valid">
+              <div class="newSearch">
+                <div class="search-section-container">
+                  <div class="search-section" *ngIf="showFilters && filtered?.length">
+                    <div *ngFor="let filter of filtered" class="filter-group">
+                      <!-- Input texte -->
+                      <div *ngIf="filter.type === 'text'">
+                        <label>{{ filter.label }}</label>
+                        <input
+                          type="text"
+                          class="form-control"
+                          [placeholder]="filter.placeholder || ''"
+                          [disabled]="filter.disabled"
+                          (input)="filterChange.emit({ filter, value: $event.target.value })"
+                        />
+                      </div>
+                      <div *ngIf="filter.type === 'select'">
+                        <label>{{ filter.label }}</label>
+                        <select
+                          class="form-control"
+                          [disabled]="filter.disabled"
+                          (change)="onFilterChange(filter, $event)"
+                        >
+                          <option value="">
+                            {{ filter.placeholder || '-- Sélectionner --' }}
+                          </option>
+                          <option *ngFor="let opt of filter.options" [value]="opt.value">
+                            {{ opt.label }}
+                          </option>
+                        </select>
+                      </div>
+
+                      <div *ngIf="filter.type === 'date-range'" class="date-range-filter">
+                        <label>{{ filter.label }}</label>
+                        <div class="row">
+                          <div class="col">
+                            <input
+                              type="date"
+                              class="form-control"
+                              placeholder="De"
+                              (change)="
+                                onDateRangeChange(filter.fromKey!, filter.toKey!, {
+                                  from: $event.target.value,
+                                  to: currentDateTo,
+                                })
+                              "
+                            />
+                          </div>
+                          <div class="col">
+                            <input
+                              type="date"
+                              class="form-control"
+                              placeholder="À"
+                              (change)="
+                                onDateRangeChange(filter.fromKey!, filter.toKey!, {
+                                  from: currentDateFrom,
+                                  to: $event.target.value,
+                                })
+                              "
+                            />
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="upload-container" *ngIf="generatedButton === true">
+                  <button
+                    class="upload-button"
+                    [routerLink]="generatedButtonLink"
+                    aria-label="Upload file button"
+                    [title]="addButtonLabel"
+                  >
+                    <span class="upload-text text-white">{{ generateButtonLabel }}</span>
+                  </button>
+                </div>
+                <div class="upload-container" *ngIf="isNoAjout !== true">
+                  <button
+                    class="upload-button"
+                    [routerLink]="addButtonLink"
+                    aria-label="Upload file button"
+                    [title]="addButtonLabel"
+                  >
+                    <span class="upload-text text-white">{{ addButtonLabel }}</span>
+                  </button>
+                </div>
+              </div>
+              <div class="containerLoader" *ngIf="isLoading">
+                <div class="boxLoader">
+                  <div class="loader2"></div>
+                  <p>Chargement ...</p>
+                </div>
+              </div>
+              <div class="table-responsive">
+                <table id="customers" title="" *ngIf="!isLoading">
+                  <thead>
+                    <tr>
+                      <th
+                        *ngFor="let column of tableColumns"
+                        (click)="sortTable(column.key)"
+                        class="sortable-column"
+                      >
+                        {{ column.header }}
+                        <span *ngIf="sortColumn === column.key" class="sort-icons">
+                          <i *ngIf="sortDirection === 'asc'" class="fas fa-sort-up active"></i>
+                          <i *ngIf="sortDirection === 'desc'" class="fas fa-sort-down active"></i>
+                        </span>
+                      </th>
+                      <th class="options-column">Options</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr *ngIf="filteredData.length === 0">
+                      <td [attr.colspan]="tableColumns.length + 2" class="text-center">
+                        Aucun élément disponible.
+                      </td>
+                    </tr>
+                    <tr
+                      *ngFor="
+                        let row of filteredData
+                          | paginate: { itemsPerPage: itemsPerPage, currentPage: p }
+                      "
+                    >
+
+                      <td *ngFor="let column of tableColumns" [title]="row[column.key]">
+                        <ng-container *ngIf="column.key === 'bulletin'; else defaultContent">
+                          <button
+                            class="icon-button"
+                            title="Générer le bulletin PDF"
+                            (click)="generatePdfDuBulletin(row)"
+                          >
+                            <i class="fas fa-file-pdf text-danger fa-lg"></i>
+                          </button>
+                        </ng-container>
+
+                        <ng-template #defaultContent>
+                          <span *ngIf="isNumber(row[column.key]); else textContent">
+                            {{ row[column.key] }}
+                          </span>
+                          <ng-template #textContent>{{ row[column.key] }}</ng-template>
+                        </ng-template>
+                      </td>
+                      <td class="icon-container options-column">
+                        <div class="icon-position left">
+                          <button
+                            class="icon-button"
+                            aria-label="Edit"
+                            title="Modifier"
+                            (click)="generateLink(modifierButtonLink, row)"
+                            *ngIf="isEditIcon"
+                          >
+                            <img src="../../assets/img/edit.png" class="icon" />
+                          </button>
+                        </div>
+
+                        <div class="icon-position center">
+                          <button
+                            class="icon-button"
+                            aria-label="Toggle Lock"
+                            [title]="row.actif === 1 || row.est_valide ? 'Desactiver' : 'Activer'"
+                            (click)="
+                              row.actif === 1 || row.est_valide
+                                ? openConfirmationDialog('desactiver', deleteEndPoint, row)
+                                : openConfirmationDialog('activer', deleteEndPoint, row)
+                            "
+                            *ngIf="isLockableIcon"
+                          >
+                            <img
+                              [src]="
+                                row.actif === 1 || row.est_valide
+                                  ? '../../assets/img/lock.png'
+                                  : '../../assets/img/unlock.png'
+                              "
+                              class="icon"
+                              style="width: 14px; height: 15px"
+                            />
+                          </button>
+                        </div>
+
+                        <!-- Autres icônes -->
+                        <div class="icon-position right">
+                          <button
+                            class="icon-button"
+                            title="Afficher les détails"
+                            aria-label="View"
+                            (click)="generateLink(detailButtonLink, row)"
+                            *ngIf="isEyesIcon"
+                          >
+                            <img
+                              src="../../assets/img/eyes.png"
+                              alt="view"
+                              class="icon"
+                              style="width: 15px; height: 15px"
+                            />
+                          </button>
+                          <div *ngIf="isPopupVisible" class="popup-container">
+                            <div class="popup-content">
+                              <button class="close-button" (click)="closePopup()">X</button>
+                              <div class="details-grid">
+                                <!-- Première colonne -->
+                                <div class="details-column">
+                                  <div *ngFor="let key of splitKeys[0]" class="details-item">
+                                    <span class="details-key">{{ formatKey(key) }}:</span>
+                                    <span class="details-value">{{
+                                      selectedItem[key] || 'N/A'
+                                    }}</span>
+                                  </div>
+                                </div>
+                                <div class="details-column">
+                                  <div *ngFor="let key of splitKeys[1]" class="details-item">
+                                    <span class="details-key">{{ formatKey(key) }}:</span>
+                                    <span class="details-value">{{
+                                      selectedItem[key] || 'N/A'
+                                    }}</span>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+
+                          <button
+                            class="icon-button"
+                            title="Afficher le tableau"
+                            aria-label="Edit"
+                            (click)="generateLink(iconTableLink, row)"
+                            *ngIf="isTableIcon"
+                          >
+                            <i class="fa fa-table"></i>
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+              <div class="pagination-container-center" *ngIf="totalElements > 0">
+                <button (click)="changePage(currentPage - 1)" [disabled]="currentPage === 0">
+                  ← Précédent
+                </button>
+                <ng-container *ngFor="let page of visiblePages">
+                  <button (click)="changePage(page)" [class.active]="page === currentPage">
+                    {{ page + 1 }}
+                  </button>
+                </ng-container>
+
+                <button
+                  (click)="changePage(currentPage + 1)"
+                  [disabled]="currentPage + 1 >= totalPages"
+                >
+                  Suivant →
+                </button>
+
+                <div class="items-per-page">
+                  <select
+                    [(ngModel)]="pageSize"
+                    (change)="changeSize($any($event.target).value)"
+                    id="pageSize"
+                  >
+                    <option *ngFor="let size of tableSizes" [value]="size">
+                      {{ size }}
+                    </option>
+                  </select>
+                </div>
+
+                <div class="pagination-summary">
+                  Éléments affichés : {{ startItem }} – {{ endItem }} sur
+                  {{ totalElements }}
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,23 @@
+<app-generic-table-dossier
+  title="Liste des cours"
+  titleFitre="Cours"
+  [tableColumns]="columns"
+  [tableData]="coursData"
+  [isLoading]="isLoading"
+  [isEditIcon]="isEdit"
+  [tableSizes]="tableSizes"
+  [totalElements]="totalElements"
+  [currentPage]="currentPage"
+  [pageSize]="pageSize"
+  (pageChange)="changePage($event)"
+  addButtonLink="/admin/planification/planifier-cours"
+  modifierButtonLink="/admin/planification/planifier"
+  [deleteEndPoint]="deleteEndpoint"
+  [showSearch]="false"
+  [filtered]="tableFilters"
+  (filterChange)="onFilterChange($event.filter, $event.value)"
+  [showFilters]="true"
+  (resetFilters)="resetFilters()"
+  (sizeChange)="changeSize($event)"
+>
+</app-generic-table-dossier>

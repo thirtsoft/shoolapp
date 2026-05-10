@@ -1,0 +1,149 @@
+<div class="page-wrapper">
+  <div class="content container-fluid">
+    <div class="page-header">
+      <div class="row">
+        <div class="col-sm-7 col-auto">
+          <h3 class="page-title">Catégory-menu</h3>
+          <ul class="breadcrumb">
+            <li class="breadcrumb-item">
+              <a [routerLink]="'/admin/'">Tableau de bord</a>
+            </li>
+            <li class="breadcrumb-item active">{{ title }}</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-sm-12">
+        <div class="card">
+          <div class="card-body">
+            <form [formGroup]="categoryMenuFormGroup">
+              <input
+                type="text"
+                readonly="true"
+                hidden="true"
+                matInput
+                formControlName="id"
+              />
+              <div class="row form-row">
+                <div class="col-lg-12 col-sm-12">
+                  <div class="form-group">
+                    <label>Libelle <span class="text-danger">*</span></label>
+                    <input
+                      type="text"
+                      formControlName="libelle"
+                      required
+                      placeholder="libelle du menu"
+                      class="form-control"
+                    />
+                  </div>
+                </div>
+              </div>
+              <hr />
+              <button
+                class="btn btn-success"
+                (click)="onAddMenuItem()"
+                style="
+                  align-items: center;
+                  border: 1px solid #028ee1;
+                  box-shadow: 0 1px 2px rgba(16, 24, 40, 0.05);
+                  background-color: #028ee1;
+                  min-height: 44px;
+                  padding: 10px 16px;
+                  cursor: pointer;
+                "
+              >
+                <i class="fas fa-plus-circle"></i> Ajouter un menu
+              </button>
+              <hr />
+
+              <div formArrayName="menuDTOs">
+                <div
+                  *ngFor="
+                    let menuItem of menuDTOs().controls;
+                    let menuItemIndex = index
+                  "
+                  [formGroupName]="menuItemIndex"
+                >
+                  <div class="row form-row">
+                    <div class="col-lg-5 col-sm-5">
+                      <div class="form-group">
+                        <label
+                          >Libellé <span class="text-danger">*</span></label
+                        >
+
+                        <input
+                          required
+                          placeholder="libelle du menu"
+                          class="form-control"
+                          formControlName="libelle"
+                          style="min-height: 58px; padding: 10px 16px"
+                        />
+                      </div>
+                    </div>
+
+                    <div class="col-lg-6 col-sm-6">
+                      <div class="form-group">
+                        <label
+                          >Description <span class="text-danger">*</span></label
+                        >
+                        <textarea
+                          type="text"
+                          formControlName="description"
+                          placeholder="description"
+                          name=""
+                          id=""
+                          class="form-control"
+                        ></textarea>
+                      </div>
+                    </div>
+                    <div class="col-lg-1 col-sm-1" *ngIf="menuItemIndex > 0">
+                      <div class="mb-3" style="margin-top: 30px">
+                        <button
+                          style="width: unset"
+                          class="btn btn-danger ml-3 espace-bouton"
+                          (click)="removeMenuItem(menuItemIndex)"
+                        >
+                          <i class="fas fa-trash"></i>
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div style="margin-top: 25px col-sm-12">
+                <button
+                  type="button"
+                  class="btn btn-success si_accept_confirm float-lg-right"
+                  style="
+                    align-items: center;
+                    border: 1px solid #028ee1;
+                    box-shadow: 0 1px 2px rgba(16, 24, 40, 0.05);
+                    background-color: #028ee1;
+                    min-height: 44px;
+                    padding: 10px 16px;
+                    cursor: pointer;
+                  "
+                  id="btn-yes"
+                  (click)="ajouterCategoryMenu()"
+                  [disabled]="!categoryMenuFormGroup.valid"
+                >
+                  Enregistrer
+                </button>
+                <button
+                  type="button"
+                  class="btn btn-danger si_accept_cancel float-left"
+                  routerLink="/admin/referentiels/category-menu"
+                >
+                  Annuler
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

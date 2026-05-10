@@ -1,11 +1,11 @@
 <aside class="sidebar" [class.collapsed]="collapsed()" [class.open]="open()">
   <!-- Brand / Logo -->
   <div class="sidebar-brand">
-    <div class="brand-logo">🍽️</div>
+    <div class="brand-logo">📚</div>
     @if (!collapsed()) {
       <div class="brand-text">
-        <span class="brand-name">ClicMenu</span>
-        <span class="brand-sub">Restaurant</span>
+        <span class="brand-name">EduSchool</span>
+        <span class="brand-sub">Espace Professeur</span>
       </div>
     }
     <button
@@ -17,12 +17,38 @@
     </button>
   </div>
 
-  <!-- Profile utilisateur -->
-
+  <!-- Profile professeur -->
+  @if (!collapsed()) {
+    <div class="sidebar-profile">
+      <div class="profile-avatar">{{ professeur().avatar || '👨‍🏫' }}</div>
+      <div class="profile-info">
+        <span class="profile-name">{{ professeur().nom || 'Professeur' }}</span>
+        <span class="profile-matiere">{{ professeur().matiere || 'Mathématiques' }}</span>
+        <span class="profile-classes">{{ nbClasses }} classes · {{ nbEleves }} élèves</span>
+      </div>
+    </div>
+  }
 
   <!-- Navigation -->
   <nav class="sidebar-nav">
+    <div class="nav-section">
+      <span class="nav-section-title">ENSEIGNEMENT</span>
+    </div>
+    
     @for (item of navItems; track item.id) {
+      <!-- Titre de section pour Évaluation -->
+      @if (item.id === 'notes') {
+        <div class="nav-section">
+          <span class="nav-section-title">ÉVALUATION</span>
+        </div>
+      }
+      <!-- Titre de section pour Vie scolaire -->
+      @if (item.id === 'absences') {
+        <div class="nav-section">
+          <span class="nav-section-title">VIE SCOLAIRE</span>
+        </div>
+      }
+      
       <a
         class="nav-item"
         [routerLink]="item.route"
@@ -45,12 +71,12 @@
   @if (!collapsed()) {
     <div class="sidebar-footer">
       <div class="footer-stat">
-        <span class="stat-value">{{ nbEmployes() }}</span>
-        <span class="stat-label">Employés</span>
+        <span class="stat-value">{{ nbEleves }}</span>
+        <span class="stat-label">Élèves</span>
       </div>
       <div class="footer-stat">
-        <span class="stat-value">{{ nbTables() }}</span>
-        <span class="stat-label">Tables</span>
+        <span class="stat-value">{{ nbClasses }}</span>
+        <span class="stat-label">Classes</span>
       </div>
     </div>
   }
@@ -58,8 +84,10 @@
   <!-- Footer — Déconnexion -->
   <div class="sb-footer">
     <button class="sb-deconnexion" (click)="deconnecter()">
-      <span class="sb-ico">🔓</span>
-      <span class="sb-label">Déconnexion</span>
+      <span class="sb-ico">🚪</span>
+      @if (!collapsed()) {
+        <span class="sb-label">Déconnexion</span>
+      }
     </button>
   </div>
 

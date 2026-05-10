@@ -1,0 +1,294 @@
+c<div class="page-wrapper">
+  <div class="content container-fluid">
+    <div class="data">
+      <h1 class="titlePage">Saisir une école</h1>
+
+      <form
+        action=""
+        [formGroup]="ecoleAdminFormGroup"
+        style="width: 100%; cursor: pointer"
+        (ngSubmit)="ajouterOrEditEcoleAdmin()"
+      >
+        <div class="block_button">
+          <button class="custom-btn btn-1" (click)="goBack()">
+            <i class="fa fa-arrow-left"></i>
+            <b style="margin-left: 5px">Retour</b>
+          </button>
+          <button class="custom-btn btn-1" style="width: 180px">
+            <b style="margin-right: 5px">Enregistrer</b>
+            <i class="fas fa-save"></i>
+          </button>
+        </div>
+
+        <div class="profile-container">
+          <div class="profile-card">
+            <div class="card-header">
+              <img
+                src="../../../assets/img/ecole.png"
+                alt=""
+                class="img-section"
+              />
+
+              <h1 style="color: #000000">Details Ecole</h1>
+            </div>
+
+            <div class="info-row">
+              <span class="label" class="row-text"
+                >Code <span class="required">*</span></span
+              >
+
+              <input formControlName="code" class="custom-select" type="text" />
+              <small
+                *ngIf="
+                  ecoleAdminFormGroup.get('code')?.hasError('required') &&
+                  ecoleAdminFormGroup.get('code')?.touched
+                "
+                class="text-danger"
+                style="color: red; display: flex; justify-content: center"
+                >Le code est obligatoire.</small
+              >
+            </div>
+
+            <div class="info-row">
+              <span class="label" class="row-text"
+                >Nom <span class="required">*</span></span
+              >
+
+              <input formControlName="nom" class="custom-select" type="text" />
+              <small
+                *ngIf="
+                  ecoleAdminFormGroup.get('nom')?.hasError('required') &&
+                  ecoleAdminFormGroup.get('nom')?.touched
+                "
+                class="text-danger"
+                style="color: red; display: flex; justify-content: center"
+                >Le nom est obligatoire.</small
+              >
+            </div>
+
+            <div class="info-row">
+              <span class="label" class="row-text"
+                >Téléphone <span class="required">*</span></span
+              >
+
+              <input
+                formControlName="telephone"
+                class="custom-select"
+                type="text"
+              />
+              <small
+                *ngIf="
+                  ecoleAdminFormGroup.get('telephone')?.hasError('required') &&
+                  ecoleAdminFormGroup.get('telephone')?.touched
+                "
+                class="text-danger"
+                style="color: red; display: flex; justify-content: center"
+                >Le telephone est obligatoire.</small
+              >
+            </div>
+
+            <div class="info-row">
+              <span class="label" class="row-text"
+                >Email <span class="required">*</span></span
+              >
+
+              <input
+                formControlName="email"
+                class="custom-select"
+                type="text"
+              />
+            </div>
+
+            <div class="info-row">
+              <span class="label" class="row-text"
+                >Nom de domaine <span class="required">*</span></span
+              >
+
+              <input
+                formControlName="subdomain"
+                class="custom-select"
+                type="text"
+              />
+              <small
+                *ngIf="
+                  ecoleAdminFormGroup.get('subdomain')?.hasError('required') &&
+                  ecoleAdminFormGroup.get('subdomain')?.touched
+                "
+                class="text-danger"
+                style="color: red; display: flex; justify-content: center"
+                >Le nom de domaine est obligatoire.</small
+              >
+            </div>
+
+            <div class="info-row">
+              <span class="label" class="row-text"
+                >Schéma base de donnée <span class="required">*</span></span
+              >
+
+              <input
+                formControlName="schemaName"
+                class="custom-select"
+                type="text"
+              />
+
+              <small
+                *ngIf="
+                  ecoleAdminFormGroup.get('schemaName')?.hasError('required') &&
+                  ecoleAdminFormGroup.get('schemaName')?.touched
+                "
+                class="text-danger"
+                style="color: red; display: flex; justify-content: center"
+                >Le schéma de base de donnée est obligatoire.</small
+              >
+            </div>
+          </div>
+
+          <div class="profile-card">
+            <div class="card-header">
+              <img
+                src="../../../assets/img/adminecole.png"
+                alt=""
+                class="img-section"
+              />
+              <h1 style="color: #000000">Administrateur école</h1>
+            </div>
+
+            <div class="info-row">
+              <span class="label" class="row-text"
+                >Civilité <span class="required">*</span></span
+              >
+
+              <select class="custom-select" formControlName="civility">
+                <option value="" selected>selectionner civilité</option>
+                <option *ngFor="let civilite of civilites" [value]="civilite">
+                  {{ civilite }}
+                </option>
+              </select>
+            </div>
+
+            <div class="info-row">
+              <span class="label" class="row-text"
+                >Prénom <span class="required">*</span></span
+              >
+
+              <input
+                formControlName="prenomUtilisateur"
+                class="custom-select"
+                type="text"
+              />
+
+              <small
+                *ngIf="
+                  ecoleAdminFormGroup
+                    .get('prenomUtilisateur')
+                    ?.hasError('required') &&
+                  ecoleAdminFormGroup.get('prenomUtilisateur')?.touched
+                "
+                class="text-danger"
+                style="color: red; display: flex; justify-content: center"
+                >Le prénom est obligatoire.</small
+              >
+            </div>
+
+            <div class="info-row">
+              <span class="label" class="row-text"
+                >Nom <span class="required">*</span></span
+              >
+
+              <input
+                formControlName="nomUtilisateur"
+                class="custom-select"
+                type="text"
+              />
+
+              <small
+                *ngIf="
+                  ecoleAdminFormGroup
+                    .get('nomUtilisateur')
+                    ?.hasError('required') &&
+                  ecoleAdminFormGroup.get('nomUtilisateur')?.touched
+                "
+                class="text-danger"
+                style="color: red; display: flex; justify-content: center"
+                >Le nom est obligatoire.</small
+              >
+            </div>
+
+            <div class="info-row">
+              <span class="label" class="row-text"
+                >Nom utilisateur <span class="required">*</span></span
+              >
+
+              <input
+                formControlName="username"
+                class="custom-select"
+                type="text"
+              />
+
+              <small
+                *ngIf="
+                  ecoleAdminFormGroup.get('username')?.hasError('required') &&
+                  ecoleAdminFormGroup.get('username')?.touched
+                "
+                class="text-danger"
+                style="color: red; display: flex; justify-content: center"
+                >Le nom utilisateur est obligatoire.</small
+              >
+            </div>
+
+            <div class="info-row">
+              <span class="label" class="row-text"
+                >Téléphone école <span class="required">*</span></span
+              >
+
+              <input
+                formControlName="telephoneUtilisateur"
+                class="custom-select"
+                type="text"
+              />
+
+              <small
+                *ngIf="
+                  ecoleAdminFormGroup
+                    .get('telephoneUtilisateur')
+                    ?.hasError('required') &&
+                  ecoleAdminFormGroup.get('telephoneUtilisateur')?.touched
+                "
+                class="text-danger"
+                style="color: red; display: flex; justify-content: center"
+                >Le téléphone est obligatoire.</small
+              >
+            </div>
+
+            <div class="info-row">
+              <span class="label" class="row-text"
+                >Email école <span class="required">*</span></span
+              >
+
+              <input
+                formControlName="emailUtilisateur"
+                class="custom-select"
+                type="text"
+              />
+
+              <small
+                *ngIf="
+                  ecoleAdminFormGroup
+                    .get('emailUtilisateur')
+                    ?.hasError('required') &&
+                  ecoleAdminFormGroup.get('emailUtilisateur')?.touched
+                "
+                class="text-danger"
+                style="color: red; display: flex; justify-content: center"
+                >L'email administrateur est obligatoire.</small
+              >
+            </div>
+          </div>
+        </div>
+
+        <div class="centerModal"></div>
+        <div></div>
+      </form>
+    </div>
+  </div>
+</div>

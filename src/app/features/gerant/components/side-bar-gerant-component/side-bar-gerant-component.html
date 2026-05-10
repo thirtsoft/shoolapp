@@ -1,22 +1,36 @@
-<!-- sidebar-gerant.html -->
+<!-- sidebar-admin.html -->
 <div class="sidebar" [class.collapsed]="collapsed()" [class.drawer-open]="open()">
   <!-- Brand -->
   <div class="sb-brand">
-    <div class="sb-logo">🍽️</div>
+    <div class="sb-logo">🎓</div>
     <div class="sb-brand-text">
-      <span class="sb-name">Clicmenu</span>
-      <span class="sb-sub">Gérant</span>
+      <span class="sb-name">EduSchool</span>
+      <span class="sb-sub">Administration</span>
     </div>
     <button class="sb-toggle" (click)="toggleCollapse.emit()" title="Réduire">
       {{ collapsed() ? '→' : '←' }}
     </button>
   </div>
 
-  <!-- Profil -->
+  <!-- Profil Admin -->
+  <div class="sb-profile">
+    <div class="sb-ava">AD</div>
+    <div class="sb-pinfo">
+      <span class="sb-pnom">Mme Aminata Diop</span>
+      <span class="sb-pmail">admin&#64;eduschool.sn</span>
+    </div>
+  </div>
 
   <!-- Navigation -->
   <nav class="sb-nav">
-    @for (item of nav; track item.route) {
+    @for (item of nav; track item.route; let i = $index) {
+      <!-- Section header -->
+      @if (item.section) {
+        <div class="sb-section">
+          <span class="sb-section-title">{{ item.section }}</span>
+        </div>
+      }
+
       <button
         class="sb-item"
         [class.active]="isActive(item.route)"
@@ -25,6 +39,9 @@
       >
         <span class="sb-ico">{{ item.ico }}</span>
         <span class="sb-label">{{ item.label }}</span>
+        @if (item.badge) {
+          <span class="sb-badge">{{ item.badge }}</span>
+        }
       </button>
     }
   </nav>
@@ -32,7 +49,7 @@
   <!-- Footer — Déconnexion -->
   <div class="sb-footer">
     <button class="sb-deconnexion" (click)="deconnecter()">
-      <span class="sb-ico">🔓</span>
+      <span class="sb-ico">🚪</span>
       <span class="sb-label">Déconnexion</span>
     </button>
   </div>

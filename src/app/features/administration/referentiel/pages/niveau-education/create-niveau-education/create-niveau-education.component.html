@@ -1,0 +1,86 @@
+<div class="page-wrapper">
+  <div class="content container-fluid">
+    <div class="page-header">
+      <div class="row">
+        <div class="col-sm-7 col-auto">
+          <h3 class="page-title"></h3>
+          <ul class="breadcrumb"></ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="row justify-content-center">
+      <div class="col-md-6 col-lg-6 col-xl-6">
+        <div class="card">
+          <h3 class="page-title text-center">{{ title }}</h3>
+          <div class="card-body">
+            <form [formGroup]="niveauFormGroup">
+              <input
+                type="text"
+                readonly="true"
+                hidden="true"
+                formControlName="id"
+              />
+
+              <div class="row form-row">
+                <div class="col-12">
+                  <div class="form-group">
+                    <label>Code <span class="text-danger">*</span></label>
+                    <input
+                      type="text"
+                      formControlName="code"
+                      required
+                      class="form-control"
+                    />
+                  </div>
+                </div>
+              </div>
+
+              <div class="row form-row">
+                <div class="col-12">
+                  <div class="form-group">
+                    <label>Libellé <span class="text-danger">*</span></label>
+                    <input
+                      type="text"
+                      formControlName="libelle"
+                      required
+                      class="form-control"
+                    />
+                  </div>
+                </div>
+              </div>
+
+              <div class="row mt-3">
+                <div class="col-12 d-flex justify-content-between">
+                  <button
+                    type="button"
+                    class="btn btn-danger si_accept_cancel"
+                    (click)="goBack()"
+                  >
+                    Annuler
+                  </button>
+                  <button
+                    type="button"
+                    class="upload-text text-white"
+                    style="
+                      align-items: center;
+                      border: 1px solid #028ee1;
+                      box-shadow: 0 1px 2px rgba(16, 24, 40, 0.05);
+                      background-color: #028ee1;
+                      min-height: 44px;
+                      padding: 10px 16px;
+                      cursor: pointer;
+                    "
+                    (click)="ajouteditNiveau()"
+                  >
+                    Enregistrer
+                  </button>
+                </div>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

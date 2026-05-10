@@ -1,19 +1,19 @@
-<div class="vd-shell">
+<div class="parent-shell">
   <!-- Topbar -->
-  <header class="vd-topbar">
+  <header class="parent-topbar">
     <button class="hamburger-btn" (click)="sidebarOpen.set(true)" aria-label="Menu">
       <span></span><span></span><span></span>
     </button>
-    <div class="vt-brand">🍽️ <span>ClicMenu</span></div>
-    <div class="vt-info">
-      <span class="vt-kpi">{{ fmtCFA(ventesJour()) }}</span>
-      <span class="vt-sep">·</span>
-      <span>{{ commandesJour() }} cmd</span>
+    <div class="pt-brand">👪 <span>Espace Parent</span></div>
+    <div class="pt-info">
+      <span class="pt-eleve">{{ eleve.nom }}</span>
+      <span class="pt-sep">·</span>
+      <span>{{ eleve.classe }}</span>
     </div>
-    <div class="vt-time">{{ heure }}</div>
+    <div class="pt-time">{{ heure }}</div>
   </header>
 
-  <div class="vd-body">
+  <div class="parent-body">
     <!-- Backdrop mobile -->
     @if (sidebarOpen()) {
       <div class="sidebar-backdrop" (click)="sidebarOpen.set(false)"></div>
@@ -23,15 +23,14 @@
     <app-side-bar-vendeur-component
       [isOpen]="sidebarOpen()"
       [vueActive]="vueActive()"
-      [ventesJour]="ventesJour()"
-      [commandesJour]="commandesJour()"
-      [clientsJour]="clientsJour()"
+      [eleve]="eleve"
       (close)="sidebarOpen.set(false)"
       (navigate)="naviguer($event)"
+      (deconnecter)="deconnecter()"
     ></app-side-bar-vendeur-component>
 
     <!-- Zone de contenu dynamique -->
-    <div class="vd-view">
+    <div class="parent-view">
       <router-outlet></router-outlet>
     </div>
   </div>
@@ -44,10 +43,10 @@
         <span class="bn-lbl">{{ item.label }}</span>
       </button>
     }
-
-    <button class="bn-btn" [class.active]="!vueActive()" (click)="deconnecter()">
-      <span class="bn-ico">🔓</span>
-      <span class="bn-lbl">Déconnexion</span>
+    
+    <button class="bn-btn" (click)="deconnecter()">
+      <span class="bn-ico">🚪</span>
+      <span class="bn-lbl">Quitter</span>
     </button>
   </nav>
 </div>

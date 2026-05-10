@@ -1,14 +1,17 @@
 /* ═══════════════════════════════════════════════
-   SIDEBAR GÉRANT RESTAURANT
+   SIDEBAR ADMINISTRATION SCOLAIRE
    ═══════════════════════════════════════════════ */
 
 :host {
-  --resto-deep: #8B4513;
-  --resto-terra: #A0522D;
-  --resto-warm: #D2691E;
-  --resto-light: #FFF5EC;
-  --gris-doux: #F5F0EE;
-  --gris-moyen: #8C7B72;
+  --blue-deep: #1e3a5f;
+  --blue-ocean: #2c5282;
+  --blue-light: #4299e1;
+  --blue-sky: #63b3ed;
+  --blue-pale: #ebf4ff;
+  --blue-ghost: #f7faff;
+  --gris-doux: #f7fafc;
+  --gris-moyen: #718096;
+  --gris-fonce: #2d3748;
   --font-display: 'Playfair Display', serif;
   --font-body: 'DM Sans', sans-serif;
   --radius-sm: 10px;
@@ -23,13 +26,13 @@
   display: flex;
   flex-direction: column;
   height: 100%;
-  background: linear-gradient(170deg, #5C3317 0%, #8B4513 55%, #A0522D 100%);
+  background: linear-gradient(170deg, #0f2440 0%, #1a365d 55%, var(--blue-deep) 100%);
   color: white;
   overflow: hidden;
   transition: all 0.3s ease;
 }
 
-/* ── Brand ──────────────────────────────────────── */
+/* ── Brand (fixe en haut) ──────────────────────── */
 .sb-brand {
   display: flex;
   align-items: center;
@@ -37,6 +40,7 @@
   padding: 22px 16px 18px;
   border-bottom: 1px solid rgba(255, 255, 255, 0.1);
   min-height: 72px;
+  flex-shrink: 0;
 }
 
 .sb-logo {
@@ -93,7 +97,7 @@
   background: rgba(255, 255, 255, 0.22);
 }
 
-/* ── Profil ─────────────────────────────────────── */
+/* ── Profil (fixe sous le brand) ───────────────── */
 .sb-profile {
   display: flex;
   align-items: center;
@@ -103,6 +107,7 @@
   background: rgba(255, 255, 255, 0.1);
   border-radius: var(--radius-md);
   transition: all 0.3s;
+  flex-shrink: 0;
 }
 
 .sb-ava {
@@ -131,31 +136,73 @@
   margin-top: 2px;
 }
 
-/* ── Navigation ─────────────────────────────────── */
+/* ── Sections ───────────────────────────────────── */
+.sb-section {
+  padding: 16px 12px 8px;
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+}
+
+.sb-section-title {
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  color: rgba(255, 255, 255, 0.5);
+}
+
+/* ── Navigation (zone scrollable) ──────────────── */
 .sb-nav {
   flex: 1;
   overflow-y: auto;
-  padding: 8px 10px;
+  overflow-x: hidden;
+  padding: 4px 10px 8px;
   display: flex;
   flex-direction: column;
-  gap: 3px;
+  gap: 2px;
+
+  /* Personnalisation de la scrollbar */
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255, 255, 255, 0.2) transparent;
+}
+
+/* Scrollbar Webkit (Chrome, Safari, Edge) */
+.sb-nav::-webkit-scrollbar {
+  width: 4px;
+}
+
+.sb-nav::-webkit-scrollbar-track {
+  background: transparent;
+  margin: 4px 0;
+}
+
+.sb-nav::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 99px;
+}
+
+.sb-nav::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.35);
 }
 
 .sb-item {
   display: flex;
   align-items: center;
   gap: 11px;
-  padding: 11px 12px;
+  padding: 10px 12px;
   border: none;
   background: transparent;
   color: rgba(255, 255, 255, 0.75);
   border-radius: var(--radius-sm);
   cursor: pointer;
   font-family: var(--font-body);
-  font-size: 14px;
+  font-size: 13px;
   transition: all 0.2s;
   text-align: left;
   width: 100%;
+  position: relative;
+  flex-shrink: 0;
 }
 
 .sb-item:hover {
@@ -167,11 +214,11 @@
   background: rgba(255, 255, 255, 0.18);
   color: white;
   font-weight: 700;
-  box-shadow: inset 3px 0 0 rgba(255, 255, 255, 0.5);
+  box-shadow: inset 3px 0 0 var(--blue-sky);
 }
 
 .sb-ico {
-  font-size: 20px;
+  font-size: 18px;
   flex-shrink: 0;
   width: 24px;
   text-align: center;
@@ -182,10 +229,28 @@
   white-space: nowrap;
 }
 
-/* ── Footer — Déconnexion ───────────────────────── */
+.sb-badge {
+  background: var(--blue-sky);
+  color: var(--blue-deep);
+  font-size: 10px;
+  font-weight: 700;
+  padding: 2px 8px;
+  border-radius: 99px;
+  white-space: nowrap;
+  min-width: 20px;
+  text-align: center;
+}
+
+.sb-item.active .sb-badge {
+  background: white;
+  color: var(--blue-deep);
+}
+
+/* ── Footer — Déconnexion (fixe en bas) ────────── */
 .sb-footer {
   padding: 10px;
   border-top: 1px solid rgba(255, 255, 255, 0.1);
+  flex-shrink: 0;
 }
 
 .sb-deconnexion {
@@ -206,7 +271,7 @@
 }
 
 .sb-deconnexion:hover {
-  background: rgba(255, 60, 60, 0.28);
+  background: rgba(255, 80, 80, 0.28);
   color: white;
 }
 
@@ -215,7 +280,9 @@
    ══════════════════════════════════════════════════ */
 .sidebar.collapsed .sb-brand-text,
 .sidebar.collapsed .sb-pinfo,
-.sidebar.collapsed .sb-label {
+.sidebar.collapsed .sb-label,
+.sidebar.collapsed .sb-badge,
+.sidebar.collapsed .sb-section-title {
   display: none;
 }
 
@@ -264,6 +331,6 @@
 
   .sidebar.drawer-open {
     transform: translateX(0);
-    box-shadow: 8px 0 40px rgba(44, 31, 26, 0.35);
+    box-shadow: 8px 0 40px rgba(26, 32, 44, 0.35);
   }
 }

@@ -1,10 +1,13 @@
 // src/app/shared/services/data.service.ts
-import { Injectable, signal } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { inject, Injectable, signal } from '@angular/core';
 import { Livraison, Production, Produit, StatsBoulangerie, User } from '../core/models';
 
 
 @Injectable({ providedIn: 'root' })
 export class DataService {
+
+  private readonly http = inject(HttpClient);
 
   readonly currentUser = signal<User>({
     id: '1',
@@ -108,4 +111,28 @@ export class DataService {
     { jour: 'Sam', ventes: 1350000 },
     { jour: 'Dim', ventes: 975000 },
   ];
+
+  getEnfantsByParentId(parentId: string) {
+    return this.http.get<any[]>(`/api/parents/${parentId}/enfants`);
+  }
+
+  // Récupérer le bulletin d'un enfant
+  getBulletinEnfant(enfantId: number, trimestre: string) {
+    return this.http.get<any>(`/api/enfants/${enfantId}/bulletins/${trimestre}`);
+  }
+
+  // Récupérer les absences d'un enfant
+  getAbsencesEnfant(enfantId: number, mois: string) {
+    return this.http.get<any[]>(`/api/enfants/${enfantId}/absences?mois=${mois}`);
+  }
+
+  // Récupérer l'emploi du temps d'un enfant
+  getEDTEnfant(enfantId: number) {
+    return this.http.get<any>(`/api/enfants/${enfantId}/emploi-temps`);
+  }
+
+  // Récupérer les factures d'un enfant
+  getFacturesEnfant(enfantId: number) {
+    return this.http.get<any[]>(`/api/enfants/${enfantId}/factures`);
+  }
 }
