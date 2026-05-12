@@ -1,15 +1,16 @@
+import { CommonModule } from '@angular/common';
 import { Component, inject, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
-import { UtilisateurService } from '../../../../utilisateur/service/utilisateur.service';
 import { ToastrService } from '@iqx-limited/ngx-toastr';
 import { Parent } from '../../../../../../core/models/parent/parent';
+import { UtilisateurService } from '../../../../utilisateur/service/utilisateur.service';
 
 
 @Component({
   selector: 'app-edit-parent',
   standalone: true,
-  imports: [RouterLink, ReactiveFormsModule],
+  imports: [CommonModule, RouterLink, ReactiveFormsModule],
   templateUrl: './edit-parent.component.html',
   styleUrls: ['./edit-parent.component.css']
 })
@@ -24,7 +25,6 @@ export class EditParentComponent implements OnInit {
 
   title = "Ajouter un parent";
 
-//  private readonly referentielService = inject(ReferentielService);
   private readonly utilisateurService = inject(UtilisateurService);
   private readonly toastService = inject(ToastrService);
   private readonly router = inject(Router);
@@ -62,7 +62,8 @@ export class EditParentComponent implements OnInit {
         console.log('Parent {} ', this.parent);
         this.initializeForm(this.parent);
       }
-    });  }
+    });
+  }
 
   ajoutereditParent() {
     const payload: Parent = {

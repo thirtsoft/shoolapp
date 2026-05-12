@@ -34,7 +34,7 @@
             <div class="search-valid">
               <div class="newSearch">
                 <div class="search-section-container">
-                  <div class="search-section" *ngIf="showFilters && filtered?.length">
+                  <div class="search-section" *ngIf="showFilters && filtered.length">
                     <div *ngFor="let filter of filtered" class="filter-group">
                       <div *ngIf="filter.type === 'text'">
                         <label>{{ filter.label }}</label>

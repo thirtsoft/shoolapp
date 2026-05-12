@@ -33,7 +33,7 @@
             <div class="search-valid">
               <div class="newSearch">
                 <div class="search-section-container">
-                  <div class="search-section" *ngIf="showFilters && filtered?.length">
+                  <div class="search-section" *ngIf="showFilters && filtered.length">
                     <div *ngFor="let filter of filtered" class="filter-group">
                       <!-- Input texte -->
                       <div *ngIf="filter.type === 'text'">
@@ -148,13 +148,7 @@
                         Aucun élément disponible.
                       </td>
                     </tr>
-                    <tr
-                      *ngFor="
-                        let row of filteredData
-                          | paginate: { itemsPerPage: itemsPerPage, currentPage: p }
-                      "
-                    >
-
+                    <tr *ngFor="let row of filteredData">
                       <td *ngFor="let column of tableColumns" [title]="row[column.key]">
                         <ng-container *ngIf="column.key === 'bulletin'; else defaultContent">
                           <button

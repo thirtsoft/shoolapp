@@ -1,9 +1,10 @@
 import { Component, inject, OnInit } from '@angular/core';
-import { DossierResourceService } from '../../../service/dossier-resource.service';
 import { IFilterConfig } from '../../../../../../core/filtered-config/FiltreConfiguration';
+import { GenericTableDossierComponent } from '../../../../../../core/generic/generic-table-dossier/generic-table-dossier.component';
 import { ListeClasse } from '../../../../../../core/models/referentiels/classe';
 import { Semestre } from '../../../../../../core/models/referentiels/semestre';
-import { GenericTableDossierComponent } from '../../../../../../core/generic/generic-table-dossier/generic-table-dossier.component';
+import { ReferentielService } from '../../../../referentiel/service/referentiel.service';
+import { DossierResourceService } from '../../../service/dossier-resource.service';
 
 @Component({
   selector: 'app-list-notes',
@@ -44,8 +45,7 @@ export class ListNotesComponent implements OnInit {
   isSelected = false;
 
   private readonly dossierResource = inject(DossierResourceService);
-  //  private readonly referentielService = inject(ReferentielService);
-
+  private readonly referentielService = inject(ReferentielService);
 
   ngOnInit(): void {
     this.chargerLesNotes();
@@ -54,8 +54,8 @@ export class ListNotesComponent implements OnInit {
   async chargerLesNotes() {
     try {
       await Promise.all([
-  //      this.getClassList(),
-  //      this.getSemestreList()
+        this.getClassList(),
+        this.getSemestreList()
       ]);
 
       this.initialisationDesFiltres();
@@ -66,7 +66,7 @@ export class ListNotesComponent implements OnInit {
   }
 
   chargerEnseignementsParClasse(classeId: number): Promise<any[]> {
-    return new Promise((resolve, reject):any => {
+    return new Promise((resolve, reject): any => {
       if (!classeId) {
         return [];
       }
@@ -120,15 +120,14 @@ export class ListNotesComponent implements OnInit {
     }
   }
 
-  /*
   getClassList(): Promise<ListeClasse[]> {
     return new Promise((resolve, reject) => {
       this.referentielService.getAllClasses().subscribe({
-        next: (data:any) => {
+        next: (data: any) => {
           this.classesList = data;
           resolve(data);
         },
-        error: (err:any) => reject(err)
+        error: (err: any) => reject(err)
       });
     });
   }
@@ -136,15 +135,15 @@ export class ListNotesComponent implements OnInit {
   getSemestreList(): Promise<Semestre[]> {
     return new Promise((resolve, reject) => {
       this.referentielService.getAllSemestres().subscribe({
-        next: (data:any) => {
+        next: (data: any) => {
           this.semestreList = data;
           resolve(data);
         },
-        error: (err:any) => reject(err)
+        error: (err: any) => reject(err)
       });
     });
   }
-*/
+
   initialisationDesFiltres() {
     this.tableFilters = [
       {

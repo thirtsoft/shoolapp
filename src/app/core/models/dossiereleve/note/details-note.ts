@@ -5,7 +5,7 @@ export interface DetailsNote {
 
   matricule?: string;
 
-  NomCompletEleve?: string;
+  nomCompletEleve?: string;
 
   sexe?: string;
 

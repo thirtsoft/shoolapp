@@ -44,7 +44,7 @@
                 <tbody>
                   <tr *ngFor="let pay of paiements">
                     <td>{{ pay.code }}</td>
-                    <td>{{ pay.eleveDTO.prenom }} - {{ pay.eleveDTO.nom }}</td>
+                    <td>{{ pay.eleveDTO!.prenom }} - {{ pay.eleveDTO!.nom }}</td>
                     <td>{{ pay.montant }}</td>
                     <td>{{ pay.mois }}</td>
                     <td>{{ pay.datePaiement }}</td>
@@ -56,7 +56,7 @@
                         <a
                           class="btn btn-sm bg-success-light"
                           data-toggle="modal"
-                          (click)="editerPaiement(pay.id)"
+                          (click)="editerPaiement(pay.id!)"
                         >
                           <i class="fe fe-pencil"></i> Edit
                         </a>

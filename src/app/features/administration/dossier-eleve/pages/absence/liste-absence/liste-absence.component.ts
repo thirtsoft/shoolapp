@@ -1,10 +1,12 @@
 import { Component, inject, OnInit } from '@angular/core';
-import { DossierResourceService } from '../../../service/dossier-resource.service';
+import { GenericTableDossierComponent } from '../../../../../../core/generic/generic-table-dossier/generic-table-dossier.component';
 import { IFilterConfig } from '../../../../../../core/models/filtreconfiguration/FiltreConfiguration';
-import { CommonService } from '../../../../../../core/services/common.service';
 import { AnneeScolaire } from '../../../../../../core/models/referentiels/annee-scolaire';
 import { Semestre } from '../../../../../../core/models/referentiels/semestre';
-import { GenericTableDossierComponent } from '../../../../../../core/generic/generic-table-dossier/generic-table-dossier.component';
+import { CommonService } from '../../../../../../core/services/common.service';
+import { LocalStorageService } from '../../../../../../core/services/local-storage.service';
+import { ReferentielService } from '../../../../referentiel/service/referentiel.service';
+import { DossierResourceService } from '../../../service/dossier-resource.service';
 
 @Component({
   selector: 'app-liste-absence',
@@ -43,21 +45,21 @@ export class ListeAbsenceComponent implements OnInit {
   hasActiveFilters: boolean = false;
 
   private readonly dossierEleveService = inject(DossierResourceService);
-  //  private readonly referentielService = inject(ReferentielService);
+  private readonly referentielService = inject(ReferentielService);
   private readonly commonService = inject(CommonService);
-  //  private readonly localStorage = inject(LocalStorageService);
+  private readonly localStorage = inject(LocalStorageService);
 
   ngOnInit(): void {
-    //  this.userId = this.localStorage.getItem('id');
-    //  this.eleveId = localStorage.getItem('eleveId');
+    this.userId = this.localStorage.getItem('id');
+    this.eleveId = this.localStorage.getItem('eleveId');
     this.chargerLesAbsencesEleve();
   }
 
   async chargerLesAbsencesEleve() {
     try {
       await Promise.all([
-        //    this.getSemestreList(),
-        //     this.getAnneeScolaires(),
+        this.getSemestreList(),
+        this.getAnneeScolaires(),
         this.getMoisList(),
         this.getAnneesList()
       ]);
@@ -68,15 +70,14 @@ export class ListeAbsenceComponent implements OnInit {
     }
   }
 
-  /*
   getAnneeScolaires(): Promise<AnneeScolaire[]> {
     return new Promise((resolve, reject) => {
       this.referentielService.getAllAnneeScolaires().subscribe({
-        next: (data:any) => {
+        next: (data: any) => {
           this.anneesScolairesList = data;
           resolve(data);
         },
-        error: (err:any) => reject(err)
+        error: (err: any) => reject(err)
       });
     });
   }
@@ -84,14 +85,14 @@ export class ListeAbsenceComponent implements OnInit {
   getSemestreList(): Promise<Semestre[]> {
     return new Promise((resolve, reject) => {
       this.referentielService.getAllSemestres().subscribe({
-        next: (data:any) => {
+        next: (data: any) => {
           this.semestreList = data;
           resolve(data);
         },
-        error: (err:any) => reject(err)
+        error: (err: any) => reject(err)
       });
     });
-  }*/
+  }
 
   getMoisList(): Promise<any[]> {
     return new Promise((resolve, reject) => {

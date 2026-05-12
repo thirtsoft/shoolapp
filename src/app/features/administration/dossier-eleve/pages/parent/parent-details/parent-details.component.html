@@ -23,25 +23,25 @@
                 <div class="doc-info-cont">
                   <h4 class="doc-name" *ngIf="!parentDetails">Dr. Kali Elder</h4>
                   <p class="doc-speciality" *ngIf="parentDetails">
-                    Civilité: {{ parentDetails?.civility }}
+                    Civilité: {{ parentDetails.civility }}
                   </p>
                   <h4 class="doc-name" *ngIf="parentDetails">
-                    Nom: {{ parentDetails?.prenom }} {{ parentDetails?.nom }}
+                    Nom: {{ parentDetails.prenom }} {{ parentDetails.nom }}
                   </h4>
                   <p class="doc-speciality" *ngIf="parentDetails">
-                    <i class="fas fa-map-marker-alt"></i>&nbsp;&nbsp; {{ parentDetails?.address }}
+                    <i class="fas fa-map-marker-alt"></i>&nbsp;&nbsp; {{ parentDetails.address }}
                   </p>
                   <p class="doc-speciality" *ngIf="parentDetails">
-                    Adresse: {{ parentDetails?.address }}
+                    Adresse: {{ parentDetails.address }}
                   </p>
                   <p class="doc-speciality" *ngIf="parentDetails">
-                    Profession: {{ parentDetails?.profession }}
+                    Profession: {{ parentDetails.profession }}
                   </p>
                   <p class="doc-speciality" *ngIf="parentDetails">
-                    Téléphone: {{ parentDetails?.telephone }}
+                    Téléphone: {{ parentDetails.telephone }}
                   </p>
                   <p class="doc-speciality" *ngIf="parentDetails">
-                    Email: {{ parentDetails?.email }}
+                    Email: {{ parentDetails.email }}
                   </p>
                 </div>
               </div>

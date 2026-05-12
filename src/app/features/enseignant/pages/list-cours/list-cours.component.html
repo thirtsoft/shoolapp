@@ -1,0 +1,20 @@
+<app-generic-table-dossier
+  title="Liste de mes cours"
+  titleFitre="Enseignement"
+  [tableColumns]="columns"
+  [tableData]="enseignementData"
+  [isLoading]="isLoading"
+  [tableSizes]="tableSizes"
+  [totalElements]="totalElements"
+  [currentPage]="currentPage"
+  [pageSize]="pageSize"
+  (pageChange)="changePage($event)"
+  [deleteEndPoint]="deleteEndpoint"
+  [showSearch]="false"
+  [filtered]="tableFilters"
+  (filterChange)="onFilterChange($event.filter, $event.value)"
+  [showFilters]="true"
+  (resetFilters)="resetFilters()"
+  (sizeChange)="changeSize($event)"
+>
+</app-generic-table-dossier>

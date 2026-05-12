@@ -1,0 +1,225 @@
+<div class="page-wrapper">
+  <div class="content container-fluid">
+    <div class="page-header">
+      <div class="row">
+        <div class="col-sm-7 col-auto">
+          <h3 class="page-title">Les Détails de la Facture</h3>
+          <ul class="breadcrumb">
+            <li class="breadcrumb-item">
+              <a [routerLink]="'/parent/'">Tableau de bord</a>
+            </li>
+            <li class="breadcrumb-item active">{{ title }}</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-sm-12">
+        <div class="card">
+          <div class="card-body">
+            <!-- Page Content -->
+
+            <div class="invoice-item">
+              <div class="row">
+                <div class="col-md-6">
+                  <div class="invoice-logo">
+                    <img src="assets/img/logo-dauphin.png" alt="logo" />
+                  </div>
+                </div>
+                <div class="col-md-6">
+                  <p class="invoice-details">
+                    <strong>N°:</strong> {{ detailsFacture?.numeroFacture }}
+                    <br />
+                    <strong>Date:</strong> {{ detailsFacture?.dateFacture }}
+                    <br />
+                    <strong>status:</strong> {{ detailsFacture?.etat }}
+                    <br />
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            <!-- Invoice Item -->
+            <div class="invoice-item">
+              <div class="row">
+                <div class="col-md-6">
+                  <div class="invoice-info">
+                    <strong class="customer-text">Information école</strong>
+                    <p class="invoice-details float-left">
+                      Ecole élémentaire <br />
+                      Les dauphins<br />
+                      Ngor, Dakar <br />
+                    </p>
+                  </div>
+                </div>
+                <div class="col-md-6">
+                  <div class="invoice-info invoice-info2">
+                    <strong class="customer-text">Facture de : </strong>
+                    <p class="invoice-details">
+                      {{ detailEleve?.prenom }} {{ detailEleve?.nom }}
+                      <br />
+                      {{ detailEleve?.lieuNaissance }}, {{ detailEleve?.nationalite }} <br />
+                      {{ detailEleve?.address }} <br />
+                      <strong>Mois : </strong>{{ detailsFacture?.mois }}
+                      <br />
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <!-- /Invoice Item -->
+
+            <!-- Invoice Item -->
+            <div class="invoice-item">
+              <div class="row">
+                <div class="col-md-12">
+                  <div class="invoice-info">
+                    <strong class="customer-text">Méthode paiement </strong>
+                    <p class="invoice-details invoice-details-two float-left">
+                      <strong *ngIf="detailsFacture?.modePaiement">
+                        {{ detailsFacture?.modePaiement }}
+                      </strong>
+                      <strong *ngIf="!detailsFacture?.modePaiement"> Virement bancaire </strong>
+                      <br />
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <!-- /Invoice Item -->
+
+            <!-- Invoice Item -->
+            <div class="invoice-item invoice-table-wrap">
+              <div class="row">
+                <div class="col-md-12">
+                  <div class="table-responsive">
+                    <table class="invoice-table table table-bordered">
+                      <thead>
+                        <tr>
+                          <th>N° facture</th>
+                          <th class="text-center">Type service</th>
+                          <th class="text-center">Montant</th>
+                          <th class="text-right">Total</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr
+                          *ngFor="
+                            let tarif of detailsFacture?.detailsLigneFactureDTOS;
+                            let i = index
+                          "
+                        >
+                          <td>{{ tarif?.numeroFacture }}</td>
+                          <td class="center">
+                            {{ tarif?.typeServiceOffertDTO?.libelle }}
+                          </td>
+                          <!-- Montant initial -->
+                          <td class="text-right">
+                            {{ tarif?.montantInitial | number: '1.0-0' }} FCFA
+                          </td>
+
+                          <td
+                            class="text-right"
+                            *ngIf="
+                              montantRemise && tarif?.typeServiceOffertDTO?.libelle === 'Mensualité'
+                            "
+                          >
+                            {{
+                              tarif.montantInitial! * (1 - remisePourcent! / 100) | number: '1.0-0'
+                            }}
+                            FCFA
+                          </td>
+
+                          
+                          <td
+                            class="text-right"
+                            *ngIf="tarif?.typeServiceOffertDTO?.libelle != 'Mensualité'"
+                          >
+                            {{ tarif?.montantInitial | number: '1.0-0' }} FCFA
+                          </td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+                <div class="col-md-6 col-xl-4 ml-auto">
+                  <div class="table-responsive">
+                    <table class="invoice-table-two table">
+                      <tbody>
+                        <tr>
+                          <th>Sous total:</th>
+                          <td>
+                            <span>{{ detailsFacture?.montant }}</span>
+                          </td>
+                        </tr>
+
+                       <!--  <tr
+                          *ngIf="
+                            detailsFacture?.montantPayement &&
+                            detailsFacture!.montantPayement < detailsFacture!.montant
+                          "
+                        > -->
+
+                        <tr>
+                          <th>Somme avancée:</th>
+                          <td>
+                            <span>{{ detailsFacture?.montantPayement }}</span>
+                          </td>
+                        </tr>
+
+                        <!--                 <tr>
+                          <th>Discount:</th>
+                          <td><span>-10%</span></td>
+                        </tr> -->
+                        <tr>
+                          <th>Total facture:</th>
+                          <td>
+                            <span>{{ detailsFacture?.montant }}</span>
+                          </td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <!-- /Invoice Item -->
+
+            <!-- Invoice Information -->
+            <div class="other-info">
+              <button
+                type="button"
+                class="btn btn-primary float-lg-right"
+                id="btn-yes"
+                style="
+                  align-items: center;
+                  border: 1px solid #028ee1;
+                  box-shadow: 0 1px 2px rgba(16, 24, 40, 0.05);
+                  background-color: #028ee1;
+                  min-height: 44px;
+                  padding: 10px 16px;
+                  cursor: pointer;
+                "
+                (click)="imprimerFacture()"
+              >
+                <i class="fa fa-print"></i>
+                Imprimer
+              </button>
+              <button
+                type="button"
+                class="btn btn-danger si_accept_cancel float-left"
+                routerLink="/parent/facture"
+              >
+                Retour
+              </button>
+            </div>
+            <!-- /Invoice Information -->
+
+            <!-- /Page Content -->
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

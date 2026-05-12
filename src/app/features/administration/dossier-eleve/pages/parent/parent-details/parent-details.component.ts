@@ -1,7 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { Component, inject, OnInit } from '@angular/core';
-import { FormBuilder } from '@angular/forms';
-import { ActivatedRoute, Router, RouterLink } from '@angular/router';
+import { ActivatedRoute, RouterLink } from '@angular/router';
 import { ParentDetails } from '../../../../../../core/models/parent/parent-details';
 import { ParentService } from '../../../service/parent.service';
 
@@ -25,8 +24,6 @@ export class ParentDetailsComponent implements OnInit {
   id: any; name: any;
 
   private readonly parentService = inject(ParentService);
-  private readonly router = inject(Router);
-  private readonly _formBuilder = inject(FormBuilder);
   private readonly activatedRouter = inject(ActivatedRoute);
 
 

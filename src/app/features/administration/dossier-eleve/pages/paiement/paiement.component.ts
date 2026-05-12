@@ -1,3 +1,4 @@
+import { CommonModule } from '@angular/common';
 import { Component, inject, OnInit } from '@angular/core';
 import { FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
@@ -11,7 +12,7 @@ import { DossierEleveService } from '../../service/dossier-eleve.service';
 @Component({
   selector: 'app-paiement',
   standalone: true,
-  imports: [ReactiveFormsModule, RouterLink],
+  imports: [CommonModule, ReactiveFormsModule, RouterLink],
   templateUrl: './paiement.component.html',
   styleUrls: ['./paiement.component.css']
 })

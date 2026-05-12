@@ -1,3 +1,4 @@
+import { CommonModule } from '@angular/common';
 import { Component, inject, OnInit } from '@angular/core';
 import { FormArray, FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
@@ -6,13 +7,14 @@ import { Paiement } from '../../../../../core/models/comptabilite/paiement';
 import { PaiementAdd } from '../../../../../core/models/dossiereleve/request/paiement-add';
 import { Eleve } from '../../../../../core/models/parent/parent';
 import { TypePaiement } from '../../../../../core/models/referentiels/type-paiement';
+import { ReferentielService } from '../../../referentiel/service/referentiel.service';
 import { DossierEleveService } from '../../service/dossier-eleve.service';
 
 
 @Component({
   selector: 'app-creation-paiement',
   standalone: true,
-  imports: [ReactiveFormsModule, RouterLink],
+  imports: [CommonModule, ReactiveFormsModule, RouterLink],
   templateUrl: './creation-paiement.component.html',
   styleUrls: ['./creation-paiement.component.css']
 })
@@ -32,7 +34,7 @@ export class CreationPaiementComponent implements OnInit {
   title = "Ajouter un paiement";
 
   private readonly dossierEleveService = inject(DossierEleveService);
-  //  private readonly referentielService = inject(ReferentielService);
+  private readonly referentielService = inject(ReferentielService);
   private readonly toastService = inject(ToastrService);
   private readonly _formBuilder = inject(FormBuilder);
   private readonly activeRoute = inject(ActivatedRoute);
@@ -46,7 +48,7 @@ export class CreationPaiementComponent implements OnInit {
 
   ngOnInit(): void {
     this.paiementId = this.activeRoute.snapshot.params['id'];
-  //  this.getTypePaiements();
+    this.getTypePaiements();
     this.getEleves();
     this.initializeForm(null);
     if (this.paiementId != null && this.paiementId != undefined) {
@@ -65,15 +67,14 @@ export class CreationPaiementComponent implements OnInit {
     );
   }
 
-  /*
   getTypePaiements() {
     this.referentielService.getAllTypePaiements().subscribe(
       (data: any[]) => {
         this.listTypePaiements = data;
       },
-      (error:any) => (this.errorMessage = <any>error)
+      (error: any) => (this.errorMessage = <any>error)
     );
-  }*/
+  }
 
   getPaiementById(paiementId: number) {
     this.dossierEleveService.getPaiement(paiementId).subscribe({

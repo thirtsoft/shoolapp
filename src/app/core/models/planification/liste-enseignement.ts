@@ -8,4 +8,5 @@ export interface ListeEnseignement {
   matiere?: string;
   dateDebut?: Date;
   actif?: number;
+  classId?: number;
 }

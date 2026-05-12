@@ -47,11 +47,8 @@
                       required=""
                     >
                       <option>Selectionnez</option>
-                      <option
-                        *ngFor="let item of eleveList"
-                        [value]="item.eleve"
-                      >
-                        {{ item?.prenomEleve }} - {{ item?.nomEleve }}
+                      <option *ngFor="let item of eleveList" [value]="item.eleve">
+                        {{ item?.prenom }} - {{ item?.nom }}
                       </option>
                     </select>
                   </div>
@@ -70,10 +67,7 @@
                       (change)="onSemestreSelected()"
                     >
                       <option>Selectionnez</option>
-                      <option
-                        *ngFor="let item of semestreList"
-                        [value]="item?.id"
-                      >
+                      <option *ngFor="let item of semestreList" [value]="item?.id">
                         {{ item?.libelle }}
                       </option>
                     </select>
@@ -81,9 +75,7 @@
                 </div>
                 <div class="col-6">
                   <div class="form-group">
-                    <label
-                      >Années scolaire <span class="text-danger">*</span></label
-                    >
+                    <label>Années scolaire <span class="text-danger">*</span></label>
                     <select
                       class="form-control select"
                       name="annee"
@@ -92,10 +84,7 @@
                       (change)="onAnneeScolaireSelected()"
                     >
                       <option>Selectionnez</option>
-                      <option
-                        *ngFor="let item of anneeScolaireList"
-                        [value]="item.id"
-                      >
+                      <option *ngFor="let item of anneeScolaireList" [value]="item.id">
                         {{ item?.libelle }}
                       </option>
                     </select>
@@ -105,11 +94,7 @@
 
               <div class="row mt-3">
                 <div class="col-12 d-flex justify-content-between">
-                  <button
-                    type="button"
-                    class="btn btn-danger si_accept_cancel"
-                    (click)="goBack()"
-                  >
+                  <button type="button" class="btn btn-danger si_accept_cancel" (click)="goBack()">
                     Annuler
                   </button>
                   <button

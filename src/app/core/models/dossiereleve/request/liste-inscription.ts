@@ -19,4 +19,10 @@ export interface ListeInscription {
 
     createdBy?: number;
 
+    eleve?: any;
+
+    prenomEleve?: string;
+
+    nomEleve?: string;
+
 }

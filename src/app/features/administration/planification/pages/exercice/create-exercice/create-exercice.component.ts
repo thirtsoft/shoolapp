@@ -1,4 +1,4 @@
-import { SlicePipe } from '@angular/common';
+import { CommonModule, SlicePipe } from '@angular/common';
 import { Component, inject, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -16,7 +16,7 @@ import { PlanificationResourceService } from '../../../services/planification-re
 @Component({
   selector: 'app-create-exercice',
   standalone: true,
-  imports: [ReactiveFormsModule, SlicePipe],
+  imports: [CommonModule, ReactiveFormsModule, SlicePipe],
   templateUrl: './create-exercice.component.html',
   styleUrls: ['./create-exercice.component.css']
 })

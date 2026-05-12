@@ -9,11 +9,14 @@ import { Eleve } from '../../../../../core/models/parent/parent';
 import { Utilisateur } from '../../../../../core/models/utilisateur/utilisateur';
 import { UtilisateurService } from '../../../utilisateur/service/utilisateur.service';
 import { ToastrService } from '@iqx-limited/ngx-toastr';
+import { CommonModule } from '@angular/common';
+import { ReferentielService } from '../../../referentiel/service/referentiel.service';
+import { LocalStorageService } from '../../../../../core/services/local-storage.service';
 
 @Component({
   selector: 'app-creation-inscription',
   standalone: true,
-  imports: [ReactiveFormsModule],
+  imports: [CommonModule, ReactiveFormsModule],
   templateUrl: './creation-inscription.component.html',
   styleUrls: ['./creation-inscription.component.css']
 })
@@ -43,10 +46,10 @@ export class CreationInscriptionComponent implements OnInit {
 
   utilisateur: Utilisateur = {};
 
-  
+
   private readonly dossierEleveService = inject(DossierEleveService);
-  //  private readonly referentielService = inject(ReferentielService);
-//  private readonly localStorage = inject(LocalStorageService);
+  private readonly referentielService = inject(ReferentielService);
+  private readonly localStorage = inject(LocalStorageService);
   private readonly utilisateurService = inject(UtilisateurService);
   private readonly toastService = inject(ToastrService);
   private readonly _formBuilder = inject(FormBuilder);
@@ -54,14 +57,13 @@ export class CreationInscriptionComponent implements OnInit {
   private readonly router = inject(Router);
 
   ngOnInit(): void {
-    /*
-     this.userId = this.localStorage.getItem('id');
-    this.eleveId = localStorage.getItem('eleveId');
-    this.eleve = localStorage.getItem('eleve');
-    this.inscriptionId = this.route.snapshot.params['id']; */
+    this.userId = this.localStorage.getItem('id');
+    this.eleveId = this.localStorage.getItem('eleveId');
+    this.eleve = this.localStorage.getItem('eleve');
+    this.inscriptionId = this.route.snapshot.params['id'];
     this.getConnectedUserInfos();
-//    this.getClasses();
-//    this.getAnneeScolaires();
+    this.getClasses();
+    this.getAnneeScolaires();
     this.getEleves();
     this.initializeInscriptionForm(null);
     if (this.inscriptionId != null && this.inscriptionId != undefined) {
@@ -75,7 +77,7 @@ export class CreationInscriptionComponent implements OnInit {
     this.utilisateurService.getUtilisateur(this.userId!).subscribe({
       next: data => {
         this.utilisateur = data;
-    //    this.ecoleId = this.utilisateur.ecoleId;
+        //    this.ecoleId = this.utilisateur.ecoleId;
       },
       error: error => { console.log(error) },
     });
@@ -92,20 +94,19 @@ export class CreationInscriptionComponent implements OnInit {
 
   getEleves() {
     this.dossierEleveService.getResourceList('eleve')?.subscribe({
-      next: (data:any) => {
+      next: (data: any) => {
         this.eleves = data;
         console.log('eleve list', this.eleves);
       }
     });
   }
 
-  /*
   getClasses() {
     this.referentielService.getAllClasses().subscribe(
       (data: any[]) => {
         this.classes = data;
       },
-      (error:any) => (this.errorMessage = <any>error)
+      (error: any) => (this.errorMessage = <any>error)
     );
   }
 
@@ -114,9 +115,9 @@ export class CreationInscriptionComponent implements OnInit {
       (data: any[]) => {
         this.anneeScolaires = data;
       },
-      (error:any) => (this.errorMessage = <any>error)
+      (error: any) => (this.errorMessage = <any>error)
     );
-  }*/
+  }
 
   initializeInscriptionForm(inscription: Inscription | null) {
     this.inscriptionFormGroup = this._formBuilder.group({
@@ -185,4 +186,3 @@ export class CreationInscriptionComponent implements OnInit {
 
 
 }
-

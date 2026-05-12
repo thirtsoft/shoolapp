@@ -1,3 +1,4 @@
+import { CommonModule } from '@angular/common';
 import { Component, inject, OnInit } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -10,7 +11,7 @@ import { PlanificationResourceService } from '../../../services/planification-re
 @Component({
   selector: 'app-detail-evenement',
   standalone: true,
-  imports: [ReactiveFormsModule, ConfirmationDialogModalComponent],
+  imports: [CommonModule, ReactiveFormsModule],
   templateUrl: './detail-evenement.component.html',
   styleUrls: ['./detail-evenement.component.css']
 })

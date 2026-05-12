@@ -20,36 +20,28 @@
           <div class="card-body">
             <form [formGroup]="evaluationFormGroup">
               <div class="enseignement-item mb-4 p-3 border rounded">
-                <input
-                  type="text"
-                  readonly="true"
-                  hidden="true"
-                  formControlName="id"
-                />
+                <input type="text" readonly="true" hidden="true" formControlName="id" />
 
                 <div class="row form-row">
                   <div class="col-lg-3 col-sm-3">
                     <div class="form-group">
-                      <label
-                        >Titre évaluation
-                        <span class="text-danger">*</span></label
-                      >
+                      <label>Titre évaluation <span class="text-danger">*</span></label>
                       <input
                         type="text"
                         formControlName="titre"
                         required
                         class="form-control"
                         [class.is-invalid]="
-                          evaluationFormGroup?.get('titre')?.invalid &&
-                          evaluationFormGroup?.get('titre')?.touched
+                          evaluationFormGroup!.get('titre')?.invalid &&
+                          evaluationFormGroup!.get('titre')?.touched
                         "
                       />
 
                       <span
                         class="invalid-feedback"
                         *ngIf="
-                          evaluationFormGroup?.get('titre')?.invalid &&
-                          evaluationFormGroup?.get('titre')?.touched
+                          evaluationFormGroup!.get('titre')?.invalid &&
+                          evaluationFormGroup!.get('titre')?.touched
                         "
                       >
                         Le titre est requise
@@ -59,23 +51,18 @@
 
                   <div class="col-lg-3 col-sm-3">
                     <div class="form-group">
-                      <label
-                        >Enseignement <span class="text-danger">*</span></label
-                      >
+                      <label>Enseignement <span class="text-danger">*</span></label>
                       <select
                         [class.is-invalid]="
-                          evaluationFormGroup?.get('enseignementId')?.invalid &&
-                          evaluationFormGroup?.get('enseignementId')?.touched
+                          evaluationFormGroup!.get('enseignementId')?.invalid &&
+                          evaluationFormGroup!.get('enseignementId')?.touched
                         "
                         class="form-control select"
                         formControlName="enseignementId"
                         required=""
                       >
                         <option value="">Selectionnez enseignement</option>
-                        <option
-                          *ngFor="let item of enseignementList"
-                          [value]="item.id"
-                        >
+                        <option *ngFor="let item of enseignementList" [value]="item.id">
                           {{ item.enseignant }} - {{ item.classe }} -
                           {{ item.anneeScolaire }}
                         </option>
@@ -83,8 +70,8 @@
                       <span
                         class="invalid-feedback"
                         *ngIf="
-                          evaluationFormGroup?.get('enseignementId')?.invalid &&
-                          evaluationFormGroup?.get('enseignementId')?.touched
+                          evaluationFormGroup!.get('enseignementId')?.invalid &&
+                          evaluationFormGroup!.get('enseignementId')?.touched
                         "
                       >
                         L'enseignement est requis
@@ -94,32 +81,26 @@
 
                   <div class="col-lg-3 col-sm-3">
                     <div class="form-group">
-                      <label
-                        >Type évaluation
-                        <span class="text-danger">*</span></label
-                      >
+                      <label>Type évaluation <span class="text-danger">*</span></label>
                       <select
                         class="form-control select"
                         formControlName="evaluationType"
                         required=""
                         [class.is-invalid]="
-                          evaluationFormGroup?.get('evaluationType')?.invalid &&
-                          evaluationFormGroup?.get('evaluationType')?.touched
+                          evaluationFormGroup!.get('evaluationType')?.invalid &&
+                          evaluationFormGroup!.get('evaluationType')?.touched
                         "
                       >
                         <option value="">Selectionnez un type</option>
-                        <option
-                          *ngFor="let item of typeEvaluations"
-                          [value]="item"
-                        >
+                        <option *ngFor="let item of typeEvaluations" [value]="item">
                           {{ item }}
                         </option>
                       </select>
                       <span
                         class="invalid-feedback"
                         *ngIf="
-                          evaluationFormGroup?.get('evaluationType')?.invalid &&
-                          evaluationFormGroup?.get('evaluationType')?.touched
+                          evaluationFormGroup!.get('evaluationType')?.invalid &&
+                          evaluationFormGroup!.get('evaluationType')?.touched
                         "
                       >
                         Le type évaluation est requise
@@ -127,46 +108,37 @@
                     </div>
                   </div>
 
-                   <div class="col-lg-3 col-sm-3">
+                  <div class="col-lg-3 col-sm-3">
                     <div class="form-group">
-                      <label
-                        >Mode évaluation
-                        <span class="text-danger">*</span></label
-                      >
+                      <label>Mode évaluation <span class="text-danger">*</span></label>
                       <select
                         class="form-control select"
                         formControlName="evaluationMode"
                         required=""
                         [class.is-invalid]="
-                          evaluationFormGroup?.get('evaluationMode')?.invalid &&
-                          evaluationFormGroup?.get('evaluationMode')?.touched
+                          evaluationFormGroup!.get('evaluationMode')?.invalid &&
+                          evaluationFormGroup!.get('evaluationMode')?.touched
                         "
                       >
                         <option value="">Selectionnez un mode</option>
-                        <option
-                          *ngFor="let item of modeEvaluations"
-                          [value]="item"
-                        >
+                        <option *ngFor="let item of modeEvaluations" [value]="item">
                           {{ item }}
                         </option>
                       </select>
                       <span
                         class="invalid-feedback"
                         *ngIf="
-                          evaluationFormGroup?.get('evaluationMode')?.invalid &&
-                          evaluationFormGroup?.get('evaluationMode')?.touched
+                          evaluationFormGroup!.get('evaluationMode')?.invalid &&
+                          evaluationFormGroup!.get('evaluationMode')?.touched
                         "
                       >
                         Le mode évaluation est requise
                       </span>
                     </div>
                   </div>
-
-                  
                 </div>
 
                 <div class="row form-row">
-                 
                   <div class="col-lg-4 col-sm-4">
                     <div class="form-group">
                       <label>Date <span class="text-danger">*</span></label>
@@ -176,16 +148,16 @@
                         required
                         class="form-control"
                         [class.is-invalid]="
-                          evaluationFormGroup?.get('dateEvaluation')?.invalid &&
-                          evaluationFormGroup?.get('dateEvaluation')?.touched
+                          evaluationFormGroup!.get('dateEvaluation')?.invalid &&
+                          evaluationFormGroup!.get('dateEvaluation')?.touched
                         "
                       />
 
                       <span
                         class="invalid-feedback"
                         *ngIf="
-                          evaluationFormGroup?.get('dateEvaluation')?.invalid &&
-                          evaluationFormGroup?.get('dateEvaluation')?.touched
+                          evaluationFormGroup!.get('dateEvaluation')?.invalid &&
+                          evaluationFormGroup!.get('dateEvaluation')?.touched
                         "
                       >
                         La date est requise
@@ -195,19 +167,13 @@
 
                   <div class="col-lg-4 col-sm-4">
                     <div class="form-group">
-                      <label
-                        >Heure début <span class="text-danger">*</span></label
-                      >
-                      <input
-                        type="time"
-                        formControlName="heureDebut"
-                        class="form-control"
-                      />
+                      <label>Heure début <span class="text-danger">*</span></label>
+                      <input type="time" formControlName="heureDebut" class="form-control" />
                       <span
                         class="invalid-feedback"
                         *ngIf="
-                          evaluationFormGroup?.get('heureDebut')?.invalid &&
-                          evaluationFormGroup?.get('heureDebut')?.touched
+                          evaluationFormGroup!.get('heureDebut')?.invalid &&
+                          evaluationFormGroup!.get('heureDebut')?.touched
                         "
                       >
                         Heure début est requise
@@ -217,19 +183,13 @@
 
                   <div class="col-lg-4 col-sm-4">
                     <div class="form-group">
-                      <label
-                        >Heure fin <span class="text-danger">*</span></label
-                      >
-                      <input
-                        type="time"
-                        formControlName="heureFin"
-                        class="form-control"
-                      />
+                      <label>Heure fin <span class="text-danger">*</span></label>
+                      <input type="time" formControlName="heureFin" class="form-control" />
                       <span
                         class="invalid-feedback"
                         *ngIf="
-                          evaluationFormGroup?.get('heureFin')?.invalid &&
-                          evaluationFormGroup?.get('heureFin')?.touched
+                          evaluationFormGroup!.get('heureFin')?.invalid &&
+                          evaluationFormGroup!.get('heureFin')?.touched
                         "
                       >
                         Heure fin est requise
@@ -241,9 +201,7 @@
                 <div class="row form-row">
                   <div class="col-12 col-sm-12">
                     <div class="form-group">
-                      <label
-                        >Description <span class="text-danger">*</span></label
-                      >
+                      <label>Description <span class="text-danger">*</span></label>
                       <textarea
                         name=""
                         type="text"
@@ -253,8 +211,8 @@
                       <span
                         class="invalid-feedback"
                         *ngIf="
-                          evaluationFormGroup?.get('description')?.invalid &&
-                          evaluationFormGroup?.get('description')?.touched
+                          evaluationFormGroup!.get('description')?.invalid &&
+                          evaluationFormGroup!.get('description')?.touched
                         "
                       >
                         Description est requise
@@ -282,20 +240,13 @@
                             </thead>
                             <tbody formArrayName="noteEditRequestDTOList">
                               <tr
-                                *ngFor="
-                                  let note of notes?.controls;
-                                  let i = index
-                                "
+                                *ngFor="let note of notes.controls; let i = index"
                                 [formGroupName]="i"
                               >
                                 <td>
-                                  {{
-                                    getEleveNomCompletEleve(
-                                      note.get("eleve")?.value
-                                    )
-                                  }}
+                                  {{ getEleveNomCompletEleve(note.get('eleve')?.value) }}
                                 </td>
-                                <td>{{ note.get("type")?.value }}</td>
+                                <td>{{ note.get('type')?.value }}</td>
                                 <td>
                                   <input
                                     type="text"

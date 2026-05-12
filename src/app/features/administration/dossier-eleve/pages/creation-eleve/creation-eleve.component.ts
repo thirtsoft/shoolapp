@@ -7,11 +7,13 @@ import { EleveEdit } from '../../../../../core/models/dossiereleve/request/eleve
 import { Eleve } from '../../../../../core/models/parent/parent';
 import { PieceJointeService } from '../../../../../core/services/piece-jointe';
 import { DossierEleveService } from '../../service/dossier-eleve.service';
+import { CommonModule } from '@angular/common';
+import { LocalStorageService } from '../../../../../core/services/local-storage.service';
 
 @Component({
   selector: 'app-creation-eleve',
   standalone: true,
-  imports: [ReactiveFormsModule, RouterLink],
+  imports: [CommonModule, ReactiveFormsModule, RouterLink],
   templateUrl: './creation-eleve.component.html',
   styleUrls: ['./creation-eleve.component.css']
 })
@@ -34,7 +36,7 @@ export class CreationEleveComponent implements OnInit {
 
   private readonly dossierEleveService = inject(DossierEleveService);
   private readonly pieceJointeService = inject(PieceJointeService);
-  //  private readonly localStorage = inject(LocalStorageService);
+  private readonly localStorage = inject(LocalStorageService);
   private readonly toastService = inject(ToastrService);
   private readonly _formBuilder = inject(FormBuilder);
   private readonly route = inject(ActivatedRoute);
@@ -43,7 +45,7 @@ export class CreationEleveComponent implements OnInit {
 
 
   ngOnInit(): void {
-    //    this.userId = this.localStorage.getItem('id');
+    this.userId = this.localStorage.getItem('id');
     this.eleveId = Number(this.route.snapshot.paramMap.get('id'));
     this.initializeForm(null);
     if (this.eleveId !== null && this.eleveId > 0) {

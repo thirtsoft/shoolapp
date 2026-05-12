@@ -1,11 +1,14 @@
+import { CommonModule } from '@angular/common';
 import { Component, inject, OnInit } from '@angular/core';
+import { FormsModule } from '@angular/forms';
+import { ActivatedRoute, Router } from '@angular/router';
+import { ToastrService } from '@iqx-limited/ngx-toastr';
+import { AnneeScolaire } from '../../../../../../core/models/referentiels/annee-scolaire';
 import { ListeClasse } from '../../../../../../core/models/referentiels/classe';
 import { Semestre } from '../../../../../../core/models/referentiels/semestre';
-import { AnneeScolaire } from '../../../../../../core/models/referentiels/annee-scolaire';
+import { LocalStorageService } from '../../../../../../core/services/local-storage.service';
+import { ReferentielResourceService } from '../../../../referentiel/service/referentiel-resource.service';
 import { DossierResourceService } from '../../../service/dossier-resource.service';
-import { ToastrService } from '@iqx-limited/ngx-toastr';
-import { ActivatedRoute, Router } from '@angular/router';
-import { FormsModule } from '@angular/forms';
 
 
 interface Mois {
@@ -16,7 +19,7 @@ interface Mois {
 @Component({
   selector: 'app-generer-bulletin-classe',
   standalone: true,
-  imports: [FormsModule],
+  imports: [CommonModule, FormsModule],
   templateUrl: './generer-bulletin-classe.component.html',
   styleUrls: ['./generer-bulletin-classe.component.css']
 })
@@ -32,23 +35,21 @@ export class GenererBulletinClasseComponent implements OnInit {
   title = "Générer les bulletins pour une classe";
 
   private readonly dossierResource = inject(DossierResourceService);
-  //  private readonly referentielResource = inject(ReferentielResourceService);
+  private readonly referentielResource = inject(ReferentielResourceService);
   private readonly toastService = inject(ToastrService);
   private readonly activeRoute = inject(ActivatedRoute);
   private readonly router = inject(Router);
-
-  //  private readonly localStorage = inject(LocalStorageService);
+  private readonly localStorage = inject(LocalStorageService);
 
   ngOnInit(): void {
-    //    this.getClassList();
-    //    this.getSemestreList();
-    //    this.getAnneeScolaireList();
+    this.getClassList();
+    this.getSemestreList();
+    this.getAnneeScolaireList();
   }
 
-  /*
   getClassList() {
     this.referentielResource.getResourceList('classe')?.subscribe({
-      next: (data) => {
+      next: (data: any) => {
         this.classList = data;
         console.log('classList', this.classList);
       }
@@ -57,7 +58,7 @@ export class GenererBulletinClasseComponent implements OnInit {
 
   getSemestreList() {
     this.referentielResource.getResourceList('semestre')?.subscribe({
-      next: (data) => {
+      next: (data: any) => {
         this.semestreList = data;
         console.log('semestreList', this.semestreList);
       }
@@ -66,13 +67,12 @@ export class GenererBulletinClasseComponent implements OnInit {
 
   getAnneeScolaireList() {
     this.referentielResource.getResourceList('anneescolaire')?.subscribe({
-      next: (data) => {
+      next: (data: any) => {
         this.anneeScolaireList = data;
         console.log('anneeScolaireList', this.anneeScolaireList);
       }
     });
   }
-    */
 
   onClasseSelected() {
     console.log('selectedTypeService', this.selectedClasse);

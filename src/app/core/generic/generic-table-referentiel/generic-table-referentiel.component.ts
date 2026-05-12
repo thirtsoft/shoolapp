@@ -6,6 +6,7 @@ import { ExportFileService } from '../../services/export-file.service';
 import { ToastrService } from '@iqx-limited/ngx-toastr';
 import * as pdfMake from 'pdfmake/build/pdfmake';
 
+import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ConfirmationDialogModalComponent } from '../../components/confirmation-dialog-modal/confirmation-dialog-modal.component';
 import { EncodateLogo } from '../../enumeration/encodage-logo-data';
@@ -18,7 +19,7 @@ import { SharedResourceService } from '../../services/shared-resource.service';
 @Component({
   selector: 'app-generic-table-referentiel',
   standalone: true,
-  imports: [RouterModule, FormsModule, RouterLink],
+  imports: [CommonModule, RouterModule, FormsModule, RouterLink],
   templateUrl: './generic-table-referentiel.component.html',
   styleUrls: ['./generic-table-referentiel.component.css']
 })
@@ -143,8 +144,17 @@ export class GenericTableReferentielComponent implements OnInit {
   private readonly cdr = inject(ChangeDetectorRef);
 
 
+  /*
+    onFilterChange(key: string, value: any) {
+      this.currentFilters[key] = value;
+      const filterConfig = this.filtered.find(f => f.key === key);
+      if (filterConfig?.onChange) {
+        filterConfig.onChange(value);
+      }
+      this.emitFiltered();
+    }*/
 
-  onFilterChange(key: string, value: any) {
+  onFilterChange(key: any, value: any) {
     this.currentFilters[key] = value;
     const filterConfig = this.filtered.find(f => f.key === key);
     if (filterConfig?.onChange) {

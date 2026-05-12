@@ -1,0 +1,52 @@
+<!-- Sidebar -->
+<div class="profile-sidebar">
+    <div class="widget-profile pro-widget-content">
+        <div class="profile-info-widget">
+            <a href="javascript:void(0)" class="booking-doc-img">
+                <img src="assets/img/doctors/doctor-thumb-02.jpg" alt="User Image">
+            </a>
+            <div class="profile-det-info">
+                <h3>Dr. Darren Elder</h3>
+
+                <div class="patient-details">
+                    <h5 class="mb-0">BDS, MDS - Oral & Maxillofacial Surgery</h5>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="dashboard-widget">
+        <nav class="dashboard-menu">
+            <ul>
+
+                <li routerLink="/admin/dashboard" [class.active]="page === 'Dashboard'">
+                    <a (click)="change('Dashboard')"><i class="fe fe-home" style="color: #fff"></i>
+                        <span style="color: #fff">Tableau de bord</span></a>
+                </li>
+                <li class="submenu">
+                    <a href="javascript:void(0)"><i class="fe fe-document"></i> <span> Administration</span> <span
+                            class="menu-arrow"></span></a>
+                    <ul style="display: none;">
+                        <li [class.active]="page === 'Actions'">
+                            <a (click)="change('Actions')" routerLink="/admin/profils/actions"><i
+                                    class="fe fe-users"></i> <span>Actions</span></a>
+                        </li>
+                        <li [class.active]="page === 'Profils'">
+                            <a (click)="change('Profils')" routerLink="/admin/profils/all"><i class="fe fe-users"></i>
+                                <span>Profils</span></a>
+                        </li>
+                        <li [class.active]="page === 'Doctors'">
+                            <a (click)="change('Doctors')" routerLink="/admin/doctor"><i class="fe fe-user-plus"></i>
+                                <span>Personnels</span></a>
+                        </li>
+
+                        <li [class.active]="page === 'Parent'">
+                            <a (click)="change('Parent')" routerLink="/admin/dossier-eleve/parent"><i
+                                    class="fe fe-users"></i> &nbsp; <span>Parents</span></a>
+                        </li>
+                    </ul>
+                </li>
+            </ul>
+        </nav>
+    </div>
+</div>
+<!-- /Sidebar -->

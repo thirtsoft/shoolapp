@@ -1,0 +1,185 @@
+<div class="page-wrapper">
+  <div class="content container-fluid">
+    <div class="data">
+      <h1 class="titlePage">Détails exercice</h1>
+
+      <div class="block_button">
+        <button class="custom-btn btn-1" routerLink="/enseignant/evaluations">
+          <i class="fa fa-arrow-left"></i>
+          <b style="margin-left: 5px">Retour</b>
+        </button>
+
+        <button
+          *ngIf="detailsEexercice?.titre === 'Remise'"
+          class="custom-btn btn-1"
+          (click)="openConfirmationDialog('envoyer')"
+        >
+          <i class="fa fa-paper-plane"></i>
+          <b style="margin-left: 5px">Envoyer</b>
+        </button>
+
+        <button
+          *ngIf="detailsEexercice?.titre === 'Envoyée'"
+          class="custom-btn btn-1"
+          (click)="openConfirmationDialog('valider')"
+        >
+          <i class="fa fa-paper-plane"></i>
+          <b style="margin-left: 5px">Valider</b>
+        </button>
+      </div>
+
+      <div class="profile-container">
+        <div class="profile-card">
+          <div class="card-header">
+            <img
+              src="../../../assets/img/chapitre.png"
+              alt=""
+              class="img-section"
+            />
+
+            <h1 style="color: #000000">Details Exercice</h1>
+          </div>
+          <div class="info-row">
+            <span class="label"> Titre</span>
+            <span class="value">{{ detailsEexercice?.titre }}</span>
+          </div>
+          <div class="info-row">
+            <span class="label"> Livre</span>
+            <span class="value">{{ detailsEexercice?.livre }}</span>
+          </div>
+          <div class="info-row">
+            <span class="label"> Page</span>
+            <span class="value">{{ detailsEexercice?.page }}</span>
+          </div>
+          <div class="info-row">
+            <span class="label"> Page</span>
+            <span class="value">{{ detailsEexercice?.page }}</span>
+          </div>
+          <div class="info-row">
+            <span class="label"> Numéro page</span>
+            <span class="value">{{ detailsEexercice?.numeroExercice }}</span>
+          </div>
+          <div class="info-row">
+            <span class="label"> Classe</span>
+            <span class="value">{{ detailsEexercice?.classe }}</span>
+          </div>
+          <div class="info-row">
+            <span class="label"> Lien</span>
+            <span class="value">{{ detailsEexercice?.url }}</span>
+          </div>
+
+          <div class="info-row">
+            <span class="label">Date début </span>
+            <span class="value">{{ detailsEexercice?.dateDebut }}</span>
+          </div>
+          <div class="info-row">
+            <span class="label">Date fin </span>
+            <span class="value">{{ detailsEexercice?.dateFin }}</span>
+          </div>
+          <div class="info-row">
+            <span class="label">Heure fin </span>
+            <span class="value">{{ detailsEexercice?.dateFin }}</span>
+          </div>
+          <div
+            class="info-row"
+            *ngIf="
+              ['Remise', 'Envoyée', 'Validée'].includes(
+                detailsEexercice.dateFin!
+              )
+            "
+          >
+            <span class="label">Date remise </span>
+            <span class="value">{{ detailsEexercice?.dateDebut }}</span>
+          </div>
+
+          <div
+            class="info-row"
+            *ngIf="['Envoyée', 'Validée'].includes(detailsEexercice?.dateFin)"
+          >
+            <span class="label">Date envoie </span>
+            <span class="value">{{ detailsEexercice?.dateFin }}</span>
+          </div>
+
+          <div
+            class="info-row"
+            *ngIf="['Validée'].includes(detailsEexercice?.dateFin)"
+          >
+            <span class="label">Date validation </span>
+            <span class="value">{{ detailsEexercice?.dateFin }}</span>
+          </div>
+          <div class="info-row">
+            <span class="label">Etat </span>
+            <span class="value">{{ detailsEexercice?.dateFin }} </span>
+          </div>
+
+          <div class="info-row">
+            <span class="label">Type </span>
+            <span class="value">{{ detailsEexercice?.dateFin }}</span>
+          </div>
+
+          <div class="info-row">
+            <span class="label">Mode évaluation </span>
+            <span class="value">{{ detailsEexercice?.dateFin }}</span>
+          </div>
+
+          <div class="info-row">
+            <span class="label">Description </span>
+            <span class="value">{{ detailsEexercice?.description }}</span>
+          </div>
+        </div>
+
+        <div class="profile-card">
+          <div class="card-header">
+            <img
+              src="../../../assets/img/chapitre.png"
+              alt=""
+              class="img-section"
+            />
+
+            <h1 style="color: #000000">Pièce jointe</h1>
+          </div>
+          <ng-container>
+            <div *ngIf="errorMessage" class="error-message">
+              {{ errorMessage }}
+            </div>
+
+            <div class="file-preview">
+              <div class="file-item" *ngIf="detailsEexercice?.piecesJointesDTO">
+                <p
+                  class="file-title"
+                  [title]="detailsEexercice?.piecesJointesDTO?.nomFichier"
+                >
+                  {{
+                    detailsEexercice?.piecesJointesDTO?.nomFichier! >  '10'
+                      ? (detailsEexercice?.piecesJointesDTO?.nomFichier
+                          | slice : 0 : 10) + "..."
+                      : detailsEexercice?.piecesJointesDTO?.nomFichier
+                  }}
+                </p>
+
+                <img
+                  alt="File icon"
+                  [src]="
+                    getFileIcon(
+                      detailsEexercice?.piecesJointesDTO?.nomTechnique!
+                    )
+                  "
+                  class="file-icon"
+                  [title]="detailsEexercice?.piecesJointesDTO?.nomFichier"
+                />
+
+                <p
+                  class="file-name"
+                  [title]="detailsEexercice?.piecesJointesDTO?.nomFichier"
+                ></p>
+              </div>
+            </div>
+          </ng-container>
+        </div>
+      </div>
+
+      <div class="centerModal"></div>
+      <div></div>
+    </div>
+  </div>
+</div>

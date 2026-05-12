@@ -1,3 +1,4 @@
+import { CommonModule } from '@angular/common';
 import { Component, inject, OnInit } from '@angular/core';
 import { FormArray, FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -6,12 +7,13 @@ import { EvaluationEditRequest } from '../../../../../../core/models/dossierelev
 import { ListeEleve } from '../../../../../../core/models/dossiereleve/liste-eleve';
 import { Enseignement } from '../../../../../../core/models/planification/enseignement';
 import { ListeEnseignement } from '../../../../../../core/models/planification/liste-enseignement';
+import { PlanificationResourceService } from '../../../../planification/services/planification-resource.service';
 import { DossierResourceService } from '../../../service/dossier-resource.service';
 
 @Component({
   selector: 'app-edit-evaluation',
   standalone: true,
-  imports: [ReactiveFormsModule, FormsModule],
+  imports: [CommonModule, ReactiveFormsModule, FormsModule],
   templateUrl: './edit-evaluation.component.html',
   styleUrls: ['./edit-evaluation.component.css']
 })
@@ -38,8 +40,7 @@ export class EditEvaluationComponent implements OnInit {
   ecoleId: any;
 
   private readonly dossierResource = inject(DossierResourceService);
-  //  private readonly referentielService = inject(ReferentielService);
-  //  private readonly planification = inject(PlanificationResourceService);
+  private readonly planification = inject(PlanificationResourceService);
   private readonly _formBuilder = inject(FormBuilder);
   private readonly toastService = inject(ToastrService);
   private readonly activeRoute = inject(ActivatedRoute);
@@ -50,7 +51,7 @@ export class EditEvaluationComponent implements OnInit {
     this.evaluationId = this.activeRoute.snapshot.params['id'];
     this.userId = Number(localStorage.getItem('id'));
     this.initialiserFormGroup();
-    //  this.getEnseignementList();
+    this.getEnseignementList();
     if (this.evaluationId != null && this.evaluationId != undefined) {
       this.getEvaluationByID(this.evaluationId);
       this.title = 'Modifier les notes de l\'évaluation';
@@ -73,23 +74,22 @@ export class EditEvaluationComponent implements OnInit {
     });
   }
 
-  /*
   getEnseignementList() {
     this.planification.getAllEnseignement().subscribe({
-      next: (data:any) => {
+      next: (data: any) => {
         this.enseignementList = data;
       }
     });
   }
 
   getEnseignement(enseignementId?: number) {
-    this.planification.getSingleResource('planification/enseignement', enseignementId).subscribe({
-      next: (data:any) => {
+    this.planification.getSingleResource('planification/enseignement', enseignementId!).subscribe({
+      next: (data: any) => {
         this.enseignement = data;
         this.getEleveListByClassAndAnneeScolaire(this.enseignement?.classe!, this.enseignement?.anneeScolaire!)
       }
     });
-  }*/
+  }
 
   getEleveListByClassAndAnneeScolaire(classId: number, anneeId: number) {
     this.dossierResource.afficherListeEleveParClassEtAnneeScolaire('eleve', classId, anneeId).subscribe({

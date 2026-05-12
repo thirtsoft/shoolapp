@@ -9,7 +9,7 @@
           <b style="margin-left: 5px">Retour</b>
         </button>
         <button
-          *ngIf="['Programmé'].includes(detailsEvenement?.etat)"
+          *ngIf="['Programmé'].includes(detailsEvenement?.etat!)"
           class="custom-btn btn-1"
           (click)="openConfirmationDialog('publier')"
         >
@@ -18,7 +18,7 @@
         </button>
 
         <button
-          *ngIf="['Publié'].includes(detailsEvenement?.etat)"
+          *ngIf="['Publié'].includes(detailsEvenement?.etat!)"
           class="custom-btn btn-1"
           (click)="openConfirmationDialog('depublier')"
         >
@@ -57,7 +57,7 @@
           </div>
           <div
             class="info-row"
-            *ngIf="['Publié'].includes(detailsEvenement?.etat)"
+            *ngIf="['Publié'].includes(detailsEvenement?.etat!)"
           >
             <span class="label">Date publication </span>
             <span class="value">{{ detailsEvenement?.datePublication }}</span>
@@ -65,7 +65,7 @@
 
           <div
             class="info-row"
-            *ngIf="['Publié', 'Dépublié'].includes(detailsEvenement?.etat)"
+            *ngIf="['Publié', 'Dépublié'].includes(detailsEvenement?.etat!)"
           >
             <span class="label">Date dépublication </span>
             <span class="value">{{ detailsEvenement?.dateDepublication }}</span>

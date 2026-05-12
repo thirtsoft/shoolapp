@@ -1,3 +1,4 @@
+import { CommonModule } from '@angular/common';
 import { Component, inject, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -8,13 +9,14 @@ import { NoteEdit } from '../../../../../../core/models/dossiereleve/note';
 import { Classe } from '../../../../../../core/models/referentiels/classe';
 import { Semestre } from '../../../../../../core/models/referentiels/semestre';
 import { Utilisateur } from '../../../../../../core/models/utilisateur/utilisateur';
+import { ReferentielService } from '../../../../referentiel/service/referentiel.service';
 import { UtilisateurService } from '../../../../utilisateur/service/utilisateur.service';
 import { DossierResourceService } from '../../../service/dossier-resource.service';
 
 @Component({
   selector: 'app-ajout-note',
   standalone: true,
-  imports: [ReactiveFormsModule],
+  imports: [CommonModule, ReactiveFormsModule],
   templateUrl: './ajout-note.component.html',
   styleUrls: ['./ajout-note.component.css']
 })
@@ -33,29 +35,23 @@ export class AjoutNoteComponent implements OnInit {
 
   title = "Ajouter une note";
   userId?: number;
-
-
   ecoleId: any;
-
   utilisateur?: Utilisateur;
 
   private readonly router = inject(Router);
   private readonly dossierResource = inject(DossierResourceService);
-  //  private readonly referentielService = inject(ReferentielService);
+  private readonly referentielService = inject(ReferentielService);
   private readonly utilisateurService = inject(UtilisateurService);
   private readonly toastService = inject(ToastrService);
   private readonly activeRoute = inject(ActivatedRoute);
   private readonly _formBuilder = inject(FormBuilder);
 
-
-
-
   ngOnInit(): void {
     this.noteId = this.activeRoute.snapshot.params['id'];
     this.userId = Number(localStorage.getItem('id'));
     this.getConnectedUserInfos();
-    //    this.getClasseList();
-    //    this.getSemestresList();
+    this.getClasseList();
+    this.getSemestresList();
     this.initializeForm(null);
     if (this.noteId != null && this.noteId != undefined) {
       this.getNoteById(this.noteId);
@@ -67,14 +63,12 @@ export class AjoutNoteComponent implements OnInit {
     this.utilisateurService.getUtilisateur(Number(this.userId)).subscribe({
       next: data => {
         this.utilisateur = data;
-        //      this.ecoleId = this.utilisateur.ecoleId!;
       },
       error: error => { console.log(error) },
     });
 
   }
 
-  /*
   getSemestresList() {
     this.referentielService.getAllSemestres().subscribe(
       (data: any[]) => {
@@ -82,7 +76,7 @@ export class AjoutNoteComponent implements OnInit {
       },
       (error: any) => (this.errorMessage = <any>error)
     );
-  }*/
+  }
 
   chargerEvaluationsParClasse(classeId: number) {
     this.dossierResource.getResourceList(`evaluation/list-by-classe/${classeId}`).subscribe({
@@ -96,7 +90,6 @@ export class AjoutNoteComponent implements OnInit {
     })
   }
 
-  /*
   getClasseList() {
     this.referentielService.getAllClasses().subscribe(
       (data: any[]) => {
@@ -104,7 +97,7 @@ export class AjoutNoteComponent implements OnInit {
       },
       (error: any) => (this.errorMessage = <any>error)
     );
-  }*/
+  }
 
   onClasseSelected() {
     if (this.selectedClass) {

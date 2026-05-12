@@ -1,0 +1,117 @@
+<div class="page-wrapper">
+  <div class="content container-fluid">
+    <div class="row">
+      <div class="col-sm-12">
+        <h3 class="page-title text-center mb-2">{{ title }}</h3>
+        <div class="card">
+          <div class="card-body">
+            <form [formGroup]="absenceFormGroup">
+              <div style="margin-top: 5px">
+                <input
+                  type="text"
+                  readonly="true"
+                  hidden="true"
+                  formControlName="id"
+                />
+
+                <div class="row form-row">
+                  <div class="col-lg-12 col-sm-12">
+                    <div class="form-group">
+                      <label
+                        >Année scolaire
+                        <span class="text-danger">*</span></label
+                      >
+                      <select
+                        class="form-control select"
+                        name="classe"
+                        formControlName="anneeScolaireId"
+                        required=""
+                      >
+                        <option>Selectionnez</option>
+                        <option
+                          *ngFor="let item of anneeScolaireList"
+                          [value]="item.id"
+                        >
+                          {{ item.libelle }}
+                        </option>
+                      </select>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="row form-row">
+                <div class="col-lg-12 col-sm-12">
+                  <div class="form-group">
+                    <label>Semestre <span class="text-danger">*</span></label>
+                    <select
+                      class="form-control select"
+                      name="semestre"
+                      formControlName="semestre"
+                      required=""
+                    >
+                      <option>Selectionnez</option>
+                      <option
+                        *ngFor="let item of semestreList"
+                        [value]="item.id"
+                      >
+                        {{ item.libelle }}
+                      </option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+
+              <div class="row form-row">
+                <div class="col-lg-12 col-sm-12">
+                  <div class="form-group">
+                    <label
+                      >Date absence <span class="text-danger">*</span></label
+                    >
+                    <input
+                      type="date"
+                      required
+                      class="form-control"
+                      formControlName="date_declaration"
+                    />
+                  </div>
+                </div>
+              </div>
+
+              <div class="row form-row">
+                <div class="col-lg-12 col-sm-12">
+                  <div class="form-group">
+                    <label>Motif <span class="text-danger">*</span></label>
+                    <textarea
+                      class="form-control select"
+                      formControlName="motif"
+                      required=""
+                    ></textarea>
+                  </div>
+                </div>
+              </div>
+            </form>
+            <div style="margin-top: 75px col-sm-12">
+              <button
+                type="button"
+                class="btn btn-primary si_accept_confirm float-lg-right"
+                id="btn-yes"
+                [disabled]="!absenceFormGroup.valid"
+                (click)="ajouterEditAbsence()"
+              >
+                Enregistrer
+              </button>
+              <button
+                type="button"
+                class="btn btn-danger si_accept_cancel float-left"
+                routerLink="/parent/absence"
+              >
+                Annuler
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

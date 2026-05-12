@@ -2,17 +2,19 @@ import { Component, inject, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 
-import { DossierResourceService } from '../../../service/dossier-resource.service';
-import { ListeEnseignement } from '../../../../../../core/models/planification/liste-enseignement';
-import { Utilisateur } from '../../../../../../core/models/utilisateur/utilisateur';
-import { UtilisateurService } from '../../../../utilisateur/service/utilisateur.service';
+import { CommonModule } from '@angular/common';
 import { ToastrService } from '@iqx-limited/ngx-toastr';
 import { Evaluation } from '../../../../../../core/models/dossiereleve/evaluation/evaluation';
+import { ListeEnseignement } from '../../../../../../core/models/planification/liste-enseignement';
+import { Utilisateur } from '../../../../../../core/models/utilisateur/utilisateur';
+import { PlanificationResourceService } from '../../../../planification/services/planification-resource.service';
+import { UtilisateurService } from '../../../../utilisateur/service/utilisateur.service';
+import { DossierResourceService } from '../../../service/dossier-resource.service';
 
 @Component({
   selector: 'app-create-evaluation',
   standalone: true,
-  imports: [ReactiveFormsModule],
+  imports: [CommonModule, ReactiveFormsModule],
   templateUrl: './create-evaluation.component.html',
   styleUrls: ['./create-evaluation.component.css']
 })
@@ -36,10 +38,10 @@ export class CreateEvaluationComponent implements OnInit {
 
   disableAddButton = false;
 
-  
+
   private readonly dossierResource = inject(DossierResourceService);
   private readonly utilisateurService = inject(UtilisateurService);
-  //  private readonly planification = inject(PlanificationResourceService);
+  private readonly planification = inject(PlanificationResourceService);
   private readonly _formBuilder = inject(FormBuilder);
   private readonly toastService = inject(ToastrService);
   private readonly router = inject(Router);
@@ -48,7 +50,7 @@ export class CreateEvaluationComponent implements OnInit {
   ngOnInit(): void {
     this.userId = Number(localStorage.getItem('id'));
     this.getConnectedUserInfos();
-  //  this.getEnseignementList();
+    this.getEnseignementList();
     this.initializeForm(null);
   }
 
@@ -56,21 +58,20 @@ export class CreateEvaluationComponent implements OnInit {
     this.utilisateurService.getUtilisateur(this.userId!).subscribe({
       next: data => {
         this.utilisateur = data;
-    //    this.ecoleId = this.utilisateur.ecoleId;
+        //    this.ecoleId = this.utilisateur.ecoleId;
       },
       error: error => { console.log(error) },
     });
 
   }
 
-/*
   getEnseignementList() {
     this.planification.getAllEnseignement().subscribe({
-      next: (data:any) => {
+      next: (data: any) => {
         this.enseignementList = data;
       }
     });
-  }*/
+  }
 
   initializeForm(evaluation: Evaluation | null) {
     this.evaluationFormGroup = this._formBuilder.group({

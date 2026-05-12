@@ -1,0 +1,23 @@
+<app-generic-table-dossier
+  title="Liste des absence de l'élève"
+  titleFitre="Absence"
+  [tableColumns]="columns"
+  [tableData]="absenceData"
+  [isLoading]="isLoading"
+  [isEyesIcon]="true"
+  [isEditIcon]="true"
+  [tableSizes]="tableSizes"
+  [totalElements]="totalElements"
+  [currentPage]="currentPage"
+  [pageSize]="pageSize"
+  (pageChange)="changePage($event)"
+  [showSearch]="false"
+  [filtered]="tableFilters"
+  (filterChange)="onFilterChange($event.filter, $event.value)"
+  [showFilters]="true"
+  (resetFilters)="resetFilters()"
+  (sizeChange)="changeSize($event)"
+  addButtonLink="/parent/absence/create"
+  modifierButtonLink="/parent/absence/edit"
+>
+</app-generic-table-dossier>

@@ -1,0 +1,20 @@
+<app-generic-table-dossier
+  title="Liste des inscriptions de l'élève"
+  titleFitre="Inscription"
+  [tableColumns]="columns"
+  [tableData]="inscriptionData"
+  [isLoading]="isLoading"
+  [tableSizes]="tableSizes"
+  [totalElements]="totalElements"
+  [currentPage]="currentPage"
+  [isNoAjout]="true"
+  [pageSize]="pageSize"
+  (pageChange)="changePage($event)"
+  [showSearch]="false"
+  [filtered]="tableFilters"
+  (filterChange)="onFilterChange($event.filter, $event.value)"
+  [showFilters]="true"
+  (resetFilters)="resetFilters()"
+  (sizeChange)="changeSize($event)"
+>
+</app-generic-table-dossier>

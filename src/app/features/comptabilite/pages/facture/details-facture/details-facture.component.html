@@ -59,8 +59,7 @@
                     <p class="invoice-details">
                       {{ detailEleve?.prenom }} {{ detailEleve?.nom }}
                       <br />
-                      {{ detailEleve?.lieuNaissance }},
-                      {{ detailEleve?.nationalite }} <br />
+                      {{ detailEleve?.lieuNaissance }}, {{ detailEleve?.nationalite }} <br />
                       {{ detailEleve?.address }} <br />
                       <strong>Mois : </strong>{{ detailsFacture?.mois }}
                       <br />
@@ -81,9 +80,7 @@
                       <strong *ngIf="detailsFacture?.modePaiement">
                         {{ detailsFacture?.modePaiement }}
                       </strong>
-                      <strong *ngIf="!detailsFacture?.modePaiement">
-                        Virement bancaire
-                      </strong>
+                      <strong *ngIf="!detailsFacture?.modePaiement"> Virement bancaire </strong>
                       <br />
                     </p>
                   </div>
@@ -119,31 +116,25 @@
                           </td>
                           <!-- Montant initial -->
                           <td class="text-right">
-                            {{ tarif?.montantInitial | number : "1.0-0" }} FCFA
+                            {{ tarif?.montantInitial | number: '1.0-0' }} FCFA
                           </td>
 
                           <td
                             class="text-right"
                             *ngIf="
-                              montantRemise &&
-                              tarif?.typeServiceOffertDTO?.libelle ===
-                                'Mensualité'
+                              montantRemise && tarif?.typeServiceOffertDTO?.libelle === 'Mensualité'
                             "
                           >
                             {{
-                              tarif?.montantInitial * (1 - remisePourcent! / 100)
-                                | number : "1.0-0"
+                              tarif?.montantInitial! * (1 - remisePourcent! / 100) | number: '1.0-0'
                             }}
                             FCFA
                           </td>
                           <td
                             class="text-right"
-                            *ngIf="
-                              tarif?.typeServiceOffertDTO?.libelle !=
-                              'Mensualité'
-                            "
+                            *ngIf="tarif?.typeServiceOffertDTO?.libelle != 'Mensualité'"
                           >
-                            {{ tarif?.montantInitial | number : "1.0-0" }} FCFA
+                            {{ tarif?.montantInitial | number: '1.0-0' }} FCFA
                           </td>
                         </tr>
                       </tbody>
@@ -161,23 +152,20 @@
                           </td>
                         </tr>
 
-                        <tr
+                        <!--    <tr
                           *ngIf="
                             detailsFacture?.montantPayement &&
                             detailsFacture?.montantPayement <
                               detailsFacture?.montant
                           "
-                        >
+                        > -->
+
+                        <tr>
                           <th>Somme avancée:</th>
                           <td>
                             <span>{{ detailsFacture?.montantPayement }}</span>
                           </td>
                         </tr>
-
-                        <!--                 <tr>
-                          <th>Discount:</th>
-                          <td><span>-10%</span></td>
-                        </tr> -->
                         <tr>
                           <th>Total facture:</th>
                           <td>

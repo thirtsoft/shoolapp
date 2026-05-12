@@ -1,0 +1,122 @@
+<div class="row">
+  <div class="col-md-12">
+    <div class="card dash-card">
+      <div class="card-body">
+        <div class="row">
+          <div class="col-md-12 col-lg-12">
+            <div class="widget about-widget">
+              <h4 class="widget-title text-center">Emploi du temps</h4>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="row">
+  <div class="col-md-12">
+    <h4 class="mb-4">La liste des inscription de {{ classeId }}</h4>
+    <div class="appointment-tab">
+      <div class="tab-content">
+        <div class="card card-table mb-0">
+          <div class="card-body">
+            <div class="table-responsive">
+              <!-- Education Details -->
+              <div
+                class="widget education-widget"
+                style="margin-top: 10px; margin-left: 5px"
+              >
+                <h4 class="widget-title">
+                  {{ emploiDuTemps?.libelleSemaine }}
+                </h4>
+                <div class="experience-box">
+                  <ul class="experience-list" *ngFor="let cours of coursList">
+                    <li>
+                      <div class="experience-user">
+                        <div class="before-circle"></div>
+                      </div>
+                      <div class="experience-content">
+                        <div class="timeline-content">
+                          <a href="#/" class="name"
+                            >{{ cours?.libelle }} - {{ cours?.matiere }}</a
+                          >
+                          <div>{{ cours?.salle }}</div>
+                          <span class="time"
+                            >{{ cours?.dateDebut }} De {{ cours?.heureDebut }} à
+                            {{ cours?.heureFin }}
+                          </span>
+                          <div>{{ cours?.enseignant }}</div>
+                        </div>
+                      </div>
+                    </li>
+                   <!--  <li>
+                      <div class="experience-user">
+                        <div class="before-circle"></div>
+                      </div>
+                      <div class="experience-content">
+                        <div class="timeline-content">
+                          <a href="#/" class="name"
+                            >American Dental Medical University</a
+                          >
+                          <div>MDS</div>
+                          <span class="time">2003 - 2005</span>
+                        </div>
+                      </div>
+                    </li> -->
+                  </ul>
+                </div>
+              </div>
+              <!-- /Education Details -->
+              <!--  <table class="table table-hover table-center mb-0">
+                <thead>
+                  <tr>
+                    <th>#</th>
+                    <th>Classe</th>
+                    <th>Semestre</th>
+                    <th>semaine</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr *ngFor="let emploi of emploiDuTempsList">
+                    <td>{{ emploi.id }}</td>
+                    <td>
+                      <h2 class="table-avatar">
+                        <a> {{ emploi?.libelleClasse }} <span></span></a>
+                      </h2>
+                    </td>
+                    <td>{{ emploi?.libelleSemestre }}</td>
+                    <td>{{ emploi.semaine }}</td>
+
+                    <td class="text-right">
+                      <div class="table-action">
+                        <a
+                          href="javascript:void(0);"
+                          class="btn btn-sm bg-info-light"
+                        >
+                          <i class="far fa-eye"></i> voir
+                        </a>
+                        <a class="btn btn-sm bg-success-light">
+                          <i class="fas fa-check"></i> Accept
+                        </a>
+                        <a
+                          href="javascript:void(0);"
+                          class="btn btn-sm bg-danger-light"
+                        >
+                          <i class="fas fa-times"></i> Cancel
+                        </a>
+                      </div>
+                    </td>
+                  </tr>
+                </tbody>
+              </table> -->
+            </div>
+          </div>
+        </div>
+
+        <!-- /Today Appointment Tab -->
+      </div>
+    </div>
+  </div>
+</div>

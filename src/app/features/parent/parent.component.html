@@ -1,0 +1,213 @@
+<!-- <div class="breadcrumb-bar" *ngIf="parentSidebar">
+  <div class="container-fluid">
+    <div class="row align-items-center">
+      <div class="col-md-12 col-12">
+        <nav aria-label="breadcrumb" class="page-breadcrumb">
+          <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="home">Accueil</a></li>
+            <li class="breadcrumb-item active" aria-current="page">
+              {{ base | titlecase }}
+            </li>
+          </ol>
+        </nav>
+        <h2 class="breadcrumb-title">{{ page | titlecase }}</h2>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="content">
+  <div class="container-fluid">
+    <div class="row">
+      <div
+        *ngIf="parentSidebar"
+        class="col-md-5 col-lg-4 col-xl-3 theiaStickySidebar"
+      >
+        <div class="profile-sidebar">
+          <div class="widget-profile pro-widget-content">
+            <div class="profile-info-widget">
+              <a href="javascript:void(0)" class="booking-doc-img">
+                <img
+                  src="assets/img/doctors/doctor-thumb-02.jpg"
+                  alt="User Image"
+                />
+              </a>
+              <div class="profile-det-info">
+                <h3>
+                  {{ parentDetails?.prenom }}
+                  {{ parentDetails?.nom }}
+                </h3>
+
+                <div class="patient-details">
+                  <h5 class="mb-0">
+                    {{ parentDetails?.telephone }} {{ parentDetails?.email }}
+                  </h5>
+                </div>
+                <br />
+                Eleve :
+                <span>{{ eleve.prenom }} - {{ eleve.nom }}</span>
+              </div>
+            </div>
+          </div>
+          <div class="dashboard-widget">
+            <nav class="dashboard-menu">
+              <ul>
+                <li
+                  [class.active]="page === 'Dashboard' || page === 'dashboard'"
+                  (click)="navigate('Dashboard')"
+                >
+                  <a [routerLink]="'dashboard'">
+                    <i class="fas fa-columns"></i>
+                    <span>Tableau de bord </span>
+                  </a>
+                </li>
+                <li
+                  [class.active]="page === 'Absence' || page === 'absence'"
+                  (click)="navigate('Absence')"
+                >
+                  <a [routerLink]="'absence'">
+                    <i class="fas fa-calendar-check"></i>
+                    <span>Absences</span>
+                  </a>
+                </li>
+                <li
+                  [class.active]="
+                    page === 'Inscription' || page === 'inscription'
+                  "
+                  (click)="navigate('Inscription')"
+                >
+                  <a [routerLink]="'inscription'">
+                    <i class="fas fa-user-injured"></i>
+                    <span>Inscriptions</span>
+                  </a>
+                </li>
+                <li
+                  [class.active]="
+                    page === 'Emploi-Eleve' || page === 'emploi-eleve'
+                  "
+                  (click)="navigate('Emploi-Eleve')"
+                >
+                  <a [routerLink]="'emploi-eleve'">
+                    <i class="fas fa-hourglass-start"></i>
+                    <span>Emploi du temps</span>
+                  </a>
+                </li>
+                <li
+                  [class.active]="page === 'Note' || page === 'note'"
+                  (click)="navigate('Note')"
+                >
+                  <a [routerLink]="'note'">
+                    <i class="fas fa-clock"></i>
+                    <span>Notes</span>
+                  </a>
+                </li>
+                <li
+                  [class.active]="page === 'Facture' || page === 'facture'"
+                  (click)="navigate('Facture')"
+                >
+                  <a [routerLink]="'facture'">
+                    <i class="fas fa-file-invoice"></i>
+                    <span>Factures</span>
+                  </a>
+                </li>
+                <li
+                  [class.active]="page === 'Payement' || page === 'payement'"
+                  (click)="navigate('Payement')"
+                >
+                  <a [routerLink]="'payement'">
+                    <i class="fas fa-dollar-sign"></i>
+                    <span>Paiements</span>
+                  </a>
+                </li>
+                <li
+                  [class.active]="page === 'Exercice' || page === 'exercice'"
+                  (click)="navigate('Exercice')"
+                >
+                  <a [routerLink]="'exercice'">
+                    <i class="fas fa-home"></i>
+                    <span>Exercices</span>
+                  </a>
+                </li>
+                <li [class.active]="page === 'Bulletin'">
+                  <a (click)="navigate('Bulletin')" routerLink="bulletin"
+                    ><i class="fas fa-user-graduate"></i>
+                    <span> Bulletins</span></a
+                  >
+                </li>
+                <li [class.active]="page === 'Menu-cantine'">
+                  <a
+                    (click)="navigate('Menu-cantine')"
+                    routerLink="menu-cantine"
+                    ><i class="fas fa-coffee"></i>
+                    <span> Menu restaurant</span></a
+                  >
+                </li>
+
+                <li
+                  [class.active]="
+                    page === 'Evenement-scolaire' ||
+                    page === 'evenement-scolaire'
+                  "
+                  (click)="navigate('Evenement-scolaire')"
+                >
+                  <a [routerLink]="'evenement-scolaire'">
+                    <i class="fas fa-calendar-alt"></i>
+                    <span>Evénements scolaires</span>
+                  </a>
+                </li>
+
+                <li
+                  [class.active]="
+                    page === 'Information' || page === 'information'
+                  "
+                  (click)="navigate('Information')"
+                >
+                  <a [routerLink]="'information'">
+                    <i class="fas fa-comments"></i>
+                    <span>Réunions</span>
+                    <small class="unread-msg">23</small>
+                  </a>
+                </li>
+                <li
+                  [class.active]="page === 'Monprofil' || page === 'monprofil'"
+                  class="cursor:pointer"
+                  (click)="goToMyProfile()"
+                >
+                  <a class="cursor:pointer">
+                    <i class="fas fa-user-cog"></i>
+                    <span>Mon profile</span>
+                  </a>
+                </li>
+                <li
+                  [class.active]="page === 'Changer-mot-passe'"
+                  (click)="navigate('Changer-mot-passe')"
+                >
+                  <a [routerLink]="'changer-mot-passe'">
+                    <i class="fas fa-lock"></i>
+                    <span>Changer mot de passe</span>
+                  </a>
+                </li>
+                <li>
+                  <a (click)="logout()" style="cursor: pointer">
+                    <i class="fas fa-sign-out-alt"></i>
+                    <span>Déconnexion</span>
+                  </a>
+                </li>
+              </ul>
+            </nav>
+          </div>
+        </div>
+      </div>
+
+      <div *ngIf="parentSidebar" class="col-md-7 col-lg-8 col-xl-9">
+        <router-outlet></router-outlet>
+      </div>
+
+      <div *ngIf="!parentSidebar" class="col-md-12 col-lg-12 col-xl-12">
+        <router-outlet></router-outlet>
+      </div>
+    </div>
+  </div>
+</div>
+ -->
+
+<router-outlet></router-outlet>

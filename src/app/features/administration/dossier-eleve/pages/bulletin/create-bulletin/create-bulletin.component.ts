@@ -1,17 +1,19 @@
+import { CommonModule } from '@angular/common';
 import { Component, inject, OnInit } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
-import { DossierResourceService } from '../../../service/dossier-resource.service';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { ActivatedRoute, Router } from '@angular/router';
+import { ToastrService } from '@iqx-limited/ngx-toastr';
 import { ListeEleve } from '../../../../../../core/models/dossiereleve/liste-eleve';
-import { Semestre } from '../../../../../../core/models/referentiels/semestre';
 import { AnneeScolaire } from '../../../../../../core/models/referentiels/annee-scolaire';
 import { ListeClasse } from '../../../../../../core/models/referentiels/classe';
-import { ToastrService } from '@iqx-limited/ngx-toastr';
+import { Semestre } from '../../../../../../core/models/referentiels/semestre';
+import { ReferentielResourceService } from '../../../../referentiel/service/referentiel-resource.service';
+import { DossierResourceService } from '../../../service/dossier-resource.service';
 
 @Component({
   selector: 'app-create-bulletin',
   standalone: true,
-  imports: [FormsModule, ReactiveFormsModule],
+  imports: [CommonModule, FormsModule, ReactiveFormsModule],
   templateUrl: './create-bulletin.component.html',
   styleUrls: ['./create-bulletin.component.css']
 })
@@ -29,23 +31,20 @@ export class CreateBulletinComponent implements OnInit {
   title = "Générer les bulletins pour l'élève";
 
   private readonly dossierResource = inject(DossierResourceService);
-  //  private readonly referentielResource = inject(ReferentielResourceService);
+  private readonly referentielResource = inject(ReferentielResourceService);
   private readonly toastService = inject(ToastrService);
   private readonly activeRoute = inject(ActivatedRoute);
   private readonly router = inject(Router);
 
   ngOnInit(): void {
-    /*
     this.getClasseList();
     this.getSemestreList();
     this.getAnneeScolaireList();
-    */
   }
 
-  /*
   getClasseList() {
     this.referentielResource.getResourceList('classe')?.subscribe({
-      next: (data:any) => {
+      next: (data: any) => {
         this.classeList = data;
         console.log('classeList', this.classeList);
       }
@@ -54,7 +53,7 @@ export class CreateBulletinComponent implements OnInit {
 
   getSemestreList() {
     this.referentielResource.getResourceList('semestre')?.subscribe({
-      next: (data:any) => {
+      next: (data: any) => {
         this.semestreList = data;
         console.log('semestreList', this.semestreList);
       }
@@ -63,12 +62,12 @@ export class CreateBulletinComponent implements OnInit {
 
   getAnneeScolaireList() {
     this.referentielResource.getResourceList('anneescolaire')?.subscribe({
-      next: (data:any) => {
+      next: (data: any) => {
         this.anneeScolaireList = data;
         console.log('anneeScolaireList', this.anneeScolaireList);
       }
     });
-  }*/
+  }
 
   onClasseSelected() {
     console.log('selectedClasse', this.selectedClass);
@@ -76,7 +75,6 @@ export class CreateBulletinComponent implements OnInit {
       this.getEleveList(this.selectedClass);
     }
   }
-
 
   getEleveList(classId: number) {
     this.dossierResource.getResourceListByElement('inscription/classe', classId)?.subscribe({

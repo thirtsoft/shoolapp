@@ -1,7 +1,7 @@
 <div class="page-wrapper">
   <div class="content container-fluid">
     <div class="data">
-      <h1 class="titlePage">Détails {{ detailsEvaluation?.evaluationType }}</h1>
+      <h1 class="titlePage">Détails {{ detailsEvaluation.evaluationType }}</h1>
 
       <div class="block_button">
         <button class="custom-btn btn-1" (click)="goBack()">
@@ -9,7 +9,7 @@
           <b style="margin-left: 5px">Retour</b>
         </button>
         <button
-          *ngIf="['Remise', 'Envoyée'].includes(detailsEvaluation?.etat)"
+          *ngIf="['Remise', 'Envoyée'].includes(detailsEvaluation.etat!)"
           class="custom-btn btn-1"
           (click)="openConfirmationDialog('valider')"
         >
@@ -18,9 +18,9 @@
         </button>
 
         <button
-          *ngIf="['Validée'].includes(detailsEvaluation?.etat)"
+          *ngIf="['Validée'].includes(detailsEvaluation.etat!)"
           class="custom-btn btn-1"
-          (click)="imprimerUneEvaluation(detailsEvaluation?.id)"
+          (click)="imprimerUneEvaluation(detailsEvaluation.id)"
         >
           <i class="fa fa-print"></i>
           <b style="margin-left: 5px">Imprimer</b>
@@ -30,106 +30,88 @@
       <div class="profile-container">
         <div class="profile-card">
           <div class="card-header">
-            <img
-              src="../../../assets/img/chapitre.png"
-              alt=""
-              class="img-section"
-            />
+            <img src="../../../assets/img/chapitre.png" alt="" class="img-section" />
 
             <h1 style="color: #000000">Details évaluation</h1>
           </div>
           <div class="info-row">
             <span class="label"> Titre</span>
-            <span class="value">{{ detailsEvaluation?.titre }}</span>
+            <span class="value">{{ detailsEvaluation.titre }}</span>
           </div>
           <div class="info-row">
             <span class="label">Date évaluation </span>
-            <span class="value">{{ detailsEvaluation?.dateEvaluation }}</span>
+            <span class="value">{{ detailsEvaluation.dateEvaluation }}</span>
           </div>
           <div class="info-row">
             <span class="label">Heure début </span>
-            <span class="value">{{ detailsEvaluation?.heureDebut }}</span>
+            <span class="value">{{ detailsEvaluation.heureDebut }}</span>
           </div>
           <div class="info-row">
             <span class="label">Heure fin </span>
-            <span class="value">{{ detailsEvaluation?.heureFin }}</span>
+            <span class="value">{{ detailsEvaluation.heureFin }}</span>
           </div>
           <div
             class="info-row"
-            *ngIf="
-              ['Remise', 'Envoyée', 'Validée'].includes(detailsEvaluation?.etat)
-            "
+            *ngIf="['Remise', 'Envoyée', 'Validée'].includes(detailsEvaluation.etat!)"
           >
             <span class="label">Date remise </span>
-            <span class="value">{{ detailsEvaluation?.dateRemise }}</span>
+            <span class="value">{{ detailsEvaluation.dateRemise }}</span>
           </div>
 
-          <div
-            class="info-row"
-            *ngIf="['Envoyée', 'Validée'].includes(detailsEvaluation?.etat)"
-          >
+          <div class="info-row" *ngIf="['Envoyée', 'Validée'].includes(detailsEvaluation.etat!)">
             <span class="label">Date envoie </span>
-            <span class="value">{{ detailsEvaluation?.dateEnvoi }}</span>
+            <span class="value">{{ detailsEvaluation.dateEnvoi }}</span>
           </div>
 
-          <div
-            class="info-row"
-            *ngIf="['Validée'].includes(detailsEvaluation?.etat)"
-          >
+          <div class="info-row" *ngIf="['Validée'].includes(detailsEvaluation.etat!)">
             <span class="label">Date validation </span>
-            <span class="value">{{ detailsEvaluation?.dateValidation }}</span>
+            <span class="value">{{ detailsEvaluation.dateValidation }}</span>
           </div>
           <div class="info-row">
             <span class="label">Etat </span>
-            <span class="value">{{ detailsEvaluation?.etat }} </span>
+            <span class="value">{{ detailsEvaluation.etat }} </span>
           </div>
 
           <div class="info-row">
             <span class="label">Type </span>
-            <span class="value">{{ detailsEvaluation?.evaluationType }}</span>
+            <span class="value">{{ detailsEvaluation.evaluationType }}</span>
           </div>
 
           <div class="info-row">
             <span class="label">Mode évaluation </span>
-            <span class="value">{{ detailsEvaluation?.evaluationMode }}</span>
+            <span class="value">{{ detailsEvaluation.evaluationMode }}</span>
           </div>
           <div class="info-row">
             <span class="label">Description </span>
-            <span class="value">{{ detailsEvaluation?.description }}</span>
+            <span class="value">{{ detailsEvaluation.description }}</span>
           </div>
         </div>
 
         <div class="profile-card">
           <div class="card-header">
-            <img
-              src="../../../assets/img/chapitre.png"
-              alt=""
-              class="img-section"
-            />
+            <img src="../../../assets/img/chapitre.png" alt="" class="img-section" />
 
             <h1 style="color: #000000">Autres information</h1>
           </div>
           <div class="info-row">
             <span class="label"> Classe</span>
-            <span class="value">{{ detailsEvaluation?.libelleClasse }}</span>
+            <span class="value">{{ detailsEvaluation.libelleClasse }}</span>
           </div>
           <div class="info-row">
             <span class="label">Année scolaire </span>
-            <span class="value">{{ detailsEvaluation?.anneeScolaire }}</span>
+            <span class="value">{{ detailsEvaluation.anneeScolaire }}</span>
           </div>
           <div class="info-row">
             <span class="label">Matière </span>
-            <span class="value">{{ detailsEvaluation?.matiere }}</span>
+            <span class="value">{{ detailsEvaluation.matiere }}</span>
           </div>
           <div class="info-row">
             <span class="label">Semestre </span>
-            <span class="value">{{ detailsEvaluation?.semestre }} </span>
+            <span class="value">{{ detailsEvaluation.semestre }} </span>
           </div>
           <div class="info-row">
             <span class="label">Enseignant </span>
-            <span class="value"
-              >{{ detailsEvaluation?.nomCompletEnseignant }}
-            </span>
+            <span class="value">{{ detailsEvaluation.nomCompletEnseignant }} </span>
           </div>
         </div>
       </div>
@@ -137,11 +119,7 @@
       <div class="profile-container">
         <div class="profile-card">
           <div class="card-header">
-            <img
-              src="../../../assets/img/paiement.png"
-              alt=""
-              class="img-section"
-            />
+            <img src="../../../assets/img/paiement.png" alt="" class="img-section" />
             <h1 style="color: #000000">Notes élèves</h1>
           </div>
 
@@ -155,9 +133,7 @@
               </tr>
             </thead>
             <tbody>
-              <tr
-                *ngFor="let note of detailsEvaluation?.detailsNoteEleveDTOList"
-              >
+              <tr *ngFor="let note of detailsEvaluation.detailsNoteEleveDTOList">
                 <td>
                   <span class="value">{{ note?.nomCompletEleve }}</span>
                 </td>

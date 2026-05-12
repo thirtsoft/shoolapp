@@ -18,4 +18,6 @@ export interface ListeEleve {
     nationalite?: string;
 
     adresse?: string;
+
+    eleve?:any;
 }

@@ -3,6 +3,8 @@ import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 
 @Component({
   selector: 'app-confirmation-dialog-modal',
+  standalone: true,
+  imports: [],
   templateUrl: './confirmation-dialog-modal.component.html',
   styleUrls: ['./confirmation-dialog-modal.component.css']
 })
@@ -15,7 +17,7 @@ export class ConfirmationDialogModalComponent implements OnInit {
 
   private readonly activeModal = inject(NgbActiveModal);
 
-  ngOnInit() {}
+  ngOnInit() { }
 
   public annuler() {
     this.activeModal.close(false);

@@ -1,133 +1,161 @@
 <div class="page-wrapper">
-    <div class="content container-fluid">
-        <div class="row">
-            <div class="col-sm-12">
-             
-                <div class="card">
-                    <div class="card-body">
-                        <div class="doctor-widget">
-                            <div class="doc-info-left">
-                                <div class="doctor-img">
-                                    <img *ngIf="eleveDetails?.sexe==='Féminin'" src="assets/img/doctors/patiente.jpg"
-                                        class="img-fluid" alt="User Image">
-                                    <img *ngIf="eleveDetails?.sexe === 'Masculin'" src="assets/img/doctors/patient.jpg"
-                                        class="img-fluid" alt="User Image">
-                                </div>
-                                <div class="doc-info-cont">
-                                    <h4 class="doc-name" *ngIf="!eleveDetails">Dr. {{eleveDetails?.sexe}} Elder</h4>
-                                    <p class="doc-speciality" *ngIf="eleveDetails">MAtricule: {{eleveDetails?.matricule}}</p>
-                                    <h4 class="doc-name" *ngIf="eleveDetails">Nom:  {{eleveDetails?.prenom}} {{eleveDetails?.nom}}</h4>
-                                    <p class="doc-speciality" *ngIf="!eleveDetails">Service médecine</p>
-                                    <p class="doc-speciality" *ngIf="eleveDetails">Lieu naissance: {{eleveDetails?.lieuNaissance}}</p>
-                                    <p class="doc-speciality" *ngIf="eleveDetails">Nationalité: {{eleveDetails?.nationalite}}</p>
-                                  
-                                    <p class="doc-speciality" *ngIf="eleveDetails">Date naissance: {{eleveDetails?.dateNaissance | date: 'dd-MM-YYYY'}}</p>
-                                    <p class="doc-speciality" *ngIf="eleveDetails"> <i
-                                        class="fas fa-map-marker-alt"></i>&nbsp;&nbsp; {{eleveDetails?.address}}</p>
-                                  
-                                    <div class="clinic-details">
-                                        <p class="doc-location" *ngIf="eleveDetails?.allergies">Allergies: 
-                                                {{eleveDetails?.allergies}}  <a
-                                                href="javascript:void(0);"></a></p>
-                                     
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="doc-info-right" *ngIf="eleveDetails?.medecinTraitantDTO">
-                                <h3>Medecin traitant</h3>
-                                <div class="clini-infos">
-                                    <ul>
-                                        <li> Nom : {{eleveDetails?.medecinTraitantDTO?.prenom}} - {{eleveDetails?.medecinTraitantDTO?.nom}}</li>
-                                        <li>Téléphone:  {{eleveDetails?.medecinTraitantDTO?.telephone}}</li>
-                                        <li>Email : {{eleveDetails?.medecinTraitantDTO?.email}}</li>
-                                       
-                                    </ul>
-                                </div>
-                                <div class="doctor-action">
-                                    <a (click)="addFav()" id="fav-btn" class="btn btn-white fav-btn">
-                                        <i class="far fa-bookmark"></i>
-                                    </a>
-                                    <a [routerLink]="'/doctor/message'" class="btn btn-white msg-btn">
-                                        <i class="far fa-comment-alt"></i>
-                                    </a>
-                                    <a [routerLink]="'/voice-call'" class="btn btn-white call-btn" data-toggle="modal"
-                                        data-target="#voice_call">
-                                        <i class="fas fa-phone"></i>
-                                    </a>
-                                    <a [routerLink]="'/video-call'" class="btn btn-white call-btn" data-toggle="modal"
-                                        data-target="#video_call">
-                                        <i class="fas fa-video"></i>
-                                    </a>
-                                </div>
-                                <div class="clinic-booking">
-                                    <a class="apt-btn" href="https://wa.me/{{eleveDetails?.medecinTraitantDTO?.telephone}}"
-                                       > <i class="fa fa-whatsapp" aria-hidden="true"></i> Contacter</a>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+  <div class="content container-fluid">
+    <div class="row">
+      <div class="col-sm-12">
+        <div class="card">
+          <div class="card-body">
+            <div class="doctor-widget">
+              <div class="doc-info-left">
+                <div class="doctor-img">
+                  <img
+                    *ngIf="eleveDetails?.sexe === 'Féminin'"
+                    src="assets/img/doctors/patiente.jpg"
+                    class="img-fluid"
+                    alt="User Image"
+                  />
+                  <img
+                    *ngIf="eleveDetails?.sexe === 'Masculin'"
+                    src="assets/img/doctors/patient.jpg"
+                    class="img-fluid"
+                    alt="User Image"
+                  />
                 </div>
-    
-                <div class="card">
-                    <div class="card-body pt-0">
+                <div class="doc-info-cont">
+                  <h4 class="doc-name" *ngIf="!eleveDetails">Dr. Elder</h4>
+                  <p class="doc-speciality" *ngIf="eleveDetails">
+                    MAtricule: {{ eleveDetails.matricule }}
+                  </p>
+                  <h4 class="doc-name" *ngIf="eleveDetails">
+                    Nom: {{ eleveDetails.prenom }} {{ eleveDetails.nom }}
+                  </h4>
+                  <p class="doc-speciality" *ngIf="!eleveDetails">Service médecine</p>
+                  <p class="doc-speciality" *ngIf="eleveDetails">
+                    Lieu naissance: {{ eleveDetails.lieuNaissance }}
+                  </p>
+                  <p class="doc-speciality" *ngIf="eleveDetails">
+                    Nationalité: {{ eleveDetails.nationalite }}
+                  </p>
 
-       
-                        <nav class="user-tabs mb-4">
-                            <ul class="nav nav-tabs nav-tabs-bottom nav-justified">
-                                <li class="nav-item">
-                                    <a class="nav-link active" href="#doc_overview" data-toggle="tab">Parents</a>
-                                </li>
-                                <li class="nav-item">
-                                    <a class="nav-link" href="#doc_locations" data-toggle="tab">Inscriptions</a>
-                                </li>
-                                <li class="nav-item">
-                                    <a class="nav-link" href="#doc_reviews" data-toggle="tab">Paiement</a>
-                                </li>
-                                <li class="nav-item">
-                                    <a class="nav-link" href="#doc_business_hours" data-toggle="tab">Bulletin</a>
-                                </li>
-                            </ul>
-                        </nav>
-             
-                        <div class="tab-content pt-0">
+                  <p class="doc-speciality" *ngIf="eleveDetails">
+                    Date naissance: {{ eleveDetails.dateNaissance | date: 'dd-MM-YYYY' }}
+                  </p>
+                  <p class="doc-speciality" *ngIf="eleveDetails">
+                    <i class="fas fa-map-marker-alt"></i>&nbsp;&nbsp; {{ eleveDetails.address }}
+                  </p>
 
-                       
-                            <div role="tabpanel" id="doc_overview" class="tab-pane fade show active">
-                                <div class="row">
-                                    <div class="col-md-12 col-lg-9">
+                  <div class="clinic-details">
+                    <p class="doc-location" *ngIf="eleveDetails?.allergies">
+                      Allergies: {{ eleveDetails?.allergies! }} <a href="javascript:void(0);"></a>
+                    </p>
+                  </div>
+                </div>
+              </div>
+              <div class="doc-info-right" *ngIf="eleveDetails?.medecinTraitantDTO">
+                <h3>Medecin traitant</h3>
+                <div class="clini-infos">
+                  <ul>
+                    <li>
+                      Nom : {{ eleveDetails?.medecinTraitantDTO?.prenom }} -
+                      {{ eleveDetails?.medecinTraitantDTO?.nom }}
+                    </li>
+                    <li>Téléphone: {{ eleveDetails?.medecinTraitantDTO?.telephone }}</li>
+                    <li>Email : {{ eleveDetails?.medecinTraitantDTO?.email }}</li>
+                  </ul>
+                </div>
+                <div class="doctor-action">
+                  <a (click)="addFav()" id="fav-btn" class="btn btn-white fav-btn">
+                    <i class="far fa-bookmark"></i>
+                  </a>
+                  <a [routerLink]="'/doctor/message'" class="btn btn-white msg-btn">
+                    <i class="far fa-comment-alt"></i>
+                  </a>
+                  <a
+                    [routerLink]="'/voice-call'"
+                    class="btn btn-white call-btn"
+                    data-toggle="modal"
+                    data-target="#voice_call"
+                  >
+                    <i class="fas fa-phone"></i>
+                  </a>
+                  <a
+                    [routerLink]="'/video-call'"
+                    class="btn btn-white call-btn"
+                    data-toggle="modal"
+                    data-target="#video_call"
+                  >
+                    <i class="fas fa-video"></i>
+                  </a>
+                </div>
+                <div class="clinic-booking">
+                  <a
+                    class="apt-btn"
+                    href="https://wa.me/{{ eleveDetails?.medecinTraitantDTO?.telephone }}"
+                  >
+                    <i class="fa fa-whatsapp" aria-hidden="true"></i> Contacter</a
+                  >
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
 
-                                      
-                                        <div class="widget about-widget">
-                                            <h4 class="widget-title">A Propos</h4>
-                                            <p>A propos des informations des parents de cet élève.</p>
-                                        </div>
-                                  
-                                        <div class="widget education-widget">
-                                            <h4 class="widget-title">Parents</h4>
-                                            <div class="experience-box">
-                                                <ul class="experience-list" *ngFor="let parent of eleveDetails?.utilisateurDTOS">
-                                                    <li>
-                                                        <div class="experience-user">
-                                                            <div class="before-circle"></div>
-                                                        </div>
-                                                        <div class="experience-content">
-                                                            <div class="timeline-content">
-                                                                <a href="#/" class="name">{{parent?.civility}}. {{parent?.prenom}} - {{parent?.nom}}
-                                                                    </a>
-                                                                <div>Adresse : {{parent?.address}}</div>
-                                                                <div>Téléphone : {{parent?.telephone}}</div>
-                                                                <div>Email : {{parent?.email}}</div>
-                                                                <div>Profession : {{parent?.profession}}</div>
-                                                                <div>Nom utilisateur : {{parent?.username}}</div>
-                                                               
-                                                            </div>
-                                                        </div>
-                                                    </li>
-                                                </ul>
-                                            </div>
-                                        </div>
-                                 
-                                    <!--   <div class="widget experience-widget">
+        <div class="card">
+          <div class="card-body pt-0">
+            <nav class="user-tabs mb-4">
+              <ul class="nav nav-tabs nav-tabs-bottom nav-justified">
+                <li class="nav-item">
+                  <a class="nav-link active" href="#doc_overview" data-toggle="tab">Parents</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="#doc_locations" data-toggle="tab">Inscriptions</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="#doc_reviews" data-toggle="tab">Paiement</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="#doc_business_hours" data-toggle="tab">Bulletin</a>
+                </li>
+              </ul>
+            </nav>
+
+            <div class="tab-content pt-0">
+              <div role="tabpanel" id="doc_overview" class="tab-pane fade show active">
+                <div class="row">
+                  <div class="col-md-12 col-lg-9">
+                    <div class="widget about-widget">
+                      <h4 class="widget-title">A Propos</h4>
+                      <p>A propos des informations des parents de cet élève.</p>
+                    </div>
+
+                    <div class="widget education-widget">
+                      <h4 class="widget-title">Parents</h4>
+                      <div class="experience-box">
+                        <ul
+                          class="experience-list"
+                          *ngFor="let parent of eleveDetails?.utilisateurDTOS"
+                        >
+                          <li>
+                            <div class="experience-user">
+                              <div class="before-circle"></div>
+                            </div>
+                            <div class="experience-content">
+                              <div class="timeline-content">
+                                <a href="#/" class="name"
+                                  >{{ parent?.civility }}. {{ parent?.prenom }} - {{ parent?.nom }}
+                                </a>
+                                <div>Adresse : {{ parent?.address }}</div>
+                                <div>Téléphone : {{ parent?.telephone }}</div>
+                                <div>Email : {{ parent?.email }}</div>
+                                <div>Profession : {{ parent?.profession }}</div>
+                                <div>Nom utilisateur : {{ parent?.username }}</div>
+                              </div>
+                            </div>
+                          </li>
+                        </ul>
+                      </div>
+                    </div>
+
+                    <!--   <div class="widget experience-widget">
                                             <h4 class="widget-title">Work & Experience</h4>
                                             <div class="experience-box">
                                                 <ul class="experience-list">
@@ -245,67 +273,58 @@
                                                 <li>Prosthodontics</li>
                                             </ul>
                                         </div> -->
-                                  
+                  </div>
+                </div>
+              </div>
 
-                                    </div>
-                                </div>
-                            </div>
-                    
-                            <div role="tabpanel" id="doc_locations" class="tab-pane fade">
+              <div role="tabpanel" id="doc_locations" class="tab-pane fade">
+                <div class="location-list" *ngIf="eleveDetails?.listeInscriptionDTOS">
+                  <div
+                    class="row"
+                    *ngFor="let ins of eleveDetails?.listeInscriptionDTOS; let i = index"
+                  >
+                    <div class="col-md-6">
+                      <div class="clinic-content">
+                        <h4 class="clinic-name">
+                          <a href="javascript:void(0)">Nom: {{ ins?.nomCompletEleve }} </a>
+                        </h4>
+                        <p class="doc-speciality">Code: {{ ins?.code }}</p>
+                        <div class="rating">Classe : {{ ins?.classe }}</div>
+                        <div class="rating">
+                          Année scolaire : {{ ins?.anneeScolareDebut }} - {{ ins?.anneeScolareFin }}
+                        </div>
+                        <div class="clinic-details mb-0">
+                          <ul class="clinic-gallery" lightbox-group>
+                            <li>
+                              <a class="btn btn-lg bg-primary-light" (click)="imprimerFiche(ins)">
+                                <i class="fe fe-print"></i> imprimer
+                              </a>
+                            </li>
+                          </ul>
+                        </div>
+                      </div>
+                    </div>
 
-                                <div class="location-list" *ngIf="eleveDetails?.listeInscriptionDTOS">
-                                    <div class="row" *ngFor="let ins of eleveDetails?.listeInscriptionDTOS; let i=index">
+                    <div class="col-md-4">
+                      <div class="clinic-timing">
+                        <div>
+                          <p class="timings-days">
+                            <span> Date inscription </span>
+                          </p>
+                          <p class="timings-times">
+                            <span> {{ ins?.dateInscription | date: 'dd-MM-YYYY' }}</span>
+                          </p>
+                        </div>
+                      </div>
+                    </div>
 
-                                 
-                                        <div class="col-md-6" >
-                                            <div class="clinic-content">
-                                                <h4 class="clinic-name"><a href="javascript:void(0)">Nom: {{ins?.nomCompletEleve}}
-                                                        </a></h4>
-                                                <p class="doc-speciality">Code: {{ins?.code}}
-                                                    </p>
-                                                <div class="rating">
-                                                    Classe : {{ins?.classe}}
-                                                </div>
-                                                <div class="rating">
-                                                    Année scolaire : {{ins?.anneeScolareDebut}} - {{ins?.anneeScolareFin}}
-                                                </div>
-                                                <div class="clinic-details mb-0">
-                                                    <ul class="clinic-gallery" lightbox-group>
-                                                        <li>
-                                                            <a class="btn btn-lg bg-primary-light"
-                                                            (click)="imprimerFiche(ins)">
-                                                            <i class="fe fe-print"></i> imprimer
-                                                        </a>
-                                                        </li>
-                                                    </ul>
-                                                </div>
-                                            </div>
-                                        </div>
-                            
-                                        <div class="col-md-4">
-                                            <div class="clinic-timing">
-                                                <div>
-                                                    <p class="timings-days">
-                                                        <span> Date inscription </span>
-                                                    </p>
-                                                    <p class="timings-times">
-                                                        <span> {{ins?.dateInscription | date: 'dd-MM-YYYY'}}</span>
-                                                        
-                                                    </p>
-                                                </div>
-                                            </div>
-                                        </div>
-                                     
+                    <div class="col-md-2">
+                      <div class="consult-price">Montant: {{ ins?.montantInscription }} FCFA</div>
+                    </div>
+                  </div>
+                </div>
 
-                                        <div class="col-md-2">
-                                            <div class="consult-price">
-                                             Montant:    {{ins?.montantInscription}} FCFA
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                   
-                               <!--  <div class="location-list">
+                <!--  <div class="location-list">
                                     <div class="row">
 
                                         
@@ -367,419 +386,194 @@
                                         </div>
                                     </div>
                                 </div> -->
-                        
+              </div>
 
-                            </div>
-
-                            <div role="tabpanel" id="doc_reviews" class="tab-pane fade">
-
-                                <div class="location-list" *ngIf="eleveDetails?.paiementDTOList">
-                                    <div class="row" *ngFor="let pay of eleveDetails?.paiementDTOList; let i=index">
-
-                                 
-                                        <div class="col-md-6" >
-                                            <div class="clinic-content">
-                                                <h4 class="clinic-name"><a href="javascript:void(0)">Nom: {{pay?.nomCompletEleve}}
-                                                        </a></h4>
-                                                <p class="doc-speciality">Code: {{pay?.code}}
-                                                    </p>
-                                                <div class="rating">
-                                                    Mois : {{pay?.mois}}
-                                                </div>
-                                                <div class="rating">
-                                                    Type paiement : {{displayList(pay.typePaiements, 'libelle')}}                                                 </div>
-                                                <div class="clinic-details mb-0">
-                                                    <ul class="clinic-gallery" lightbox-group>
-                                                        <li>
-                                                            <a class="btn btn-lg bg-primary-light"
-                                                            (click)="imprimerFiche(pay)">
-                                                            <i class="fe fe-print"></i> imprimer
-                                                        </a>
-                                                        </li>
-                                                    </ul>
-                                                </div>
-                                            </div>
-                                        </div>
-                            
-                                        <div class="col-md-4">
-                                            <div class="clinic-timing">
-                                                <div>
-                                                    <p class="timings-days">
-                                                        <span> Date paiement </span>
-                                                    </p>
-                                                    <p class="timings-times">
-                                                        <span> {{pay?.datePaiement | date: 'dd-MM-YYYY'}}</span>
-                                                        
-                                                    </p>
-                                                </div>
-                                            </div>
-                                        </div>
-                                     
-
-                                        <div class="col-md-2">
-                                            <div class="consult-price">
-                                             Montant:    {{pay?.montant}} FCFA
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                        
-
-                            </div>
-                         
-
-                           <!--  <div role="tabpanel" id="doc_reviews" class="tab-pane fade">
-
-                         
-                                <div class="widget review-listing">
-                                    <ul class="comments-list">
-
-                                        <li>
-                                            <div class="comment">
-                                                <img class="avatar avatar-sm rounded-circle" alt="User Image"
-                                                    src="assets/img/patients/patient.jpg">
-                                                <div class="comment-body">
-                                                    <div class="meta-data">
-                                                        <span class="comment-author">Richard Wilson</span>
-                                                        <span class="comment-date">Reviewed 2 Days ago</span>
-                                                        <div class="review-count rating">
-                                                            <i class="fas fa-star filled"></i>
-                                                            <i class="fas fa-star filled"></i>
-                                                            <i class="fas fa-star filled"></i>
-                                                            <i class="fas fa-star filled"></i>
-                                                            <i class="fas fa-star"></i>
-                                                        </div>
-                                                    </div>
-                                                    <p class="recommended"><i class="far fa-thumbs-up"></i> I recommend
-                                                        the doctor</p>
-                                                    <p class="comment-content">
-                                                        Lorem ipsum dolor sit amet, consectetur adipisicing elit,
-                                                        sed do eiusmod tempor incididunt ut labore et dolore magna
-                                                        aliqua.
-                                                        Ut enim ad minim veniam, quis nostrud exercitation.
-                                                        Curabitur non nulla sit amet nisl tempus
-                                                    </p>
-                                                    <div class="comment-reply">
-                                                        <a class="comment-btn" href="javascript:void(0)">
-                                                            <i class="fas fa-reply"></i> Reply
-                                                        </a>
-                                                        <p class="recommend-btn">
-                                                            <span>Recommend?</span>
-                                                            <a href="javascript:void(0)" class="like-btn">
-                                                                <i class="far fa-thumbs-up"></i> Yes
-                                                            </a>
-                                                            <a href="javascript:void(0)" class="dislike-btn">
-                                                                <i class="far fa-thumbs-down"></i> No
-                                                            </a>
-                                                        </p>
-                                                    </div>
-                                                </div>
-                                            </div>
-
-                                            <ul class="comments-reply">
-                                                <li>
-                                                    <div class="comment">
-                                                        <img class="avatar avatar-sm rounded-circle" alt="User Image"
-                                                            src="assets/img/patients/patient1.jpg">
-                                                        <div class="comment-body">
-                                                            <div class="meta-data">
-                                                                <span class="comment-author">Charlene Reed</span>
-                                                                <span class="comment-date">Reviewed 3 Days ago</span>
-                                                                <div class="review-count rating">
-                                                                    <i class="fas fa-star filled"></i>
-                                                                    <i class="fas fa-star filled"></i>
-                                                                    <i class="fas fa-star filled"></i>
-                                                                    <i class="fas fa-star filled"></i>
-                                                                    <i class="fas fa-star"></i>
-                                                                </div>
-                                                            </div>
-                                                            <p class="comment-content">
-                                                                Lorem ipsum dolor sit amet, consectetur adipisicing
-                                                                elit,
-                                                                sed do eiusmod tempor incididunt ut labore et dolore
-                                                                magna aliqua.
-                                                                Ut enim ad minim veniam.
-                                                                Curabitur non nulla sit amet nisl tempus
-                                                            </p>
-                                                            <div class="comment-reply">
-                                                                <a class="comment-btn" href="javascript:void(0)">
-                                                                    <i class="fas fa-reply"></i> Reply
-                                                                </a>
-                                                                <p class="recommend-btn">
-                                                                    <span>Recommend?</span>
-                                                                    <a href="javascript:void(0)" class="like-btn">
-                                                                        <i class="far fa-thumbs-up"></i> Yes
-                                                                    </a>
-                                                                    <a href="javascript:void(0)" class="dislike-btn">
-                                                                        <i class="far fa-thumbs-down"></i> No
-                                                                    </a>
-                                                                </p>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </li>
-                                            </ul>
-                                        
-
-                                        </li>
-                           
-                                        <li>
-                                            <div class="comment">
-                                                <img class="avatar avatar-sm rounded-circle" alt="User Image"
-                                                    src="assets/img/patients/patient2.jpg">
-                                                <div class="comment-body">
-                                                    <div class="meta-data">
-                                                        <span class="comment-author">Travis Trimble</span>
-                                                        <span class="comment-date">Reviewed 4 Days ago</span>
-                                                        <div class="review-count rating">
-                                                            <i class="fas fa-star filled"></i>
-                                                            <i class="fas fa-star filled"></i>
-                                                            <i class="fas fa-star filled"></i>
-                                                            <i class="fas fa-star filled"></i>
-                                                            <i class="fas fa-star"></i>
-                                                        </div>
-                                                    </div>
-                                                    <p class="comment-content">
-                                                        Lorem ipsum dolor sit amet, consectetur adipisicing elit,
-                                                        sed do eiusmod tempor incididunt ut labore et dolore magna
-                                                        aliqua.
-                                                        Ut enim ad minim veniam, quis nostrud exercitation.
-                                                        Curabitur non nulla sit amet nisl tempus
-                                                    </p>
-                                                    <div class="comment-reply">
-                                                        <a class="comment-btn" href="javascript:void(0)">
-                                                            <i class="fas fa-reply"></i> Reply
-                                                        </a>
-                                                        <p class="recommend-btn">
-                                                            <span>Recommend?</span>
-                                                            <a href="javascript:void(0)" class="like-btn">
-                                                                <i class="far fa-thumbs-up"></i> Yes
-                                                            </a>
-                                                            <a href="javascript:void(0)" class="dislike-btn">
-                                                                <i class="far fa-thumbs-down"></i> No
-                                                            </a>
-                                                        </p>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </li>
-                                   
-
-                                    </ul>
-
-                             
-                                    <div class="all-feedback text-center">
-                                        <a href="javascript:void(0)" class="btn btn-primary btn-sm">
-                                            Show all feedback <strong>(167)</strong>
-                                        </a>
-                                    </div>
-                            
-
-                                </div>
-               
-                                <div class="write-review">
-                                    <h4>Write a review for <strong>Dr. Darren Elder</strong></h4>
-
-                         
-                                    <form>
-                                        <div class="form-group">
-                                            <label>Review</label>
-                                            <div class="star-rating">
-                                                <input id="star-5" type="radio" name="rating" value="star-5">
-                                                <label for="star-5" title="5 stars">
-                                                    <i class="active fa fa-star"></i>
-                                                </label>
-                                                <input id="star-4" type="radio" name="rating" value="star-4">
-                                                <label for="star-4" title="4 stars">
-                                                    <i class="active fa fa-star"></i>
-                                                </label>
-                                                <input id="star-3" type="radio" name="rating" value="star-3">
-                                                <label for="star-3" title="3 stars">
-                                                    <i class="active fa fa-star"></i>
-                                                </label>
-                                                <input id="star-2" type="radio" name="rating" value="star-2">
-                                                <label for="star-2" title="2 stars">
-                                                    <i class="active fa fa-star"></i>
-                                                </label>
-                                                <input id="star-1" type="radio" name="rating" value="star-1">
-                                                <label for="star-1" title="1 star">
-                                                    <i class="active fa fa-star"></i>
-                                                </label>
-                                            </div>
-                                        </div>
-                                        <div class="form-group">
-                                            <label>Title of your review</label>
-                                            <input class="form-control" type="text"
-                                                placeholder="If you could say it in one sentence, what would you say?">
-                                        </div>
-                                        <div class="form-group">
-                                            <label>Your review</label>
-                                            <textarea id="review_desc" maxlength="100" class="form-control"></textarea>
-
-                                            <div class="d-flex justify-content-between mt-3"><small
-                                                    class="text-muted"><span id="chars">100</span> characters
-                                                    remaining</small></div>
-                                        </div>
-                                        <hr>
-                                        <div class="form-group">
-                                            <div class="terms-accept">
-                                                <div class="custom-checkbox">
-                                                    <input type="checkbox" id="terms_accept">
-                                                    <label for="terms_accept">&nbsp;I have read and accept <a
-                                                            href="javascript:void(0)">Terms &amp; Conditions</a></label>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="submit-section">
-                                            <button type="submit" class="btn btn-primary submit-btn">Add Review</button>
-                                        </div>
-                                    </form>
-                                 
-
-                                </div>
-                                
-
-                            </div> -->
-                      
-                            <div role="tabpanel" id="doc_business_hours" class="tab-pane fade">
-                                <div class="row">
-                                    <div class="col-md-6 offset-md-3">
-
-                                  
-                                        <div class="widget business-widget">
-                                            <div class="widget-content">
-                                                <div class="listing-hours">
-                                                    <div class="listing-day current">
-                                                        <div class="day">Today <span>5 Nov 2019</span></div>
-                                                        <div class="time-items">
-                                                            <span class="open-status"><span
-                                                                    class="badge bg-success-light">Open
-                                                                    Now</span></span>
-                                                            <span class="time">07:00 AM - 09:00 PM</span>
-                                                        </div>
-                                                    </div>
-                                                    <div class="listing-day">
-                                                        <div class="day">Monday</div>
-                                                        <div class="time-items">
-                                                            <span class="time">07:00 AM - 09:00 PM</span>
-                                                        </div>
-                                                    </div>
-                                                    <div class="listing-day">
-                                                        <div class="day">Tuesday</div>
-                                                        <div class="time-items">
-                                                            <span class="time">07:00 AM - 09:00 PM</span>
-                                                        </div>
-                                                    </div>
-                                                    <div class="listing-day">
-                                                        <div class="day">Wednesday</div>
-                                                        <div class="time-items">
-                                                            <span class="time">07:00 AM - 09:00 PM</span>
-                                                        </div>
-                                                    </div>
-                                                    <div class="listing-day">
-                                                        <div class="day">Thursday</div>
-                                                        <div class="time-items">
-                                                            <span class="time">07:00 AM - 09:00 PM</span>
-                                                        </div>
-                                                    </div>
-                                                    <div class="listing-day">
-                                                        <div class="day">Friday</div>
-                                                        <div class="time-items">
-                                                            <span class="time">07:00 AM - 09:00 PM</span>
-                                                        </div>
-                                                    </div>
-                                                    <div class="listing-day">
-                                                        <div class="day">Saturday</div>
-                                                        <div class="time-items">
-                                                            <span class="time">07:00 AM - 09:00 PM</span>
-                                                        </div>
-                                                    </div>
-                                                    <div class="listing-day closed">
-                                                        <div class="day">Sunday</div>
-                                                        <div class="time-items">
-                                                            <span class="time"><span
-                                                                    class="badge bg-danger-light">Closed</span></span>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                   
-
-                                    </div>
-                                </div>
-                            </div>
-                       
-
+              <div role="tabpanel" id="doc_reviews" class="tab-pane fade">
+                <div class="location-list" *ngIf="eleveDetails?.paiementDTOList">
+                  <div class="row" *ngFor="let pay of eleveDetails?.paiementDTOList; let i = index">
+                    <div class="col-md-6">
+                      <div class="clinic-content">
+                        <h4 class="clinic-name">
+                          <a href="javascript:void(0)">Nom: {{ pay?.nomCompletEleve }} </a>
+                        </h4>
+                        <p class="doc-speciality">Code: {{ pay?.code }}</p>
+                        <div class="rating">Mois : {{ pay?.mois }}</div>
+                        <div class="rating">
+                          Type paiement : {{ displayList(pay.typePaiements!, 'libelle') }}
                         </div>
-                    </div>
-                </div>
-        
-            </div>
-        </div>
-
-
-        <div class="modal fade call-modal" id="voice_call">
-            <div class="modal-dialog modal-dialog-centered" role="document">
-                <div class="modal-content">
-                    <div class="modal-body">
-
-                      
-                        <div class="call-box incoming-box">
-                            <div class="call-wrapper">
-                                <div class="call-inner">
-                                    <div class="call-user">
-                                        <img alt="User Image" src="assets/img/patients/patient.jpg" class="call-avatar">
-                                        <h4>Richard Wilson</h4>
-                                        <span>Connecting...</span>
-                                    </div>
-                                    <div class="call-items">
-                                        <a href="javascript:void(0);" class="btn call-item call-end"
-                                            data-dismiss="modal" aria-label="Close"><i
-                                                class="material-icons">call_end</i></a>
-                                        <a [routerLink]="'/voice-call'" class="btn call-item call-start"><i
-                                                class="material-icons">call</i></a>
-                                    </div>
-                                </div>
-                            </div>
+                        <div class="clinic-details mb-0">
+                          <ul class="clinic-gallery" lightbox-group>
+                            <li>
+                              <a class="btn btn-lg bg-primary-light" (click)="imprimerFiche(pay)">
+                                <i class="fe fe-print"></i> imprimer
+                              </a>
+                            </li>
+                          </ul>
                         </div>
-                    
-
+                      </div>
                     </div>
-                </div>
-            </div>
-        </div>
 
-        <div class="modal fade call-modal" id="video_call">
-            <div class="modal-dialog modal-dialog-centered" role="document">
-                <div class="modal-content">
-                    <div class="modal-body">
-
-                      
-                        <div class="call-box incoming-box">
-                            <div class="call-wrapper">
-                                <div class="call-inner">
-                                    <div class="call-user">
-                                        <img class="call-avatar" src="assets/img/patients/patient.jpg" alt="User Image">
-                                        <h4>Richard Wilson</h4>
-                                        <span>Calling ...</span>
-                                    </div>
-                                    <div class="call-items">
-                                        <a href="javascript:void(0);" class="btn call-item call-end"
-                                            data-dismiss="modal" aria-label="Close"><i
-                                                class="material-icons">call_end</i></a>
-                                        <a [routerLink]="'/video-call'" class="btn call-item call-start"><i
-                                                class="material-icons">videocam</i></a>
-                                    </div>
-                                </div>
-                            </div>
+                    <div class="col-md-4">
+                      <div class="clinic-timing">
+                        <div>
+                          <p class="timings-days">
+                            <span> Date paiement </span>
+                          </p>
+                          <p class="timings-times">
+                            <span> {{ pay?.datePaiement | date: 'dd-MM-YYYY' }}</span>
+                          </p>
                         </div>
-                     
-
+                      </div>
                     </div>
+
+                    <div class="col-md-2">
+                      <div class="consult-price">Montant: {{ pay?.montant }} FCFA</div>
+                    </div>
+                  </div>
                 </div>
+              </div>
+
+              <div role="tabpanel" id="doc_business_hours" class="tab-pane fade">
+                <div class="row">
+                  <div class="col-md-6 offset-md-3">
+                    <div class="widget business-widget">
+                      <div class="widget-content">
+                        <div class="listing-hours">
+                          <div class="listing-day current">
+                            <div class="day">Today <span>5 Nov 2019</span></div>
+                            <div class="time-items">
+                              <span class="open-status"
+                                ><span class="badge bg-success-light">Open Now</span></span
+                              >
+                              <span class="time">07:00 AM - 09:00 PM</span>
+                            </div>
+                          </div>
+                          <div class="listing-day">
+                            <div class="day">Monday</div>
+                            <div class="time-items">
+                              <span class="time">07:00 AM - 09:00 PM</span>
+                            </div>
+                          </div>
+                          <div class="listing-day">
+                            <div class="day">Tuesday</div>
+                            <div class="time-items">
+                              <span class="time">07:00 AM - 09:00 PM</span>
+                            </div>
+                          </div>
+                          <div class="listing-day">
+                            <div class="day">Wednesday</div>
+                            <div class="time-items">
+                              <span class="time">07:00 AM - 09:00 PM</span>
+                            </div>
+                          </div>
+                          <div class="listing-day">
+                            <div class="day">Thursday</div>
+                            <div class="time-items">
+                              <span class="time">07:00 AM - 09:00 PM</span>
+                            </div>
+                          </div>
+                          <div class="listing-day">
+                            <div class="day">Friday</div>
+                            <div class="time-items">
+                              <span class="time">07:00 AM - 09:00 PM</span>
+                            </div>
+                          </div>
+                          <div class="listing-day">
+                            <div class="day">Saturday</div>
+                            <div class="time-items">
+                              <span class="time">07:00 AM - 09:00 PM</span>
+                            </div>
+                          </div>
+                          <div class="listing-day closed">
+                            <div class="day">Sunday</div>
+                            <div class="time-items">
+                              <span class="time"
+                                ><span class="badge bg-danger-light">Closed</span></span
+                              >
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
             </div>
+          </div>
         </div>
-      
+      </div>
     </div>
+
+    <div class="modal fade call-modal" id="voice_call">
+      <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+          <div class="modal-body">
+            <div class="call-box incoming-box">
+              <div class="call-wrapper">
+                <div class="call-inner">
+                  <div class="call-user">
+                    <img
+                      alt="User Image"
+                      src="assets/img/patients/patient.jpg"
+                      class="call-avatar"
+                    />
+                    <h4>Richard Wilson</h4>
+                    <span>Connecting...</span>
+                  </div>
+                  <div class="call-items">
+                    <a
+                      href="javascript:void(0);"
+                      class="btn call-item call-end"
+                      data-dismiss="modal"
+                      aria-label="Close"
+                      ><i class="material-icons">call_end</i></a
+                    >
+                    <a [routerLink]="'/voice-call'" class="btn call-item call-start"
+                      ><i class="material-icons">call</i></a
+                    >
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="modal fade call-modal" id="video_call">
+      <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+          <div class="modal-body">
+            <div class="call-box incoming-box">
+              <div class="call-wrapper">
+                <div class="call-inner">
+                  <div class="call-user">
+                    <img
+                      class="call-avatar"
+                      src="assets/img/patients/patient.jpg"
+                      alt="User Image"
+                    />
+                    <h4>Richard Wilson</h4>
+                    <span>Calling ...</span>
+                  </div>
+                  <div class="call-items">
+                    <a
+                      href="javascript:void(0);"
+                      class="btn call-item call-end"
+                      data-dismiss="modal"
+                      aria-label="Close"
+                      ><i class="material-icons">call_end</i></a
+                    >
+                    <a [routerLink]="'/video-call'" class="btn call-item call-start"
+                      ><i class="material-icons">videocam</i></a
+                    >
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
 </div>

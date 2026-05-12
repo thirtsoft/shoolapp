@@ -36,4 +36,7 @@ export interface Paiement {
   datePaiement?: Date;
 
   createdBy?: number;
+
+  nomCompletEleve?: string;
+  
 }

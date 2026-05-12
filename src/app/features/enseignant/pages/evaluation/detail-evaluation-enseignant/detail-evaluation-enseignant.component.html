@@ -1,0 +1,159 @@
+<div class="page-wrapper">
+  <div class="content container-fluid">
+    <div class="data">
+      <h1 class="titlePage">Détails {{ title }}</h1>
+
+      <div class="block_button">
+        <button class="custom-btn btn-1" routerLink="/enseignant/evaluations">
+          <i class="fa fa-arrow-left"></i>
+          <b style="margin-left: 5px">Retour</b>
+        </button>
+
+        <button
+          *ngIf="detailsEvaluation.etat === 'Remise'"
+          class="custom-btn btn-1"
+          (click)="openConfirmationDialog('envoyer')"
+        >
+          <i class="fa fa-paper-plane"></i>
+          <b style="margin-left: 5px">Envoyer</b>
+        </button>
+
+        <button
+          *ngIf="detailsEvaluation.etat === 'Envoyée'"
+          class="custom-btn btn-1"
+          (click)="openConfirmationDialog('valider')"
+        >
+          <i class="fa fa-paper-plane"></i>
+          <b style="margin-left: 5px">Valider</b>
+        </button>
+      </div>
+
+      <div class="profile-container">
+        <div class="profile-card">
+          <div class="card-header">
+            <img src="../../../assets/img/chapitre.png" alt="" class="img-section" />
+
+            <h1 style="color: #000000">Details Evaluation</h1>
+          </div>
+          <div class="info-row">
+            <span class="label"> Titre</span>
+            <span class="value">{{ detailsEvaluation.titre }}</span>
+          </div>
+          <div class="info-row">
+            <span class="label">Date évaluation </span>
+            <span class="value">{{ detailsEvaluation.dateEvaluation }}</span>
+          </div>
+          <div class="info-row">
+            <span class="label">Heure début </span>
+            <span class="value">{{ detailsEvaluation.heureDebut }}</span>
+          </div>
+          <div class="info-row">
+            <span class="label">Heure fin </span>
+            <span class="value">{{ detailsEvaluation.heureFin }}</span>
+          </div>
+          <div
+            class="info-row"
+            *ngIf="['Remise', 'Envoyée', 'Validée'].includes(detailsEvaluation.etat!)"
+          >
+            <span class="label">Date remise </span>
+            <span class="value">{{ detailsEvaluation.dateRemise }}</span>
+          </div>
+
+          <div class="info-row" *ngIf="['Envoyée', 'Validée'].includes(detailsEvaluation.etat!)">
+            <span class="label">Date envoie </span>
+            <span class="value">{{ detailsEvaluation.dateEnvoi }}</span>
+          </div>
+
+          <div class="info-row" *ngIf="['Validée'].includes(detailsEvaluation.etat!)">
+            <span class="label">Date validation </span>
+            <span class="value">{{ detailsEvaluation.dateValidation }}</span>
+          </div>
+          <div class="info-row">
+            <span class="label">Etat </span>
+            <span class="value">{{ detailsEvaluation.etat }} </span>
+          </div>
+
+          <div class="info-row">
+            <span class="label">Type </span>
+            <span class="value">{{ detailsEvaluation.evaluationType }}</span>
+          </div>
+
+          <div class="info-row">
+            <span class="label">Mode évaluation </span>
+            <span class="value">{{ detailsEvaluation.evaluationMode }}</span>
+          </div>
+
+          <div class="info-row">
+            <span class="label">Description </span>
+            <span class="value">{{ detailsEvaluation.description }}</span>
+          </div>
+        </div>
+
+        <div class="profile-card">
+          <div class="card-header">
+            <img src="../../../assets/img/chapitre.png" alt="" class="img-section" />
+
+            <h1 style="color: #000000">Autres information</h1>
+          </div>
+          <div class="info-row">
+            <span class="label"> Classe</span>
+            <span class="value">{{ detailsEvaluation.libelleClasse }}</span>
+          </div>
+          <div class="info-row">
+            <span class="label">Année scolaire </span>
+            <span class="value">{{ detailsEvaluation.anneeScolaire }}</span>
+          </div>
+          <div class="info-row">
+            <span class="label">Matière </span>
+            <span class="value">{{ detailsEvaluation.matiere }}</span>
+          </div>
+          <div class="info-row">
+            <span class="label">Semestre </span>
+            <span class="value">{{ detailsEvaluation.semestre }} </span>
+          </div>
+          <div class="info-row">
+            <span class="label">Enseignant </span>
+            <span class="value">{{ detailsEvaluation.nomCompletEnseignant }} </span>
+          </div>
+        </div>
+      </div>
+
+      <div class="profile-container">
+        <div class="profile-card">
+          <div class="card-header">
+            <img src="../../../assets/img/paiement.png" alt="" class="img-section" />
+            <h1 style="color: #000000">Notes élèves</h1>
+          </div>
+
+          <table class="table table-striped table-center">
+            <thead>
+              <tr>
+                <th style="min-width: 200px">Nom&Prénom</th>
+                <th style="min-width: 80px">Type note</th>
+                <th style="min-width: 80px">Note</th>
+                <th style="min-width: 100px">Appréciation</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let note of detailsEvaluation.detailsNoteEleveDTOList">
+                <td></td>
+                <td>
+                  <span class="value">{{ note?.type }}</span>
+                </td>
+                <td>
+                  <span class="value">{{ note?.note }}</span>
+                </td>
+                <td>
+                  <span class="value">{{ note?.appreciation }}</span>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="centerModal"></div>
+      <div></div>
+    </div>
+  </div>
+</div>

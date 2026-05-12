@@ -11,11 +11,12 @@ import { DossierResourceService } from '../../../../administration/dossier-eleve
 import { ToastrService } from '@iqx-limited/ngx-toastr';
 import { UtilisateurService } from '../../../../administration/utilisateur/service/utilisateur.service';
 import { InscriptionEleveTypeService } from '../../../../../core/models/comptabilite/inscrire-eleve-service';
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-inscrire-eleve-service',
   standalone: true,
-  imports: [ReactiveFormsModule],
+  imports: [CommonModule, ReactiveFormsModule],
   templateUrl: './inscrire-eleve-service.component.html',
   styleUrls: ['./inscrire-eleve-service.component.css']
 })

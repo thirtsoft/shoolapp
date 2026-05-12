@@ -1,12 +1,13 @@
+import { CommonModule } from '@angular/common';
 import { Component, inject, OnInit } from '@angular/core';
+import { ReactiveFormsModule } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { PlanificationResourceService } from '../../../services/planification-resource.service';
-import { ReactiveFormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-details-emploi-du-temps-admin',
   standalone: true,
-  imports: [ReactiveFormsModule, RouterLink],
+  imports: [CommonModule, ReactiveFormsModule, RouterLink],
   templateUrl: './details-emploi-du-temps-admin.component.html',
   styleUrls: ['./details-emploi-du-temps-admin.component.css']
 })

@@ -3,10 +3,12 @@ import { DossierResourceService } from '../../../service/dossier-resource.servic
 import { ReactiveFormsModule } from '@angular/forms';
 import { GenericTableDossierComponent } from '../../../../../../core/generic/generic-table-dossier/generic-table-dossier.component';
 import { IFilterConfig } from '../../../../../../core/filtered-config/FiltreConfiguration';
+import { CommonService } from '../../../../../../core/services/common.service';
+import { ReferentielService } from '../../../../referentiel/service/referentiel.service';
+import { PlanificationResourceService } from '../../../../planification/services/planification-resource.service';
 import { ListeClasse } from '../../../../../../core/models/referentiels/classe';
 import { Semestre } from '../../../../../../core/models/referentiels/semestre';
 import { ListeEnseignement } from '../../../../../../core/models/planification/liste-enseignement';
-import { CommonService } from '../../../../../../core/services/common.service';
 
 @Component({
   selector: 'app-list-evaluation',
@@ -50,8 +52,8 @@ export class ListEvaluationComponent implements OnInit {
   isSelected = false;
 
   private readonly dossierResource = inject(DossierResourceService);
-  //  private readonly referentielService = inject(ReferentielService);
-  //  private readonly planification = inject(PlanificationResourceService);
+  private readonly referentielService = inject(ReferentielService);
+  private readonly planification = inject(PlanificationResourceService);
   private readonly commonService = inject(CommonService);
 
 
@@ -62,9 +64,9 @@ export class ListEvaluationComponent implements OnInit {
   async chargerLesEvaluations() {
     try {
       await Promise.all([
-    //    this.getClassList(),
-    //    this.getEnseignementList(),
-    //    this.getSemestreList(),
+        this.getClassList(),
+        this.getEnseignementList(),
+        this.getSemestreList(),
         this.getEtatEvaluationList(),
         this.getMoisList(),
         this.getAnneesList()
@@ -77,15 +79,15 @@ export class ListEvaluationComponent implements OnInit {
     }
   }
 
-  /*
+
   getClassList(): Promise<ListeClasse[]> {
     return new Promise((resolve, reject) => {
       this.referentielService.getAllClasses().subscribe({
-        next: (data:any) => {
+        next: (data: any) => {
           this.classesList = data;
           resolve(data);
         },
-        error: (err:any) => reject(err)
+        error: (err: any) => reject(err)
       });
     });
   }
@@ -93,12 +95,12 @@ export class ListEvaluationComponent implements OnInit {
   getSemestreList(): Promise<Semestre[]> {
     return new Promise((resolve, reject) => {
       this.referentielService.getAllSemestres().subscribe({
-        next: (data:any) => {
+        next: (data: any) => {
           this.semestreList = data;
           console.log('semestre', this.semestreList);
           resolve(data);
         },
-        error: (err:any) => reject(err)
+        error: (err: any) => reject(err)
       });
     });
   }
@@ -106,26 +108,25 @@ export class ListEvaluationComponent implements OnInit {
   getEnseignementList(): Promise<ListeEnseignement[]> {
     return new Promise((resolve, reject) => {
       this.planification.getAllEnseignement().subscribe({
-        next: (data:any) => {
+        next: (data: any) => {
           this.enseignementList = data;
           console.log('Enseign', this.enseignementList);
           resolve(data);
         },
-        error: (err:any) => reject(err)
+        error: (err: any) => reject(err)
       });
     });
   }
-  */
 
   getEtatEvaluationList(): Promise<any[]> {
     return new Promise((resolve, reject) => {
       this.commonService.getEtatEvaluations().subscribe({
-        next: (data:any) => {
+        next: (data: any) => {
           this.etatEvaluationOptions = data;
           console.log('Etat facture', this.etatEvaluationOptions);
           resolve(data);
         },
-        error: (err:any) => reject(err)
+        error: (err: any) => reject(err)
       });
     });
   }

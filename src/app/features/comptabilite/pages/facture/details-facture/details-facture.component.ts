@@ -2,7 +2,7 @@ import { Component, inject, OnInit } from '@angular/core';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { ComptabiliteResourceService } from '../../../services/comptabilite-resource.service';
 
-import { DecimalPipe } from '@angular/common';
+import { CommonModule, DecimalPipe } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import * as pdfMake from 'pdfmake/build/pdfmake';
 import { DetailsFacture } from '../../../../../core/models/comptabilite/details-facture';
@@ -14,7 +14,7 @@ import { ReferentielService } from '../../../../administration/referentiel/servi
 @Component({
   selector: 'app-details-facture',
   standalone: true,
-  imports: [ReactiveFormsModule, FormsModule, RouterLink, DecimalPipe],
+  imports: [CommonModule, ReactiveFormsModule, FormsModule, RouterLink, DecimalPipe],
   templateUrl: './details-facture.component.html',
   styleUrls: ['./details-facture.component.css']
 })

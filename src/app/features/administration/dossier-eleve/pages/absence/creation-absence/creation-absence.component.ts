@@ -1,22 +1,25 @@
+import { CommonModule } from '@angular/common';
 import { Component, inject, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { DossierEleveService } from '../../../service/dossier-eleve.service';
-import { DossierResourceService } from '../../../service/dossier-resource.service';
-import { AnneeScolaire } from '../../../../../../core/models/referentiels/annee-scolaire';
-import { Semestre } from '../../../../../../core/models/referentiels/semestre';
-import { ListeEleve } from '../../../../../../core/models/dossiereleve/liste-eleve';
-import { Classe } from '../../../../../../core/models/referentiels/classe';
-import { Utilisateur } from '../../../../../../core/models/utilisateur/utilisateur';
 import { ToastrService } from '@iqx-limited/ngx-toastr';
-import { UtilisateurService } from '../../../../utilisateur/service/utilisateur.service';
-import { AbsenceEdit } from '../../../../../../core/models/dossiereleve/absence/absenceedit';
 import { TypeSignalement } from '../../../../../../core/enumeration/type-signalement';
+import { AbsenceEdit } from '../../../../../../core/models/dossiereleve/absence/absenceedit';
+import { ListeEleve } from '../../../../../../core/models/dossiereleve/liste-eleve';
+import { AnneeScolaire } from '../../../../../../core/models/referentiels/annee-scolaire';
+import { Classe } from '../../../../../../core/models/referentiels/classe';
+import { Semestre } from '../../../../../../core/models/referentiels/semestre';
+import { Utilisateur } from '../../../../../../core/models/utilisateur/utilisateur';
+import { LocalStorageService } from '../../../../../../core/services/local-storage.service';
+import { PlanificationResourceService } from '../../../../planification/services/planification-resource.service';
+import { ReferentielService } from '../../../../referentiel/service/referentiel.service';
+import { UtilisateurService } from '../../../../utilisateur/service/utilisateur.service';
+import { DossierResourceService } from '../../../service/dossier-resource.service';
 
 @Component({
   selector: 'app-creation-absence',
   standalone: true,
-  imports: [ReactiveFormsModule],
+  imports: [CommonModule, ReactiveFormsModule],
   templateUrl: './creation-absence.component.html',
   styleUrls: ['./creation-absence.component.css']
 })
@@ -42,27 +45,26 @@ export class CreationAbsenceComponent implements OnInit {
   title = "Ajouter une absence";
 
   private readonly dossierResource = inject(DossierResourceService);
-  private readonly eleveService = inject(DossierEleveService);
-  //  private readonly coursService = inject(PlanificationResourceService);
-  //  private readonly utilisateurService = inject(ReferentielService);
+  private readonly coursService = inject(PlanificationResourceService);
+  private readonly referentielService = inject(ReferentielService);
   private readonly utilisateurService = inject(UtilisateurService);
   private readonly router = inject(Router);
   private readonly toastService = inject(ToastrService);
   private readonly _formBuilder = inject(FormBuilder);
   private readonly activeRoute = inject(ActivatedRoute);
-  //  private readonly localStorage = inject(LocalStorageService);
+  private readonly localStorage = inject(LocalStorageService);
 
   ngOnInit(): void {
     this.absenceId = this.activeRoute.snapshot.params['id'];
-    //  this.userId = this.localStorage.getItem('id');
-    //  this.eleveId = localStorage.getItem('eleveId')!;
+    this.userId = this.localStorage.getItem('id');
+    this.eleveId = this.localStorage.getItem('eleveId')!;
     this.getConnectedUserInfos();
-    //    this.getClasseList();
-    //    this.getAnneeSclaireList();
-    //    this.getSemestresList();
+    this.getClasseList();
+    this.getAnneeSclaireList();
+    this.getSemestresList();
     this.initializeForm(null);
     if (this.absenceId != null && this.absenceId != undefined) {
-      //      this.getAbsenceById(this.absenceId);
+      this.getAbsenceById(this.absenceId);
       this.title = 'Modifier la déclaration absence';
     }
   }
@@ -71,29 +73,43 @@ export class CreationAbsenceComponent implements OnInit {
     this.utilisateurService.getUtilisateur(this.userId!).subscribe({
       next: (data: any) => {
         this.utilisateur = data;
-        //      this.ecoleId = this.utilisateur.ecoleId;
       },
       error: (error: any) => { console.log(error) },
     });
   }
 
-
-  /*
   getClasseList() {
     this.referentielService.getAllClasses().subscribe(
       (data: any[]) => {
         this.classeList = data;
       },
-      (error:any) => (this.errorMessage = <any>error)
+      (error: any) => (this.errorMessage = <any>error)
     );
-  }*/
+  }
+
+  getSemestresList() {
+    this.referentielService.getAllSemestres().subscribe(
+      (data: any[]) => {
+        this.semestreList = data;
+      },
+      (error: any) => (this.errorMessage = <any>error)
+    );
+  }
+
+  getAnneeSclaireList() {
+    this.referentielService.getAllAnneeScolaires().subscribe(
+      (data: any[]) => {
+        this.anneeScolaireList = data;
+      },
+      (error: any) => (this.errorMessage = <any>error)
+    );
+  }
 
   onClasseSelected() {
     const classId = this.absenceFormGroup.get('classId')?.value;
     if (classId) {
       this.getEleveList(classId);
     }
-
   }
 
   getEleveList(classId: number) {
@@ -103,26 +119,6 @@ export class CreationAbsenceComponent implements OnInit {
       }
     });
   }
-
-  /*
-  getSemestresList() {
-    this.referentielService.getAllSemestres().subscribe(
-      (data: any[]) => {
-        this.semestreList = data;
-      },
-      (error:any) => (this.errorMessage = <any>error)
-    );
-  }
-
-  getAnneeSclaireList() {
-    this.referentielService.getAllAnneeScolaires().subscribe(
-      (data: any[]) => {
-        this.anneeScolaireList = data;
-      },
-      (error:any) => (this.errorMessage = <any>error)
-    );
-  }
-  */
 
   initializeForm(absence: AbsenceEdit | null) {
     this.absenceFormGroup = this._formBuilder.group({
@@ -137,10 +133,9 @@ export class CreationAbsenceComponent implements OnInit {
     });
   }
 
-  /*
   getAbsenceById(absenceId: number) {
     this.coursService.getSingleResource('absence', absenceId).subscribe({
-      next: (data:any) => {
+      next: (data: any) => {
         this.absence = data;
         this.initializeForm(this.absence);
 
@@ -168,23 +163,22 @@ export class CreationAbsenceComponent implements OnInit {
         error: (data) => {
           console.log('error', 'Erreur lors de la création : ' + data.error);
           this.toastService.warning('error', 'Erreur lors de la création : ' + data.error);
-        }      });
+        }
+      });
     } else {
       this.coursService.updateResource('absence', this.absenceId, payload).subscribe({
-        next: (data:any) => {
+        next: (data: any) => {
           this.toastService.success('success', 'Absence modifiée avec succès.');
           this.goBack();
         },
-        error: (data:any) => {
+        error: (data: any) => {
           console.log('error', 'Erreur lors de la création : ' + data.error);
           this.toastService.warning('error', 'Erreur lors de la modification : ' + data.error);
         }
       });
     }
 
-  }*/
-
-  ajouterEditAbsence() { }
+  }
 
   goBack() {
     this.router.navigate(['/admin/dossier-eleve/absence']);

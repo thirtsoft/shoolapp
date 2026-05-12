@@ -1,15 +1,17 @@
-import { DatePipe } from '@angular/common';
+import { CommonModule, DatePipe } from '@angular/common';
 import { Component, inject, OnInit } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { DetailsEleve } from '../../../../../core/models/dossiereleve/details-eleve';
 import { Inscription } from '../../../../../core/models/dossiereleve/request/inscription';
+import { TypePaiement } from '../../../../../core/models/referentiels/type-paiement';
+import { LocalStorageService } from '../../../../../core/services/local-storage.service';
 import { DossierEleveService } from '../../service/dossier-eleve.service';
 
 @Component({
   selector: 'app-details-eleve',
   standalone: true,
-  imports: [DatePipe, RouterLink],
+  imports: [CommonModule, DatePipe, RouterLink],
   templateUrl: './details-eleve.component.html',
   styleUrls: ['./details-eleve.component.css']
 })
@@ -22,7 +24,7 @@ export class DetailsEleveComponent implements OnInit {
   title = "Ajouter un eleve";
 
   private readonly dossierEleveService = inject(DossierEleveService);
-  //  private readonly localStorage = inject(LocalStorageService);
+  private readonly localStorage = inject(LocalStorageService);
   private readonly _formBuilder = inject(FormBuilder);
   private readonly activatedRouter = inject(ActivatedRoute);
   private readonly router = inject(Router);
@@ -74,8 +76,8 @@ export class DetailsEleveComponent implements OnInit {
 
   addFav() { }
 
-  displayList(items: any[], prop: string) {
-    return items?.map(item => item[prop]).join(', ')
+  displayList(items: TypePaiement[], prop: string) {
+    return items?.map((item: any) => item[prop]).join(', ')
   }
 
 }

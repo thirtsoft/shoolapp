@@ -1,21 +1,24 @@
-import { Location } from '@angular/common';
+import { CommonModule, Location } from '@angular/common';
 import { Component, inject, OnInit } from '@angular/core';
 import { FormArray, FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
-import { Eleve, MedecinTraitant, Parent } from '../../../../../core/models/parent/parent';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
+import { ToastrService } from '@iqx-limited/ngx-toastr';
 import { EleveRequest } from '../../../../../core/models/dossiereleve/request/eleve-request';
 import { Inscription } from '../../../../../core/models/dossiereleve/request/inscription';
-import { Classe } from '../../../../../core/models/referentiels/classe';
+import { Eleve, MedecinTraitant, Parent } from '../../../../../core/models/parent/parent';
 import { AnneeScolaire } from '../../../../../core/models/referentiels/annee-scolaire';
-import { ActivatedRoute, Router, RouterLink } from '@angular/router';
+import { Classe } from '../../../../../core/models/referentiels/classe';
 import { DossierEleveService } from '../../service/dossier-eleve.service';
 import { DossierResourceService } from '../../service/dossier-resource.service';
-import { ToastrService } from '@iqx-limited/ngx-toastr';
+import { ReferentielService } from '../../../referentiel/service/referentiel.service';
+import { ReferentielResourceService } from '../../../referentiel/service/referentiel-resource.service';
+import { LocalStorageService } from '../../../../../core/services/local-storage.service';
 
 
 @Component({
   selector: 'app-inscrire-eleve',
   standalone: true,
-  imports: [ReactiveFormsModule, RouterLink, FormsModule],
+  imports: [CommonModule, ReactiveFormsModule, RouterLink, FormsModule],
   templateUrl: './inscrire-eleve.component.html',
   styleUrls: ['./inscrire-eleve.component.css']
 })
@@ -61,16 +64,13 @@ export class InscrireEleveComponent implements OnInit {
   private readonly router = inject(Router);
   private readonly dossierEleveService = inject(DossierEleveService);
   private readonly dossierResource = inject(DossierResourceService);
-
-  /*
   private readonly referentielService = inject(ReferentielService);
   private readonly referentielResource = inject(ReferentielResourceService);
   private readonly localStorage = inject(LocalStorageService);
-*/
-   private readonly _formBuilder = inject(FormBuilder);
+  private readonly _formBuilder = inject(FormBuilder);
   private readonly route = inject(ActivatedRoute);
   private readonly toastService = inject(ToastrService);
-    private readonly location = inject(Location);
+  private readonly location = inject(Location);
 
   parentFormGroup = this._formBuilder.group({
     nouveauParent: [true],
@@ -83,36 +83,35 @@ export class InscrireEleveComponent implements OnInit {
   preview = '';
 
   ngOnInit(): void {
-  //  this.userId = this.localStorage.getItem('id');
+    this.userId = this.localStorage.getItem('id');
     this.formateJS();
     this.initializeEleveForm(null);
     this.initializeMedecinTraitantForm(null);
     this.initializeInscriptionForm(null);
-  //  this.getClasses();
-  //  this.getAnneeScolaires();
-    this.parentFormGroup.get('nouveauParent')?.valueChanges.subscribe((value:any) => {
+    this.getClasses();
+    this.getAnneeScolaires();
+    this.parentFormGroup.get('nouveauParent')?.valueChanges.subscribe((value: any) => {
       console.log('Valeur sélectionnée:', value);
       this.newParent = value;
     });
   }
 
-  /*
   getClasses() {
     this.referentielService.getAllClasses().subscribe(
       (data: any[]) => {
         this.classes = data;
       },
-      (error:any) => (this.errorMessage = <any>error)
+      (error: any) => (this.errorMessage = <any>error)
     );
   }
 
   getAnneeScolaires() {
     this.referentielResource.getResourceList('anneescolaire').subscribe({
-      next: (data:any) => {
+      next: (data: any) => {
         this.anneeScolaires = data;
       }
     });
-  }*/
+  }
 
   initializeEleveForm(eleve: Eleve | null) {
     this.eleveFormGroup = this._formBuilder.group({
@@ -455,7 +454,7 @@ export class InscrireEleveComponent implements OnInit {
     const buttons = document.querySelectorAll("button");
     console.log(circles.length);
     this.currentStep = 1;
-    const updateSteps = (e:any) => {
+    const updateSteps = (e: any) => {
       this.currentStep = e.target.id === "next" ? ++this.currentStep : --this.currentStep;
       circles.forEach((circle, index) => {
         circle.classList[`${index < this.currentStep ? "add" : "remove"}`]("active");

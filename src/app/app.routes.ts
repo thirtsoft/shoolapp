@@ -34,11 +34,18 @@ export const routes: Routes = [
         .then(m => m.ADMIN_ROUTES)
   },
 
-    {
+  {
     path: 'comptabilite',
     loadChildren: () =>
       import('./features/comptabilite/comptabilite.routes')
         .then(m => m.COMPTA_ROUTES)
+  },
+
+  {
+    path: 'enseignant',
+    loadChildren: () =>
+      import('./features/enseignant/enseignant.routes')
+        .then(m => m.ENSEIGNANTS_ROUTES)
   },
 
   {

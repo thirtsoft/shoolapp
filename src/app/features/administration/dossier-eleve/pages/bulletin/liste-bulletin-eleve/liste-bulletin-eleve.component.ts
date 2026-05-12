@@ -2,6 +2,11 @@ import { Component, inject, OnInit } from '@angular/core';
 import { IFilterConfig } from '../../../../../../core/filtered-config/FiltreConfiguration';
 import { DossierResourceService } from '../../../service/dossier-resource.service';
 import { GenericTableDossierComponent } from '../../../../../../core/generic/generic-table-dossier/generic-table-dossier.component';
+import { ReferentielService } from '../../../../referentiel/service/referentiel.service';
+import { LocalStorageService } from '../../../../../../core/services/local-storage.service';
+import { ListeClasse } from '../../../../../../core/models/referentiels/classe';
+import { AnneeScolaire } from '../../../../../../core/models/referentiels/annee-scolaire';
+import { Semestre } from '../../../../../../core/models/referentiels/semestre';
 
 
 @Component({
@@ -40,8 +45,8 @@ export class ListeBulletinEleveComponent implements OnInit {
   hasActiveFilters: boolean = false;
 
   private readonly dossierEleveService = inject(DossierResourceService);
-  //  private readonly referentielService = inject(ReferentielService);
-  //  private readonly localStorage = inject(LocalStorageService);
+  private readonly referentielService = inject(ReferentielService);
+  private readonly localStorage = inject(LocalStorageService);
 
   ngOnInit(): void {
     this.chargerLesBulletins();
@@ -50,9 +55,9 @@ export class ListeBulletinEleveComponent implements OnInit {
   async chargerLesBulletins() {
     try {
       const [classe, semestre, annees]: any = await Promise.all([
-        //    this.getClasseList(),
-        //    this.getSemestreList(),
-        //    this.getAnneeScolaires(),
+        this.getClasseList(),
+        this.getSemestreList(),
+        this.getAnneeScolaires(),
 
       ]);
       this.initialisationDesFiltres(classe, semestre, annees);
@@ -62,15 +67,15 @@ export class ListeBulletinEleveComponent implements OnInit {
     }
   }
 
-  /*
+
   getClasseList(): Promise<ListeClasse[]> {
     return new Promise((resolve, reject) => {
       this.referentielService.getAllClasses().subscribe({
-        next: (data:any) => {
+        next: (data: any) => {
           this.classeList = data;
           resolve(data);
         },
-        error: (err:any) => reject(err)
+        error: (err: any) => reject(err)
       });
     });
   }
@@ -78,11 +83,11 @@ export class ListeBulletinEleveComponent implements OnInit {
   getAnneeScolaires(): Promise<AnneeScolaire[]> {
     return new Promise((resolve, reject) => {
       this.referentielService.getAllAnneeScolaires().subscribe({
-        next: (data:any) => {
+        next: (data: any) => {
           this.anneesScolairesList = data;
           resolve(data);
         },
-        error: (err:any) => reject(err)
+        error: (err: any) => reject(err)
       });
     });
   }
@@ -90,14 +95,14 @@ export class ListeBulletinEleveComponent implements OnInit {
   getSemestreList(): Promise<Semestre[]> {
     return new Promise((resolve, reject) => {
       this.referentielService.getAllSemestres().subscribe({
-        next: (data:any) => {
+        next: (data: any) => {
           this.semestreList = data;
           resolve(data);
         },
-        error: (err:any) => reject(err)
+        error: (err: any) => reject(err)
       });
     });
-  }*/
+  }
 
   chargerLesDonnees(useFilterApi: boolean) {
     this.isLoading = true;
