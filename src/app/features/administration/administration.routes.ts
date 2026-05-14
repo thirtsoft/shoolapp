@@ -24,6 +24,14 @@ export const ADMIN_ROUTES: Routes = [
       },
 
       {
+        path: 'comptabilite',
+        loadChildren: () =>
+          import('../comptabilite/comptabilite.routes')
+            .then(m => m.COMPTA_ROUTES)
+      },
+
+
+      {
         path: 'planification',
         loadChildren: () =>
           import('./planification/planification.routes')

@@ -1,0 +1,500 @@
+/* ─── VARIABLES ──────────────────────────────────────── */
+:host {
+  --primary: #2563eb;
+  --primary-light: #eff6ff;
+  --success: #16a34a;
+  --success-light: #f0fdf4;
+  --warning: #f59e0b;
+  --warning-light: #fffbeb;
+  --danger: #dc2626;
+  --danger-light: #fef2f2;
+  --gray-50: #f9fafb;
+  --gray-100: #f3f4f6;
+  --gray-200: #e5e7eb;
+  --gray-300: #d1d5db;
+  --gray-500: #6b7280;
+  --gray-700: #374151;
+  --gray-900: #111827;
+  --radius: 12px;
+  --shadow: 0 1px 3px rgba(0, 0, 0, .1);
+}
+
+/* ─── LAYOUT GLOBAL ─────────────────────────────────── */
+.classe-management {
+  padding: 1.5rem;
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+/* ─── HEADER ────────────────────────────────────────── */
+.page-header {
+  background: white;
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  padding: 1.25rem 1.5rem;
+  margin-bottom: 1rem;
+  border: 1px solid var(--gray-200);
+}
+
+.header-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1rem;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+}
+
+.btn-back {
+  background: var(--gray-100);
+  border: 1px solid var(--gray-300);
+  padding: 0.5rem 0.75rem;
+  border-radius: 8px;
+  font-size: 0.85rem;
+  cursor: pointer;
+  color: var(--gray-700);
+  transition: 0.2s;
+}
+
+.btn-back:hover {
+  background: var(--gray-200);
+}
+
+.header-title {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 1.3rem;
+  margin: 0;
+  font-weight: 600;
+  color: var(--gray-900);
+}
+
+.matiere-badge {
+  background: var(--primary-light);
+  color: var(--primary);
+  padding: 0.3rem 0.75rem;
+  border-radius: 20px;
+  font-size: 1rem;
+}
+
+.classe-badge {
+  background: var(--success-light);
+  color: var(--success);
+  padding: 0.3rem 0.75rem;
+  border-radius: 20px;
+  font-size: 1rem;
+}
+
+.separator {
+  color: var(--gray-300);
+  font-size: 1.2rem;
+}
+
+.annee-scolaire {
+  background: var(--gray-100);
+  color: var(--gray-500);
+  padding: 0.3rem 0.75rem;
+  border-radius: 20px;
+  font-size: 0.85rem;
+  font-weight: 500;
+}
+
+/* Stats header */
+.header-stats {
+  display: flex;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.stat-card {
+  background: var(--gray-50);
+  border: 1px solid var(--gray-200);
+  border-radius: 10px;
+  padding: 0.5rem 1rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.9rem;
+}
+
+.stat-card.warning {
+  background: var(--warning-light);
+  border-color: var(--warning);
+}
+
+.stat-icon {
+  font-size: 1.3rem;
+}
+
+.stat-value {
+  font-weight: 700;
+  color: var(--gray-900);
+}
+
+.stat-label {
+  color: var(--gray-500);
+  font-size: 0.8rem;
+}
+
+/* ─── ONGLETS ───────────────────────────────────────── */
+.tabs {
+  display: flex;
+  gap: 0.25rem;
+  background: white;
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  padding: 0.5rem;
+  margin-bottom: 1.5rem;
+  border: 1px solid var(--gray-200);
+  flex-wrap: wrap;
+}
+
+.tab {
+  padding: 0.6rem 1.25rem;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: var(--gray-500);
+  transition: 0.2s;
+  position: relative;
+  white-space: nowrap;
+}
+
+.tab:hover {
+  background: var(--gray-100);
+  color: var(--gray-700);
+}
+
+.tab.active {
+  background: var(--primary);
+  color: white;
+}
+
+.tab-badge {
+  background: var(--danger);
+  color: white;
+  font-size: 0.7rem;
+  padding: 0.15rem 0.4rem;
+  border-radius: 10px;
+  margin-left: 0.4rem;
+  font-weight: 700;
+}
+
+/* ─── CONTENU DES ONGLETS ───────────────────────────── */
+.tab-content {
+  background: white;
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  padding: 1.5rem;
+  border: 1px solid var(--gray-200);
+  animation: fadeIn 0.2s ease;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+.tab-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1.25rem;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+}
+
+.tab-header h2 {
+  margin: 0;
+  font-size: 1.2rem;
+  color: var(--gray-900);
+}
+
+.date-jour {
+  color: var(--gray-500);
+  font-size: 0.9rem;
+}
+
+/* ─── TABLEAUX ──────────────────────────────────────── */
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.9rem;
+}
+
+.table th {
+  text-align: left;
+  padding: 0.75rem;
+  background: var(--gray-50);
+  color: var(--gray-500);
+  font-weight: 600;
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  border-bottom: 2px solid var(--gray-200);
+}
+
+.table td {
+  padding: 0.75rem;
+  border-bottom: 1px solid var(--gray-100);
+}
+
+.table tr:hover td {
+  background: var(--gray-50);
+}
+
+.table tr.absent td {
+  background: var(--danger-light);
+}
+
+.table-responsive {
+  overflow-x: auto;
+}
+
+/* Statuts */
+.statut-badge {
+  padding: 0.2rem 0.6rem;
+  border-radius: 12px;
+  font-size: 0.8rem;
+  font-weight: 600;
+}
+
+.statut-badge.present {
+  background: var(--success-light);
+  color: var(--success);
+}
+
+.statut-badge.absent {
+  background: var(--danger-light);
+  color: var(--danger);
+}
+
+.no-motif {
+  color: var(--gray-300);
+}
+
+/* Types d'évaluation */
+.eval-type {
+  padding: 0.15rem 0.5rem;
+  border-radius: 8px;
+  font-size: 0.8rem;
+  font-weight: 500;
+}
+
+.eval-type.contrôle {
+  background: #ede9fe;
+  color: #7c3aed;
+}
+
+.eval-type.dm {
+  background: #fce7f3;
+  color: #db2777;
+}
+
+.eval-type.tp {
+  background: #e0f2fe;
+  color: #0284c7;
+}
+
+.eval-type.examen {
+  background: #fef3c7;
+  color: #d97706;
+}
+
+/* Notes */
+.note-cell {
+  width: 80px;
+  text-align: center;
+}
+
+.note-input {
+  width: 60px;
+  padding: 0.4rem;
+  border: 1px solid var(--gray-300);
+  border-radius: 6px;
+  text-align: center;
+  font-size: 0.9rem;
+  transition: 0.2s;
+}
+
+.note-input:focus {
+  border-color: var(--primary);
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, .15);
+}
+
+.moyenne-cell {
+  text-align: center;
+  font-weight: 700;
+}
+
+.bonne-note {
+  color: var(--success);
+}
+
+.mauvaise-note {
+  color: var(--danger);
+}
+
+.appreciation-input {
+  width: 140px;
+  padding: 0.4rem;
+  border: 1px solid var(--gray-300);
+  border-radius: 6px;
+  font-size: 0.85rem;
+}
+
+.appreciation-col {
+  max-width: 250px;
+  color: var(--gray-700);
+  font-size: 0.85rem;
+}
+
+.notes-summary {
+  display: flex;
+  gap: 1.5rem;
+  font-size: 0.9rem;
+  color: var(--gray-700);
+}
+
+/* Décisions bulletin */
+.decision-badge {
+  padding: 0.2rem 0.6rem;
+  border-radius: 12px;
+  font-size: 0.8rem;
+  font-weight: 600;
+}
+
+.decision-badge.admis {
+  background: var(--success-light);
+  color: var(--success);
+}
+
+.decision-badge.encouragement {
+  background: #e0f2fe;
+  color: #0284c7;
+}
+
+.decision-badge.avertissement {
+  background: var(--warning-light);
+  color: var(--warning);
+}
+
+.decision-badge.redouble {
+  background: var(--danger-light);
+  color: var(--danger);
+}
+
+/* Appel summary */
+.appel-summary {
+  display: flex;
+  gap: 1.5rem;
+  margin-bottom: 1rem;
+  font-weight: 600;
+}
+
+.summary-item.present {
+  color: var(--success);
+}
+
+.summary-item.absent {
+  color: var(--danger);
+}
+
+/* Progression */
+.progression-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 1rem;
+}
+
+.progression-card {
+  background: var(--gray-50);
+  border: 1px solid var(--gray-200);
+  border-radius: var(--radius);
+  padding: 1.25rem;
+}
+
+.progression-card h3 {
+  margin: 0 0 1rem 0;
+  font-size: 1rem;
+  color: var(--gray-700);
+}
+
+.chart-placeholder {
+  height: 150px;
+  background: white;
+  border: 2px dashed var(--gray-300);
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--gray-500);
+  font-size: 0.9rem;
+}
+
+.chapitres-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.chapitres-list li {
+  padding: 0.5rem 0;
+  border-bottom: 1px solid var(--gray-200);
+  font-size: 0.9rem;
+}
+
+/* ─── BOUTONS ───────────────────────────────────────── */
+.btn {
+  padding: 0.5rem 1rem;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  font-weight: 500;
+  transition: 0.2s;
+}
+
+.btn-primary {
+  background: var(--primary);
+  color: white;
+}
+
+.btn-primary:hover {
+  background: #1d4ed8;
+}
+
+.btn-sm {
+  padding: 0.3rem 0.6rem;
+  font-size: 0.8rem;
+}
+
+.btn-success {
+  background: var(--success);
+  color: white;
+}
+
+.btn-outline {
+  background: transparent;
+  border: 1px solid var(--gray-300);
+  color: var(--gray-700);
+}
+
+.btn-outline:hover {
+  background: var(--gray-100);
+}
+
+.btn-danger {
+  background: var(--danger);
+  color: white;
+}

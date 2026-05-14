@@ -1,52 +1,72 @@
 <aside class="parent-sidebar" [class.is-open]="isOpen()">
   <button class="sidebar-close" (click)="close.emit()">✕</button>
 
-  <!-- Profil élève -->
   <div class="ps-header">
-    <div class="ps-ava">👦</div>
+    <div class="ps-ava">{{ parent().avatar }}</div>
     <div class="ps-info">
-      <div class="ps-nom">{{ eleve().nom }}</div>
-      <div class="ps-classe">{{ eleve().classe }}</div>
-      <div class="ps-moyenne">Moyenne : {{ eleve().moyenne }}/20</div>
+      <div class="ps-nom">{{ parent().prenom }} {{ parent().nom }}</div>
+      <div class="ps-role">{{ parent().profession || 'Parent' }}</div>
     </div>
   </div>
 
-  <!-- Statistiques rapides -->
-  <div class="ps-stats">
-    <div class="pss-card">
-      <span class="pss-val">{{ eleve().moyenne }}/20</span>
-      <span class="pss-lbl">Moyenne</span>
-    </div>
-    <div class="pss-row">
-      <div class="pss-pill warning">
-        <span>⚠️</span>
-        {{ eleve().absences }} absences
-      </div>
-      <div class="pss-pill warning">
-        <span>⏰</span>
-        {{ eleve().retards }} retards
-      </div>
-    </div>
-  </div>
-
-  <!-- Navigation -->
   <nav class="ps-nav">
-    @for (item of navItems(); track item.id) {
-      <button
-        class="psn-item"
-        [class.active]="vueActive() === item.id"
-        (click)="navigate.emit(item.id)"
-      >
-        <span class="psn-ico">{{ item.ico }}</span>
-        <span class="psn-label">{{ item.label }}</span>
-        @if (item.badge) {
-          <span class="psn-badge">{{ item.badge }}</span>
-        }
-      </button>
+    @for (item of nav; track item.label; let i = $index) {
+      @if (item.section) {
+        <div class="ps-section">
+          <span class="ps-section-title">{{ item.section }}</span>
+        </div>
+      }
+
+      @if (!hasChildren(item)) {
+        <button
+          class="psn-item"
+          [class.active]="isActive(item.route)"
+          (click)="naviguer(item.route)"
+          [title]="item.label"
+        >
+          <span class="psn-ico">{{ item.ico }}</span>
+          <span class="psn-label">{{ item.label }}</span>
+          @if (item.badge) {
+            <span class="psn-badge">{{ item.badge }}</span>
+          }
+        </button>
+      }
+
+      @if (hasChildren(item)) {
+        <div class="ps-dropdown-group">
+          <button
+            class="psn-item ps-dropdown-toggle"
+            [class.active]="isParentActive(item)"
+            [class.expanded]="isExpanded(item.label)"
+            (click)="toggleDropdown(item.label)"
+            [title]="item.label"
+          >
+            <span class="psn-ico">{{ item.ico }}</span>
+            <span class="psn-label">{{ item.label }}</span>
+            <span class="ps-chevron">{{ isExpanded(item.label) ? '▾' : '▸' }}</span>
+          </button>
+
+          <!-- Sous-menu -->
+          @if (isExpanded(item.label)) {
+            <div class="ps-submenu">
+              @for (child of item.children; track child.label) {
+                <button
+                  class="psn-item ps-subitem"
+                  [class.active]="isActive(child.route)"
+                  (click)="naviguer(child.route)"
+                  [title]="child.label"
+                >
+                  <span class="psn-ico">{{ child.ico }}</span>
+                  <span class="psn-label">{{ child.label }}</span>
+                </button>
+              }
+            </div>
+          }
+        </div>
+      }
     }
   </nav>
 
-  <!-- Footer — Déconnexion -->
   <div class="ps-footer">
     <button class="ps-deconnexion" (click)="deconnecter()">
       <span class="ps-ico">🚪</span>

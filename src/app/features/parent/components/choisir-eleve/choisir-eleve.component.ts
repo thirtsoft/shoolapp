@@ -17,16 +17,14 @@ export class ChoisirEleveComponent implements OnInit {
 
   userId?: number;
   parentDetails: ParentDetails = {};
-  eleveList: any = []
+  eleveList: any[] = [];
   TotalElevesLength: any;
 
   private readonly parentService = inject(ParentService);
   private readonly router = inject(Router);
   private readonly localStorage = inject(LocalStorageService);
 
-  constructor(
-
-  ) {
+  constructor() {
     this.userId = this.localStorage.getItem('id');
   }
 
@@ -40,16 +38,42 @@ export class ChoisirEleveComponent implements OnInit {
     this.parentService.getDetailsParent(parentId)
       .subscribe(res => {
         this.parentDetails = res;
+        this.eleveList = res?.eleveParentDTOList || [];
         console.log('parent', this.parentDetails);
-      })
+      });
   }
 
   afficherLesEleves(): any[] {
-    let eleveList: any[] = [];
-    if (this.parentDetails != null && this.parentDetails != undefined) {
-      eleveList = this.parentDetails.eleveParentDTOList!;
+    return this.eleveList;
+  }
+  
+  getAvatar(eleve: any): string {
+    const prenom = (eleve?.prenom || '').toLowerCase();
+    const prenomsFeminins = [
+      'fatima', 'aminata', 'aïcha', 'mariama', 'khady', 'ndeye', 'fatou',
+      'aida', 'codou', 'rama', 'awa', 'mata', 'nazi', 'astou', 'maimouna',
+      'sokhna', 'coumba', 'dieynaba', 'bineta', 'adja', 'nabou', 'yacine',
+      'amy', 'sophie', 'marie', 'anna', 'léa', 'chloé', 'emma', 'sarah',
+      'inès', 'lina', 'julie', 'laura', 'lucie', 'clara', 'manon'
+    ];
+
+    if (prenomsFeminins.includes(prenom)) {
+      return '👧';
     }
-    return eleveList;
+    return '👦';
+  }
+
+  /** Retourne la classe CSS de fond selon le genre */
+  getAvatarBg(eleve: any): string {
+    const prenom = (eleve?.prenom || '').toLowerCase();
+    const prenomsFeminins = [
+      'fatima', 'aminata', 'aïcha', 'mariama', 'khady', 'ndeye', 'fatou',
+      'aida', 'codou', 'rama', 'awa', 'mata', 'nazi', 'astou', 'maimouna',
+      'sokhna', 'coumba', 'dieynaba', 'bineta', 'adja', 'nabou', 'yacine',
+      'amy', 'sophie', 'marie', 'anna', 'léa', 'chloé', 'emma', 'sarah',
+      'inès', 'lina', 'julie', 'laura', 'lucie', 'clara', 'manon'
+    ];
+    return prenomsFeminins.includes(prenom) ? 'avatar-fille' : 'avatar-garcon';
   }
 
   afficherDossier(eleve: any) {
@@ -58,7 +82,10 @@ export class ChoisirEleveComponent implements OnInit {
     this.router.navigateByUrl('/', { skipLocationChange: true }).then(() => {
       this.router.navigate(['/parent/dashboard']);
     });
-
   }
 
+  deconnecter(): void {
+    this.localStorage.clear();
+    this.router.navigate(['/auth/login']);
+  }
 }

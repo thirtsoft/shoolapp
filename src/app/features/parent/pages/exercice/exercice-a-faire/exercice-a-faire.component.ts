@@ -1,4 +1,4 @@
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, inject, OnDestroy, OnInit } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
 import { IFilterConfig } from '../../../../../core/filtered-config/FiltreConfiguration';
 import { PlanificationResourceService } from '../../../../administration/planification/services/planification-resource.service';
@@ -7,6 +7,8 @@ import { CommonService } from '../../../../../core/services/common.service';
 import { LocalStorageService } from '../../../../../core/services/local-storage.service';
 import { EnseigantList } from '../../../../../core/models/enseignant/enseignant-list';
 import { GenericTableDossierComponent } from '../../../../../core/generic/generic-table-dossier/generic-table-dossier.component';
+import { Subject, takeUntil } from 'rxjs';
+import { ParentSessionService } from '../../../service/parent-session.service';
 
 @Component({
   selector: 'app-exercice-a-faire',
@@ -15,13 +17,15 @@ import { GenericTableDossierComponent } from '../../../../../core/generic/generi
   templateUrl: './exercice-a-faire.component.html',
   styleUrls: ['./exercice-a-faire.component.css']
 })
-export class ExerciceAFaireComponent implements OnInit {
+export class ExerciceAFaireComponent implements OnInit, OnDestroy {
 
   isLoading: boolean = false;
   isLockable: boolean = true;
   isTable: boolean = true;
   columns: any = [];
   exerciceData: any = [];
+
+  private readonly destroy$ = new Subject<void>();
 
   userId?: number;
   eleveId?: number;
@@ -47,6 +51,7 @@ export class ExerciceAFaireComponent implements OnInit {
   private readonly enseigantService = inject(EnseignantService);
   private readonly commonService = inject(CommonService);
   private readonly localStorage = inject(LocalStorageService);
+  private readonly sessionService = inject(ParentSessionService);
 
   constructor(
 
@@ -58,6 +63,24 @@ export class ExerciceAFaireComponent implements OnInit {
 
   ngOnInit(): void {
     this.chargerLesExercices();
+    this.sessionService.changement$
+      .pipe(takeUntil(this.destroy$))
+      .subscribe((changement) => {
+        if (changement && changement.classeId !== this.classeId) {
+          console.log('🔄 Nouvelle classe :', changement.classeId);
+          this.classeId = changement.classeId!;
+
+          this.currentPage = 0;
+          this.activeFilters = {};
+          this.hasActiveFilters = false;
+          this.chargerLesExercices();
+        }
+      });
+  }
+
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
   }
 
   async chargerLesExercices() {
@@ -136,7 +159,7 @@ export class ExerciceAFaireComponent implements OnInit {
         key: 'livre',
         label: 'Livre',
         type: 'select',
-        options: this.livreList.map((c:any) => ({
+        options: this.livreList.map((c: any) => ({
           value: c.id,
           label: c.titre
         })),

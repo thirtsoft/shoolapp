@@ -2,25 +2,7 @@
   <!-- En-tête -->
   <div class="dp-header">
     <div>
-      <h1>👋 Bonjour, {{ enfantActif().nom }}</h1>
-      <p>{{ enfantActif().classe }} — Année {{ enfantActif().anneeScolaire }}</p>
-    </div>
-
-    <!-- ═══ SÉLECTEUR D'ENFANT ═══ -->
-    <div class="enfants-selector">
-      @for (enfant of enfants(); track enfant.id) {
-        <button
-          class="enfant-chip"
-          [class.active]="enfantActifId() === enfant.id"
-          (click)="changerEnfant(enfant.id)"
-        >
-          <span class="enfant-avatar">{{ enfant.photo }}</span>
-          <span class="enfant-info">
-            <span class="enfant-nom">{{ enfant.nom.split(' ')[0] }}</span>
-            <span class="enfant-classe">{{ enfant.classe }}</span>
-          </span>
-        </button>
-      }
+      <h1>👋 Bonjour, {{ parent().nom }} - {{ parent().prenom }}</h1>
     </div>
 
     <div class="dp-actions">
@@ -181,7 +163,7 @@
             </div>
           }
         </div>
-        <button class="card-link" (click)="toutVoir('/parent/messagerie')">
+        <button class="card-link" (click)="toutVoir('/parent/informations')">
           Voir tous les messages →
         </button>
       </div>

@@ -32,6 +32,17 @@ export class UtilsService {
     if (this.role) {
       this.router.navigateByUrl('/admin');
     }
-    // this.router.navigate([urlNavigation]);
+
+     switch (this.role) {
+      case 'Agent, Admin':
+        this.router.navigateByUrl('/admin');
+        break;
+      case 'Parent':
+        this.router.navigateByUrl('/parent');
+        break;
+      case 'Enseignant':
+        this.router.navigateByUrl('/enseignant');
+        break;
+    }
   }
 }

@@ -1,9 +1,11 @@
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, inject, OnDestroy, OnInit } from '@angular/core';
 
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule } from '@angular/forms';
+import { Subject, takeUntil } from 'rxjs';
 import { LocalStorageService } from '../../../../../core/services/local-storage.service';
-import { ReferentielResourceService } from '../../../../administration/referentiel/service/referentiel-resource.service';
+import { PlanificationResourceService } from '../../../../administration/planification/services/planification-resource.service';
+import { ParentSessionService } from '../../../service/parent-session.service';
 
 @Component({
   selector: 'app-emploie-eleve',
@@ -12,7 +14,7 @@ import { ReferentielResourceService } from '../../../../administration/referenti
   templateUrl: './emploie-eleve.component.html',
   styleUrls: ['./emploie-eleve.component.css']
 })
-export class EmploieEleveComponent implements OnInit {
+export class EmploieEleveComponent implements OnInit, OnDestroy {
 
   emploiDuTemps: any;
   errorMessage?: string;
@@ -20,8 +22,12 @@ export class EmploieEleveComponent implements OnInit {
   coursList: any;
   sizeNull?: number;
 
-  private readonly referentielService = inject(ReferentielResourceService);
+  private readonly destroy$ = new Subject<void>();
+
+
+  private readonly planificationService = inject(PlanificationResourceService);
   private readonly localStorage = inject(LocalStorageService);
+  private readonly sessionService = inject(ParentSessionService);
 
   constructor(
   ) {
@@ -29,13 +35,27 @@ export class EmploieEleveComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    if (this.classeId != null && this.classeId != undefined) {
-      this.getListeEmploiDuTempsClasse(this.classeId);
-    }
+    this.getListeEmploiDuTempsClasse();
+
+    this.sessionService.changement$
+      .pipe(takeUntil(this.destroy$))
+      .subscribe((changement) => {
+        if (changement && changement.classeId !== this.classeId) {
+          console.log('🔄 Nouvelle classe :', changement.classeId);
+          this.classeId = changement.classeId!;
+          this.getListeEmploiDuTempsClasse();
+        }
+      });
   }
 
-  getListeEmploiDuTempsClasse(classeId: number) {
-    this.referentielService.recupererUneResource('emploidutemps/byclasse', classeId).subscribe({
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
+  }
+
+  getListeEmploiDuTempsClasse() {
+    if (!this.classeId) return;
+    this.planificationService.recupererUneResource('emploidutemps/byclasse', this.classeId).subscribe({
       next: (data) => {
         this.emploiDuTemps = data;
         console.log('Details course', this.emploiDuTemps);

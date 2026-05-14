@@ -1,12 +1,12 @@
 import { Component, inject, OnInit } from '@angular/core';
-import { GenericTableDossierComponent } from '../../../../../core/generic/generic-table-dossier/generic-table-dossier.component';
 import { IFilterConfig } from '../../../../../core/filtered-config/FiltreConfiguration';
-import { DossierResourceService } from '../../../../administration/dossier-eleve/service/dossier-resource.service';
-import { ReferentielService } from '../../../../administration/referentiel/service/referentiel.service';
-import { LocalStorageService } from '../../../../../core/services/local-storage.service';
+import { GenericTableDossierComponent } from '../../../../../core/generic/generic-table-dossier/generic-table-dossier.component';
 import { AnneeScolaire } from '../../../../../core/models/referentiels/annee-scolaire';
 import { ListeClasse } from '../../../../../core/models/referentiels/classe';
 import { Niveau } from '../../../../../core/models/referentiels/niveau';
+import { LocalStorageService } from '../../../../../core/services/local-storage.service';
+import { DossierResourceService } from '../../../../administration/dossier-eleve/service/dossier-resource.service';
+import { ReferentielService } from '../../../../administration/referentiel/service/referentiel.service';
 
 @Component({
   selector: 'app-list-inscription-eleve-parent',
@@ -184,6 +184,7 @@ export class ListInscriptionEleveParentComponent implements OnInit {
     }
     apiCall.subscribe({
       next: (response) => {
+        console.log('Inscription', response);
         this.inscriptionData = response.data?.content || [];
         this.totalElements = response.data?.totalElements || 0;
 

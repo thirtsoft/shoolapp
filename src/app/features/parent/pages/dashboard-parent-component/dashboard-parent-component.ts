@@ -1,8 +1,11 @@
 import { CommonModule } from '@angular/common';
-import { Component, computed, inject, signal } from '@angular/core';
+import { Component, computed, inject, OnInit, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
+import { ParentDetails } from '../../../../core/models/parent/parent-details';
+import { LocalStorageService } from '../../../../core/services/local-storage.service';
 import { DataService } from '../../../../shared/data.service';
+import { ParentService } from '../../service/parent.service';
 
 interface Note {
   matiere: string;
@@ -79,11 +82,54 @@ interface Message {
   templateUrl: './dashboard-parent-component.html',
   styleUrl: './dashboard-parent-component.css',
 })
-export class DashboardParentComponent {
+export class DashboardParentComponent implements OnInit {
 
   protected readonly Math = Math;
   ds = inject(DataService);
+
   private readonly router = inject(Router);
+  private readonly localStorage = inject(LocalStorageService);
+  private readonly parentService = inject(ParentService);
+
+  parentDetails = signal<ParentDetails>({});
+  parent = signal({
+    nom: '',
+    prenom: '',
+    email: '',
+    telephone: '',
+    profession: '',
+  });
+
+
+  ngOnInit() {
+    this.chargerParentEtEleves();
+  }
+
+  private chargerParentEtEleves() {
+    const userId = this.localStorage.getItem('id');
+    if (!userId) {
+      this.router.navigate(['/auth/login']);
+      return;
+    }
+
+    this.parentService.getDetailsParent(Number(userId)).subscribe({
+      next: (res) => {
+        this.parentDetails.set(res);
+
+        this.parent.set({
+          nom: res.nom || '',
+          prenom: res.prenom || '',
+          email: res.email || '',
+          telephone: res.telephone || '',
+          profession: res.profession || '',
+        });
+      },
+      error: () => {
+        this.router.navigate(['/auth/login']);
+      }
+    });
+  }
+
 
   // ── Liste des enfants du parent ──────────────────────
   enfants = signal([

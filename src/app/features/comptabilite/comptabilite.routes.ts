@@ -3,12 +3,12 @@ import { Routes } from '@angular/router';
 import { ComptabiliteComponent } from './comptabilite.component';
 import { InscrireEleveServiceComponent } from './pages/eleveservice/inscrire-eleve-service/inscrire-eleve-service.component';
 import { ListInscrireEleveServiceComponent } from './pages/eleveservice/list-inscrire-eleve-service/list-inscrire-eleve-service.component';
-import { CreatePaiementComponent } from './pages/paiement/create-paiement/create-paiement.component';
-import { ListPaiementComponent } from './pages/paiement/list-paiement/list-paiement.component';
+import { CreateFactureComponent } from './pages/facture/create-facture/create-facture.component';
 import { DetailsFactureComponent } from './pages/facture/details-facture/details-facture.component';
 import { GenererFactureClasseComponent } from './pages/facture/generer-facture-classe/generer-facture-classe.component';
-import { CreateFactureComponent } from './pages/facture/create-facture/create-facture.component';
 import { ListFactureComponent } from './pages/facture/list-facture/list-facture.component';
+import { CreatePaiementComponent } from './pages/paiement/create-paiement/create-paiement.component';
+import { ListPaiementComponent } from './pages/paiement/list-paiement/list-paiement.component';
 
 export const COMPTA_ROUTES: Routes = [
   {
@@ -48,15 +48,15 @@ export const COMPTA_ROUTES: Routes = [
         component: CreatePaiementComponent
       },
       {
-        path: 'eleveservice',
+        path: 'services',
         component: ListInscrireEleveServiceComponent
       },
       {
-        path: 'eleveservice/create',
+        path: 'service/create',
         component: InscrireEleveServiceComponent
       },
       {
-        path: 'eleveservice/edit/:id',
+        path: 'service/edit/:id',
         component: InscrireEleveServiceComponent
       }
     ],

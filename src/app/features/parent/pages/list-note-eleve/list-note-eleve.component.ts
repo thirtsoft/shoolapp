@@ -1,12 +1,14 @@
-import { Component, inject, OnInit } from '@angular/core';
-import { GenericTableDossierComponent } from '../../../../core/generic/generic-table-dossier/generic-table-dossier.component';
+import { Component, inject, OnDestroy, OnInit } from '@angular/core';
+import { Subject, takeUntil } from 'rxjs';
 import { IFilterConfig } from '../../../../core/filtered-config/FiltreConfiguration';
+import { GenericTableDossierComponent } from '../../../../core/generic/generic-table-dossier/generic-table-dossier.component';
+import { ListeClasse } from '../../../../core/models/referentiels/classe';
+import { Matiere } from '../../../../core/models/referentiels/matiere';
+import { Semestre } from '../../../../core/models/referentiels/semestre';
+import { LocalStorageService } from '../../../../core/services/local-storage.service';
 import { PlanificationResourceService } from '../../../administration/planification/services/planification-resource.service';
 import { ReferentielService } from '../../../administration/referentiel/service/referentiel.service';
-import { LocalStorageService } from '../../../../core/services/local-storage.service';
-import { Matiere } from '../../../../core/models/referentiels/matiere';
-import { ListeClasse } from '../../../../core/models/referentiels/classe';
-import { Semestre } from '../../../../core/models/referentiels/semestre';
+import { ParentSessionService } from '../../service/parent-session.service';
 
 @Component({
   selector: 'app-list-note-eleve',
@@ -15,7 +17,7 @@ import { Semestre } from '../../../../core/models/referentiels/semestre';
   templateUrl: './list-note-eleve.component.html',
   styleUrls: ['./list-note-eleve.component.css']
 })
-export class ListNoteEleveComponent implements OnInit {
+export class ListNoteEleveComponent implements OnInit, OnDestroy {
   noteId?: number | null;
   isEdit: boolean = true;
   isLoading: boolean = false;
@@ -24,6 +26,8 @@ export class ListNoteEleveComponent implements OnInit {
   isTable: boolean = true;
   columns: any = [];
   noteData: any = [];
+
+  private readonly destroy$ = new Subject<void>();
 
   userId?: number;
   eleveId?: number;
@@ -49,6 +53,7 @@ export class ListNoteEleveComponent implements OnInit {
   private readonly coursService = inject(PlanificationResourceService);
   private readonly referentielService = inject(ReferentielService);
   private readonly localStorage = inject(LocalStorageService);
+  private readonly sessionService = inject(ParentSessionService);
 
   constructor(
   ) {
@@ -59,6 +64,26 @@ export class ListNoteEleveComponent implements OnInit {
 
   ngOnInit(): void {
     this.chargerLesNotesEleve();
+    this.sessionService.changement$
+      .pipe(takeUntil(this.destroy$))
+      .subscribe((changement) => {
+        console.log('📩 Notification reçue dans ListNote:', changement);
+        if (changement && changement.eleveId !== this.eleveId) {
+          console.log('🔄 Rechargement pour eleveId:', changement.eleveId);
+          this.eleveId = changement.eleveId;
+          this.classeId = changement.classeId!;
+
+          this.currentPage = 0;
+          this.activeFilters = {};
+          this.hasActiveFilters = false;
+          this.chargerLesNotesEleve();
+        }
+      });
+  }
+
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
   }
 
   async chargerLesNotesEleve() {
@@ -165,6 +190,7 @@ export class ListNoteEleveComponent implements OnInit {
   chargerLesDonnees(useFilterApi: boolean) {
     this.isLoading = true;
     let apiCall;
+    console.log('élève ID', this.eleveId);
 
     if (useFilterApi) {
 
@@ -182,6 +208,7 @@ export class ListNoteEleveComponent implements OnInit {
     }
     apiCall.subscribe({
       next: (response) => {
+        console.log('Notes élèves', response);
         this.noteData = response.data?.content || [];
         this.totalElements = response.data?.totalElements || 0;
 

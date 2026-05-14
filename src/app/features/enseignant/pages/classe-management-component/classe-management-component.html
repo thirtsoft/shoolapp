@@ -1,0 +1,390 @@
+<!-- classe-management.component.html -->
+<div class="classe-management">
+  <!-- ═══════════ HEADER ═══════════ -->
+  <header class="page-header">
+    <div class="header-top">
+      <button class="btn-back" routerLink="/enseignant/mes-enseignements" title="Retour">
+        ← Retour
+      </button>
+      <h1 class="header-title">
+        <span class="matiere-badge">{{ matiere() }}</span>
+        <span class="separator">•</span>
+        <span class="classe-badge">{{ classe() }}</span>
+      </h1>
+      <span class="annee-scolaire">{{ anneeScolaire() }}</span>
+    </div>
+
+    <!-- Bloc stats rapide -->
+    <div class="header-stats">
+      <div class="stat-card">
+        <span class="stat-icon">👨‍🎓</span>
+        <span class="stat-value">{{ eleves().length }}</span>
+        <span class="stat-label">Élèves</span>
+      </div>
+      <div class="stat-card">
+        <span class="stat-icon">📊</span>
+        <span class="stat-value">{{ moyenneClasse }}/20</span>
+        <span class="stat-label">Moyenne</span>
+      </div>
+      <div class="stat-card">
+        <span class="stat-icon">📋</span>
+        <span class="stat-value">{{ evaluations().length }}</span>
+        <span class="stat-label">Évaluations</span>
+      </div>
+      <div class="stat-card warning">
+        <span class="stat-icon">⚠️</span>
+        <span class="stat-value">{{ totalAbsents }}</span>
+        <span class="stat-label">Absents</span>
+      </div>
+    </div>
+  </header>
+
+  <!-- ═══════════ NAVIGATION PAR ONGLETS ═══════════ -->
+  <div class="tabs">
+    <button class="tab" [class.active]="activeTab() === 'appel'" (click)="changerOnglet('appel')">
+      📋 Appel des absences
+      <span class="tab-badge" *ngIf="totalAbsents > 0">{{ totalAbsents }}</span>
+    </button>
+     <button class="tab" [class.active]="activeTab() === 'exercices'" (click)="changerOnglet('exercices')">
+      ✏️ Exercices
+    </button>
+    <button
+      class="tab"
+      [class.active]="activeTab() === 'evaluation'"
+      (click)="changerOnglet('evaluation')"
+    >
+      📝 Évaluations
+      <span class="tab-badge" *ngIf="evaluationsEnAttente > 0">{{ evaluationsEnAttente }}</span>
+    </button>
+    <button class="tab" [class.active]="activeTab() === 'notes'" (click)="changerOnglet('notes')">
+      ✏️ Saisie des notes
+    </button>
+    <button
+      class="tab"
+      [class.active]="activeTab() === 'bulletin'"
+      (click)="changerOnglet('bulletin')"
+    >
+      📄 Bulletins
+    </button>
+    <button
+      class="tab"
+      [class.active]="activeTab() === 'progression'"
+      (click)="changerOnglet('progression')"
+    >
+      📈 Progression
+    </button>
+  </div>
+
+  <!-- ═══════════ CONTENU DES ONGLETS ═══════════ -->
+
+  <!-- Onglet 1 : APPEL DES ABSENCES -->
+  <div class="tab-content" *ngIf="activeTab() === 'appel'">
+    <div class="tab-header">
+      <h2>📋 Appel des absences</h2>
+      <span class="date-jour">{{ today() }}</span>
+      <button class="btn btn-primary" (click)="sauvegarderAppel()">💾 Sauvegarder l'appel</button>
+    </div>
+
+    <div class="appel-summary">
+      <span class="summary-item present">✅ {{ totalPresents }} Présents</span>
+      <span class="summary-item absent">❌ {{ totalAbsents }} Absents</span>
+    </div>
+
+    <table class="table">
+      <thead>
+        <tr>
+          <th>N°</th>
+          <th>Nom</th>
+          <th>Prénom</th>
+          <th>Statut</th>
+          <th>Motif</th>
+          <th>Action</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (eleve of eleves(); track eleve.id; let i = $index) {
+          <tr [class.absent]="eleve.absent">
+            <td>{{ i + 1 }}</td>
+            <td>
+              <strong>{{ eleve.nom }}</strong>
+            </td>
+            <td>{{ eleve.prenom }}</td>
+            <td>
+              <span
+                class="statut-badge"
+                [class.present]="!eleve.absent"
+                [class.absent]="eleve.absent"
+              >
+                {{ eleve.absent ? 'Absent' : 'Présent' }}
+              </span>
+            </td>
+            <td>
+              <span *ngIf="eleve.motif; else sansMotif">{{ eleve.motif }}</span>
+              <ng-template #sansMotif>
+                <span class="no-motif">—</span>
+              </ng-template>
+            </td>
+            <td>
+              <button
+                class="btn btn-sm"
+                [class.btn-success]="eleve.absent"
+                [class.btn-outline]="!eleve.absent"
+              >
+                {{ eleve.absent ? '✅ Justifier' : '❌ Marquer absent' }}
+              </button>
+            </td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  </div>
+
+    <!-- Onglet 2 : ÉVALUATIONS -->
+  <div class="tab-content" *ngIf="activeTab() === 'exercices'">
+    <div class="tab-header">
+      <h2>✏️ Exercices</h2>
+      <button class="btn btn-primary" (click)="creerExercice()">➕ Créer un exercice</button>
+    </div>
+
+    <table class="table">
+      <thead>
+        <tr>
+          <th>Titre</th>
+          <th>Type</th>
+          <th>Date</th>
+          <th>Coefficient</th>
+          <th>Note max</th>
+          <th>Statut</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (evaluation of exercices(); track evaluation.id) {
+          <tr>
+            <td>
+              <strong>{{ evaluation.titre }}</strong>
+            </td>
+            <td>
+              <span class="eval-type" [class]="evaluation.type.toLowerCase()">
+                {{ evaluation.type }}
+              </span>
+            </td>
+            <td>{{ evaluation.date | date: 'dd/MM/yyyy' }}</td>
+            <td>×{{ evaluation.coefficient }}</td>
+            <td>/{{ evaluation.noteMax }}</td>
+            <td>
+              <span
+                class="statut-badge"
+                [class.present]="evaluation.statut === 'Publiée'"
+                [class.absent]="evaluation.statut === 'En attente'"
+              >
+                {{ evaluation.statut }}
+              </span>
+            </td>
+            <td>
+              <button class="btn btn-sm">✏️</button>
+              <button class="btn btn-sm btn-danger">🗑️</button>
+            </td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Onglet 2 : ÉVALUATIONS -->
+  <div class="tab-content" *ngIf="activeTab() === 'evaluation'">
+    <div class="tab-header">
+      <h2>📝 Évaluations</h2>
+      <button class="btn btn-primary" (click)="creerEvaluation()">➕ Créer une évaluation</button>
+    </div>
+
+    <table class="table">
+      <thead>
+        <tr>
+          <th>Titre</th>
+          <th>Type</th>
+          <th>Date</th>
+          <th>Coefficient</th>
+          <th>Note max</th>
+          <th>Statut</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (evaluation of evaluations(); track evaluation.id) {
+          <tr>
+            <td>
+              <strong>{{ evaluation.titre }}</strong>
+            </td>
+            <td>
+              <span class="eval-type" [class]="evaluation.type.toLowerCase()">
+                {{ evaluation.type }}
+              </span>
+            </td>
+            <td>{{ evaluation.date | date: 'dd/MM/yyyy' }}</td>
+            <td>×{{ evaluation.coefficient }}</td>
+            <td>/{{ evaluation.noteMax }}</td>
+            <td>
+              <span
+                class="statut-badge"
+                [class.present]="evaluation.statut === 'Publiée'"
+                [class.absent]="evaluation.statut === 'En attente'"
+              >
+                {{ evaluation.statut }}
+              </span>
+            </td>
+            <td>
+              <button class="btn btn-sm">✏️</button>
+              <button class="btn btn-sm btn-danger">🗑️</button>
+            </td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Onglet 3 : SAISIE DES NOTES -->
+  <div class="tab-content" *ngIf="activeTab() === 'notes'">
+    <div class="tab-header">
+      <h2>✏️ Saisie des notes</h2>
+      <div class="notes-summary">
+        <span
+          >Moyenne : <strong>{{ moyenneClasse }}/20</strong></span
+        >
+        <span
+          >Max : <strong>{{ noteMaximale }}/20</strong></span
+        >
+        <span
+          >Min : <strong>{{ noteMinimale }}/20</strong></span
+        >
+      </div>
+      <button class="btn btn-primary" (click)="sauvegarderNotes()">💾 Sauvegarder</button>
+    </div>
+
+    <div class="table-responsive">
+      <table class="table table-notes">
+        <thead>
+          <tr>
+            <th>Élève</th>
+            @for (evaluation of evaluations(); track evaluation.id) {
+              <th title="{{ evaluation.titre }}">
+                {{ evaluation.titre.split(' ').slice(0, 2).join(' ') }}...
+                <br />
+                <small>×{{ evaluation.coefficient }}</small>
+              </th>
+            }
+            <th>Moy.</th>
+            <th>Appréciation</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (note of notes(); track note.eleveId) {
+            <tr>
+              <td>{{ note.nom }} {{ note.prenom }}</td>
+              @for (evaluation of evaluations(); track evaluation.id) {
+                <td class="note-cell">
+                  <input
+                    type="number"
+                    class="note-input"
+                    [value]="note.evaluations[evaluation.id]"
+                    min="0"
+                    [max]="evaluation.noteMax"
+                    step="0.5"
+                  />
+                </td>
+              }
+              <td class="moyenne-cell">
+                <span
+                  [class.bonne-note]="note.moyenne >= 15"
+                  [class.mauvaise-note]="note.moyenne < 10"
+                >
+                  {{ note.moyenne.toFixed(1) }}
+                </span>
+              </td>
+              <td>
+                <input
+                  type="text"
+                  class="appreciation-input"
+                  [value]="note.appreciation"
+                  placeholder="Appréciation..."
+                />
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Onglet 4 : BULLETINS -->
+  <div class="tab-content" *ngIf="activeTab() === 'bulletin'">
+    <div class="tab-header">
+      <h2>📄 Bulletins - 2ème Trimestre</h2>
+      <button class="btn btn-primary" (click)="genererBulletins()">🖨️ Générer les bulletins</button>
+    </div>
+
+    <table class="table">
+      <thead>
+        <tr>
+          <th>N°</th>
+          <th>Élève</th>
+          <th>Moyenne</th>
+          <th>Rang</th>
+          <th>Appréciation</th>
+          <th>Décision</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (bulletin of bulletins(); track bulletin.eleveId; let i = $index) {
+          <tr>
+            <td>{{ i + 1 }}</td>
+            <td>{{ bulletin.nom }} {{ bulletin.prenom }}</td>
+            <td>
+              <span
+                [class.bonne-note]="bulletin.moyenne >= 15"
+                [class.mauvaise-note]="bulletin.moyenne < 10"
+              >
+                {{ bulletin.moyenne.toFixed(1) }}/20
+              </span>
+            </td>
+            <td>{{ bulletin.rang }}<sup>e</sup> / {{ bulletins().length }}</td>
+            <td class="appreciation-col">{{ bulletin.appreciation }}</td>
+            <td>
+              <span class="decision-badge" [class]="bulletin.decision.toLowerCase()">
+                {{ bulletin.decision }}
+              </span>
+            </td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Onglet 5 : PROGRESSION -->
+  <div class="tab-content" *ngIf="activeTab() === 'progression'">
+    <div class="tab-header">
+      <h2>📈 Progression de la classe</h2>
+    </div>
+
+    <div class="progression-grid">
+      <div class="progression-card">
+        <h3>📊 Évolution des moyennes</h3>
+        <div class="chart-placeholder">[ Graphique d'évolution des moyennes ]</div>
+      </div>
+      <div class="progression-card">
+        <h3>🎯 Taux de réussite par évaluation</h3>
+        <div class="chart-placeholder">[ Graphique en barres des taux de réussite ]</div>
+      </div>
+      <div class="progression-card">
+        <h3>📋 Chapitres complétés</h3>
+        <ul class="chapitres-list">
+          <li>✅ Chapitre 1 : Nombres relatifs</li>
+          <li>✅ Chapitre 2 : Fractions</li>
+          <li>✅ Chapitre 3 : Théorème de Pythagore</li>
+          <li>🔄 Chapitre 4 : Proportionnalité (en cours)</li>
+          <li>⏳ Chapitre 5 : Statistiques</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>

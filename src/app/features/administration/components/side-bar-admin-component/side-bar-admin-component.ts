@@ -30,61 +30,36 @@ export class SideBarAdminComponent {
 
   expandedMenus = signal<Set<string>>(new Set());
 
-  /*
   nav: NavItem[] = [
     { route: '/admin/dashboard', ico: '📊', label: 'Tableau de bord', section: '', badge: '' },
-    { route: '/admin/dossier-eleve/eleves', ico: '🎒', label: 'Élèves', section: '', badge: '1 200' },
-    { route: '/admin/dossier-eleve/inscriptions', ico: '📝', label: 'Inscriptions', section: '', badge: '24' },
-    { route: '/admin/dossier-eleve/parents', ico: '👪', label: 'Parents', section: '', badge: '' },
-    { route: '/admin/dossier-eleve/classes', ico: '🏫', label: 'Classes', section: '', badge: '32' },
-    { route: '/admin/dossier-eleve/enseignants', ico: '👨‍🏫', label: 'Enseignants', section: '', badge: '85' },
-
-    // VIE SCOLAIRE
-    { route: '/admin/dossier-eleve/bulletins', ico: '📋', label: 'Bulletins', section: 'VIE SCOLAIRE', badge: '' },
-    { route: '/admin/emplois-temps', ico: '🕐', label: 'Emplois du temps', section: '', badge: '' },
-    { route: '/admin/discipline', ico: '⚠️', label: 'Discipline', section: '', badge: '' },
 
     // FINANCES
-    { route: '/admin/factures', ico: '💰', label: 'Factures', section: 'FINANCES', badge: '18' },
-    { route: '/admin/comptabilite', ico: '💼', label: 'Comptabilité', section: '', badge: '' },
-    { route: '/admin/bourses', ico: '🎓', label: 'Bourses', section: '', badge: '' },
+    { route: '/admin/comptabilite/facture', ico: '💰', label: 'Factures', section: 'FINANCES', badge: '18' },
+    { route: '/admin/comptabilite/paiement', ico: '💳', label: 'Frais scolarité', section: '', badge: '' },
+    { route: '/admin/comptabilite/services', ico: '📋', label: 'Inscriptions services', section: '', badge: '' },
 
-    // COMMUNICATION
-    { route: '/admin/messagerie', ico: '✉️', label: 'Messagerie', section: 'COMMUNICATION', badge: '5' },
-    { route: '/admin/evenements', ico: '📅', label: 'Événements', section: '', badge: '' },
-
-    // SYSTÈME
-    { route: '/admin/utilisateurs', ico: '👥', label: 'Utilisateurs', section: 'SYSTÈME', badge: '' },
-    { route: '/admin/profils', ico: '🔑', label: 'Profils & Rôles', section: '', badge: '' },
-    { route: '/admin/parametres', ico: '⚙️', label: 'Paramètres', section: '', badge: '' },
-  ]; */
-
-  nav: NavItem[] = [
-    { route: '/admin/dashboard', ico: '📊', label: 'Tableau de bord', section: '', badge: '' },
+    // GESTION SCOLAIRE
     { route: '/admin/dossier-eleve/eleves', ico: '🎒', label: 'Élèves', section: 'GESTION SCOLAIRE', badge: '1 200' },
     { route: '/admin/dossier-eleve/inscriptions', ico: '📝', label: 'Inscriptions', section: '', badge: '24' },
-    { route: '/admin/dossier-eleve/parents', ico: '👪', label: 'Parents', section: '', badge: '' },
-    { route: '/admin/dossier-eleve/classes', ico: '🏫', label: 'Classes', section: '', badge: '32' },
-    { route: '/admin/dossier-eleve/enseignants', ico: '👨‍🏫', label: 'Enseignants', section: '', badge: '85' },
+    { route: '/admin/dossier-eleve/parent', ico: '👪', label: 'Parents', section: '', badge: '' },
+    //  { route: '/admin/dossier-eleve/enseignants', ico: '👨‍🏫', label: 'Enseignants', section: '', badge: '85' },
 
     // VIE SCOLAIRE
-    { route: '/admin/dossier-eleve/bulletins', ico: '📋', label: 'Bulletins', section: 'VIE SCOLAIRE', badge: '' },
-    { route: '/admin/emplois-temps', ico: '🕐', label: 'Emplois du temps', section: '', badge: '' },
-    { route: '/admin/discipline', ico: '⚠️', label: 'Discipline', section: '', badge: '' },
+    { route: '/admin/dossier-eleve/absences', ico: '❌', label: 'Absences', section: 'VIE SCOLAIRE', badge: '7' },
+    { route: '/admin/dossier-eleve/evaluations', ico: '🎯', label: 'Évaluations', section: '', badge: '' },
+    { route: '/admin/dossier-eleve/notes', ico: '📝', label: 'Notes', section: '', badge: '' },
+    { route: '/admin/dossier-eleve/bulletin', ico: '📋', label: 'Bulletins', section: '', badge: '' },
 
-    // FINANCES
-    { route: '/admin/factures', ico: '💰', label: 'Factures', section: 'FINANCES', badge: '18' },
-    { route: '/admin/comptabilite', ico: '💼', label: 'Comptabilité', section: '', badge: '' },
-    { route: '/admin/bourses', ico: '🎓', label: 'Bourses', section: '', badge: '' },
+    // ═══════════ PLANIFICATION ═══════════
+    { route: '/admin/planification/emploi-du-temps', ico: '🕐', label: 'Emplois du temps', section: 'PLANIFICATION', badge: '' },
+    { route: '/admin/planification/cours', ico: '📖', label: 'Cours', section: '', badge: '' },
+    { route: '/admin/planification/enseignement', ico: '👨‍🏫', label: 'Enseignements', section: '', badge: '' },
+
 
     // COMMUNICATION
-    { route: '/admin/messagerie', ico: '✉️', label: 'Messagerie', section: 'COMMUNICATION', badge: '5' },
-    { route: '/admin/evenements', ico: '📅', label: 'Événements', section: '', badge: '' },
-
-    // SYSTÈME
-    { route: '/admin/utilisateurs', ico: '👥', label: 'Utilisateurs', section: 'SYSTÈME', badge: '' },
-    { route: '/admin/profils', ico: '🔑', label: 'Profils & Rôles', section: '', badge: '' },
-    { route: '/admin/parametres', ico: '⚙️', label: 'Paramètres', section: '', badge: '' },
+    { route: '/admin/planification/reunion', ico: '👥', label: 'Réunions', section: 'COMMUNICATION', badge: '5' },
+    { route: '/admin/planification/noteinformations', ico: '📢', label: 'Notes d\'info', section: '' },
+    { route: '/admin/planification/evenement', ico: '🎪', label: 'Événements', section: '' },
 
     // ═══════════ PARAMÉTRAGE DE BASE (DROPDOWN) ═══════════
     {
@@ -93,14 +68,36 @@ export class SideBarAdminComponent {
       section: 'CONFIGURATION',
       badge: '',
       children: [
-        { route: '/admin/parametrage/salles', ico: '🚪', label: 'Salles' },
-        { route: '/admin/parametrage/batiments', ico: '🏗️', label: 'Bâtiments' },
-        { route: '/admin/parametrage/annees-scolaires', ico: '📅', label: 'Années scolaires' },
-        { route: '/admin/parametrage/matieres', ico: '📚', label: 'Matières' },
-        { route: '/admin/parametrage/menus', ico: '🍽️', label: 'Menus' },
-        { route: '/admin/parametrage/types-services', ico: '🛎️', label: 'Types de service' },
-        { route: '/admin/parametrage/uniformes', ico: '👔', label: 'Uniformes' },
-        { route: '/admin/parametrage/transports', ico: '🚌', label: 'Transports' },
+        // Structures
+        { route: '/admin/referentiel/batiments', ico: '🏗️', label: 'Bâtiments' },
+        { route: '/admin/referentiel/salles', ico: '🚪', label: 'Salles' },
+
+        // Pédagogie
+        { route: '/admin/referentiel/annee-scolaires', ico: '📅', label: 'Années scolaires' },
+        { route: '/admin/referentiel/semestres', ico: '🗓️', label: 'Semestres' },
+        { route: '/admin/referentiel/matieres', ico: '📚', label: 'Matières' },
+        { route: '/admin/referentiel/coefficients', ico: '⚖️', label: 'Coefficients' },
+        { route: '/admin/referentiel/classes', ico: '🏫', label: 'Classes' },
+        { route: '/admin/referentiel/niveau', ico: '📊', label: 'Niveaux' },
+        { route: '/admin/referentiel/grades', ico: '🎓', label: 'Niveaux éducation' },
+
+        // Services
+        { route: '/admin/referentiel/typeservices', ico: '🛎️', label: 'Types de service' },
+        { route: '/admin/referentiel/tarifs', ico: '💲', label: 'Tarifs' },
+        { route: '/admin/referentiel/type-paiements', ico: '💳', label: 'Types de paiement' },
+        { route: '/admin/referentiel/moyenpaiements', ico: '🏦', label: 'Modes de paiement' },
+        { route: '/admin/referentiel/menus', ico: '🍽️', label: 'Menus' },
+        { route: '/admin/referentiel/category-menu', ico: '📋', label: 'Catégories menu' },
+
+        // Documents
+        { route: '/admin/referentiel/type-documents', ico: '📄', label: 'Types de document' },
+
+        // Système
+        { route: '/admin/profils', ico: '🔑', label: 'Profils & Rôles', section: '', badge: '' },
+        { route: '/admin/utilisateur', ico: '👥', label: 'Utilisateurs' },
+        { route: '/admin/utilisateur/enseignants', ico: '👨‍🏫', label: 'Enseignants' },
+        { route: '/admin/referentiel/parametrage', ico: '🔧', label: 'Paramètres établissement' }
+
       ]
     },
   ];

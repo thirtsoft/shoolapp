@@ -1,25 +1,24 @@
 import { Routes } from '@angular/router';
 import { ChoisirEleveComponent } from './components/choisir-eleve/choisir-eleve.component';
 import { MainLayoutParentComponent } from './components/main-layout-parent-component/main-layout-parent-component';
-import { ChangerPasswordParentComponent } from './pages/settings/changer-password-parent/changer-password-parent.component';
-import { ParentProfileComponent } from './pages/settings/parent-profile/parent-profile.component';
-import { NoteInformationComponent } from './pages/note-information/note-information.component';
 import { AjoutAbsenceEleveComponent } from './pages/absence/ajout-absence-eleve/ajout-absence-eleve.component';
 import { ListAbsenceEleveComponent } from './pages/absence/list-absence-eleve/list-absence-eleve.component';
-import { ListeEvenementComponent } from './pages/liste-evenement/liste-evenement.component';
-import { ListeMenuComponent } from './pages/liste-menu/liste-menu.component';
-import { ExerciceAFaireComponent } from './pages/exercice/exercice-a-faire/exercice-a-faire.component';
-import { ListeBulletinEleveComponent } from './pages/liste-bulletin-eleve/liste-bulletin-eleve.component';
-import { ListNoteEleveComponent } from './pages/list-note-eleve/list-note-eleve.component';
-import { ListCourseEleveComponent } from './pages/emploidutemps/list-course-eleve/list-course-eleve.component';
-import { DetailsInscriptionEleveComponent } from './pages/inscription/details-inscription-eleve/details-inscription-eleve.component';
-import { ListInscriptionEleveParentComponent } from './pages/inscription/list-inscription-eleve-parent/list-inscription-eleve-parent.component';
 import { DetailsEmploidutempsEleveComponent } from './pages/emploidutemps/details-emploidutemps-eleve/details-emploidutemps-eleve.component';
 import { EmploieEleveComponent } from './pages/emploidutemps/emploie-eleve/emploie-eleve.component';
-import { ListPaiementEleveComponent } from './pages/facture/list-paiement-eleve/list-paiement-eleve.component';
+import { ListCourseEleveComponent } from './pages/emploidutemps/list-course-eleve/list-course-eleve.component';
+import { ExerciceAFaireComponent } from './pages/exercice/exercice-a-faire/exercice-a-faire.component';
 import { DetailsFactureParentComponent } from './pages/facture/details-facture-parent/details-facture-parent.component';
 import { ListInvoiceEleveComponent } from './pages/facture/list-invoice-eleve/list-invoice-eleve.component';
-import { DashboardParentComponent } from './pages/dashboard-parent-component/dashboard-parent-component';
+import { ListPaiementEleveComponent } from './pages/facture/list-paiement-eleve/list-paiement-eleve.component';
+import { DetailsInscriptionEleveComponent } from './pages/inscription/details-inscription-eleve/details-inscription-eleve.component';
+import { ListInscriptionEleveParentComponent } from './pages/inscription/list-inscription-eleve-parent/list-inscription-eleve-parent.component';
+import { ListNoteEleveComponent } from './pages/list-note-eleve/list-note-eleve.component';
+import { ListeBulletinEleveComponent } from './pages/liste-bulletin-eleve/liste-bulletin-eleve.component';
+import { ListeEvenementComponent } from './pages/liste-evenement/liste-evenement.component';
+import { ListeMenuComponent } from './pages/liste-menu/liste-menu.component';
+import { NoteInformationComponent } from './pages/note-information/note-information.component';
+import { ChangerPasswordParentComponent } from './pages/settings/changer-password-parent/changer-password-parent.component';
+import { ParentProfileComponent } from './pages/settings/parent-profile/parent-profile.component';
 
 export const PARENT_ROUTES: Routes = [
 
@@ -39,7 +38,7 @@ export const PARENT_ROUTES: Routes = [
         title: 'Tableau de bord'
       },
       {
-        path: 'facture',
+        path: 'factures',
         component: ListInvoiceEleveComponent
       },
       {
@@ -47,19 +46,19 @@ export const PARENT_ROUTES: Routes = [
         component: DetailsFactureParentComponent
       },
       {
-        path: 'payement',
+        path: 'paiements',
         component: ListPaiementEleveComponent
       },
       {
-        path: 'emploi-eleve',
+        path: 'emploi-temps',
         component: EmploieEleveComponent
       },
       {
-        path: 'emploi-eleve/details/:id',
+        path: 'emploi-temps/details/:id',
         component: DetailsEmploidutempsEleveComponent
       },
       {
-        path: 'inscription',
+        path: 'inscriptions',
         component: ListInscriptionEleveParentComponent
       },
       {
@@ -71,15 +70,15 @@ export const PARENT_ROUTES: Routes = [
         component: ListCourseEleveComponent
       },
       {
-        path: 'note',
+        path: 'notes',
         component: ListNoteEleveComponent
       },
       {
-        path: 'bulletin',
+        path: 'bulletins',
         component: ListeBulletinEleveComponent
       },
       {
-        path: 'exercice',
+        path: 'exercices',
         component: ExerciceAFaireComponent
       },
       {
@@ -87,11 +86,11 @@ export const PARENT_ROUTES: Routes = [
         component: ListeMenuComponent
       },
       {
-        path: 'evenement-scolaire',
+        path: 'evenements',
         component: ListeEvenementComponent
       },
       {
-        path: 'absence',
+        path: 'absences',
         component: ListAbsenceEleveComponent
       },
       {
@@ -99,7 +98,7 @@ export const PARENT_ROUTES: Routes = [
         component: AjoutAbsenceEleveComponent
       },
       {
-        path: 'information',
+        path: 'informations',
         component: NoteInformationComponent
       },
       {

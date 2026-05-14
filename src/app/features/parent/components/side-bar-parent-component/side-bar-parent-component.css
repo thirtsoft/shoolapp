@@ -252,6 +252,64 @@
   flex-shrink: 0;
 }
 
+/* ═══════════ SECTIONS ═══════════ */
+.ps-section {
+  padding: 16px 12px 6px;
+  margin-top: 4px;
+}
+
+.ps-section:first-child {
+  margin-top: 0;
+  padding-top: 8px;
+}
+
+.ps-section-title {
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1.2px;
+  color: rgba(255, 255, 255, 0.45);
+}
+
+/* ═══════════ DROPDOWN ═══════════ */
+.ps-dropdown-group {
+  display: flex;
+  flex-direction: column;
+}
+
+.ps-dropdown-toggle {
+  position: relative;
+}
+
+.ps-chevron {
+  font-size: 11px;
+  margin-left: auto;
+  opacity: 0.6;
+  transition: transform 0.2s;
+}
+
+.ps-dropdown-toggle.expanded .ps-chevron {
+  opacity: 1;
+}
+
+.ps-submenu {
+  display: flex;
+  flex-direction: column;
+  padding-left: 12px;
+  border-left: 1px solid rgba(255, 255, 255, 0.12);
+  margin-left: 20px;
+}
+
+.ps-subitem {
+  font-size: 12px;
+  padding: 9px 12px;
+  opacity: 0.8;
+}
+
+.ps-subitem:hover {
+  opacity: 1;
+}
+
 /* ══════════════════════════════════════════════════
    MOBILE — drawer depuis la gauche
    ══════════════════════════════════════════════════ */

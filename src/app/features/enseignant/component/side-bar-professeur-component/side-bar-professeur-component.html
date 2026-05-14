@@ -1,98 +1,117 @@
 <aside class="sidebar" [class.collapsed]="collapsed()" [class.open]="open()">
-  <!-- Brand / Logo -->
+  <button class="sidebar-close" (click)="close.emit()">✕</button>
+
+  <!-- Brand -->
   <div class="sidebar-brand">
-    <div class="brand-logo">📚</div>
+    <div class="brand-logo">🏫</div>
     @if (!collapsed()) {
       <div class="brand-text">
         <span class="brand-name">EduSchool</span>
-        <span class="brand-sub">Espace Professeur</span>
+        <span class="brand-sub">Espace Enseignant</span>
       </div>
     }
     <button
       class="brand-toggle"
       (click)="toggleCollapse.emit()"
-      [attr.aria-label]="collapsed() ? 'Développer' : 'Réduire'"
+      [title]="collapsed() ? 'Agrandir' : 'Réduire'"
     >
-      {{ collapsed() ? '→' : '←' }}
+      {{ collapsed() ? '▶' : '◀' }}
     </button>
   </div>
 
-  <!-- Profile professeur -->
-  @if (!collapsed()) {
-    <div class="sidebar-profile">
-      <div class="profile-avatar">{{ professeur().avatar || '👨‍🏫' }}</div>
-      <div class="profile-info">
-        <span class="profile-name">{{ professeur().nom || 'Professeur' }}</span>
-        <span class="profile-matiere">{{ professeur().matiere || 'Mathématiques' }}</span>
-        <span class="profile-classes">{{ nbClasses }} classes · {{ nbEleves }} élèves</span>
-      </div>
-    </div>
-  }
-
-  <!-- Navigation -->
   <nav class="sidebar-nav">
-    <div class="nav-section">
-      <span class="nav-section-title">ENSEIGNEMENT</span>
-    </div>
-
-    @for (item of navItems; track item.id) {
-      <!-- Titre de section pour Évaluation -->
-      @if (item.id === 'notes') {
+    @for (item of nav; track item.label; let i = $index) {
+      <!-- Section header -->
+      @if (item.section) {
         <div class="nav-section">
-          <span class="nav-section-title">ÉVALUATION</span>
-        </div>
-      }
-      <!-- Titre de section pour Vie scolaire -->
-      @if (item.id === 'absences') {
-        <div class="nav-section">
-          <span class="nav-section-title">VIE SCOLAIRE</span>
-        </div>
-      }
-
-      <a
-        class="nav-item"
-        [routerLink]="item.route"
-        routerLinkActive="active"
-        [routerLinkActiveOptions]="{ exact: false }"
-        (click)="close.emit()"
-      >
-        <span class="nav-icon">{{ item.icon }}</span>
-        @if (!collapsed()) {
-          <span class="nav-label">{{ item.label }}</span>
-          @if (item.badge) {
-            <span class="nav-badge">{{ item.badge }}</span>
+          @if (!collapsed()) {
+            <span class="nav-section-title">{{ item.section }}</span>
           }
+        </div>
+      }
+
+      @if (!hasChildren(item)) {
+        <button
+          class="nav-item"
+          [class.active]="isActive(item.route)"
+          (click)="naviguer(item.route)"
+          [title]="item.label"
+        >
+          <span class="nav-icon">{{ item.ico }}</span>
+          @if (!collapsed()) {
+            <span class="nav-label">{{ item.label }}</span>
+            @if (item.badge) {
+              <span class="nav-badge">{{ item.badge }}</span>
+            }
+          }
+        </button>
+      }
+
+      @if (hasChildren(item)) {
+        @if (!collapsed()) {
+          <div class="ps-dropdown-group">
+            <button
+              class="nav-item ps-dropdown-toggle"
+              [class.active]="isParentActive(item)"
+              [class.expanded]="isExpanded(item.label)"
+              (click)="toggleDropdown(item.label)"
+              [title]="item.label"
+            >
+              <span class="nav-icon">{{ item.ico }}</span>
+              <span class="nav-label">{{ item.label }}</span>
+              <span class="ps-chevron">{{ isExpanded(item.label) ? '▾' : '▸' }}</span>
+            </button>
+
+            @if (isExpanded(item.label)) {
+              <div class="ps-submenu">
+                @for (child of item.children; track child.label) {
+                  <button
+                    class="nav-item ps-subitem"
+                    [class.active]="isActive(child.route)"
+                    (click)="naviguer(child.route)"
+                    [title]="child.label"
+                  >
+                    <span class="nav-icon">{{ child.ico }}</span>
+                    <span class="nav-label">{{ child.label }}</span>
+                  </button>
+                }
+              </div>
+            }
+          </div>
+        } @else {
+          <!-- Version collapsed : juste l'icône -->
+          <button
+            class="nav-item"
+            [class.active]="isParentActive(item)"
+            [title]="item.label"
+            (click)="toggleDropdown(item.label)"
+          >
+            <span class="nav-icon">{{ item.ico }}</span>
+          </button>
         }
-      </a>
+      }
     }
   </nav>
 
-  <!-- Footer avec statistiques rapides -->
   @if (!collapsed()) {
     <div class="sidebar-footer">
-      <div class="footer-stat">
-        <span class="stat-value">{{ nbEleves }}</span>
-        <span class="stat-label">Élèves</span>
-      </div>
       <div class="footer-stat">
         <span class="stat-value">{{ nbClasses }}</span>
         <span class="stat-label">Classes</span>
       </div>
+      <div class="footer-stat">
+        <span class="stat-value">{{ nbEleves }}</span>
+        <span class="stat-label">Élèves</span>
+      </div>
     </div>
   }
 
-  <!-- Footer — Déconnexion -->
   <div class="sb-footer">
     <button class="sb-deconnexion" (click)="deconnecter()">
       <span class="sb-ico">🚪</span>
       @if (!collapsed()) {
-        <span class="sb-label">Déconnexion</span>
+        <span>Déconnexion</span>
       }
     </button>
   </div>
-
-  <!-- Version mobile : bouton fermeture -->
-  @if (open()) {
-    <button class="sidebar-close" (click)="close.emit()" aria-label="Fermer le menu">✕</button>
-  }
 </aside>

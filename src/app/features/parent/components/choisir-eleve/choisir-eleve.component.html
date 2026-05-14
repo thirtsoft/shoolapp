@@ -1,55 +1,58 @@
-<!-- Team -->
-<section id="team" class="pb-5" *ngIf="afficherLesEleves().length == 0">
-  <div class="container">
-    <h5 class="section-title h1">
-      Vous n'avez aucun enfants inscrit à cet établissements
-    </h5>
-    <div class="row"></div>
-  </div>
-</section>
-<!-- Team -->
-
-<!-- Team -->
-<section id="team" class="pb-5" *ngIf="afficherLesEleves().length > 0">
-  <div class="container">
-    <h5 class="section-title h1">MES ENFANTS</h5>
-    <div class="row d-flex flex-nowrap overflow-auto">
-      <!-- Team member -->
-      <div
-        class="col-xs-12 col-sm-6 col-md-4"
-        *ngFor="let eleve of afficherLesEleves()"
-      >
-        <div class="image-flip">
-          <div class="mainflip flip-0">
-            <div class="frontside">
-              <div class="card">
-                <div class="card-body text-center">
-                  <p>
-                    <img
-                      class="img-fluid"
-                      src="https://cdn-0.codingyaar.com/wp-content/uploads/bootstrap-profile-card-image.jpg"
-                      alt="card image"
-                    />
-                  </p>
-                  <h4 class="card-title">
-                    {{ eleve?.prenom }} - {{ eleve?.nom }}
-                  </h4>
-                  <p class="card-text">
-                    {{ eleve?.niveauEleve }} - {{ eleve?.classeEleve }} -
-                    {{ eleve?.anneeScolaire }}
-                  </p>
-                  <a
-                    (click)="afficherDossier(eleve)"
-                    class="btn btn-primary btn-sm"
-                    ><i class="fa fa-plus"></i>voir dossier scolaire</a
-                  >
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
+<!-- Aucun enfant -->
+@if (afficherLesEleves().length === 0) {
+  <section class="choisir-section">
+    <div class="choisir-container">
+      <div class="choisir-empty">
+        <span class="choisir-empty-ico">📭</span>
+        <h2>Aucun enfant inscrit</h2>
+        <p>Vous n'avez aucun enfant inscrit dans cet établissement.</p>
+        <p class="choisir-empty-contact">Contactez l'administration pour plus d'informations.</p>
+        <!-- ✅ Bouton déconnexion -->
+        <button class="choisir-deconnexion" (click)="deconnecter()">
+          <span>🚪</span> Déconnexion
+        </button>
       </div>
     </div>
-  </div>
-</section>
-<!-- Team -->
+  </section>
+}
+
+<!-- Liste des enfants -->
+@if (afficherLesEleves().length > 0) {
+  <section class="choisir-section">
+    <div class="choisir-container">
+      <h1 class="choisir-title">Mes Enfants</h1>
+      <p class="choisir-subtitle">Sélectionnez un élève pour accéder à son dossier scolaire</p>
+
+      <div class="choisir-grid">
+        @for (eleve of afficherLesEleves(); track eleve.id) {
+          <div class="choisir-card" (click)="afficherDossier(eleve)">
+            <!-- Avatar -->
+            <div class="choisir-avatar {{ getAvatarBg(eleve) }}">
+              <span class="choisir-avatar-ico">{{ getAvatar(eleve) }}</span>
+            </div>
+
+            <!-- Infos -->
+            <div class="choisir-card-body">
+              <h3 class="choisir-card-nom">{{ eleve?.prenom }} {{ eleve?.nom }}</h3>
+              <div class="choisir-card-tags">
+                <span class="choisir-tag">{{ eleve?.classeEleve }}</span>
+                <span class="choisir-tag">{{ eleve?.niveauEleve }}</span>
+              </div>
+              <p class="choisir-card-annee">Année {{ eleve?.anneeScolaire }}</p>
+              <span class="choisir-card-lien">
+                Voir le dossier scolaire
+                <span class="choisir-fleche">→</span>
+              </span>
+            </div>
+          </div>
+        }
+      </div>
+      <!-- ✅ Bouton déconnexion en bas -->
+      <div class="choisir-footer">
+        <button class="choisir-deconnexion" (click)="deconnecter()">
+          <span>🚪</span> Déconnexion
+        </button>
+      </div>
+    </div>
+  </section>
+}

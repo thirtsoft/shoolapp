@@ -22,12 +22,11 @@ export class MainLayoutProfesseurComponent {
 
   sidebarCollapsed = signal(false);
   sidebarOpen = signal(false);
-  today = new Date();
 
   professeur = {
     nom: 'M. Sall',
+    prenom: 'Moussa',
     matiere: 'Mathématiques',
-    classes: ['Terminale S2', 'Première S1', 'Seconde S2'],
     avatar: '👨‍🏫'
   };
 
@@ -38,37 +37,46 @@ export class MainLayoutProfesseurComponent {
     year: 'numeric'
   });
 
-
+  // ✅ Routes alignées sur /enseignant/
   nav: NavItem[] = [
-    { route: '/professeur/dashboard', ico: '📊', label: 'Tableau de bord' },
-    { route: '/professeur/classes', ico: '🏫', label: 'Mes classes' },
-    { route: '/professeur/notes', ico: '📝', label: 'Saisie des notes' },
-    { route: '/professeur/bulletins', ico: '📋', label: 'Bulletins' },
-    { route: '/professeur/emploi-temps', ico: '🕐', label: 'Emploi du temps' },
-    { route: '/professeur/cours', ico: '📚', label: 'Cours & Ressources' },
-    { route: '/professeur/absences', ico: '📌', label: 'Appel & Absences' },
-    { route: '/professeur/messagerie', ico: '✉️', label: 'Messagerie' },
+    { route: '/enseignant/dashboard', ico: '📊', label: 'Accueil' },
+    { route: '/enseignant/mes-eleves', ico: '👨‍🎓', label: 'Élèves' },
+    { route: '/enseignant/notes', ico: '📝', label: 'Notes' },
+    { route: '/enseignant/absences', ico: '✅', label: 'Appel' },
+    { route: '/enseignant/mon-compte', ico: '👤', label: 'Profil' },
   ];
+
+  private readonly sectionLabels: Record<string, string> = {
+    'dashboard': 'Tableau de bord',
+    'mes-eleves': 'Mes élèves',
+    'absences': 'Appel & Absences',
+    'demande-conge': 'Demande de congé',
+    'mes-conges': 'Mes congés',
+    'mes-enseignements': 'Mes enseignements',
+    'notes': 'Saisie des notes',
+    'evaluations': 'Évaluations',
+    'exercices': 'Exercices',
+    'mes-cours': 'Cours & Ressources',
+    'mes-reunions': 'Réunions',
+    'mon-compte': 'Mon compte',
+  };
 
   get sectionLabel(): string {
     const url = this.router.url;
-    if (url.includes('dashboard')) return 'Tableau de bord';
-    if (url.includes('classes')) return 'Mes classes';
-    if (url.includes('notes')) return 'Saisie des notes';
-    if (url.includes('bulletins')) return 'Bulletins';
-    if (url.includes('emploi-temps')) return 'Emploi du temps';
-    if (url.includes('cours')) return 'Cours & Ressources';
-    if (url.includes('absences')) return 'Appel & Absences';
-    if (url.includes('messagerie')) return 'Messagerie';
-    return 'Professeur';
+    for (const [key, label] of Object.entries(this.sectionLabels)) {
+      if (url.includes('/' + key)) {
+        return label;
+      }
+    }
+    return 'Tableau de bord';
   }
 
   isActive(route: string): boolean {
-    const segment = route.split('/').pop() ?? '';
-    return this.router.url.includes(segment);
+    return this.router.url === route || this.router.url.startsWith(route + '/');
   }
 
   naviguer(route: string): void {
+    this.sidebarOpen.set(false);
     this.router.navigate([route]);
   }
 
@@ -79,6 +87,4 @@ export class MainLayoutProfesseurComponent {
   onSidebarClose(): void {
     this.sidebarOpen.set(false);
   }
-
 }
-

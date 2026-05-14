@@ -1,49 +1,77 @@
 <div class="parent-shell">
-  <!-- Topbar -->
   <header class="parent-topbar">
     <button class="hamburger-btn" (click)="sidebarOpen.set(true)" aria-label="Menu">
       <span></span><span></span><span></span>
     </button>
     <div class="pt-brand">👪 <span>Espace Parent</span></div>
-    <div class="pt-info">
-      <span class="pt-eleve">{{ eleve.nom }}</span>
-      <span class="pt-sep">·</span>
-      <span>{{ eleve.classe }}</span>
-    </div>
+
+    <!-- ✅ SÉLECTEUR (juste le déclencheur) -->
+    @if (eleveActif()) {
+      <div class="pt-eleve-selector" (click)="toggleEleveDropdown()">
+        <span class="pt-eleve-ava">{{ getAvatar(eleveActif()!) }}</span>
+        <div class="pt-eleve-infos">
+          <span class="pt-eleve-nom">{{ eleveActif()!.prenom }} {{ eleveActif()!.nom }}</span>
+          <span class="pt-eleve-classe">{{ eleveActif()!.classeEleve }}</span>
+        </div>
+        <span class="pt-chevron" [class.open]="eleveDropdownOpen()">▾</span>
+      </div>
+    }
+
     <div class="pt-time">{{ heure }}</div>
   </header>
 
+  <!-- ✅ DROPDOWN SÉPARÉ (hors du sélecteur, hors du header) -->
+  @if (eleveDropdownOpen()) {
+    <div class="eleve-dropdown-wrapper">
+      <div class="eleve-dropdown-backdrop" (click)="eleveDropdownOpen.set(false)"></div>
+      <div class="pt-eleve-dropdown" (click)="$event.stopPropagation()">
+        <div class="pt-dropdown-header">Changer d'élève</div>
+        @for (enfant of listeEleves(); track enfant.id) {
+          <div
+            class="pt-dropdown-item"
+            [class.active]="enfant.id === eleveActif()?.id"
+            (click)="changerEleve(enfant)"
+          >
+            <span class="pt-dropdown-ico">{{ getAvatar(enfant) }}</span>
+            <div class="pt-dropdown-text">
+              <span class="pt-dropdown-name">{{ enfant.prenom }} {{ enfant.nom }}</span>
+              <span class="pt-dropdown-sub"
+                >{{ enfant.classeEleve }} · {{ enfant.niveauEleve }}</span
+              >
+            </div>
+            @if (enfant.id === eleveActif()?.id) {
+              <span class="pt-dropdown-check">✅</span>
+            }
+          </div>
+        }
+      </div>
+    </div>
+  }
+
   <div class="parent-body">
-    <!-- Backdrop mobile -->
     @if (sidebarOpen()) {
       <div class="sidebar-backdrop" (click)="sidebarOpen.set(false)"></div>
     }
 
-    <!-- Sidebar -->
     <app-side-bar-parent-component
       [isOpen]="sidebarOpen()"
-      [vueActive]="vueActive()"
-      [eleve]="eleve"
+      [parent]="parent()"
+      [eleveActif]="eleveActif()"
       (close)="sidebarOpen.set(false)"
-      (navigate)="naviguer($event)"
-      (deconnecter)="deconnecter()"
     ></app-side-bar-parent-component>
 
-    <!-- Zone de contenu dynamique -->
     <div class="parent-view">
       <router-outlet></router-outlet>
     </div>
   </div>
 
-  <!-- Bottom nav mobile -->
   <nav class="bottom-nav">
-    @for (item of navMobilesItems; track item.id) {
-      <button class="bn-btn" [class.active]="vueActive() === item.id" (click)="naviguer(item.id)">
+    @for (item of navMobilesItems; track item.route) {
+      <button class="bn-btn" [class.active]="isActive(item.route)" (click)="naviguer(item.route)">
         <span class="bn-ico">{{ item.ico }}</span>
         <span class="bn-lbl">{{ item.label }}</span>
       </button>
     }
-
     <button class="bn-btn" (click)="deconnecter()">
       <span class="bn-ico">🚪</span>
       <span class="bn-lbl">Quitter</span>

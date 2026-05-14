@@ -1,36 +1,36 @@
 
 import { Routes } from '@angular/router';
-import { ReferentielsComponent } from './referentiels.component';
-import { BatimentComponent } from './pages/batiment/batiment.component';
-import { CreationBatimentComponent } from './pages/batiment/creation-batiment/creation-batiment.component';
 import { AnneeScolaireComponent } from './pages/anneescolaire/annee-scolaire/annee-scolaire.component';
 import { CreateAnneeScolaireComponent } from './pages/anneescolaire/create-annee-scolaire/create-annee-scolaire.component';
-import { MatiereComponent } from './pages/matiere/matiere.component';
-import { CreateMatiereAvecCoefficientComponent } from './pages/matiere/create-matiere-avec-coefficient/create-matiere-avec-coefficient.component';
-import { ClasseComponent } from './pages/classe/classe.component';
-import { CreateClasseComponent } from './pages/classe/create-classe/create-classe.component';
-import { SemestreComponent } from './pages/semestre/semestre.component';
-import { CreateSemestreComponent } from './pages/semestre/create-semestre/create-semestre.component';
+import { BatimentComponent } from './pages/batiment/batiment.component';
+import { CreationBatimentComponent } from './pages/batiment/creation-batiment/creation-batiment.component';
 import { CategoryMenuComponent } from './pages/category-menu/category-menu.component';
 import { CreationCategoryMenuComponent } from './pages/category-menu/creation-category-menu/creation-category-menu.component';
-import { MenuComponent } from './pages/menu/menu.component';
-import { NiveauEducationComponent } from './pages/niveau-education/niveau-education.component';
-import { CreateNiveauEducationComponent } from './pages/niveau-education/create-niveau-education/create-niveau-education.component';
-import { ListNiveauComponent } from './pages/niveau/list-niveau/list-niveau.component';
-import { CreateNiveauComponent } from './pages/niveau/create-niveau/create-niveau.component';
-import { TypePaiementComponent } from './pages/type-paiement/type-paiement.component';
-import { TypeDocumentsComponent } from './pages/type-document/type-documents/type-documents.component';
-import { CreateTypeDocumentComponent } from './pages/type-document/create-type-document/create-type-document.component';
-import { SallesComponent } from './pages/salle/salles/salles.component';
-import { ListTypeServiceOffertComponent } from './pages/typeservice/list-type-service-offert/list-type-service-offert.component';
-import { CreateTypeServiceOffertComponent } from './pages/typeservice/create-type-service-offert/create-type-service-offert.component';
-import { ListTarifComponent } from './pages/tarif/list-tarif/list-tarif.component';
-import { CreateTarifComponent } from './pages/tarif/create-tarif/create-tarif.component';
+import { ClasseComponent } from './pages/classe/classe.component';
+import { CreateClasseComponent } from './pages/classe/create-classe/create-classe.component';
 import { CoefficientmatclasseComponent } from './pages/coefficientmatclasse/coefficientmatclasse/coefficientmatclasse.component';
 import { CreateCoefficientmatclasseComponent } from './pages/coefficientmatclasse/create-coefficientmatclasse/create-coefficientmatclasse.component';
-import { ListeModePaiementComponent } from './pages/modepaiement/liste-mode-paiement/liste-mode-paiement.component';
-import { CreateModePaiementComponent } from './pages/modepaiement/create-mode-paiement/create-mode-paiement.component';
 import { ConfigEtablissementComponent } from './pages/config-etablissement/config-etablissement.component';
+import { CreateMatiereAvecCoefficientComponent } from './pages/matiere/create-matiere-avec-coefficient/create-matiere-avec-coefficient.component';
+import { MatiereComponent } from './pages/matiere/matiere.component';
+import { MenuComponent } from './pages/menu/menu.component';
+import { CreateModePaiementComponent } from './pages/modepaiement/create-mode-paiement/create-mode-paiement.component';
+import { ListeModePaiementComponent } from './pages/modepaiement/liste-mode-paiement/liste-mode-paiement.component';
+import { CreateNiveauEducationComponent } from './pages/niveau-education/create-niveau-education/create-niveau-education.component';
+import { NiveauEducationComponent } from './pages/niveau-education/niveau-education.component';
+import { CreateNiveauComponent } from './pages/niveau/create-niveau/create-niveau.component';
+import { ListNiveauComponent } from './pages/niveau/list-niveau/list-niveau.component';
+import { SallesComponent } from './pages/salle/salles/salles.component';
+import { CreateSemestreComponent } from './pages/semestre/create-semestre/create-semestre.component';
+import { SemestreComponent } from './pages/semestre/semestre.component';
+import { CreateTarifComponent } from './pages/tarif/create-tarif/create-tarif.component';
+import { ListTarifComponent } from './pages/tarif/list-tarif/list-tarif.component';
+import { CreateTypeDocumentComponent } from './pages/type-document/create-type-document/create-type-document.component';
+import { TypeDocumentsComponent } from './pages/type-document/type-documents/type-documents.component';
+import { TypePaiementComponent } from './pages/type-paiement/type-paiement.component';
+import { CreateTypeServiceOffertComponent } from './pages/typeservice/create-type-service-offert/create-type-service-offert.component';
+import { ListTypeServiceOffertComponent } from './pages/typeservice/list-type-service-offert/list-type-service-offert.component';
+import { ReferentielsComponent } from './referentiels.component';
 
 export const REFERENTIELS_ROUTES: Routes = [
   {
@@ -39,7 +39,7 @@ export const REFERENTIELS_ROUTES: Routes = [
     children: [
 
       {
-        path: 'batiment',
+        path: 'batiments',
         component: BatimentComponent
       },
 
@@ -52,7 +52,7 @@ export const REFERENTIELS_ROUTES: Routes = [
         component: CreationBatimentComponent
       },
       {
-        path: 'annee-scolaire',
+        path: 'annee-scolaires',
         component: AnneeScolaireComponent,
       },
       {
@@ -64,7 +64,7 @@ export const REFERENTIELS_ROUTES: Routes = [
         component: CreateAnneeScolaireComponent,
       },
       {
-        path: 'matiere',
+        path: 'matieres',
         component: MatiereComponent
       },
       {
@@ -76,7 +76,7 @@ export const REFERENTIELS_ROUTES: Routes = [
         component: CreateMatiereAvecCoefficientComponent
       },
       {
-        path: 'classe',
+        path: 'classes',
         component: ClasseComponent
       },
       {
@@ -88,7 +88,7 @@ export const REFERENTIELS_ROUTES: Routes = [
         component: CreateClasseComponent
       },
       {
-        path: 'semestre',
+        path: 'semestres',
         component: SemestreComponent
       },
       {
@@ -112,19 +112,19 @@ export const REFERENTIELS_ROUTES: Routes = [
         component: CreationCategoryMenuComponent
       },
       {
-        path: 'menu',
+        path: 'menus',
         component: MenuComponent
       },
       {
-        path: 'niveau-education',
+        path: 'grades',
         component: NiveauEducationComponent
       },
       {
-        path: 'niveau-education/create',
+        path: 'grade/create',
         component: CreateNiveauEducationComponent
       },
       {
-        path: 'niveau-education/edit/:id',
+        path: 'grade/edit/:id',
         component: CreateNiveauEducationComponent
       },
       {
@@ -142,11 +142,11 @@ export const REFERENTIELS_ROUTES: Routes = [
 
 
       {
-        path: 'type-paiement',
+        path: 'type-paiements',
         component: TypePaiementComponent
       },
       {
-        path: 'type-document',
+        path: 'type-documents',
         component: TypeDocumentsComponent
       },
       {
@@ -159,11 +159,11 @@ export const REFERENTIELS_ROUTES: Routes = [
       },
 
       {
-        path: 'salle',
+        path: 'salles',
         component: SallesComponent
       },
       {
-        path: 'typeservice',
+        path: 'typeservices',
         component: ListTypeServiceOffertComponent
       },
       {
@@ -175,7 +175,7 @@ export const REFERENTIELS_ROUTES: Routes = [
         component: CreateTypeServiceOffertComponent
       },
       {
-        path: 'tarif',
+        path: 'tarifs',
         component: ListTarifComponent
       },
       {
@@ -187,7 +187,7 @@ export const REFERENTIELS_ROUTES: Routes = [
         component: CreateTarifComponent
       },
       {
-        path: 'coefficient',
+        path: 'coefficients',
         component: CoefficientmatclasseComponent
       },
       {
@@ -199,7 +199,7 @@ export const REFERENTIELS_ROUTES: Routes = [
         component: CreateCoefficientmatclasseComponent
       },
       {
-        path: 'moyenpaiement',
+        path: 'moyenpaiements',
         component: ListeModePaiementComponent
       },
       {
@@ -210,13 +210,12 @@ export const REFERENTIELS_ROUTES: Routes = [
         path: 'moyenpaiement/edit/:id',
         component: CreateModePaiementComponent
       },
-
       {
         path: 'parametrage',
         component: ConfigEtablissementComponent
       }
     ]
-  }          
-  
+  }
+
 ];
 

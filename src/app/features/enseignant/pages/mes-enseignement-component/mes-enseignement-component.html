@@ -1,14 +1,15 @@
-
-<app-generic-table-referentiel
-  title="Liste des reunions"
-  titleFitre="Reunions"
+<app-generic-table-dossier
+  title="Liste de mes enseignements"
+  titleFitre="Enseignement"
   [tableColumns]="columns"
-  [tableData]="meetingData"
+  [tableData]="enseignementData"
+  [isLoading]="isLoading"
+  [isEyesIcon]="true"
   [tableSizes]="tableSizes"
   [totalElements]="totalElements"
   [currentPage]="currentPage"
+  [isNoAjout]="true"
   [pageSize]="pageSize"
-  [isLoading]="isLoading"
   (pageChange)="changePage($event)"
   [deleteEndPoint]="deleteEndpoint"
   [showSearch]="false"
@@ -17,5 +18,6 @@
   [showFilters]="true"
   (resetFilters)="resetFilters()"
   (sizeChange)="changeSize($event)"
+  detailButtonLink="/enseignant/gestion-classe"
 >
-</app-generic-table-referentiel>
+</app-generic-table-dossier>

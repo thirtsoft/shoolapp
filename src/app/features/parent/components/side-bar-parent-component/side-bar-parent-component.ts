@@ -1,16 +1,18 @@
 import { CommonModule } from '@angular/common';
-import { Component, inject, input, output } from '@angular/core';
+import { Component, inject, input, output, signal } from '@angular/core';
 import { Router } from '@angular/router';
+import { DetailsEleveParent } from '../../../../core/models/dossiereleve/details-eleve-parent';
+import { LocalStorageService } from '../../../../core/services/local-storage.service';
 
-export type VueParent = 'dashboard' | 'bulletins' | 'emploi-temps' | 'cours' | 'factures' | 'messagerie' | 'parametres';
 
 export interface NavItem {
-  id: VueParent;
+  route?: string;
   ico: string;
   label: string;
-  badge?: number;
+  badge?: string;
+  section?: string;
+  children?: NavItem[];
 }
-
 @Component({
   selector: 'app-side-bar-parent-component',
   standalone: true,
@@ -20,40 +22,133 @@ export interface NavItem {
 })
 export class SideBarParentComponent {
 
-
   readonly router = inject(Router);
+  private readonly localStorage = inject(LocalStorageService);
 
+  expandedMenus = signal<Set<string>>(new Set());
   isOpen = input<boolean>(false);
-  vueActive = input<VueParent>('dashboard');
 
-  navItems = input<NavItem[]>([
-    { id: 'dashboard', ico: '📊', label: 'Tableau de bord' },
-    { id: 'bulletins', ico: '📋', label: 'Bulletins de notes' },
-    { id: 'emploi-temps', ico: '🕐', label: 'Emploi du temps' },
-    { id: 'cours', ico: '📚', label: 'Cours & Ressources' },
-    { id: 'factures', ico: '💰', label: 'Factures', badge: 2 },
-    { id: 'messagerie', ico: '✉️', label: 'Messagerie', badge: 3 },
-    { id: 'parametres', ico: '⚙️', label: 'Paramètres' },
-  ]);
-
-  eleve = input<{
+  parent = input<{
     nom: string;
-    classe: string;
-    moyenne: number;
-    absences: number;
-    retards: number;
+    prenom: string;
+    email: string;
+    telephone: string;
+    profession: string;
+    avatar: string;
   }>({
-    nom: 'Moussa Diop',
-    classe: 'Terminale S2',
-    moyenne: 14.5,
-    absences: 3,
-    retards: 2
+    nom: '',
+    prenom: '',
+    email: '',
+    telephone: '',
+    profession: '',
+    avatar: '👨‍👩‍👧'
   });
 
+  eleveActif = input<DetailsEleveParent | null>(null);
+
   close = output<void>();
-  navigate = output<VueParent>();
+
+  nav: NavItem[] = [
+    { route: '/parent/dashboard', ico: '📊', label: 'Tableau de bord', section: '', badge: '' },
+
+    // FINANCES
+    { route: '/parent/notes', ico: '📝', label: 'Notes', section: 'Suivi quotidien', badge: '18' },
+    { route: '/parent/bulletins', ico: '📋', label: 'Bulletins', section: '', badge: '' },
+    { route: '/parent/absences', ico: '❌', label: 'Absences', section: '', badge: '' },
+
+    // FINANCES
+    { route: '/parent/factures', ico: '💰', label: 'Factures', section: 'Finances', badge: '18' },
+    { route: '/parent/paiements', ico: '💳', label: 'Paiements', section: '', badge: '' },
+    //  { route: '/parent/comptabilite/services', ico: '📋', label: 'Inscriptions services', section: '', badge: '' },
+
+
+    { route: '/parent/emploi-temps', ico: '🕐', label: 'Emploi du temps', section: 'Ressources', badge: '18' },
+    { route: '/parent/cours', ico: '📚', label: 'Cours & Ressources', section: '', badge: '' },
+    { route: '/parent/exercices', ico: '✏️', label: 'Exercices', section: '', badge: '' },
+
+    // VIE SCOLAIRE
+    { route: '/parent/inscriptions', ico: '📝', label: 'Inscriptions', section: 'Vie scolaire', badge: '7' },
+    { route: '/parent/menu-cantine', ico: '🍽️', label: 'Menu cantine', section: '', badge: '' },
+    { route: '/parent/evenements', ico: '🎉', label: 'Événements', section: '', badge: '' },
+
+
+    // COMMUNICATION
+    { route: '/parent/informations', ico: '📢', label: 'Informations', section: 'Communication', badge: '5' },
+
+    // ═══════════ PARAMÉTRAGE DE BASE (DROPDOWN) ═══════════
+    {
+      ico: '🔧',
+      label: 'Paramétrage',
+      section: 'Configuration',
+      badge: '',
+      children: [
+        // Système
+        { route: '/parent/monprofil', ico: '👤', label: 'Mon profil', section: '', badge: '' },
+        { route: '/parent/changer-mot-passe', ico: '🔑', label: 'Modifier password' },
+
+
+      ]
+    },
+  ];
+
+  getElevePrenom(): string {
+    return this.eleveActif()?.prenom ?? '';
+  }
+
+  getEleveNom(): string {
+    return this.eleveActif()?.nom ?? '';
+  }
+
+  getEleveClasse(): string {
+    return this.eleveActif()?.classeEleve ?? '';
+  }
+
+  isActive(route: string | undefined): boolean {
+    if (!route) return false;
+    return this.router.url === route || this.router.url.startsWith(route + '/');
+  }
+
+  hasChildren(item: NavItem): boolean {
+    return !!item.children && item.children.length > 0;
+  }
+
+  toggleDropdown(label: string): void {
+    this.expandedMenus.update(menus => {
+      const newMenus = new Set(menus);
+      if (newMenus.has(label)) {
+        newMenus.delete(label);
+      } else {
+        newMenus.add(label);
+      }
+      return newMenus;
+    });
+  }
+
+  isExpanded(label: string): boolean {
+    return this.expandedMenus().has(label);
+  }
+
+  isParentActive(item: NavItem): boolean {
+    if (item.route && this.isActive(item.route)) return true;
+    if (item.children) {
+      return item.children.some(child => child.route && this.isActive(child.route));
+    }
+    return false;
+  }
+
+  naviguer(route: string | undefined): void {
+    if (route) {
+      this.router.navigate([route]);
+      this.close.emit();
+    }
+  }
+
+  hasSectionBefore(index: number): boolean {
+    return index === 0 || !!this.nav[index].section;
+  }
 
   deconnecter(): void {
+    this.localStorage.clear();
     this.router.navigate(['/auth/login']);
   }
 

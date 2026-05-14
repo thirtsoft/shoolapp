@@ -1,7 +1,7 @@
-import { MedecinTraitant } from "./request/medecin-traitant";
-import { ListeInscription } from "./request/liste-inscription";
-import { Paiement } from "./request/paiement";
 import { ListNote } from "./list-note";
+import { ListeInscription } from "./request/liste-inscription";
+import { MedecinTraitant } from "./request/medecin-traitant";
+import { Paiement } from "./request/paiement";
 
 
 export interface DetailsEleveParent {
@@ -34,4 +34,9 @@ export interface DetailsEleveParent {
     paiementDTOList?: Paiement[];
 
     actif?: number;
+
+    classeId?: number;        // ← Peut-être optionnel ?
+    classeEleve?: string;     // ← Peut-être optionnel ?
+    niveauEleve?: string;
+    anneeScolaire?: any;
 }

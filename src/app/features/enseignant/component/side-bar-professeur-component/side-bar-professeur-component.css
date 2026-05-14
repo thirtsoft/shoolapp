@@ -1,8 +1,3 @@
-/* ═══════════════════════════════════════════════
-   SIDEBAR PROFESSEUR - EduSchool
-   Thème Bleu & Blanc
-   ═══════════════════════════════════════════════ */
-
 :host {
   --blue-deep: #1e3a5f;
   --blue-ocean: #2c5282;
@@ -23,6 +18,8 @@
 
   display: block;
   height: 100%;
+  overflow: hidden;
+  /* ✅ Le host ne scrolle pas */
 }
 
 .sidebar {
@@ -32,6 +29,7 @@
   display: flex;
   flex-direction: column;
   overflow: hidden;
+  /* ✅ La sidebar ne scrolle pas */
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   position: relative;
   box-shadow: 4px 0 20px rgba(0, 0, 0, 0.15);
@@ -187,12 +185,19 @@
 
 /* ===== NAVIGATION ===== */
 .sidebar-nav {
-  flex: 1;
+  flex: 1 1 0;
+  /* ✅ PEUT RÉTRÉCIR */
   overflow-y: auto;
+  /* ✅ SCROLL VERTICAL */
+  overflow-x: hidden;
   padding: 4px 10px 8px;
   display: flex;
   flex-direction: column;
   gap: 2px;
+  min-height: 0;
+  /* ✅ ESSENTIEL */
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255, 255, 255, 0.15) transparent;
 }
 
 .nav-item {
@@ -408,6 +413,67 @@
   }
 }
 
+/* Sections */
+.ps-section {
+  padding: 16px 12px 6px;
+  margin-top: 4px;
+}
+
+.ps-section-title {
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1.2px;
+  color: rgba(255, 255, 255, 0.45);
+}
+
+/* Dropdown */
+.ps-dropdown-group {
+  display: flex;
+  flex-direction: column;
+}
+
+.ps-chevron {
+  font-size: 11px;
+  margin-left: auto;
+  opacity: 0.6;
+  transition: transform 0.2s;
+}
+
+.ps-submenu {
+  padding-left: 12px;
+  border-left: 1px solid rgba(255, 255, 255, 0.12);
+  margin-left: 20px;
+}
+
+.ps-subitem {
+  font-size: 12px;
+  padding: 9px 12px;
+  opacity: 0.8;
+}
+
+/* Stats */
+.ps-stats {
+  padding: 0 4px;
+}
+
+.pss-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+
+.pss-pill {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 10px;
+  padding: 10px 8px;
+  font-size: 11px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
 /* ===== RESPONSIVE TABLETTE ===== */
 @media (max-width: 1024px) {
   .sidebar {
@@ -561,16 +627,17 @@
 
 /* ===== SCROLLBAR PERSONNALISÉ ===== */
 .sidebar-nav::-webkit-scrollbar {
-  width: 4px;
+  width: 5px;
 }
 
 .sidebar-nav::-webkit-scrollbar-track {
-  background: rgba(255, 255, 255, 0.05);
+  background: transparent;
+  /* ✅ Plus propre */
 }
 
 .sidebar-nav::-webkit-scrollbar-thumb {
-  background: rgba(255, 255, 255, 0.2);
-  border-radius: 4px;
+  background: rgba(255, 255, 255, 0.15);
+  border-radius: 99px;
 }
 
 .sidebar-nav::-webkit-scrollbar-thumb:hover {
