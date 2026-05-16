@@ -19,5 +19,9 @@ export interface ListeEleve {
 
     adresse?: string;
 
-    eleve?:any;
+    eleve?: any;
+
+    nomEleve?: any;
+
+    prenomEleve?: any;
 }

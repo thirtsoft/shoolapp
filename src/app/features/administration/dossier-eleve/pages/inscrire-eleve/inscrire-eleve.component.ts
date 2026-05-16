@@ -1,24 +1,24 @@
-import { CommonModule, Location } from '@angular/common';
+import { Location } from '@angular/common';
 import { Component, inject, OnInit } from '@angular/core';
 import { FormArray, FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
-import { ActivatedRoute, Router, RouterLink } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { ToastrService } from '@iqx-limited/ngx-toastr';
 import { EleveRequest } from '../../../../../core/models/dossiereleve/request/eleve-request';
 import { Inscription } from '../../../../../core/models/dossiereleve/request/inscription';
 import { Eleve, MedecinTraitant, Parent } from '../../../../../core/models/parent/parent';
 import { AnneeScolaire } from '../../../../../core/models/referentiels/annee-scolaire';
 import { Classe } from '../../../../../core/models/referentiels/classe';
+import { LocalStorageService } from '../../../../../core/services/local-storage.service';
+import { ReferentielResourceService } from '../../../referentiel/service/referentiel-resource.service';
+import { ReferentielService } from '../../../referentiel/service/referentiel.service';
 import { DossierEleveService } from '../../service/dossier-eleve.service';
 import { DossierResourceService } from '../../service/dossier-resource.service';
-import { ReferentielService } from '../../../referentiel/service/referentiel.service';
-import { ReferentielResourceService } from '../../../referentiel/service/referentiel-resource.service';
-import { LocalStorageService } from '../../../../../core/services/local-storage.service';
 
 
 @Component({
   selector: 'app-inscrire-eleve',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, RouterLink, FormsModule],
+  imports: [ReactiveFormsModule, FormsModule],
   templateUrl: './inscrire-eleve.component.html',
   styleUrls: ['./inscrire-eleve.component.css']
 })
@@ -111,6 +111,86 @@ export class InscrireEleveComponent implements OnInit {
         this.anneeScolaires = data;
       }
     });
+  }
+
+  nextStep() {
+    if (!this.isCurrentStepValid()) return;
+
+    if (this.currentStep === 1) {
+      this.ajouterEleve();
+    } else if (this.currentStep === 2) {
+      this.ajouterParent();
+    } else if (this.currentStep === 3) {
+      this.saveEleveWithFiles();
+    } else if (this.currentStep === 4) {
+      this.ajouterInscription();
+    }
+  }
+
+  isCurrentStepValid(): boolean {
+    if (this.currentStep === 1) {
+      return this.eleveFormGroup.valid;
+    } else if (this.currentStep === 2) {
+      return this.isFormValid;
+    } else if (this.currentStep === 3) {
+      return this.medecinTraitantFormGroup.valid;
+    } else if (this.currentStep === 4) {
+      return this.inscriptionFormGroup.valid;
+    }
+    return false;
+  }
+
+  deletePhoto() {
+    const confirmDelete = confirm('Voulez-vous vraiment supprimer cette photo ?');
+    if (!confirmDelete) return;
+    this.preview = '';
+    this.currentFile = undefined;
+    this.message = '';
+    const fileInput = document.querySelector('#fileInput') as HTMLInputElement;
+    if (fileInput) {
+      fileInput.value = '';
+    }
+    this.toastService.success('Succès', 'Photo supprimée avec succès');
+  }
+
+  remove(item: string) {
+    if (!this.allergies) return;
+
+    const index = this.allergies.indexOf(item);
+    if (index >= 0) {
+      this.allergies.splice(index, 1);
+    }
+
+    this.toastService.info('Info', `Allergie "${item}" supprimée`);
+  }
+
+  remove1(produit: string): void {
+    const index = this.allergies!.indexOf(produit);
+    if (index >= 0) {
+      this.allergies!.splice(index, 1);
+    }
+  }
+
+  // Ajouter une allergie (avec bouton +)
+  addAllergie() {
+    if (this.allergie && this.allergie.trim() !== '') {
+      if (!this.allergies) {
+        this.allergies = [];
+      }
+      this.allergies.push(this.allergie.trim());
+      this.allergie = '';
+    }
+  }
+
+  add(event: any) {
+    event.preventDefault();
+    event.stopPropagation();
+    if (this.allergie === '') return;
+    if (!this.allergies) {
+      this.allergies = [];
+    }
+    this.allergies.push(this.allergie!.trim());
+    this.allergie = '';
   }
 
   initializeEleveForm(eleve: Eleve | null) {
@@ -239,24 +319,6 @@ export class InscrireEleveComponent implements OnInit {
       email: [medecin?.email ? medecin.email : ''],
     });
   }
-
-  add(event: any): void {
-    event.preventDefault();
-    event.stopPropagation();
-    if (this.allergie === '') return
-    if (!this.allergies)
-      this.allergies = [];
-    this.allergies.push(this.allergie!.trim());
-    this.allergie = '';
-  }
-
-  remove(produit: string): void {
-    const index = this.allergies!.indexOf(produit);
-    if (index >= 0) {
-      this.allergies!.splice(index, 1);
-    }
-  }
-
   selectFile(event: any): void {
     this.message = '';
     this.preview = '';

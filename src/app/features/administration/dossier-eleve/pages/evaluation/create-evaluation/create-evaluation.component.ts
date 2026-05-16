@@ -2,7 +2,6 @@ import { Component, inject, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 
-import { CommonModule } from '@angular/common';
 import { ToastrService } from '@iqx-limited/ngx-toastr';
 import { Evaluation } from '../../../../../../core/models/dossiereleve/evaluation/evaluation';
 import { ListeEnseignement } from '../../../../../../core/models/planification/liste-enseignement';
@@ -14,7 +13,7 @@ import { DossierResourceService } from '../../../service/dossier-resource.servic
 @Component({
   selector: 'app-create-evaluation',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule],
+  imports: [ReactiveFormsModule],
   templateUrl: './create-evaluation.component.html',
   styleUrls: ['./create-evaluation.component.css']
 })

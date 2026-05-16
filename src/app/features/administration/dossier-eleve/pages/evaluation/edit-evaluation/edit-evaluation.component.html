@@ -1,4 +1,4 @@
-<div class="page-wrapper">
+<!-- <div class="page-wrapper">
   <div class="content container-fluid">
     <div class="page-header">
       <div class="row">
@@ -300,6 +300,372 @@
                     </button>
                   </div>
                 </div>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div> -->
+
+<div class="page-wrapper">
+  <div class="content container-fluid">
+    <!-- Page Header -->
+    <div class="page-header">
+      <div class="row align-items-center">
+        <div class="col-sm-12">
+          <h3 class="page-title">{{ title }}</h3>
+          <p class="text-muted mt-1 mb-0">
+            <i class="fas fa-edit me-1"></i> Modification des notes de l'évaluation
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Badge -->
+    <div class="badge-container">
+      <span class="badge badge-primary"> <i class="fas fa-edit me-1"></i> Modification </span>
+    </div>
+
+    <div class="row">
+      <div class="col-12">
+        <div class="card">
+          <div class="card-body p-4 p-md-5">
+            <!-- Step Indicator -->
+            <div class="step-indicator">
+              <div class="step active">
+                <span class="step-number">1</span>
+                <span class="step-label">Informations</span>
+              </div>
+              <div class="step-line"></div>
+              <div class="step active">
+                <span class="step-number">2</span>
+                <span class="step-label">Notes</span>
+              </div>
+            </div>
+
+            <form [formGroup]="evaluationFormGroup" (ngSubmit)="ajouterEditEvaluation()">
+              <input type="hidden" formControlName="id" />
+
+              <!-- Enseignement Item -->
+              <div class="enseignement-item">
+                <!-- Ligne 1: Titre + Enseignement + Type + Mode -->
+                <div class="row form-row">
+                  <div class="col-lg-3 col-sm-12">
+                    <div class="form-group">
+                      <label class="form-label">
+                        Titre évaluation <span class="text-danger">*</span>
+                        <i class="fas fa-tag ms-1 text-muted"></i>
+                      </label>
+                      <input
+                        type="text"
+                        class="form-control"
+                        formControlName="titre"
+                        placeholder="Ex: Devoir de mathématiques"
+                        [class.is-invalid]="
+                          evaluationFormGroup!.get('titre')?.invalid &&
+                          evaluationFormGroup!.get('titre')?.touched
+                        "
+                      />
+                      @if (
+                        evaluationFormGroup!.get('titre')?.invalid &&
+                        evaluationFormGroup!.get('titre')?.touched
+                      ) {
+                        <div class="invalid-feedback">Le titre est requis</div>
+                      }
+                    </div>
+                  </div>
+
+                  <div class="col-lg-3 col-sm-12">
+                    <div class="form-group">
+                      <label class="form-label">
+                        Enseignement <span class="text-danger">*</span>
+                        <i class="fas fa-chalkboard-teacher ms-1 text-muted"></i>
+                      </label>
+                      <select
+                        class="form-select"
+                        formControlName="enseignementId"
+                        required
+                        [class.is-invalid]="
+                          evaluationFormGroup!.get('enseignementId')?.invalid &&
+                          evaluationFormGroup!.get('enseignementId')?.touched
+                        "
+                      >
+                        <option value="" disabled selected>— Sélectionnez un enseignement —</option>
+                        @for (item of enseignementList; track item.id) {
+                          <option [value]="item.id">
+                            {{ item.enseignant }} - {{ item.classe }} - {{ item.anneeScolaire }}
+                          </option>
+                        }
+                      </select>
+                      @if (
+                        evaluationFormGroup!.get('enseignementId')?.invalid &&
+                        evaluationFormGroup!.get('enseignementId')?.touched
+                      ) {
+                        <div class="invalid-feedback">L'enseignement est requis</div>
+                      }
+                    </div>
+                  </div>
+
+                  <div class="col-lg-3 col-sm-12">
+                    <div class="form-group">
+                      <label class="form-label">
+                        Type évaluation <span class="text-danger">*</span>
+                        <i class="fas fa-layer-group ms-1 text-muted"></i>
+                      </label>
+                      <select
+                        class="form-select"
+                        formControlName="evaluationType"
+                        required
+                        [class.is-invalid]="
+                          evaluationFormGroup!.get('evaluationType')?.invalid &&
+                          evaluationFormGroup!.get('evaluationType')?.touched
+                        "
+                      >
+                        <option value="" disabled selected>— Sélectionnez un type —</option>
+                        @for (item of typeEvaluations; track item) {
+                          <option [value]="item">{{ item }}</option>
+                        }
+                      </select>
+                      @if (
+                        evaluationFormGroup!.get('evaluationType')?.invalid &&
+                        evaluationFormGroup!.get('evaluationType')?.touched
+                      ) {
+                        <div class="invalid-feedback">Le type d'évaluation est requis</div>
+                      }
+                    </div>
+                  </div>
+
+                  <div class="col-lg-3 col-sm-12">
+                    <div class="form-group">
+                      <label class="form-label">
+                        Mode évaluation <span class="text-danger">*</span>
+                        <i class="fas fa-cog ms-1 text-muted"></i>
+                      </label>
+                      <select
+                        class="form-select"
+                        formControlName="evaluationMode"
+                        required
+                        [class.is-invalid]="
+                          evaluationFormGroup!.get('evaluationMode')?.invalid &&
+                          evaluationFormGroup!.get('evaluationMode')?.touched
+                        "
+                      >
+                        <option value="" disabled selected>— Sélectionnez un mode —</option>
+                        @for (item of modeEvaluations; track item) {
+                          <option [value]="item">{{ item }}</option>
+                        }
+                      </select>
+                      @if (
+                        evaluationFormGroup!.get('evaluationMode')?.invalid &&
+                        evaluationFormGroup!.get('evaluationMode')?.touched
+                      ) {
+                        <div class="invalid-feedback">Le mode d'évaluation est requis</div>
+                      }
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Ligne 2: Date + Heure début + Heure fin -->
+                <div class="row form-row">
+                  <div class="col-lg-4 col-sm-12">
+                    <div class="form-group">
+                      <label class="form-label">
+                        Date <span class="text-danger">*</span>
+                        <i class="fas fa-calendar-alt ms-1 text-muted"></i>
+                      </label>
+                      <input
+                        type="date"
+                        class="form-control"
+                        formControlName="dateEvaluation"
+                        required
+                        [class.is-invalid]="
+                          evaluationFormGroup!.get('dateEvaluation')?.invalid &&
+                          evaluationFormGroup!.get('dateEvaluation')?.touched
+                        "
+                      />
+                      @if (
+                        evaluationFormGroup!.get('dateEvaluation')?.invalid &&
+                        evaluationFormGroup!.get('dateEvaluation')?.touched
+                      ) {
+                        <div class="invalid-feedback">La date est requise</div>
+                      }
+                    </div>
+                  </div>
+
+                  <div class="col-lg-4 col-sm-12">
+                    <div class="form-group">
+                      <label class="form-label">
+                        Heure début <span class="text-danger">*</span>
+                        <i class="fas fa-clock ms-1 text-muted"></i>
+                      </label>
+                      <input
+                        type="time"
+                        class="form-control"
+                        formControlName="heureDebut"
+                        [class.is-invalid]="
+                          evaluationFormGroup!.get('heureDebut')?.invalid &&
+                          evaluationFormGroup!.get('heureDebut')?.touched
+                        "
+                      />
+                      @if (
+                        evaluationFormGroup!.get('heureDebut')?.invalid &&
+                        evaluationFormGroup!.get('heureDebut')?.touched
+                      ) {
+                        <div class="invalid-feedback">L'heure de début est requise</div>
+                      }
+                    </div>
+                  </div>
+
+                  <div class="col-lg-4 col-sm-12">
+                    <div class="form-group">
+                      <label class="form-label">
+                        Heure fin <span class="text-danger">*</span>
+                        <i class="fas fa-clock ms-1 text-muted"></i>
+                      </label>
+                      <input
+                        type="time"
+                        class="form-control"
+                        formControlName="heureFin"
+                        [class.is-invalid]="
+                          evaluationFormGroup!.get('heureFin')?.invalid &&
+                          evaluationFormGroup!.get('heureFin')?.touched
+                        "
+                      />
+                      @if (
+                        evaluationFormGroup!.get('heureFin')?.invalid &&
+                        evaluationFormGroup!.get('heureFin')?.touched
+                      ) {
+                        <div class="invalid-feedback">L'heure de fin est requise</div>
+                      }
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Ligne 3: Description -->
+                <div class="row form-row">
+                  <div class="col-12">
+                    <div class="form-group">
+                      <label class="form-label">
+                        Description <span class="text-danger">*</span>
+                        <i class="fas fa-align-left ms-1 text-muted"></i>
+                      </label>
+                      <textarea
+                        class="form-control"
+                        formControlName="description"
+                        rows="4"
+                        placeholder="Décrivez l'évaluation..."
+                        [class.is-invalid]="
+                          evaluationFormGroup!.get('description')?.invalid &&
+                          evaluationFormGroup!.get('description')?.touched
+                        "
+                      ></textarea>
+                      @if (
+                        evaluationFormGroup!.get('description')?.invalid &&
+                        evaluationFormGroup!.get('description')?.touched
+                      ) {
+                        <div class="invalid-feedback">La description est requise</div>
+                      }
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Section Notes des élèves (uniquement en mode édition) -->
+              @if (isEdit) {
+                <div class="card notes-card">
+                  <div class="card-header">
+                    <h4 class="card-title"><i class="fas fa-star me-2"></i>Notes des élèves</h4>
+                  </div>
+                  <div class="card-body p-0">
+                    <div class="table-responsive">
+                      <table class="table table-hover">
+                        <thead>
+                          <tr>
+                            <th style="min-width: 200px">
+                              <i class="fas fa-user-graduate me-1"></i>Nom & Prénom
+                            </th>
+                            <th style="min-width: 100px">
+                              <i class="fas fa-tag me-1"></i>Type note
+                            </th>
+                            <th style="min-width: 100px">
+                              <i class="fas fa-chart-line me-1"></i>Note /20
+                            </th>
+                            <th style="min-width: 150px">
+                              <i class="fas fa-comment me-1"></i>Appréciation
+                            </th>
+                          </tr>
+                        </thead>
+                        <tbody formArrayName="noteEditRequestDTOList">
+                          @for (note of notes.controls; track $index) {
+                            <tr [formGroupName]="$index">
+                              <td class="eleve-name">
+                                <div class="d-flex align-items-center gap-2">
+                                  <div class="avatar-circle">
+                                    {{
+                                      getEleveNomCompletEleve(note.get('eleve')?.value).charAt(0)
+                                    }}
+                                    
+                                  </div>
+                                  <span>{{
+                                    getEleveNomCompletEleve(note.get('eleve')?.value)
+                                  }}</span>
+                                </div>
+                              </td>
+                              <td>
+                                <span class="badge-type">{{ note.get('type')?.value }}</span>
+                              </td>
+                              <td>
+                                <input
+                                  type="number"
+                                  class="form-control form-control-sm"
+                                  formControlName="note"
+                                  placeholder="0"
+                                  min="0"
+                                  max="20"
+                                  step="0.5"
+                                />
+                              </td>
+                              <td>
+                                <input
+                                  type="text"
+                                  class="form-control form-control-sm"
+                                  formControlName="appreciation"
+                                  placeholder="Appréciation..."
+                                />
+                              </td>
+                            </tr>
+                          }
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+                </div>
+              }
+
+              <!-- Actions -->
+              <div class="form-actions">
+                <button type="button" class="btn btn-secondary" (click)="goBack()">
+                  <i class="fas fa-times me-2"></i>Annuler
+                </button>
+                <button
+                  type="submit"
+                  class="btn btn-primary"
+                  [disabled]="!evaluationFormGroup!.valid"
+                >
+                  <i class="fas fa-save me-2"></i>
+                  Enregistrer les modifications
+                </button>
+              </div>
+
+              <!-- Message d'aide -->
+              <div class="alert-help mt-4" role="alert">
+                <i class="fas fa-info-circle me-2"></i>
+                <span>
+                  Les notes doivent être comprises entre 0 et 20. Vous pouvez modifier les notes et
+                  les appréciations pour chaque élève.
+                </span>
               </div>
             </form>
           </div>

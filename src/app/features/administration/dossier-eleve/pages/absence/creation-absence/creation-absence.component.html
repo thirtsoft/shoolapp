@@ -1,4 +1,4 @@
-<div class="page-wrapper">
+<!-- <div class="page-wrapper">
   <div class="content container-fluid">
     <div class="row">
       <div class="col-sm-12">
@@ -168,6 +168,221 @@
                 Annuler
               </button>
             </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+ -->
+
+<div class="page-wrapper">
+  <div class="content container-fluid">
+    <!-- Page Header -->
+    <div class="page-header">
+      <div class="row align-items-center">
+        <div class="col-sm-12">
+          <h3 class="page-title">{{ title }}</h3>
+          <p class="text-muted mt-1 mb-0">
+            <i class="fas fa-calendar-times me-1"></i> Gestion des absences des élèves
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Badge -->
+    <div class="row mb-3">
+      <div class="col-sm-12">
+        <div class="badge-container">
+          <span class="badge badge-primary">
+            @if (!absenceId) {
+              <i class="fas fa-plus-circle me-1"></i> Nouvelle absence
+            } @else {
+              <i class="fas fa-edit me-1"></i> Modification absence
+            }
+          </span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Formulaire pleine largeur -->
+    <div class="row">
+      <div class="col-12">
+        <div class="card">
+          <div class="card-body p-4 p-md-5">
+            <!-- Indicateur d'étape -->
+            <div class="step-indicator">
+              <div class="step active">
+                <span class="step-number">1</span>
+                <span class="step-label">Information</span>
+              </div>
+              <div class="step-line"></div>
+              <div class="step">
+                <span class="step-number">2</span>
+                <span class="step-label">Confirmation</span>
+              </div>
+            </div>
+
+            <form [formGroup]="absenceFormGroup" (ngSubmit)="ajouterEditAbsence()">
+              <input type="hidden" formControlName="id" />
+
+              <!-- 2 colonnes : Informations à gauche / Confirmation à droite -->
+              <div class="two-columns-layout">
+                <!-- COLONNE GAUCHE - INFORMATIONS -->
+                <div class="info-column">
+                  <div class="info-section">
+                    <h4 class="section-title">
+                      <i class="fas fa-info-circle me-2"></i>Informations
+                    </h4>
+
+                    <!-- Classe -->
+                    <div class="form-group">
+                      <label class="form-label">
+                        Classe <span class="text-danger">*</span>
+                        <i class="fas fa-chalkboard-user ms-1 text-muted"></i>
+                      </label>
+                      <select
+                        class="form-select"
+                        formControlName="classId"
+                        required
+                        (change)="onClasseSelected()"
+                      >
+                        <option value="" disabled selected>— Sélectionnez une classe —</option>
+                        @for (item of classeList; track item.id) {
+                          <option [value]="item.id">{{ item.libelle }}</option>
+                        }
+                      </select>
+                    </div>
+
+                    <!-- Élève -->
+                    <div class="form-group">
+                      <label class="form-label">
+                        Élève <span class="text-danger">*</span>
+                        <i class="fas fa-user-graduate ms-1 text-muted"></i>
+                      </label>
+                      <select class="form-select" formControlName="eleveId" required>
+                        <option value="" disabled selected>— Sélectionnez un élève —</option>
+                        @for (item of eleveList; track item.id) {
+                          <option [value]="item.eleve">
+                            {{ item.prenomEleve }} - {{ item.nomEleve }}
+                          </option>
+                        }
+                      </select>
+                    </div>
+
+                    <!-- État absence -->
+                    <div class="form-group">
+                      <label class="form-label">
+                        État absence <span class="text-danger">*</span>
+                        <i class="fas fa-check-circle ms-1 text-muted"></i>
+                      </label>
+                      <select class="form-select" formControlName="justifiee" required>
+                        <option value="" disabled selected>— Sélectionnez —</option>
+                        <option value="1">Justifiée</option>
+                        <option value="0">Non justifiée</option>
+                      </select>
+                    </div>
+
+                    <!-- Motif -->
+                    <div class="form-group">
+                      <label class="form-label">
+                        Motif <span class="text-danger">*</span>
+                        <i class="fas fa-pen ms-1 text-muted"></i>
+                      </label>
+                      <textarea
+                        class="form-control"
+                        formControlName="motif"
+                        rows="4"
+                        placeholder="Décrivez le motif de l'absence..."
+                      ></textarea>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- COLONNE DROITE - CONFIRMATION -->
+                <div class="confirmation-column">
+                  <div class="info-section">
+                    <h4 class="section-title">
+                      <i class="fas fa-check-circle me-2"></i>Confirmation
+                    </h4>
+
+                    <!-- Année scolaire -->
+                    <div class="form-group">
+                      <label class="form-label">
+                        Année scolaire <span class="text-danger">*</span>
+                        <i class="fas fa-calendar-alt ms-1 text-muted"></i>
+                      </label>
+                      <select class="form-select" formControlName="anneeScolaireId" required>
+                        <option value="" disabled selected>— Sélectionnez une année —</option>
+                        @for (item of anneeScolaireList; track item.id) {
+                          <option [value]="item.id">{{ item.libelle }}</option>
+                        }
+                      </select>
+                    </div>
+
+                    <!-- Semestre -->
+                    <div class="form-group">
+                      <label class="form-label">
+                        Semestre <span class="text-danger">*</span>
+                        <i class="fas fa-book-open ms-1 text-muted"></i>
+                      </label>
+                      <select class="form-select" formControlName="semestre" required>
+                        <option value="" disabled selected>— Sélectionnez un semestre —</option>
+                        @for (item of semestreList; track item.id) {
+                          <option [value]="item.id">{{ item.libelle }}</option>
+                        }
+                      </select>
+                    </div>
+
+                    <!-- Date absence -->
+                    <div class="form-group">
+                      <label class="form-label">
+                        Date absence <span class="text-danger">*</span>
+                        <i class="fas fa-calendar-day ms-1 text-muted"></i>
+                      </label>
+                      <input
+                        type="date"
+                        class="form-control"
+                        formControlName="dateAbsence"
+                        required
+                      />
+                    </div>
+
+                    <!-- Espace pour aligner -->
+                    <div class="form-group placeholder-field">
+                      <!-- Champ vide pour l'alignement -->
+                    </div>
+                    <div class="form-group placeholder-field">
+                      <!-- Champ vide pour l'alignement -->
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Actions -->
+              <div class="form-actions">
+                <button type="button" class="btn btn-secondary" (click)="goBack()">
+                  <i class="fas fa-times me-2"></i>Annuler
+                </button>
+                <button type="submit" class="btn btn-primary" [disabled]="!absenceFormGroup.valid">
+                  <i class="fas fa-save me-2"></i>
+                  @if (!absenceId) {
+                    Enregistrer l'absence
+                  } @else {
+                    Modifier l'absence
+                  }
+                </button>
+              </div>
+
+              <!-- Message d'aide -->
+              <div class="alert-help mt-4" role="alert">
+                <i class="fas fa-info-circle me-2"></i>
+                <span
+                  >Les absences permettent de suivre l'assiduité des élèves tout au long de l'année
+                  scolaire.</span
+                >
+              </div>
+            </form>
           </div>
         </div>
       </div>

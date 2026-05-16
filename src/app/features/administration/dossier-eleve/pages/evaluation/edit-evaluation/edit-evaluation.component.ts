@@ -13,7 +13,7 @@ import { DossierResourceService } from '../../../service/dossier-resource.servic
 @Component({
   selector: 'app-edit-evaluation',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, FormsModule],
+  imports: [ReactiveFormsModule, FormsModule],
   templateUrl: './edit-evaluation.component.html',
   styleUrls: ['./edit-evaluation.component.css']
 })
@@ -91,10 +91,14 @@ export class EditEvaluationComponent implements OnInit {
     });
   }
 
-  getEleveListByClassAndAnneeScolaire(classId: number, anneeId: number) {
+   getEleveListByClassAndAnneeScolaire(classId: number, anneeId: number) {
     this.dossierResource.afficherListeEleveParClassEtAnneeScolaire('eleve', classId, anneeId).subscribe({
       next: (data: any) => {
         this.elevesList = data;
+        console.log('Liste des élèves chargée:', this.elevesList);
+      },
+      error: (error) => {
+        console.error('Erreur chargement élèves:', error);
       }
     });
   }
@@ -110,6 +114,11 @@ export class EditEvaluationComponent implements OnInit {
         this.addEditEvaluation = data;
         console.log('Details eval', this.addEditEvaluation);
         this.ecoleId = this.addEditEvaluation.ecole;
+
+        if (this.addEditEvaluation?.enseignementId) {
+          this.getEnseignement(this.addEditEvaluation.enseignementId);
+        }
+
         this.evaluationFormGroup = this._formBuilder.group({
           id: [this.addEditEvaluation?.id ? this.addEditEvaluation.id : ''],
           titre: [this.addEditEvaluation?.titre ? this.addEditEvaluation.titre : '', Validators.required],

@@ -1,4 +1,4 @@
-<div class="page-wrapper">
+<!-- <div class="page-wrapper">
   <div class="content container-fluid">
     <div class="row">
       <div class="col-sm-12">
@@ -7,21 +7,13 @@
             <h3 class="page-title text-center mb-2">{{ title }}</h3>
             <form [formGroup]="eleveinscrireFormGroup">
               <div style="margin-top: 5px">
-                <input
-                  type="text"
-                  readonly="true"
-                  hidden="true"
-                  formControlName="id"
-                />
+                <input type="text" readonly="true" hidden="true" formControlName="id" />
 
                 <div class="row form-row">
                   <div class="col-lg-6 col-sm-6">
                     <div class="form-group">
-                      <label
-                        >Liste des type service
-                        <span class="text-danger">*</span></label
-                      >
-                    <!--   <ng-select
+                      <label>Liste des type service <span class="text-danger">*</span></label>
+                      <ng-select
                         [items]="typeServiceList"
                         [multiple]="true"
                         [closeOnSelect]="false"
@@ -33,9 +25,7 @@
                         class="form-control multipleselect"
                       >
                         <ng-template ng-option-tmp let-item="item">
-                          <ng-container
-                            *ngIf="item === 'selectAll'; else normalOption"
-                          >
+                          <ng-container *ngIf="item === 'selectAll'; else normalOption">
                             <div class="option-item">
                               <input
                                 type="checkbox"
@@ -49,9 +39,7 @@
                             <div class="option-item">
                               <input
                                 type="checkbox"
-                                [checked]="
-                                  selectedTypeServiceOfferts.includes(item.id)
-                                "
+                                [checked]="selectedTypeServiceOfferts.includes(item.id)"
                                 (click)="toggleSelection(item.id, $event)"
                               />
                               <span>{{ item.libelle }}</span>
@@ -62,8 +50,7 @@
                         <ng-template ng-label-tmp let-item="item">
                           {{ item.libelle }}
                         </ng-template>
-                      </ng-select> -->
-                      
+                      </ng-select>
                     </div>
                   </div>
 
@@ -77,10 +64,7 @@
                         (change)="onPrimaryChange($event)"
                       >
                         <option>Selectionnez</option>
-                        <option
-                          *ngFor="let item of classList"
-                          [value]="item.id"
-                        >
+                        <option *ngFor="let item of classList" [value]="item.id">
                           {{ item?.libelle }}
                         </option>
                       </select>
@@ -92,16 +76,9 @@
                   <div class="col-lg-6 col-sm-6">
                     <div class="form-group">
                       <label>Elève <span class="text-danger">*</span></label>
-                      <select
-                        class="form-control select"
-                        formControlName="eleve"
-                        required=""
-                      >
+                      <select class="form-control select" formControlName="eleve" required="">
                         <option>Selectionnez</option>
-                        <option
-                          *ngFor="let item of eleveList"
-                          [value]="item.eleve"
-                        >
+                        <option *ngFor="let item of eleveList" [value]="item.eleve">
                           {{ item?.prenomEleve }} - {{ item?.nomEleve }}
                         </option>
                       </select>
@@ -110,20 +87,14 @@
 
                   <div class="col-lg-6 col-sm-6">
                     <div class="form-group">
-                      <label
-                        >Année scolaire
-                        <span class="text-danger">*</span></label
-                      >
+                      <label>Année scolaire <span class="text-danger">*</span></label>
                       <select
                         class="form-control select"
                         formControlName="anneeScolaire"
                         required=""
                       >
                         <option>Selectionnez</option>
-                        <option
-                          *ngFor="let item of anneeScolaires"
-                          [value]="item.id"
-                        >
+                        <option *ngFor="let item of anneeScolaires" [value]="item.id">
                           {{ item?.libelle }}
                         </option>
                       </select>
@@ -134,10 +105,7 @@
                 <div class="row form-row">
                   <div class="col-lg-6 col-sm-6">
                     <div class="form-group">
-                      <label
-                        >A une réduction
-                        <span class="text-danger">*</span></label
-                      >
+                      <label>A une réduction <span class="text-danger">*</span></label>
                       <select
                         class="form-control select"
                         formControlName="benefice_remise"
@@ -151,19 +119,11 @@
 
                   <div
                     class="col-6 col-sm-6"
-                    *ngIf="
-                      eleveinscrireFormGroup.get('benefice_remise')?.value == 1
-                    "
+                    *ngIf="eleveinscrireFormGroup.get('benefice_remise')?.value == 1"
                   >
                     <div class="form-group">
-                      <label
-                        >Remise en % <span class="text-danger">*</span></label
-                      >
-                      <input
-                        type="number"
-                        class="form-control"
-                        formControlName="remise"
-                      />
+                      <label>Remise en % <span class="text-danger">*</span></label>
+                      <input type="number" class="form-control" formControlName="remise" />
                     </div>
                   </div>
                 </div>
@@ -202,6 +162,305 @@
             </div>
           </div>
         </div>
+      </div>
+    </div>
+  </div>
+</div>
+ -->
+
+<div class="page-wrapper">
+  <div class="content container-fluid">
+    <div class="page-header">
+      <div class="row align-items-center">
+        <div class="col-sm-7 col-auto">
+          <h3 class="page-title">{{ title }}</h3>
+          <p class="text-muted mt-1 mb-0">
+            <i class="fas fa-user-graduate me-1"></i> Inscription d'un élève à des services
+          </p>
+        </div>
+        <div class="col-sm-5 col-auto text-end">
+          <span class="badge badge-primary">
+            @if (!isEdit) {
+              Nouvelle inscription
+            } @else {
+              Modification
+            }
+          </span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Suppression de la classe qui limite la largeur -->
+    <div class="card">
+      <div class="card-body p-4 p-md-5">
+        <!-- Indicateur d'étape -->
+        <div class="step-indicator mb-4">
+          <div class="step" [class.active]="!isFormStep2Valid()">
+            <span class="step-number">1</span>
+            <span class="step-label">Informations</span>
+          </div>
+          <div class="step-line" [class.active]="isFormStep2Valid()"></div>
+          <div class="step" [class.active]="isFormStep2Valid()">
+            <span class="step-number">2</span>
+            <span class="step-label">Services</span>
+          </div>
+        </div>
+
+        <form
+          [formGroup]="eleveinscrireFormGroup"
+          (ngSubmit)="ajouteditInscriptionEleveTypeService()"
+        >
+          <input type="hidden" formControlName="id" />
+
+          <!-- Ligne 1: Type de service + Classe -->
+          <div class="row g-3 mb-4">
+            <div class="col-md-6">
+              <div class="form-group">
+                <label class="form-label">
+                  Type de service <span class="text-danger">*</span>
+                  <i class="fas fa-tags ms-1 text-muted"></i>
+                </label>
+                <div class="service-select-container" #serviceSelectContainer>
+                  <div class="service-select-header" (click)="toggleServiceDropdown($event)">
+                    <span>
+                      @if (selectedTypeServiceOfferts.length === 0) {
+                        — Sélectionnez des services —
+                      } @else if (
+                        selectedTypeServiceOfferts.length === getNormalServices().length
+                      ) {
+                        Tous les services sélectionnés
+                      } @else {
+                        {{ selectedTypeServiceOfferts.length }} service(s) sélectionné(s)
+                      }
+                    </span>
+                    <i class="fas fa-chevron-down" [class.rotated]="serviceDropdownOpen"></i>
+                  </div>
+                  @if (serviceDropdownOpen) {
+                    <div class="service-select-dropdown" (click)="$event.stopPropagation()">
+                      <div class="service-option select-all">
+                        <label class="checkbox-label">
+                          <input
+                            type="checkbox"
+                            [checked]="isAllSelected()"
+                            (change)="toggleSelectAll($event)"
+                          />
+                          <span>Sélectionner tous les services</span>
+                        </label>
+                      </div>
+                      @for (item of getNormalServices(); track item.id) {
+                        <div class="service-option">
+                          <label class="checkbox-label">
+                            <input
+                              type="checkbox"
+                              [checked]="selectedTypeServiceOfferts.includes(item.id!)"
+                              (change)="toggleSelection(item.id!, $event)"
+                            />
+                            <span>{{ item.libelle }}</span>
+                          </label>
+                        </div>
+                      }
+                    </div>
+                  }
+                </div>
+                @if (
+                  selectedTypeServiceOfferts.length === 0 &&
+                  eleveinscrireFormGroup.get('typeServiceOffertDTOList')?.touched
+                ) {
+                  <small class="form-text text-danger">
+                    Veuillez sélectionner au moins un service
+                  </small>
+                }
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="form-group">
+                <label class="form-label">
+                  Classe <span class="text-danger">*</span>
+                  <i class="fas fa-chalkboard-user ms-1 text-muted"></i>
+                </label>
+                <select
+                  class="form-select"
+                  formControlName="classId"
+                  required
+                  (change)="onPrimaryChange($event)"
+                >
+                  <option value="" disabled selected>— Sélectionnez une classe —</option>
+                  @for (item of classList; track item.id) {
+                    <option [value]="item.id">
+                      {{ item?.libelle }}
+                    </option>
+                  }
+                </select>
+                @if (
+                  eleveinscrireFormGroup.get('classId')?.invalid &&
+                  eleveinscrireFormGroup.get('classId')?.touched
+                ) {
+                  <small class="form-text text-danger"> Veuillez sélectionner une classe </small>
+                }
+              </div>
+            </div>
+          </div>
+
+          <!-- Ligne 2: Élève + Année scolaire -->
+          <div class="row g-3 mb-4">
+            <div class="col-md-6">
+              <div class="form-group">
+                <label class="form-label">
+                  Élève <span class="text-danger">*</span>
+                  <i class="fas fa-user ms-1 text-muted"></i>
+                </label>
+                <select class="form-select" formControlName="eleve" required>
+                  <option value="" disabled selected>— Sélectionnez un élève —</option>
+                  @for (item of eleveList; track item.eleve) {
+                    <option [value]="item.eleve">
+                      {{ item?.prenomEleve }} {{ item?.nomEleve }}
+                    </option>
+                  }
+                </select>
+                @if (
+                  eleveinscrireFormGroup.get('eleve')?.invalid &&
+                  eleveinscrireFormGroup.get('eleve')?.touched
+                ) {
+                  <small class="form-text text-danger"> Veuillez sélectionner un élève </small>
+                }
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="form-group">
+                <label class="form-label">
+                  Année scolaire <span class="text-danger">*</span>
+                  <i class="fas fa-calendar-alt ms-1 text-muted"></i>
+                </label>
+                <select class="form-select" formControlName="anneeScolaire" required>
+                  <option value="" disabled selected>— Sélectionnez une année scolaire —</option>
+                  @for (item of anneeScolaires; track item.id) {
+                    <option [value]="item.id">
+                      {{ item?.libelle }}
+                    </option>
+                  }
+                </select>
+                @if (
+                  eleveinscrireFormGroup.get('anneeScolaire')?.invalid &&
+                  eleveinscrireFormGroup.get('anneeScolaire')?.touched
+                ) {
+                  <small class="form-text text-danger">
+                    Veuillez sélectionner une année scolaire
+                  </small>
+                }
+              </div>
+            </div>
+          </div>
+
+          <!-- Ligne 3: Réduction + Pourcentage -->
+          <div class="row g-3 mb-4">
+            <div class="col-md-6">
+              <div class="form-group">
+                <label class="form-label">
+                  A une réduction <span class="text-danger">*</span>
+                  <i class="fas fa-percent ms-1 text-muted"></i>
+                </label>
+                <select class="form-select" formControlName="benefice_remise" required>
+                  <option value="0">Non</option>
+                  <option value="1">Oui</option>
+                </select>
+              </div>
+            </div>
+            @if (eleveinscrireFormGroup.get('benefice_remise')?.value == 1) {
+              <div class="col-md-6">
+                <div class="form-group">
+                  <label class="form-label">
+                    Remise (%) <span class="text-danger">*</span>
+                    <i class="fas fa-tag ms-1 text-muted"></i>
+                  </label>
+                  <div class="input-group">
+                    <input
+                      type="number"
+                      class="form-control"
+                      formControlName="remise"
+                      placeholder="0"
+                    />
+                    <span class="input-group-suffix">%</span>
+                  </div>
+                  @if (eleveinscrireFormGroup.get('remise')?.value > 100) {
+                    <small class="form-text text-danger">
+                      La remise ne peut pas dépasser 100%
+                    </small>
+                  }
+                </div>
+              </div>
+            }
+          </div>
+
+          <!-- Ligne 4: Motif -->
+          <div class="row g-3 mb-4">
+            <div class="col-12">
+              <div class="form-group">
+                <label class="form-label">
+                  Motif <span class="text-danger">*</span>
+                  <i class="fas fa-pen ms-1 text-muted"></i>
+                </label>
+                <textarea
+                  class="form-textarea"
+                  formControlName="motif"
+                  rows="3"
+                  placeholder="Décrivez le motif de l'inscription..."
+                ></textarea>
+                @if (
+                  eleveinscrireFormGroup.get('motif')?.invalid &&
+                  eleveinscrireFormGroup.get('motif')?.touched
+                ) {
+                  <small class="form-text text-danger"> Veuillez saisir un motif </small>
+                }
+              </div>
+            </div>
+          </div>
+
+          <!-- Récapitulatif -->
+          @if (
+            selectedTypeServiceOfferts.length > 0 && eleveinscrireFormGroup.get('eleve')?.value
+          ) {
+            <div class="recap-card p-3 mb-4">
+              <div class="d-flex align-items-center gap-3">
+                <div class="recap-icon">
+                  <i class="fas fa-clipboard-list"></i>
+                </div>
+                <div class="recap-content">
+                  <span class="recap-label">Récapitulatif de l'inscription</span>
+                  <span class="recap-value">
+                    Inscription de
+                    <strong>{{ getSelectedEleveName() }}</strong>
+                    à <strong>{{ selectedTypeServiceOfferts.length }}</strong> service(s)
+                  </span>
+                </div>
+              </div>
+            </div>
+          }
+
+          <!-- Actions -->
+          <div class="form-actions">
+            <button type="button" class="btn btn-secondary" (click)="goBack()">
+              <i class="fas fa-times me-2"></i>Annuler
+            </button>
+            <button
+              type="submit"
+              class="btn btn-primary"
+              [disabled]="!eleveinscrireFormGroup.valid || selectedTypeServiceOfferts.length === 0"
+            >
+              <i class="fas fa-save me-2"></i>
+              @if (!isEdit) {
+                Enregistrer l'inscription
+              } @else {
+                Modifier l'inscription
+              }
+            </button>
+          </div>
+
+          <!-- Message d'aide -->
+          <div class="alert-help mt-4" role="alert">
+            <i class="fas fa-info-circle me-2"></i>
+            <span>L'inscription permettra à l'élève d'accéder aux services sélectionnés.</span>
+          </div>
+        </form>
       </div>
     </div>
   </div>

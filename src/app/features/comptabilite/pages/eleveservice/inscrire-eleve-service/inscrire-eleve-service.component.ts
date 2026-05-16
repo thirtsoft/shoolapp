@@ -1,17 +1,17 @@
-import { Component, inject, OnInit } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { AfterViewInit, Component, ElementRef, HostListener, inject, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { ComptabiliteResourceService } from '../../../services/comptabilite-resource.service';
-import { TypeServiceOffert } from '../../../../../core/models/referentiels/type-service-offert';
+import { ToastrService } from '@iqx-limited/ngx-toastr';
+import { InscriptionEleveTypeService } from '../../../../../core/models/comptabilite/inscrire-eleve-service';
 import { ListeInscription } from '../../../../../core/models/dossiereleve/request/liste-inscription';
 import { AnneeScolaire } from '../../../../../core/models/referentiels/annee-scolaire';
+import { TypeServiceOffert } from '../../../../../core/models/referentiels/type-service-offert';
 import { Utilisateur } from '../../../../../core/models/utilisateur/utilisateur';
-import { ReferentielResourceService } from '../../../../administration/referentiel/service/referentiel-resource.service';
 import { DossierResourceService } from '../../../../administration/dossier-eleve/service/dossier-resource.service';
-import { ToastrService } from '@iqx-limited/ngx-toastr';
+import { ReferentielResourceService } from '../../../../administration/referentiel/service/referentiel-resource.service';
 import { UtilisateurService } from '../../../../administration/utilisateur/service/utilisateur.service';
-import { InscriptionEleveTypeService } from '../../../../../core/models/comptabilite/inscrire-eleve-service';
-import { CommonModule } from '@angular/common';
+import { ComptabiliteResourceService } from '../../../services/comptabilite-resource.service';
 
 @Component({
   selector: 'app-inscrire-eleve-service',
@@ -20,8 +20,9 @@ import { CommonModule } from '@angular/common';
   templateUrl: './inscrire-eleve-service.component.html',
   styleUrls: ['./inscrire-eleve-service.component.css']
 })
-export class InscrireEleveServiceComponent implements OnInit {
+export class InscrireEleveServiceComponent implements OnInit, AfterViewInit {
 
+  /*
   errorMessage?: string;
   eleveinscrireId: number;
   eleveinscrireFormGroup!: FormGroup;
@@ -30,6 +31,8 @@ export class InscrireEleveServiceComponent implements OnInit {
 
   typeServiceList: (TypeServiceOffert | 'selectAll')[] = [];
   selectedTypeServiceOfferts: number[] = [];
+  serviceDropdownOpen: boolean = false;
+  @ViewChild('serviceSelectContainer') serviceSelectContainer!: ElementRef;
 
   eleveList?: ListeInscription[];
   anneeScolaires: AnneeScolaire[] = [];
@@ -82,7 +85,7 @@ export class InscrireEleveServiceComponent implements OnInit {
 
   getTypeServiceList() {
     this.referentielResource.getResourceList('typeserviceoffert/autres').subscribe({
-      next: (data:any) => {
+      next: (data: any) => {
         this.typeServiceList = ['selectAll', ...data];
       }
     });
@@ -98,14 +101,14 @@ export class InscrireEleveServiceComponent implements OnInit {
 
   getAnneeScolaires() {
     this.referentielResource.getResourceList('anneescolaire').subscribe({
-      next: (data:any) => {
+      next: (data: any) => {
         this.anneeScolaires = data;
         console.log('Valeur sélectionnée:', this.anneeScolaires);
       }
     });
   }
 
-  onPrimaryChange(event:any) {
+  onPrimaryChange(event: any) {
     if (event.target.value != null && event.target.value != undefined) {
       this.getEleveList(event.target.value);
     }
@@ -114,7 +117,7 @@ export class InscrireEleveServiceComponent implements OnInit {
 
   getEleveList(classId: number) {
     this.eleveService.getResourceListByElement('inscription/classe', classId).subscribe({
-      next: (data:any) => {
+      next: (data: any) => {
         this.eleveList = data;
       }
     });
@@ -130,11 +133,33 @@ export class InscrireEleveServiceComponent implements OnInit {
     });
   }
 
+  toggleServiceDropdown() {
+    this.serviceDropdownOpen = !this.serviceDropdownOpen;
+  }
+
+  closeServiceDropdown() {
+    this.serviceDropdownOpen = false;
+  }
+  /*
+    toggleSelection(id: number, event: Event) {
+      event.stopPropagation();
+      const index = this.selectedTypeServiceOfferts.indexOf(id);
+      if (index === -1) this.selectedTypeServiceOfferts.push(id);
+      else this.selectedTypeServiceOfferts.splice(index, 1);
+      this.eleveinscrireFormGroup.get('typeServiceOffertDTOList')?.setValue(this.selectedTypeServiceOfferts);
+    }
+    */
+
+    /*
+
   toggleSelection(id: number, event: Event) {
     event.stopPropagation();
     const index = this.selectedTypeServiceOfferts.indexOf(id);
-    if (index === -1) this.selectedTypeServiceOfferts.push(id);
-    else this.selectedTypeServiceOfferts.splice(index, 1);
+    if (index === -1) {
+      this.selectedTypeServiceOfferts.push(id);
+    } else {
+      this.selectedTypeServiceOfferts.splice(index, 1);
+    }
     this.eleveinscrireFormGroup.get('typeServiceOffertDTOList')?.setValue(this.selectedTypeServiceOfferts);
   }
 
@@ -146,19 +171,59 @@ export class InscrireEleveServiceComponent implements OnInit {
       normalActions.length > 0 &&
       normalActions.every((a) => this.selectedTypeServiceOfferts.includes(a.id!))
     );
-  }
+  } 
 
+  /*
+    toggleSelectAll(event: Event) {
+      event.stopPropagation();
+      const normalActions = this.typeServiceList.filter(
+        (a): a is TypeServiceOffert => a !== 'selectAll'
+      );
+      if (this.isAllSelected()) {
+        this.selectedTypeServiceOfferts = [];
+      } else {
+        this.selectedTypeServiceOfferts = normalActions.map((a) => a.id!) as number[];
+      }
+      this.eleveinscrireFormGroup.get('typeServiceOffertDTOList')?.setValue(this.selectedTypeServiceOfferts);
+    }*/
+
+      /*
   toggleSelectAll(event: Event) {
     event.stopPropagation();
-    const normalActions = this.typeServiceList.filter(
-      (a): a is TypeServiceOffert => a !== 'selectAll'
-    );
+    const normalActions = this.getNormalServices();
     if (this.isAllSelected()) {
       this.selectedTypeServiceOfferts = [];
     } else {
-      this.selectedTypeServiceOfferts = normalActions.map((a) => a.id!) as number[];
+      this.selectedTypeServiceOfferts = normalActions
+        .map((a) => a.id)
+        .filter((id): id is number => id !== undefined);
     }
     this.eleveinscrireFormGroup.get('typeServiceOffertDTOList')?.setValue(this.selectedTypeServiceOfferts);
+  }
+
+  // Fermer le dropdown quand on clique en dehors
+  @HostListener('document:click', ['$event'])
+  onClickOutside(event: MouseEvent) {
+    if (this.serviceDropdownOpen && this.serviceSelectContainer) {
+      const clickedInside = this.serviceSelectContainer.nativeElement.contains(event.target);
+      if (!clickedInside) {
+        this.serviceDropdownOpen = false;
+      }
+    }
+  }
+
+
+
+  getSelectedEleveName(): string {
+    const eleveId = this.eleveinscrireFormGroup.get('eleve')?.value;
+    const eleve = this.eleveList?.find(e => e.eleve === eleveId);
+    return eleve ? `${eleve.prenomEleve} ${eleve.nomEleve}` : '';
+  }
+
+  isFormStep2Valid(): boolean {
+    return !!(this.eleveinscrireFormGroup.get('classId')?.value &&
+      this.eleveinscrireFormGroup.get('eleve')?.value &&
+      this.eleveinscrireFormGroup.get('anneeScolaire')?.value);
   }
 
   initializeForm(eleveservice: InscriptionEleveTypeService | null) {
@@ -168,13 +233,49 @@ export class InscrireEleveServiceComponent implements OnInit {
       anneeScolaire: [eleveservice?.anneeScolaire ? eleveservice.anneeScolaire : '', Validators.required],
       eleve: [eleveservice?.eleve ? eleveservice.eleve : '', Validators.required],
       typeServiceOffertDTOList: [eleveservice?.typeServiceOffertDTOList?.map(a => a.id) ?? [], Validators.required],
-      benefice_remise: [eleveservice?.benefice_remise ?? '', Validators.required],
+      benefice_remise: [eleveservice?.benefice_remise ?? '0', Validators.required],
       remise: [eleveservice?.remise ?? ''],
+      motif: ['', Validators.required],
     });
+    if (eleveservice?.typeServiceOffertDTOList) {
+      this.selectedTypeServiceOfferts = eleveservice.typeServiceOffertDTOList
+        .map(a => a.id)
+        .filter((id): id is number => id !== undefined);
+    }
   }
 
+  getNormalServices(): TypeServiceOffert[] {
+    return this.typeServiceList.filter(
+      (item): item is TypeServiceOffert => item !== 'selectAll'
+    );
+  }
 
+  // Version alternative avec gestion d'erreur
+  getNormalServicesSafe(): TypeServiceOffert[] {
+    return (this.typeServiceList || [])
+      .filter(item => item !== 'selectAll' && item !== null && item !== undefined)
+      .map(item => item as TypeServiceOffert);
+  }
+
+  /*
+    initializeForm(eleveservice: InscriptionEleveTypeService | null) {
+      this.eleveinscrireFormGroup = this._formBuilder.group({
+        id: [eleveservice?.id ? eleveservice.id : ''],
+        classId: [eleveservice?.classId ? eleveservice.classId : '', Validators.required],
+        anneeScolaire: [eleveservice?.anneeScolaire ? eleveservice.anneeScolaire : '', Validators.required],
+        eleve: [eleveservice?.eleve ? eleveservice.eleve : '', Validators.required],
+        typeServiceOffertDTOList: [eleveservice?.typeServiceOffertDTOList?.map(a => a.id) ?? [], Validators.required],
+        benefice_remise: [eleveservice?.benefice_remise ?? '', Validators.required],
+        remise: [eleveservice?.remise ?? ''],
+      });
+    }*/
+
+/*
   ajouteditInscriptionEleveTypeService() {
+    if (this.selectedTypeServiceOfferts.length === 0) {
+      this.toastService.warning('Attention', 'Veuillez sélectionner au moins un service');
+      return;
+    }
     const typeServiceOffertSelected = this.eleveinscrireFormGroup.value.typeServiceOffertDTOList;
     this.eleveinscrire = {
       id: this.eleveinscrireFormGroup.get('id')?.value,
@@ -223,6 +324,257 @@ export class InscrireEleveServiceComponent implements OnInit {
 
   goBack() {
     this.router.navigate(['admin/comptabilite/eleveservice'])
+  }*/
+
+    errorMessage?: string;
+  eleveinscrireId: number;
+  eleveinscrireFormGroup!: FormGroup;
+  eleveinscrire: any;
+  isEdit: boolean = false;
+
+  typeServiceList: TypeServiceOffert[] = [];
+  selectedTypeServiceOfferts: number[] = [];
+  serviceDropdownOpen: boolean = false;
+
+  eleveList?: ListeInscription[];
+  anneeScolaires: AnneeScolaire[] = [];
+  classList?: any[];
+  selectedPrimary: number | null = null;
+  selectedSecondary: number | null = null;
+  ecoleId: any;
+  userId: number;
+  utilisateur: Utilisateur = {};
+
+  title = "Inscrire un élève à un service";
+
+  @ViewChild('serviceSelectContainer') serviceSelectContainer!: ElementRef;
+
+  private readonly comptabiliteResource = inject(ComptabiliteResourceService);
+  private readonly referentielResource = inject(ReferentielResourceService);
+  private readonly eleveService = inject(DossierResourceService);
+  private readonly _formBuilder = inject(FormBuilder);
+  private readonly toastService = inject(ToastrService);
+  private readonly utilisateurService = inject(UtilisateurService);
+  private readonly activeRoute = inject(ActivatedRoute);
+  private readonly router = inject(Router);
+
+  constructor() {
+    this.eleveinscrireId = this.activeRoute.snapshot.params['id'];
+    this.userId = Number(localStorage.getItem('id'));
+    this.ecoleId = Number(localStorage.getItem('ecoleId'));
+  }
+
+  ngOnInit(): void {
+    this.getConnectedUserInfos();
+    this.getClassList();
+    this.getTypeServiceList();
+    this.getAnneeScolaires();
+    this.initializeForm(null);
+    if (this.eleveinscrireId != null && this.eleveinscrireId != undefined) {
+      this.getInscriptionEleve(this.eleveinscrireId);
+      this.title = 'Modifier une inscription';
+      this.isEdit = true;
+    }
+  }
+
+  ngAfterViewInit() {
+    // S'assurer que le container est disponible
+  }
+
+  // HostListener pour fermer le dropdown quand on clique en dehors
+  @HostListener('document:click', ['$event'])
+  handleClickOutside(event: MouseEvent) {
+    if (this.serviceDropdownOpen && this.serviceSelectContainer) {
+      const clickedInside = this.serviceSelectContainer.nativeElement.contains(event.target);
+      if (!clickedInside) {
+        this.serviceDropdownOpen = false;
+      }
+    }
+  }
+
+  // Empêcher la propagation du clic à l'intérieur du dropdown
+  onDropdownClick(event: MouseEvent) {
+    event.stopPropagation();
+  }
+
+  getConnectedUserInfos() {
+    this.utilisateurService.getUtilisateur(this.userId).subscribe({
+      next: data => {
+        this.utilisateur = data;
+      },
+      error: error => { console.log(error) },
+    });
+  }
+
+  getTypeServiceList() {
+    this.referentielResource.getResourceList('typeserviceoffert/autres').subscribe({
+      next: (data: any) => {
+        this.typeServiceList = data;
+      }
+    });
+  }
+
+  getNormalServices(): TypeServiceOffert[] {
+    return this.typeServiceList;
+  }
+
+  getClassList() {
+    this.referentielResource.getResourceList('classe').subscribe({
+      next: (data) => {
+        this.classList = data;
+      }
+    });
+  }
+
+  getAnneeScolaires() {
+    this.referentielResource.getResourceList('anneescolaire').subscribe({
+      next: (data: any) => {
+        this.anneeScolaires = data;
+      }
+    });
+  }
+
+  onPrimaryChange(event: any) {
+    const classId = event.target.value;
+    if (classId) {
+      this.getEleveList(classId);
+    }
+  }
+
+  getEleveList(classId: number) {
+    this.eleveService.getResourceListByElement('inscription/classe', classId).subscribe({
+      next: (data: any) => {
+        this.eleveList = data;
+      }
+    });
+  }
+
+  getInscriptionEleve(eleveserviceId: number) {
+    this.comptabiliteResource.recupererUneResource('eleveservice', eleveserviceId).subscribe({
+      next: (data) => {
+        this.eleveinscrire = data;
+        this.getEleveList(this.eleveinscrire.classId);
+        this.initializeForm(this.eleveinscrire);
+      }
+    });
+  }
+
+  toggleServiceDropdown(event?: MouseEvent) {
+    if (event) {
+      event.stopPropagation();
+    }
+    this.serviceDropdownOpen = !this.serviceDropdownOpen;
+  }
+
+  toggleSelection(id: number, event: Event) {
+    event.stopPropagation();
+    const index = this.selectedTypeServiceOfferts.indexOf(id);
+    if (index === -1) {
+      this.selectedTypeServiceOfferts.push(id);
+    } else {
+      this.selectedTypeServiceOfferts.splice(index, 1);
+    }
+    this.eleveinscrireFormGroup.get('typeServiceOffertDTOList')?.setValue(this.selectedTypeServiceOfferts);
+  }
+
+  isAllSelected(): boolean {
+    return this.typeServiceList.length > 0 && 
+           this.typeServiceList.every((a) => this.selectedTypeServiceOfferts.includes(a.id!));
+  }
+
+  toggleSelectAll(event: Event) {
+    event.stopPropagation();
+    if (this.isAllSelected()) {
+      this.selectedTypeServiceOfferts = [];
+    } else {
+      this.selectedTypeServiceOfferts = this.typeServiceList
+        .map((a) => a.id)
+        .filter((id): id is number => id !== undefined);
+    }
+    this.eleveinscrireFormGroup.get('typeServiceOffertDTOList')?.setValue(this.selectedTypeServiceOfferts);
+  }
+
+  getSelectedEleveName(): string {
+    const eleveId = this.eleveinscrireFormGroup.get('eleve')?.value;
+    const eleve = this.eleveList?.find(e => e.eleve === eleveId);
+    return eleve ? `${eleve.prenomEleve} ${eleve.nomEleve}` : '';
+  }
+
+  isFormStep2Valid(): boolean {
+    return !!(this.eleveinscrireFormGroup.get('classId')?.value && 
+              this.eleveinscrireFormGroup.get('eleve')?.value &&
+              this.eleveinscrireFormGroup.get('anneeScolaire')?.value);
+  }
+
+  initializeForm(eleveservice: InscriptionEleveTypeService | null) {
+    const serviceIds = eleveservice?.typeServiceOffertDTOList?.map(a => a.id).filter(id => id !== undefined) ?? [];
+    
+    this.eleveinscrireFormGroup = this._formBuilder.group({
+      id: [eleveservice?.id ? eleveservice.id : ''],
+      classId: [eleveservice?.classId ? eleveservice.classId : '', Validators.required],
+      anneeScolaire: [eleveservice?.anneeScolaire ? eleveservice.anneeScolaire : '', Validators.required],
+      eleve: [eleveservice?.eleve ? eleveservice.eleve : '', Validators.required],
+      typeServiceOffertDTOList: [serviceIds, Validators.required],
+      benefice_remise: [eleveservice?.benefice_remise ?? '0', Validators.required],
+      remise: [eleveservice?.remise ?? ''],
+      motif: ['', Validators.required],
+    });
+    
+    this.selectedTypeServiceOfferts = serviceIds;
+  }
+
+  ajouteditInscriptionEleveTypeService() {
+    if (this.selectedTypeServiceOfferts.length === 0) {
+      this.toastService.warning('Attention', 'Veuillez sélectionner au moins un service');
+      return;
+    }
+
+    const typeServiceOffertSelected = this.eleveinscrireFormGroup.value.typeServiceOffertDTOList;
+    const payload = {
+      id: this.eleveinscrireFormGroup.get('id')?.value,
+      classId: this.eleveinscrireFormGroup.get('classId')?.value,
+      eleve: this.eleveinscrireFormGroup.get('eleve')?.value,
+      anneeScolaire: this.eleveinscrireFormGroup.get('anneeScolaire')?.value,
+      benefice_remise: this.eleveinscrireFormGroup.get('benefice_remise')?.value,
+      remise: this.eleveinscrireFormGroup.get('remise')?.value,
+      motif: this.eleveinscrireFormGroup.get('motif')?.value,
+      typeServiceOffertDTOList: this.typeServiceList.filter((action: any) => typeServiceOffertSelected.includes(Number(action.id))),
+      ecole: this.ecoleId
+    };
+
+    if (!this.isEdit) {
+      this.comptabiliteResource.creerUneRessource('eleveservice', payload).subscribe({
+        next: (data) => {
+          if (data.statut === 'OK') {
+            this.toastService.success('Succès', 'L\'inscription a été enregistrée avec succès !');
+            this.router.navigate(['admin/comptabilite/eleveservice']);
+          } else if (data.statut === 'FAILED') {
+            this.toastService.error('Erreur', 'Erreur lors de la création : ' + data.message);
+          }
+        },
+        error: (data) => {
+          this.toastService.error('Erreur', 'Erreur lors de la création : ' + data.error);
+        }
+      });
+    } else {
+      this.comptabiliteResource.modifierUneRessource('eleveservice', this.eleveinscrireId, payload).subscribe({
+        next: (data) => {
+          if (data.statut === 'OK') {
+            this.toastService.success('Succès', 'L\'inscription a été modifiée avec succès !');
+            this.router.navigate(['admin/comptabilite/eleveservice']);
+          } else if (data.statut === 'FAILED') {
+            this.toastService.error('Erreur', 'Erreur lors de la modification : ' + data.message);
+          }
+        },
+        error: (data) => {
+          this.toastService.error('Erreur', 'Erreur lors de la modification : ' + data.error);
+        }
+      });
+    }
+  }
+
+  goBack() {
+    this.router.navigate(['admin/comptabilite/eleveservice']);
   }
 
 }

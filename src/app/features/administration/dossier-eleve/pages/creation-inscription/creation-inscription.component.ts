@@ -1,17 +1,17 @@
+import { CommonModule } from '@angular/common';
 import { Component, inject, Input, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { DossierEleveService } from '../../service/dossier-eleve.service';
-import { Inscription } from '../../../../../core/models/dossiereleve/request/inscription';
-import { Classe } from '../../../../../core/models/referentiels/classe';
-import { AnneeScolaire } from '../../../../../core/models/referentiels/annee-scolaire';
-import { Eleve } from '../../../../../core/models/parent/parent';
-import { Utilisateur } from '../../../../../core/models/utilisateur/utilisateur';
-import { UtilisateurService } from '../../../utilisateur/service/utilisateur.service';
 import { ToastrService } from '@iqx-limited/ngx-toastr';
-import { CommonModule } from '@angular/common';
-import { ReferentielService } from '../../../referentiel/service/referentiel.service';
+import { Inscription } from '../../../../../core/models/dossiereleve/request/inscription';
+import { Eleve } from '../../../../../core/models/parent/parent';
+import { AnneeScolaire } from '../../../../../core/models/referentiels/annee-scolaire';
+import { Classe } from '../../../../../core/models/referentiels/classe';
+import { Utilisateur } from '../../../../../core/models/utilisateur/utilisateur';
 import { LocalStorageService } from '../../../../../core/services/local-storage.service';
+import { ReferentielService } from '../../../referentiel/service/referentiel.service';
+import { UtilisateurService } from '../../../utilisateur/service/utilisateur.service';
+import { DossierEleveService } from '../../service/dossier-eleve.service';
 
 @Component({
   selector: 'app-creation-inscription',
@@ -96,10 +96,25 @@ export class CreationInscriptionComponent implements OnInit {
     this.dossierEleveService.getResourceList('eleve')?.subscribe({
       next: (data: any) => {
         this.eleves = data;
-        console.log('eleve list', this.eleves);
       }
     });
   }
+
+  getSelectedEleveName(): string {
+    const eleveId = this.inscriptionFormGroup.get('eleveId')?.value;
+    console.log('Élève ID sélectionné:', eleveId);
+    console.log('Liste des élèves:', this.eleves);
+
+    if (!eleveId || !this.eleves || this.eleves.length === 0) {
+      return '';
+    }
+
+    const eleve = this.eleves.find(e => Number(e.id) === Number(eleveId));
+    console.log('Élève trouvé:', eleve);
+
+    return eleve ? `${eleve.prenom} ${eleve.nom}` : '';
+  }
+
 
   getClasses() {
     this.referentielService.getAllClasses().subscribe(
@@ -110,6 +125,22 @@ export class CreationInscriptionComponent implements OnInit {
     );
   }
 
+  getSelectedClasseName(): string {
+    const classeId = this.inscriptionFormGroup.get('classeId')?.value;
+    console.log('Classe ID sélectionné:', classeId);
+    console.log('Liste des classes:', this.classes);
+
+    if (!classeId || !this.classes || this.classes.length === 0) {
+      return '';
+    }
+
+    const classe = this.classes.find(c => Number(c.id) === Number(classeId));
+    console.log('Classe trouvée:', classe);
+
+    // Solution 1 : Utiliser ?? pour fournir une valeur par défaut
+    return classe?.libelle ?? '';
+  }
+
   getAnneeScolaires() {
     this.referentielService.getAllAnneeScolaires().subscribe(
       (data: any[]) => {
@@ -118,6 +149,21 @@ export class CreationInscriptionComponent implements OnInit {
       (error: any) => (this.errorMessage = <any>error)
     );
   }
+
+  getSelectedAnneeName(): string {
+    const anneeId = this.inscriptionFormGroup.get('anneeScolaireId')?.value;
+    console.log('Année ID sélectionné:', anneeId);
+    console.log('Liste des années:', this.anneeScolaires);
+
+    if (!anneeId || !this.anneeScolaires || this.anneeScolaires.length === 0) {
+      return '';
+    }
+
+    const annee = this.classes.find(c => Number(c.id) === Number(anneeId));
+    console.log('année trouvée:', anneeId);
+    return annee?.libelle ?? '';
+  }
+
 
   initializeInscriptionForm(inscription: Inscription | null) {
     this.inscriptionFormGroup = this._formBuilder.group({

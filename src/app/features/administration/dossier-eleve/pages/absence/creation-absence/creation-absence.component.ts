@@ -1,4 +1,3 @@
-import { CommonModule } from '@angular/common';
 import { Component, inject, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -19,7 +18,7 @@ import { DossierResourceService } from '../../../service/dossier-resource.servic
 @Component({
   selector: 'app-creation-absence',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule],
+  imports: [ReactiveFormsModule],
   templateUrl: './creation-absence.component.html',
   styleUrls: ['./creation-absence.component.css']
 })
@@ -116,6 +115,7 @@ export class CreationAbsenceComponent implements OnInit {
     this.dossierResource.getResourceListByElement('inscription/classe', classId)?.subscribe({
       next: (data: any) => {
         this.eleveList = data;
+        console.log('Eleves', this.eleveList);
       }
     });
   }
