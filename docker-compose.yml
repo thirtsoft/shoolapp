@@ -1,0 +1,13 @@
+services:
+  angular-app:
+    build: .
+    container_name: eduschool_angular_app
+    restart: unless-stopped
+    ports:
+      - '4200:80'
+    networks:
+      - shared-network
+
+networks:
+  shared-network:
+    external: true
