@@ -53,6 +53,12 @@ export const ADMIN_ROUTES: Routes = [
             .then(m => m.UTILISATEURS_ROUTES)
       },
 
+      {
+        path: 'profils',
+        loadChildren: () =>
+          import('./profil/profile.routes')
+            .then(m => m.PROFILES_ROUTES)
+      },
 
       // ── Redirection par défaut ────────────────────────
       {

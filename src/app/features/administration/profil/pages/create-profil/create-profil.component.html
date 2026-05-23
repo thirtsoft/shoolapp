@@ -1,0 +1,338 @@
+<!-- <div class="page-wrapper">
+  <div class="content container-fluid">
+    <div class="page-header">
+      <div class="row">
+        <div class="col-sm-7 col-auto">
+          <h3 class="page-title"></h3>
+          <ul class="breadcrumb"></ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="row justify-content-center">
+      <div class="col-md-6 col-lg-6 col-xl-6">
+        <div class="card">
+          <h3 class="page-title text-center" style="margin-top: 20px">
+            {{ title }}
+          </h3>
+          <div class="card-body">
+            <form [formGroup]="profilFormGroup">
+              <input
+                type="text"
+                readonly="true"
+                hidden="true"
+                formControlName="id"
+              />
+              <div class="row form-row">
+                <div class="col-12">
+                  <div class="form-group">
+                    <label>Libellé <span class="text-danger">*</span></label>
+                    <input
+                      type="text"
+                      formControlName="libelle"
+                      required
+                      class="form-control"
+                    />
+                  </div>
+                </div>
+              </div>
+
+              <div class="row form-row">
+                <div class="col-12">
+                  <div class="form-group">
+                    <label
+                      >Type compte <span class="text-danger">*</span></label
+                    >
+
+                    <select
+                      class="form-control select"
+                      name="typeCompte"
+                      formControlName="typeCompte"
+                      required=""
+                      (change)="onTypeCompteChange($event)"
+                    >
+                      <option value="">Selectionnez</option>
+                      <option *ngFor="let type of typeCompeList" [value]="type">
+                        {{ type }}
+                      </option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+              <div class="row form-row">
+                <div class="col-12">
+                  <div class="form-group">
+                    <label
+                      >Habilitations <span class="text-danger">*</span></label
+                    >
+                    <ng-select
+                      [items]="actionList"
+                      [multiple]="true"
+                      [closeOnSelect]="false"
+                      [searchable]="false"
+                      formControlName="actionDTOs"
+                      [clearable]="false"
+                      [bindLabel]="'libelle'"
+                      [bindValue]="'id'"
+                      class="form-control multipleselect"
+                    >
+                      <ng-template ng-option-tmp let-item="item">
+                        <ng-container
+                          *ngIf="item === 'selectAll'; else normalOption"
+                        >
+                          <div class="option-item">
+                            <input
+                              type="checkbox"
+                              [checked]="isAllSelected()"
+                              (click)="toggleSelectAll($event)"
+                            />
+                            <span><strong>Sélectionner tous</strong></span>
+                          </div>
+                        </ng-container>
+                        <ng-template #normalOption>
+                          <div class="option-item">
+                            <input
+                              type="checkbox"
+                              [checked]="selectedActions.includes(item.id)"
+                              (click)="toggleSelection(item.id, $event)"
+                            />
+                            <span>{{ item.libelle }}</span>
+                          </div>
+                        </ng-template>
+                      </ng-template>
+
+                      <ng-template ng-label-tmp let-item="item">
+                        {{ item.libelle }}
+                      </ng-template>
+                    </ng-select> 
+                  </div>
+                </div>
+              </div>
+
+              <div class="row mt-3">
+                <div class="col-12 d-flex justify-content-between">
+                  <button
+                    type="button"
+                    class="btn btn-danger si_accept_cancel"
+                    (click)="goBack()"
+                  >
+                    Annuler
+                  </button>
+                  <button
+                    type="button"
+                    class="btn btn-success si_accept_confirm float-lg-right"
+                    id="btn-yes"
+                    style="background: #4070f4"
+                    (click)="ajouteditProfile()"
+                  >
+                    <i class="fas fa-save"></i>
+                    Enregistrer
+                  </button>
+                </div>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+ -->
+
+<div class="page-wrapper">
+  <div class="content container-fluid">
+    <!-- Page Header -->
+    <div class="page-header">
+      <div class="row align-items-center">
+        <div class="col-sm-12">
+          <h3 class="page-title">{{ title }}</h3>
+          <p class="text-muted mt-1 mb-0">
+            <i class="fas fa-user-shield me-1"></i> Gestion des profils et habilitations
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Badge -->
+    <div class="badge-container">
+      <span class="badge badge-primary">
+        <i class="fas fa-plus-circle me-1"></i>
+        @if (!profilId) {
+          Nouveau profil
+        } @else {
+          Modification
+        }
+      </span>
+    </div>
+
+    <!-- Formulaire pleine largeur -->
+    <div class="card">
+      <div class="card-body p-4 p-md-5">
+        <!-- Step Indicator -->
+        <div class="step-indicator">
+          <div class="step active">
+            <span class="step-number">1</span>
+            <span class="step-label">Informations</span>
+          </div>
+          <div class="step-line"></div>
+          <div class="step">
+            <span class="step-number">2</span>
+            <span class="step-label">Habilitations</span>
+          </div>
+        </div>
+
+        <form [formGroup]="profilFormGroup" (ngSubmit)="ajouteditProfile()">
+          <input type="hidden" formControlName="id" />
+
+          <!-- Ligne 1: Libellé -->
+          <div class="form-group">
+            <label class="form-label">
+              Libellé du profil <span class="text-danger">*</span>
+              <i class="fas fa-tag ms-1 text-muted"></i>
+            </label>
+            <input
+              type="text"
+              class="form-control"
+              formControlName="libelle"
+              placeholder="Ex: Administrateur, Enseignant, Parent"
+              required
+            />
+            @if (
+              profilFormGroup.get('libelle')?.invalid && profilFormGroup.get('libelle')?.touched
+            ) {
+              <div class="invalid-feedback">Le libellé est requis</div>
+            }
+          </div>
+
+          <!-- Ligne 2: Type compte -->
+          <div class="form-group">
+            <label class="form-label">
+              Type de compte <span class="text-danger">*</span>
+              <i class="fas fa-users ms-1 text-muted"></i>
+            </label>
+            <select
+              class="form-select"
+              formControlName="typeCompte"
+              required
+              (change)="onTypeCompteChange($event)"
+            >
+              <option value="" disabled selected>— Sélectionnez un type de compte —</option>
+              @for (type of typeCompeList; track type) {
+                <option [value]="type">{{ type }}</option>
+              }
+            </select>
+            @if (
+              profilFormGroup.get('typeCompte')?.invalid &&
+              profilFormGroup.get('typeCompte')?.touched
+            ) {
+              <div class="invalid-feedback">Le type de compte est requis</div>
+            }
+          </div>
+
+          <!-- Ligne 3: Habilitations -->
+          <div class="form-group">
+            <label class="form-label">
+              Habilitations <span class="text-danger">*</span>
+              <i class="fas fa-key ms-1 text-muted"></i>
+            </label>
+            <div class="actions-select-container" #actionsSelectContainer>
+              <div class="actions-select-header" (click)="toggleActionsDropdown($event)">
+                <span>
+                  @if (selectedActions.length === 0) {
+                    — Sélectionnez les habilitations —
+                  } @else if (selectedActions.length === getNormalActions().length) {
+                    Toutes les habilitations sélectionnées
+                  } @else {
+                    {{ selectedActions.length }} habilitation(s) sélectionnée(s)
+                  }
+                </span>
+                <i class="fas fa-chevron-down" [class.rotated]="actionsDropdownOpen"></i>
+              </div>
+              @if (actionsDropdownOpen) {
+                <div class="actions-select-dropdown" (click)="$event.stopPropagation()">
+                  <div class="action-option select-all">
+                    <label class="checkbox-label">
+                      <input
+                        type="checkbox"
+                        [checked]="isAllSelected()"
+                        (change)="toggleSelectAll($event)"
+                      />
+                      <span>Sélectionner toutes les habilitations</span>
+                    </label>
+                  </div>
+                  @for (item of getNormalActions(); track item.id) {
+                    <div class="action-option">
+                      <label class="checkbox-label">
+                        <input
+                          type="checkbox"
+                          [checked]="selectedActions.includes(item.id!)"
+                          (change)="toggleSelection(item.id!, $event)"
+                        />
+                        <span>{{ item.libelle }}</span>
+                      </label>
+                    </div>
+                  }
+                </div>
+              }
+            </div>
+            @if (selectedActions.length === 0 && profilFormGroup.get('actionDTOs')?.touched) {
+              <small class="form-text text-danger"
+                >Veuillez sélectionner au moins une habilitation</small
+              >
+            }
+          </div>
+
+          <!-- Récapitulatif -->
+          @if (profilFormGroup.get('libelle')?.value && profilFormGroup.get('typeCompte')?.value) {
+            <div class="recap-card">
+              <div class="d-flex align-items-center gap-3">
+                <div class="recap-icon">
+                  <i class="fas fa-user-shield"></i>
+                </div>
+                <div class="recap-content">
+                  <span class="recap-label">Récapitulatif du profil</span>
+                  <span class="recap-value">
+                    Profil <strong>{{ profilFormGroup.get('libelle')?.value }}</strong> ({{
+                      profilFormGroup.get('typeCompte')?.value
+                    }})
+                    @if (selectedActions.length > 0) {
+                      - <strong>{{ selectedActions.length }}</strong> habilitation(s)
+                    }
+                  </span>
+                </div>
+              </div>
+            </div>
+          }
+
+          <!-- Actions -->
+          <div class="form-actions">
+            <button type="button" class="btn btn-secondary" (click)="goBack()">
+              <i class="fas fa-times me-2"></i>Annuler
+            </button>
+            <button
+              type="submit"
+              class="btn btn-primary"
+              [disabled]="!profilFormGroup.valid || selectedActions.length === 0"
+            >
+              <i class="fas fa-save me-2"></i>
+              @if (!profilId) {
+                Enregistrer le profil
+              } @else {
+                Modifier le profil
+              }
+            </button>
+          </div>
+
+          <!-- Message d'aide -->
+          <div class="alert-help mt-4" role="alert">
+            <i class="fas fa-info-circle me-2"></i>
+            <span>
+              Les profils définissent les droits d'accès des utilisateurs. Les habilitations
+              déterminent les actions autorisées pour chaque profil.
+            </span>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>

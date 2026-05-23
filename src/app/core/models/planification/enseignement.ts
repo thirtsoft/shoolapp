@@ -9,6 +9,7 @@ export interface Enseignement {
   dateDebut?: Date;
   actif?: number;
   dateFin?: Date;
+  libelle?: string;
 }
 
 export interface DetailsEnseignement {

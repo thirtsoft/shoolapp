@@ -22,6 +22,7 @@ import { ResponseMessage } from '../../../../core/response/response-message';
 export class PlanificationResourceService {
 
   planificationUrl = environment.apiBaseUrl;
+  enseignantUrl = this.planificationUrl + '/planification';
 
   httpOptions = {
     headers: new HttpHeaders({
@@ -350,39 +351,43 @@ export class PlanificationResourceService {
   // *****************  Cours **********************//
 
   getAllCourses(): Observable<ListeCours[]> {
-    return this.http.get<ListeCours[]>(`${this.planificationUrl}/cours/list`, this.httpOptions);
+    return this.http.get<ListeCours[]>(`${this.planificationUrl}/planification/cours/list`, this.httpOptions);
   }
 
   getCourseDeLaSemaine(): Observable<ListeCours[]> {
-    return this.http.get<ListeCours[]>(`${this.planificationUrl}/cours/semaine`, this.httpOptions);
+    return this.http.get<ListeCours[]>(`${this.planificationUrl}//planificationcours/semaine`, this.httpOptions);
   }
 
   getListeCoursByClasse(classeId: number): Observable<ListeCours[]> {
-    return this.http.get<ListeCours[]>(`${this.planificationUrl}/cours/byclasse/${classeId}`, this.httpOptions);
+    return this.http.get<ListeCours[]>(`${this.planificationUrl}/planification/cours/byclasse/${classeId}`, this.httpOptions);
   }
 
   getListeCoursByMatiere(matId: number): Observable<ListeCours[]> {
-    return this.http.get<ListeCours[]>(`${this.planificationUrl}/cours/bymatiere/${matId}`, this.httpOptions);
+    return this.http.get<ListeCours[]>(`${this.planificationUrl}/planification/cours/bymatiere/${matId}`, this.httpOptions);
   }
 
   getListeCoursByEnseignant(ensId: number): Observable<ListeCours[]> {
-    return this.http.get<ListeCours[]>(`${this.planificationUrl}/cours/byenseignant/${ensId}`, this.httpOptions);
+    return this.http.get<ListeCours[]>(`${this.planificationUrl}/planification/cours/byenseignant/${ensId}`, this.httpOptions);
+  }
+
+  getListeCoursSemaineByEnseignant(ensId: number): Observable<ListeCours[]> {
+    return this.http.get<ListeCours[]>(`${this.planificationUrl}/planification/cours/semaine/byenseignant/${ensId}`, this.httpOptions);
   }
 
   getCourse(id: number): Observable<Cours> {
-    return this.http.get<Cours>(`${this.planificationUrl}/cours/${id}`);
+    return this.http.get<Cours>(`${this.planificationUrl}/planification/cours/${id}`);
   }
 
   ajouterCourse(info: Cours) {
-    return this.http.post<ResponseMessage>(`${this.planificationUrl}/cours/save`, info);
+    return this.http.post<ResponseMessage>(`${this.planificationUrl}/planification/cours/save`, info);
   }
 
   updateCourse(id: number, value: Cours) {
-    return this.http.put<ResponseMessage>(`${this.planificationUrl}/cours/update/${id}`, value);
+    return this.http.put<ResponseMessage>(`${this.planificationUrl}/planification/cours/update/${id}`, value);
   }
 
   deleteCourse(id?: number) {
-    return this.http.delete<ResponseMessage>(`${this.planificationUrl}/cours/delete/${id}`);
+    return this.http.delete<ResponseMessage>(`${this.planificationUrl}/planification/cours/delete/${id}`);
   }
 
   /****************    enseignement           ****/

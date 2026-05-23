@@ -13,7 +13,7 @@ import { ReferentielService } from '../../service/referentiel.service';
 @Component({
   selector: 'app-config-etablissement',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule],
+  imports: [ReactiveFormsModule],
   templateUrl: './config-etablissement.component.html',
   styleUrls: ['./config-etablissement.component.css']
 })

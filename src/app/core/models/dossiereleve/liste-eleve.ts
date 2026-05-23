@@ -24,4 +24,6 @@ export interface ListeEleve {
     nomEleve?: any;
 
     prenomEleve?: any;
+
+    nomCompletEleve?: string;
 }

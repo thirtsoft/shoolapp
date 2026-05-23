@@ -1,7 +1,6 @@
-import { CommonModule } from '@angular/common';
 import { Component, inject, OnInit } from '@angular/core';
 import { FormArray, FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { ActivatedRoute, Router, RouterLink } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { ToastrService } from '@iqx-limited/ngx-toastr';
 import { EnseigantList } from '../../../../../../core/models/enseignant/enseignant-list';
 import { EmploiDuTemps } from '../../../../../../core/models/planification/emploi-du-temp';
@@ -18,7 +17,7 @@ import { PlanificationResourceService } from '../../../services/planification-re
 @Component({
   selector: 'app-create-emploie-du-temps',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, RouterLink],
+  imports: [ReactiveFormsModule],
   templateUrl: './create-emploie-du-temps.component.html',
   styleUrls: ['./create-emploie-du-temps.component.css']
 })

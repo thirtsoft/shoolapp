@@ -1,4 +1,3 @@
-
 import { Routes } from '@angular/router';
 import { DossierEleveComponent } from './dossier-eleve.component';
 import { CreationAbsenceComponent } from './pages/absence/creation-absence/creation-absence.component';

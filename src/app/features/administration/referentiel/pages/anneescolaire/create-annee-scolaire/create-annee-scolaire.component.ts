@@ -1,3 +1,4 @@
+import { DatePipe } from '@angular/common';
 import { Component, inject, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -10,7 +11,7 @@ import { ReferentielService } from '../../../service/referentiel.service';
 @Component({
   selector: 'app-create-annee-scolaire',
   standalone: true,
-  imports: [ReactiveFormsModule],
+  imports: [ReactiveFormsModule, DatePipe],
   templateUrl: './create-annee-scolaire.component.html',
   styleUrls: ['./create-annee-scolaire.component.css']
 })

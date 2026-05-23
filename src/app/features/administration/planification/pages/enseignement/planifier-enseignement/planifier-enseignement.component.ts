@@ -1,4 +1,3 @@
-import { CommonModule } from '@angular/common';
 import { Component, inject, OnInit } from '@angular/core';
 import { FormArray, FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -10,6 +9,7 @@ import { ListeClasse } from '../../../../../../core/models/referentiels/classe';
 import { Matiere } from '../../../../../../core/models/referentiels/matiere';
 import { Semestre } from '../../../../../../core/models/referentiels/semestre';
 import { Utilisateur } from '../../../../../../core/models/utilisateur/utilisateur';
+import { EnseignantService } from '../../../../../enseignant/service/enseignant.service';
 import { ReferentielService } from '../../../../referentiel/service/referentiel.service';
 import { UtilisateurService } from '../../../../utilisateur/service/utilisateur.service';
 import { PlanificationResourceService } from '../../../services/planification-resource.service';
@@ -17,7 +17,7 @@ import { PlanificationResourceService } from '../../../services/planification-re
 @Component({
   selector: 'app-planifier-enseignement',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule],
+  imports: [ReactiveFormsModule],
   templateUrl: './planifier-enseignement.component.html',
   styleUrls: ['./planifier-enseignement.component.css']
 })
@@ -47,7 +47,7 @@ export class PlanifierEnseignementComponent implements OnInit {
 
   private readonly planification = inject(PlanificationResourceService);
   private readonly referentielService = inject(ReferentielService);
-  //  private readonly enseignantService = inject(EnseignantService);
+  private readonly enseignantService = inject(EnseignantService);
   private readonly utilisateurService = inject(UtilisateurService);
   private readonly _formBuilder = inject(FormBuilder);
   private readonly toastService = inject(ToastrService);
@@ -64,7 +64,7 @@ export class PlanifierEnseignementComponent implements OnInit {
     this.getConnectedUserInfos();
     this.getClasseList();
     this.getAnneeScolaireList();
-    //  this.getEnseignantList();
+    this.getEnseignantList();
     this.getMatiereList();
     this.getSemestreList();
     this.initializeForm();
@@ -108,14 +108,13 @@ export class PlanifierEnseignementComponent implements OnInit {
     });
   }
 
-  /*
   getEnseignantList() {
     this.enseignantService.getAllEnseignants().subscribe({
       next: (data) => {
         this.enseigantList = data;
       }
     });
-  }*/
+  }
 
   getSemestreList() {
     this.referentielService.getAllSemestres().subscribe({
@@ -195,8 +194,14 @@ export class PlanifierEnseignementComponent implements OnInit {
     this.addEnseignementItem();
   }
 
+  /*
   addEnseignementItem(enseignement: Enseignement | null = null) {
     this.enseignementsArray.push(this.createEnseignementItem(enseignement));
+  }*/
+
+
+  addEnseignementItem(enseignement: Enseignement | null = null) {
+    this.enseignementsArray.insert(0, this.createEnseignementItem(enseignement));
   }
 
   removeEnseignementItem(index: number) {

@@ -1,4 +1,4 @@
-<div class="page-wrapper">
+<!-- <div class="page-wrapper">
   <div class="content container-fluid">
     <div class="row">
       <div class="col-sm-12">
@@ -358,6 +358,401 @@
             </div>
           </div>
         </div>
+      </div>
+    </div>
+  </div>
+</div>
+ -->
+
+<div class="page-wrapper">
+  <div class="content container-fluid">
+    <!-- Page Header -->
+    <div class="page-header">
+      <div class="row align-items-center">
+        <div class="col-sm-12">
+          <h3 class="page-title">{{ title }}</h3>
+          <p class="text-muted mt-1 mb-0">
+            <i class="fas fa-chalkboard-teacher me-1"></i> Gestion des enseignants
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Badge -->
+    <div class="badge-container">
+      <span class="badge badge-primary">
+        <i class="fas fa-plus-circle me-1"></i>
+        @if (!enseignantId) {
+          Nouvel enseignant
+        } @else {
+          Modification
+        }
+      </span>
+    </div>
+
+    <!-- Formulaire pleine largeur -->
+    <div class="card">
+      <div class="card-body p-4 p-md-5">
+        <!-- Step Indicator -->
+        <div class="step-indicator">
+          <div class="step active">
+            <span class="step-number">1</span>
+            <span class="step-label">Identité</span>
+          </div>
+          <div class="step-line"></div>
+          <div class="step">
+            <span class="step-number">2</span>
+            <span class="step-label">Contact</span>
+          </div>
+          <div class="step-line"></div>
+          <div class="step">
+            <span class="step-number">3</span>
+            <span class="step-label">Enseignement</span>
+          </div>
+          <div class="step-line"></div>
+          <div class="step">
+            <span class="step-number">4</span>
+            <span class="step-label">Service</span>
+          </div>
+        </div>
+
+        <form [formGroup]="enseignantFormGroup" (ngSubmit)="ajoutereditEnseignant()">
+          <input type="hidden" formControlName="id" />
+          <input type="hidden" formControlName="idEnseignement" />
+
+          <!-- Ligne 1: Civilité + Photo -->
+          <div class="two-columns-row">
+            <div class="form-group">
+              <label class="form-label">
+                Civilité <span class="text-danger">*</span>
+                <i class="fas fa-user-tie ms-1 text-muted"></i>
+              </label>
+              <select class="form-select" formControlName="civilite">
+                <option value="" disabled selected>— Sélectionnez une civilité —</option>
+                @for (item of civilites; track item) {
+                  <option [value]="item">{{ item }}</option>
+                }
+              </select>
+            </div>
+
+            <div class="photo-container">
+              <label class="form-label text-center w-100">
+                Photo de profil
+                <i class="fas fa-camera ms-1 text-muted"></i>
+              </label>
+              <div class="image-preview-wrapper">
+                <div class="image-preview" (click)="fileInput.click()">
+                  @if (preview) {
+                    <img [src]="preview" alt="Photo de profil" />
+                  } @else {
+                    <div class="image-placeholder">
+                      <i class="fas fa-user-graduate"></i>
+                      <span>Cliquez pour ajouter</span>
+                    </div>
+                  }
+                </div>
+                <input
+                  type="file"
+                  #fileInput
+                  (change)="selectFile($event)"
+                  accept="image/*"
+                  hidden
+                />
+                <div class="image-info">
+                  <small>Formats: JPG, PNG | Max: 2MB</small>
+                </div>
+                @if (message) {
+                  <small class="form-text text-danger">{{ message }}</small>
+                }
+                @if (currentFile && !message) {
+                  <small class="form-text text-success">✓ {{ currentFile.name }}</small>
+                }
+              </div>
+            </div>
+          </div>
+
+          <!-- Ligne 2: Prénom + Nom -->
+          <div class="two-columns-row">
+            <div class="form-group">
+              <label class="form-label">
+                Prénom <span class="text-danger">*</span>
+                <i class="fas fa-user ms-1 text-muted"></i>
+              </label>
+              <input
+                type="text"
+                class="form-control"
+                formControlName="prenom"
+                placeholder="Prénom"
+                required
+              />
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">
+                Nom <span class="text-danger">*</span>
+                <i class="fas fa-user ms-1 text-muted"></i>
+              </label>
+              <input
+                type="text"
+                class="form-control"
+                formControlName="nom"
+                placeholder="Nom"
+                required
+              />
+            </div>
+          </div>
+
+          <!-- Ligne 3: Adresse + Téléphone + Email -->
+          <div class="three-columns-row">
+            <div class="form-group">
+              <label class="form-label">
+                Adresse
+                <i class="fas fa-home ms-1 text-muted"></i>
+              </label>
+              <input
+                type="text"
+                class="form-control"
+                formControlName="address"
+                placeholder="Adresse"
+              />
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">
+                Téléphone <span class="text-danger">*</span>
+                <i class="fas fa-phone ms-1 text-muted"></i>
+              </label>
+              <input
+                type="tel"
+                class="form-control"
+                formControlName="telephone"
+                placeholder="77 000 00 00"
+                required
+              />
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">
+                Email <span class="text-danger">*</span>
+                <i class="fas fa-envelope ms-1 text-muted"></i>
+              </label>
+              <input
+                type="email"
+                class="form-control"
+                formControlName="email"
+                placeholder="email@exemple.com"
+                required
+              />
+            </div>
+          </div>
+
+          <!-- Ligne 4: CNI + Situation matrimoniale + Profession -->
+          <div class="three-columns-row">
+            <div class="form-group">
+              <label class="form-label">
+                CNI / Passeport <span class="text-danger">*</span>
+                <i class="fas fa-id-card ms-1 text-muted"></i>
+              </label>
+              <input
+                type="text"
+                class="form-control"
+                formControlName="cni"
+                placeholder="Numéro CNI"
+                required
+              />
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">
+                Situation matrimoniale
+                <i class="fas fa-heart ms-1 text-muted"></i>
+              </label>
+              <input
+                type="text"
+                class="form-control"
+                formControlName="situationMatrimoniale"
+                placeholder="Célibataire, Marié(e)..."
+              />
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">
+                Profession
+                <i class="fas fa-briefcase ms-1 text-muted"></i>
+              </label>
+              <input
+                type="text"
+                class="form-control"
+                formControlName="profession"
+                placeholder="Profession"
+              />
+            </div>
+          </div>
+
+          <!-- Section Enseignements -->
+          <div class="info-section">
+            <h4 class="section-title">
+              <i class="fas fa-chalkboard-teacher me-2"></i>Informations d'enseignement
+            </h4>
+            <div class="three-columns-row">
+              <div class="form-group">
+                <label class="form-label">
+                  Classe enseignée <span class="text-danger">*</span>
+                  <i class="fas fa-chalkboard-user ms-1 text-muted"></i>
+                </label>
+                <select class="form-select" formControlName="classe" required>
+                  <option value="" disabled selected>— Sélectionnez une classe —</option>
+                  @for (item of classeList; track item.id) {
+                    <option [value]="item.id">{{ item.libelle }}</option>
+                  }
+                </select>
+              </div>
+
+              <div class="form-group">
+                <label class="form-label">
+                  Année scolaire <span class="text-danger">*</span>
+                  <i class="fas fa-calendar-alt ms-1 text-muted"></i>
+                </label>
+                <select class="form-select" formControlName="anneeScolaire" required>
+                  <option value="" disabled selected>— Sélectionnez une année —</option>
+                  @for (item of anneeScolaireList; track item.id) {
+                    <option [value]="item.id">{{ item.libelle }}</option>
+                  }
+                </select>
+              </div>
+
+              <div class="form-group">
+                <label class="form-label">
+                  Date début enseignement <span class="text-danger">*</span>
+                  <i class="fas fa-calendar-day ms-1 text-muted"></i>
+                </label>
+                <input
+                  type="date"
+                  class="form-control"
+                  formControlName="dateDebutEnseignement"
+                  required
+                />
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">
+                Description
+                <i class="fas fa-align-left ms-1 text-muted"></i>
+              </label>
+              <textarea
+                class="form-control"
+                formControlName="description"
+                rows="2"
+                placeholder="Description de l'enseignement..."
+              ></textarea>
+            </div>
+          </div>
+
+          <!-- Section Service -->
+          <div class="info-section">
+            <h4 class="section-title">
+              <i class="fas fa-briefcase me-2"></i>Informations de service
+            </h4>
+            <div class="three-columns-row">
+              <div class="form-group">
+                <label class="form-label">
+                  Nom utilisateur <span class="text-danger">*</span>
+                  <i class="fas fa-key ms-1 text-muted"></i>
+                </label>
+                <input
+                  type="text"
+                  class="form-control"
+                  formControlName="username"
+                  placeholder="Nom d'utilisateur"
+                  required
+                />
+              </div>
+
+              <div class="form-group">
+                <label class="form-label">
+                  Niveau éducation <span class="text-danger">*</span>
+                  <i class="fas fa-graduation-cap ms-1 text-muted"></i>
+                </label>
+                <select class="form-select" formControlName="niveauEducation" required>
+                  <option value="" disabled selected>— Sélectionnez un niveau —</option>
+                  @for (item of listEducations; track item.id) {
+                    <option [value]="item.id">{{ item.libelle }}</option>
+                  }
+                </select>
+              </div>
+
+              <div class="form-group">
+                <label class="form-label">
+                  Date début service <span class="text-danger">*</span>
+                  <i class="fas fa-calendar-day ms-1 text-muted"></i>
+                </label>
+                <input type="date" class="form-control" formControlName="dateDebut" required />
+              </div>
+            </div>
+
+            <div class="two-columns-row">
+              <div class="form-group">
+                <label class="form-label">
+                  Date fin service
+                  <i class="fas fa-calendar-check ms-1 text-muted"></i>
+                </label>
+                <input type="date" class="form-control" formControlName="dateFin" />
+              </div>
+              <div class="form-group">
+                <!-- Espace pour alignement -->
+              </div>
+            </div>
+          </div>
+
+          <!-- Récapitulatif -->
+          @if (enseignantFormGroup.get('nom')?.value && enseignantFormGroup.get('prenom')?.value) {
+            <div class="recap-card">
+              <div class="d-flex align-items-center gap-3">
+                <div class="recap-icon">
+                  <i class="fas fa-user-check"></i>
+                </div>
+                <div class="recap-content">
+                  <span class="recap-label">Récapitulatif</span>
+                  <span class="recap-value">
+                    Enseignant
+                    <strong
+                      >{{ enseignantFormGroup.get('prenom')?.value }}
+                      {{ enseignantFormGroup.get('nom')?.value }}</strong
+                    >
+                    @if (enseignantFormGroup.get('classe')?.value) {
+                      - Classe <strong>{{ getSelectedClasseName() }}</strong>
+                    }
+                  </span>
+                </div>
+              </div>
+            </div>
+          }
+
+          <!-- Actions -->
+          <div class="form-actions">
+            <button type="button" class="btn btn-secondary" (click)="goBack()">
+              <i class="fas fa-times me-2"></i>Annuler
+            </button>
+            <button type="submit" class="btn btn-primary" [disabled]="!enseignantFormGroup.valid">
+              <i class="fas fa-save me-2"></i>
+              @if (!enseignantId) {
+                Enregistrer l'enseignant
+              } @else {
+                Modifier l'enseignant
+              }
+            </button>
+          </div>
+
+          <!-- Message d'aide -->
+          <div class="alert-help mt-4" role="alert">
+            <i class="fas fa-info-circle me-2"></i>
+            <span>
+              Les enseignants sont les membres du personnel chargés de l'enseignement. Ils peuvent
+              être assignés à plusieurs classes et matières.
+            </span>
+          </div>
+        </form>
       </div>
     </div>
   </div>

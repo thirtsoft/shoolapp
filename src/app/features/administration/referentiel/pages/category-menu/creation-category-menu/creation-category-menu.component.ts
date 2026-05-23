@@ -11,7 +11,7 @@ import { ReferentielService } from '../../../service/referentiel.service';
 @Component({
   selector: 'app-creation-category-menu',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, RouterLink],
+  imports: [ReactiveFormsModule, RouterLink],
   templateUrl: './creation-category-menu.component.html',
   styleUrls: ['./creation-category-menu.component.css']
 })

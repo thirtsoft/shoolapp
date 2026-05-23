@@ -1,6 +1,9 @@
 import { CommonModule } from '@angular/common';
-import { Component, computed, inject, signal } from '@angular/core';
+import { Component, computed, inject, OnInit, signal } from '@angular/core';
 import { Router } from '@angular/router';
+import { ListeCours } from '../../../../core/models/planification/liste-cours';
+import { LocalStorageService } from '../../../../core/services/local-storage.service';
+import { PlanificationResourceService } from '../../../administration/planification/services/planification-resource.service';
 
 
 interface ClasseProfesseur {
@@ -61,9 +64,20 @@ interface AbsenceClasse {
   templateUrl: './dashboard-enseignant-component.html',
   styleUrl: './dashboard-enseignant-component.css',
 })
-export class DashboardEnseignantComponent {
+export class DashboardEnseignantComponent implements OnInit {
+
+
+  coursList: ListeCours[] = [];
+  ensId: number;
+
 
   private readonly router = inject(Router);
+  private readonly planificationService = inject(PlanificationResourceService);
+  private readonly localStorage = inject(LocalStorageService);
+
+  constructor() {
+    this.ensId = this.localStorage.getItem('id');
+  }
 
   // ── Informations professeur ────────────────────────
   professeur = signal({
@@ -81,6 +95,7 @@ export class DashboardEnseignantComponent {
   ]);
 
   // ── Emploi du temps du jour ────────────────────────
+
   edtJour = signal<CoursJour[]>([
     { heure: '08:00 - 10:00', classe: 'Terminale S2', matiere: 'Mathématiques', salle: 'Salle 12', duree: '2h', statut: 'termine' },
     { heure: '10:15 - 12:15', classe: 'Première S1', matiere: 'Mathématiques', salle: 'Salle 8', duree: '2h', statut: 'en_cours' },
@@ -126,6 +141,12 @@ export class DashboardEnseignantComponent {
 
   messagesNonLus = computed(() => this.messages().filter(m => m.nonLu).length);
 
+  ngOnInit(): void {
+    if (this.ensId && this.ensId != undefined) {
+      this.getCoursSemaineEnseignant(this.ensId);
+    }
+  }
+
   // ── Méthodes ───────────────────────────────────────
   getStatutCoursCls(statut: string): string {
     const classes: Record<string, string> = {
@@ -134,6 +155,57 @@ export class DashboardEnseignantComponent {
       a_venir: 'a-venir'
     };
     return classes[statut] || '';
+  }
+
+  /*
+  getCoursSemaineEnseignant(enseiId: number): Promise<[ListeCours]> {
+    return new Promise((resolve, reject) => {
+      this.planificationService.getListeCoursSemaineByEnseignant(enseiId).subscribe({
+        next: (data: any) => {
+          this.coursList = data;
+          console.log('Cours list', this.coursList);
+          resolve(data);
+        },
+        error: (err) => reject(err)
+      });
+    });
+  }*/
+
+  getCoursSemaineEnseignant(enseiId: number): Promise<ListeCours[]> {
+    return new Promise((resolve, reject) => {
+      this.planificationService.getListeCoursSemaineByEnseignant(enseiId).subscribe({
+        next: (data: any) => {
+          this.coursList = data;
+          console.log('Cours list', this.coursList);
+          if (!data || data.length === 0) {
+            console.log('Aucun cours cette semaine, basculement vers tous les cours');
+            this.planificationService.getAllCourses().subscribe({
+              next: (allCourses) => {
+                this.coursList = allCourses;
+                console.log('Cours list', this.coursList);
+              },
+              error: (err) => {
+                console.error('Erreur lors du chargement de tous les cours', err);
+                reject(err);
+              }
+            });
+          } else {
+            resolve(data);
+          }
+        },
+        error: (err) => {
+          console.error('Erreur lors du chargement des cours de la semaine', err);
+          // En cas d'erreur, essayer le fallback
+          this.planificationService.getAllCourses().subscribe({
+            next: (allCourses) => {
+              this.coursList = allCourses;
+              resolve(allCourses);
+            },
+            error: (err2) => reject(err2)
+          });
+        }
+      });
+    });
   }
 
   getStatutCoursLabel(statut: string): string {

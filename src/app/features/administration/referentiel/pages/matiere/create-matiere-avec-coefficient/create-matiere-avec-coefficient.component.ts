@@ -13,7 +13,7 @@ import { ReferentielService } from '../../../service/referentiel.service';
 @Component({
   selector: 'app-create-matiere-avec-coefficient',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, RouterLink],
+  imports: [ReactiveFormsModule, RouterLink],
   templateUrl: './create-matiere-avec-coefficient.component.html',
   styleUrls: ['./create-matiere-avec-coefficient.component.css']
 })

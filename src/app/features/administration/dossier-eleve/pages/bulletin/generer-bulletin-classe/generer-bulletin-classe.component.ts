@@ -1,4 +1,3 @@
-import { CommonModule } from '@angular/common';
 import { Component, inject, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -19,7 +18,7 @@ interface Mois {
 @Component({
   selector: 'app-generer-bulletin-classe',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [FormsModule],
   templateUrl: './generer-bulletin-classe.component.html',
   styleUrls: ['./generer-bulletin-classe.component.css']
 })
@@ -37,9 +36,7 @@ export class GenererBulletinClasseComponent implements OnInit {
   private readonly dossierResource = inject(DossierResourceService);
   private readonly referentielResource = inject(ReferentielResourceService);
   private readonly toastService = inject(ToastrService);
-  private readonly activeRoute = inject(ActivatedRoute);
   private readonly router = inject(Router);
-  private readonly localStorage = inject(LocalStorageService);
 
   ngOnInit(): void {
     this.getClassList();
@@ -51,27 +48,40 @@ export class GenererBulletinClasseComponent implements OnInit {
     this.referentielResource.getResourceList('classe')?.subscribe({
       next: (data: any) => {
         this.classList = data;
-        console.log('classList', this.classList);
       }
     });
+  }
+
+  getSelectedClasseName(): string {
+    const classe = this.classList?.find(s => Number(s.id) === Number(this.selectedClasse));
+    return classe?.libelle || '';
   }
 
   getSemestreList() {
     this.referentielResource.getResourceList('semestre')?.subscribe({
       next: (data: any) => {
         this.semestreList = data;
-        console.log('semestreList', this.semestreList);
       }
     });
+  }
+
+  getSelectedSemestreName(): string {
+    const semestre = this.semestreList?.find(s => Number(s.id) === Number(this.selectedSemestre));
+    return semestre?.libelle || '';
   }
 
   getAnneeScolaireList() {
     this.referentielResource.getResourceList('anneescolaire')?.subscribe({
       next: (data: any) => {
         this.anneeScolaireList = data;
-        console.log('anneeScolaireList', this.anneeScolaireList);
       }
     });
+  }
+
+
+  getSelectedAnneeName(): string {
+    const annee = this.anneeScolaireList?.find(a => Number(a.id) === Number(this.selectedAnneeScolaire));
+    return annee?.libelle || '';
   }
 
   onClasseSelected() {

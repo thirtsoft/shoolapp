@@ -31,6 +31,8 @@ import { TypePaiementComponent } from './pages/type-paiement/type-paiement.compo
 import { CreateTypeServiceOffertComponent } from './pages/typeservice/create-type-service-offert/create-type-service-offert.component';
 import { ListTypeServiceOffertComponent } from './pages/typeservice/list-type-service-offert/list-type-service-offert.component';
 import { ReferentielsComponent } from './referentiels.component';
+import { AjoutEditSalleComponent } from './pages/salle/ajout-edit-salle-component/ajout-edit-salle-component';
+import { CreationMenuComponent } from './pages/menu/creation-menu-component/creation-menu-component';
 
 export const REFERENTIELS_ROUTES: Routes = [
   {
@@ -116,6 +118,14 @@ export const REFERENTIELS_ROUTES: Routes = [
         component: MenuComponent
       },
       {
+        path: 'menu/create',
+        component: CreationMenuComponent
+      },
+      {
+        path: 'menu/edit/:id',
+        component: CreationMenuComponent
+      },
+      {
         path: 'grades',
         component: NiveauEducationComponent
       },
@@ -161,6 +171,14 @@ export const REFERENTIELS_ROUTES: Routes = [
       {
         path: 'salles',
         component: SallesComponent
+      },
+      {
+        path: 'salle/create',
+        component: AjoutEditSalleComponent
+      },
+      {
+        path: 'salle/edit/:id',
+        component: AjoutEditSalleComponent
       },
       {
         path: 'typeservices',

@@ -82,6 +82,18 @@ export class ReferentielService {
     return this.http.get<Salle[]>(`${this.referentiel}/salle`);
   }
 
+  getSalleById(id: number): Observable<Salle> {
+    return this.http.get<Salle>(`${this.referentiel}/salle/${id}`);
+  }
+
+  createSalle(info: Salle) {
+    return this.http.post<ResponseMessage>(`${this.referentiel}/salle/save`, info);
+  }
+
+  updateSalle(id: number, value: Salle) {
+    return this.http.put<ResponseMessage>(`${this.referentiel}/salle/update/${id}`, value);
+  }
+
   /*************     AnnéesColaire      ***********/
 
   getAllAnneeScolaires(): Observable<AnneeScolaire[]> {

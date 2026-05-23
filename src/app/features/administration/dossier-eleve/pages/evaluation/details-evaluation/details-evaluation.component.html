@@ -1,4 +1,4 @@
-<div class="page-wrapper">
+<!-- <div class="page-wrapper">
   <div class="content container-fluid">
     <div class="data">
       <h1 class="titlePage">Détails {{ detailsEvaluation.evaluationType }}</h1>
@@ -154,6 +154,177 @@
 
       <div class="centerModal"></div>
       <div></div>
+    </div>
+  </div>
+</div>
+ -->
+
+<div class="page-wrapper">
+  <div class="content container-fluid">
+    <!-- Page Header -->
+    <div class="page-header">
+      <div class="row">
+        <div class="col-sm-12">
+          <h3 class="page-title">Détails évaluation</h3>
+          <p class="text-muted mt-1 mb-0">
+            <i class="fas fa-clipboard-list me-1"></i> Visualisation des informations de
+            l'évaluation
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Ligne Retour + État (sur la même ligne - État complètement à droite) -->
+    <div class="action-bar">
+      <div class="action-left">
+        <button class="btn-back" (click)="goBack()">
+          <i class="fas fa-arrow-left me-2"></i>Retour
+        </button>
+        @if (['Remise', 'Envoyée'].includes(detailsEvaluation.etat!)) {
+          <button class="btn-validate" (click)="openConfirmationDialog('valider')">
+            <i class="fas fa-check-circle me-2"></i>Valider
+          </button>
+        }
+        @if (['Validée'].includes(detailsEvaluation.etat!)) {
+          <button class="btn-print" (click)="imprimerUneEvaluation(detailsEvaluation.id)">
+            <i class="fas fa-print me-2"></i>Imprimer
+          </button>
+        }
+      </div>
+      <div class="action-right">
+        <span class="status-badge" [class]="getStatusClass()">
+          <i class="fas fa-info-circle me-1"></i>
+          État : {{ detailsEvaluation.etat || 'Brouillon' }}
+        </span>
+      </div>
+    </div>
+
+    <!-- Cartes d'informations (2 colonnes) -->
+    <div class="two-cards-grid">
+      <!-- Carte 1: Détails évaluation -->
+      <div class="info-card">
+        <div class="card-header-custom">
+          <i class="fas fa-clipboard-list"></i>
+          <h4>Détails évaluation</h4>
+        </div>
+        <div class="info-list">
+          <div class="info-row">
+            <div class="info-label">Titre</div>
+            <div class="info-value">{{ detailsEvaluation.titre || '-' }}</div>
+          </div>
+          <div class="info-row">
+            <div class="info-label">Date évaluation</div>
+            <div class="info-value">
+              {{ detailsEvaluation.dateEvaluation | date: 'dd/MM/yyyy' }}
+            </div>
+          </div>
+          <div class="info-row">
+            <div class="info-label">Heure début</div>
+            <div class="info-value">{{ detailsEvaluation.heureDebut || '-' }}</div>
+          </div>
+          <div class="info-row">
+            <div class="info-label">Heure fin</div>
+            <div class="info-value">{{ detailsEvaluation.heureFin || '-' }}</div>
+          </div>
+          <div class="info-row">
+            <div class="info-label">État</div>
+            <div class="info-value">
+              <span class="status-inline" [class]="getStatusClass()">
+                {{ detailsEvaluation.etat || 'Brouillon' }}
+              </span>
+            </div>
+          </div>
+          <div class="info-row">
+            <div class="info-label">Type</div>
+            <div class="info-value">{{ detailsEvaluation.evaluationType || '-' }}</div>
+          </div>
+          <div class="info-row">
+            <div class="info-label">Mode évaluation</div>
+            <div class="info-value">{{ detailsEvaluation.evaluationMode || '-' }}</div>
+          </div>
+          <div class="info-row">
+            <div class="info-label">Description</div>
+            <div class="info-value description-text">
+              {{ detailsEvaluation.description || '-' }}
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Carte 2: Autres informations -->
+      <div class="info-card">
+        <div class="card-header-custom">
+          <i class="fas fa-school"></i>
+          <h4>Autres informations</h4>
+        </div>
+        <div class="info-list">
+          <div class="info-row">
+            <div class="info-label">Classe</div>
+            <div class="info-value">{{ detailsEvaluation.libelleClasse || '-' }}</div>
+          </div>
+          <div class="info-row">
+            <div class="info-label">Année scolaire</div>
+            <div class="info-value">{{ detailsEvaluation.anneeScolaire || '-' }}</div>
+          </div>
+          <div class="info-row">
+            <div class="info-label">Matière</div>
+            <div class="info-value">{{ detailsEvaluation.matiere || '-' }}</div>
+          </div>
+          <div class="info-row">
+            <div class="info-label">Semestre</div>
+            <div class="info-value">{{ detailsEvaluation.semestre || '-' }}</div>
+          </div>
+          <div class="info-row">
+            <div class="info-label">Enseignant</div>
+            <div class="info-value">{{ detailsEvaluation.nomCompletEnseignant || '-' }}</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Tableau des notes -->
+    <div class="info-card full-width">
+      <div class="card-header-custom">
+        <i class="fas fa-star"></i>
+        <h4>Notes des élèves</h4>
+      </div>
+      <div class="table-responsive">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Nom & Prénom</th>
+              <th>Type note</th>
+              <th>Note /20</th>
+              <th>Appréciation</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (note of detailsEvaluation.detailsNoteEleveDTOList; track $index) {
+              <tr>
+                <td class="eleve-cell">
+                  <div class="eleve-avatar">
+                    <div class="avatar-circle">
+                      {{ (note?.nomCompletEleve || '?').charAt(0) }}
+                    </div>
+                    <span>{{ note?.nomCompletEleve || '-' }}</span>
+                  </div>
+                </td>
+                <td class="type-cell">
+                  <span class="badge-type">{{ note?.type || '-' }}</span>
+                </td>
+                <td class="note-value">{{ note?.note || '-' }}</td>
+                <td class="appreciation-cell">{{ note?.appreciation || '-' }}</td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+      @if (!detailsEvaluation.detailsNoteEleveDTOList?.length) {
+        <div class="empty-state">
+          <i class="fas fa-chart-line"></i>
+          <p>Aucune note disponible pour cette évaluation</p>
+        </div>
+      }
     </div>
   </div>
 </div>

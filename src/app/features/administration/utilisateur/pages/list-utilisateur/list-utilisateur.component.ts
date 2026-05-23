@@ -4,6 +4,8 @@ import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { IFilterConfig } from '../../../../../core/filtered-config/FiltreConfiguration';
 import { UtilisateurResourceService } from '../../service/utilisateur-resource.service';
 import { GenericTableReferentielComponent } from '../../../../../core/generic/generic-table-referentiel/generic-table-referentiel.component';
+import { ProfilageService } from '../../../profil/service/profilage.service';
+import { LocalStorageService } from '../../../../../core/services/local-storage.service';
 
 @Component({
   selector: 'app-list-utilisateur',
@@ -38,8 +40,8 @@ export class ListUtilisateurComponent implements OnInit {
   profilList: any[] = [];
 
   private readonly utilisateurService = inject(UtilisateurResourceService);
-  //  private readonly profileService = inject(ProfilageService);
-  //  private readonly localStorage = inject(LocalStorageService);
+  private readonly profileService = inject(ProfilageService);
+  private readonly localStorage = inject(LocalStorageService);
   private readonly modalService = inject(NgbModal);
   private readonly ngbModelService = inject(NgbModal);
   private readonly router = inject(Router);

@@ -1,4 +1,4 @@
-<div class="page-wrapper">
+<!-- <div class="page-wrapper">
   <div class="content container-fluid">
     <div class="page-header">
       <div class="row">
@@ -108,6 +108,164 @@
             </form>
           </div>
         </div>
+      </div>
+    </div>
+  </div>
+</div>
+ -->
+
+<div class="page-wrapper">
+  <div class="content container-fluid">
+    <!-- Page Header -->
+    <div class="page-header">
+      <div class="row align-items-center">
+        <div class="col-sm-12">
+          <h3 class="page-title">{{ title }}</h3>
+          <p class="text-muted mt-1 mb-0">
+            <i class="fas fa-tag me-1"></i> Gestion des tarifs par service et classe
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Badge -->
+    <div class="badge-container">
+      <span class="badge badge-primary">
+        <i class="fas fa-plus-circle me-1"></i>
+        @if (!isEdit) {
+          Nouveau tarif
+        } @else {
+          Modification
+        }
+      </span>
+    </div>
+
+    <!-- Formulaire pleine largeur -->
+    <div class="card">
+      <div class="card-body p-4 p-md-5">
+        <!-- Step Indicator -->
+        <div class="step-indicator">
+          <div class="step active">
+            <span class="step-number">1</span>
+            <span class="step-label">Information</span>
+          </div>
+          <div class="step-line"></div>
+          <div class="step">
+            <span class="step-number">2</span>
+            <span class="step-label">Confirmation</span>
+          </div>
+        </div>
+
+        <form [formGroup]="tarifFormGroup" (ngSubmit)="ajouteditTarif()">
+          <input type="hidden" formControlName="id" />
+
+          <!-- Ligne 1: Type service -->
+          <div class="form-group">
+            <label class="form-label">
+              Type de service <span class="text-danger">*</span>
+              <i class="fas fa-concierge-bell ms-1 text-muted"></i>
+            </label>
+            <select class="form-select" formControlName="typeService" required>
+              <option value="" disabled selected>— Sélectionnez un service —</option>
+              @for (item of typeServiceList; track item.id) {
+                <option [value]="item.id">{{ item.libelle }}</option>
+              }
+            </select>
+            @if (
+              tarifFormGroup.get('typeService')?.invalid &&
+              tarifFormGroup.get('typeService')?.touched
+            ) {
+              <div class="invalid-feedback">Le type de service est requis</div>
+            }
+          </div>
+
+          <!-- Ligne 2: Classe -->
+          <div class="form-group">
+            <label class="form-label">
+              Classe <span class="text-danger">*</span>
+              <i class="fas fa-chalkboard-user ms-1 text-muted"></i>
+            </label>
+            <select class="form-select" formControlName="classe" required>
+              <option value="" disabled selected>— Sélectionnez une classe —</option>
+              @for (item of classList; track item.id) {
+                <option [value]="item.id">{{ item.libelle }}</option>
+              }
+            </select>
+            @if (tarifFormGroup.get('classe')?.invalid && tarifFormGroup.get('classe')?.touched) {
+              <div class="invalid-feedback">La classe est requise</div>
+            }
+          </div>
+
+          <!-- Ligne 3: Montant -->
+          <div class="form-group">
+            <label class="form-label">
+              Montant <span class="text-danger">*</span>
+              <i class="fas fa-money-bill-wave ms-1 text-muted"></i>
+            </label>
+            <div class="input-group">
+              <span class="input-group-text">CFA</span>
+              <input
+                type="number"
+                class="form-control"
+                formControlName="montant"
+                placeholder="0"
+                step="100"
+                min="0"
+                required
+              />
+            </div>
+            @if (tarifFormGroup.get('montant')?.invalid && tarifFormGroup.get('montant')?.touched) {
+              <div class="invalid-feedback">Le montant est requis</div>
+            }
+          </div>
+
+          <!-- Récapitulatif -->
+          @if (
+            tarifFormGroup.get('typeService')?.value &&
+            tarifFormGroup.get('classe')?.value &&
+            tarifFormGroup.get('montant')?.value
+          ) {
+            <div class="recap-card">
+              <div class="d-flex align-items-center gap-3">
+                <div class="recap-icon">
+                  <i class="fas fa-tag"></i>
+                </div>
+                <div class="recap-content">
+                  <span class="recap-label">Récapitulatif du tarif</span>
+                  <span class="recap-value">
+                    Service <strong>{{ getSelectedTypeServiceName() }}</strong> pour la classe
+                    <strong>{{ getSelectedClasseName() }}</strong> :
+                    <strong>{{ tarifFormGroup.get('montant')?.value | number }} CFA</strong>
+                  </span>
+                </div>
+              </div>
+            </div>
+          }
+
+          <!-- Actions -->
+          <div class="form-actions">
+            <button type="button" class="btn btn-secondary" (click)="goBack()">
+              <i class="fas fa-times me-2"></i>Annuler
+            </button>
+            <button type="submit" class="btn btn-primary" [disabled]="!tarifFormGroup.valid">
+              <i class="fas fa-save me-2"></i>
+              @if (!isEdit) {
+                Enregistrer le tarif
+              } @else {
+                Modifier le tarif
+              }
+            </button>
+          </div>
+
+          <!-- Message d'aide -->
+          <div class="alert-help mt-4" role="alert">
+            <i class="fas fa-info-circle me-2"></i>
+            <span>
+              Les tarifs définissent le coût des services offerts par classe. Ils sont utilisés pour
+              la facturation des prestations aux élèves.
+            </span>
+          </div>
+        </form>
       </div>
     </div>
   </div>

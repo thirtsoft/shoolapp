@@ -84,7 +84,7 @@ export class SideBarAdminComponent {
         // Services
         { route: '/admin/referentiel/typeservices', ico: '🛎️', label: 'Types de service' },
         { route: '/admin/referentiel/tarifs', ico: '💲', label: 'Tarifs' },
-        { route: '/admin/referentiel/type-paiements', ico: '💳', label: 'Types de paiement' },
+        //    { route: '/admin/referentiel/type-paiements', ico: '💳', label: 'Types de paiement' },
         { route: '/admin/referentiel/moyenpaiements', ico: '🏦', label: 'Modes de paiement' },
         { route: '/admin/referentiel/menus', ico: '🍽️', label: 'Menus' },
         { route: '/admin/referentiel/category-menu', ico: '📋', label: 'Catégories menu' },

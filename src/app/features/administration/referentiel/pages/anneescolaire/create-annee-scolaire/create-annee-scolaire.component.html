@@ -1,4 +1,4 @@
-<div class="page-wrapper">
+<!-- <div class="page-wrapper">
   <div class="content container-fluid">
     <div class="page-header">
       <div class="row">
@@ -91,6 +91,161 @@
             </form>
           </div>
         </div>
+      </div>
+    </div>
+  </div>
+</div>
+ -->
+
+<div class="page-wrapper">
+  <div class="content container-fluid">
+    <!-- Page Header -->
+    <div class="page-header">
+      <div class="row align-items-center">
+        <div class="col-sm-12">
+          <h3 class="page-title">{{ title }}</h3>
+          <p class="text-muted mt-1 mb-0">
+            <i class="fas fa-calendar-alt me-1"></i> Gestion des années scolaires
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Badge -->
+    <div class="badge-container">
+      <span class="badge badge-primary">
+        <i class="fas fa-plus-circle me-1"></i>
+        @if (!isEdit) {
+          Nouvelle année scolaire
+        } @else {
+          Modification
+        }
+      </span>
+    </div>
+
+    <!-- Formulaire pleine largeur -->
+    <div class="card">
+      <div class="card-body p-4 p-md-5">
+        <!-- Step Indicator -->
+        <div class="step-indicator">
+          <div class="step active">
+            <span class="step-number">1</span>
+            <span class="step-label">Information</span>
+          </div>
+          <div class="step-line"></div>
+          <div class="step">
+            <span class="step-number">2</span>
+            <span class="step-label">Confirmation</span>
+          </div>
+        </div>
+
+        <form [formGroup]="anneeScolairesFormGroup" (ngSubmit)="ajouteditAnneeScolaire()">
+          <input type="hidden" formControlName="id" />
+
+          <!-- Ligne 1: Libellé -->
+          <div class="form-group">
+            <label class="form-label">
+              Libellé <span class="text-danger">*</span>
+              <i class="fas fa-tag ms-1 text-muted"></i>
+            </label>
+            <input
+              type="text"
+              class="form-control"
+              formControlName="libelle"
+              placeholder="Ex: 2024-2025"
+              required
+            />
+            @if (
+              anneeScolairesFormGroup.get('libelle')?.invalid &&
+              anneeScolairesFormGroup.get('libelle')?.touched
+            ) {
+              <div class="invalid-feedback">Le libellé est requis</div>
+            }
+          </div>
+
+          <!-- Ligne 2: Date début + Date fin (2 colonnes) -->
+          <div class="two-columns-row">
+            <div class="form-group">
+              <label class="form-label">
+                Date de début <span class="text-danger">*</span>
+                <i class="fas fa-calendar-day ms-1 text-muted"></i>
+              </label>
+              <input type="date" class="form-control" formControlName="dateDebut" required />
+              @if (
+                anneeScolairesFormGroup.get('dateDebut')?.invalid &&
+                anneeScolairesFormGroup.get('dateDebut')?.touched
+              ) {
+                <div class="invalid-feedback">La date de début est requise</div>
+              }
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">
+                Date de fin
+                <i class="fas fa-calendar-check ms-1 text-muted"></i>
+              </label>
+              <input type="date" class="form-control" formControlName="dateFin" />
+            </div>
+          </div>
+
+          <!-- Récapitulatif -->
+          @if (
+            anneeScolairesFormGroup.get('libelle')?.value &&
+            anneeScolairesFormGroup.get('dateDebut')?.value
+          ) {
+            <div class="recap-card">
+              <div class="d-flex align-items-center gap-3">
+                <div class="recap-icon">
+                  <i class="fas fa-calendar-alt"></i>
+                </div>
+                <div class="recap-content">
+                  <span class="recap-label">Récapitulatif</span>
+                  <span class="recap-value">
+                    Année scolaire
+                    <strong>{{ anneeScolairesFormGroup.get('libelle')?.value }}</strong> du
+                    <strong>{{
+                      anneeScolairesFormGroup.get('dateDebut')?.value | date: 'dd/MM/yyyy'
+                    }}</strong>
+                    @if (anneeScolairesFormGroup.get('dateFin')?.value) {
+                      au
+                      <strong>{{
+                        anneeScolairesFormGroup.get('dateFin')?.value | date: 'dd/MM/yyyy'
+                      }}</strong>
+                    }
+                  </span>
+                </div>
+              </div>
+            </div>
+          }
+
+          <!-- Actions -->
+          <div class="form-actions">
+            <button type="button" class="btn btn-secondary" (click)="goBack()">
+              <i class="fas fa-times me-2"></i>Annuler
+            </button>
+            <button
+              type="submit"
+              class="btn btn-primary"
+              [disabled]="!anneeScolairesFormGroup.valid"
+            >
+              <i class="fas fa-save me-2"></i>
+              @if (!isEdit) {
+                Enregistrer l'année scolaire
+              } @else {
+                Modifier l'année scolaire
+              }
+            </button>
+          </div>
+
+          <!-- Message d'aide -->
+          <div class="alert-help mt-4" role="alert">
+            <i class="fas fa-info-circle me-2"></i>
+            <span>
+              Les années scolaires définissent les périodes d'activité de l'établissement et sont
+              utilisées pour la planification des cours et des inscriptions.
+            </span>
+          </div>
+        </form>
       </div>
     </div>
   </div>

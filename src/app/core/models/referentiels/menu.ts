@@ -8,3 +8,13 @@ export interface Menu {
 
     //   categoryMenuDTO?: CategoryMenu;
 }
+
+export interface MenuAddEdit {
+    id?: number;
+
+    libelle?: string;
+
+    description?: string;
+
+    categoryMenuId?: number;
+}

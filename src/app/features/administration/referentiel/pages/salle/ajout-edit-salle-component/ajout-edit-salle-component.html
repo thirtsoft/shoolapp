@@ -1,0 +1,336 @@
+<!-- <div class="page-wrapper">
+  <div class="content container-fluid">
+    <div class="row">
+      <div class="col-sm-12">
+        <h3 class="page-title text-center mb-2">{{ title }}</h3>
+        <div class="card">
+          <div class="card-body">
+            <form [formGroup]="coursFormGroup">
+              <div style="margin-top: 5px">
+                <input
+                  type="text"
+                  readonly="true"
+                  hidden="true"
+                  formControlName="id"
+                />
+                <div class="row form-row">
+                  <div class="col-lg-4 col-sm-4">
+                    <div class="form-group">
+                      <label>Libelle <span class="text-danger">*</span></label>
+                      <input
+                        type="text"
+                        formControlName="libelle"
+                        required
+                        placeholder="libelle"
+                        class="form-control"
+                      />
+                    </div>
+                  </div>
+                  <div class="col-lg-4 col-sm-4">
+                    <div class="form-group">
+                      <label
+                        >Enseignement <span class="text-danger">*</span></label
+                      >
+                      <select
+                        class="form-control select"
+                        name="enseignement"
+                        formControlName="enseignement"
+                        required=""
+                      >
+                        <option value="">Selectionnez enseignement</option>
+                        <option
+                          *ngFor="let item of enseignementtList"
+                          [value]="item.id"
+                        >
+                          {{ item.libelle }}
+                        </option>
+                      </select>
+                    </div>
+                  </div>
+
+                  <div class="col-lg-4 col-sm-4">
+                    <div class="form-group">
+                      <label
+                        >Emploi du temps
+                        <span class="text-danger">*</span></label
+                      >
+                      <select
+                        class="form-control select"
+                        name="emploiDuTemps"
+                        formControlName="emploiDuTemps"
+                        required=""
+                      >
+                        <option value="">Selectionnez un emploi</option>
+                        <option
+                          *ngFor="let item of epmloiDuTempsList"
+                          [value]="item.id"
+                        >
+                          {{ item.nomComplet }}
+                        </option>
+                      </select>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="row form-row">
+                  <div class="col-lg-4 col-sm-4">
+                    <div class="form-group">
+                      <label>Salle <span class="text-danger">*</span></label>
+                      <select
+                        class="form-control select"
+                        name="salle"
+                        formControlName="salle"
+                        required=""
+                      >
+                        <option value="">Selectionnez une salle</option>
+                        <option
+                          *ngFor="let item of salleList"
+                          [value]="item.id"
+                        >
+                          {{ item.libelle }}
+                        </option>
+                      </select>
+                    </div>
+                  </div>
+
+                  <div class="col-lg-4 col-sm-4">
+                    <div class="form-group">
+                      <label
+                        >Date du cours <span class="text-danger">*</span></label
+                      >
+                      <input
+                        type="date"
+                        formControlName="dateCours"
+                        required
+                        class="form-control"
+                      />
+                    </div>
+                  </div>
+
+                  <div class="col-lg-2 col-sm-2">
+                    <div class="form-group">
+                      <label
+                        >Heure début <span class="text-danger">*</span></label
+                      >
+                      <input
+                        type="time"
+                        formControlName="heureDebut"
+                        required
+                        class="form-control"
+                      />
+                    </div>
+                  </div>
+
+                  <div class="col-lg-2 col-sm-2">
+                    <div class="form-group">
+                      <label
+                        >Heure fin <span class="text-danger">*</span></label
+                      >
+                      <input
+                        type="time"
+                        formControlName="heureFin"
+                        required
+                        class="form-control"
+                      />
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </form>
+            <div style="margin-top: 75px col-sm-12">
+              <button
+                type="button"
+                class="btn btn-primary si_accept_confirm float-lg-right"
+                id="btn-yes"
+                (click)="ajoutereditCours()"
+              >
+                Enregistrer
+              </button>
+              <button
+                type="button"
+                class="btn btn-danger si_accept_cancel float-left"
+                routerLink="/admin/planification/cours"
+              >
+                Annuler
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+ -->
+
+<div class="page-wrapper">
+  <div class="content container-fluid">
+    <div class="page-header">
+      <div class="row align-items-center">
+        <div class="col-sm-12">
+          <h3 class="page-title">{{ title }}</h3>
+          <p class="text-muted mt-1 mb-0">
+            <i class="fas fa-calendar-plus me-1"></i> Gestion des salles
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <div class="badge-container">
+      <span class="badge badge-primary">
+        <i class="fas fa-plus-circle me-1"></i>
+        @if (!salleId) {
+          Nouvelle salle
+        } @else {
+          Modification
+        }
+      </span>
+    </div>
+
+    <div class="card">
+      <div class="card-body p-4 p-md-5">
+        <!-- Step Indicator -->
+        <div class="step-indicator">
+          <div class="step active">
+            <span class="step-number">1</span>
+            <span class="step-label">Information</span>
+          </div>
+          <div class="step-line"></div>
+          <div class="step">
+            <span class="step-number">2</span>
+            <span class="step-label">Confirmation</span>
+          </div>
+        </div>
+
+        <form [formGroup]="salleFormGroup" (ngSubmit)="ajouterEditSalle()">
+          <input type="hidden" formControlName="id" />
+
+          <div class="form-group">
+            <label class="form-label">
+              Bâtiment <span class="text-danger">*</span>
+              <i class="fas fa-tag ms-1 text-muted"></i>
+            </label>
+            <select class="form-select" formControlName="batimentId" required>
+              <option value="" disabled selected>— Sélectionnez un batiment —</option>
+              @for (item of batimentList; track item.id) {
+                <option [value]="item.id">{{ item.libelle }}</option>
+              }
+            </select>
+            @if (
+              salleFormGroup.get('batimentId')?.invalid && salleFormGroup.get('batimentId')?.touched
+            ) {
+              <div class="invalid-feedback">Un batiment est requis</div>
+            }
+          </div>
+
+          <div class="row form-row">
+            <div class="col-lg-4 col-sm-12">
+              <div class="form-group">
+                <label class="form-label">
+                  Libellé <span class="text-danger">*</span>
+                  <i class="fas fa-tag ms-1 text-muted"></i>
+                </label>
+                <input
+                  type="text"
+                  class="form-control"
+                  formControlName="libelle"
+                  placeholder="Ex: Salle H"
+                  required
+                />
+                @if (
+                  salleFormGroup.get('libelle')?.invalid && salleFormGroup.get('libelle')?.touched
+                ) {
+                  <div class="invalid-feedback">Le libellé est requis</div>
+                }
+              </div>
+            </div>
+
+            <div class="col-lg-4 col-sm-12">
+              <div class="form-group">
+                <label class="form-label">
+                  Type de salle <span class="text-danger">*</span>
+                  <i class="fas fa-layer-group ms-1 text-muted"></i>
+                </label>
+                <select class="form-select" formControlName="type_salle" required>
+                  <option value="" disabled selected>— Sélectionnez un type —</option>
+                  @for (item of typeSalles; track item) {
+                    <option [value]="item">{{ item }}</option>
+                  }
+                </select>
+                @if (
+                  salleFormGroup.get('type_salle')?.invalid &&
+                  salleFormGroup.get('type_salle')?.touched
+                ) {
+                  <div class="invalid-feedback">Le type de salle est requis</div>
+                }
+              </div>
+            </div>
+
+            <div class="col-lg-4 col-sm-12">
+              <div class="form-group">
+                <label class="form-label">
+                  Capacité <span class="text-danger">*</span>
+                  <i class="fas fa-users ms-1 text-muted"></i>
+                </label>
+                <input
+                  type="number"
+                  class="form-control"
+                  formControlName="capacite"
+                  placeholder="Nombre de places"
+                  required
+                />
+                @if (
+                  salleFormGroup.get('capacite')?.invalid && salleFormGroup.get('capacite')?.touched
+                ) {
+                  <div class="invalid-feedback">La capacite est requise</div>
+                }
+              </div>
+            </div>
+          </div>
+
+          <!-- Récapitulatif -->
+          @if (salleFormGroup.valid) {
+            <div class="recap-card">
+              <div class="d-flex align-items-center gap-3">
+                <div class="recap-icon">
+                  <i class="fas fa-calendar-check"></i>
+                </div>
+                <div class="recap-content">
+                  <span class="recap-label">Récapitulatif du cours</span>
+                  <span class="recap-value">
+                    La sallee <strong>{{ salleFormGroup.get('libelle')?.value }}</strong> de capacié
+                    <strong>{{ salleFormGroup.get('capacite')?.value }}</strong> au batiment
+                    <strong>{{ getSelectedBatimentName() }}</strong>
+                  </span>
+                </div>
+              </div>
+            </div>
+          }
+
+          <!-- Actions -->
+          <div class="form-actions">
+            <button type="button" class="btn btn-secondary" routerLink="/admin/referentiel/salles">
+              <i class="fas fa-times me-2"></i>Annuler
+            </button>
+            <button type="submit" class="btn btn-primary" [disabled]="!salleFormGroup.valid">
+              <i class="fas fa-save me-2"></i>
+              @if (!salleId) {
+                Enregistrer une salle
+              } @else {
+                Modifier la salle
+              }
+            </button>
+          </div>
+
+          <!-- Message d'aide -->
+          <div class="alert-help mt-4" role="alert">
+            <i class="fas fa-info-circle me-2"></i>
+            <span>
+              Les salles permettent d'organiser l'infrastructure de l'établissement pour la
+              planification des cours et événements.
+            </span>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>

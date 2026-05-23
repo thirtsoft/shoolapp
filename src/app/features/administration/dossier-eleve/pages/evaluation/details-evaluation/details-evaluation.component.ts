@@ -1,4 +1,4 @@
-import { CommonModule } from '@angular/common';
+import { DatePipe } from '@angular/common';
 import { Component, inject, OnInit } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -11,7 +11,7 @@ import { PlanificationResourceService } from '../../../../planification/services
 @Component({
   selector: 'app-details-evaluation',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule],
+  imports: [ReactiveFormsModule, DatePipe],
   templateUrl: './details-evaluation.component.html',
   styleUrls: ['./details-evaluation.component.css']
 })
@@ -98,6 +98,14 @@ export class DetailsEvaluationComponent implements OnInit {
       }
     }
     );
+  }
+
+  getStatusClass(): string {
+    const etat = this.detailsEvaluation.etat;
+    if (etat === 'Validée') return 'status-validated';
+    if (etat === 'Envoyée') return 'status-sent';
+    if (etat === 'Remise') return 'status-remise';
+    return '';
   }
 
   imprimerUneEvaluation(event: any) { }

@@ -10,6 +10,8 @@ export interface ListeCours {
 
     salle?: string;
 
+    classe?: string;
+
     matiere?: string;
 
     dateDebut?: Date;
@@ -17,5 +19,7 @@ export interface ListeCours {
     heureDebut?: string;
 
     heureFin?: string;
+
+    duree?: string;
 
 }

@@ -1,4 +1,4 @@
-<div class="page-wrapper">
+<!-- <div class="page-wrapper">
   <div class="content container-fluid">
     <div class="page-header">
       <div class="row">
@@ -328,6 +328,278 @@
             </form>
           </div>
         </div>
+      </div>
+    </div>
+  </div>
+</div>
+ -->
+
+<div class="page-wrapper">
+  <div class="content container-fluid">
+    <div class="page-header">
+      <div class="row align-items-center">
+        <div class="col-sm-12">
+          <h3 class="page-title">{{ title }}</h3>
+          <p class="text-muted mt-1 mb-0">
+            <i class="fas fa-chalkboard-teacher me-1"></i> Planification des enseignements
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <div class="badge-container">
+      <span class="badge badge-primary">
+        <i class="fas fa-plus-circle me-1"></i>
+        @if (!isEdit) {
+          Nouvel enseignement
+        } @else {
+          Modification
+        }
+      </span>
+    </div>
+
+    <div class="card">
+      <div class="card-body p-4 p-md-5">
+        <!-- Step Indicator -->
+        <div class="step-indicator">
+          <div class="step active">
+            <span class="step-number">1</span>
+            <span class="step-label">Informations</span>
+          </div>
+          <div class="step-line"></div>
+          <div class="step">
+            <span class="step-number">2</span>
+            <span class="step-label">Validation</span>
+          </div>
+        </div>
+
+        <form [formGroup]="enseignementFormGroup" (ngSubmit)="ajouteditEnseignement()">
+          <!-- Bouton Ajouter un enseignement -->
+          <div class="add-button-container">
+            <button
+              type="button"
+              class="btn-add"
+              (click)="onAddEnseignementItems()"
+              [disabled]="isEdit || disableAddButton"
+            >
+              <i class="fas fa-plus-circle me-2"></i>
+              @if (isEdit) {
+                Modification en cours
+              } @else {
+                Ajouter un enseignement
+              }
+            </button>
+          </div>
+
+          <div class="divider"></div>
+
+          <div formArrayName="enseignements">
+            @for (enseignement of enseignementsArray.controls; track $index) {
+              <div class="enseignement-card" [formGroupName]="$index">
+                <div class="card-header-custom">
+                  <h4 class="card-title-custom">
+                    <i class="fas fa-book me-2"></i>Enseignement {{ $index + 1 }}
+                  </h4>
+                  <div class="card-actions">
+                    @if (enseignementsArray.length > 1) {
+                      <button
+                        type="button"
+                        class="btn-remove"
+                        (click)="removeEnseignementItem($index)"
+                      >
+                        <i class="fas fa-trash-alt me-1"></i> Supprimer
+                      </button>
+                    }
+                  </div>
+                </div>
+
+                <input type="hidden" formControlName="id" />
+
+                <!-- Ligne 1: Enseignant + Classe + Matière + Semestre -->
+                <div class="row form-row">
+                  <div class="col-lg-3 col-sm-12">
+                    <div class="form-group">
+                      <label class="form-label">
+                        Enseignant <span class="text-danger">*</span>
+                        <i class="fas fa-user-tie ms-1 text-muted"></i>
+                      </label>
+                      <select class="form-select" formControlName="enseignant" required>
+                        <option value="" disabled selected>— Sélectionnez un enseignant —</option>
+                        @for (item of enseigantList; track item.id) {
+                          <option [value]="item.id">{{ item.nomComplet }}</option>
+                        }
+                      </select>
+                      @if (
+                        enseignement.get('enseignant')?.invalid &&
+                        enseignement.get('enseignant')?.touched
+                      ) {
+                        <div class="invalid-feedback">L'enseignant est requis</div>
+                      }
+                    </div>
+                  </div>
+
+                  <div class="col-lg-3 col-sm-12">
+                    <div class="form-group">
+                      <label class="form-label">
+                        Classe <span class="text-danger">*</span>
+                        <i class="fas fa-chalkboard-user ms-1 text-muted"></i>
+                      </label>
+                      <select class="form-select" formControlName="classe" required>
+                        <option value="" disabled selected>— Sélectionnez une classe —</option>
+                        @for (item of classeList; track item.id) {
+                          <option [value]="item.id">{{ item.libelle }}</option>
+                        }
+                      </select>
+                      @if (
+                        enseignement.get('classe')?.invalid && enseignement.get('classe')?.touched
+                      ) {
+                        <div class="invalid-feedback">La classe est requise</div>
+                      }
+                    </div>
+                  </div>
+
+                  <div class="col-lg-3 col-sm-12">
+                    <div class="form-group">
+                      <label class="form-label">
+                        Matière <span class="text-danger">*</span>
+                        <i class="fas fa-book ms-1 text-muted"></i>
+                      </label>
+                      <select class="form-select" formControlName="matiere" required>
+                        <option value="" disabled selected>— Sélectionnez une matière —</option>
+                        @for (item of matiereList; track item.id) {
+                          <option [value]="item.id">{{ item?.libelle }}</option>
+                        }
+                      </select>
+                      @if (
+                        enseignement.get('matiere')?.invalid && enseignement.get('matiere')?.touched
+                      ) {
+                        <div class="invalid-feedback">La matière est requise</div>
+                      }
+                    </div>
+                  </div>
+
+                  <div class="col-lg-3 col-sm-12">
+                    <div class="form-group">
+                      <label class="form-label">
+                        Semestre <span class="text-danger">*</span>
+                        <i class="fas fa-book-open ms-1 text-muted"></i>
+                      </label>
+                      <select class="form-select" formControlName="semestre" required>
+                        <option value="" disabled selected>— Sélectionnez un semestre —</option>
+                        @for (semestre of semestreList; track semestre.id) {
+                          <option [value]="semestre.id">{{ semestre?.libelle }}</option>
+                        }
+                      </select>
+                      @if (
+                        enseignement.get('semestre')?.invalid &&
+                        enseignement.get('semestre')?.touched
+                      ) {
+                        <div class="invalid-feedback">Le semestre est requis</div>
+                      }
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Ligne 2: Année scolaire + Date début + Date fin -->
+                <div class="row form-row">
+                  <div class="col-lg-4 col-sm-12">
+                    <div class="form-group">
+                      <label class="form-label">
+                        Année scolaire <span class="text-danger">*</span>
+                        <i class="fas fa-calendar-alt ms-1 text-muted"></i>
+                      </label>
+                      <select class="form-select" formControlName="anneeScolaire" required>
+                        <option value="" disabled selected>
+                          — Sélectionnez une année scolaire —
+                        </option>
+                        @for (item of anneeScolaireList; track item.id) {
+                          <option [value]="item.id">{{ item?.libelle }}</option>
+                        }
+                      </select>
+                      @if (
+                        enseignement.get('anneeScolaire')?.invalid &&
+                        enseignement.get('anneeScolaire')?.touched
+                      ) {
+                        <div class="invalid-feedback">L'année scolaire est requise</div>
+                      }
+                    </div>
+                  </div>
+
+                  <div class="col-lg-4 col-sm-12">
+                    <div class="form-group">
+                      <label class="form-label">
+                        Date de début <span class="text-danger">*</span>
+                        <i class="fas fa-calendar-day ms-1 text-muted"></i>
+                      </label>
+                      <input
+                        type="date"
+                        class="form-control"
+                        formControlName="dateDebut"
+                        required
+                      />
+                      @if (
+                        enseignement.get('dateDebut')?.invalid &&
+                        enseignement.get('dateDebut')?.touched
+                      ) {
+                        <div class="invalid-feedback">La date de début est requise</div>
+                      }
+                    </div>
+                  </div>
+
+                  <div class="col-lg-4 col-sm-12">
+                    <div class="form-group">
+                      <label class="form-label">
+                        Date de fin
+                        <i class="fas fa-calendar-check ms-1 text-muted"></i>
+                      </label>
+                      <input type="date" class="form-control" formControlName="dateFin" />
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Ligne 3: Description -->
+                <div class="row form-row">
+                  <div class="col-12">
+                    <div class="form-group">
+                      <label class="form-label">
+                        Description
+                        <i class="fas fa-align-left ms-1 text-muted"></i>
+                      </label>
+                      <textarea
+                        class="form-control"
+                        formControlName="description"
+                        rows="3"
+                        placeholder="Décrivez l'enseignement..."
+                      ></textarea>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            }
+          </div>
+
+          <div class="form-actions">
+            <button type="button" class="btn btn-secondary" (click)="goBack()">
+              <i class="fas fa-times me-2"></i>Annuler
+            </button>
+            <button type="submit" class="btn btn-primary" [disabled]="!enseignementFormGroup.valid">
+              <i class="fas fa-save me-2"></i>
+              @if (!isEdit) {
+                Enregistrer les enseignements
+              } @else {
+                Modifier l'enseignement
+              }
+            </button>
+          </div>
+
+          <div class="alert-help mt-4" role="alert">
+            <i class="fas fa-info-circle me-2"></i>
+            <span>
+              La planification des enseignements permet d'assigner les matières aux classes, avec
+              les enseignants responsables et les périodes correspondantes.
+            </span>
+          </div>
+        </form>
       </div>
     </div>
   </div>

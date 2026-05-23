@@ -39,9 +39,26 @@
       <!-- Emploi du temps du jour -->
       <div class="card">
         <div class="card-head">
-          <h2>🕐 Emploi du temps du jour</h2>
+          <h2>🕐 Emploi du temps de la semaine</h2>
         </div>
         <div class="edt-list">
+          @for (c of coursList; track c.id) {
+            <div class="edt-item" [class]="'termine'">
+              <div class="edt-time">
+                <span class="edt-heure">{{ c.heureDebut }} - {{ c.heureFin }}</span>
+
+                <span class="edt-statut">{{ c.matiere }}</span>
+              </div> 
+              <div class="edt-info">
+                <span class="edt-classe">{{ c.classe }}</span>
+                <span class="edt-detail">{{ c.salle }} · {{ c.duree }}</span>
+              </div>
+              <span class="edt-duree">{{ c.duree }}</span>
+            </div>
+          }
+        </div>
+
+        <!--  <div class="edt-list">
           @for (c of edtJour(); track c.heure) {
             <div class="edt-item" [class]="getStatutCoursCls(c.statut)">
               <div class="edt-time">
@@ -55,7 +72,7 @@
               <span class="edt-duree">{{ c.duree }}</span>
             </div>
           }
-        </div>
+        </div> -->
       </div>
 
       <!-- Notes à remplir -->

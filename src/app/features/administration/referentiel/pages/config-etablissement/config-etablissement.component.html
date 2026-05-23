@@ -1,4 +1,4 @@
-<div class="page-wrapper">
+<!-- <div class="page-wrapper">
   <div class="content container-fluid">
     <div class="page-header">
       <div class="row">
@@ -160,6 +160,257 @@
             </form>
           </div>
         </div>
+      </div>
+    </div>
+  </div>
+</div>
+ -->
+
+<div class="page-wrapper">
+  <div class="content container-fluid">
+    <!-- Page Header -->
+    <div class="page-header">
+      <div class="row align-items-center">
+        <div class="col-sm-12">
+          <h3 class="page-title">{{ title }}</h3>
+          <p class="text-muted mt-1 mb-0">
+            <i class="fas fa-school me-1"></i> Configuration de l'établissement
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Badge -->
+    <div class="badge-container">
+      <span class="badge badge-primary"> <i class="fas fa-cog me-1"></i> Paramètres généraux </span>
+    </div>
+
+    <!-- Formulaire pleine largeur -->
+    <div class="card">
+      <div class="card-body p-4 p-md-5">
+        <!-- Step Indicator -->
+        <div class="step-indicator">
+          <div class="step active">
+            <span class="step-number">1</span>
+            <span class="step-label">Identité</span>
+          </div>
+          <div class="step-line"></div>
+          <div class="step">
+            <span class="step-number">2</span>
+            <span class="step-label">Contact</span>
+          </div>
+          <div class="step-line"></div>
+          <div class="step">
+            <span class="step-number">3</span>
+            <span class="step-label">Logo</span>
+          </div>
+        </div>
+
+        <form
+          [formGroup]="parametreEtablissementFormGroup"
+          (ngSubmit)="miseAJoutParametresEtablissement()"
+        >
+          <input type="hidden" formControlName="id" />
+
+          <!-- Ligne 1: Nom de l'établissement -->
+          <div class="form-group">
+            <label class="form-label">
+              Nom de l'établissement <span class="text-danger">*</span>
+              <i class="fas fa-school ms-1 text-muted"></i>
+            </label>
+            <input
+              type="text"
+              class="form-control"
+              formControlName="nom"
+              placeholder="Ex: École Les Savants"
+              required
+            />
+            @if (
+              parametreEtablissementFormGroup.get('nom')?.invalid &&
+              parametreEtablissementFormGroup.get('nom')?.touched
+            ) {
+              <div class="invalid-feedback">Le nom est requis</div>
+            }
+          </div>
+
+          <!-- Ligne 2: Slogan -->
+          <div class="form-group">
+            <label class="form-label">
+              Slogan
+              <i class="fas fa-quote-right ms-1 text-muted"></i>
+            </label>
+            <input
+              type="text"
+              class="form-control"
+              formControlName="slogan"
+              placeholder="Ex: L'excellence au service de l'éducation"
+            />
+          </div>
+
+          <!-- Ligne 3: Ville + Adresse (2 colonnes) -->
+          <div class="two-columns-row">
+            <div class="form-group">
+              <label class="form-label">
+                Ville
+                <i class="fas fa-city ms-1 text-muted"></i>
+              </label>
+              <input
+                type="text"
+                class="form-control"
+                formControlName="ville"
+                placeholder="Ex: Dakar"
+              />
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">
+                Adresse <span class="text-danger">*</span>
+                <i class="fas fa-map-marker-alt ms-1 text-muted"></i>
+              </label>
+              <input
+                type="text"
+                class="form-control"
+                formControlName="adresse"
+                placeholder="Ex: 123 Rue de la République"
+                required
+              />
+              @if (
+                parametreEtablissementFormGroup.get('adresse')?.invalid &&
+                parametreEtablissementFormGroup.get('adresse')?.touched
+              ) {
+                <div class="invalid-feedback">L'adresse est requise</div>
+              }
+            </div>
+          </div>
+
+          <!-- Ligne 4: Téléphone + Email (2 colonnes) -->
+          <div class="two-columns-row">
+            <div class="form-group">
+              <label class="form-label">
+                Téléphone <span class="text-danger">*</span>
+                <i class="fas fa-phone ms-1 text-muted"></i>
+              </label>
+              <input
+                type="tel"
+                class="form-control"
+                formControlName="telephone"
+                placeholder="Ex: 33 123 45 67"
+                required
+              />
+              @if (
+                parametreEtablissementFormGroup.get('telephone')?.invalid &&
+                parametreEtablissementFormGroup.get('telephone')?.touched
+              ) {
+                <div class="invalid-feedback">Le téléphone est requis</div>
+              }
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">
+                Email
+                <i class="fas fa-envelope ms-1 text-muted"></i>
+              </label>
+              <input
+                type="email"
+                class="form-control"
+                formControlName="email"
+                placeholder="Ex: contact@ecole.com"
+              />
+            </div>
+          </div>
+
+          <!-- Ligne 5: Site web -->
+          <div class="form-group">
+            <label class="form-label">
+              Site web
+              <i class="fas fa-globe ms-1 text-muted"></i>
+            </label>
+            <input
+              type="text"
+              class="form-control"
+              formControlName="siteWeb"
+              placeholder="Ex: www.ecole.com"
+            />
+          </div>
+
+          <!-- Ligne 6: Logo -->
+          <div class="logo-section">
+            <label class="form-label">
+              Logo de l'établissement
+              <i class="fas fa-image ms-1 text-muted"></i>
+            </label>
+            <div class="logo-upload-container">
+              <div class="logo-preview-wrapper" (click)="fileInput.click()">
+                @if (logoPreview) {
+                  <img [src]="logoPreview" alt="Logo de l'établissement" class="logo-preview" />
+                } @else {
+                  <div class="logo-placeholder">
+                    <i class="fas fa-school"></i>
+                    <span>Cliquez pour ajouter un logo</span>
+                  </div>
+                }
+              </div>
+              <input
+                type="file"
+                #fileInput
+                (change)="onLogoSelected($event)"
+                accept="image/*"
+                hidden
+              />
+              <div class="logo-info">
+                <small>Formats: JPG, PNG | Taille recommandée: 200x200px</small>
+              </div>
+            </div>
+          </div>
+
+          <!-- Récapitulatif -->
+          @if (parametreEtablissementFormGroup.get('nom')?.value) {
+            <div class="recap-card">
+              <div class="d-flex align-items-center gap-3">
+                <div class="recap-icon">
+                  <i class="fas fa-school"></i>
+                </div>
+                <div class="recap-content">
+                  <span class="recap-label">Récapitulatif</span>
+                  <span class="recap-value">
+                    Établissement
+                    <strong>{{ parametreEtablissementFormGroup.get('nom')?.value }}</strong>
+                    @if (parametreEtablissementFormGroup.get('ville')?.value) {
+                      - {{ parametreEtablissementFormGroup.get('ville')?.value }}
+                    }
+                  </span>
+                </div>
+              </div>
+            </div>
+          }
+
+          <!-- Actions -->
+          <div class="form-actions">
+            <button type="button" class="btn btn-secondary" (click)="goBack()">
+              <i class="fas fa-times me-2"></i>Annuler
+            </button>
+            <button
+              type="submit"
+              class="btn btn-primary"
+              [disabled]="!parametreEtablissementFormGroup.valid || isLoading"
+            >
+              @if (isLoading) {
+                <i class="fas fa-spinner fa-spin me-2"></i>Chargement...
+              } @else {
+                <i class="fas fa-save me-2"></i>Enregistrer les modifications
+              }
+            </button>
+          </div>
+
+          <!-- Message d'aide -->
+          <div class="alert-help mt-4" role="alert">
+            <i class="fas fa-info-circle me-2"></i>
+            <span>
+              Les informations de l'établissement apparaîtront sur les documents officiels
+              (factures, bulletins, certificats) et sur l'interface de l'application.
+            </span>
+          </div>
+        </form>
       </div>
     </div>
   </div>

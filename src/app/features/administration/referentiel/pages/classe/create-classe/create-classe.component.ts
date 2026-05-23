@@ -71,6 +71,12 @@ export class CreateClasseComponent implements OnInit {
     });
   }
 
+  getSelectedNiveauName(): string {
+    const niveauId = this.classeFormGroup.get('niveau')?.value;
+    const niveau = this.niveauList.find(n => Number(n.id) === Number(niveauId));
+    return niveau?.libelle || '';
+  }
+
   getClasse(classeId: number) {
     this.referentielService.getClasseById(classeId).subscribe({
       next: (data) => {

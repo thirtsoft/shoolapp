@@ -15,7 +15,7 @@ import { EnseignantService } from '../../service/enseignant.service';
 })
 export class MesEnseignementComponent implements OnInit {
 
-   errorMessage?: string;
+  errorMessage?: string;
   isEdit: boolean = true;
   isLoading: boolean = false;
   filteredDataEnseignement: any;

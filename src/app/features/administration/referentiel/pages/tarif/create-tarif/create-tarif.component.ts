@@ -1,18 +1,19 @@
+import { DecimalPipe } from '@angular/common';
 import { Component, inject, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
+import { ToastrService } from '@iqx-limited/ngx-toastr';
 import { ListeClasse } from '../../../../../../core/models/referentiels/classe';
+import { Tarif } from '../../../../../../core/models/referentiels/tarif';
 import { TypeServiceOffert } from '../../../../../../core/models/referentiels/type-service-offert';
 import { Utilisateur } from '../../../../../../core/models/utilisateur/utilisateur';
-import { ToastrService } from '@iqx-limited/ngx-toastr';
 import { UtilisateurService } from '../../../../utilisateur/service/utilisateur.service';
 import { ReferentielResourceService } from '../../../service/referentiel-resource.service';
-import { Tarif } from '../../../../../../core/models/referentiels/tarif';
 
 @Component({
   selector: 'app-create-tarif',
   standalone: true,
-  imports: [ReactiveFormsModule],
+  imports: [ReactiveFormsModule, DecimalPipe],
   templateUrl: './create-tarif.component.html',
   styleUrls: ['./create-tarif.component.css']
 })
@@ -62,7 +63,7 @@ export class CreateTarifComponent implements OnInit {
     this.utilisateurService.getUtilisateur(this.userId).subscribe({
       next: data => {
         this.utilisateur = data;
-    //    this.ecoleId = this.utilisateur.ecoleId;
+        //    this.ecoleId = this.utilisateur.ecoleId;
       },
       error: error => { console.log(error) },
     });
@@ -71,19 +72,33 @@ export class CreateTarifComponent implements OnInit {
 
   getClassList() {
     this.referentielResource.getResourceList('classe').subscribe({
-      next: (data :any) => {
+      next: (data: any) => {
         this.classList = data;
       }
     });
   }
 
+  getSelectedClasseName(): string {
+    const classeId = this.tarifFormGroup.get('classe')?.value;
+    const classe = this.classList.find(c => Number(c.id) === Number(classeId));
+    return classe?.libelle || '';
+  }
+
   getTypeServiceList() {
     this.referentielResource.getResourceList('typeserviceoffert').subscribe({
-      next: (data:any) => {
+      next: (data: any) => {
         this.typeServiceList = data;
       }
     });
   }
+
+  getSelectedTypeServiceName(): string {
+    const serviceId = this.tarifFormGroup.get('typeService')?.value;
+    const service = this.typeServiceList.find(s => Number(s.id) === Number(serviceId));
+    return service?.libelle || '';
+  }
+
+
 
   getTarif(tarifId: number) {
     this.referentielResource.recupererUneResource('tarif', tarifId).subscribe({

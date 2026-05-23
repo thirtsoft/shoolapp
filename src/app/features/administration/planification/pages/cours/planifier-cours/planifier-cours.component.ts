@@ -2,15 +2,17 @@ import { Component, inject, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 
+import { DatePipe } from '@angular/common';
 import { ToastrService } from '@iqx-limited/ngx-toastr';
 import { EnseigantList } from '../../../../../../core/models/enseignant/enseignant-list';
 import { CoursEdit } from '../../../../../../core/models/planification/cours';
-import { EmploiDuTemps } from '../../../../../../core/models/planification/emploi-du-temp';
+import { EmploiDuTempsList } from '../../../../../../core/models/planification/emploi-du-temp';
 import { Enseignement } from '../../../../../../core/models/planification/enseignement';
 import { Classe } from '../../../../../../core/models/referentiels/classe';
 import { Matiere } from '../../../../../../core/models/referentiels/matiere';
 import { Salle } from '../../../../../../core/models/referentiels/salle';
 import { Utilisateur } from '../../../../../../core/models/utilisateur/utilisateur';
+import { EnseignantService } from '../../../../../enseignant/service/enseignant.service';
 import { ReferentielService } from '../../../../referentiel/service/referentiel.service';
 import { UtilisateurService } from '../../../../utilisateur/service/utilisateur.service';
 import { PlanificationResourceService } from '../../../services/planification-resource.service';
@@ -18,7 +20,7 @@ import { PlanificationResourceService } from '../../../services/planification-re
 @Component({
   selector: 'app-planifier-cours',
   standalone: true,
-  imports: [ReactiveFormsModule, RouterLink],
+  imports: [ReactiveFormsModule, RouterLink, DatePipe],
   templateUrl: './planifier-cours.component.html',
   styleUrls: ['./planifier-cours.component.css']
 })
@@ -29,7 +31,7 @@ export class PlanifierCoursComponent implements OnInit {
   coursId: number;
   enseigantList: EnseigantList[] = [];
   enseignementtList: Enseignement[] = [];
-  epmloiDuTempsList: EmploiDuTemps[] = [];
+  epmloiDuTempsList: EmploiDuTempsList[] = [];
   matiereList: Matiere[] = [];
   classeList: Classe[] = [];
   salleList: Salle[] = [];
@@ -43,7 +45,7 @@ export class PlanifierCoursComponent implements OnInit {
   private readonly coursService = inject(PlanificationResourceService);
   private readonly utilisateurService = inject(UtilisateurService);
   private readonly referentielService = inject(ReferentielService);
-  //  private readonly enseignantService = inject(EnseignantService);
+  private readonly enseignantService = inject(EnseignantService);
   private readonly _formBuilder = inject(FormBuilder);
   private readonly toastService = inject(ToastrService);
   private readonly activeRoute = inject(ActivatedRoute);
@@ -102,16 +104,26 @@ export class PlanifierCoursComponent implements OnInit {
       (error) => (this.errorMessage = <any>error)
     );
   }
-  /*
-    getEnseigantList() {
-      this.enseignanService.getAllEnseignants().subscribe(
-        (data: any[]) => {
-          this.enseigantList = data;
-        },
-        (error) => (this.errorMessage = <any>error)
-      );
-    }
-  */
+
+  getEnseigantList() {
+    this.enseignantService.getAllEnseignants().subscribe(
+      (data: any[]) => {
+        this.enseigantList = data;
+      },
+      (error) => (this.errorMessage = <any>error)
+    );
+  }
+
+  getSelectedSalleName(): string {
+    const salleId = this.coursFormGroup.get('salle')?.value;
+    const salle = this.salleList.find(s => s.id === salleId);
+    return salle?.libelle || '';
+  }
+
+  goBack() {
+    this.router.navigate(['/admin/planification/cours']);
+  }
+
 
   initializeForm(cours: CoursEdit | null) {
     this.coursFormGroup = this._formBuilder.group({

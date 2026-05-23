@@ -1,16 +1,17 @@
+import { SlicePipe } from '@angular/common';
 import { Component, inject, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { PlanificationResourceService } from '../../../services/planification-resource.service';
-import { Utilisateur } from '../../../../../../core/models/utilisateur/utilisateur';
-import { UtilisateurService } from '../../../../utilisateur/service/utilisateur.service';
 import { ToastrService } from '@iqx-limited/ngx-toastr';
 import { NoteInformation } from '../../../../../../core/models/planification/note-information';
+import { Utilisateur } from '../../../../../../core/models/utilisateur/utilisateur';
+import { UtilisateurService } from '../../../../utilisateur/service/utilisateur.service';
+import { PlanificationResourceService } from '../../../services/planification-resource.service';
 
 @Component({
   selector: 'app-create-edit-note-information',
   standalone: true,
-  imports: [ReactiveFormsModule],
+  imports: [ReactiveFormsModule, SlicePipe],
   templateUrl: './create-edit-note-information.component.html',
   styleUrls: ['./create-edit-note-information.component.css']
 })

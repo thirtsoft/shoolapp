@@ -51,19 +51,32 @@ export class CreateCoefficientmatclasseComponent implements OnInit {
 
   getClassList() {
     this.referentielResource.getResourceList('classe').subscribe({
-      next: (data:any) => {
+      next: (data: any) => {
         this.classList = data;
       }
     });
   }
 
+  getSelectedClasseName(): string {
+    const classeId = this.coefficientFormGroup.get('classe')?.value;
+    const classe = this.classList.find(c => Number(c.id) === Number(classeId));
+    return classe?.libelle || '';
+  }
+
   getMatiereList() {
     this.referentielResource.getResourceList('matiere').subscribe({
-      next: (data:any) => {
+      next: (data: any) => {
         this.matiereList = data;
       }
     });
   }
+
+  getSelectedMatiereName(): string {
+    const matiereId = this.coefficientFormGroup.get('matiere')?.value;
+    const matiere = this.matiereList.find(m => Number(m.id) === Number(matiereId));
+    return matiere?.libelle || '';
+  }
+
 
   getCoefficient(coeffId: number) {
     this.referentielResource.recupererUneResource('coefficientmatiereclasse', coeffId).subscribe({

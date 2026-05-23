@@ -1,4 +1,3 @@
-import { CommonModule } from '@angular/common';
 import { Component, inject, OnInit } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -13,7 +12,7 @@ import { DossierResourceService } from '../../../service/dossier-resource.servic
 @Component({
   selector: 'app-create-bulletin',
   standalone: true,
-  imports: [CommonModule, FormsModule, ReactiveFormsModule],
+  imports: [FormsModule, ReactiveFormsModule],
   templateUrl: './create-bulletin.component.html',
   styleUrls: ['./create-bulletin.component.css']
 })
@@ -46,7 +45,6 @@ export class CreateBulletinComponent implements OnInit {
     this.referentielResource.getResourceList('classe')?.subscribe({
       next: (data: any) => {
         this.classeList = data;
-        console.log('classeList', this.classeList);
       }
     });
   }
@@ -55,22 +53,30 @@ export class CreateBulletinComponent implements OnInit {
     this.referentielResource.getResourceList('semestre')?.subscribe({
       next: (data: any) => {
         this.semestreList = data;
-        console.log('semestreList', this.semestreList);
       }
     });
+  }
+
+  getSelectedSemestreName(): string {
+    const semestre = this.semestreList?.find(s => Number(s.id) === Number(this.selectedSemestre));
+    return semestre?.libelle || '';
   }
 
   getAnneeScolaireList() {
     this.referentielResource.getResourceList('anneescolaire')?.subscribe({
       next: (data: any) => {
         this.anneeScolaireList = data;
-        console.log('anneeScolaireList', this.anneeScolaireList);
       }
     });
   }
 
+  getSelectedAnneeName(): string {
+    const annee = this.anneeScolaireList?.find(a => Number(a.id) === Number(this.selectedAnneeScolaire));
+    return annee?.libelle || '';
+  }
+
+
   onClasseSelected() {
-    console.log('selectedClasse', this.selectedClass);
     if (this.selectedClass) {
       this.getEleveList(this.selectedClass);
     }
@@ -80,10 +86,15 @@ export class CreateBulletinComponent implements OnInit {
     this.dossierResource.getResourceListByElement('inscription/classe', classId)?.subscribe({
       next: (data: any) => {
         this.eleveList = data;
-        console.log('liste eleve', this.eleveList);
       }
     });
   }
+
+  getSelectedEleveName(): string {
+    const eleve = this.eleveList?.find(e => Number(e.eleve) === Number(this.selectedEleve));
+    return eleve?.nomCompletEleve || '';
+  }
+
 
   onEleveSelected() {
     console.log('selectedEleve', this.selectedEleve);

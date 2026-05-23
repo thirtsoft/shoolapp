@@ -1,3 +1,4 @@
+import { DatePipe } from '@angular/common';
 import { Component, inject, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -10,7 +11,7 @@ import { PlanificationResourceService } from '../../../services/planification-re
 @Component({
   selector: 'app-create-meeting',
   standalone: true,
-  imports: [ReactiveFormsModule],
+  imports: [ReactiveFormsModule, DatePipe],
   templateUrl: './create-meeting.component.html',
   styleUrls: ['./create-meeting.component.css']
 })
@@ -22,7 +23,7 @@ export class CreateMeetingComponent implements OnInit {
 
   isEdit: boolean = false;
 
-  typeReunions: string[] = ['ADMINISTRATION', 'PARENT', 'ENSEIGNANT'];
+  typeReunions: string[] = ['ADMINISTRATION', 'PARENT', 'ENSEIGNANT','SCOLAIRE'];
   ecoleId: any;
   userId: number;
   utilisateur: Utilisateur = {};

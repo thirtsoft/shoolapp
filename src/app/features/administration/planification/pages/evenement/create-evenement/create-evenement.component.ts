@@ -1,16 +1,17 @@
+import { DatePipe } from '@angular/common';
 import { Component, inject, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { PlanificationResourceService } from '../../../services/planification-resource.service';
-import { Utilisateur } from '../../../../../../core/models/utilisateur/utilisateur';
-import { UtilisateurService } from '../../../../utilisateur/service/utilisateur.service';
 import { ToastrService } from '@iqx-limited/ngx-toastr';
 import { Evenement } from '../../../../../../core/models/planification/evenement';
+import { Utilisateur } from '../../../../../../core/models/utilisateur/utilisateur';
+import { UtilisateurService } from '../../../../utilisateur/service/utilisateur.service';
+import { PlanificationResourceService } from '../../../services/planification-resource.service';
 
 @Component({
   selector: 'app-create-evenement',
   standalone: true,
-  imports: [ReactiveFormsModule],
+  imports: [ReactiveFormsModule, DatePipe],
   templateUrl: './create-evenement.component.html',
   styleUrls: ['./create-evenement.component.css']
 })

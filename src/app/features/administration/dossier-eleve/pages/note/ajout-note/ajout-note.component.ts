@@ -16,7 +16,7 @@ import { DossierResourceService } from '../../../service/dossier-resource.servic
 @Component({
   selector: 'app-ajout-note',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule],
+  imports: [ReactiveFormsModule],
   templateUrl: './ajout-note.component.html',
   styleUrls: ['./ajout-note.component.css']
 })

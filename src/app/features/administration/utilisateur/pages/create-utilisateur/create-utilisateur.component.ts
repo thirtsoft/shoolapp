@@ -1,16 +1,18 @@
 import { Component, inject, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { ActivatedRoute, Router, RouterLink } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { ToastrService } from '@iqx-limited/ngx-toastr';
 import { Profil } from '../../../../../core/models/profil/profil';
 import { Utilisateur } from '../../../../../core/models/utilisateur/utilisateur';
+import { LocalStorageService } from '../../../../../core/services/local-storage.service';
+import { ProfilageService } from '../../../profil/service/profilage.service';
 import { UtilisateurService } from '../../service/utilisateur.service';
 
 
 @Component({
   selector: 'app-create-utilisateur',
   standalone: true,
-  imports: [ReactiveFormsModule, RouterLink],
+  imports: [ReactiveFormsModule],
   templateUrl: './create-utilisateur.component.html',
   styleUrls: ['./create-utilisateur.component.css']
 })
@@ -29,16 +31,16 @@ export class CreateUtilisateurComponent implements OnInit {
   title = "Création d'un compte d'un agent";
 
   private readonly utilisateurService = inject(UtilisateurService);
-  //  private readonly profilageService = inject(ProfilageService);
+  private readonly profilageService = inject(ProfilageService);
   private readonly toastService = inject(ToastrService);
-  //  private readonly localStorage = inject(LocalStorageService);
+  private readonly localStorage = inject(LocalStorageService);
   private readonly _formBuilder = inject(FormBuilder);
   private readonly router = inject(Router);
   private readonly route = inject(ActivatedRoute);
 
   ngOnInit(): void {
     this.userId = this.route.snapshot.params['id'];
-    //  this.getProfils();
+    this.getProfils();
     this.initializeForm(null);
     if (this.userId && this.userId != null) {
       this.getUtilisateurById(this.userId);
@@ -46,16 +48,15 @@ export class CreateUtilisateurComponent implements OnInit {
     }
   }
 
-  /*
   getProfils() {
     this.profilageService.getProfilesAgents().subscribe(
       (data: any[]) => {
         this.profils = data;
         console.log(this.profils);
       },
-      (error:any) => (this.errorMessage = <any>error)
+      (error: any) => (this.errorMessage = <any>error)
     );
-  }*/
+  }
 
   getUtilisateurById(eleveId: number) {
     this.utilisateurService.getUtilisateur(eleveId).subscribe({

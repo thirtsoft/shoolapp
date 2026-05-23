@@ -1,4 +1,4 @@
-<div class="page-wrapper">
+<!-- <div class="page-wrapper">
   <div class="content container-fluid">
     <div class="row">
       <div class="col-sm-12">
@@ -120,6 +120,218 @@
                 Annuler
               </button>
             </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+ -->
+
+<div class="page-wrapper">
+  <div class="content container-fluid">
+    <!-- Page Header -->
+    <div class="page-header">
+      <div class="row align-items-center">
+        <div class="col-sm-12">
+          <h3 class="page-title">{{ title }}</h3>
+          <p class="text-muted mt-1 mb-0">
+            <i class="fas fa-chart-line me-1"></i> Gestion des notes des élèves
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Badge -->
+    <div class="badge-container">
+      <span class="badge badge-primary">
+        <i class="fas fa-plus-circle me-1"></i> Nouvelle note
+      </span>
+    </div>
+
+    <div class="row">
+      <div class="col-12">
+        <div class="card">
+          <div class="card-body p-4 p-md-5">
+            <!-- Step Indicator -->
+            <div class="step-indicator">
+              <div class="step active">
+                <span class="step-number">1</span>
+                <span class="step-label">Information</span>
+              </div>
+              <div class="step-line"></div>
+              <div class="step">
+                <span class="step-number">2</span>
+                <span class="step-label">Confirmation</span>
+              </div>
+            </div>
+
+            <form [formGroup]="noteFormGroup" (ngSubmit)="ajoutereditNote()">
+              <input type="hidden" formControlName="id" />
+
+              <div class="enseignement-item">
+                <!-- Ligne 1: Classe + Élève -->
+                <div class="row form-row">
+                  <div class="col-lg-6 col-sm-12">
+                    <div class="form-group">
+                      <label class="form-label">
+                        Classe <span class="text-danger">*</span>
+                        <i class="fas fa-chalkboard-user ms-1 text-muted"></i>
+                      </label>
+                      <select
+                        class="form-select"
+                        formControlName="classe"
+                        required
+                        [(ngModel)]="selectedClass"
+                        (change)="onClasseSelected()"
+                      >
+                        <option value="" disabled selected>— Sélectionnez une classe —</option>
+                        @for (item of classeList; track item.id) {
+                          <option [value]="item.id">{{ item.libelle }}</option>
+                        }
+                      </select>
+                      @if (
+                        noteFormGroup.get('classe')?.invalid && noteFormGroup.get('classe')?.touched
+                      ) {
+                        <div class="invalid-feedback">Veuillez sélectionner une classe</div>
+                      }
+                    </div>
+                  </div>
+
+                  <div class="col-lg-6 col-sm-12">
+                    <div class="form-group">
+                      <label class="form-label">
+                        Élève <span class="text-danger">*</span>
+                        <i class="fas fa-user-graduate ms-1 text-muted"></i>
+                      </label>
+                      <select class="form-select" formControlName="eleve" required>
+                        <option value="" disabled selected>— Sélectionnez un élève —</option>
+                        @for (item of eleveList; track item.eleve) {
+                          <option [value]="item.eleve">{{ item.nomCompletEleve }}</option>
+                        }
+                      </select>
+                      @if (
+                        noteFormGroup.get('eleve')?.invalid && noteFormGroup.get('eleve')?.touched
+                      ) {
+                        <div class="invalid-feedback">Veuillez sélectionner un élève</div>
+                      }
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Ligne 2: Évaluation + Type note + Note -->
+                <div class="row form-row">
+                  <div class="col-lg-4 col-sm-12">
+                    <div class="form-group">
+                      <label class="form-label">
+                        Évaluation <span class="text-danger">*</span>
+                        <i class="fas fa-clipboard-list ms-1 text-muted"></i>
+                      </label>
+                      <select class="form-select" formControlName="evaluation" required>
+                        <option value="" disabled selected>— Sélectionnez une évaluation —</option>
+                        @for (item of evaluationList; track item.id) {
+                          <option [value]="item.id">{{ item.matiere }}</option>
+                        }
+                      </select>
+                      @if (
+                        noteFormGroup.get('evaluation')?.invalid &&
+                        noteFormGroup.get('evaluation')?.touched
+                      ) {
+                        <div class="invalid-feedback">Veuillez sélectionner une évaluation</div>
+                      }
+                    </div>
+                  </div>
+
+                  <div class="col-lg-4 col-sm-12">
+                    <div class="form-group">
+                      <label class="form-label">
+                        Type note <span class="text-danger">*</span>
+                        <i class="fas fa-tag ms-1 text-muted"></i>
+                      </label>
+                      <select class="form-select" formControlName="type" required>
+                        <option value="" disabled selected>— Sélectionnez un type —</option>
+                        @for (item of typeNoteList; track item) {
+                          <option [value]="item">{{ item }}</option>
+                        }
+                      </select>
+                      @if (
+                        noteFormGroup.get('type')?.invalid && noteFormGroup.get('type')?.touched
+                      ) {
+                        <div class="invalid-feedback">Veuillez sélectionner un type</div>
+                      }
+                    </div>
+                  </div>
+
+                  <div class="col-lg-4 col-sm-12">
+                    <div class="form-group">
+                      <label class="form-label">
+                        Note /20 <span class="text-danger">*</span>
+                        <i class="fas fa-star ms-1 text-muted"></i>
+                      </label>
+                      <input
+                        type="number"
+                        class="form-control"
+                        formControlName="note"
+                        placeholder="0"
+                        min="0"
+                        max="20"
+                        step="0.5"
+                        required
+                      />
+                      @if (
+                        noteFormGroup.get('note')?.invalid && noteFormGroup.get('note')?.touched
+                      ) {
+                        <div class="invalid-feedback">La note est requise (0-20)</div>
+                      }
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Ligne 3: Appréciation -->
+                <div class="row form-row">
+                  <div class="col-12">
+                    <div class="form-group">
+                      <label class="form-label">
+                        Appréciation <span class="text-danger">*</span>
+                        <i class="fas fa-comment ms-1 text-muted"></i>
+                      </label>
+                      <textarea
+                        class="form-control"
+                        formControlName="appreciation"
+                        rows="3"
+                        placeholder="Saisissez une appréciation pour l'élève..."
+                      ></textarea>
+                      @if (
+                        noteFormGroup.get('appreciation')?.invalid &&
+                        noteFormGroup.get('appreciation')?.touched
+                      ) {
+                        <div class="invalid-feedback">L'appréciation est requise</div>
+                      }
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Actions -->
+              <div class="form-actions">
+                <button type="button" class="btn btn-secondary" (click)="goBack()">
+                  <i class="fas fa-times me-2"></i>Annuler
+                </button>
+                <button type="submit" class="btn btn-primary" [disabled]="!noteFormGroup.valid">
+                  <i class="fas fa-save me-2"></i>
+                  Enregistrer la note
+                </button>
+              </div>
+
+              <!-- Message d'aide -->
+              <div class="alert-help mt-4" role="alert">
+                <i class="fas fa-info-circle me-2"></i>
+                <span>
+                  Les notes doivent être comprises entre 0 et 20. Saisissez une appréciation pour
+                  chaque élève afin de suivre ses progrès.
+                </span>
+              </div>
+            </form>
           </div>
         </div>
       </div>

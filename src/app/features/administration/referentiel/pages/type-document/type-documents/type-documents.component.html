@@ -1,1 +1,21 @@
-<p>type-documents works!</p>
+<app-generic-table-referentiel
+  title="Liste des type de documents"
+  titleFitre="TypeDocument"
+  [tableColumns]="columns"
+  [tableData]="typeDocumentData"
+  [tableSizes]="tableSizes"
+  [totalElements]="totalElements"
+  [currentPage]="currentPage"
+  [pageSize]="pageSize"
+  [isLoading]="isLoading"
+  [isLockableIcon]="isLockable"
+  (pageChange)="changePage($event)"
+  [deleteEndPoint]="deleteEndpoint"
+  [showSearch]="false"
+  [filtered]="tableFilters"
+  (filterChange)="onFilterChange($event.filter, $event.value)"
+  [showFilters]="true"
+  (resetFilters)="resetFilters()"
+  (sizeChange)="changeSize($event)"
+>
+</app-generic-table-referentiel>

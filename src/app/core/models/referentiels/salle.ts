@@ -9,3 +9,17 @@ export interface Salle {
 
 
 }
+
+export interface SalleAddEdit {
+  id?: number;
+
+  libelle?: string;
+
+  type_salle?: string;
+
+  capacite?: number;
+
+  batimentId?: number;
+
+
+}

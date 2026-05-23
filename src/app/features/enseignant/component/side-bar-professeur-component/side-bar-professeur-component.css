@@ -19,9 +19,9 @@
   display: block;
   height: 100%;
   overflow: hidden;
-  /* ✅ Le host ne scrolle pas */
 }
 
+/* ── Structure Principale ───────────────────── */
 .sidebar {
   background: var(--sidebar-bg);
   color: var(--sidebar-text);
@@ -29,13 +29,12 @@
   display: flex;
   flex-direction: column;
   overflow: hidden;
-  /* ✅ La sidebar ne scrolle pas */
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   position: relative;
   box-shadow: 4px 0 20px rgba(0, 0, 0, 0.15);
 }
 
-/* ===== BRAND ===== */
+/* ── Entête / Brand ─────────────────────────── */
 .sidebar-brand {
   display: flex;
   align-items: center;
@@ -106,7 +105,7 @@
   transform: scale(1.05);
 }
 
-/* ===== PROFILE ===== */
+/* ── Profil Utilisateur ──────────────────────── */
 .sidebar-profile {
   display: flex;
   align-items: center;
@@ -169,7 +168,7 @@
   margin-top: 1px;
 }
 
-/* ===== SECTIONS ===== */
+/* ── Menu Section & Navigation ───────────────── */
 .nav-section {
   padding: 16px 12px 8px;
   flex-shrink: 0;
@@ -183,19 +182,15 @@
   color: rgba(255, 255, 255, 0.5);
 }
 
-/* ===== NAVIGATION ===== */
 .sidebar-nav {
   flex: 1 1 0;
-  /* ✅ PEUT RÉTRÉCIR */
   overflow-y: auto;
-  /* ✅ SCROLL VERTICAL */
   overflow-x: hidden;
   padding: 4px 10px 8px;
   display: flex;
   flex-direction: column;
   gap: 2px;
   min-height: 0;
-  /* ✅ ESSENTIEL */
   scrollbar-width: thin;
   scrollbar-color: rgba(255, 255, 255, 0.15) transparent;
 }
@@ -264,7 +259,45 @@
   color: var(--blue-deep);
 }
 
-/* ===== FOOTER STATS ===== */
+/* ── Éléments Avancés (Dropdowns & Submenus) ─── */
+.ps-section {
+  padding: 16px 12px 6px;
+  margin-top: 4px;
+}
+
+.ps-section-title {
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1.2px;
+  color: rgba(255, 255, 255, 0.45);
+}
+
+.ps-dropdown-group {
+  display: flex;
+  flex-direction: column;
+}
+
+.ps-chevron {
+  font-size: 11px;
+  margin-left: auto;
+  opacity: 0.6;
+  transition: transform 0.2s;
+}
+
+.ps-submenu {
+  padding-left: 12px;
+  border-left: 1px solid rgba(255, 255, 255, 0.12);
+  margin-left: 20px;
+}
+
+.ps-subitem {
+  font-size: 12px;
+  padding: 9px 12px;
+  opacity: 0.8;
+}
+
+/* ── Pied de Page & Statistiques ────────────── */
 .sidebar-footer {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -301,7 +334,7 @@
   letter-spacing: 0.5px;
 }
 
-/* ===== DÉCONNEXION ===== */
+/* Section déconnexion native */
 .sb-footer {
   padding: 10px;
   border-top: 1px solid rgba(255, 255, 255, 0.1);
@@ -337,7 +370,29 @@
   text-align: center;
 }
 
-/* ===== BOUTON FERMETURE MOBILE ===== */
+/* Pilules additionnelles */
+.ps-stats {
+  padding: 0 4px;
+}
+
+.pss-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+
+.pss-pill {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 10px;
+  padding: 10px 8px;
+  font-size: 11px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+/* Bouton fermeture mobile hors arborescence standard */
 .sidebar-close {
   display: none;
   position: absolute;
@@ -361,7 +416,8 @@
   transform: scale(1.1);
 }
 
-/* ===== ÉTAT COLLAPSÉ ===== */
+/* ── Gestion des États Intrinseque ──────────── */
+/* État Collapsed (.collapsed) */
 .sidebar.collapsed .sidebar-brand {
   justify-content: center;
   padding: 22px 8px;
@@ -400,86 +456,39 @@
   text-align: center;
 }
 
-/* ===== ANIMATIONS ===== */
+/* Animations Functional */
 @keyframes fadeIn {
-  from {
-    opacity: 0;
-    transform: translateX(-10px);
-  }
-
-  to {
-    opacity: 1;
-    transform: translateX(0);
-  }
+  from { opacity: 0; transform: translateX(-10px); }
+  to   { opacity: 1; transform: translateX(0); }
 }
 
-/* Sections */
-.ps-section {
-  padding: 16px 12px 6px;
-  margin-top: 4px;
+/* Custom Scrollbar */
+.sidebar-nav::-webkit-scrollbar {
+  width: 5px;
 }
 
-.ps-section-title {
-  font-size: 10px;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 1.2px;
-  color: rgba(255, 255, 255, 0.45);
+.sidebar-nav::-webkit-scrollbar-track {
+  background: transparent;
 }
 
-/* Dropdown */
-.ps-dropdown-group {
-  display: flex;
-  flex-direction: column;
+.sidebar-nav::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.15);
+  border-radius: 99px;
 }
 
-.ps-chevron {
-  font-size: 11px;
-  margin-left: auto;
-  opacity: 0.6;
-  transition: transform 0.2s;
+.sidebar-nav::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.3);
 }
 
-.ps-submenu {
-  padding-left: 12px;
-  border-left: 1px solid rgba(255, 255, 255, 0.12);
-  margin-left: 20px;
-}
+/* ══════════════════════════════════════════════
+   MEDIA QUERIES (BREAKPOINTS RESPONSIVE)
+   ══════════════════════════════════════════════ */
 
-.ps-subitem {
-  font-size: 12px;
-  padding: 9px 12px;
-  opacity: 0.8;
-}
-
-/* Stats */
-.ps-stats {
-  padding: 0 4px;
-}
-
-.pss-row {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 8px;
-}
-
-.pss-pill {
-  background: rgba(255, 255, 255, 0.1);
-  border-radius: 10px;
-  padding: 10px 8px;
-  font-size: 11px;
-  font-weight: 600;
-  display: flex;
-  align-items: center;
-  gap: 6px;
-}
-
-/* ===== RESPONSIVE TABLETTE ===== */
+/* Tablettes / Medium Desktops */
 @media (max-width: 1024px) {
   .sidebar {
     width: var(--sidebar-collapsed-width) !important;
   }
-
   .sidebar:not(.collapsed) {
     width: var(--sidebar-width) !important;
     position: fixed;
@@ -488,17 +497,15 @@
     bottom: 0;
     z-index: 1000;
   }
-
   .sidebar:not(.collapsed) .brand-toggle {
     display: flex;
   }
-
   .sidebar.collapsed .brand-toggle {
     display: none;
   }
 }
 
-/* ===== RESPONSIVE MOBILE ===== */
+/* Smartphones / Mobiles */
 @media (max-width: 768px) {
   .sidebar {
     position: fixed !important;
@@ -510,16 +517,13 @@
     transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     z-index: 1000;
   }
-
   .sidebar.open {
     transform: translateX(0);
     box-shadow: 8px 0 40px rgba(0, 0, 0, 0.3);
   }
-
   .sidebar-close {
     display: flex;
   }
-
   .sidebar .brand-text,
   .sidebar .sidebar-profile,
   .sidebar .nav-label,
@@ -528,118 +532,81 @@
   .sidebar .sidebar-footer {
     display: block !important;
   }
-
   .sidebar .nav-item {
     justify-content: flex-start !important;
     padding: 14px 16px !important;
   }
-
   .sidebar .nav-icon {
     font-size: 18px !important;
     width: 24px !important;
   }
-
   .sidebar-brand {
     padding: 18px 16px !important;
   }
-
   .brand-toggle {
     display: flex !important;
   }
-
   .nav-item.active {
     box-shadow: inset 3px 0 0 var(--blue-sky) !important;
   }
 }
 
-/* ===== RESPONSIVE PETIT MOBILE ===== */
+/* Écrans Très Compacts */
 @media (max-width: 480px) {
   .sidebar {
     width: 85vw !important;
     max-width: 300px;
   }
-
   .sidebar-brand {
     padding: 16px !important;
   }
-
   .brand-name {
     font-size: 16px;
   }
-
   .brand-sub {
     font-size: 9px;
   }
-
   .sidebar-profile {
     padding: 12px;
     margin: 8px 10px;
   }
-
   .profile-avatar {
     width: 36px;
     height: 36px;
     font-size: 18px;
   }
-
   .profile-name {
     font-size: 13px;
   }
-
   .profile-matiere {
     font-size: 10px;
   }
-
   .nav-item {
     padding: 12px 14px !important;
     font-size: 12px;
   }
-
   .nav-icon {
     font-size: 16px !important;
     width: 22px !important;
   }
-
   .footer-stat .stat-value {
     font-size: 16px;
   }
-
   .footer-stat .stat-label {
     font-size: 9px;
   }
 }
 
-/* ===== SUPPORT iOS SAFE AREA ===== */
+/* ── Support iOS Safe Areas & Notches ───────── */
 @supports (padding: max(0px)) {
   .sidebar {
     padding-top: env(safe-area-inset-top);
     padding-bottom: env(safe-area-inset-bottom);
   }
-
   .sidebar-brand {
     padding-top: max(22px, env(safe-area-inset-top));
   }
-
   .sb-footer {
     padding-bottom: max(10px, env(safe-area-inset-bottom));
   }
-}
-
-/* ===== SCROLLBAR PERSONNALISÉ ===== */
-.sidebar-nav::-webkit-scrollbar {
-  width: 5px;
-}
-
-.sidebar-nav::-webkit-scrollbar-track {
-  background: transparent;
-  /* ✅ Plus propre */
-}
-
-.sidebar-nav::-webkit-scrollbar-thumb {
-  background: rgba(255, 255, 255, 0.15);
-  border-radius: 99px;
-}
-
-.sidebar-nav::-webkit-scrollbar-thumb:hover {
-  background: rgba(255, 255, 255, 0.3);
 }

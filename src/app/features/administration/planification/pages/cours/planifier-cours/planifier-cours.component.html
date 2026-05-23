@@ -1,4 +1,4 @@
-<div class="page-wrapper">
+<!-- <div class="page-wrapper">
   <div class="content container-fluid">
     <div class="row">
       <div class="col-sm-12">
@@ -156,6 +156,242 @@
             </div>
           </div>
         </div>
+      </div>
+    </div>
+  </div>
+</div>
+ -->
+
+<div class="page-wrapper">
+  <div class="content container-fluid">
+    <!-- Page Header -->
+    <div class="page-header">
+      <div class="row align-items-center">
+        <div class="col-sm-12">
+          <h3 class="page-title">{{ title }}</h3>
+          <p class="text-muted mt-1 mb-0">
+            <i class="fas fa-calendar-plus me-1"></i> Planification des cours
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Badge -->
+    <div class="badge-container">
+      <span class="badge badge-primary">
+        <i class="fas fa-plus-circle me-1"></i>
+        @if (!coursId) {
+          Nouveau cours
+        } @else {
+          Reprogrammation
+        }
+      </span>
+    </div>
+
+    <!-- Suppression des colonnes restrictives -->
+    <div class="card">
+      <div class="card-body p-4 p-md-5">
+        <!-- Step Indicator -->
+        <div class="step-indicator">
+          <div class="step active">
+            <span class="step-number">1</span>
+            <span class="step-label">Information</span>
+          </div>
+          <div class="step-line"></div>
+          <div class="step">
+            <span class="step-number">2</span>
+            <span class="step-label">Confirmation</span>
+          </div>
+        </div>
+
+        <form [formGroup]="coursFormGroup" (ngSubmit)="ajoutereditCours()">
+          <input type="hidden" formControlName="id" />
+
+          <!-- Ligne 1: Libellé + Enseignement + Emploi du temps -->
+          <div class="row form-row">
+            <div class="col-lg-4 col-sm-12">
+              <div class="form-group">
+                <label class="form-label">
+                  Libellé <span class="text-danger">*</span>
+                  <i class="fas fa-tag ms-1 text-muted"></i>
+                </label>
+                <input
+                  type="text"
+                  class="form-control"
+                  formControlName="libelle"
+                  placeholder="Ex: Cours de Mathématiques"
+                  required
+                />
+                @if (
+                  coursFormGroup.get('libelle')?.invalid && coursFormGroup.get('libelle')?.touched
+                ) {
+                  <div class="invalid-feedback">Le libellé est requis</div>
+                }
+              </div>
+            </div>
+
+            <div class="col-lg-4 col-sm-12">
+              <div class="form-group">
+                <label class="form-label">
+                  Enseignement <span class="text-danger">*</span>
+                  <i class="fas fa-chalkboard-teacher ms-1 text-muted"></i>
+                </label>
+                <select class="form-select" formControlName="enseignement" required>
+                  <option value="" disabled selected>— Sélectionnez un enseignement —</option>
+                  @for (item of enseignementtList; track item.id) {
+                    <option [value]="item.id">{{ item.enseignant }} - {{ item.classe }} - {{ item.matiere }}</option>
+                  }
+                </select>
+
+                @if (
+                  coursFormGroup.get('enseignement')?.invalid &&
+                  coursFormGroup.get('enseignement')?.touched
+                ) {
+                  <div class="invalid-feedback">L'enseignement est requis</div>
+                }
+              </div>
+            </div>
+
+            <div class="col-lg-4 col-sm-12">
+              <div class="form-group">
+                <label class="form-label">
+                  Emploi du temps <span class="text-danger">*</span>
+                  <i class="fas fa-calendar-alt ms-1 text-muted"></i>
+                </label>
+                <select class="form-select" formControlName="emploiDuTemps" required>
+                  <option value="" disabled selected>— Sélectionnez un emploi du temps —</option>
+                  @for (item of epmloiDuTempsList; track item.id) {
+                    <option [value]="item.id">{{ item.libelleSemestre }} - {{ item.libelleClasse }}</option>
+                  }
+
+                
+
+                </select>
+                @if (
+                  coursFormGroup.get('emploiDuTemps')?.invalid &&
+                  coursFormGroup.get('emploiDuTemps')?.touched
+                ) {
+                  <div class="invalid-feedback">L'emploi du temps est requis</div>
+                }
+              </div>
+            </div>
+          </div>
+
+          <!-- Ligne 2: Salle + Date + Heure début + Heure fin -->
+          <div class="row form-row">
+            <div class="col-lg-4 col-sm-12">
+              <div class="form-group">
+                <label class="form-label">
+                  Salle <span class="text-danger">*</span>
+                  <i class="fas fa-door-open ms-1 text-muted"></i>
+                </label>
+                <select class="form-select" formControlName="salle" required>
+                  <option value="" disabled selected>— Sélectionnez une salle —</option>
+                  @for (item of salleList; track item.id) {
+                    <option [value]="item.id">{{ item.libelle }}</option>
+                  }
+                </select>
+                @if (coursFormGroup.get('salle')?.invalid && coursFormGroup.get('salle')?.touched) {
+                  <div class="invalid-feedback">La salle est requise</div>
+                }
+              </div>
+            </div>
+
+            <div class="col-lg-4 col-sm-12">
+              <div class="form-group">
+                <label class="form-label">
+                  Date du cours <span class="text-danger">*</span>
+                  <i class="fas fa-calendar-day ms-1 text-muted"></i>
+                </label>
+                <input type="date" class="form-control" formControlName="dateCours" required />
+                @if (
+                  coursFormGroup.get('dateCours')?.invalid &&
+                  coursFormGroup.get('dateCours')?.touched
+                ) {
+                  <div class="invalid-feedback">La date est requise</div>
+                }
+              </div>
+            </div>
+
+            <div class="col-lg-2 col-sm-6">
+              <div class="form-group">
+                <label class="form-label">
+                  Heure début <span class="text-danger">*</span>
+                  <i class="fas fa-clock ms-1 text-muted"></i>
+                </label>
+                <input type="time" class="form-control" formControlName="heureDebut" required />
+                @if (
+                  coursFormGroup.get('heureDebut')?.invalid &&
+                  coursFormGroup.get('heureDebut')?.touched
+                ) {
+                  <div class="invalid-feedback">Heure début requise</div>
+                }
+              </div>
+            </div>
+
+            <div class="col-lg-2 col-sm-6">
+              <div class="form-group">
+                <label class="form-label">
+                  Heure fin <span class="text-danger">*</span>
+                  <i class="fas fa-clock ms-1 text-muted"></i>
+                </label>
+                <input type="time" class="form-control" formControlName="heureFin" required />
+                @if (
+                  coursFormGroup.get('heureFin')?.invalid && coursFormGroup.get('heureFin')?.touched
+                ) {
+                  <div class="invalid-feedback">Heure fin requise</div>
+                }
+              </div>
+            </div>
+          </div>
+
+          <!-- Récapitulatif -->
+          @if (coursFormGroup.valid) {
+            <div class="recap-card">
+              <div class="d-flex align-items-center gap-3">
+                <div class="recap-icon">
+                  <i class="fas fa-calendar-check"></i>
+                </div>
+                <div class="recap-content">
+                  <span class="recap-label">Récapitulatif du cours</span>
+                  <span class="recap-value">
+                    Cours de <strong>{{ coursFormGroup.get('libelle')?.value }}</strong> le
+                    <strong>{{
+                      coursFormGroup.get('dateCours')?.value | date: 'dd/MM/yyyy'
+                    }}</strong>
+                    de <strong>{{ coursFormGroup.get('heureDebut')?.value }}</strong> à
+                    <strong>{{ coursFormGroup.get('heureFin')?.value }}</strong>
+                    en salle <strong>{{ getSelectedSalleName() }}</strong>
+                  </span>
+                </div>
+              </div>
+            </div>
+          }
+
+          <!-- Actions -->
+          <div class="form-actions">
+            <button type="button" class="btn btn-secondary" routerLink="/admin/planification/cours">
+              <i class="fas fa-times me-2"></i>Annuler
+            </button>
+            <button type="submit" class="btn btn-primary" [disabled]="!coursFormGroup.valid">
+              <i class="fas fa-save me-2"></i>
+              @if (!coursId) {
+                Planifier le cours
+              } @else {
+                Reprogrammer le cours
+              }
+            </button>
+          </div>
+
+          <!-- Message d'aide -->
+          <div class="alert-help mt-4" role="alert">
+            <i class="fas fa-info-circle me-2"></i>
+            <span>
+              La planification des cours permet d'organiser les séances par enseignement, salle et
+              créneau horaire. Vérifiez la disponibilité des salles.
+            </span>
+          </div>
+        </form>
       </div>
     </div>
   </div>

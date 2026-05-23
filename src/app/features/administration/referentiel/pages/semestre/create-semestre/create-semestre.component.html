@@ -1,4 +1,4 @@
-<div class="page-wrapper">
+<!-- <div class="page-wrapper">
   <div class="content container-fluid">
     <div class="page-header">
       <div class="row">
@@ -102,6 +102,151 @@
             </form>
           </div>
         </div>
+      </div>
+    </div>
+  </div>
+</div>
+ -->
+
+ <div class="page-wrapper">
+  <div class="content container-fluid">
+    <!-- Page Header -->
+    <div class="page-header">
+      <div class="row align-items-center">
+        <div class="col-sm-12">
+          <h3 class="page-title">{{ title }}</h3>
+          <p class="text-muted mt-1 mb-0">
+            <i class="fas fa-book-open me-1"></i> Gestion des semestres
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Badge -->
+    <div class="badge-container">
+      <span class="badge badge-primary">
+        <i class="fas fa-plus-circle me-1"></i>
+        @if (!isEdit) {
+          Nouveau semestre
+        } @else {
+          Modification
+        }
+      </span>
+    </div>
+
+    <!-- Formulaire pleine largeur -->
+    <div class="card">
+      <div class="card-body p-4 p-md-5">
+        
+        <!-- Step Indicator -->
+        <div class="step-indicator">
+          <div class="step active">
+            <span class="step-number">1</span>
+            <span class="step-label">Information</span>
+          </div>
+          <div class="step-line"></div>
+          <div class="step">
+            <span class="step-number">2</span>
+            <span class="step-label">Confirmation</span>
+          </div>
+        </div>
+
+        <form [formGroup]="semestreFormGroup" (ngSubmit)="ajouteditSemestre()">
+          <input type="hidden" formControlName="id" />
+
+          <!-- Ligne 1: Code -->
+          <div class="form-group">
+            <label class="form-label">
+              Code <span class="text-danger">*</span>
+              <i class="fas fa-barcode ms-1 text-muted"></i>
+            </label>
+            <input type="text" class="form-control" formControlName="code" placeholder="Ex: S1, SEM1" required>
+            @if (semestreFormGroup.get('code')?.invalid && semestreFormGroup.get('code')?.touched) {
+              <div class="invalid-feedback">Le code est requis</div>
+            }
+          </div>
+
+          <!-- Ligne 2: Libellé -->
+          <div class="form-group">
+            <label class="form-label">
+              Libellé <span class="text-danger">*</span>
+              <i class="fas fa-tag ms-1 text-muted"></i>
+            </label>
+            <input type="text" class="form-control" formControlName="libelle" placeholder="Ex: Premier semestre" required>
+            @if (semestreFormGroup.get('libelle')?.invalid && semestreFormGroup.get('libelle')?.touched) {
+              <div class="invalid-feedback">Le libellé est requis</div>
+            }
+          </div>
+
+          <!-- Ligne 3: Date début + Date fin (2 colonnes) -->
+          <div class="two-columns-row">
+            <div class="form-group">
+              <label class="form-label">
+                Date de début <span class="text-danger">*</span>
+                <i class="fas fa-calendar-day ms-1 text-muted"></i>
+              </label>
+              <input type="date" class="form-control" formControlName="dateDebut" required>
+              @if (semestreFormGroup.get('dateDebut')?.invalid && semestreFormGroup.get('dateDebut')?.touched) {
+                <div class="invalid-feedback">La date de début est requise</div>
+              }
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">
+                Date de fin <span class="text-danger">*</span>
+                <i class="fas fa-calendar-check ms-1 text-muted"></i>
+              </label>
+              <input type="date" class="form-control" formControlName="dateFin" required>
+              @if (semestreFormGroup.get('dateFin')?.invalid && semestreFormGroup.get('dateFin')?.touched) {
+                <div class="invalid-feedback">La date de fin est requise</div>
+              }
+            </div>
+          </div>
+
+          <!-- Récapitulatif -->
+          @if (semestreFormGroup.get('libelle')?.value && semestreFormGroup.get('dateDebut')?.value) {
+            <div class="recap-card">
+              <div class="d-flex align-items-center gap-3">
+                <div class="recap-icon">
+                  <i class="fas fa-book-open"></i>
+                </div>
+                <div class="recap-content">
+                  <span class="recap-label">Récapitulatif du semestre</span>
+                  <span class="recap-value">
+                    <strong>{{ semestreFormGroup.get('code')?.value }}</strong> - 
+                    <strong>{{ semestreFormGroup.get('libelle')?.value }}</strong>
+                    du <strong>{{ semestreFormGroup.get('dateDebut')?.value | date:'dd/MM/yyyy' }}</strong>
+                    au <strong>{{ semestreFormGroup.get('dateFin')?.value | date:'dd/MM/yyyy' }}</strong>
+                  </span>
+                </div>
+              </div>
+            </div>
+          }
+
+          <!-- Actions -->
+          <div class="form-actions">
+            <button type="button" class="btn btn-secondary" (click)="goBack()">
+              <i class="fas fa-times me-2"></i>Annuler
+            </button>
+            <button type="submit" class="btn btn-primary" [disabled]="!semestreFormGroup.valid">
+              <i class="fas fa-save me-2"></i>
+              @if (!isEdit) {
+                Enregistrer le semestre
+              } @else {
+                Modifier le semestre
+              }
+            </button>
+          </div>
+
+          <!-- Message d'aide -->
+          <div class="alert-help mt-4" role="alert">
+            <i class="fas fa-info-circle me-2"></i>
+            <span>
+              Les semestres divisent l'année scolaire en deux périodes et sont utilisés pour
+              l'organisation pédagogique et les évaluations.
+            </span>
+          </div>
+        </form>
       </div>
     </div>
   </div>
