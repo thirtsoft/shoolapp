@@ -18,13 +18,13 @@ FROM nginx:alpine
 # Installer wget pour le healthcheck et outils utiles
 RUN apk add --no-cache wget curl
 
-# Créer un utilisateur non-root pour la sécurité
-RUN addgroup -g 101 -S nginx && adduser -S nginx -G nginx
+# Pas besoin de créer l'utilisateur nginx, il existe déjà
+# L'image nginx:alpine a déjà un utilisateur 'nginx'
 
 # Copier la configuration Nginx
 COPY nginx.conf /etc/nginx/conf.d/default.conf
 
-# Copier les fichiers buildés
+# Copier les fichiers buildés (utiliser l'utilisateur nginx existant)
 COPY --from=build --chown=nginx:nginx /app/dist/shoolapp/browser /usr/share/nginx/html
 
 # Exposition du port
