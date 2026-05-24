@@ -1,18 +1,21 @@
 services:
   # Instance Dauphin
   angular-dauphin:
-    build: .
+    build:
+      context: .
+      args:
+        BASE_HREF: /dauphin/
     container_name: eduschool_angular_dauphin
     restart: unless-stopped
     ports:
-      - '4201:80'
+      - "4201:80"
     environment:
       - NODE_ENV=${NODE_ENV}
-      - API_URL=${DAUPHIN_API_URL}
+      - API_URL=${COLLEGE_API_URL}
     networks:
       - shared-network
     healthcheck:
-      test: ['CMD', 'wget', '--quiet', '--tries=1', '--spider', 'http://localhost/']
+      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost/"]
       interval: 30s
       timeout: 5s
       retries: 3
@@ -23,26 +26,24 @@ services:
           memory: 128M
         reservations:
           memory: 64M
-    logging:
-      driver: 'json-file'
-      options:
-        max-size: '10m'
-        max-file: '3'
 
   # Instance Collège
   angular-college:
-    build: .
+    build:
+      context: .
+      args:
+        BASE_HREF: /college/
     container_name: eduschool_angular_college
     restart: unless-stopped
     ports:
-      - '4203:80'
+      - "4203:80"
     environment:
       - NODE_ENV=${NODE_ENV}
       - API_URL=${COLLEGE_API_URL}
     networks:
       - shared-network
     healthcheck:
-      test: ['CMD', 'wget', '--quiet', '--tries=1', '--spider', 'http://localhost/']
+      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost/"]
       interval: 30s
       timeout: 5s
       retries: 3
@@ -53,41 +54,6 @@ services:
           memory: 128M
         reservations:
           memory: 64M
-    logging:
-      driver: 'json-file'
-      options:
-        max-size: '10m'
-        max-file: '3'
-
-    # Instance Lycée
-  angular-lycee:
-    build: .
-    container_name: eduschool_angular_lycee
-    restart: unless-stopped
-    ports:
-      - '4202:80'
-    environment:
-      - NODE_ENV=${NODE_ENV}
-      - API_URL=${COLLEGE_API_URL}
-    networks:
-      - shared-network
-    healthcheck:
-      test: ['CMD', 'wget', '--quiet', '--tries=1', '--spider', 'http://localhost/']
-      interval: 30s
-      timeout: 5s
-      retries: 3
-      start_period: 10s
-    deploy:
-      resources:
-        limits:
-          memory: 128M
-        reservations:
-          memory: 64M
-    logging:
-      driver: 'json-file'
-      options:
-        max-size: '10m'
-        max-file: '3'
 
 networks:
   shared-network:

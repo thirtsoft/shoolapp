@@ -2,19 +2,18 @@ FROM node:22-alpine AS build
 
 WORKDIR /app
 
-# Copier package files
-COPY package*.json ./
+# Argument pour le base href (ex: /dauphin/, /college/)
+ARG BASE_HREF=/
+ENV BASE_HREF=$BASE_HREF
 
-# Installer les dépendances
+COPY package*.json ./
 RUN npm install --legacy-peer-deps
 
-# Copier le code source
 COPY . .
 
-# Build avec npx (utilise le ng local du projet)
-RUN npx ng build --configuration=production
+# Build avec le base href personnalisé
+RUN npx ng build --configuration=production --base-href=$BASE_HREF
 
-# Stage 2 : Serveur Nginx
 FROM nginx:alpine
 
 RUN apk add --no-cache wget curl
