@@ -1,10 +1,10 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { environment } from '../../../../environments/environment';
-import { SignInRequest } from '../../../core/models/auth/sign-in-request';
 import { Observable } from 'rxjs';
-import { SignInResponse } from '../../../core/models/auth/sign-in-response';
+import { environment } from '../../../../environments/environment';
 import { FirstSignInRequest } from '../../../core/models/auth/first-sign-in-request';
+import { SignInRequest } from '../../../core/models/auth/sign-in-request';
+import { SignInResponse } from '../../../core/models/auth/sign-in-response';
 import { Utilisateur } from '../../../core/models/utilisateur/utilisateur';
 
 @Injectable({
@@ -21,17 +21,17 @@ export class AuthenticationService {
       'Content-Type': 'application/json'
     })
   }
-  constructor(private httpClient: HttpClient) {
+  constructor(private readonly httpClient: HttpClient) {
   }
 
   signIn(signInRequest: SignInRequest): Observable<SignInResponse> {
-    return this.httpClient.post<SignInResponse>(this.apiServer + '/auth/signin', signInRequest)
+    return this.httpClient.post<SignInResponse>(`${this.apiServer}/auth/signin`, signInRequest);
   }
-
 
   getFirstSigninUser(token?: string): Observable<any> {
-    return this.httpClient.get(this.apiServer + `/utilisateur/activation/${token}`);
+    return this.httpClient.get(`${this.apiServer}/utilisateur/activation/${token}`);
   }
+
 
 
   firstSignIn(firstSignInReq: FirstSignInRequest, isIfAdmin: boolean) {
