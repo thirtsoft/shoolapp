@@ -11,7 +11,7 @@ services:
       - "4201:80"
     environment:
       - NODE_ENV=${NODE_ENV}
-      - API_URL=${COLLEGE_API_URL}
+      - API_URL=${DAUPHIN_API_URL}
     networks:
       - shared-network
     healthcheck:
