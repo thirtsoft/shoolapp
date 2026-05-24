@@ -3,19 +3,17 @@ services:
   angular-dauphin:
     build:
       context: .
+      dockerfile: Dockerfile
       args:
         BASE_HREF: /dauphin/
     container_name: eduschool_angular_dauphin
     restart: unless-stopped
     ports:
-      - "4201:80"
-    environment:
-      - NODE_ENV=${NODE_ENV}
-      - API_URL=${DAUPHIN_API_URL}
+      - '4201:80'
     networks:
       - shared-network
     healthcheck:
-      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost/"]
+      test: ['CMD', 'wget', '--quiet', '--tries=1', '--spider', 'http://localhost/']
       interval: 30s
       timeout: 5s
       retries: 3
@@ -31,19 +29,17 @@ services:
   angular-college:
     build:
       context: .
+      dockerfile: Dockerfile
       args:
         BASE_HREF: /college/
     container_name: eduschool_angular_college
     restart: unless-stopped
     ports:
-      - "4203:80"
-    environment:
-      - NODE_ENV=${NODE_ENV}
-      - API_URL=${COLLEGE_API_URL}
+      - '4203:80'
     networks:
       - shared-network
     healthcheck:
-      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost/"]
+      test: ['CMD', 'wget', '--quiet', '--tries=1', '--spider', 'http://localhost/']
       interval: 30s
       timeout: 5s
       retries: 3
