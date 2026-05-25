@@ -1,0 +1,36 @@
+name: CI/CD Frontend EduSchool
+
+on:
+  push:
+    branches:
+      - master # Déclenchement automatique sur cette branche
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Deploy Frontend to VPS via SSH
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.VPS_HOST }}
+          username: ${{ secrets.VPS_USER }}
+          password: ${{ secrets.VPS_PASSWORD }}
+          port: 22
+          script: |
+            echo "====== Début de l'automatisation FRONTEND ======"
+            
+            # 1. On se positionne dans le dossier de ton infrastructure sur le VPS
+            cd ~/apps/backend/eduschool/eduschooldauphin
+            
+            # 2. On récupère les dernières modifications (si ton sous-module ou dossier contient le code front)
+            # git pull origin master
+            
+            echo "====== Rebuild et déploiement à chaud des conteneurs Angular ======"
+            # 3. Docker reconstruit les images du Front en tâche de fond et remplace à chaud sans coupure
+            docker compose up --build -d eduschool_angular_college eduschool_angular_dauphin
+            
+            # 4. Nettoyage des anciennes images obsolètes
+            docker image prune -f
+            
+            echo "====== Déploiement Frontend terminé avec succès ! ======"
