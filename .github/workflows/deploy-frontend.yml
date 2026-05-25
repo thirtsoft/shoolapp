@@ -23,8 +23,8 @@ jobs:
             # 1. On se positionne dans le dossier de ton infrastructure sur le VPS
             cd ~/apps/frontend/eduschool/eduschooldauphin
 
-            # 2. On récupère les dernières modifications (si ton sous-module ou dossier contient le code front)
-            # git pull origin master
+            # 2. On récupère le dernier code Angular depuis GitHub (Ligne activée !)
+            git pull origin master
 
             echo "====== Rebuild et déploiement à chaud des conteneurs Angular ======"
             # 3. Docker reconstruit les images du Front en tâche de fond et remplace à chaud sans coupure

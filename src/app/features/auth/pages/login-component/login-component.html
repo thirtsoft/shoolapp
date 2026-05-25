@@ -1,12 +1,10 @@
 <div class="login-page">
-  <!-- ══════════ PANNEAU GAUCHE — Illustration ══════════ -->
   <div class="left-panel">
     <div class="grain"></div>
     <div class="circle c1"></div>
     <div class="circle c2"></div>
     <div class="circle c3"></div>
 
-    <!-- Logo -->
     <div class="lp-logo">
       <div class="lp-logo-ico">🎓</div>
       <div>
@@ -15,7 +13,6 @@
       </div>
     </div>
 
-    <!-- Illustration + titre -->
     <div class="lp-mid">
       <div class="lp-illustration">📖</div>
       <div class="lp-text">
@@ -26,7 +23,7 @@
         </h1>
         <p class="lp-desc">
           Notes, absences, emplois du temps et communication parents-professeurs réunis dans une
-          seule plateforme pensée pour les écoles de Dakar.
+          seule plateforme pensée pour les écoles.
         </p>
         <div class="lp-features">
           @for (f of features; track f.ico) {
@@ -39,7 +36,6 @@
       </div>
     </div>
 
-    <!-- Stats -->
     <div class="lp-stats">
       @for (s of stats; track s.lbl) {
         <div class="lp-stat">
@@ -50,13 +46,11 @@
     </div>
   </div>
 
-  <!-- ══════════ PANNEAU DROIT — Formulaire ══════════ -->
   <div class="right-panel">
     <div class="rp-deco-tl"></div>
     <div class="rp-deco-br"></div>
 
     <div class="rp-content">
-      <!-- En-tête -->
       <div class="rp-eyebrow">
         <div class="rp-eyebrow-line"></div>
         <span class="rp-eyebrow-txt">Bienvenue</span>
@@ -64,7 +58,6 @@
       <h2 class="rp-titre">Se <em>connecter</em></h2>
       <p class="rp-sous-titre">Accédez à votre espace personnalisé de gestion scolaire.</p>
 
-      <!-- Message d'erreur -->
       @if (erreur) {
         <div class="msg-erreur">
           <span>⚠️</span>
@@ -72,7 +65,6 @@
         </div>
       }
 
-      <!-- Formulaire -->
       <form [formGroup]="signInForm" (ngSubmit)="onSubmit()" novalidate>
         <div class="form-group">
           <label for="email">Adresse e-mail</label>
@@ -153,7 +145,6 @@
         </button>
       </form>
 
-      <!-- Footer -->
       <div class="rp-footer">
         <span class="rp-footer-txt">Accès sécurisé</span>
         <span class="rp-badge">🔐 SSL</span>
