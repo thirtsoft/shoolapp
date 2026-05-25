@@ -28,11 +28,15 @@ jobs:
 
             echo "====== Rebuild forcé sans cache (Anti-Cache Docker) ======"
             # 3. On force Docker à recompiler Angular en ignorant le cache pour voir les changements de code
-            docker compose build --no-cache angular-dauphin angular-college
+            docker compose build --no-cache angular-dauphin
+            docker compose build --no-cache angular-college
 
             echo "====== Relance des conteneurs à chaud ======"
             # 4. On applique la nouvelle image à chaud (Zéro Coupure)
             docker compose up -d angular-dauphin angular-college
+
+            # On force aussi le redémarrage du proxy pour actualiser les routes Nginx
+            docker compose restart nginx_proxy
 
             # 5. Nettoyage des anciennes images inutilisées
             docker image prune -f
