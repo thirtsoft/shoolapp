@@ -3,7 +3,7 @@ name: CI/CD Frontend EduSchool
 on:
   push:
     branches:
-      - master # Déclenchement automatique sur cette branche
+      - master # Déclenchement sur la branche master
 
 jobs:
   deploy:
@@ -20,17 +20,21 @@ jobs:
           script: |
             echo "====== Début de l'automatisation FRONTEND ======"
 
-            # 1. On se positionne dans le dossier de ton infrastructure sur le VPS
+            # 1. On se positionne dans le dossier où se trouvent le code et le docker-compose
             cd ~/apps/frontend/eduschool/eduschooldauphin
 
-            # 2. On récupère le dernier code Angular depuis GitHub (Ligne activée !)
+            # 2. On récupère le dernier code mis à jour
             git pull origin master
 
-            echo "====== Rebuild et déploiement à chaud des conteneurs Angular ======"
-            # 3. Docker reconstruit les images du Front en tâche de fond et remplace à chaud sans coupure
-            docker compose up --build -d eduschool_angular_college eduschool_angular_dauphin
+            echo "====== Rebuild forcé sans cache (Anti-Cache Docker) ======"
+            # 3. On force Docker à recompiler Angular en ignorant le cache pour voir les changements de code
+            docker compose build --no-cache angular-dauphin angular-college
 
-            # 4. Nettoyage des anciennes images obsolètes
+            echo "====== Relance des conteneurs à chaud ======"
+            # 4. On applique la nouvelle image à chaud (Zéro Coupure)
+            docker compose up -d angular-dauphin angular-college
+
+            # 5. Nettoyage des anciennes images inutilisées
             docker image prune -f
 
             echo "====== Déploiement Frontend terminé avec succès ! ======"
