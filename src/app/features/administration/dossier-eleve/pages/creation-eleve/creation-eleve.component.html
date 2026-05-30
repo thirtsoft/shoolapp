@@ -1,4 +1,4 @@
-<div class="page-wrapper">
+<!-- <div class="page-wrapper">
   <div class="content container-fluid">
     <div class="page-header">
       <div class="row">
@@ -178,6 +178,210 @@
               >
                 Annuler
               </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+ -->
+
+ <div class="page-wrapper">
+  <div class="content container-fluid">
+    <!-- Page Header -->
+    <div class="page-header">
+      <div class="row align-items-center">
+        <div class="col-sm-7 col-auto">
+          <h3 class="page-title">Élève</h3>
+          <p class="text-muted mt-1 mb-0">
+            <i class="fas fa-user-graduate me-1"></i> Gestion des informations de l'élève
+          </p>
+        </div>
+        <div class="col-sm-5 col-auto text-end">
+          <span class="badge badge-primary">Fiche élève</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="row justify-content-center">
+      <div class="col-12">
+        <div class="card">
+          <div class="card-body p-4 p-md-5">
+            <form [formGroup]="eleveFormGroup">
+              <input type="text" readonly hidden formControlName="id" />
+
+              <!-- Layout 2 colonnes -->
+              <div class="two-columns-layout">
+                <!-- COLONNE GAUCHE : INFORMATIONS -->
+                <div class="info-column">
+                  <!-- Section Informations personnelles -->
+                  <div class="info-section">
+                    <h4 class="section-title">
+                      <i class="fas fa-user me-2"></i>Informations personnelles
+                    </h4>
+                    <div class="form-row-2cols">
+                      <div class="form-group">
+                        <label class="form-label">
+                          Prénom <span class="text-danger">*</span>
+                        </label>
+                        <input
+                          type="text"
+                          class="form-control"
+                          formControlName="prenom"
+                          placeholder="Jean"
+                        />
+                        @if (
+                          eleveFormGroup.get('prenom')?.invalid &&
+                          eleveFormGroup.get('prenom')?.touched
+                        ) {
+                          <small class="form-text text-danger">Le prénom est obligatoire</small>
+                        }
+                      </div>
+
+                      <div class="form-group">
+                        <label class="form-label">
+                          Nom <span class="text-danger">*</span>
+                        </label>
+                        <input
+                          type="text"
+                          class="form-control"
+                          formControlName="nom"
+                          placeholder="Dupont"
+                        />
+                        @if (
+                          eleveFormGroup.get('nom')?.invalid &&
+                          eleveFormGroup.get('nom')?.touched
+                        ) {
+                          <small class="form-text text-danger">Le nom est obligatoire</small>
+                        }
+                      </div>
+
+                      <div class="form-group">
+                        <label class="form-label">
+                          Sexe <span class="text-danger">*</span>
+                        </label>
+                        <select class="form-select" formControlName="sexe">
+                          <option value="" disabled selected>— Sélectionnez —</option>
+                          @for (item of typeSexe; track item) {
+                            <option [value]="item">{{ item }}</option>
+                          }
+                        </select>
+                      </div>
+
+                      <div class="form-group">
+                        <label class="form-label">
+                          Date de naissance <span class="text-danger">*</span>
+                        </label>
+                        <input type="date" class="form-control" formControlName="dateNaissance" />
+                      </div>
+
+                      <div class="form-group">
+                        <label class="form-label">
+                          Lieu de naissance <span class="text-danger">*</span>
+                        </label>
+                        <input
+                          type="text"
+                          class="form-control"
+                          formControlName="lieuNaissance"
+                          placeholder="Dakar"
+                        />
+                      </div>
+
+                      <div class="form-group">
+                        <label class="form-label">Adresse</label>
+                        <input
+                          type="text"
+                          class="form-control"
+                          formControlName="address"
+                          placeholder="Adresse complète"
+                        />
+                      </div>
+
+                      <div class="form-group">
+                        <label class="form-label">Nationalité</label>
+                        <input
+                          type="text"
+                          class="form-control"
+                          formControlName="nationalite"
+                          placeholder="Sénégalaise"
+                        />
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- COLONNE DROITE : PHOTO DE PROFIL -->
+                <div class="photo-column">
+                  <div class="photo-card">
+                    <h4 class="section-title">
+                      <i class="fas fa-camera me-2"></i>Photo de l'élève
+                    </h4>
+                    <div class="photo-container">
+                      <div class="photo-preview" (click)="fileInput.click()">
+                        @if (preview) {
+                          <img [src]="preview" alt="Photo de l'élève" />
+                        } @else {
+                          <div class="photo-placeholder">
+                            <i class="fas fa-user-graduate"></i>
+                          </div>
+                        }
+                      </div>
+                      <input
+                        type="file"
+                        #fileInput
+                        (change)="selectFile($event)"
+                        accept="image/*"
+                        hidden
+                      />
+
+                      @if (preview) {
+                        <button type="button" class="btn-delete-photo" (click)="deletePhoto()">
+                          <i class="fas fa-trash-alt me-1"></i> Supprimer
+                        </button>
+                      }
+
+                      <button type="button" class="btn-change-photo" (click)="fileInput.click()">
+                        <i class="fas fa-sync-alt me-1"></i> Changer photo
+                      </button>
+
+                      <div class="photo-info">
+                        <small>Formats: JPG, PNG | Max: 2MB</small>
+                      </div>
+                      @if (message) {
+                        <small class="form-text text-danger">{{ message }}</small>
+                      }
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </form>
+
+            <!-- Form Actions -->
+            <div class="form-actions">
+              <button
+                type="button"
+                class="btn btn-secondary"
+                (click)="goBack()"
+              >
+                <i class="fas fa-times me-2"></i>
+                Annuler
+              </button>
+              <button
+                type="button"
+                class="btn btn-primary"
+                (click)="editerUnEleve()"
+                [disabled]="!eleveFormGroup.valid"
+              >
+                <i class="fas fa-save me-2"></i>
+                Enregistrer
+              </button>
+            </div>
+
+            <!-- Help Message -->
+            <div class="alert-help">
+              <i class="fas fa-info-circle me-2"></i>
+              <span>Les champs marqués d'un astérisque (*) sont obligatoires.</span>
             </div>
           </div>
         </div>

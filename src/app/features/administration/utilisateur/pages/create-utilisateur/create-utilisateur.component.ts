@@ -1,12 +1,12 @@
 import { Component, inject, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { ToastrService } from '@iqx-limited/ngx-toastr';
 import { Profil } from '../../../../../core/models/profil/profil';
 import { Utilisateur } from '../../../../../core/models/utilisateur/utilisateur';
 import { LocalStorageService } from '../../../../../core/services/local-storage.service';
 import { ProfilageService } from '../../../profil/service/profilage.service';
 import { UtilisateurService } from '../../service/utilisateur.service';
+import { ToastrService } from 'ngx-toastr';
 
 
 @Component({

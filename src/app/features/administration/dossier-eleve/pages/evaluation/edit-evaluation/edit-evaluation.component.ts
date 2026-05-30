@@ -1,8 +1,7 @@
-import { CommonModule } from '@angular/common';
 import { Component, inject, OnInit } from '@angular/core';
 import { FormArray, FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { ToastrService } from '@iqx-limited/ngx-toastr';
+import { ToastrService } from 'ngx-toastr';
 import { EvaluationEditRequest } from '../../../../../../core/models/dossiereleve/evaluation/evaluation-edit-resquest';
 import { ListeEleve } from '../../../../../../core/models/dossiereleve/liste-eleve';
 import { Enseignement } from '../../../../../../core/models/planification/enseignement';
@@ -91,7 +90,7 @@ export class EditEvaluationComponent implements OnInit {
     });
   }
 
-   getEleveListByClassAndAnneeScolaire(classId: number, anneeId: number) {
+  getEleveListByClassAndAnneeScolaire(classId: number, anneeId: number) {
     this.dossierResource.afficherListeEleveParClassEtAnneeScolaire('eleve', classId, anneeId).subscribe({
       next: (data: any) => {
         this.elevesList = data;

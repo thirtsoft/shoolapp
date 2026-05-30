@@ -3,7 +3,7 @@ import { Router, RouterLink, RouterModule } from '@angular/router';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ExportFileService } from '../../services/export-file.service';
 
-import { ToastrService } from '@iqx-limited/ngx-toastr';
+import { ToastrService } from 'ngx-toastr';
 import * as pdfMake from 'pdfmake/build/pdfmake';
 
 import { CommonModule } from '@angular/common';

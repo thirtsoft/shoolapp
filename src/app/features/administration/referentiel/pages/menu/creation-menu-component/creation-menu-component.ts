@@ -1,7 +1,7 @@
 import { Component, inject, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { ToastrService } from '@iqx-limited/ngx-toastr';
+import { ToastrService } from 'ngx-toastr';
 import { CategoryMenu } from '../../../../../../core/models/referentiels/category-menu';
 import { MenuAddEdit } from '../../../../../../core/models/referentiels/menu';
 import { Utilisateur } from '../../../../../../core/models/utilisateur/utilisateur';

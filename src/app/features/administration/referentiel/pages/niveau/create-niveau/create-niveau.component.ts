@@ -1,11 +1,11 @@
 import { Component, inject, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { ReferentielService } from '../../../service/referentiel.service';
+import { ToastrService } from 'ngx-toastr';
+import { Niveau } from '../../../../../../core/models/referentiels/niveau';
 import { Utilisateur } from '../../../../../../core/models/utilisateur/utilisateur';
 import { UtilisateurService } from '../../../../utilisateur/service/utilisateur.service';
-import { ToastrService } from '@iqx-limited/ngx-toastr';
-import { Niveau } from '../../../../../../core/models/referentiels/niveau';
+import { ReferentielService } from '../../../service/referentiel.service';
 
 @Component({
   selector: 'app-create-niveau',

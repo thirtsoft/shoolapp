@@ -1,14 +1,14 @@
+import { CommonModule } from '@angular/common';
 import { Component, inject, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
-import { ToastrService } from '@iqx-limited/ngx-toastr';
+import { ToastrService } from 'ngx-toastr';
 import { Constants } from '../../../../../core/constants/constants';
 import { EleveEdit } from '../../../../../core/models/dossiereleve/request/eleve-edit';
 import { Eleve } from '../../../../../core/models/parent/parent';
+import { LocalStorageService } from '../../../../../core/services/local-storage.service';
 import { PieceJointeService } from '../../../../../core/services/piece-jointe';
 import { DossierEleveService } from '../../service/dossier-eleve.service';
-import { CommonModule } from '@angular/common';
-import { LocalStorageService } from '../../../../../core/services/local-storage.service';
 
 @Component({
   selector: 'app-creation-eleve',
@@ -108,6 +108,19 @@ export class CreationEleveComponent implements OnInit {
       reader.readAsDataURL(this.currentFile);
     }
     console.log("Le fichier choisi est ", this.currentFile);
+  }
+
+  deletePhoto() {
+    const confirmDelete = confirm('Voulez-vous vraiment supprimer cette photo ?');
+    if (!confirmDelete) return;
+    this.preview = '';
+    this.currentFile = undefined;
+    this.message = '';
+    const fileInput = document.querySelector('#fileInput') as HTMLInputElement;
+    if (fileInput) {
+      fileInput.value = '';
+    }
+    this.toastService.success('Succès', 'Photo supprimée avec succès');
   }
 
   ajouterEleve() {

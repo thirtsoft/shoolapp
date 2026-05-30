@@ -2,7 +2,6 @@ import { DatePipe, DecimalPipe } from '@angular/common';
 import { Component, inject, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { ToastrService } from '@iqx-limited/ngx-toastr';
 import { ListeFacture } from '../../../../../core/models/comptabilite/liste-facture';
 import { PaiementAdd } from '../../../../../core/models/comptabilite/paiement';
 import { MoyenPaiement } from '../../../../../core/models/referentiels/moyen-paiement';
@@ -10,6 +9,7 @@ import { Utilisateur } from '../../../../../core/models/utilisateur/utilisateur'
 import { ReferentielResourceService } from '../../../../administration/referentiel/service/referentiel-resource.service';
 import { UtilisateurService } from '../../../../administration/utilisateur/service/utilisateur.service';
 import { ComptabiliteResourceService } from '../../../services/comptabilite-resource.service';
+import { ToastrService } from 'ngx-toastr';
 
 @Component({
   selector: 'app-create-paiement',

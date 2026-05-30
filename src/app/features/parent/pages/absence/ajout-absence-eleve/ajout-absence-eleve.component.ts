@@ -1,7 +1,7 @@
 import { Component, inject, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { ToastrService } from '@iqx-limited/ngx-toastr';
+import { ToastrService } from 'ngx-toastr';
 import { AbsenceEdit } from '../../../../../core/models/dossiereleve/absence/absenceedit';
 import { AnneeScolaire } from '../../../../../core/models/referentiels/annee-scolaire';
 import { Semestre } from '../../../../../core/models/referentiels/semestre';

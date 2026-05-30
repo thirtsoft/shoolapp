@@ -1,7 +1,7 @@
 import { Component, ElementRef, HostListener, inject, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { ToastrService } from '@iqx-limited/ngx-toastr';
+import { ToastrService } from 'ngx-toastr';
 import { Action } from '../../../../../core/models/profil/action';
 import { Profil } from '../../../../../core/models/profil/profil';
 import { ProfilageService } from '../../service/profilage.service';

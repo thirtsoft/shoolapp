@@ -2,13 +2,14 @@ import { CommonModule, SlicePipe } from '@angular/common';
 import { Component, inject, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { ToastrService } from '@iqx-limited/ngx-toastr';
+import { ToastrService } from 'ngx-toastr';
 import { Constants } from '../../../../../../core/constants/constants';
 import { EnseigantList } from '../../../../../../core/models/enseignant/enseignant-list';
 import { Exercice } from '../../../../../../core/models/planification/exercice';
 import { ListeClasse } from '../../../../../../core/models/referentiels/classe';
 import { Utilisateur } from '../../../../../../core/models/utilisateur/utilisateur';
 import { PieceJointeService } from '../../../../../../core/services/piece-jointe';
+import { EnseignantService } from '../../../../../enseignant/service/enseignant.service';
 import { ReferentielService } from '../../../../referentiel/service/referentiel.service';
 import { UtilisateurService } from '../../../../utilisateur/service/utilisateur.service';
 import { PlanificationResourceService } from '../../../services/planification-resource.service';
@@ -43,7 +44,7 @@ export class CreateExerciceComponent implements OnInit {
 
   private readonly planification = inject(PlanificationResourceService);
   private readonly referentielService = inject(ReferentielService);
-  //  private readonly enseignantService = inject(EnseignantService);
+  private readonly enseignantService = inject(EnseignantService);
   private readonly pieceJointeService = inject(PieceJointeService);
   private readonly utilisateurService = inject(UtilisateurService);
   private readonly _formBuilder = inject(FormBuilder);

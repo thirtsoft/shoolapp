@@ -2,7 +2,7 @@ import { CommonModule } from '@angular/common';
 import { Component, inject, Input, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { ToastrService } from '@iqx-limited/ngx-toastr';
+import { ToastrService } from 'ngx-toastr';
 import { Inscription } from '../../../../../core/models/dossiereleve/request/inscription';
 import { Eleve } from '../../../../../core/models/parent/parent';
 import { AnneeScolaire } from '../../../../../core/models/referentiels/annee-scolaire';

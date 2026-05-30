@@ -1,17 +1,17 @@
 import { Component, inject, OnInit } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { ToastrService } from '@iqx-limited/ngx-toastr';
+import { ToastrService } from 'ngx-toastr';
 import { ParentDetails } from '../../../../core/models/parent/parent-details';
 import { Utilisateur } from '../../../../core/models/utilisateur/utilisateur';
 import { CommonService } from '../../../../core/services/common.service';
 import { LocalStorageService } from '../../../../core/services/local-storage.service';
 import { UtilisateurService } from '../../../administration/utilisateur/service/utilisateur.service';
 import { ParentService } from '../../service/parent.service';
+import { ListFactureImpayeesEleveComponent } from '../facture/list-facture-impayees-eleve/list-facture-impayees-eleve.component';
 import { CoursSemaineEleveComponent } from '../semaine/cours-semaine-eleve/cours-semaine-eleve.component';
 import { ExerciceSemaineEleveComponent } from '../semaine/exercice-semaine-eleve/exercice-semaine-eleve.component';
 import { NoteSemaineEleveComponent } from '../semaine/note-semaine-eleve/note-semaine-eleve.component';
-import { ListFactureImpayeesEleveComponent } from '../facture/list-facture-impayees-eleve/list-facture-impayees-eleve.component';
 
 @Component({
   selector: 'app-dashboard-parent',

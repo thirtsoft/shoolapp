@@ -1,10 +1,9 @@
 import { CommonModule, SlicePipe } from '@angular/common';
 import { Component, inject, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { ToastrService } from '@iqx-limited/ngx-toastr';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { ToastrService } from 'ngx-toastr';
 import { ConfirmationDialogModalComponent } from '../../../../../core/components/confirmation-dialog-modal/confirmation-dialog-modal.component';
-import { DetailsExercice } from '../../../../../core/models/planification/details-exercice';
 import { PlanificationResourceService } from '../../../../administration/planification/services/planification-resource.service';
 
 @Component({

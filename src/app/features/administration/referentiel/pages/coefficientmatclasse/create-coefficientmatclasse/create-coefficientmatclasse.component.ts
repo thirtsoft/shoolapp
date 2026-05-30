@@ -4,7 +4,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { ReferentielResourceService } from '../../../service/referentiel-resource.service';
 import { ListeClasse } from '../../../../../../core/models/referentiels/classe';
 import { Matiere } from '../../../../../../core/models/referentiels/matiere';
-import { ToastrService } from '@iqx-limited/ngx-toastr';
+import { ToastrService } from 'ngx-toastr';
 import { CoefficientMatiereClasse } from '../../../../../../core/models/referentiels/coefficient-matiere-classe';
 
 @Component({

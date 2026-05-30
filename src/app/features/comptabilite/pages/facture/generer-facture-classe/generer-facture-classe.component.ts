@@ -1,13 +1,12 @@
-import { CommonModule } from '@angular/common';
 import { Component, inject, OnInit } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
-import { ToastrService } from '@iqx-limited/ngx-toastr';
 import { ListeClasse } from '../../../../../core/models/referentiels/classe';
 import { Utilisateur } from '../../../../../core/models/utilisateur/utilisateur';
 import { ReferentielResourceService } from '../../../../administration/referentiel/service/referentiel-resource.service';
 import { UtilisateurService } from '../../../../administration/utilisateur/service/utilisateur.service';
 import { ComptabiliteResourceService } from '../../../services/comptabilite-resource.service';
+import { ToastrService } from 'ngx-toastr';
 
 interface Mois {
   id: number;

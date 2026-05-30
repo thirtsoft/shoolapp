@@ -1,10 +1,11 @@
 import { Component, inject, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { Router } from '@angular/router';
-import { ToastrService } from '@iqx-limited/ngx-toastr';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
+import { ToastrService } from 'ngx-toastr';
 import { Utilisateur } from '../../../../../core/models/utilisateur/utilisateur';
 import { UtilisateurCredentials } from '../../../../../core/models/utilisateur/utilisateur-credential';
+import { LocalStorageService } from '../../../../../core/services/local-storage.service';
 import { UtilisateurService } from '../../service/utilisateur.service';
 
 @Component({
@@ -35,7 +36,7 @@ export class ChangerPasswordComponent implements OnInit {
   private readonly utilisateurService = inject(UtilisateurService);
   private readonly toastService = inject(ToastrService);
   private readonly _formBuilder = inject(FormBuilder);
-  //  private readonly localStorage = inject(LocalStorageService);
+  private readonly localStorage = inject(LocalStorageService);
   private readonly router = inject(Router);
   private readonly activeModal = inject(NgbActiveModal);
 

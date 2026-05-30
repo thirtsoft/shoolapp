@@ -1,13 +1,13 @@
 import { CommonModule } from '@angular/common';
 import { Component, inject, OnInit } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
-import { ToastrService } from '@iqx-limited/ngx-toastr';
 import { DetailsEnseignantUtilisateur } from '../../../../core/models/enseignant/details-enseignant-utilisateur';
 import { ParentDetails } from '../../../../core/models/parent/parent-details';
 import { CommonService } from '../../../../core/services/common.service';
 import { LocalStorageService } from '../../../../core/services/local-storage.service';
 import { PlanificationResourceService } from '../../../administration/planification/services/planification-resource.service';
 import { EnseignantService } from '../../service/enseignant.service';
+import { ToastrService } from 'ngx-toastr';
 
 @Component({
   selector: 'app-dashboard-enseignant',

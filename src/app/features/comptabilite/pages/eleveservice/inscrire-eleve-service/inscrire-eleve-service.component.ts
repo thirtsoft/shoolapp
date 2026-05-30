@@ -2,7 +2,6 @@ import { CommonModule } from '@angular/common';
 import { AfterViewInit, Component, ElementRef, HostListener, inject, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { ToastrService } from '@iqx-limited/ngx-toastr';
 import { InscriptionEleveTypeService } from '../../../../../core/models/comptabilite/inscrire-eleve-service';
 import { ListeInscription } from '../../../../../core/models/dossiereleve/request/liste-inscription';
 import { AnneeScolaire } from '../../../../../core/models/referentiels/annee-scolaire';
@@ -12,6 +11,7 @@ import { DossierResourceService } from '../../../../administration/dossier-eleve
 import { ReferentielResourceService } from '../../../../administration/referentiel/service/referentiel-resource.service';
 import { UtilisateurService } from '../../../../administration/utilisateur/service/utilisateur.service';
 import { ComptabiliteResourceService } from '../../../services/comptabilite-resource.service';
+import { ToastrService } from 'ngx-toastr';
 
 @Component({
   selector: 'app-inscrire-eleve-service',

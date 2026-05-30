@@ -5,7 +5,7 @@ import { ExportFileService } from '../../services/export-file.service';
 
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { ToastrService } from '@iqx-limited/ngx-toastr';
+import { ToastrService } from 'ngx-toastr';
 import * as pdfMake from 'pdfmake/build/pdfmake';
 import { ConfirmationDialogModalComponent } from '../../components/confirmation-dialog-modal/confirmation-dialog-modal.component';
 import { EncodateLogo } from '../../enumeration/encodage-logo-data';

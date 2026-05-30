@@ -2,7 +2,7 @@ import { CommonModule, DatePipe } from '@angular/common';
 import { Component, inject, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { RouterLink } from '@angular/router';
-import { ToastrService } from '@iqx-limited/ngx-toastr';
+import { ToastrService } from 'ngx-toastr';
 import { Conge } from '../../../../core/models/enseignant/conge';
 import { ListeConge } from '../../../../core/models/enseignant/liste-conge';
 import { LocalStorageService } from '../../../../core/services/local-storage.service';

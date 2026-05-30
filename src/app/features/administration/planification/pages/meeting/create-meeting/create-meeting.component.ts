@@ -2,7 +2,7 @@ import { DatePipe } from '@angular/common';
 import { Component, inject, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { ToastrService } from '@iqx-limited/ngx-toastr';
+import { ToastrService } from 'ngx-toastr';
 import { Meeting } from '../../../../../../core/models/planification/meeting';
 import { Utilisateur } from '../../../../../../core/models/utilisateur/utilisateur';
 import { UtilisateurService } from '../../../../utilisateur/service/utilisateur.service';
@@ -23,7 +23,7 @@ export class CreateMeetingComponent implements OnInit {
 
   isEdit: boolean = false;
 
-  typeReunions: string[] = ['ADMINISTRATION', 'PARENT', 'ENSEIGNANT','SCOLAIRE'];
+  typeReunions: string[] = ['ADMINISTRATION', 'PARENT', 'ENSEIGNANT', 'SCOLAIRE'];
   ecoleId: any;
   userId: number;
   utilisateur: Utilisateur = {};
