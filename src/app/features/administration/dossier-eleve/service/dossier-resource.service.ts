@@ -2,9 +2,9 @@ import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { Observable, throwError } from 'rxjs';
 import { catchError, tap } from 'rxjs/operators';
+import { environment } from '../../../../../environments/environment';
 import { DataResult } from '../../../../core/datamodel/data-model';
 import { ResponseMessage } from '../../../../core/response/response-message';
-import { environment } from '../../../../../environments/environment';
 
 @Injectable({
   providedIn: 'root'
@@ -106,26 +106,6 @@ export class DossierResourceService {
       return `${baseUrl}?${paginationParams}`;
     }
   }
-/*
-  fetchFilterDataTable<T>(endpoint: string, page: number, size: number, filters?: any): Observable<DataResult<T>> {
-    let url = `${this.baseUrl_1}/${endpoint}`;
-    console.log('Paramètres envoyés:', { endpoint, page, size, filters });
-
-    if (filters) {
-      const encodedFilters = encodeURIComponent(JSON.stringify(filters));
-      url = `${url}/filtered/page?filtre=${encodedFilters}&page=${page}&size=${size}`;
-
-      console.log('URL avec filtres:', url); // Debug URL
-
-      return this.http.get<DataResult<T>>(url, this.httpOptions).pipe(
-        tap(response => console.log('Réponse API (avec filtres):', response)),
-        catchError(error => {
-          console.error('Erreur API (avec filtres):', error);
-          return throwError(() => error);
-        })
-      );
-    }
-  }*/
 
   fetchFilterDataTable<T>(endpoint: string, page: number, size: number, filters?: any): Observable<DataResult<T>> {
     let url = `${this.baseUrl_1}/${endpoint}`;
@@ -182,7 +162,7 @@ export class DossierResourceService {
     return this.http.get<T>(url, this.httpOptions);
   }
 
-   afficherListeEleveParClassEtAnneeScolaire<T>(endpoint: string, classId: number, anneeId: number): Observable<T[]> {
+  afficherListeEleveParClassEtAnneeScolaire<T>(endpoint: string, classId: number, anneeId: number): Observable<T[]> {
     const url = `${this.baseUrl_1}/${endpoint}/classe/${classId}/anneescolaire/${anneeId}`;
     return this.http.get<T[]>(url, this.httpOptions);
   }
@@ -198,10 +178,10 @@ export class DossierResourceService {
     return this.http.post<ResponseMessage>(url, resource);
   }
 
-    updateUneReource(endpoint: string, id: number, value: any) {
-      const url = `${this.baseUrl_1}/${endpoint}/update/${id}`;
-      return this.http.put<ResponseMessage>(url, value);
-    }
+  updateUneReource(endpoint: string, id: number, value: any) {
+    const url = `${this.baseUrl_1}/${endpoint}/update/${id}`;
+    return this.http.put<ResponseMessage>(url, value);
+  }
 
 
   createRessource<T>(endpoint: string, resource: T): Observable<DataResult<T>> {

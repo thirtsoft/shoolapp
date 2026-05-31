@@ -1,0 +1,238 @@
+/* Style général du formulaire */
+.page-wrapper {
+  background-color: #f8f9fa;
+  min-height: 100vh;
+}
+
+.content {
+  padding: 20px;
+}
+
+/* En-tête de page */
+.page-header {
+  margin-bottom: 30px;
+  padding-bottom: 15px;
+  border-bottom: 2px solid #e9ecef;
+}
+
+.page-title {
+  font-size: 1.75rem;
+  font-weight: 600;
+  color: #2c3e50;
+  margin: 0;
+}
+
+.badge-primary {
+  background-color: #4e73df;
+  color: white;
+  padding: 8px 15px;
+  border-radius: 20px;
+  font-size: 0.85rem;
+  font-weight: 500;
+}
+
+/* Carte formulaire */
+.card {
+  border: none;
+  border-radius: 15px;
+  box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.08);
+  overflow: hidden;
+}
+
+.card-body {
+  padding: 2rem 2.5rem !important;
+}
+
+/* Grille à deux colonnes */
+.two-columns-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.5rem;
+  margin-bottom: 1.5rem;
+}
+
+@media (max-width: 768px) {
+  .two-columns-row {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+
+  .card-body {
+    padding: 1.5rem !important;
+  }
+}
+
+/* Groupes de formulaire */
+.form-group {
+  margin-bottom: 0;
+}
+
+.form-label {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-weight: 500;
+  color: #2c3e50;
+  font-size: 0.9rem;
+}
+
+.form-label i {
+  font-size: 0.85rem;
+  opacity: 0.7;
+}
+
+/* Champs de formulaire */
+.form-control,
+.form-select {
+  width: 100%;
+  padding: 0.6rem 1rem;
+  font-size: 0.95rem;
+  line-height: 1.5;
+  color: #495057;
+  background-color: #fff;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  transition: all 0.2s ease;
+}
+
+.form-control:focus,
+.form-select:focus {
+  border-color: #4e73df;
+  outline: 0;
+  box-shadow: 0 0 0 0.2rem rgba(78, 115, 223, 0.25);
+}
+
+/* Input group (téléphone, email) */
+.input-group {
+  display: flex;
+  align-items: stretch;
+}
+
+.input-group-text {
+  display: flex;
+  align-items: center;
+  padding: 0.6rem 1rem;
+  font-size: 0.95rem;
+  font-weight: 400;
+  color: #495057;
+  text-align: center;
+  background-color: #f8f9fc;
+  border: 1px solid #d1d5db;
+  border-radius: 8px 0 0 8px;
+  border-right: none;
+}
+
+.input-group .form-control {
+  border-radius: 0 8px 8px 0;
+}
+
+/* Messages d'erreur */
+.form-text {
+  display: block;
+  margin-top: 0.25rem;
+  font-size: 0.8rem;
+}
+
+.text-danger {
+  color: #e74a3b !important;
+}
+
+.is-invalid,
+.ng-invalid.ng-touched {
+  border-color: #e74a3b !important;
+}
+
+/* Boutons d'action */
+.form-actions {
+  display: flex;
+  gap: 1rem;
+  margin-top: 1.5rem;
+}
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1.25rem;
+  font-weight: 600;
+  font-size: 0.875rem;
+  border-radius: 12px;
+  transition: all 0.2s ease;
+  cursor: pointer;
+  border: none;
+  flex: 1;
+}
+
+.btn-primary {
+  background: linear-gradient(135deg, #2c5282, #1e3a5f);
+  color: white;
+}
+
+.btn-primary:hover:not(:disabled) {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(30, 58, 95, 0.25);
+}
+
+.btn-primary:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.btn-secondary {
+  background: white;
+  color: #2c5282;
+  border: 1.5px solid #cbd5e0;
+}
+
+.btn-secondary:hover {
+  background: #f7fafc;
+  border-color: #4299e1;
+  transform: translateY(-1px);
+}
+
+.alert-help {
+  background: #f7fafc;
+  border-radius: 12px;
+  padding: 0.875rem 1rem;
+  margin-top: 1rem !important;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  color: #4a5568;
+  font-size: 0.75rem;
+  border: 1px solid #e2e8f0;
+}
+
+.alert-help i {
+  color: #4299e1;
+  font-size: 1rem;
+}
+
+/* Animation des icônes */
+.fa-spin {
+  animation: fa-spin 2s infinite linear;
+}
+
+@keyframes fa-spin {
+  0% {
+    transform: rotate(0deg);
+  }
+
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+/* Version responsive pour mobiles */
+@media (max-width: 576px) {
+  .form-actions {
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .btn {
+    width: 80%;
+    padding: 12px 20px;
+  }
+}

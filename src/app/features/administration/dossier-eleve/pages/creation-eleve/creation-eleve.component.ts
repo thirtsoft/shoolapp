@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, inject, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { ActivatedRoute, Router, RouterLink } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
 import { Constants } from '../../../../../core/constants/constants';
 import { EleveEdit } from '../../../../../core/models/dossiereleve/request/eleve-edit';
@@ -9,11 +9,13 @@ import { Eleve } from '../../../../../core/models/parent/parent';
 import { LocalStorageService } from '../../../../../core/services/local-storage.service';
 import { PieceJointeService } from '../../../../../core/services/piece-jointe';
 import { DossierEleveService } from '../../service/dossier-eleve.service';
+import { DateFormat } from '../../../../../core/utilites/date-format';
+
 
 @Component({
   selector: 'app-creation-eleve',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, RouterLink],
+  imports: [CommonModule, ReactiveFormsModule],
   templateUrl: './creation-eleve.component.html',
   styleUrls: ['./creation-eleve.component.css']
 })
@@ -41,6 +43,7 @@ export class CreationEleveComponent implements OnInit {
   private readonly _formBuilder = inject(FormBuilder);
   private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
+  private readonly dateFormat = inject(DateFormat);
 
 
 
@@ -76,8 +79,7 @@ export class CreationEleveComponent implements OnInit {
       sexe: [eleve?.sexe ? eleve.sexe : '', Validators.required],
       lieuNaissance: [eleve?.lieuNaissance ? eleve.lieuNaissance : '', Validators.required],
       address: [eleve?.address ? eleve.address : ''],
-      dateNaissance: [eleve?.dateNaissance],
-      //    dateNaissance: [moment(eleve?.dateNaissance).format('YYYY-MM-DD')],
+      dateNaissance: [eleve?.dateNaissance ? this.dateFormat.formatDateForInput(eleve.dateNaissance) : ''],
       nationalite: [eleve?.nationalite ? eleve.nationalite : ''],
     });
   }
@@ -95,7 +97,7 @@ export class CreationEleveComponent implements OnInit {
         return;
       }
 
-      if (file.size > 2097152) { // 2MB en octets
+      if (file.size > 2097152) {
         this.message = 'L\'image ne doit pas dépasser 2MB!';
         return;
       }
@@ -158,7 +160,6 @@ export class CreationEleveComponent implements OnInit {
     }
   }
 
-  // Méthode pour uploader la photo
   uploadPhotoEleve(eleveId: number) {
     if (this.currentFile) {
       const piecesJointesDTO = {

@@ -1,153 +1,214 @@
 <div class="page-wrapper">
   <div class="content container-fluid">
-    <div class="row">
-      <div class="col-sm-12">
-        <h3 class="page-title text-center mb-2">{{ title }}</h3>
-        <div class="card">
-          <div class="card-body">
-            <form [formGroup]="parentFormGroup">
-              <div style="margin-top: 5px">
-                <input
-                  type="text"
-                  readonly="true"
-                  hidden="true"
-                  formControlName="id"
-                />
-                <div class="row form-row">
-                  <div class="col-lg-6 col-sm-6">
-                    <div class="form-group">
-                      <label>Civilité <span class="text-danger">*</span></label>
-                      <select
-                        class="form-control select"
-                        name="civility"
-                        formControlName="civility"
-                      >
-                        <option>Selectionnez</option>
-                        <option *ngFor="let item of civilites" [value]="item">
-                          {{ item }}
-                        </option>
-                      </select>
-                    </div>
-                  </div>
-                  <div class="col-lg-6 col-sm-6">
-                    <div class="form-group">
-                      <label
-                        >Nom utilisateur
-                        <span class="text-danger">*</span></label
-                      >
-                      <input
-                        type="text"
-                        formControlName="username"
-                        required
-                        placeholder="username"
-                        class="form-control"
-                      />
-                    </div>
-                  </div>
-                </div>
-                <div class="row form-row">
-                  <div class="col-lg-6 col-sm-6">
-                    <div class="form-group">
-                      <label>Prénom <span class="text-danger">*</span></label>
-                      <input
-                        type="text"
-                        formControlName="prenom"
-                        required
-                        placeholder="prénom"
-                        class="form-control"
-                      />
-                    </div>
-                  </div>
-                  <div class="col-lg-6 col-sm-6">
-                    <div class="form-group">
-                      <label>Nom <span class="text-danger">*</span></label>
-                      <input
-                        type="text"
-                        formControlName="nom"
-                        required
-                        placeholder="nom"
-                        class="form-control"
-                      />
-                    </div>
-                  </div>
-                </div>
+    <div class="page-header">
+      <div class="row align-items-center">
+        <div class="col-sm-7 col-auto">
+          <h3 class="page-title">{{ title }}</h3>
+          <p class="text-muted mt-1 mb-0">
+            <i class="fas fa-user-friends me-1"></i> Gestion des informations du parent/tuteur
+          </p>
+        </div>
+        <div class="col-sm-5 col-auto text-end">
+          <span class="badge badge-primary"> Modification </span>
+        </div>
+      </div>
+    </div>
 
-                <div class="row form-row">
-                  <div class="col-lg-6 col-sm-6">
-                    <div class="form-group">
-                      <label>Address <span class="text-danger">*</span></label>
-                      <input
-                        type="text"
-                        formControlName="address"
-                        required
-                        placeholder="address"
-                        class="form-control"
-                      />
-                    </div>
-                  </div>
-                  <div class="col-lg-6 col-sm-6">
-                    <div class="form-group">
-                      <label
-                        >Téléphone <span class="text-danger">*</span></label
-                      >
-                      <input
-                        type="text"
-                        formControlName="telephone"
-                        required
-                        placeholder="telephone"
-                        class="form-control"
-                      />
-                    </div>
-                  </div>
-                </div>
-                <div class="row form-row">
-                  <div class="col-lg-6 col-sm-6">
-                    <div class="form-group">
-                      <label>Email <span class="text-danger">*</span></label>
-                      <input
-                        type="text"
-                        formControlName="email"
-                        required
-                        placeholder="email"
-                        class="form-control"
-                      />
-                    </div>
-                  </div>
-                  <div class="col-lg-6 col-sm-6">
-                    <div class="form-group">
-                      <label
-                        >Profession <span class="text-danger">*</span></label
-                      >
-                      <input
-                        type="text"
-                        formControlName="profession"
-                        placeholder="profession"
-                        class="form-control"
-                      />
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </form>
-            <div style="margin-top: 75px col-sm-12">
-              <button
-                type="button"
-                class="btn btn-primary si_accept_confirm float-lg-right"
-                id="btn-yes"
-                (click)="ajoutereditParent()"
-              >
-                Enregistrer
-              </button>
-              <button
-                type="button"
-                class="btn btn-danger si_accept_cancel float-left"
-                routerLink="/admin/dossier-eleve/parent"
-              >
-                Annuler
-              </button>
+    <div class="card">
+      <div class="card-body p-4 p-md-5">
+        <form [formGroup]="parentFormGroup" (ngSubmit)="ajoutereditParent()">
+          <input type="hidden" formControlName="id" />
+
+          <div class="two-columns-row">
+            <div class="form-group">
+              <label class="form-label">
+                Civilité <span class="text-danger">*</span>
+                <i class="fas fa-user-tie ms-1 text-muted"></i>
+              </label>
+              <select class="form-select" formControlName="civility" required>
+                <option value="" disabled selected>— Sélectionnez une civilité —</option>
+                @for (item of civilites; track item) {
+                  <option [value]="item">{{ item }}</option>
+                }
+              </select>
+              @if (
+                parentFormGroup.get('civility')?.invalid && parentFormGroup.get('civility')?.touched
+              ) {
+                <small class="form-text text-danger">Veuillez sélectionner une civilité</small>
+              }
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">
+                Nom utilisateur <span class="text-danger">*</span>
+                <i class="fas fa-user-circle ms-1 text-muted"></i>
+              </label>
+              <input
+                type="text"
+                class="form-control"
+                formControlName="username"
+                placeholder="Nom d'utilisateur"
+                required
+              />
+              @if (
+                parentFormGroup.get('username')?.invalid && parentFormGroup.get('username')?.touched
+              ) {
+                <small class="form-text text-danger">Le nom d'utilisateur est obligatoire</small>
+              }
             </div>
           </div>
-        </div>
+
+          <div class="two-columns-row">
+            <div class="form-group">
+              <label class="form-label">
+                Prénom <span class="text-danger">*</span>
+                <i class="fas fa-user ms-1 text-muted"></i>
+              </label>
+              <input
+                type="text"
+                class="form-control"
+                formControlName="prenom"
+                placeholder="Prénom"
+                required
+              />
+              @if (
+                parentFormGroup.get('prenom')?.invalid && parentFormGroup.get('prenom')?.touched
+              ) {
+                <small class="form-text text-danger">Le prénom est obligatoire</small>
+              }
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">
+                Nom <span class="text-danger">*</span>
+                <i class="fas fa-user ms-1 text-muted"></i>
+              </label>
+              <input
+                type="text"
+                class="form-control"
+                formControlName="nom"
+                placeholder="Nom"
+                required
+              />
+              @if (parentFormGroup.get('nom')?.invalid && parentFormGroup.get('nom')?.touched) {
+                <small class="form-text text-danger">Le nom est obligatoire</small>
+              }
+            </div>
+          </div>
+
+          <div class="two-columns-row">
+            <div class="form-group">
+              <label class="form-label">
+                Adresse <span class="text-danger">*</span>
+                <i class="fas fa-map-marker-alt ms-1 text-muted"></i>
+              </label>
+              <input
+                type="text"
+                class="form-control"
+                formControlName="address"
+                placeholder="Adresse complète"
+                required
+              />
+              @if (
+                parentFormGroup.get('address')?.invalid && parentFormGroup.get('address')?.touched
+              ) {
+                <small class="form-text text-danger">L'adresse est obligatoire</small>
+              }
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">
+                Téléphone <span class="text-danger">*</span>
+                <i class="fas fa-phone-alt ms-1 text-muted"></i>
+              </label>
+              <div class="input-group">
+                <span class="input-group-text">
+                  <i class="fas fa-phone"></i>
+                </span>
+                <input
+                  type="tel"
+                  class="form-control"
+                  formControlName="telephone"
+                  placeholder="77 123 45 67"
+                  required
+                />
+              </div>
+              @if (
+                parentFormGroup.get('telephone')?.invalid &&
+                parentFormGroup.get('telephone')?.touched
+              ) {
+                <small class="form-text text-danger">Le numéro de téléphone est obligatoire</small>
+              }
+            </div>
+          </div>
+
+          <div class="two-columns-row">
+            <div class="form-group">
+              <label class="form-label">
+                Email <span class="text-danger">*</span>
+                <i class="fas fa-envelope ms-1 text-muted"></i>
+              </label>
+              <div class="input-group">
+                <span class="input-group-text">
+                  <i class="fas fa-envelope"></i>
+                </span>
+                <input
+                  type="email"
+                  class="form-control"
+                  formControlName="email"
+                  placeholder="exemple@email.com"
+                  required
+                />
+              </div>
+              @if (parentFormGroup.get('email')?.invalid && parentFormGroup.get('email')?.touched) {
+                <small class="form-text text-danger">Email valide est obligatoire</small>
+              }
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">
+                Profession <span class="text-danger">*</span>
+                <i class="fas fa-briefcase ms-1 text-muted"></i>
+              </label>
+              <input
+                type="text"
+                class="form-control"
+                formControlName="profession"
+                placeholder="Profession"
+                required
+              />
+              @if (
+                parentFormGroup.get('profession')?.invalid &&
+                parentFormGroup.get('profession')?.touched
+              ) {
+                <small class="form-text text-danger">La profession est obligatoire</small>
+              }
+            </div>
+          </div>
+
+          <div class="form-actions">
+            <button
+              type="button"
+              class="btn btn-secondary"
+              routerLink="/admin/dossier-eleve/parent"
+            >
+              <i class="fas fa-times me-2"></i>Annuler
+            </button>
+            <button type="submit" class="btn btn-primary" [disabled]="!parentFormGroup.valid">
+              <i class="fas fa-save me-2"></i>
+
+              Enregistrer
+            </button>
+          </div>
+
+          <div class="alert-help mt-4" role="alert">
+            <i class="fas fa-info-circle me-2"></i>
+            <span>
+              Les informations du parent/tuteur sont essentielles pour la communication et le suivi
+              scolaire de l'élève.
+            </span>
+          </div>
+        </form>
       </div>
     </div>
   </div>

@@ -1,173 +1,3 @@
-<!-- <div class="page-wrapper">
-  <div class="content container-fluid">
-    <div class="row">
-      <div class="col-sm-12">
-        <div class="card">
-          <div class="card-body">
-            <h3 class="page-title text-center mb-2">{{ title }}</h3>
-            <form [formGroup]="eleveinscrireFormGroup">
-              <div style="margin-top: 5px">
-                <input type="text" readonly="true" hidden="true" formControlName="id" />
-
-                <div class="row form-row">
-                  <div class="col-lg-6 col-sm-6">
-                    <div class="form-group">
-                      <label>Liste des type service <span class="text-danger">*</span></label>
-                      <ng-select
-                        [items]="typeServiceList"
-                        [multiple]="true"
-                        [closeOnSelect]="false"
-                        [searchable]="false"
-                        formControlName="typeServiceOffertDTOList"
-                        [clearable]="false"
-                        [bindLabel]="'libelle'"
-                        [bindValue]="'id'"
-                        class="form-control multipleselect"
-                      >
-                        <ng-template ng-option-tmp let-item="item">
-                          <ng-container *ngIf="item === 'selectAll'; else normalOption">
-                            <div class="option-item">
-                              <input
-                                type="checkbox"
-                                [checked]="isAllSelected()"
-                                (click)="toggleSelectAll($event)"
-                              />
-                              <span><strong>Sélectionner tous</strong></span>
-                            </div>
-                          </ng-container>
-                          <ng-template #normalOption>
-                            <div class="option-item">
-                              <input
-                                type="checkbox"
-                                [checked]="selectedTypeServiceOfferts.includes(item.id)"
-                                (click)="toggleSelection(item.id, $event)"
-                              />
-                              <span>{{ item.libelle }}</span>
-                            </div>
-                          </ng-template>
-                        </ng-template>
-
-                        <ng-template ng-label-tmp let-item="item">
-                          {{ item.libelle }}
-                        </ng-template>
-                      </ng-select>
-                    </div>
-                  </div>
-
-                  <div class="col-lg-6 col-sm-6">
-                    <div class="form-group">
-                      <label>Classe <span class="text-danger">*</span></label>
-                      <select
-                        class="form-control select"
-                        formControlName="classId"
-                        required=""
-                        (change)="onPrimaryChange($event)"
-                      >
-                        <option>Selectionnez</option>
-                        <option *ngFor="let item of classList" [value]="item.id">
-                          {{ item?.libelle }}
-                        </option>
-                      </select>
-                    </div>
-                  </div>
-                </div>
-
-                <div class="row form-row">
-                  <div class="col-lg-6 col-sm-6">
-                    <div class="form-group">
-                      <label>Elève <span class="text-danger">*</span></label>
-                      <select class="form-control select" formControlName="eleve" required="">
-                        <option>Selectionnez</option>
-                        <option *ngFor="let item of eleveList" [value]="item.eleve">
-                          {{ item?.prenomEleve }} - {{ item?.nomEleve }}
-                        </option>
-                      </select>
-                    </div>
-                  </div>
-
-                  <div class="col-lg-6 col-sm-6">
-                    <div class="form-group">
-                      <label>Année scolaire <span class="text-danger">*</span></label>
-                      <select
-                        class="form-control select"
-                        formControlName="anneeScolaire"
-                        required=""
-                      >
-                        <option>Selectionnez</option>
-                        <option *ngFor="let item of anneeScolaires" [value]="item.id">
-                          {{ item?.libelle }}
-                        </option>
-                      </select>
-                    </div>
-                  </div>
-                </div>
-
-                <div class="row form-row">
-                  <div class="col-lg-6 col-sm-6">
-                    <div class="form-group">
-                      <label>A une réduction <span class="text-danger">*</span></label>
-                      <select
-                        class="form-control select"
-                        formControlName="benefice_remise"
-                        required=""
-                      >
-                        <option value="0">Non</option>
-                        <option value="1">Oui</option>
-                      </select>
-                    </div>
-                  </div>
-
-                  <div
-                    class="col-6 col-sm-6"
-                    *ngIf="eleveinscrireFormGroup.get('benefice_remise')?.value == 1"
-                  >
-                    <div class="form-group">
-                      <label>Remise en % <span class="text-danger">*</span></label>
-                      <input type="number" class="form-control" formControlName="remise" />
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              <div class="row form-row">
-                <div class="col-lg-12 col-sm-12">
-                  <div class="form-group">
-                    <label>Motif <span class="text-danger">*</span></label>
-                    <textarea
-                      class="form-control select"
-                      formControlName="motif"
-                      required=""
-                    ></textarea>
-                  </div>
-                </div>
-              </div>
-            </form>
-            <div style="margin-top: 75px col-sm-12">
-              <button
-                type="button"
-                class="btn btn-primary si_accept_confirm float-lg-right"
-                id="btn-yes"
-                (click)="ajouteditInscriptionEleveTypeService()"
-                [disabled]="!eleveinscrireFormGroup.valid"
-              >
-                Enregistrer
-              </button>
-              <button
-                type="button"
-                class="btn btn-danger si_accept_cancel float-left"
-                (click)="goBack()"
-              >
-                Annuler
-              </button>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
- -->
-
 <div class="page-wrapper">
   <div class="content container-fluid">
     <div class="page-header">
@@ -190,10 +20,8 @@
       </div>
     </div>
 
-    <!-- Suppression de la classe qui limite la largeur -->
     <div class="card">
       <div class="card-body p-4 p-md-5">
-        <!-- Indicateur d'étape -->
         <div class="step-indicator mb-4">
           <div class="step" [class.active]="!isFormStep2Valid()">
             <span class="step-number">1</span>
@@ -212,7 +40,6 @@
         >
           <input type="hidden" formControlName="id" />
 
-          <!-- Ligne 1: Type de service + Classe -->
           <div class="row g-3 mb-4">
             <div class="col-md-6">
               <div class="form-group">
@@ -222,7 +49,7 @@
                 </label>
                 <div class="service-select-container" #serviceSelectContainer>
                   <div class="service-select-header" (click)="toggleServiceDropdown($event)">
-                    <span>
+                    <span class="selected-services-text">
                       @if (selectedTypeServiceOfferts.length === 0) {
                         — Sélectionnez des services —
                       } @else if (
@@ -230,7 +57,7 @@
                       ) {
                         Tous les services sélectionnés
                       } @else {
-                        {{ selectedTypeServiceOfferts.length }} service(s) sélectionné(s)
+                        {{ getSelectedServicesLabels() }}
                       }
                     </span>
                     <i class="fas fa-chevron-down" [class.rotated]="serviceDropdownOpen"></i>
@@ -301,7 +128,6 @@
             </div>
           </div>
 
-          <!-- Ligne 2: Élève + Année scolaire -->
           <div class="row g-3 mb-4">
             <div class="col-md-6">
               <div class="form-group">
@@ -351,7 +177,6 @@
             </div>
           </div>
 
-          <!-- Ligne 3: Réduction + Pourcentage -->
           <div class="row g-3 mb-4">
             <div class="col-md-6">
               <div class="form-group">
@@ -391,7 +216,6 @@
             }
           </div>
 
-          <!-- Ligne 4: Motif -->
           <div class="row g-3 mb-4">
             <div class="col-12">
               <div class="form-group">
@@ -415,7 +239,6 @@
             </div>
           </div>
 
-          <!-- Récapitulatif -->
           @if (
             selectedTypeServiceOfferts.length > 0 && eleveinscrireFormGroup.get('eleve')?.value
           ) {
@@ -427,16 +250,15 @@
                 <div class="recap-content">
                   <span class="recap-label">Récapitulatif de l'inscription</span>
                   <span class="recap-value">
-                    Inscription de
-                    <strong>{{ getSelectedEleveName() }}</strong>
-                    à <strong>{{ selectedTypeServiceOfferts.length }}</strong> service(s)
+                    Inscription aux services
+                    <strong>{{ getSelectedServicesLabels() }}</strong>
+                    total <strong>{{ selectedTypeServiceOfferts.length }}</strong> service(s)
                   </span>
                 </div>
               </div>
             </div>
           }
 
-          <!-- Actions -->
           <div class="form-actions">
             <button type="button" class="btn btn-secondary" (click)="goBack()">
               <i class="fas fa-times me-2"></i>Annuler
