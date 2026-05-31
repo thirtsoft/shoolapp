@@ -39,7 +39,7 @@ export class CreatePaiementComponent implements OnInit {
   title = "Enregistrer un paiement d'une facture";
 
   private readonly comptabiliteResource = inject(ComptabiliteResourceService);
-  private readonly referentielResource = inject(ReferentielResourceService)
+  private readonly referentielResource = inject(ReferentielResourceService);
   private readonly utilisateurService = inject(UtilisateurService);
   private readonly _formBuilder = inject(FormBuilder)
   private readonly toastService = inject(ToastrService);
@@ -193,6 +193,9 @@ export class CreatePaiementComponent implements OnInit {
       montant: Number(this.paiementFormGroup.get('montant')?.value),
       facture: Number(this.paiementFormGroup.get('facture')?.value)
     };
+
+    console.log('payload', payload);
+    return;
 
     payload.ecole = this.ecoleId;
     if (!this.isEdit) {
