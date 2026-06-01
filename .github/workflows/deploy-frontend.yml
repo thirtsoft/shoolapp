@@ -42,9 +42,12 @@ jobs:
             sleep 3
             docker ps --filter "name=angular"
             
-            # Redémarrage proxy
+            echo "====== Rafraîchissement du Proxy Global (Nginx) ======"
+            # On cible UNIQUEMENT le service nginx dans ~/infra
             cd ~/infra
-            docker compose restart nginx
+            docker compose stop nginx
+            docker compose rm -f nginx
+            docker compose up -d nginx
             
             # Nettoyage
             docker image prune -f

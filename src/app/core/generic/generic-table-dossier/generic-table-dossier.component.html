@@ -9,7 +9,7 @@
               <button class="export-button" aria-label="Export to PDF file" (click)="exportToPDF()">
                 <img
                   loading="lazy"
-                  src="/assets/img/pdf.png"
+                  src="assets/img/pdf.png"
                   alt="PDF export icon"
                   class="export-icon"
                 />
@@ -24,7 +24,7 @@
               >
                 <img
                   loading="lazy"
-                  src="/assets/img/excel.png"
+                  src="assets/img/excel.png"
                   alt="Excel export icon"
                   class="export-icon"
                 />
@@ -177,7 +177,7 @@
                             (click)="generateLink(modifierButtonLink, row)"
                             *ngIf="isEditIcon && showEditOrDeleteCondition(row)"
                           >
-                            <img src="/assets/img/edit.png" class="icon" />
+                            <img src="assets/img/edit.png" class="icon" />
                           </button>
                         </div>
 
@@ -190,7 +190,7 @@
                             *ngIf="isPrnterIcon && showEditOrDeleteCondition(row)"
                           >
                             <img
-                              src="/assets/img/printing.png"
+                              src="assets/img/printing.png"
                               class="icon"
                               style="width: 14px; height: 15px"
                             />
@@ -211,8 +211,8 @@
                             <img
                               [src]="
                                 row.actif === 1 || row.est_valide
-                                  ? '/assets/img/lock.png'
-                                  : '/assets/img/unlock.png'
+                                  ? 'assets/img/lock.png'
+                                  : 'assets/img/unlock.png'
                               "
                               class="icon"
                               style="width: 14px; height: 15px"
@@ -229,7 +229,7 @@
                             *ngIf="isEyesIcon"
                           >
                             <img
-                              src="/assets/img/eyes.png"
+                              src="assets/img/eyes.png"
                               alt="view"
                               class="icon"
                               style="width: 15px; height: 15px"
@@ -244,7 +244,7 @@
                             *ngIf="isReinscrireIcon"
                           >
                             <img
-                              src="/assets/img/eyes.png"
+                              src="assets/img/eyes.png"
                               alt="view"
                               class="icon"
                               style="width: 15px; height: 15px"
