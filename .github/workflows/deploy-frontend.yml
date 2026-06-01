@@ -3,7 +3,7 @@ name: CI/CD Frontend EduSchool
 on:
   push:
     branches:
-      - master # Déclenchement sur la branche master
+      - master
 
 jobs:
   deploy:
@@ -18,29 +18,35 @@ jobs:
           password: ${{ secrets.VPS_PASSWORD }}
           port: 22
           script: |
-            echo "====== Début de l'automatisation FRONTEND ======"
-
-            # 1. On se positionne dans le dossier où se trouvent le code et le docker-compose
+            echo "====== Début déploiement FRONTEND ======"
+            
             cd ~/apps/frontend/eduschool/eduschooldauphin
-
-            # 2. On récupère le dernier code mis à jour
-            git pull origin master
-
-            echo "====== Rebuild forcé sans cache (Anti-Cache Docker) ======"
-            # 3. On force Docker à recompiler Angular en ignorant le cache pour voir les changements de code
-            docker compose build --no-cache angular-dauphin
-            docker compose build --no-cache angular-college
-
-            echo "====== Relance des conteneurs à chaud ======"
-            # 4. On applique la nouvelle image à chaud (Zéro Coupure)
+            
+            # Mise à jour du code
+            git fetch origin
+            git reset --hard origin/master
+            
+            echo "Déploiement du commit: $(git log -1 --oneline)"
+            
+            # Force la recréation des conteneurs
+            docker compose stop angular-dauphin angular-college
+            docker compose rm -f angular-dauphin angular-college
+            
+            # Rebuild sans cache
+            docker compose build --no-cache angular-dauphin angular-college
+            
+            # Démarrage
             docker compose up -d angular-dauphin angular-college
-
-            echo "====== Redémarrage du Proxy Global (Dossier Infra) ======"
-            # CORRECTION : On se déplace dans l'infra et on relance le bon service "nginx"
+            
+            # Vérification
+            sleep 3
+            docker ps --filter "name=angular"
+            
+            # Redémarrage proxy
             cd ~/infra
             docker compose restart nginx
-
-            # 5. Nettoyage des anciennes images inutilisées
+            
+            # Nettoyage
             docker image prune -f
-
-            echo "====== Déploiement Frontend terminé avec succès ! ======"
+            
+            echo "====== Déploiement terminé ======"

@@ -1,10 +1,11 @@
 import { Component, inject, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
 import { TypeSignalement } from '../../../../../../core/enumeration/type-signalement';
-import { AbsenceEdit } from '../../../../../../core/models/dossiereleve/absence/absenceedit';
+import { AttendanceRecord } from '../../../../../../core/models/dossiereleve/absence/attendanceRecordedit';
 import { ListeEleve } from '../../../../../../core/models/dossiereleve/liste-eleve';
+import { ListeCours } from '../../../../../../core/models/planification/liste-cours';
 import { AnneeScolaire } from '../../../../../../core/models/referentiels/annee-scolaire';
 import { Classe } from '../../../../../../core/models/referentiels/classe';
 import { Semestre } from '../../../../../../core/models/referentiels/semestre';
@@ -25,14 +26,15 @@ import { DossierResourceService } from '../../../service/dossier-resource.servic
 export class CreationAbsenceComponent implements OnInit {
 
   errorMessage?: string;
-  absenceFormGroup!: FormGroup;
-  absence?: any;
-  absenceId?: number;
+  attendanceRecordFormGroup!: FormGroup;
+  attendanceRecord?: any;
+  attendanceRecordId?: number;
   eleveId?: number;
   anneeScolaireList: AnneeScolaire[] = [];
   semestreList: Semestre[] = [];
   eleveList: ListeEleve[] = [];
   classeList: Classe[] = [];
+  coursList: ListeCours[] = [];
   selectedClass: any;
 
   ecoleId: any;
@@ -54,7 +56,7 @@ export class CreationAbsenceComponent implements OnInit {
   private readonly localStorage = inject(LocalStorageService);
 
   ngOnInit(): void {
-    this.absenceId = this.activeRoute.snapshot.params['id'];
+    this.attendanceRecordId = this.activeRoute.snapshot.params['id'];
     this.userId = this.localStorage.getItem('id');
     this.eleveId = this.localStorage.getItem('eleveId')!;
     this.getConnectedUserInfos();
@@ -62,8 +64,8 @@ export class CreationAbsenceComponent implements OnInit {
     this.getAnneeSclaireList();
     this.getSemestresList();
     this.initializeForm(null);
-    if (this.absenceId != null && this.absenceId != undefined) {
-      this.getAbsenceById(this.absenceId);
+    if (this.attendanceRecordId != null && this.attendanceRecordId != undefined) {
+      this.getAttendanceRecordById(this.attendanceRecordId);
       this.title = 'Modifier la déclaration absence';
     }
   }
@@ -104,10 +106,20 @@ export class CreationAbsenceComponent implements OnInit {
     );
   }
 
+  getCoursList(classId: number) {
+    this.coursService.getListeCoursByClasse(classId).subscribe(
+      (data: any[]) => {
+        this.coursList = data;
+      },
+      (error: any) => (this.errorMessage = <any>error)
+    );
+  }
+
   onClasseSelected() {
-    const classId = this.absenceFormGroup.get('classId')?.value;
+    const classId = this.attendanceRecordFormGroup.get('classId')?.value;
     if (classId) {
       this.getEleveList(classId);
+      this.getCoursList(classId);
     }
   }
 
@@ -120,8 +132,9 @@ export class CreationAbsenceComponent implements OnInit {
     });
   }
 
-  initializeForm(absence: AbsenceEdit | null) {
-    this.absenceFormGroup = this._formBuilder.group({
+  initializeForm(absence: AttendanceRecord | null) {
+    /*
+    this.attendanceRecordFormGroup = this._formBuilder.group({
       id: [absence?.id ? absence.id : ''],
       eleveId: [absence?.eleveId ? absence.eleveId : '', Validators.required],
       semestre: [absence?.semestre ? absence.semestre : '', Validators.required],
@@ -130,19 +143,20 @@ export class CreationAbsenceComponent implements OnInit {
       justifiee: [absence?.justifiee ? absence.justifiee : '', Validators.required],
       dateAbsence: [absence?.dateAbsence ? absence.dateAbsence : '', Validators.required],
       classId: [absence?.classId ? absence.classId : '', Validators.required],
-    });
+    })*/
+
   }
 
-  getAbsenceById(absenceId: number) {
-    this.coursService.getSingleResource('absence', absenceId).subscribe({
+  getAttendanceRecordById(absenceId: number) {
+    this.coursService.getSingleResource('attendancerecord', absenceId).subscribe({
       next: (data: any) => {
-        this.absence = data;
-        this.initializeForm(this.absence);
+        this.attendanceRecord = data;
+        this.initializeForm(this.attendanceRecord);
 
-        if (this.absence?.classId) {
+        if (this.attendanceRecord?.classId) {
 
-          this.absenceFormGroup.get("classId")!.patchValue(this.absence.classId);
-          this.getEleveList(this.absence.classId);
+          this.attendanceRecordFormGroup.get("classId")!.patchValue(this.attendanceRecord.classId);
+          this.getEleveList(this.attendanceRecord.classId);
         }
       }
     });
@@ -150,12 +164,12 @@ export class CreationAbsenceComponent implements OnInit {
 
 
   ajouterEditAbsence() {
-    const payload: AbsenceEdit = this.absenceFormGroup.value;
-    payload.createur = this.userId;
+    const payload: AttendanceRecord = this.attendanceRecordFormGroup.value;
+    payload.declaredByUserId = this.userId;
     payload.typeSignalement = TypeSignalement.ADMIN;
     payload.ecole = this.ecoleId;
-    if (this.absenceId === null || this.absenceId === undefined) {
-      this.coursService.createRessource('absence', payload).subscribe({
+    if (this.attendanceRecordId === null || this.attendanceRecordId === undefined) {
+      this.coursService.createRessource('attendancerecord', payload).subscribe({
         next: (data) => {
           this.toastService.success('success', 'Absence ajoutée avec succès.');
           this.goBack();
@@ -166,7 +180,7 @@ export class CreationAbsenceComponent implements OnInit {
         }
       });
     } else {
-      this.coursService.updateResource('absence', this.absenceId, payload).subscribe({
+      this.coursService.updateResource('attendancerecord', this.attendanceRecordId, payload).subscribe({
         next: (data: any) => {
           this.toastService.success('success', 'Absence modifiée avec succès.');
           this.goBack();
