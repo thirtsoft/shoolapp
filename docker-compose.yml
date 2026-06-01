@@ -2,7 +2,8 @@ services:
   # Instance Dauphin
   angular-dauphin:
     build:
-      context: .
+      #  context: .
+      context: /home/ubuntu/apps/frontend/eduschool/eduschooldauphin
       dockerfile: Dockerfile
       args:
         BASE_HREF: /dauphin/
@@ -28,7 +29,8 @@ services:
   # Instance Collège
   angular-college:
     build:
-      context: .
+      #  context: .
+      context: /home/ubuntu/apps/frontend/eduschool/eduschooldauphin
       dockerfile: Dockerfile
       args:
         BASE_HREF: /college/
