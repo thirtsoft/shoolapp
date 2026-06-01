@@ -69,19 +69,6 @@ export const DOSSIERS_ELEVES_ROUTES: Routes = [
         component: CreationInscriptionComponent
       },
 
-      /*
-      {
-        path: 'paiement',
-        component: PaiementComponent
-      },
-      {
-        path: 'paiement/create',
-        component: CreationPaiementComponent
-      },
-      {
-        path: 'paiement/edit/:id',
-        component: CreationPaiementComponent
-      },*/
       {
         path: 'parent',
         component: ParentListComponent
