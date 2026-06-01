@@ -1,14 +1,14 @@
 import { Component, inject, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { ToastrService } from '@iqx-limited/ngx-toastr';
+import { ToastrService } from 'ngx-toastr';
+import { Livre } from '../../../../../../core/models/planification/livre';
 import { ListeClasse } from '../../../../../../core/models/referentiels/classe';
 import { Matiere } from '../../../../../../core/models/referentiels/matiere';
 import { Utilisateur } from '../../../../../../core/models/utilisateur/utilisateur';
 import { ReferentielService } from '../../../../referentiel/service/referentiel.service';
 import { UtilisateurService } from '../../../../utilisateur/service/utilisateur.service';
 import { PlanificationResourceService } from '../../../services/planification-resource.service';
-import { Livre } from '../../../../../../core/models/planification/livre';
 
 @Component({
   selector: 'app-create-livre',

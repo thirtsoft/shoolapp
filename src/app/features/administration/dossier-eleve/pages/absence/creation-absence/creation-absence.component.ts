@@ -1,7 +1,7 @@
 import { Component, inject, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { ToastrService } from '@iqx-limited/ngx-toastr';
+import { ToastrService } from 'ngx-toastr';
 import { TypeSignalement } from '../../../../../../core/enumeration/type-signalement';
 import { AbsenceEdit } from '../../../../../../core/models/dossiereleve/absence/absenceedit';
 import { ListeEleve } from '../../../../../../core/models/dossiereleve/liste-eleve';

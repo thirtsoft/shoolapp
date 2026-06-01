@@ -2,11 +2,11 @@ import { DatePipe } from '@angular/common';
 import { Component, inject, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { ToastrService } from '@iqx-limited/ngx-toastr';
 import { AnneeScolaire } from '../../../../../../core/models/referentiels/annee-scolaire';
 import { Utilisateur } from '../../../../../../core/models/utilisateur/utilisateur';
 import { UtilisateurService } from '../../../../utilisateur/service/utilisateur.service';
 import { ReferentielService } from '../../../service/referentiel.service';
+import { ToastrService } from 'ngx-toastr';
 
 @Component({
   selector: 'app-create-annee-scolaire',

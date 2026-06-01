@@ -1,7 +1,6 @@
 import { Component, inject, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { ToastrService } from '@iqx-limited/ngx-toastr';
 import { Constants } from '../../../../../../core/constants/constants';
 import { Enseignant } from '../../../../../../core/models/enseignant/enseignant';
 import { Enseignement } from '../../../../../../core/models/planification/enseignement';
@@ -12,6 +11,7 @@ import { PieceJointeService } from '../../../../../../core/services/piece-jointe
 import { EnseignantService } from '../../../../../enseignant/service/enseignant.service';
 import { PlanificationResourceService } from '../../../../planification/services/planification-resource.service';
 import { ReferentielService } from '../../../../referentiel/service/referentiel.service';
+import { ToastrService } from 'ngx-toastr';
 
 
 @Component({

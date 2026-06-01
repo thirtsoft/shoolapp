@@ -1,338 +1,185 @@
-<!-- <div class="page-wrapper">
-  <div class="content container-fluid">
-    <div class="row">
-      <div class="col-sm-12">
-        <div class="card">
-          <div class="card-body">
-            <h3 class="page-title text-center mb-2">{{ title }}</h3>
-            <form [formGroup]="noteFormGroup">
-              <div style="margin-top: 5px">
-                <input type="text" readonly="true" hidden="true" formControlName="id" />
-                <div class="row form-row">
-                  <div class="col-lg-6 col-sm-6">
-                    <div class="form-group">
-                      <label>Classe <span class="text-danger">*</span></label>
-                      <select
-                        class="form-control select"
-                        name="classe"
-                        formControlName="classe"
-                        required=""
-                        [(ngModel)]="selectedClass"
-                        (change)="onClasseSelected()"
-                      >
-                        <option>Selectionnez</option>
-                        <option *ngFor="let item of classeList" [value]="item.id">
-                          {{ item.libelle }}
-                        </option>
-                      </select>
-                    </div>
-                  </div>
-                  <div class="col-lg-6 col-sm-6">
-                    <div class="form-group">
-                      <label>Elève <span class="text-danger">*</span></label>
-                      <select
-                        class="form-control select"
-                        name="eleve"
-                        formControlName="eleve"
-                        required=""
-                      >
-                        <option>Selectionnez</option>
-                        <option *ngFor="let item of eleveList" [value]="item.eleve">
-                          {{ item.prenom }} - {{ item.nom }}
-                        </option>
-                      </select>
-                    </div>
-                  </div>
-                </div>
-
-                <div class="row form-row">
-                  <div class="col-lg-4 col-sm-4">
-                    <div class="form-group">
-                      <label>Evaluation <span class="text-danger">*</span></label>
-                      <select
-                        class="form-control select"
-                        name="evaluation"
-                        formControlName="evaluation"
-                        required=""
-                      >
-                        <option value="">Selectionnez une évaluation</option>
-                        <option *ngFor="let item of evaluationList" [value]="item.id">
-                          {{ item.matiere }}
-                        </option>
-                      </select>
-                    </div>
-                  </div>
-
-                  <div class="col-lg-4 col-sm-4">
-                    <div class="form-group">
-                      <label>Type note <span class="text-danger">*</span></label>
-                      <select
-                        class="form-control select"
-                        name="type"
-                        formControlName="type"
-                        required=""
-                      >
-                        <option value="">Selectionnez une type note</option>
-                        <option *ngFor="let item of typeNoteList" [value]="item">
-                          {{ item }}
-                        </option>
-                      </select>
-                    </div>
-                  </div>
-                  <div class="col-lg-4 col-sm-4">
-                    <div class="form-group">
-                      <label>Note <span class="text-danger">*</span></label>
-                      <input type="number" formControlName="note" required class="form-control" />
-                    </div>
-                  </div>
-                </div>
-
-                <div class="row form-row">
-                  <div class="col-lg-12 col-sm-12">
-                    <div class="form-group">
-                      <label>Appréciation <span class="text-danger">*</span></label>
-
-                      <textarea
-                        formControlName="appreciation"
-                        class="form-control"
-                        name=""
-                        id=""
-                      ></textarea>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </form>
-            <div style="margin-top: 75px col-sm-12">
-              <button
-                type="button"
-                class="btn btn-primary si_accept_confirm float-lg-right"
-                id="btn-yes"
-                (click)="ajoutereditNote()"
-              >
-                Enregistrer
-              </button>
-              <button
-                type="button"
-                class="btn btn-danger si_accept_cancel float-left"
-                (click)="goBack()"
-              >
-                Annuler
-              </button>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
- -->
-
 <div class="page-wrapper">
   <div class="content container-fluid">
-    <!-- Page Header -->
     <div class="page-header">
       <div class="row align-items-center">
-        <div class="col-sm-12">
-          <h3 class="page-title">{{ title }}</h3>
+        <div class="col-sm-6 col-auto">
+          <h3 class="page-title">Saisie des notes</h3>
           <p class="text-muted mt-1 mb-0">
             <i class="fas fa-chart-line me-1"></i> Gestion des notes des élèves
           </p>
         </div>
+        <div class="col-sm-6 col-auto text-end">
+          <div class="notes-summary">
+            <span class="badge-summary"
+              >Moyenne : <strong>{{ moyenneClasse }}/20</strong></span
+            >
+            <span class="badge-summary"
+              >Max : <strong>{{ noteMaximale }}/20</strong></span
+            >
+            <span class="badge-summary"
+              >Min : <strong>{{ noteMinimale }}/20</strong></span
+            >
+          </div>
+        </div>
       </div>
     </div>
 
-    <!-- Badge -->
-    <div class="badge-container">
-      <span class="badge badge-primary">
-        <i class="fas fa-plus-circle me-1"></i> Nouvelle note
-      </span>
-    </div>
+    <div class="card">
+      <div class="card-body p-4 p-md-5">
+        <!-- Sélecteur de classe -->
+        <div class="form-group full-width">
+          <label class="form-label">
+            <i class="fas fa-chalkboard-user me-1"></i> Classe
+            <span class="text-danger">*</span>
+          </label>
+          <select
+            class="form-select"
+            (change)="onClasseChange($event)"
+            [(ngModel)]="selectedClasseId"
+          >
+            <option value="" disabled selected>— Sélectionnez une classe —</option>
+            @for (classe of classeList; track classe.id) {
+              <option [value]="classe.id">
+                {{ classe.libelle }}
+              </option>
+            }
+          </select>
+        </div>
 
-    <div class="row">
-      <div class="col-12">
-        <div class="card">
-          <div class="card-body p-4 p-md-5">
-            <!-- Step Indicator -->
-            <div class="step-indicator">
-              <div class="step active">
-                <span class="step-number">1</span>
-                <span class="step-label">Information</span>
-              </div>
-              <div class="step-line"></div>
-              <div class="step">
-                <span class="step-number">2</span>
-                <span class="step-label">Confirmation</span>
-              </div>
+        <!-- Sélecteur d'évaluation (visible uniquement si une classe est sélectionnée) -->
+        @if (selectedClasseId) {
+          <div class="evaluation-selector">
+            <div class="form-group full-width">
+              <label class="form-label">
+                <i class="fas fa-clipboard-list me-1"></i> Choisir une évaluation
+                <span class="text-danger">*</span>
+              </label>
+              <select class="form-select" (change)="onEvaluationChange($event)">
+                <option value="" disabled selected>— Sélectionnez une évaluation —</option>
+                @for (evaluation of evaluationList; track evaluation.id) {
+                  <!--  <option [value]="evaluation.id">
+                    {{ evaluation.titre }} ({{ evaluation.typeEvaluation}} - Coef.
+                    {{ evaluation.coefficient }})
+                  </option> -->
+
+                  <option [value]="evaluation.id">
+                    {{ evaluation.titre }} {{ evaluation.evaluationType }} - Coef.
+                  </option>
+                }
+              </select>
             </div>
 
-            <form [formGroup]="noteFormGroup" (ngSubmit)="ajoutereditNote()">
-              <input type="hidden" formControlName="id" />
-
-              <div class="enseignement-item">
-                <!-- Ligne 1: Classe + Élève -->
-                <div class="row form-row">
-                  <div class="col-lg-6 col-sm-12">
-                    <div class="form-group">
-                      <label class="form-label">
-                        Classe <span class="text-danger">*</span>
-                        <i class="fas fa-chalkboard-user ms-1 text-muted"></i>
-                      </label>
-                      <select
-                        class="form-select"
-                        formControlName="classe"
-                        required
-                        [(ngModel)]="selectedClass"
-                        (change)="onClasseSelected()"
-                      >
-                        <option value="" disabled selected>— Sélectionnez une classe —</option>
-                        @for (item of classeList; track item.id) {
-                          <option [value]="item.id">{{ item.libelle }}</option>
-                        }
-                      </select>
-                      @if (
-                        noteFormGroup.get('classe')?.invalid && noteFormGroup.get('classe')?.touched
-                      ) {
-                        <div class="invalid-feedback">Veuillez sélectionner une classe</div>
-                      }
-                    </div>
-                  </div>
-
-                  <div class="col-lg-6 col-sm-12">
-                    <div class="form-group">
-                      <label class="form-label">
-                        Élève <span class="text-danger">*</span>
-                        <i class="fas fa-user-graduate ms-1 text-muted"></i>
-                      </label>
-                      <select class="form-select" formControlName="eleve" required>
-                        <option value="" disabled selected>— Sélectionnez un élève —</option>
-                        @for (item of eleveList; track item.eleve) {
-                          <option [value]="item.eleve">{{ item.nomCompletEleve }}</option>
-                        }
-                      </select>
-                      @if (
-                        noteFormGroup.get('eleve')?.invalid && noteFormGroup.get('eleve')?.touched
-                      ) {
-                        <div class="invalid-feedback">Veuillez sélectionner un élève</div>
-                      }
-                    </div>
-                  </div>
-                </div>
-
-                <!-- Ligne 2: Évaluation + Type note + Note -->
-                <div class="row form-row">
-                  <div class="col-lg-4 col-sm-12">
-                    <div class="form-group">
-                      <label class="form-label">
-                        Évaluation <span class="text-danger">*</span>
-                        <i class="fas fa-clipboard-list ms-1 text-muted"></i>
-                      </label>
-                      <select class="form-select" formControlName="evaluation" required>
-                        <option value="" disabled selected>— Sélectionnez une évaluation —</option>
-                        @for (item of evaluationList; track item.id) {
-                          <option [value]="item.id">{{ item.matiere }}</option>
-                        }
-                      </select>
-                      @if (
-                        noteFormGroup.get('evaluation')?.invalid &&
-                        noteFormGroup.get('evaluation')?.touched
-                      ) {
-                        <div class="invalid-feedback">Veuillez sélectionner une évaluation</div>
-                      }
-                    </div>
-                  </div>
-
-                  <div class="col-lg-4 col-sm-12">
-                    <div class="form-group">
-                      <label class="form-label">
-                        Type note <span class="text-danger">*</span>
-                        <i class="fas fa-tag ms-1 text-muted"></i>
-                      </label>
-                      <select class="form-select" formControlName="type" required>
-                        <option value="" disabled selected>— Sélectionnez un type —</option>
-                        @for (item of typeNoteList; track item) {
-                          <option [value]="item">{{ item }}</option>
-                        }
-                      </select>
-                      @if (
-                        noteFormGroup.get('type')?.invalid && noteFormGroup.get('type')?.touched
-                      ) {
-                        <div class="invalid-feedback">Veuillez sélectionner un type</div>
-                      }
-                    </div>
-                  </div>
-
-                  <div class="col-lg-4 col-sm-12">
-                    <div class="form-group">
-                      <label class="form-label">
-                        Note /20 <span class="text-danger">*</span>
-                        <i class="fas fa-star ms-1 text-muted"></i>
-                      </label>
-                      <input
-                        type="number"
-                        class="form-control"
-                        formControlName="note"
-                        placeholder="0"
-                        min="0"
-                        max="20"
-                        step="0.5"
-                        required
-                      />
-                      @if (
-                        noteFormGroup.get('note')?.invalid && noteFormGroup.get('note')?.touched
-                      ) {
-                        <div class="invalid-feedback">La note est requise (0-20)</div>
-                      }
-                    </div>
-                  </div>
-                </div>
-
-                <!-- Ligne 3: Appréciation -->
-                <div class="row form-row">
-                  <div class="col-12">
-                    <div class="form-group">
-                      <label class="form-label">
-                        Appréciation <span class="text-danger">*</span>
-                        <i class="fas fa-comment ms-1 text-muted"></i>
-                      </label>
-                      <textarea
-                        class="form-control"
-                        formControlName="appreciation"
-                        rows="3"
-                        placeholder="Saisissez une appréciation pour l'élève..."
-                      ></textarea>
-                      @if (
-                        noteFormGroup.get('appreciation')?.invalid &&
-                        noteFormGroup.get('appreciation')?.touched
-                      ) {
-                        <div class="invalid-feedback">L'appréciation est requise</div>
-                      }
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              <!-- Actions -->
-              <div class="form-actions">
-                <button type="button" class="btn btn-secondary" (click)="goBack()">
-                  <i class="fas fa-times me-2"></i>Annuler
-                </button>
-                <button type="submit" class="btn btn-primary" [disabled]="!noteFormGroup.valid">
-                  <i class="fas fa-save me-2"></i>
-                  Enregistrer la note
-                </button>
-              </div>
-
-              <!-- Message d'aide -->
-              <div class="alert-help mt-4" role="alert">
-                <i class="fas fa-info-circle me-2"></i>
-                <span>
-                  Les notes doivent être comprises entre 0 et 20. Saisissez une appréciation pour
-                  chaque élève afin de suivre ses progrès.
+            @if (selectedEvaluationForNotes) {
+              <div class="selected-info">
+                <span class="badge-info">
+                  <i class="fas fa-book-open me-1"></i> {{ selectedEvaluationForNotes.titre }}
+                </span>
+                <span class="badge-info">
+                  <i class="fas fa-calendar-alt me-1"></i>
+                  {{ selectedEvaluationForNotes.date | date: 'dd/MM/yyyy' }}
+                </span>
+                <span class="badge-info">
+                  <i class="fas fa-calculator me-1"></i> Coefficient ×{{
+                    selectedEvaluationForNotes.coefficient
+                  }}
                 </span>
               </div>
-            </form>
+            }
           </div>
+        }
+
+        @if (selectedEvaluationForNotes) {
+          <!-- Actions -->
+          <div class="form-actions">
+            <button class="btn btn-primary" (click)="sauvegarderNotes()">
+              <i class="fas fa-save me-2"></i> Sauvegarder toutes les notes
+            </button>
+          </div>
+
+          <!-- Tableau des notes -->
+          <div class="table-responsive">
+            <table class="data-table notes-table">
+              <thead>
+                <tr>
+                  <th class="sticky-col">Élève</th>
+                  <th class="text-center">Note /{{ selectedEvaluationForNotes.noteMax }}</th>
+                  <th class="text-center">
+                    Coefficient ×{{ selectedEvaluationForNotes.coefficient }}
+                  </th>
+                  <th>Appréciation</th>
+                </tr>
+              </thead>
+              <tbody>
+                @for (note of notesData(); track note.eleveId; let i = $index) {
+                  <tr>
+                    <td class="sticky-col">
+                      <div class="eleve-cell">
+                        <div class="eleve-avatar-small">
+                          @if (note.prenom && note.nom) {
+                            {{ (note.prenom.charAt(0) || '') + (note.nom.charAt(0) || '') }}
+                          } @else {
+                            {{ note.eleveId }}
+                          }
+                        </div>
+                        <span class="eleve-name">
+                          @if (note.nom && note.prenom) {
+                            {{ note.nom }} {{ note.prenom }}
+                          } @else {
+                            Élève {{ note.eleveId }}
+                          }
+                        </span>
+                      </div>
+                    </td>
+                    <td class="text-center">
+                      <input
+                        type="number"
+                        class="note-input"
+                        [(ngModel)]="note.noteValue"
+                        (change)="updateNote(note.eleveId, note.noteValue)"
+                        min="0"
+                        [max]="selectedEvaluationForNotes.noteMax || 20"
+                        step="0.5"
+                      />
+                    </td>
+                    <td class="text-center">
+                      <span class="coefficient-badge"
+                        >×{{ selectedEvaluationForNotes.coefficient || 1 }}</span
+                      >
+                    </td>
+                    <td>
+                      <input
+                        type="text"
+                        class="appreciation-input"
+                        [(ngModel)]="note.appreciation"
+                        (change)="updateAppreciation(note.eleveId, note.appreciation)"
+                        placeholder="Saisir une appréciation..."
+                      />
+                    </td>
+                  </tr>
+                }
+              </tbody>
+            </table>
+          </div>
+        } @else if (selectedClasseId && !selectedEvaluationForNotes) {
+          <div class="empty-notes-state">
+            <i class="fas fa-clipboard-list fa-3x"></i>
+            <p>Veuillez sélectionner une évaluation pour commencer la saisie des notes</p>
+          </div>
+        } @else if (!selectedClasseId) {
+          <div class="empty-notes-state">
+            <i class="fas fa-chalkboard-user fa-3x"></i>
+            <p>Veuillez d'abord sélectionner une classe</p>
+          </div>
+        }
+
+        <!-- Message d'aide -->
+        <div class="alert-help mt-4" role="alert">
+          <i class="fas fa-info-circle me-2"></i>
+          <span>
+            Les notes doivent être comprises entre 0 et
+            {{ selectedEvaluationForNotes?.noteMax || 20 }}. Saisissez une appréciation pour chaque
+            élève afin de suivre ses progrès.
+          </span>
         </div>
       </div>
     </div>

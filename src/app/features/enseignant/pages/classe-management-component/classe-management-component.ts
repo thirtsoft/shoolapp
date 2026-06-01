@@ -1,7 +1,12 @@
 import { DatePipe } from '@angular/common';
 import { Component, inject, OnInit, signal } from '@angular/core';
-import { FormsModule } from '@angular/forms';
-import { ActivatedRoute, RouterModule } from '@angular/router';
+import { FormBuilder, FormsModule } from '@angular/forms';
+import { ActivatedRoute, Router, RouterModule } from '@angular/router';
+import { PieceJointeService } from '../../../../core/services/piece-jointe';
+import { PlanificationResourceService } from '../../../administration/planification/services/planification-resource.service';
+import { ReferentielService } from '../../../administration/referentiel/service/referentiel.service';
+import { EnseignantService } from '../../service/enseignant.service';
+import { ToastrService } from 'ngx-toastr';
 // ─── Interfaces ───────────────────────────────────────
 export interface Eleve {
   id: string;
@@ -98,7 +103,25 @@ interface ExerciceForm {
 })
 export class ClasseManagementComponent implements OnInit {
 
+
+  classeId?: number;
+  //  classe: Classe = {};
+
   private readonly route = inject(ActivatedRoute);
+  private readonly referentielService = inject(ReferentielService);
+  private readonly planification = inject(PlanificationResourceService);
+  private readonly enseignantService = inject(EnseignantService);
+  private readonly pieceJointeService = inject(PieceJointeService);
+  private readonly toastService = inject(ToastrService)
+  private readonly activeRoute = inject(ActivatedRoute);
+  private readonly router = inject(Router);
+  private readonly _formBuilder = inject(FormBuilder);
+
+  constructor(
+  ) {
+    this.classeId = Number(this.activeRoute.snapshot.params['id']);
+    console.log('ClassID', this.classeId);
+  }
 
   // ─── Contexte (vient des query params) ──────────────
   matiere = signal<string>('Mathématiques');

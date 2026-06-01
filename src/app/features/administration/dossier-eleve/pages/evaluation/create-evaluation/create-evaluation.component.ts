@@ -2,7 +2,7 @@ import { Component, inject, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 
-import { ToastrService } from '@iqx-limited/ngx-toastr';
+import { ToastrService } from 'ngx-toastr';
 import { Evaluation } from '../../../../../../core/models/dossiereleve/evaluation/evaluation';
 import { ListeEnseignement } from '../../../../../../core/models/planification/liste-enseignement';
 import { Utilisateur } from '../../../../../../core/models/utilisateur/utilisateur';

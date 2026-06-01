@@ -1,8 +1,8 @@
 import { Location } from '@angular/common';
 import { Component, inject, OnInit } from '@angular/core';
 import { FormArray, FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
-import { ActivatedRoute, Router } from '@angular/router';
-import { ToastrService } from '@iqx-limited/ngx-toastr';
+import { Router } from '@angular/router';
+import { ToastrService } from 'ngx-toastr';
 import { EleveRequest } from '../../../../../core/models/dossiereleve/request/eleve-request';
 import { Inscription } from '../../../../../core/models/dossiereleve/request/inscription';
 import { Eleve, MedecinTraitant, Parent } from '../../../../../core/models/parent/parent';
@@ -12,7 +12,6 @@ import { LocalStorageService } from '../../../../../core/services/local-storage.
 import { ReferentielResourceService } from '../../../referentiel/service/referentiel-resource.service';
 import { ReferentielService } from '../../../referentiel/service/referentiel.service';
 import { DossierEleveService } from '../../service/dossier-eleve.service';
-import { DossierResourceService } from '../../service/dossier-resource.service';
 
 
 @Component({
@@ -39,7 +38,6 @@ export class InscrireEleveComponent implements OnInit {
   medecinTraitant?: MedecinTraitant;
   medecinTraitantId?: number;
 
-  //  parentFormGroup!: FormGroup;
   parent: Parent = {};
   parentId?: number;
 
@@ -51,7 +49,7 @@ export class InscrireEleveComponent implements OnInit {
   userId?: number;
   classes: Classe[] = [];
   anneeScolaires: AnneeScolaire[] = [];
-  currentStep: number = 0;
+  currentStep: number = 1;
   endStep: boolean = false;
   allergie?: string;
   allergies?: string[];
@@ -63,12 +61,10 @@ export class InscrireEleveComponent implements OnInit {
 
   private readonly router = inject(Router);
   private readonly dossierEleveService = inject(DossierEleveService);
-  private readonly dossierResource = inject(DossierResourceService);
   private readonly referentielService = inject(ReferentielService);
   private readonly referentielResource = inject(ReferentielResourceService);
   private readonly localStorage = inject(LocalStorageService);
   private readonly _formBuilder = inject(FormBuilder);
-  private readonly route = inject(ActivatedRoute);
   private readonly toastService = inject(ToastrService);
   private readonly location = inject(Location);
 
@@ -84,14 +80,12 @@ export class InscrireEleveComponent implements OnInit {
 
   ngOnInit(): void {
     this.userId = this.localStorage.getItem('id');
-    this.formateJS();
     this.initializeEleveForm(null);
     this.initializeMedecinTraitantForm(null);
     this.initializeInscriptionForm(null);
     this.getClasses();
     this.getAnneeScolaires();
     this.parentFormGroup.get('nouveauParent')?.valueChanges.subscribe((value: any) => {
-      console.log('Valeur sélectionnée:', value);
       this.newParent = value;
     });
   }
@@ -115,7 +109,6 @@ export class InscrireEleveComponent implements OnInit {
 
   nextStep() {
     if (!this.isCurrentStepValid()) return;
-
     if (this.currentStep === 1) {
       this.ajouterEleve();
     } else if (this.currentStep === 2) {
@@ -135,6 +128,7 @@ export class InscrireEleveComponent implements OnInit {
     } else if (this.currentStep === 3) {
       return this.medecinTraitantFormGroup.valid;
     } else if (this.currentStep === 4) {
+      this.checkFormValidity();
       return this.inscriptionFormGroup.valid;
     }
     return false;
@@ -160,8 +154,7 @@ export class InscrireEleveComponent implements OnInit {
     if (index >= 0) {
       this.allergies.splice(index, 1);
     }
-
-    this.toastService.info('Info', `Allergie "${item}" supprimée`);
+    this.toastService.info('Info', '"${item}" supprimée`');
   }
 
   remove1(produit: string): void {
@@ -171,7 +164,6 @@ export class InscrireEleveComponent implements OnInit {
     }
   }
 
-  // Ajouter une allergie (avec bouton +)
   addAllergie() {
     if (this.allergie && this.allergie.trim() !== '') {
       if (!this.allergies) {
@@ -207,13 +199,14 @@ export class InscrireEleveComponent implements OnInit {
   }
 
   ajouterEleve() {
-    const circles = document.querySelectorAll(".circle");
-    const progressBar: any = document.querySelector(".indicator");
     const payload = this.eleveFormGroup.value;
-    if (payload) {
-      this.currentStep = this.currentStep + 1;
-      progressBar.style.width = `${((this.currentStep - 1) / (circles.length - 1)) * 100}%`;
+    console.log('payload', payload);
+    if (payload && this.eleveFormGroup.valid) {
+      this.currentStep++;
+      this.updateProgressBar();
+      this.toastService.success('Succès', 'Elève ajouté avec succès');
     }
+
   }
 
   utilisateurDTOS(): FormArray {
@@ -235,9 +228,10 @@ export class InscrireEleveComponent implements OnInit {
   }
 
   onAddParentItem() {
-    if (this.utilisateurDTOS().length === 0) {
-      this.utilisateurDTOS().push(this.newParentItem());
-    }
+    this.checkNombreParent();
+    console.log('Ajout d\'un nouveau parent');
+    this.utilisateurDTOS().push(this.newParentItem());
+    console.log('Nombre de parents:', this.utilisateurDTOS().length);
   }
 
   removeParentItem(parentItemIndex: number) {
@@ -257,8 +251,15 @@ export class InscrireEleveComponent implements OnInit {
   }
 
   onAddParentIdentifiantItem() {
-    if (this.utilisateurDTOs().length === 0) {
-      this.utilisateurDTOs().push(this.ParentItemIdentifiant());
+    this.checkNombreParent();
+    this.utilisateurDTOs().push(this.ParentItemIdentifiant());
+  }
+
+
+  checkNombreParent() {
+    if (this.utilisateurDTOs().length >= 2) {
+      this.toastService.warning('Attention', 'Vous ne pouvez ajouter que 2 parents maximum');
+      return;
     }
   }
 
@@ -291,7 +292,23 @@ export class InscrireEleveComponent implements OnInit {
     }
   }
 
+  ajouterParent() {
+    const payload = this.parentFormGroup.value;
+    this.telephonesList = [];
+    if (payload) {
+      this.currentStep++;
+      this.updateProgressBar();
+    }
 
+    if (payload?.utilisateurDTOs) {
+      this.telephonesList = payload.utilisateurDTOs
+        .map((item: any) => item.telephone)
+        .filter((telephone: string) => telephone !== undefined);
+    }
+    console.log('matricules list parent', this.telephonesList);
+  }
+
+  /*
   ajouterParent() {
     const circles = document.querySelectorAll(".circle");
     const progressBar: any = document.querySelector(".indicator");
@@ -308,7 +325,7 @@ export class InscrireEleveComponent implements OnInit {
       }
     }
     console.log('matricules list parent', this.telephonesList);
-  }
+  }*/
 
   initializeMedecinTraitantForm(medecin: MedecinTraitant | null) {
     this.medecinTraitantFormGroup = this._formBuilder.group({
@@ -319,6 +336,7 @@ export class InscrireEleveComponent implements OnInit {
       email: [medecin?.email ? medecin.email : ''],
     });
   }
+
   selectFile(event: any): void {
     this.message = '';
     this.preview = '';
@@ -347,53 +365,6 @@ export class InscrireEleveComponent implements OnInit {
     console.log("Le fichier choisi est ", this.currentFile);
   }
 
-
-  saveEleve() {
-    if (this.utilisateurDTOS().length > 0) {
-      this.newParent = false;
-      this.utilisateurDTOResult = this.parentFormGroup.getRawValue().utilisateurDTOS;
-    } else {
-      this.newParent = true;
-      this.utilisateurDTOResult = this.parentFormGroup.getRawValue().utilisateurDTOs;
-    }
-    let request: Eleve = {
-      id: this.eleveFormGroup.getRawValue().id,
-      nom: this.eleveFormGroup.getRawValue().nom,
-      prenom: this.eleveFormGroup.getRawValue().prenom,
-      sexe: this.eleveFormGroup.getRawValue().sexe,
-      lieuNaissance: this.eleveFormGroup.getRawValue().lieuNaissance,
-      dateNaissance: this.eleveFormGroup.getRawValue().dateNaissance,
-      nationalite: this.eleveFormGroup.getRawValue().nationalite,
-      address: this.eleveFormGroup.getRawValue().address,
-      allergies: this.allergies,
-      utilisateurDTOS: this.utilisateurDTOResult,
-      medecinTraitantDTO: this.medecinTraitantFormGroup.getRawValue()
-    }
-    const circles = document.querySelectorAll(".circle");
-    const progressBar: any = document.querySelector(".indicator");
-    request.parentExist = this.newParent;
-    request.telephones = this.telephonesList;
-    this.dossierEleveService.enregistrerEleve(request).subscribe({
-      next: (response) => {
-        if (response.statut === 'OK') {
-          this.code = response.eleve;
-          this.eleveId = response.eleve;
-          this.currentStep = this.currentStep + 1;
-          progressBar.style.width = `${((this.currentStep - 1) / (circles.length - 1)) * 100}%`;
-          this.toastService.success('succès', 'Les informations l\'élève ont été enregistrées avec succès !!! ');
-        } else if (response.statut === 'FAILED') {
-          this.toastService.error('Erreur', response.message);
-        } else {
-          this.toastService.error('Erreur', 'Réponse inattendue du serveur: ' + JSON.stringify(response));
-        }
-      }, error: (error) => {
-        console.error('Erreur technique:', error);
-        const errorMsg = error.error?.message || error.message || 'Erreur de connexion au serveur';
-        this.toastService.error('Erreur technique', errorMsg);
-      }
-    });
-  }
-
   saveEleveWithFiles() {
     const formData: FormData = new FormData();
 
@@ -417,8 +388,6 @@ export class InscrireEleveComponent implements OnInit {
       utilisateurDTOS: this.utilisateurDTOResult,
       medecinTraitantDTO: this.medecinTraitantFormGroup.getRawValue()
     }
-    const circles = document.querySelectorAll(".circle");
-    const progressBar: any = document.querySelector(".indicator");
     request.parentExist = this.newParent;
     request.telephones = this.telephonesList;
     formData.append('file', this.currentFile!);
@@ -428,9 +397,12 @@ export class InscrireEleveComponent implements OnInit {
         if (response.statut === 'OK') {
           this.code = response.eleve;
           this.eleveId = response.eleve;
-          this.currentStep = this.currentStep + 1;
-          progressBar.style.width = `${((this.currentStep - 1) / (circles.length - 1)) * 100}%`;
-          this.toastService.success('succès', 'Les informations l\'élève ont été enregistrées avec succès !!! ');
+          this.updateInscriptionFormWithEleveId(this.eleveId);
+          if (this.eleveId) {
+            this.currentStep++;
+            this.updateProgressBar();
+            this.toastService.success('succès', 'Les informations l\'élève ont été enregistrées avec succès !!! ');
+          }
         } else if (response.statut === 'FAILED') {
           this.toastService.error('Erreur', response.message);
         } else {
@@ -453,6 +425,26 @@ export class InscrireEleveComponent implements OnInit {
       classeId: [inscription?.classeDTO?.id ? inscription?.classeDTO?.id : '', Validators.required],
       montantInscription: [inscription?.montantInscription ? inscription.montantInscription : '', Validators.required],
     });
+  }
+
+  updateInscriptionFormWithEleveId(eleveId: number) {
+    this.inscriptionFormGroup.patchValue({
+      eleveId: eleveId
+    });
+    console.log('eleveId mis à jour dans le formulaire inscription:', eleveId);
+  }
+
+  checkFormValidity() {
+    if (this.currentStep === 4) {
+      Object.keys(this.inscriptionFormGroup.controls).forEach(key => {
+        const control = this.inscriptionFormGroup.get(key);
+        console.log(`${key}:`, {
+          value: control?.value,
+          valid: control?.valid,
+          errors: control?.errors
+        });
+      });
+    }
   }
 
   getInscriptionByCodeEleve(code: string) {
@@ -490,61 +482,29 @@ export class InscrireEleveComponent implements OnInit {
 
   }
 
-  goBack() {
-    this.location.back();
-  }
-
   cancel() {
     this.location.back()
   }
 
   precedent() {
-    const circles = document.querySelectorAll(".circle");
-    const progressBar: any = document.querySelector(".indicator");
-    const payload = this.parentFormGroup.value;
-    if (payload) {
-      this.currentStep = this.currentStep - 1;
-      progressBar.style.width = `${((this.currentStep - 1) / (circles.length - 1)) * 100}%`;
+    if (this.currentStep > 1) {
+      this.currentStep--;
+      this.updateProgressBar();
     }
   }
 
+  updateProgressBar() {
+    setTimeout(() => {
+      const steps = document.querySelectorAll(".step");
+      const progressBar = document.querySelector(".step-indicator") as HTMLElement;
 
+      console.log('steps', steps);
+      console.log('progressBar', progressBar);
 
-  public formateJS() {
-    const circles = document.querySelectorAll(".circle");
-    const progressBar: any = document.querySelector(".indicator");
-    const buttons = document.querySelectorAll("button");
-    console.log(circles.length);
-    this.currentStep = 1;
-    const updateSteps = (e: any) => {
-      this.currentStep = e.target.id === "next" ? ++this.currentStep : --this.currentStep;
-      circles.forEach((circle, index) => {
-        circle.classList[`${index < this.currentStep ? "add" : "remove"}`]("active");
-      });
-      progressBar.style.width = `${((this.currentStep - 1) / (circles.length - 1)) * 100}%`;
-      if (this.currentStep === circles.length) {
-        this.endStep = true;
-        console.log(buttons[1]);
-      } else if (this.currentStep === 1) {
-        buttons[0].disabled = true;
-        this.endStep = false;
-      } else {
-        buttons.forEach((button) => (button.disabled = false));
+      if (progressBar && steps.length > 0) {
+        const progress = ((this.currentStep - 1) / (steps.length - 1)) * 100;
+        progressBar.style.width = `${progress}%`;
       }
-    };
-    buttons.forEach((button) => {
-      button.addEventListener("click", updateSteps);
     });
   }
-
-  private getValue(event: any) {
-    if (event instanceof Event) return +(event.target as HTMLSelectElement).value;
-    else return +event;
-  }
-
-  private getStringValue(event: any) {
-    if (event instanceof Event) return (event.target as HTMLSelectElement).value;
-    else return event;
-  }
-
 }

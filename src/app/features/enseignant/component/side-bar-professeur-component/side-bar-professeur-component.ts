@@ -63,27 +63,21 @@ export class SideBarProfesseurComponent {
   ];*/
 
   nav: NavItem[] = [
-    // ═══════════ ACCUEIL ═══════════
     { route: '/enseignant/dashboard', ico: '📊', label: 'Tableau de bord' },
-
     { route: '/enseignant/agenda', ico: '📅', label: 'Mon agenda', section: 'QUOTIDIEN' },
 
-    { route: '/enseignant/mes-enseignements', ico: '📚', label: 'Mes enseignements', section: 'ENSEIGNEMENTS' },
+    // enseignements & classes
+    { route: '/enseignant/mes-classes', ico: '🏫', label: 'Mes classes', section: 'CLASSES et ENSEIGNEMENTS' },
+    { route: '/enseignant/mes-enseignements', ico: '📖', label: 'Mes enseignements' },
+    { route: '/enseignant/notes', ico: '📝', label: 'Notes' },
+    { route: '/enseignant/absences', ico: '✅', label: 'Appel' },
 
-    { route: '/enseignant/mes-classes', ico: '👥', label: 'Mes classes', section: 'CLASSES' },
-
-    { route: '/enseignant/mes-reunions', ico: '📋', label: 'Réunions', section: 'VIE SCOLAIRE' },
+    // vie scolaire
+    { route: '/enseignant/mes-reunions', ico: '🗓️', label: 'Réunions', section: 'VIE SCOLAIRE' },
     { route: '/enseignant/mes-conges', ico: '🌴', label: 'Mes congés' },
 
-    // ═══════════ COMPTE ═══════════
-    {
-      ico: '⚙️',
-      label: 'Paramètres',
-      section: 'COMPTE',
-      children: [
-        { route: '/enseignant/mon-compte', ico: '👤', label: 'Mon compte' },
-      ]
-    },
+    // compte
+    { route: '/enseignant/mon-compte', ico: '👤', label: 'Mon compte', section: 'COMPTE', },
   ];
 
   nbClasses = 3;

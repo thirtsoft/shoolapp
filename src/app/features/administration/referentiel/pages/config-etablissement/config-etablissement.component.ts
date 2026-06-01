@@ -1,8 +1,7 @@
-import { CommonModule } from '@angular/common';
 import { Component, inject, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
-import { ToastrService } from '@iqx-limited/ngx-toastr';
+import { ToastrService } from 'ngx-toastr';
 import { ParametrageEcole } from '../../../../../core/models/admin/ecole/parametrage-ecole';
 import { ParametresEtablissement } from '../../../../../core/models/referentiels/parametre-etablissement';
 import { Utilisateur } from '../../../../../core/models/utilisateur/utilisateur';

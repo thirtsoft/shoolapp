@@ -2,7 +2,7 @@ import { CommonModule } from '@angular/common';
 import { Component, inject, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
-import { ToastrService } from '@iqx-limited/ngx-toastr';
+import { ToastrService } from 'ngx-toastr';
 import { Parent } from '../../../../../../core/models/parent/parent';
 import { UtilisateurService } from '../../../../utilisateur/service/utilisateur.service';
 
@@ -33,6 +33,7 @@ export class EditParentComponent implements OnInit {
 
 
   ngOnInit(): void {
+    this.initializeForm(null);
     this.parentId = this.activeRoute.snapshot.params['id'];
     if (this.parentId != null && this.parentId != undefined) {
       this.getParentById(this.parentId);
@@ -59,13 +60,32 @@ export class EditParentComponent implements OnInit {
       next: (data) => {
         this.parent = data;
         this.userId = this.parent.userId;
-        console.log('Parent {} ', this.parent);
-        this.initializeForm(this.parent);
+
+        this.parentFormGroup.patchValue({
+          id: this.parent?.id || '',
+          civility: this.parent?.civility || '',
+          nom: this.parent?.nom || '',
+          prenom: this.parent?.prenom || '',
+          address: this.parent?.address || '',
+          email: this.parent?.email || '',
+          telephone: this.parent?.telephone || '',
+          username: this.parent?.username || '',
+          profession: this.parent?.profession || '',
+        });
+      },
+      error: (error) => {
+        console.error('Erreur lors du chargement du parent', error);
+        this.toastService.error('Erreur', 'Impossible de charger les informations du parent');
       }
     });
   }
 
   ajoutereditParent() {
+    if (this.parentFormGroup.invalid) {
+      this.toastService.warning('Attention', 'Veuillez remplir tous les champs obligatoires');
+      return;
+    }
+
     const payload: Parent = {
       id: this.parentFormGroup.get("id")!.value,
       civility: this.parentFormGroup.get("civility")!.value,
@@ -78,6 +98,7 @@ export class EditParentComponent implements OnInit {
       profession: this.parentFormGroup.get("profession")!.value,
     }
     payload.userId = this.userId;
+
     this.utilisateurService.updateParent(this.parentId!, payload).subscribe({
       next: data => {
         if (data.statut === 'OK') {

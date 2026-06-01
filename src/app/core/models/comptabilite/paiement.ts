@@ -16,6 +16,8 @@ export interface PaiementAdd {
 
   moyenPaiement?: number;
 
+  reference?: string;
+
 }
 
 export interface Paiement {
@@ -38,5 +40,7 @@ export interface Paiement {
   createdBy?: number;
 
   nomCompletEleve?: string;
-  
+
+  reference?: string;
+
 }

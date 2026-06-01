@@ -1,129 +1,3 @@
-<!-- <div class="page-wrapper">
-  <div class="content container-fluid">
-
-    <div class="container">
-      <div class="row form-row">
-        <hr />
-        <div class="col-sm-12">
-          <div class="card">
-            <h3 class="text-center" style="margin-top: 40px">{{ title }}</h3>
-            <div class="card-body">
-              <form [formGroup]="inscriptionFormGroup">
-                <input
-                  type="text"
-                  readonly="true"
-                  hidden="true"
-                  matInput
-                  formControlName="id"
-                />
-
-                <div class="row form-row">
-                  <div class="col-lg-12 col-sm-12">
-                    <div class="form-group">
-                      <label>Elève <span class="text-danger">*</span></label>
-                      <select
-                        class="form-control select"
-                        name="eleveId"
-                        formControlName="eleveId"
-                        required=""
-                      >
-                        <option>Selectionnez</option>
-                        <option *ngFor="let eleve of eleves" [value]="eleve.id">
-                          {{ eleve.prenom }} - {{ eleve.nom }}
-                        </option>
-                      </select>
-                    </div>
-                  </div>
-                </div>
-
-                <div class="row form-row">
-                  <div class="col-lg-6 col-sm-12">
-                    <div class="form-group">
-                      <label>Classe <span class="text-danger">*</span></label>
-                      <select
-                        class="form-control select"
-                        name="classeId"
-                        formControlName="classeId"
-                        required=""
-                      >
-                        <option>Selectionnez</option>
-                        <option
-                          *ngFor="let class of classes"
-                          [value]="class.id"
-                        >
-                          {{ class.libelle }}
-                        </option>
-                      </select>
-                    </div>
-                  </div>
-                  <div class="col-lg-6 col-sm-12">
-                    <div class="form-group">
-                      <label
-                        >Frais scolarité
-                        <span class="text-danger">*</span></label
-                      >
-                      <input
-                        type="number"
-                        formControlName="montantInscription"
-                        required
-                        class="form-control"
-                      />
-                    </div>
-                  </div>
-                </div>
-
-                <div class="row form-row">
-                  <div class="col-lg-12 col-sm-12">
-                    <div class="form-group">
-                      <label
-                        >Année scolaire
-                        <span class="text-danger">*</span></label
-                      >
-                      <select
-                        class="form-control select"
-                        name="anneeScolaireId"
-                        formControlName="anneeScolaireId"
-                        required=""
-                      >
-                        <option>Selectionnez</option>
-                        <option
-                          *ngFor="let annee of anneeScolaires"
-                          [value]="annee.id"
-                        >
-                          {{ annee.libelle }}
-                        </option>
-                      </select>
-                    </div>
-                  </div>
-                </div>
-              </form>
-              <div style="margin-top: 25px col-sm-12">
-                <button
-                  type="button"
-                  class="btn btn-success si_accept_confirm float-lg-right"
-                  id="btn-yes"
-                  (click)="ajouterEditInscription()"
-                >
-                  Enregistrer
-                </button>
-                <button
-                  id="prev"
-                  type="button"
-                  class="btn btn-danger si_accept_cancel float-left"
-                  (click)="goBack()"
-                >
-                  Précédent
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
- -->
-
 <div class="page-wrapper">
   <div class="content container-fluid">
     <div class="page-header">
@@ -168,12 +42,102 @@
               Élève <span class="text-danger">*</span>
               <i class="fas fa-user-graduate ms-1 text-muted"></i>
             </label>
-            <select class="form-select" formControlName="eleveId" required>
-              <option value="" disabled selected>— Sélectionnez un élève —</option>
-              @for (eleve of eleves; track eleve.id) {
-                <option [value]="eleve.id">{{ eleve.prenom }} {{ eleve.nom }}</option>
+
+            <div class="autocomplete-container" (click)="$event.stopPropagation()">
+              <div class="input-group">
+                <span class="input-group-text">
+                  <i class="fas fa-search"></i>
+                </span>
+                <input
+                  type="text"
+                  class="form-control"
+                  [class.is-invalid]="
+                    inscriptionFormGroup.get('eleveId')?.invalid &&
+                    inscriptionFormGroup.get('eleveId')?.touched
+                  "
+                  [(ngModel)]="searchTerm"
+                  [ngModelOptions]="{ standalone: true }"
+                  (input)="onSearchInput($event)"
+                  (focus)="searchTerm && searchTerm.length >= 2 && (showDropdown = true)"
+                  placeholder="Rechercher par nom, prénom ou matricule... (min. 2 caractères)"
+                  autocomplete="off"
+                />
+                @if (searchTerm) {
+                  <button
+                    class="btn btn-outline-secondary"
+                    type="button"
+                    (click)="
+                      searchTerm = '';
+                      selectedEleveInfo = null;
+                      inscriptionFormGroup.patchValue({ eleveId: '' })
+                    "
+                  >
+                    <i class="fas fa-times"></i>
+                  </button>
+                }
+              </div>
+
+              @if (showDropdown) {
+                <div class="dropdown-results">
+                  @if (isLoading) {
+                    <div class="dropdown-item text-center text-muted">
+                      <i class="fas fa-spinner fa-spin me-2"></i>Recherche...
+                    </div>
+                  }
+
+                  @if (!isLoading && filteredEleves.length === 0) {
+                    <div class="dropdown-item text-center text-muted">
+                      <i class="fas fa-user-slash me-2"></i>Aucun élève trouvé
+                    </div>
+                  }
+
+                  @for (eleve of filteredEleves; track eleve.id) {
+                    <button type="button" class="dropdown-item" (click)="selectEleve(eleve)">
+                      <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                          <strong>{{ eleve.prenom }} {{ eleve.nom }}</strong>
+                          <div class="small text-muted">
+                            <span class="badge bg-secondary me-1">#{{ eleve.id }}</span>
+                            @if (eleve.matricule) {
+                              <span class="badge bg-info me-1">{{ eleve.matricule }}</span>
+                            }
+                            @if (eleve.dateNaissance) {
+                              <span class="me-1"
+                                >Date naissance :
+                                {{ eleve.dateNaissance | date: 'dd/MM/yyyy' }}</span
+                              >
+                            }
+                          </div>
+                        </div>
+                        <i class="fas fa-chevron-right text-muted"></i>
+                      </div>
+                    </button>
+                  }
+                </div>
               }
-            </select>
+            </div>
+
+            <input type="hidden" formControlName="eleveId" />
+
+            @if (selectedEleveInfo) {
+              <div class="mt-2 p-2 bg-light rounded">
+                <div class="d-flex align-items-center">
+                  <div class="me-2">
+                    <i class="fas fa-check-circle text-success"></i>
+                  </div>
+                  <div>
+                    <strong>Élève sélectionné :</strong> {{ selectedEleveInfo.prenom }}
+                    {{ selectedEleveInfo.nom }}
+                    @if (selectedEleveInfo.matricule) {
+                      <span class="text-muted ms-2">
+                        (Matricule: {{ selectedEleveInfo.matricule }})
+                      </span>
+                    }
+                  </div>
+                </div>
+              </div>
+            }
+
             @if (
               inscriptionFormGroup.get('eleveId')?.invalid &&
               inscriptionFormGroup.get('eleveId')?.touched

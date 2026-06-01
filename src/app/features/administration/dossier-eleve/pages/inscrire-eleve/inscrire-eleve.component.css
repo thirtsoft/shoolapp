@@ -1,5 +1,5 @@
 /* ============================================
-   INSCRIRE ÉLÈVE - STYLE MODERNE
+   INSCRIRE ÉLÈVE - STYLE MODERNE (VERSION CORRIGÉE)
    ============================================ */
 
 .page-wrapper {
@@ -61,13 +61,18 @@
   font-weight: 600;
 }
 
-/* Step Indicator */
+/* ============================================
+   STEP INDICATOR - CENTRAGE PARFAIT
+   ============================================ */
 .step-indicator {
   display: flex;
   align-items: center;
   justify-content: center;
   gap: 0.5rem;
-  margin-bottom: 2rem;
+  margin: 0 auto 2rem auto;
+  padding: 0;
+  width: 100%;
+  max-width: 600px;
 }
 
 .step {
@@ -75,6 +80,7 @@
   flex-direction: column;
   align-items: center;
   gap: 0.5rem;
+  flex-shrink: 0;
 }
 
 .step-number {
@@ -101,6 +107,7 @@
   font-size: 0.7rem;
   font-weight: 500;
   color: #718096;
+  white-space: nowrap;
 }
 
 .step.active .step-label {
@@ -113,6 +120,7 @@
   height: 2px;
   background: #e2e8f0;
   border-radius: 2px;
+  flex-shrink: 0;
 }
 
 .step-line.active {
@@ -120,6 +128,11 @@
 }
 
 @media (max-width: 768px) {
+  .step-indicator {
+    max-width: 100%;
+    gap: 0.25rem;
+  }
+  
   .step-line {
     width: 25px;
   }
@@ -132,14 +145,33 @@
 
   .step-label {
     font-size: 0.6rem;
+    white-space: normal;
+    text-align: center;
   }
 }
 
-/* Layout 2 colonnes */
+@media (max-width: 480px) {
+  .step-label {
+    display: none;
+  }
+  
+  .step-number {
+    width: 32px;
+    height: 32px;
+    font-size: 0.75rem;
+  }
+  
+  .step-line {
+    width: 15px;
+  }
+}
+
+/* ============================================
+   LAYOUT 2 COLONNES
+   ============================================ */
 .two-columns-layout {
   display: grid;
   grid-template-columns: 1fr 320px;
-  /* L'inverse d'avant : la colonne de droite prend 320px */
   gap: 2rem;
 }
 
@@ -182,9 +214,28 @@
   gap: 1rem;
 }
 
+/* Formulaire parent et médecin - grille 2 colonnes */
+.form-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1rem;
+}
+
+.full-width {
+  grid-column: span 2;
+}
+
 @media (max-width: 768px) {
   .form-row-2cols {
     grid-template-columns: 1fr;
+  }
+  
+  .form-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .full-width {
+    grid-column: span 1;
   }
 }
 
@@ -237,16 +288,6 @@
   padding: 1.5rem;
   align-self: start;
   border: 1px solid #e2e8f0;
-  /* Léger contour pour s'aligner esthétiquement avec les blocs de gauche */
-}
-
-.photo-fields-wrapper {
-  margin-top: 1.5rem;
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
-  /* Espace vertical entre Nom, Date de Naissance et Adresse */
-  text-align: left;
 }
 
 .photo-card {
@@ -396,6 +437,102 @@
   opacity: 1;
 }
 
+/* Parent Card */
+.parent-card {
+  background: #f8fafc;
+  border-radius: 16px;
+  padding: 1.25rem;
+  margin-bottom: 1.5rem;
+  border: 1px solid #e2e8f0;
+}
+
+.parent-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+  padding-bottom: 0.75rem;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.parent-card-header h4 {
+  font-size: 1rem;
+  font-weight: 600;
+  color: #1e3a5f;
+  margin: 0;
+}
+
+.btn-remove {
+  background: #fee2e2;
+  border: none;
+  color: #e53e3e;
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.btn-remove:hover {
+  background: #fecaca;
+  transform: scale(1.05);
+}
+
+/* Radio Group */
+.radio-group {
+  display: flex;
+  gap: 1.5rem;
+  margin-top: 0.5rem;
+  margin-bottom: 1rem;
+  flex-wrap: wrap;
+}
+
+.radio-label {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  cursor: pointer;
+  font-size: 0.875rem;
+  color: #4a5568;
+}
+
+.radio-label input[type="radio"] {
+  width: 16px;
+  height: 16px;
+  cursor: pointer;
+  accent-color: #2c5282;
+}
+
+/* Form Actions Header */
+.form-actions-header {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 1rem;
+}
+
+.btn-add {
+  background: linear-gradient(135deg, #2c5282, #1e3a5f);
+  border: none;
+  color: white;
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+  font-size: 0.75rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.btn-add:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 2px 8px rgba(30, 58, 95, 0.2);
+}
+
 /* Form Actions */
 .form-actions {
   display: flex;
@@ -448,6 +585,32 @@
   transform: translateY(-1px);
 }
 
+/* Input Group (pour le montant CFA) */
+.input-group {
+  display: flex;
+  align-items: center;
+}
+
+.input-group-text {
+  background: #e2e8f0;
+  border: 1.5px solid #e2e8f0;
+  border-right: none;
+  padding: 0.625rem 0.875rem;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: #4a5568;
+  border-radius: 10px 0 0 10px;
+}
+
+.input-group .form-control {
+  border-radius: 0 10px 10px 0;
+  border-left: none;
+}
+
+.input-group .form-control:focus {
+  border-left: none;
+}
+
 /* Alert Help */
 .alert-help {
   background: #f7fafc;
@@ -472,6 +635,16 @@
   font-size: 0.7rem;
   margin-top: 0.375rem;
   display: block;
+}
+
+.form-text.text-danger {
+  color: #e53e3e;
+  margin-top: 0.25rem;
+}
+
+/* Correction pour les champs required */
+.form-label .text-danger {
+  margin-left: 2px;
 }
 
 /* Responsive */
@@ -500,5 +673,9 @@
   .photo-preview {
     width: 140px;
     height: 140px;
+  }
+  
+  .radio-group {
+    gap: 1rem;
   }
 }

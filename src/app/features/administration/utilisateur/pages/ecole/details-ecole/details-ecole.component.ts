@@ -2,10 +2,11 @@ import { CommonModule } from '@angular/common';
 import { Component, inject, OnInit } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { ToastrService } from '@iqx-limited/ngx-toastr';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { ToastrService } from 'ngx-toastr';
 import { ConfirmationDialogModalComponent } from '../../../../../../core/components/confirmation-dialog-modal/confirmation-dialog-modal.component';
 import { DetailsEcoleAdmin } from '../../../../../../core/models/admin/ecole/details-ecole-admin';
+import { PlanificationResourceService } from '../../../../planification/services/planification-resource.service';
 
 @Component({
   selector: 'app-details-ecole',
@@ -26,7 +27,7 @@ export class DetailsEcoleComponent implements OnInit {
 
   disableAddButton = false;
 
-  //  private readonly planification = inject(PlanificationResourceService);
+  private readonly planification = inject(PlanificationResourceService);
   private readonly _formBuilder = inject(FormBuilder);
   private readonly router = inject(Router);
   private readonly toastService = inject(ToastrService);

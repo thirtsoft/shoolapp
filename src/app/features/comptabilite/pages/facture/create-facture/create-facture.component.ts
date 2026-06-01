@@ -9,8 +9,8 @@ import { ComptabiliteResourceService } from '../../../services/comptabilite-reso
 import { ReferentielResourceService } from '../../../../administration/referentiel/service/referentiel-resource.service';
 import { ReferentielService } from '../../../../administration/referentiel/service/referentiel.service';
 import { DossierEleveService } from '../../../../administration/dossier-eleve/service/dossier-eleve.service';
-import { ToastrService } from '@iqx-limited/ngx-toastr';
 import { Facture } from '../../../../../core/models/comptabilite/facture';
+import { ToastrService } from 'ngx-toastr';
 
 @Component({
   selector: 'app-create-facture',

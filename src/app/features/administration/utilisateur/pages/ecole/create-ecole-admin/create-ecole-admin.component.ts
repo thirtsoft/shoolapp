@@ -2,10 +2,11 @@ import { CommonModule } from '@angular/common';
 import { Component, inject, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { ToastrService } from '@iqx-limited/ngx-toastr';
 import { AddEditEcoleAdmin } from '../../../../../../core/models/admin/ecole/ecole-admin';
 import { UtilisateurResourceService } from '../../../service/utilisateur-resource.service';
 import { UtilisateurService } from '../../../service/utilisateur.service';
+import { ToastrService } from 'ngx-toastr';
+import { LocalStorageService } from '../../../../../../core/services/local-storage.service';
 
 @Component({
   selector: 'app-create-ecole-admin',
@@ -33,7 +34,7 @@ export class CreateEcoleAdminComponent implements OnInit {
   private readonly router = inject(Router);
   private readonly toastService = inject(ToastrService);
   private readonly route = inject(ActivatedRoute);
-  //  private readonly localStorage = inject(LocalStorageService);
+  private readonly localStorage = inject(LocalStorageService);
 
   ngOnInit(): void {
     this.userId = this.route.snapshot.params['id'];

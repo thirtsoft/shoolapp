@@ -3,7 +3,7 @@ import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angula
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 
 import { DatePipe } from '@angular/common';
-import { ToastrService } from '@iqx-limited/ngx-toastr';
+import { ToastrService } from 'ngx-toastr';
 import { EnseigantList } from '../../../../../../core/models/enseignant/enseignant-list';
 import { CoursEdit } from '../../../../../../core/models/planification/cours';
 import { EmploiDuTempsList } from '../../../../../../core/models/planification/emploi-du-temp';

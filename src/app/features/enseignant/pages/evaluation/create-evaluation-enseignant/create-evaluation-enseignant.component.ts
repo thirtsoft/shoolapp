@@ -7,8 +7,8 @@ import { DetailsEnseignantUtilisateur } from '../../../../../core/models/enseign
 import { DossierResourceService } from '../../../../administration/dossier-eleve/service/dossier-resource.service';
 import { PlanificationResourceService } from '../../../../administration/planification/services/planification-resource.service';
 import { EnseignantService } from '../../../service/enseignant.service';
-import { ToastrService } from '@iqx-limited/ngx-toastr';
 import { Evaluation } from '../../../../../core/models/dossiereleve/evaluation/evaluation';
+import { ToastrService } from 'ngx-toastr';
 
 @Component({
   selector: 'app-create-evaluation-enseignant',

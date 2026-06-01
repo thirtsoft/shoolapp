@@ -44,6 +44,7 @@ export class MainLayoutProfesseurComponent {
     { route: '/enseignant/notes', ico: '📝', label: 'Notes' },
     { route: '/enseignant/absences', ico: '✅', label: 'Appel' },
     { route: '/enseignant/mon-compte', ico: '👤', label: 'Profil' },
+    
   ];
 
   private readonly sectionLabels: Record<string, string> = {

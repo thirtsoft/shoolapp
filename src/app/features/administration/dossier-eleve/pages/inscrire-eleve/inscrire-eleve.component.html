@@ -703,7 +703,6 @@
 
 <div class="page-wrapper">
   <div class="content container-fluid">
-    <!-- Page Header -->
     <div class="page-header">
       <div class="row align-items-center">
         <div class="col-sm-7 col-auto">
@@ -722,7 +721,6 @@
       <div class="col-12">
         <div class="card">
           <div class="card-body p-4 p-md-5">
-            <!-- Step Indicator -->
             <div class="step-indicator">
               <div class="step" [class.active]="currentStep >= 1">
                 <span class="step-number">1</span>
@@ -745,15 +743,10 @@
               </div>
             </div>
 
-            <!-- Step 1: Informations élève -->
-
             @if (currentStep === 1) {
               <form [formGroup]="eleveFormGroup">
-                <!-- 2 colonnes : Infos à gauche / Photo à droite -->
                 <div class="two-columns-layout">
-                  <!-- COLONNE GAUCHE : INFORMATIONS -->
                   <div class="info-column">
-                    <!-- Section Informations personnelles -->
                     <div class="info-section">
                       <h4 class="section-title">
                         <i class="fas fa-user me-2"></i>Informations personnelles
@@ -837,7 +830,6 @@
                       </div>
                     </div>
 
-                    <!-- Section Allergies -->
                     <div class="info-section">
                       <h4 class="section-title"><i class="fas fa-allergies me-2"></i>Allergies</h4>
                       <div class="allergy-input-wrapper">
@@ -869,7 +861,6 @@
                     </div>
                   </div>
 
-                  <!-- COLONNE DROITE : PHOTO DE PROFIL -->
                   <div class="photo-column">
                     <div class="photo-card">
                       <h4 class="section-title">
@@ -916,7 +907,6 @@
               </form>
             }
 
-            <!-- Step 2: Informations parents -->
             @if (currentStep === 2) {
               <form [formGroup]="parentFormGroup">
                 <div class="form-group">
@@ -958,13 +948,15 @@
                       <div class="parent-card" [formGroupName]="$index">
                         <div class="parent-card-header">
                           <h4>Parent {{ $index + 1 }}</h4>
-                          <button
-                            type="button"
-                            class="btn-remove"
-                            (click)="removeParentItem($index)"
-                          >
-                            <i class="fas fa-trash-alt"></i>
-                          </button>
+                          @if ($index > 0 || utilisateurDTOS().length > 1) {
+                            <button
+                              type="button"
+                              class="btn-remove"
+                              (click)="removeParentItem($index)"
+                            >
+                              <i class="fas fa-trash-alt"></i>
+                            </button>
+                          }
                         </div>
                         <div class="form-grid">
                           <div class="form-group">
@@ -1050,7 +1042,6 @@
               </form>
             }
 
-            <!-- Step 3: Médecin traitant -->
             @if (currentStep === 3) {
               <form [formGroup]="medecinTraitantFormGroup">
                 <div class="form-grid">
@@ -1074,7 +1065,7 @@
                   </div>
 
                   <div class="form-group">
-                    <label class="form-label"> Nom <span class="text-danger">*</span> </label>
+                    <label class="form-label">Nom <span class="text-danger">*</span></label>
                     <input
                       type="text"
                       class="form-control"
@@ -1090,10 +1081,7 @@
                   </div>
 
                   <div class="form-group">
-                    <label class="form-label">
-                      Téléphone
-                      <i class="fas fa-phone ms-1 text-muted"></i>
-                    </label>
+                    <label class="form-label">Téléphone</label>
                     <input
                       type="tel"
                       class="form-control"
@@ -1103,10 +1091,7 @@
                   </div>
 
                   <div class="form-group">
-                    <label class="form-label">
-                      Email
-                      <i class="fas fa-envelope ms-1 text-muted"></i>
-                    </label>
+                    <label class="form-label">Email</label>
                     <input
                       type="email"
                       class="form-control"
@@ -1118,7 +1103,6 @@
               </form>
             }
 
-            <!-- Step 4: Inscription -->
             @if (currentStep === 4) {
               <form [formGroup]="inscriptionFormGroup">
                 <div class="form-grid">
@@ -1169,7 +1153,6 @@
               </form>
             }
 
-            <!-- Form Actions -->
             <div class="form-actions">
               <button
                 type="button"
@@ -1199,7 +1182,6 @@
               </button>
             </div>
 
-            <!-- Help Message -->
             <div class="alert-help">
               <i class="fas fa-info-circle me-2"></i>
               <span>Les champs marqués d'un astérisque (*) sont obligatoires.</span>

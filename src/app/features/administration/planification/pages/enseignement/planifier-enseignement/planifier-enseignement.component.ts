@@ -1,7 +1,7 @@
 import { Component, inject, OnInit } from '@angular/core';
 import { FormArray, FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { ToastrService } from '@iqx-limited/ngx-toastr';
+import { ToastrService } from 'ngx-toastr';
 import { EnseigantList } from '../../../../../../core/models/enseignant/enseignant-list';
 import { Enseignement } from '../../../../../../core/models/planification/enseignement';
 import { AnneeScolaire } from '../../../../../../core/models/referentiels/annee-scolaire';

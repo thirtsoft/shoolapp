@@ -2,11 +2,11 @@ import { DatePipe } from '@angular/common';
 import { Component, inject, OnInit } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { ToastrService } from '@iqx-limited/ngx-toastr';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ConfirmationDialogModalComponent } from '../../../../../../core/components/confirmation-dialog-modal/confirmation-dialog-modal.component';
 import { DetailsEvaluation } from '../../../../../../core/models/dossiereleve/evaluation/details-evaluation';
 import { PlanificationResourceService } from '../../../../planification/services/planification-resource.service';
+import { ToastrService } from 'ngx-toastr';
 
 @Component({
   selector: 'app-details-evaluation',
