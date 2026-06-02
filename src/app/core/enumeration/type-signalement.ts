@@ -4,3 +4,21 @@ export const TypeSignalement = {
   PARENT: 'PARENT',
   ELEVE: 'ELEVE'
 };
+
+
+export const AttendanceStatus = {
+  ABSENCE: 'ABSENCE',
+  RETARD: 'RETARD',
+  PRESENCE: 'PRESENCE',
+  EXCLUSION: 'EXCLUSION',
+  JUSTIFICATION: 'JUSTIFICATION',
+  MALADIE: 'MALADIE'
+}
+
+export const AttendanceSource = {
+  ADMIN: 'ADMINISTRATION',
+  ENSEIGNANT: 'ENSEIGNANT',
+  PARENT: 'PARENT',
+  SUPERVISOR: 'SUPERVISOR',
+  SYSTEM: 'SYSTEM'
+};

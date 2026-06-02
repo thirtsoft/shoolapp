@@ -1,13 +1,13 @@
 import { Component, inject, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
+import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
-import { TypeSignalement } from '../../../../../../core/enumeration/type-signalement';
+import { AttendanceSource } from '../../../../../../core/enumeration/type-signalement';
 import { AttendanceRecord } from '../../../../../../core/models/dossiereleve/absence/attendanceRecordedit';
 import { ListeEleve } from '../../../../../../core/models/dossiereleve/liste-eleve';
 import { ListeCours } from '../../../../../../core/models/planification/liste-cours';
 import { AnneeScolaire } from '../../../../../../core/models/referentiels/annee-scolaire';
-import { Classe } from '../../../../../../core/models/referentiels/classe';
+import { Classe, ListeClasse } from '../../../../../../core/models/referentiels/classe';
 import { Semestre } from '../../../../../../core/models/referentiels/semestre';
 import { Utilisateur } from '../../../../../../core/models/utilisateur/utilisateur';
 import { LocalStorageService } from '../../../../../../core/services/local-storage.service';
@@ -33,9 +33,14 @@ export class CreationAbsenceComponent implements OnInit {
   anneeScolaireList: AnneeScolaire[] = [];
   semestreList: Semestre[] = [];
   eleveList: ListeEleve[] = [];
-  classeList: Classe[] = [];
+  classeList: ListeClasse[] = [];
   coursList: ListeCours[] = [];
+  allClassesList: ListeClasse[] = [];
   selectedClass: any;
+
+  attendanceStatusList: string[] = ['ABSENCE', 'RETARD', 'PRESENCE', 'EXCLUSION', 'JUSTIFICATION', 'MALADIE'];
+
+  lateMinutes?: any;
 
   ecoleId: any;
 
@@ -64,8 +69,11 @@ export class CreationAbsenceComponent implements OnInit {
     this.getAnneeSclaireList();
     this.getSemestresList();
     this.initializeForm(null);
+
+    this.setupAttendanceStatusListener();
+
     if (this.attendanceRecordId != null && this.attendanceRecordId != undefined) {
-      this.getAttendanceRecordById(this.attendanceRecordId);
+      this.getAttendanceRecordById(this.attendanceRecordId, AttendanceSource.ADMIN);
       this.title = 'Modifier la déclaration absence';
     }
   }
@@ -127,47 +135,176 @@ export class CreationAbsenceComponent implements OnInit {
     this.dossierResource.getResourceListByElement('inscription/classe', classId)?.subscribe({
       next: (data: any) => {
         this.eleveList = data;
-        console.log('Eleves', this.eleveList);
       }
     });
   }
 
+  setupAttendanceStatusListener() {
+    this.attendanceRecordFormGroup.get('attendanceStatus')?.valueChanges.subscribe((status) => {
+      if (status === 'RETARD') {
+        this.attendanceRecordFormGroup.get('courseId')?.setValidators([Validators.required]);
+        this.attendanceRecordFormGroup.get('expectedTime')?.setValidators([Validators.required]);
+        this.attendanceRecordFormGroup.get('arrivalTime')?.setValidators([Validators.required]);
+      } else {
+        this.attendanceRecordFormGroup.get('courseId')?.clearValidators();
+        this.attendanceRecordFormGroup.get('expectedTime')?.clearValidators();
+        this.attendanceRecordFormGroup.get('arrivalTime')?.clearValidators();
+
+        if (status !== 'RETARD') {
+          this.attendanceRecordFormGroup.patchValue({
+            courseId: null,
+            expectedTime: null,
+            arrivalTime: null,
+            lateMinutes: null
+          });
+        }
+      }
+      this.attendanceRecordFormGroup.get('courseId')?.updateValueAndValidity();
+      this.attendanceRecordFormGroup.get('expectedTime')?.updateValueAndValidity();
+      this.attendanceRecordFormGroup.get('arrivalTime')?.updateValueAndValidity();
+    });
+  }
+
+  calculateLateMinutes() {
+    const expectedTime = this.attendanceRecordFormGroup.get('expectedTime')?.value;
+    const arrivalTime = this.attendanceRecordFormGroup.get('arrivalTime')?.value;
+
+    if (expectedTime && arrivalTime) {
+      const [expectedHour, expectedMinute] = expectedTime.split(':').map(Number);
+      const [arrivalHour, arrivalMinute] = arrivalTime.split(':').map(Number);
+
+      const expectedTotalMinutes = expectedHour * 60 + expectedMinute;
+      const arrivalTotalMinutes = arrivalHour * 60 + arrivalMinute;
+
+      this.lateMinutes = arrivalTotalMinutes - expectedTotalMinutes;
+
+      if (this.lateMinutes < 0) {
+        this.lateMinutes += 24 * 60;
+      }
+
+      if (this.lateMinutes < 0) {
+        this.lateMinutes = 0;
+        this.toastService.warning('Attention', "L'heure d'arrivée ne peut pas être avant l'heure prévue");
+      }
+
+      this.attendanceRecordFormGroup.patchValue({
+        lateMinutes: this.lateMinutes
+      });
+
+      if (this.lateMinutes > 60) {
+        this.toastService.info('Information', `Retard de ${this.lateMinutes} minutes, considéré comme demi-absence`);
+      }
+    }
+  }
+
+  isRetardJustifie(): boolean {
+    const lateMinutes = this.attendanceRecordFormGroup.get('lateMinutes')?.value;
+    const justified = this.attendanceRecordFormGroup.get('justified')?.value;
+    if (lateMinutes > 30 && !justified) {
+      return false;
+    }
+    return true;
+  }
+
   initializeForm(absence: AttendanceRecord | null) {
-    /*
     this.attendanceRecordFormGroup = this._formBuilder.group({
       id: [absence?.id ? absence.id : ''],
       eleveId: [absence?.eleveId ? absence.eleveId : '', Validators.required],
       semestre: [absence?.semestre ? absence.semestre : '', Validators.required],
       anneeScolaireId: [absence?.anneeScolaireId ? absence.anneeScolaireId : '', Validators.required],
-      motif: [absence?.motif ? absence.motif : '', Validators.required],
-      justifiee: [absence?.justifiee ? absence.justifiee : '', Validators.required],
-      dateAbsence: [absence?.dateAbsence ? absence.dateAbsence : '', Validators.required],
+      courseId: [absence?.courseId ? absence.courseId : ''],
+      justificationReason: [absence?.justificationReason ? absence.justificationReason : ''],
+      attendanceDate: [absence?.attendanceDate ? absence.attendanceDate : ''],
       classId: [absence?.classId ? absence.classId : '', Validators.required],
-    })*/
+      attendanceStatus: [absence?.attendanceStatus ? absence.attendanceStatus : '', Validators.required],
+      justified: [absence?.justified ? absence.justified : '', Validators.required],
+      expectedTime: [absence?.expectedTime ? absence.expectedTime : ''],
+      arrivalTime: [absence?.arrivalTime ? absence.arrivalTime : ''],
+      lateMinutes: [absence?.lateMinutes ? absence.lateMinutes : ''],
+    })
 
   }
 
-  getAttendanceRecordById(absenceId: number) {
-    this.coursService.getSingleResource('attendancerecord', absenceId).subscribe({
+  getAttendanceRecordById(absenceId: number, source: string) {
+    this.coursService.getSingleResourceAttendRecordByMultiplesParameters('attendancerecord', absenceId, source).subscribe({
       next: (data: any) => {
         this.attendanceRecord = data;
-        this.initializeForm(this.attendanceRecord);
-
-        if (this.attendanceRecord?.classId) {
-
-          this.attendanceRecordFormGroup.get("classId")!.patchValue(this.attendanceRecord.classId);
-          this.getEleveList(this.attendanceRecord.classId);
+        let recordData;
+        if (this.attendanceRecord.source === 'ADMINISTRATION') {
+          recordData = this.attendanceRecord.attendanceRecordEditAdminDTO;
+        } else {
+          recordData = this.attendanceRecord.attendanceRecordAddEditDTO;
         }
+
+        if (recordData) {
+          this.fillFormWithData(recordData);
+
+          this.loadRequiredLists(recordData);
+        }
+      },
+      error: (error: any) => {
+        console.error('Erreur lors du chargement:', error);
+        this.toastService.error('Erreur', 'Impossible de charger les données de l\'absence');
       }
     });
+  }
+
+  fillFormWithData(recordData: any) {
+    this.attendanceRecordFormGroup.patchValue({
+      id: recordData.id,
+      eleveId: recordData.eleveId,
+      classId: recordData.classeId,
+      anneeScolaireId: recordData.anneeScolaireId,
+      semestre: recordData.semestre,
+      attendanceStatus: recordData.status,
+      justificationReason: recordData.justificationReason || '',
+      justified: recordData.justified ? 'true' : 'false',
+      attendanceDate: recordData.attendanceDate,
+      courseId: recordData.courseId || null,
+      expectedTime: recordData.expectedTime || null,
+      arrivalTime: recordData.arrivalTime || null,
+      lateMinutes: recordData.lateMinutes || null
+    });
+
+    if (recordData.status === 'RETARD' && recordData.expectedTime && recordData.arrivalTime) {
+      setTimeout(() => {
+        this.calculateLateMinutes();
+      }, 100);
+    }
+  }
+
+  loadRequiredLists(recordData: any) {
+    if (recordData.toutesLesClasses && recordData.toutesLesClasses.length > 0) {
+      this.allClassesList = recordData.toutesLesClasses;
+      this.classeList = recordData.toutesLesClasses;
+    }
+
+    if (recordData.classeId && recordData.elevesDeLaClasse) {
+      this.eleveList = recordData.elevesDeLaClasse.map((eleve: any) => ({
+        id: eleve.id,
+        eleve: eleve.id,
+        nomEleve: eleve.nom,
+        prenomEleve: eleve.prenom,
+        matricule: eleve.matricule
+      }));
+    }
+
+    if (recordData.classeId && recordData.coursDeLaClasse) {
+      this.coursList = recordData.coursDeLaClasse;
+    }
+
+    if (recordData.eleveId) {
+      this.attendanceRecordFormGroup.patchValue({
+        eleveId: recordData.eleveId
+      });
+    }
   }
 
 
   ajouterEditAbsence() {
     const payload: AttendanceRecord = this.attendanceRecordFormGroup.value;
     payload.declaredByUserId = this.userId;
-    payload.typeSignalement = TypeSignalement.ADMIN;
-    payload.ecole = this.ecoleId;
+    payload.attendanceSource = AttendanceSource.ADMIN;
     if (this.attendanceRecordId === null || this.attendanceRecordId === undefined) {
       this.coursService.createRessource('attendancerecord', payload).subscribe({
         next: (data) => {
@@ -180,7 +317,7 @@ export class CreationAbsenceComponent implements OnInit {
         }
       });
     } else {
-      this.coursService.updateResource('attendancerecord', this.attendanceRecordId, payload).subscribe({
+      this.coursService.updateResource('attendancerecord', Number(this.attendanceRecordId), payload).subscribe({
         next: (data: any) => {
           this.toastService.success('success', 'Absence modifiée avec succès.');
           this.goBack();
@@ -195,7 +332,7 @@ export class CreationAbsenceComponent implements OnInit {
   }
 
   goBack() {
-    this.router.navigate(['/admin/dossier-eleve/absence']);
+    this.router.navigate(['/admin/dossier-eleve/absences']);
   }
 
 }

@@ -1,181 +1,3 @@
-<!-- <div class="page-wrapper">
-  <div class="content container-fluid">
-    <div class="row">
-      <div class="col-sm-12">
-        <div class="card">
-          <div class="card-body">
-            <h3 class="page-title text-center mb-2">{{ title }}</h3>
-            <form [formGroup]="attendanceRecordFormGroup">
-              <div style="margin-top: 5px">
-                <input
-                  type="text"
-                  readonly="true"
-                  hidden="true"
-                  formControlName="id"
-                />
-
-                <div class="row form-row">
-                  <div class="col-lg-6 col-sm-6">
-                    <div class="form-group">
-                      <label>Classe <span class="text-danger">*</span></label>
-                      <select
-                        class="form-control select"
-                        name="classId"
-                        formControlName="classId"
-                        required=""
-                        (change)="onClasseSelected()"
-                      >
-                        <option value="">Selectionnez</option>
-                        <option
-                          *ngFor="let item of classeList"
-                          [value]="item.id"
-                        >
-                          {{ item.libelle }}
-                        </option>
-                      </select>
-                    </div>
-                  </div>
-
-                  <div class="col-lg-6 col-sm-6">
-                    <div class="form-group">
-                      <label
-                        >Année scolaire
-                        <span class="text-danger">*</span></label
-                      >
-                      <select
-                        class="form-control select"
-                        name="classe"
-                        formControlName="anneeScolaireId"
-                        required=""
-                      >
-                        <option>Selectionnez</option>
-                        <option
-                          *ngFor="let item of anneeScolaireList"
-                          [value]="item.id"
-                        >
-                          {{ item.libelle }}
-                        </option>
-                      </select>
-                    </div>
-                  </div>
-                </div>
-
-                <div class="row form-row">
-                  <div class="col-lg-6 col-sm-6">
-                    <div class="form-group">
-                      <label>Elève <span class="text-danger">*</span></label>
-                      <select
-                        class="form-control select"
-                        name="eleveId"
-                        formControlName="eleveId"
-                        required=""
-                      >
-                        <option>Selectionnez</option>
-                        <option
-                          *ngFor="let item of eleveList"
-                          [value]="item.eleve"
-                        >
-                          {{ item.prenom }} - {{ item.nom }}
-                        </option>
-                      </select>
-                    </div>
-                  </div>
-
-                  <div class="col-lg-6 col-sm-6">
-                    <div class="form-group">
-                      <label>Semestre <span class="text-danger">*</span></label>
-                      <select
-                        class="form-control select"
-                        name="semestre"
-                        formControlName="semestre"
-                        required=""
-                      >
-                        <option>Selectionnez</option>
-                        <option
-                          *ngFor="let item of semestreList"
-                          [value]="item.id"
-                        >
-                          {{ item.libelle }}
-                        </option>
-                      </select>
-                    </div>
-                  </div>
-                </div>
-
-                <div class="row form-row">
-                  <div class="col-lg-6 col-sm-6">
-                    <div class="form-group">
-                      <label
-                        >Etat absence <span class="text-danger">*</span></label
-                      >
-                      <select
-                        class="form-control select"
-                        name="justifiee"
-                        formControlName="justifiee"
-                        required=""
-                      >
-                        <option>Selectionnez</option>
-                        <option value="1">Justifiée</option>
-                        <option value="0">Non justifiée</option>
-                      </select>
-                    </div>
-                  </div>
-
-                  <div class="col-lg-6 col-sm-6">
-                    <div class="form-group">
-                      <label
-                        >Date absence <span class="text-danger">*</span></label
-                      >
-                      <input
-                        type="date"
-                        required
-                        class="form-control"
-                        formControlName="dateAbsence"
-                      />
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              <div class="row form-row">
-                <div class="col-lg-12 col-sm-12">
-                  <div class="form-group">
-                    <label>Motif <span class="text-danger">*</span></label>
-                    <textarea
-                      class="form-control select"
-                      formControlName="motif"
-                      required=""
-                    ></textarea>
-                  </div>
-                </div>
-              </div>
-            </form>
-            <div style="margin-top: 75px col-sm-12">
-              <button
-                type="button"
-                class="btn btn-primary si_accept_confirm float-lg-right"
-                id="btn-yes"
-                [disabled]="!attendanceRecordFormGroup.valid"
-                (click)="ajouterEditAbsence()"
-              >
-                Enregistrer
-              </button>
-              <button
-                type="button"
-                class="btn btn-danger si_accept_cancel float-left"
-                (click)="goBack()"
-              >
-                Annuler
-              </button>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
- -->
-
 <div class="page-wrapper">
   <div class="content container-fluid">
     <div class="page-header">
@@ -264,15 +86,87 @@
 
                     <div class="form-group">
                       <label class="form-label">
-                        État absence <span class="text-danger">*</span>
+                        type absence <span class="text-danger">*</span>
                         <i class="fas fa-check-circle ms-1 text-muted"></i>
                       </label>
-                      <select class="form-select" formControlName="justifiee" required>
+                      <select class="form-select" formControlName="attendanceStatus" required>
                         <option value="" disabled selected>— Sélectionnez —</option>
-                        <option value="1">Justifiée</option>
-                        <option value="0">Non justifiée</option>
+                        @for (item of attendanceStatusList; track item) {
+                          <option [value]="item">
+                            {{ item }}
+                          </option>
+                        }
                       </select>
                     </div>
+
+                    <!-- Champs spécifiques au RETARD (affichés uniquement si RETARD est sélectionné) -->
+                    @if (attendanceRecordFormGroup.get('attendanceStatus')?.value === 'RETARD') {
+                      <div class="retard-fields">
+                        <div class="form-group">
+                          <label class="form-label">
+                            Cours <span class="text-danger">*</span>
+                            <i class="fas fa-book ms-1 text-muted"></i>
+                          </label>
+                          <select class="form-select" formControlName="courseId" required>
+                            <option value="" disabled selected>— Sélectionnez un cours —</option>
+                            @for (item of coursList; track item.id) {
+                              <option [value]="item.id">
+                                {{ item.libelle }}
+                              </option>
+                            }
+                          </select>
+                          @if (
+                            attendanceRecordFormGroup.get('courseId')?.invalid &&
+                            attendanceRecordFormGroup.get('courseId')?.touched
+                          ) {
+                            <div class="text-danger small">
+                              Le cours est obligatoire pour un retard
+                            </div>
+                          }
+                        </div>
+
+                        <div class="form-group">
+                          <label class="form-label">
+                            Heure prévue (début du cours) <span class="text-danger">*</span>
+                            <i class="fas fa-clock ms-1 text-muted"></i>
+                          </label>
+                          <input
+                            type="time"
+                            class="form-control"
+                            formControlName="expectedTime"
+                            (change)="calculateLateMinutes()"
+                          />
+                        </div>
+
+                        <div class="form-group">
+                          <label class="form-label">
+                            Heure d'arrivée réelle <span class="text-danger">*</span>
+                            <i class="fas fa-clock ms-1 text-muted"></i>
+                          </label>
+                          <input
+                            type="time"
+                            class="form-control"
+                            formControlName="arrivalTime"
+                            (change)="calculateLateMinutes()"
+                          />
+                        </div>
+
+                        <div class="form-group">
+                          <label class="form-label">
+                            Minutes de retard
+                            <i class="fas fa-hourglass-half ms-1 text-muted"></i>
+                          </label>
+                          <input
+                            type="number"
+                            class="form-control"
+                            formControlName="lateMinutes"
+                            readonly
+                            [class.is-invalid]="lateMinutes > 0 && !isRetardJustifie()"
+                          />
+                          <small class="text-muted">Calculé automatiquement</small>
+                        </div>
+                      </div>
+                    }
 
                     <div class="form-group">
                       <label class="form-label">
@@ -281,7 +175,7 @@
                       </label>
                       <textarea
                         class="form-control"
-                        formControlName="motif"
+                        formControlName="justificationReason"
                         rows="4"
                         placeholder="Décrivez le motif de l'absence..."
                       ></textarea>
@@ -323,23 +217,32 @@
 
                     <div class="form-group">
                       <label class="form-label">
+                        État absence <span class="text-danger">*</span>
+                        <i class="fas fa-check-circle ms-1 text-muted"></i>
+                      </label>
+                      <select class="form-select" formControlName="justified" required>
+                        <option value="" disabled selected>— Sélectionnez —</option>
+                        <option value="true">Justifiée</option>
+                        <option value="false">Non justifiée</option>
+                      </select>
+                    </div>
+
+                    <div class="form-group">
+                      <label class="form-label">
                         Date absence <span class="text-danger">*</span>
                         <i class="fas fa-calendar-day ms-1 text-muted"></i>
                       </label>
                       <input
                         type="date"
                         class="form-control"
-                        formControlName="dateAbsence"
+                        formControlName="attendanceDate"
                         required
                       />
                     </div>
 
-                    <div class="form-group placeholder-field">
-                      <!-- Champ vide pour l'alignement -->
-                    </div>
-                    <div class="form-group placeholder-field">
-                      <!-- Champ vide pour l'alignement -->
-                    </div>
+                    
+                    <div class="form-group placeholder-field"></div>
+                    <div class="form-group placeholder-field"></div>
                   </div>
                 </div>
               </div>
@@ -348,7 +251,11 @@
                 <button type="button" class="btn btn-secondary" (click)="goBack()">
                   <i class="fas fa-times me-2"></i>Annuler
                 </button>
-                <button type="submit" class="btn btn-primary" [disabled]="!attendanceRecordFormGroup.valid">
+                <button
+                  type="submit"
+                  class="btn btn-primary"
+                  [disabled]="!attendanceRecordFormGroup.valid"
+                >
                   <i class="fas fa-save me-2"></i>
                   @if (!attendanceRecordId) {
                     Enregistrer l'absence

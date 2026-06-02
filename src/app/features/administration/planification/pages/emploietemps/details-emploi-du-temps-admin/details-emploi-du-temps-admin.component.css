@@ -1,0 +1,1370 @@
+/* Styles pour l'en-tête d'information */
+.info-header {
+  margin-bottom: 2rem;
+}
+
+.info-card {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1rem 1.5rem;
+  background: linear-gradient(135deg, #f8f9fa 0%, #ffffff 100%);
+  border-radius: 12px;
+  border: 1px solid #e9ecef;
+  transition: all 0.3s ease;
+}
+
+.info-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+.info-icon {
+  width: 48px;
+  height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #028ee1;
+  border-radius: 12px;
+  color: white;
+  font-size: 1.5rem;
+}
+
+.info-content label {
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: #6c757d;
+  margin-bottom: 0.25rem;
+  display: block;
+}
+
+.info-content h5 {
+  margin: 0;
+  font-size: 1rem;
+  font-weight: 600;
+  color: #2c3e50;
+}
+
+/* Section divider */
+.section-divider {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  margin: 2rem 0 1.5rem;
+}
+
+.divider-icon {
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #028ee1;
+  border-radius: 50%;
+  color: white;
+  font-size: 1rem;
+}
+
+.divider-text {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #2c3e50;
+}
+
+.divider-line {
+  flex: 1;
+  height: 2px;
+  background: linear-gradient(90deg, #028ee1, transparent);
+}
+
+/* Table moderne */
+.modern-table {
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.modern-table thead th {
+  background: #f8f9fa;
+  color: #2c3e50;
+  font-weight: 600;
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  padding: 1rem;
+  border-bottom: 2px solid #028ee1;
+}
+
+.modern-table tbody td {
+  padding: 1rem;
+  vertical-align: middle;
+  border-bottom: 1px solid #e9ecef;
+}
+
+.modern-table tbody tr:hover {
+  background-color: #f8f9fa;
+}
+
+.course-badge {
+  display: inline-block;
+  padding: 0.25rem 0.75rem;
+  background: #e3f2fd;
+  color: #028ee1;
+  border-radius: 20px;
+  font-size: 0.85rem;
+  font-weight: 500;
+}
+
+.matiere-tag {
+  display: inline-block;
+  padding: 0.25rem 0.75rem;
+  background: #f3e5f5;
+  color: #7b1fa2;
+  border-radius: 20px;
+  font-size: 0.85rem;
+}
+
+.teacher-info,
+.salle-info {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: #6c757d;
+  font-size: 0.9rem;
+}
+
+.date-badge,
+.time-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.25rem 0.75rem;
+  background: #f8f9fa;
+  border-radius: 20px;
+  font-size: 0.85rem;
+  color: #495057;
+}
+
+/* Cartes mobiles */
+.course-card-mobile {
+  background: white;
+  border-radius: 12px;
+  border: 1px solid #e9ecef;
+  overflow: hidden;
+  transition: all 0.3s ease;
+}
+
+.course-card-mobile:hover {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+.course-header {
+  background: linear-gradient(135deg, #028ee1, #0277bd);
+  padding: 1rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.course-number {
+  color: white;
+  font-weight: 600;
+  font-size: 0.85rem;
+}
+
+.matiere-badge {
+  background: rgba(255, 255, 255, 0.2);
+  padding: 0.25rem 0.75rem;
+  border-radius: 20px;
+  color: white;
+  font-size: 0.8rem;
+}
+
+.course-body {
+  padding: 1rem;
+}
+
+.course-row {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.5rem 0;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.course-row:last-child {
+  border-bottom: none;
+}
+
+.course-row i {
+  width: 20px;
+  color: #028ee1;
+}
+
+.course-row .label {
+  font-size: 0.8rem;
+  color: #6c757d;
+  min-width: 80px;
+}
+
+.course-row .value {
+  font-size: 0.9rem;
+  color: #2c3e50;
+  font-weight: 500;
+}
+
+/* État vide */
+.empty-state {
+  text-align: center;
+  padding: 3rem;
+  color: #6c757d;
+}
+
+.empty-icon {
+  font-size: 3rem;
+  margin-bottom: 1rem;
+  color: #dee2e6;
+}
+
+/* Actions */
+.form-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 1rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid #e9ecef;
+}
+
+.btn {
+  padding: 0.5rem 1.5rem;
+  border-radius: 8px;
+  font-weight: 500;
+  transition: all 0.3s ease;
+}
+
+.btn-primary {
+  background-color: #028ee1;
+  border-color: #028ee1;
+}
+
+.btn-primary:hover {
+  background-color: #0277bd;
+  border-color: #0277bd;
+  transform: translateY(-1px);
+}
+
+.btn-outline-primary {
+  border-color: #028ee1;
+  color: #028ee1;
+}
+
+.btn-outline-primary:hover {
+  background-color: #028ee1;
+  color: white;
+  transform: translateY(-1px);
+}
+
+.btn-secondary {
+  background-color: #6c757d;
+  border-color: #6c757d;
+}
+
+.btn-secondary:hover {
+  background-color: #5a6268;
+  transform: translateY(-1px);
+}
+
+/* Alert help */
+.alert-help {
+  background: #f8f9fa;
+  border-left: 4px solid #028ee1;
+  padding: 1rem;
+  border-radius: 8px;
+  color: #6c757d;
+  font-size: 0.85rem;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .info-card {
+    margin-bottom: 1rem;
+  }
+
+  .form-actions {
+    flex-direction: column;
+  }
+
+  .form-actions button {
+    width: 100%;
+  }
+
+  .section-divider {
+    margin: 1rem 0;
+  }
+}
+
+/* Animation */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.modern-table tbody tr {
+  animation: fadeIn 0.3s ease-out;
+}
+
+.course-card-mobile {
+  animation: fadeIn 0.3s ease-out;
+}
+
+/* Style académique pour l'emploi du temps */
+
+/* En-tête avec informations - alignement sur une ligne */
+.info-header {
+  margin-bottom: 1.5rem;
+}
+
+.info-card {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 0.75rem 1rem;
+  background: #f8f9fa;
+  border-radius: 8px;
+  border: 1px solid #e9ecef;
+  transition: all 0.2s ease;
+}
+
+.info-card:hover {
+  background: #ffffff;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.info-icon {
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #028ee1;
+  border-radius: 8px;
+  color: white;
+  font-size: 1.2rem;
+}
+
+.info-content label {
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: #6c757d;
+  margin-bottom: 0.25rem;
+  display: block;
+}
+
+.info-content h5 {
+  margin: 0;
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: #2c3e50;
+}
+
+/* Pour garantir l'alignement sur la même ligne */
+@media (min-width: 768px) {
+  .info-header .row {
+    display: flex;
+    flex-wrap: nowrap;
+  }
+
+  .info-header .col-md-4 {
+    flex: 1;
+  }
+}
+
+/* Section divider */
+.section-divider {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  margin: 1.5rem 0;
+}
+
+.divider-icon {
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #028ee1;
+  border-radius: 50%;
+  color: white;
+  font-size: 0.9rem;
+}
+
+.divider-text {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #2c3e50;
+}
+
+.divider-line {
+  flex: 1;
+  height: 1px;
+  background: linear-gradient(90deg, #028ee1, #e9ecef);
+}
+
+/* Tableau moderne */
+.modern-table {
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.modern-table thead th {
+  background: #028ee1;
+  color: white;
+  font-weight: 600;
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  padding: 0.75rem 1rem;
+  border-bottom: none;
+}
+
+.modern-table tbody td {
+  padding: 0.75rem 1rem;
+  vertical-align: middle;
+  border-bottom: 1px solid #e9ecef;
+}
+
+.modern-table tbody tr:hover {
+  background-color: #f8f9fa;
+}
+
+/* Badges */
+.course-badge {
+  display: inline-block;
+  padding: 0.2rem 0.6rem;
+  background: #e3f2fd;
+  color: #028ee1;
+  border-radius: 15px;
+  font-size: 0.8rem;
+  font-weight: 500;
+}
+
+.matiere-tag {
+  display: inline-block;
+  padding: 0.2rem 0.6rem;
+  background: #f3e5f5;
+  color: #7b1fa2;
+  border-radius: 15px;
+  font-size: 0.8rem;
+}
+
+.teacher-info,
+.salle-info {
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+  color: #6c757d;
+  font-size: 0.85rem;
+}
+
+.date-badge,
+.time-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  padding: 0.2rem 0.6rem;
+  background: #f8f9fa;
+  border-radius: 15px;
+  font-size: 0.8rem;
+  color: #495057;
+}
+
+/* Empty state */
+.empty-state {
+  text-align: center;
+  padding: 3rem;
+  color: #6c757d;
+}
+
+.empty-icon {
+  font-size: 3rem;
+  margin-bottom: 1rem;
+  color: #dee2e6;
+}
+
+/* Actions */
+.form-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 1rem;
+  padding-top: 1rem;
+  border-top: 1px solid #e9ecef;
+}
+
+.btn {
+  padding: 0.5rem 1.5rem;
+  border-radius: 6px;
+  font-weight: 500;
+  transition: all 0.2s ease;
+}
+
+.btn-primary {
+  background-color: #028ee1;
+  border-color: #028ee1;
+}
+
+.btn-primary:hover {
+  background-color: #0277bd;
+  border-color: #0277bd;
+  transform: translateY(-1px);
+}
+
+.btn-outline-primary {
+  border-color: #028ee1;
+  color: #028ee1;
+}
+
+.btn-outline-primary:hover {
+  background-color: #028ee1;
+  color: white;
+  transform: translateY(-1px);
+}
+
+.btn-secondary {
+  background-color: #6c757d;
+  border-color: #6c757d;
+}
+
+.btn-secondary:hover {
+  background-color: #5a6268;
+  transform: translateY(-1px);
+}
+
+/* Alert help */
+.alert-help {
+  background: #f8f9fa;
+  border-left: 4px solid #028ee1;
+  padding: 0.75rem 1rem;
+  border-radius: 6px;
+  color: #6c757d;
+  font-size: 0.8rem;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .info-card {
+    margin-bottom: 0.75rem;
+  }
+
+  .form-actions {
+    flex-direction: column;
+  }
+
+  .form-actions button {
+    width: 100%;
+  }
+
+  .modern-table {
+    font-size: 0.75rem;
+  }
+
+  .course-badge,
+  .matiere-tag {
+    font-size: 0.7rem;
+  }
+}
+
+/* Impression */
+@media print {
+
+  .form-actions,
+  .alert-help {
+    display: none;
+  }
+
+  .info-card {
+    border: 1px solid #ddd;
+    background: white;
+  }
+
+  .info-icon {
+    background: #6c757d;
+  }
+
+  .modern-table thead th {
+    background: #e9ecef !important;
+    color: black !important;
+  }
+}
+
+/* Séparateur entre le header et le contenu */
+.header-separator {
+  height: 2px;
+  background: linear-gradient(90deg, #028ee1 0%, #e9ecef 100%);
+  margin: 1rem 0 1.5rem 0;
+  border-radius: 2px;
+}
+
+/* Alternative : utiliser un margin-top sur la carte principale */
+.card {
+  margin-top: 0.5rem;
+}
+
+/* Ou ajouter un espace avec un padding sur le body du card */
+.card-body {
+  padding-top: 1.5rem;
+}
+
+/* Pour un espace plus grand sur desktop */
+@media (min-width: 768px) {
+  .header-separator {
+    margin: 1.5rem 0 2rem 0;
+  }
+
+  .card-body {
+    padding-top: 2rem;
+  }
+}
+
+/*today*/
+/* Container Général Style Écolier */
+.timetable-clean-container {
+  background-color: #ffffff;
+  border: 1px solid #bcbcbc;
+  border-radius: 8px;
+  padding: 15px;
+  width: 100%;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+}
+
+.timetable-outer-header {
+  text-align: center;
+  margin-bottom: 15px;
+}
+
+.title-badge-scolaire {
+  display: inline-block;
+  border: 2px solid #333333;
+  border-radius: 24px;
+  padding: 5px 30px;
+  font-weight: bold;
+  font-size: 14px;
+  background-color: #ffffff;
+}
+
+/* Grille de Table */
+.timetable-grid {
+  width: 100%;
+  border-collapse: collapse;
+  table-layout: fixed;
+}
+
+.timetable-grid th,
+.timetable-grid td {
+  border: 1px solid #555555;
+  text-align: center;
+  vertical-align: middle;
+  padding: 5px 4px;
+  font-size: 11px;
+  word-wrap: break-word;
+}
+
+.timetable-grid th {
+  background-color: #ffffff;
+  font-size: 13px;
+  font-weight: bold;
+}
+
+.sub-class {
+  font-size: 10px;
+  font-weight: normal;
+  color: #666666;
+}
+
+.time-cell {
+  font-weight: bold;
+  background-color: #ffffff;
+  font-size: 10px;
+  width: 11%;
+}
+
+/* Couleurs Thématiques de la Capture */
+.accueil-cell {
+  background-color: #e2e3e5 !important;
+  color: #212529;
+  font-size: 10px;
+}
+
+.break-cell {
+  background-color: #ffffff !important;
+  font-weight: normal;
+  letter-spacing: 1.5px;
+  color: #444444;
+  font-size: 11px;
+}
+
+.french-cell {
+  background-color: #f8d7da !important;
+  color: #721c24;
+}
+
+.math-cell {
+  background-color: #cce5ff !important;
+  color: #004085;
+}
+
+.eps-cell {
+  background-color: #ffe8cc !important;
+  color: #a04000;
+  font-weight: bold;
+}
+
+.art-cell {
+  background-color: #fff3cd !important;
+  color: #856404;
+}
+
+.monde-cell {
+  background-color: #d1ecf1 !important;
+  color: #0c5460;
+}
+
+.langue-cell {
+  background-color: #e8dbff !important;
+  color: #4b0082;
+}
+
+.emc-cell {
+  background-color: #fff3cd !important;
+  color: #856404;
+}
+
+/* Ruban de volume horaire inférieur */
+.volume-footer-ribbon {
+  margin-top: 15px;
+  border: 1px solid #cccccc;
+  border-radius: 6px;
+  padding: 8px;
+  background-color: #ffffff;
+}
+
+.ribbon-title {
+  font-weight: bold;
+  font-size: 11px;
+  margin-bottom: 6px;
+}
+
+.ribbon-flex {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  justify-content: space-between;
+}
+
+.ribbon-item {
+  display: flex;
+  align-items: center;
+  font-size: 10px;
+}
+
+.color-dot {
+  display: inline-block;
+  width: 12px;
+  height: 12px;
+  margin-right: 5px;
+  border-radius: 3px;
+  border: 1px solid #999;
+}
+
+/* Gestion de l'impression système Native */
+@media print {
+  @page {
+    size: A4 landscape;
+    margin: 5mm;
+  }
+
+  body {
+    visibility: hidden;
+    background: none;
+  }
+
+  .timetable-clean-container,
+  .timetable-clean-container * {
+    visibility: visible;
+  }
+
+  .timetable-clean-container {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    border: none;
+    box-shadow: none;
+    padding: 0;
+  }
+
+  .no-print,
+  .form-actions,
+  .page-header {
+    display: none !important;
+  }
+}
+
+/* Container fantôme pour l'exportation et l'impression */
+.modern-printable-container {
+  background-color: #ffffff;
+  border: 1px solid #bcbcbc;
+  border-radius: 8px;
+  padding: 15px;
+  width: 100%;
+}
+
+.timetable-outer-header {
+  text-align: center;
+  margin-bottom: 12px;
+}
+
+.title-badge-scolaire {
+  display: inline-block;
+  border: 2px solid #333333;
+  border-radius: 24px;
+  padding: 4px 25px;
+  font-weight: bold;
+  font-size: 14px;
+  background-color: #ffffff;
+  color: #000000;
+}
+
+.subtitle-scolaire {
+  font-size: 11px;
+  margin-top: 5px;
+  color: #555555;
+  font-weight: 500;
+}
+
+/* Grille de Table Harmonisée */
+.timetable-grid {
+  width: 100%;
+  border-collapse: collapse;
+  table-layout: fixed;
+}
+
+.timetable-grid th,
+.timetable-grid td {
+  border: 1px solid #444444;
+  text-align: center;
+  vertical-align: middle;
+  padding: 4px 3px;
+  font-size: 10.5px;
+  word-wrap: break-word;
+}
+
+.timetable-grid th {
+  background-color: #ffffff;
+  font-size: 12px;
+  font-weight: bold;
+}
+
+.sub-class {
+  font-size: 9.5px;
+  font-weight: normal;
+  color: #666666;
+}
+
+.time-cell {
+  font-weight: bold;
+  background-color: #ffffff;
+  font-size: 9.5px;
+  width: 11%;
+}
+
+/* Application exacte des nuances pastel de l'image */
+.accueil-cell {
+  background-color: #e2e3e5 !important;
+  color: #000;
+}
+
+.break-cell {
+  background-color: #ffffff !important;
+  font-weight: normal;
+  letter-spacing: 1.5px;
+  color: #444444;
+  font-size: 11px;
+}
+
+.french-cell {
+  background-color: #f8d7da !important;
+  color: #000;
+}
+
+.math-cell {
+  background-color: #cce5ff !important;
+  color: #000;
+}
+
+.eps-cell {
+  background-color: #ffe8cc !important;
+  color: #000;
+  font-weight: bold;
+}
+
+.art-cell {
+  background-color: #fff3cd !important;
+  color: #000;
+}
+
+.monde-cell {
+  background-color: #d1ecf1 !important;
+  color: #000;
+}
+
+.langue-cell {
+  background-color: #e8dbff !important;
+  color: #000;
+}
+
+.emc-cell {
+  background-color: #fff3cd !important;
+  color: #000;
+}
+
+/* Ruban inférieur pour le volume horaire */
+.volume-footer-ribbon {
+  margin-top: 15px;
+  border: 1px solid #cccccc;
+  border-radius: 6px;
+  padding: 8px;
+  background-color: #ffffff;
+}
+
+.ribbon-title {
+  font-weight: bold;
+  font-size: 11px;
+  margin-bottom: 5px;
+}
+
+.ribbon-flex {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  justify-content: space-between;
+}
+
+.ribbon-item {
+  display: flex;
+  align-items: center;
+  font-size: 10px;
+}
+
+.color-dot {
+  display: inline-block;
+  width: 11px;
+  height: 11px;
+  margin-right: 5px;
+  border-radius: 2px;
+  border: 1px solid #888888;
+}
+
+/* ========================================== */
+/* DIRECTIVES POUR L'IMPRESSION SYSTEME (CTRL+P) */
+/* ========================================== */
+@media print {
+  @page {
+    size: A4 landscape;
+    /* Force le format paysage en sortie */
+    margin: 6mm;
+  }
+
+  /* Masque l'intégralité de la liste écran */
+  body * {
+    visibility: hidden;
+  }
+
+  /* Rend uniquement visible la matrice calquée sur l'image */
+  .modern-printable-container,
+  .modern-printable-container * {
+    visibility: visible;
+  }
+
+  .modern-printable-container {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    display: block !important;
+  }
+}
+
+/* Cache l'élément de la vue utilisateur courante à l'écran */
+.print-matrix-target {
+  position: absolute;
+  left: -9999px;
+  top: 0;
+  width: 1050px;
+  /* Largeur optimale pour un rendu A4 paysage impeccable */
+  background-color: #ffffff;
+  padding: 10px;
+}
+
+.timetable-outer-header {
+  text-align: center;
+  margin-bottom: 10px;
+}
+
+.title-badge-scolaire {
+  display: inline-block;
+  border: 2px solid #333333;
+  border-radius: 20px;
+  padding: 3px 25px;
+  font-weight: bold;
+  font-size: 14px;
+  background-color: #ffffff;
+  color: #000000;
+}
+
+.subtitle-scolaire {
+  font-size: 11px;
+  margin-top: 4px;
+  color: #555555;
+}
+
+/* Grille de Table Matricielle */
+.timetable-grid {
+  width: 100%;
+  border-collapse: collapse;
+  table-layout: fixed;
+}
+
+.timetable-grid th,
+.timetable-grid td {
+  border: 1px solid #444444;
+  text-align: center;
+  vertical-align: middle;
+  padding: 4px 2px;
+  font-size: 10.5px;
+  color: #000000;
+}
+
+.timetable-grid th {
+  background-color: #ffffff;
+  font-size: 12px;
+  font-weight: bold;
+}
+
+.sub-class {
+  font-size: 9px;
+  font-weight: normal;
+  color: #555555;
+}
+
+.time-cell {
+  font-weight: bold;
+  background-color: #ffffff;
+  width: 11%;
+}
+
+/* Nuancier de couleurs fidèles à la capture */
+.accueil-cell {
+  background-color: #e2e3e5 !important;
+}
+
+.break-cell {
+  background-color: #ffffff !important;
+  letter-spacing: 1.5px;
+  color: #333333;
+  font-weight: 500;
+}
+
+.french-cell {
+  background-color: #f8d7da !important;
+}
+
+.math-cell {
+  background-color: #cce5ff !important;
+}
+
+.eps-cell {
+  background-color: #ffe8cc !important;
+  font-weight: bold;
+}
+
+.art-cell {
+  background-color: #fff3cd !important;
+}
+
+.monde-cell {
+  background-color: #d1ecf1 !important;
+}
+
+.langue-cell {
+  background-color: #e8dbff !important;
+}
+
+.emc-cell {
+  background-color: #fff3cd !important;
+}
+
+/* Ruban inférieur (Volume horaire) */
+.volume-footer-ribbon {
+  margin-top: 12px;
+  border: 1px solid #bbbbbb;
+  border-radius: 4px;
+  padding: 6px;
+  background-color: #ffffff;
+}
+
+.ribbon-title {
+  font-weight: bold;
+  font-size: 11px;
+  margin-bottom: 4px;
+}
+
+.ribbon-flex {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  justify-content: space-between;
+}
+
+.ribbon-item {
+  display: flex;
+  align-items: center;
+  font-size: 9.5px;
+}
+
+.color-dot {
+  display: inline-block;
+  width: 11px;
+  height: 11px;
+  margin-right: 4px;
+  border-radius: 2px;
+  border: 1px solid #777777;
+}
+
+/* ========================================================== */
+/* DIRECTIVES LORS DE L'IMPRESSION (DÉCLENCHÉE PAR IMPRIMER) */
+/* ========================================================== */
+@media print {
+  @page {
+    size: A4 landscape;
+    margin: 5mm;
+  }
+
+  /* On cache l'intégralité de l'interface et du détail en liste */
+  body * {
+    visibility: hidden !important;
+  }
+
+  /* On force le conteneur fantôme à devenir le seul élément visible et imprimé */
+  .print-matrix-target,
+  .print-matrix-target * {
+    visibility: visible !important;
+  }
+
+  .print-matrix-target {
+    position: absolute !important;
+    left: 0 !important;
+    top: 0 !important;
+    width: 100% !important;
+  }
+}
+
+/* Positionnement hors-champ pour l'utilisateur à l'écran */
+.print-matrix-target {
+  position: absolute;
+  left: -9999px;
+  top: 0;
+  width: 1100px;
+  background-color: #ffffff;
+  padding: 15px;
+  font-family: 'Helvetica Neue', Arial, sans-serif;
+}
+
+.timetable-outer-header {
+  text-align: center;
+  margin-bottom: 15px;
+}
+
+.title-badge-scolaire {
+  display: inline-block;
+  border: 2px solid #000000;
+  border-radius: 20px;
+  padding: 5px 30px;
+  font-weight: bold;
+  font-size: 16px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.subtitle-scolaire {
+  font-size: 12px;
+  margin-top: 6px;
+  color: #444444;
+  font-weight: 500;
+}
+
+/* Grille principale */
+.timetable-grid {
+  width: 100%;
+  border-collapse: collapse;
+  table-layout: fixed;
+}
+
+.timetable-grid th,
+.timetable-grid td {
+  border: 1px solid #333333;
+  text-align: center;
+  vertical-align: middle;
+  padding: 6px 4px;
+}
+
+.timetable-grid th {
+  background-color: #fcfcfc;
+  font-size: 13px;
+  font-weight: bold;
+}
+
+.sub-class {
+  font-size: 10px;
+  font-weight: normal;
+  color: #555555;
+}
+
+.time-cell {
+  font-weight: bold;
+  background-color: #ffffff;
+  font-size: 11px;
+  width: 12%;
+}
+
+/* Alignement du contenu des cours */
+.course-box-content {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  justify-content: center;
+}
+
+.course-subject {
+  font-size: 11.5px;
+  color: #000000;
+}
+
+.course-title-sub {
+  font-size: 9.5px;
+  font-style: italic;
+  color: #333333;
+}
+
+.course-details {
+  font-size: 9px;
+  color: #555555;
+  margin-top: 1px;
+}
+
+.empty-cell-dash {
+  color: #aaaaaa;
+  font-size: 12px;
+}
+
+/* Couleurs des cours dynamiques */
+.math-cell {
+  background-color: #cce5ff !important;
+}
+
+.french-cell {
+  background-color: #f8d7da !important;
+}
+
+.eps-cell {
+  background-color: #ffe8cc !important;
+  font-weight: bold;
+}
+
+.art-cell {
+  background-color: #fff3cd !important;
+}
+
+.langue-cell {
+  background-color: #e8dbff !important;
+}
+
+.monde-cell {
+  background-color: #d1ecf1 !important;
+}
+
+.default-course-cell {
+  background-color: #e2e3e5 !important;
+}
+
+/* Ruban bas de page */
+.volume-footer-ribbon {
+  margin-top: 15px;
+  border: 1px solid #222222;
+  border-radius: 4px;
+  padding: 8px 12px;
+  background-color: #ffffff;
+}
+
+.ribbon-title {
+  font-weight: bold;
+  font-size: 12px;
+  margin-bottom: 6px;
+  text-decoration: underline;
+}
+
+.ribbon-flex {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.ribbon-item {
+  display: flex;
+  align-items: center;
+  font-size: 11px;
+}
+
+.color-dot {
+  display: inline-block;
+  width: 12px;
+  height: 12px;
+  margin-right: 6px;
+  border-radius: 2px;
+  border: 1px solid #333333;
+}
+
+/* Gestion de la sortie physique d'impression */
+@media print {
+  @page {
+    size: A4 landscape;
+    margin: 6mm;
+  }
+
+  body * {
+    visibility: hidden !important;
+  }
+
+  .print-matrix-target,
+  .print-matrix-target * {
+    visibility: visible !important;
+  }
+
+  .print-matrix-target {
+    position: absolute !important;
+    left: 0 !important;
+    top: 0 !important;
+    width: 100% !important;
+  }
+}

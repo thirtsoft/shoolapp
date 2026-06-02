@@ -21,13 +21,13 @@ export class ListeAbsenceComponent implements OnInit {
   isLockable: boolean = true;
   isTable: boolean = true;
   columns: any = [];
-  absenceData: any = [];
+  attendRecordData: any = [];
   isEdit: boolean = true;
 
   userId?: number;
   eleveId?: number;
   classeId?: number;
-  deleteEndpoint = "absence";
+  deleteEndpoint = "attendRecord";
 
   currentPage = 0;
   pageSize = 5;
@@ -52,10 +52,10 @@ export class ListeAbsenceComponent implements OnInit {
   ngOnInit(): void {
     this.userId = this.localStorage.getItem('id');
     this.eleveId = this.localStorage.getItem('eleveId');
-    this.chargerLesAbsencesEleve();
+    this.chargerLesAttendRecordsEleve();
   }
 
-  async chargerLesAbsencesEleve() {
+  async chargerLesAttendRecordsEleve() {
     try {
       await Promise.all([
         this.getSemestreList(),
@@ -127,29 +127,34 @@ export class ListeAbsenceComponent implements OnInit {
       const filtreParam = this.construireLesParametreDeFiltre();
 
       resultatAPI = this.dossierEleveService.fetchFilterDataTable(
-        'absence',
+        'attendancerecord',
         this.currentPage,
         this.pageSize,
         filtreParam)
 
     } else {
-      resultatAPI = this.dossierEleveService.getResourcePaged('absence', this.currentPage, this.pageSize);
+      resultatAPI = this.dossierEleveService.getResourcePaged('attendancerecord', this.currentPage, this.pageSize);
     }
     resultatAPI.subscribe({
       next: (response) => {
-        this.absenceData = response.data?.content || [];
+        this.attendRecordData = response.data?.content || [];
         this.totalElements = response.data?.totalElements || 0;
 
         this.columns = [
           { key: 'nomCompletEleve', header: 'Elève' },
           { key: 'semestre', header: 'Semestre' },
           { key: 'anneeScolare', header: 'Année scolaire' },
-          { key: 'libelleJustifiee', header: 'Etat absence' },
-          { key: 'dateAbsence', header: 'Date absence' },
-          { key: 'date_declaration', header: 'Date déclaration' },
+          { key: 'attendanceStatus', header: 'Type absence' },
+          {
+            key: 'course',
+            header: 'Cours',
+            valueGetter: (record: any) => record.courseLibelle || '-'
+          },
+
+          { key: 'attendanceDate', header: 'Date absence' },
         ];
 
-        this.absenceData = this.absenceData.map((item: any) => ({
+        this.attendRecordData = this.attendRecordData.map((item: any) => ({
           ...item,
         }));
         this.isLoading = false;
@@ -160,6 +165,7 @@ export class ListeAbsenceComponent implements OnInit {
       }
     });
   }
+
 
   initialisationDesFiltres() {
     this.tableFilters = [

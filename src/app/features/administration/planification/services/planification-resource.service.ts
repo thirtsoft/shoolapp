@@ -98,8 +98,6 @@ export class PlanificationResourceService {
       url = `${url}?page=${page}&size=${size}`;
     }
 
-    console.log('URL:', url); // Debug URL
-
     return this.http.get<DataResult<T>>(url, this.httpOptions).pipe(
       tap(response => console.log('Réponse API:', response)),
       catchError(error => {
@@ -123,6 +121,11 @@ export class PlanificationResourceService {
 
   getSingleResource<T>(endpoint: string, id: number): Observable<T> {
     const url = `${this.planificationUrl}/${endpoint}/${id}`;
+    return this.http.get<T>(url, this.httpOptions);
+  }
+
+  getSingleResourceAttendRecordByMultiplesParameters<T>(endpoint: string, id: number, param: string): Observable<T> {
+    const url = `${this.planificationUrl}/${endpoint}/${id}/attendancesource/${param}`;
     return this.http.get<T>(url, this.httpOptions);
   }
 

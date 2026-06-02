@@ -187,15 +187,16 @@ export class CreateEmploieDuTempsComponent implements OnInit {
 
 
   ajouterEmploieDuTemps() {
+    const payload: EmploiDuTemps = {
+      id: this.emploiFormGroup.get("id")!.value,
+      classe: this.emploiFormGroup.get("classe")!.value,
+      semestre: this.emploiFormGroup.get("semestre")!.value,
+      semaine: this.emploiFormGroup.get("semaine")!.value,
+      coursEditDTOList: this.emploiFormGroup.get("coursEditDTOList")!.value,
+    }
+    payload.ecole = this.ecoleId;
+    console.log('Emploi du temps', payload);
     if (!this.emploieId && this.emploieId == undefined) {
-      const payload: EmploiDuTemps = {
-        id: this.emploiFormGroup.get("id")!.value,
-        classe: this.emploiFormGroup.get("classe")!.value,
-        semestre: this.emploiFormGroup.get("semestre")!.value,
-        semaine: this.emploiFormGroup.get("semaine")!.value,
-        coursEditDTOList: this.emploiFormGroup.get("coursEditDTOList")!.value,
-      }
-      payload.ecole = this.ecoleId;
       this.planificationService.createEmploiDuTemps(payload).subscribe({
         next: (data) => {
           if (data.statut === 'OK') {

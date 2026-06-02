@@ -1,186 +1,213 @@
 <div class="page-wrapper">
   <div class="content container-fluid">
     <div class="page-header">
-      <div class="row">
-        <div class="col-sm-7 col-auto">
-          <h3 class="page-title">Emploi du temps</h3>
-          <ul class="breadcrumb">
-            <li class="breadcrumb-item">
-              <a [routerLink]="'/admin/'">Tableau de bord</a>
-            </li>
-            <li class="breadcrumb-item active">{{ title }}</li>
-          </ul>
+      <div class="row align-items-center">
+        <div class="col-sm-7">
+          <h3 class="page-title">
+            <i class="fas fa-calendar-alt me-2"></i>Gestion des Emplois du Temps
+          </h3>
         </div>
       </div>
-    </div>
 
-    <div class="row">
-      <div class="col-sm-12">
-        <div class="card">
-          <div class="card-body">
-            <form>
-              <div class="row form-row">
-                <div class="col-lg-4 col-sm-4">
-                  <div class="form-group">
-                    <label>Classe</label>
-                    <input
-                      type="text"
-                      class="form-control"
-                      value=" {{ emploie?.libelleClasse }}"
-                      readonly
-                    />
+      <div class="row">
+        <div class="col-12">
+          <div class="card">
+            <div class="card-body p-4 p-md-5">
+              <div class="info-header mb-4">
+                <div class="row">
+                  <div class="col-md-4 col-sm-12">
+                    <div class="info-card">
+                      <div class="info-icon">
+                        <i class="fas fa-chalkboard-user"></i>
+                      </div>
+                      <div class="info-content">
+                        <label>Classe</label>
+                        <h5>{{ emploie?.libelleClasse || '-' }}</h5>
+                      </div>
+                    </div>
                   </div>
-                </div>
-                <div class="col-lg-4 col-sm-4">
-                  <div class="form-group">
-                    <label>Semestre</label>
-                    <input
-                      type="text"
-                      class="form-control"
-                      value=" {{ emploie?.libelleSemestre }}"
-                      readonly
-                    />
+                  <div class="col-md-4 col-sm-12">
+                    <div class="info-card">
+                      <div class="info-icon">
+                        <i class="fas fa-book-open"></i>
+                      </div>
+                      <div class="info-content">
+                        <label>Semestre</label>
+                        <h5>{{ emploie?.libelleSemestre || '-' }}</h5>
+                      </div>
+                    </div>
                   </div>
-                </div>
-                <div class="col-lg-4 col-sm-4">
-                  <div class="form-group">
-                    <label>Semaine</label>
-                    <input
-                      type="text"
-                      class="form-control"
-                      value=" {{ emploie?.libelleSemaine }}"
-                      readonly
-                    />
+                  <div class="col-md-4 col-sm-12">
+                    <div class="info-card">
+                      <div class="info-icon">
+                        <i class="fas fa-calendar-week"></i>
+                      </div>
+                      <div class="info-content">
+                        <label>Semaine</label>
+                        <h5>{{ emploie?.libelleSemaine || '-' }}</h5>
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>
 
-              <hr />
-              <h3 class="text-center">Liste des cours</h3>
-              <hr />
-
-              <div *ngFor="let cours of coursesList">
-                <div>
-                  <div class="row form-row">
-                    <div class="col-lg-4 col-sm-4">
-                      <div class="form-group">
-                        <label>Libelle </label>
-                        <input
-                          type="text"
-                          class="form-control"
-                          value=" {{ cours?.libelle }}"
-                          readonly
-                        />
-                      </div>
-                    </div>
-                    <div class="col-lg-4 col-sm-4">
-                      <div class="form-group">
-                        <label>Matière</label>
-                        <input
-                          type="text"
-                          class="form-control"
-                          value=" {{ cours?.matiere }}"
-                          readonly
-                        />
-                      </div>
-                    </div>
-                    <div class="col-lg-4 col-sm-4">
-                      <div class="form-group">
-                        <label>Enseignant </label>
-                        <input
-                          type="text"
-                          class="form-control"
-                          value=" {{ cours?.enseignant }}"
-                          readonly
-                        />
-                      </div>
-                    </div>
-                  </div>
-
-                  <div class="row form-row">
-                    <div class="col-lg-3 col-sm-3">
-                      <div class="form-group">
-                        <label>Salle <span class="text-danger">*</span></label>
-
-                        <input
-                          type="text"
-                          class="form-control"
-                          value=" {{ cours?.salle }}"
-                          readonly
-                        />
-                      </div>
-                    </div>
-                    <div class="col-lg-3 col-sm-3">
-                      <div class="form-group">
-                        <label>Date <span class="text-danger">*</span></label>
-                        <input
-                          type="text"
-                          class="form-control"
-                          value=" {{ cours?.dateDebut }}"
-                          readonly
-                        />
-                      </div>
-                    </div>
-
-                    <div class="col-lg-3 col-sm-3">
-                      <div class="form-group">
-                        <label>Heure début </label>
-                        <input
-                          type="text"
-                          class="form-control"
-                          value=" {{ cours?.heureDebut }}"
-                          readonly
-                        />
-                      </div>
-                    </div>
-                    <div class="col-lg-3 col-sm-3">
-                      <div class="form-group">
-                        <label>Heure fin </label>
-
-                        <input
-                          type="text"
-                          class="form-control"
-                          value=" {{ cours?.heureFin }}"
-                          readonly
-                        />
-                      </div>
-                    </div>
-                  </div>
-
-                  <div class="row form-row"></div>
-                </div>
+              <div class="section-divider">
+                <span class="divider-icon">
+                  <i class="fas fa-graduation-cap"></i>
+                </span>
+                <span class="divider-text">Liste des cours</span>
+                <span class="divider-line"></span>
               </div>
 
-              <div style="margin-top: 25px col-sm-12">
-                <button
-                  type="button"
-                  class="btn btn-primary float-lg-right"
-                  id="btn-yes"
-                  style="
-                    align-items: center;
-                    border: 1px solid #028ee1;
-                    box-shadow: 0 1px 2px rgba(16, 24, 40, 0.05);
-                    background-color: #028ee1;
-                    min-height: 44px;
-                    padding: 10px 16px;
-                    cursor: pointer;
-                  "
-                >
-                  <i class="fa fa-print"></i>
-                  Imprimer
+              <div class="courses-section">
+                <div class="table-responsive d-none d-md-block">
+                  <table class="table table-hover modern-table">
+                    <thead>
+                      <tr>
+                        <th><i class="fas fa-book me-1"></i> Libellé</th>
+                        <th><i class="fas fa-flask me-1"></i> Matière</th>
+                        <th><i class="fas fa-chalkboard me-1"></i> Enseignant</th>
+                        <th><i class="fas fa-door-open me-1"></i> Salle</th>
+                        <th><i class="fas fa-calendar-day me-1"></i> Date</th>
+                        <th><i class="fas fa-clock me-1"></i> Horaire</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      @for (cours of coursesList; track cours.id; let i = $index) {
+                        <tr>
+                          <td class="fw-semibold">
+                            <span class="course-badge">{{ cours?.libelle || '-' }}</span>
+                          </td>
+                          <td>
+                            <span class="matiere-tag">{{ cours?.matiere || '-' }}</span>
+                          </td>
+                          <td>
+                            <div class="teacher-info">
+                              <i class="fas fa-user-graduate me-1 text-muted"></i>
+                              {{ cours?.enseignant || '-' }}
+                            </div>
+                          </td>
+                          <td>
+                            <div class="salle-info">
+                              <i class="fas fa-map-marker-alt me-1 text-muted"></i>
+                              {{ cours?.salle || '-' }}
+                            </div>
+                          </td>
+                          <td>
+                            <span class="date-badge">
+                              <i class="far fa-calendar-alt me-1"></i>
+                              {{ cours?.dateDebut | date: 'dd/MM/yyyy' }}
+                            </span>
+                          </td>
+                          <td>
+                            <span class="time-badge">
+                              <i class="far fa-clock me-1"></i>
+                              {{ cours?.heureDebut }} - {{ cours?.heureFin }}
+                            </span>
+                          </td>
+                        </tr>
+                      }
+                    </tbody>
+                  </table>
+                </div>
+
+                @if (!coursesList || coursesList.length === 0) {
+                  <div class="empty-state">
+                    <i class="fas fa-calendar-times empty-icon"></i>
+                    <p>Aucun cours programmé pour cette période</p>
+                  </div>
+                }
+              </div>
+
+              <div class="form-actions mt-5">
+                <button type="button" class="btn btn-secondary" (click)="goBack()">
+                  <i class="fas fa-arrow-left me-2"></i>Retour
                 </button>
-                <button
-                  type="button"
-                  class="btn btn-danger si_accept_cancel float-left"
-                  (click)="goBack()"
-                >
-                  Retour
+                <button type="button" class="btn btn-primary" (click)="imprimerEmploiDuTemps()">
+                  <i class="fas fa-print me-2"></i>Imprimer l'emploi du temps
+                </button>
+                <button type="button" class="btn btn-outline-primary" (click)="exporterPDF()">
+                  <i class="fas fa-file-pdf me-2"></i>Exporter PDF
                 </button>
               </div>
-            </form>
+
+              <div class="alert-help mt-4" role="alert">
+                <i class="fas fa-info-circle me-2"></i>
+                <span>L'emploi du temps est généré automatiquement selon la planification des cours.</span>
+              </div>
+            </div>
           </div>
         </div>
       </div>
+    </div>
+  </div>
+</div>
+
+<div id="print-shadow-element" class="print-matrix-target">
+  <div class="timetable-outer-header">
+    <div class="title-badge-scolaire">Emploi du temps {{ emploie?.libelleClasse || '6ème' }}</div>
+    <div class="subtitle-scolaire">
+      {{ emploie?.libelleSemestre || 'Semestre 2' }} - {{ emploie?.libelleSemaine || 'Première semaine' }}
+    </div>
+  </div>
+
+  <table class="timetable-grid">
+    <thead>
+      <tr>
+        <th class="time-header-cell">Horaire</th>
+        @for (jour of joursSemaine; track jour) {
+          <th>
+            {{ jour }}<br /><span class="sub-class">{{ emploie?.libelleClasse || '6ème' }}</span>
+          </th>
+        }
+      </tr>
+    </thead>
+    <tbody>
+      @for (row of gridData; track row.horaire; let r = $index) {
+        <tr>
+          <td class="time-cell">{{ row.horaire }}</td>
+
+          @for (j of joursSemaine; track j) {
+            @if (rowSpans && rowSpans[j.toLowerCase()] && (rowSpans[j.toLowerCase()][r]?.span)! > 0) {
+              <td [attr.rowspan]="rowSpans[j.toLowerCase()][r].span"
+                  [ngClass]="getCellClass(rowSpans[j.toLowerCase()][r].course?.matiere)">
+                
+                @if (rowSpans[j.toLowerCase()][r].course; as cours) {
+                  <div class="course-box-content">
+                    <div class="course-subject">
+                      <strong>{{ cours.matiere }}</strong>
+                    </div>
+                    <div class="course-title-sub">{{ cours.libelle }}</div>
+                    <div class="course-details">
+                      {{ cours.enseignant }} - <span>{{ cours.salle }}</span>
+                    </div>
+                  </div>
+                } @else {
+                  <div class="empty-cell-dash">-</div>
+                }
+              </td>
+            }
+          }
+        </tr>
+      }
+    </tbody>
+  </table>
+
+  <div class="volume-footer-ribbon">
+    <div class="ribbon-title">Répartition du volume horaire</div>
+    <div class="ribbon-flex">
+      @for (item of repartitionHoraire; track item.matiere) {
+        <div class="ribbon-item">
+          <span class="color-dot" [style.background-color]="item.color"></span>
+          <span class="label-text"><strong>{{ item.matiere }}</strong> : {{ item.volume }}</span>
+        </div>
+      }
+      
+      @if (repartitionHoraire.length === 0) {
+        <div class="ribbon-item">
+          <span class="label-text text-muted">Aucune donnée de volume horaire disponible</span>
+        </div>
+      }
     </div>
   </div>
 </div>

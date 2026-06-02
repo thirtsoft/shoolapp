@@ -1,273 +1,5 @@
-<!-- <div class="page-wrapper">
-  <div class="content container-fluid">
-    <div class="page-header">
-      <div class="row">
-        <div class="col-sm-7 col-auto">
-          <h3 class="page-title">Emploi du temps</h3>
-          <ul class="breadcrumb">
-            <li class="breadcrumb-item">
-              <a [routerLink]="'/admin/'">Tableau de bord</a>
-            </li>
-            <li class="breadcrumb-item active">{{ title }}</li>
-          </ul>
-        </div>
-      </div>
-    </div>
-
-    <div class="row">
-      <div class="col-sm-12">
-        <div class="card">
-          <div class="card-body">
-            <form [formGroup]="emploiFormGroup">
-              <input
-                type="text"
-                readonly="true"
-                hidden="true"
-                matInput
-                formControlName="id"
-              />
-              <div class="row form-row">
-                <div class="col-lg-4 col-sm-4">
-                  <div class="form-group">
-                    <label>Classe <span class="text-danger">*</span></label>
-                    <select
-                      type="text"
-                      class="form-control select"
-                      name="classe"
-                      formControlName="classe"
-                      required=""
-                    >
-                      <option value="">Selectionnez une classe</option>
-                      <option *ngFor="let item of classList" [value]="item.id">
-                        {{ item.libelle }}
-                      </option>
-                    </select>
-                  </div>
-                </div>
-                <div class="col-lg-4 col-sm-4">
-                  <div class="form-group">
-                    <label>Semestre <span class="text-danger">*</span></label>
-                    <select
-                      type="text"
-                      class="form-control select"
-                      name="semestre"
-                      formControlName="semestre"
-                      required=""
-                    >
-                      <option value="">Selectionnez un semestre</option>
-                      <option
-                        *ngFor="let item of semestreList"
-                        [value]="item.id"
-                      >
-                        {{ item.libelle }}
-                      </option>
-                    </select>
-                  </div>
-                </div>
-                <div class="col-lg-4 col-sm-4">
-                  <div class="form-group">
-                    <label>Semaine <span class="text-danger">*</span></label>
-                    <input
-                      type="text"
-                      formControlName="semaine"
-                      required
-                      placeholder="exemple : 1"
-                      class="form-control"
-                    />
-                  </div>
-                </div>
-              </div>
-              <hr />
-              <button
-                class="btn btn-primary"
-                (click)="onAddCourseItem()"
-                style="
-                  align-items: center;
-                  border: 1px solid #028ee1;
-                  box-shadow: 0 1px 2px rgba(16, 24, 40, 0.05);
-                  background-color: #028ee1;
-                  min-height: 44px;
-                  padding: 10px 16px;
-                  cursor: pointer;
-                "
-              >
-                <i class="fas fa-plus-circle"></i> Ajouter un cours
-              </button>
-              <hr />
-
-              <div formArrayName="coursEditDTOList">
-                <div
-                  *ngFor="
-                    let courseItem of coursEditDTOList().controls;
-                    let courseItemIndex = index
-                  "
-                  [formGroupName]="courseItemIndex"
-                >
-                  <div class="row form-row">
-                    <div class="col-lg-4 col-sm-4">
-                      <div class="form-group">
-                        <label
-                          >Libelle <span class="text-danger">*</span></label
-                        >
-
-                        <input
-                          type="text"
-                          required
-                          placeholder="libelle de la salle"
-                          class="form-control"
-                          formControlName="libelle"
-                        />
-                      </div>
-                    </div>
-                    <div class="col-lg-4 col-sm-4">
-                      <div class="form-group">
-                        <label
-                          >Enseignement
-                          <span class="text-danger">*</span></label
-                        >
-
-                        <select
-                          type="text"
-                          class="form-control select"
-                          name="enseignement"
-                          formControlName="enseignement"
-                          required=""
-                        >
-                          <option value="">Selectionnez enseignement</option>
-                          <option
-                            *ngFor="let item of enseignementList"
-                            [value]="item.id"
-                          >
-                            {{ item.enseignant }} - {{ item.classe }} -
-                            {{ item.anneeScolaire }}
-                          </option>
-                        </select>
-                      </div>
-                    </div>
-
-                    <div class="col-lg-4 col-sm-4">
-                      <div class="form-group">
-                        <label>Salle <span class="text-danger">*</span></label>
-
-                        <select
-                          type="text"
-                          class="form-control select"
-                          name="salle"
-                          formControlName="salle"
-                          required=""
-                        >
-                          <option value="">Selectionnez une salle</option>
-                          <option
-                            *ngFor="let item of salleList"
-                            [value]="item.id"
-                          >
-                            {{ item.libelle }}
-                          </option>
-                        </select>
-                      </div>
-                    </div>
-                  </div>
-
-                  <div class="row form-row">
-                    <div class="col-lg-4 col-sm-4">
-                      <div class="form-group">
-                        <label>Date <span class="text-danger">*</span></label>
-
-                        <input
-                          type="date"
-                          required
-                          class="form-control"
-                          formControlName="dateCours"
-                        />
-                      </div>
-                    </div>
-
-                    <div class="col-lg-4 col-sm-4">
-                      <div class="form-group">
-                        <label
-                          >Heure début <span class="text-danger">*</span></label
-                        >
-
-                        <input
-                          type="time"
-                          required
-                          class="form-control"
-                          formControlName="heureDebut"
-                        />
-                      </div>
-                    </div>
-                    <div class="col-lg-4 col-sm-4">
-                      <div class="form-group">
-                        <label
-                          >Heure fin <span class="text-danger">*</span></label
-                        >
-
-                        <input
-                          type="time"
-                          required
-                          class="form-control"
-                          formControlName="heureFin"
-                        />
-                      </div>
-                    </div>
-                  </div>
-
-                  <div class="row form-row">
-                    <div class="col-lg-4 col-sm-4" *ngIf="courseItemIndex > 0">
-                      <div class="mb-3" style="margin-top: 30px">
-                        <button
-                          style="width: unset"
-                          class="btn btn-danger ml-3 espace-bouton col-sm-5"
-                          (click)="removeCourseItem(courseItemIndex)"
-                        >
-                          <i class="fas fa-trash"></i>
-                          Supprimer
-                        </button>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              <div style="margin-top: 25px col-sm-12">
-                <button
-                  type="button"
-                  class="btn btn-primary float-lg-right"
-                  id="btn-yes"
-                  (click)="ajouterEmploieDuTemps()"
-                  [disabled]="!emploiFormGroup.valid"
-                  style="
-                    align-items: center;
-                    border: 1px solid #028ee1;
-                    box-shadow: 0 1px 2px rgba(16, 24, 40, 0.05);
-                    background-color: #028ee1;
-                    min-height: 44px;
-                    padding: 10px 16px;
-                    cursor: pointer;
-                  "
-                >
-                  Enregistrer
-                </button>
-                <button
-                  type="button"
-                  class="btn btn-danger si_accept_cancel float-left"
-                  (click)="goBack()"
-                >
-                  Annuler
-                </button>
-              </div>
-            </form>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
- -->
-
 <div class="page-wrapper">
   <div class="content container-fluid">
-    <!-- Page Header -->
     <div class="page-header">
       <div class="row align-items-center">
         <div class="col-sm-12">
@@ -279,7 +11,6 @@
       </div>
     </div>
 
-    <!-- Badge -->
     <div class="badge-container">
       <span class="badge badge-primary">
         <i class="fas fa-plus-circle me-1"></i>
@@ -295,7 +26,6 @@
       <div class="col-12">
         <div class="card">
           <div class="card-body p-4 p-md-5">
-            <!-- Step Indicator -->
             <div class="step-indicator">
               <div class="step active">
                 <span class="step-number">1</span>
@@ -310,8 +40,6 @@
 
             <form [formGroup]="emploiFormGroup" (ngSubmit)="ajouterEmploieDuTemps()">
               <input type="hidden" formControlName="id" />
-
-              <!-- Ligne 1: Classe + Semestre + Semaine -->
               <div class="row form-row">
                 <div class="col-lg-4 col-sm-12">
                   <div class="form-group">
@@ -380,7 +108,6 @@
 
               <div class="divider"></div>
 
-              <!-- Bouton Ajouter cours -->
               <div class="add-button-container">
                 <button type="button" class="btn-add-course" (click)="onAddCourseItem()">
                   <i class="fas fa-plus-circle me-2"></i>Ajouter un cours
@@ -389,7 +116,6 @@
 
               <div class="divider"></div>
 
-              <!-- Liste des cours -->
               <div formArrayName="coursEditDTOList">
                 @for (courseItem of coursEditDTOList().controls; track $index) {
                   <div class="course-card" [formGroupName]="$index">
@@ -509,7 +235,6 @@
                 }
               </div>
 
-              <!-- Actions -->
               <div class="form-actions">
                 <button type="button" class="btn btn-secondary" (click)="goBack()">
                   <i class="fas fa-times me-2"></i>Annuler
@@ -524,7 +249,6 @@
                 </button>
               </div>
 
-              <!-- Message d'aide -->
               <div class="alert-help mt-4" role="alert">
                 <i class="fas fa-info-circle me-2"></i>
                 <span>

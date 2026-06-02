@@ -13,8 +13,6 @@ export interface AttendanceRecord {
 
   attendanceStatus?: string;
 
-  typeSignalement?: string;
-
   attendanceSource?: string;
 
   declarationDate?: Date;
