@@ -1,4 +1,5 @@
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, DestroyRef, inject, OnInit } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormArray, FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
@@ -6,7 +7,10 @@ import { EvaluationEditRequest } from '../../../../../../core/models/dossierelev
 import { ListeEleve } from '../../../../../../core/models/dossiereleve/liste-eleve';
 import { Enseignement } from '../../../../../../core/models/planification/enseignement';
 import { ListeEnseignement } from '../../../../../../core/models/planification/liste-enseignement';
+import { ListeClasse } from '../../../../../../core/models/referentiels/classe';
+import { Semestre } from '../../../../../../core/models/referentiels/semestre';
 import { PlanificationResourceService } from '../../../../planification/services/planification-resource.service';
+import { ReferentielResourceService } from '../../../../referentiel/service/referentiel-resource.service';
 import { DossierResourceService } from '../../../service/dossier-resource.service';
 
 @Component({
@@ -26,7 +30,7 @@ export class EditEvaluationComponent implements OnInit {
   enseignementList: ListeEnseignement[] = [];
   typeEvaluations: string[] = ['DEVOIR', 'COMPOSITION'];
   modeEvaluations: string[] = ['NORMAL', 'RATTRAPAGE'];
-
+  semestreList: Semestre[] = [];
   addEditEvaluation: EvaluationEditRequest = {};
   isEditMode = false;
   title = "Modifier une évaluation";
@@ -35,22 +39,26 @@ export class EditEvaluationComponent implements OnInit {
 
   elevesList?: ListeEleve[] = [];
   enseignement?: Enseignement = {};
+  classeList: ListeClasse[] = [];
   userId?: number;
   ecoleId: any;
 
   private readonly dossierResource = inject(DossierResourceService);
   private readonly planification = inject(PlanificationResourceService);
+  private readonly referentielService = inject(ReferentielResourceService);
   private readonly _formBuilder = inject(FormBuilder);
   private readonly toastService = inject(ToastrService);
   private readonly activeRoute = inject(ActivatedRoute);
   private readonly router = inject(Router);
+  private readonly destroyRef = inject(DestroyRef);
 
 
   ngOnInit(): void {
     this.evaluationId = this.activeRoute.snapshot.params['id'];
     this.userId = Number(localStorage.getItem('id'));
     this.initialiserFormGroup();
-    this.getEnseignementList();
+    this.chargerLesDonnees();
+    //  this.getEnseignementList();
     if (this.evaluationId != null && this.evaluationId != undefined) {
       this.getEvaluationByID(this.evaluationId);
       this.title = 'Modifier les notes de l\'évaluation';
@@ -58,26 +66,51 @@ export class EditEvaluationComponent implements OnInit {
     }
   }
 
+  private chargerLesDonnees() {
+    this.referentielService.getResourceList('semestre').pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
+      next: (data: any) => this.semestreList = data
+    });
+
+    this.referentielService.getResourceList('classe').pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
+      next: (data: any) => this.classeList = data
+    });
+  }
+
+  private getEnseignementByClass(classId: number) {
+    this.planification.getAllEnseignementByclasse(classId).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
+      next: data => {
+        this.enseignementList = data;
+      }
+    });
+  }
+
+  onClasseSelected() {
+    const classId = this.evaluationFormGroup.get('classId')?.value;
+    if (classId) {
+      this.getEnseignementByClass(classId);
+    }
+    if (this.isEdit && this.addEditEvaluation?.enseignementId) {
+      this.evaluationFormGroup.patchValue({
+        enseignementId: this.addEditEvaluation.enseignementId
+      });
+    }
+
+  }
+
   initialiserFormGroup() {
     this.evaluationFormGroup = this._formBuilder.group({
       id: [''],
       titre: ['', Validators.required],
       description: [''],
+      classeId: ['', Validators.required],
       enseignementId: ['', Validators.required],
+      semestre: ['', Validators.required],
       dateEvaluation: ['', Validators.required],
       evaluationType: ['', Validators.required],
       evaluationMode: ['', Validators.required],
       heureDebut: ['', Validators.required],
       heureFin: ['', Validators.required],
       noteEditRequestDTOList: this._formBuilder.array([])
-    });
-  }
-
-  getEnseignementList() {
-    this.planification.getAllEnseignement().subscribe({
-      next: (data: any) => {
-        this.enseignementList = data;
-      }
     });
   }
 
@@ -94,7 +127,6 @@ export class EditEvaluationComponent implements OnInit {
     this.dossierResource.afficherListeEleveParClassEtAnneeScolaire('eleve', classId, anneeId).subscribe({
       next: (data: any) => {
         this.elevesList = data;
-        console.log('Liste des élèves chargée:', this.elevesList);
       },
       error: (error) => {
         console.error('Erreur chargement élèves:', error);
@@ -103,7 +135,7 @@ export class EditEvaluationComponent implements OnInit {
   }
 
   getEleveNomCompletEleve(id: number): string {
-    const eleve = this.elevesList!.find(e => e.id === id);
+    const eleve = this.elevesList?.find(e => e.id === id);
     return eleve ? eleve.prenom + " " + eleve.nom : 'Élève inconnu';
   }
 
@@ -111,26 +143,28 @@ export class EditEvaluationComponent implements OnInit {
     this.dossierResource.getSingleResource('evaluation', evaluationId).subscribe({
       next: (data: any) => {
         this.addEditEvaluation = data;
-        console.log('Details eval', this.addEditEvaluation);
         this.ecoleId = this.addEditEvaluation.ecole;
 
-        if (this.addEditEvaluation?.enseignementId) {
-          this.getEnseignement(this.addEditEvaluation.enseignementId);
+        if (this.addEditEvaluation?.classeId) {
+          this.getEnseignementByClass(this.addEditEvaluation.classeId);
         }
 
         this.evaluationFormGroup = this._formBuilder.group({
-          id: [this.addEditEvaluation?.id ? this.addEditEvaluation.id : ''],
-          titre: [this.addEditEvaluation?.titre ? this.addEditEvaluation.titre : '', Validators.required],
-          description: [this.addEditEvaluation?.description ? this.addEditEvaluation.description : ''],
-          enseignementId: [this.addEditEvaluation?.enseignementId ? this.addEditEvaluation.enseignementId : '', Validators.required],
-          dateEvaluation: [this.addEditEvaluation?.dateEvaluation ? this.addEditEvaluation.dateEvaluation : '', Validators.required],
-          evaluationType: [this.addEditEvaluation?.evaluationType ? this.addEditEvaluation.evaluationType : '', Validators.required],
-          evaluationMode: [this.addEditEvaluation?.evaluationMode ? this.addEditEvaluation.evaluationMode : '', Validators.required],
-          heureDebut: [this.addEditEvaluation?.heureDebut ? this.addEditEvaluation.heureDebut : '', Validators.required],
-          heureFin: [this.addEditEvaluation?.heureFin ? this.addEditEvaluation.heureFin : '', Validators.required],
+          id: [this.addEditEvaluation?.id ?? ''],
+          titre: [this.addEditEvaluation?.titre ?? '', Validators.required],
+          description: [this.addEditEvaluation?.description ?? ''],
+          classeId: [this.addEditEvaluation?.classeId ?? '', Validators.required],
+          enseignementId: [this.addEditEvaluation?.enseignementId ?? '', Validators.required],
+          semestre: [this.addEditEvaluation?.semestre ?? '', Validators.required],
+          dateEvaluation: [this.addEditEvaluation?.dateEvaluation ?? '', Validators.required],
+          evaluationType: [this.addEditEvaluation?.evaluationType ?? '', Validators.required],
+          evaluationMode: [this.addEditEvaluation?.evaluationMode ?? '', Validators.required],
+          heureDebut: [this.addEditEvaluation?.heureDebut ?? '', Validators.required],
+          heureFin: [this.addEditEvaluation?.heureFin ?? '', Validators.required],
           noteEditRequestDTOList: this._formBuilder.array([])
         });
-        this.addEditEvaluation?.noteEditRequestDTOList!.forEach((n: any) => {
+
+        this.addEditEvaluation?.noteEditRequestDTOList?.forEach((n: any) => {
           this.notes.push(this._formBuilder.group({
             id: [n.id],
             eleve: [n.eleve, Validators.required],
@@ -140,7 +174,6 @@ export class EditEvaluationComponent implements OnInit {
             appreciation: [n.appreciation]
           }));
         });
-        //     this.getEnseignement(this.addEditEvaluation?.enseignementId);
       },
       error: (data) => {
         console.log('error', 'Erreur lors de la création : ' + data.error);
@@ -151,23 +184,22 @@ export class EditEvaluationComponent implements OnInit {
   }
 
   get notes(): FormArray {
-    return this.evaluationFormGroup?.get('noteEditRequestDTOList') as FormArray;
+    const formArray = this.evaluationFormGroup?.get('noteEditRequestDTOList');
+    return (formArray as FormArray) ?? this._formBuilder.array([]);
   }
 
   ajouterEditEvaluation() {
-    if (this.evaluationFormGroup!.invalid) {
-      this.evaluationFormGroup!.markAllAsTouched();
+    if (this.evaluationFormGroup?.invalid) {
+      this.evaluationFormGroup?.markAllAsTouched();
       return;
     }
 
-    const payload = this.evaluationFormGroup!.value;
+    const payload = this.evaluationFormGroup?.value;
     payload.createur = this.userId;
     payload.etatId = this.addEditEvaluation.etatId;
     payload.dateCreation = this.addEditEvaluation.dateCreation;
     payload.dateRemise = this.addEditEvaluation.dateRemise;
     payload.ecole = this.ecoleId;
-
-    console.log(payload);
 
     this.dossierResource.updateUneReource('evaluation', payload.id, payload).subscribe({
       next: (data) => {
@@ -187,7 +219,7 @@ export class EditEvaluationComponent implements OnInit {
   }
 
   goBack() {
-    window.history.back();
+    this.router.navigate(['/admin/dossier-eleve/evaluations'])
   }
 
 }

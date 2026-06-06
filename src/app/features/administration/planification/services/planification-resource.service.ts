@@ -130,7 +130,7 @@ export class PlanificationResourceService {
   }
 
   getExercicet(id: number): Observable<Exercice> {
-    return this.http.get<Exercice>(`${this.planificationUrl}/exercice/${id}`);
+    return this.http.get<Exercice>(`${this.planificationUrl}/planification/exercice/${id}`);
   }
 
   getDetailsResource<T>(endpoint: string, id: number): Observable<T> {
@@ -162,6 +162,12 @@ export class PlanificationResourceService {
     const url = `${this.planificationUrl}/${endpoint}/changeretat/${id}`;
     return this.http.patch<ResponseMessage>(url, this.httpOptions);
   }
+
+  changeEtatResource<T>(endpoint: string, id: number, resource: Partial<T>): Observable<any> {
+    const url = `${this.planificationUrl}/${endpoint}/${id}/changeretat`;
+    return this.http.patch<ResponseMessage>(url, resource, this.httpOptions);
+  }
+
 
   updateMultipleResource<T>(endpoint: string, id: number, resource: Partial<T>): Observable<any> {
     const url = `${this.planificationUrl}/${endpoint}/updateplus/${id}`;
@@ -401,6 +407,10 @@ export class PlanificationResourceService {
 
   getAllEnseignementByEnseignant(ensignantId: number): Observable<ListeEnseignement[]> {
     return this.http.get<ListeEnseignement[]>(`${this.planificationUrl}/planification/enseignement/enseignant/${ensignantId}`, this.httpOptions);
+  }
+
+  getAllEnseignementByclasse(classeId: number): Observable<ListeEnseignement[]> {
+    return this.http.get<ListeEnseignement[]>(`${this.planificationUrl}/planification/enseignement/by-classe/${classeId}`, this.httpOptions);
   }
 
   getEnseignement(id: number): Observable<Enseignement> {

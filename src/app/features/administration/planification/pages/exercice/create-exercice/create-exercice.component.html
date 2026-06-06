@@ -1,276 +1,335 @@
 <div class="page-wrapper">
   <div class="content container-fluid">
     <div class="page-header">
-      <div class="row">
-        <div class="col-sm-7 col-auto">
-          <h3 class="page-title"></h3>
-          <ul class="breadcrumb"></ul>
+      <div class="row align-items-center">
+        <div class="col-sm-12">
+          <h3 class="page-title">{{ title }}</h3>
+          <p class="text-muted mt-1 mb-0">
+            <i class="fas fa-dumbbell me-1"></i> Gestion des exercices scolaires
+          </p>
         </div>
       </div>
     </div>
 
-    <div class="row justify-content-center">
-      <div class="col-md-12 col-lg-12 col-xl-12">
+    <div class="row mb-3">
+      <div class="col-sm-12">
+        <div class="badge-container">
+          <span class="badge badge-primary">
+            <i class="fas fa-plus-circle me-1"></i> Nouvel exercice
+          </span>
+        </div>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-12">
         <div class="card">
-          <h3 class="page-title text-center">{{ title }}</h3>
-          <div class="card-body">
-            <form [formGroup]="exerciceFormGroup">
-              <input
-                type="text"
-                readonly="true"
-                hidden="true"
-                formControlName="id"
-              />
-
-              <div class="row form-row">
-                <div class="col-12">
-                  <div class="form-group">
-                    <label>Titre <span class="text-danger">*</span></label>
-                    <input
-                      type="text"
-                      formControlName="titre"
-                      required
-                      class="form-control"
-                    />
-                  </div>
-                </div>
+          <div class="card-body p-4 p-md-5">
+            <div class="step-indicator">
+              <div class="step active">
+                <span class="step-number">1</span>
+                <span class="step-label">Information</span>
               </div>
-
-              <div class="row form-row">
-                <div class="col-6 col-sm-6">
-                  <div class="form-group">
-                    <label>Classe <span class="text-danger">*</span></label>
-                    <select
-                      class="form-control select"
-                      formControlName="classe"
-                      required=""
-                    >
-                      <option>Selectionnez</option>
-                      <option *ngFor="let item of classeList" [value]="item.id">
-                        {{ item.libelle }}
-                      </option>
-                    </select>
-                  </div>
-                </div>
-
-                <div class="col-6 col-sm-6">
-                  <div class="form-group">
-                    <label>Enseignant <span class="text-danger">*</span></label>
-                    <select
-                      class="form-control select"
-                      formControlName="enseignant"
-                      required=""
-                    >
-                      <option>Selectionnez</option>
-                      <option
-                        *ngFor="let item of enseigantList"
-                        [value]="item.id"
-                      >
-                        {{ item.nomComplet }}
-                      </option>
-                    </select>
-                  </div>
-                </div>
+              <div class="step-line"></div>
+              <div class="step">
+                <span class="step-number">2</span>
+                <span class="step-label">Confirmation</span>
               </div>
+            </div>
 
-              <div class="row form-row">
-                <div class="col-3">
-                  <div class="form-group">
-                    <label>Livre </label>
-                    <select class="form-control select" formControlName="livre">
-                      <option>Selectionnez</option>
-                      <option *ngFor="let item of livreList" [value]="item.id">
-                        {{ item.titre }}
-                      </option>
-                    </select>
-                  </div>
-                </div>
+            <form [formGroup]="exerciceFormGroup" (ngSubmit)="ajouteditExerciceWithFiles()">
+              <input type="hidden" formControlName="id" />
 
-                <div class="col-3">
-                  <div class="form-group">
-                    <label>Page </label>
-                    <input
-                      type="text"
-                      formControlName="page"
-                      class="form-control"
-                    />
-                  </div>
-                </div>
-
-                <div class="col-3">
-                  <div class="form-group">
-                    <label>Numero exercice </label>
-                    <input
-                      type="number"
-                      formControlName="numeroExercice"
-                      class="form-control"
-                    />
-                  </div>
-                </div>
-
-                <div class="col-3">
-                  <div class="form-group">
-                    <label>Lien </label>
-                    <input
-                      type="text"
-                      formControlName="url"
-                      class="form-control"
-                    />
-                  </div>
-                </div>
-              </div>
-
-              <div class="row form-row">
-                <div class="col-6">
-                  <div class="form-group">
-                    <label>Date début <span class="text-danger">*</span></label>
-                    <input
-                      type="date"
-                      formControlName="dateDebut"
-                      class="form-control"
-                      required=""
-                    />
-                  </div>
-                </div>
-
-                <div class="col-6">
-                  <div class="form-group">
-                    <label>Date fin </label>
-                    <input
-                      type="date"
-                      formControlName="dateFin"
-                      class="form-control"
-                    />
-                  </div>
-                </div>
-              </div>
-
-              <div class="row form-row">
-                <div class="col-12">
-                  <div class="form-group">
-                    <label
-                      >Description <span class="text-danger">*</span></label
-                    >
-                    <textarea
-                      name=""
-                      type="text"
-                      formControlName="description"
-                      class="form-control"
-                      required=""
-                    ></textarea>
-                  </div>
-                </div>
-              </div>
-
-              <ng-container>
-                <div class="entete">
-                  <div class="upload-container">
-                    <label class="upload-button">
-                      <i class="fas fa-plus"></i>
+              <div class="enseignement-item">
+                <div class="row form-row">
+                  <div class="col-lg-6 col-sm-12">
+                    <div class="form-group">
+                      <label class="form-label">
+                        Titre exercice <span class="text-danger">*</span>
+                        <i class="fas fa-tag ms-1 text-muted"></i>
+                      </label>
                       <input
-                        type="file"
-                        multiple
-                        (change)="onFileSelected($event)"
+                        type="text"
+                        class="form-control"
+                        formControlName="titre"
+                        placeholder="Ex: Exercice sur les équations"
                       />
-                      Ajouter une pièce jointe
-                    </label>
+                      @if (
+                        exerciceFormGroup.get('titre')?.invalid &&
+                        exerciceFormGroup.get('titre')?.touched
+                      ) {
+                        <div class="invalid-feedback">Le titre est requis</div>
+                      }
+                    </div>
+                  </div>
+
+                  <div class="col-lg-6 col-sm-12">
+                    <div class="form-group">
+                      <label class="form-label">
+                        Livre
+                        <i class="fas fa-book ms-1 text-muted"></i>
+                      </label>
+                      <select class="form-select" formControlName="livre">
+                        <option value="" disabled selected>— Sélectionnez un livre —</option>
+                        @for (item of livreList; track item.id) {
+                          <option [value]="item.id">
+                            {{ item.titre }}
+                          </option>
+                        }
+                      </select>
+                    </div>
                   </div>
                 </div>
 
-                <div *ngIf="errorMessage" class="error-message">
-                  {{ errorMessage }}
-                </div>
-
-                <div class="file-preview">
-                  <!-- Fichiers déjà enregistrés sur l'API -->
-                  <div
-                    class="file-item"
-                    *ngIf="this.exercice?.piecesJointesDTO"
-                  >
-                   <!--  <p
-                      class="file-title"
-                      [title]="this.exercice?.piecesJointesDTO?.nomFichier"
-                    >
-                      {{
-                        this.exercice.piecesJointesDTO.nomFichier > 10
-                          ? (this.exercice?.piecesJointesDTO?.nomFichier
-                              | slice : 0 : 10) + "..."
-                          : this.exercice?.piecesJointesDTO?.nomFichier
-                      }}
-                    </p>
- -->
-                    <img
-                      alt="File icon"
-                      [src]="
-                        getFileIcon(
-                          this.exercice?.piecesJointesDTO!.nomTechnique!
-                        )
-                      "
-                      class="file-icon"
-                      [title]="this.exercice?.piecesJointesDTO?.nomFichier"
-                    />
-
-                    <p
-                      class="file-name"
-                      [title]="this.exercice?.piecesJointesDTO?.nomFichier"
-                    >
-                     
-                    </p>
+                <div class="row form-row">
+                  <div class="col-lg-6 col-sm-12">
+                    <div class="form-group">
+                      <label class="form-label">
+                        Classe <span class="text-danger">*</span>
+                        <i class="fas fa-chalkboard-user ms-1 text-muted"></i>
+                      </label>
+                      <select
+                        class="form-select"
+                        formControlName="classId"
+                        (change)="onClasseSelected()"
+                        required
+                      >
+                        <option value="" disabled selected>— Sélectionnez une classe —</option>
+                        @for (item of classeList; track item.id) {
+                          <option [value]="item.id">
+                            {{ item.libelle }}
+                          </option>
+                        }
+                      </select>
+                      @if (
+                        exerciceFormGroup.get('classId')?.invalid &&
+                        exerciceFormGroup.get('classId')?.touched
+                      ) {
+                        <div class="invalid-feedback">La classe est requise</div>
+                      }
+                    </div>
                   </div>
 
-                  <!-- Fichiers sélectionnés mais pas encore envoyés -->
-                  <div class="file-item newItem" *ngIf="currentFile">
-                    <img
-                      [src]="getFileIcon(currentFile!.name)"
-                      alt="File icon"
-                      class="file-icon"
-                      [title]="currentFile!.name"
-                    />
-                    <p class="file-name" [title]="currentFile!.name">
-                      {{
-                        currentFile!.name.length > 10
-                          ? (currentFile!.name | slice : 0 : 10) + "..."
-                          : currentFile!.name
-                      }}
-                    </p>
-                    <span class="file-status new-file">Nouveau</span>
-                    <button
-                      class="remove-button"
-                      (click)="removeFileNoApi(false)"
-                    >
-                      <i class="fa fa-trash"></i>
-                    </button>
+                  <div class="col-lg-6 col-sm-12">
+                    <div class="form-group">
+                      <label class="form-label">
+                        Enseignement <span class="text-danger">*</span>
+                        <i class="fas fa-graduation-cap ms-1 text-muted"></i>
+                      </label>
+                      <select class="form-select" formControlName="enseignement" required>
+                        <option value="" disabled selected>
+                          — Sélectionnez une enseignement —
+                        </option>
+                        @for (item of enseignementList; track item.id) {
+                          <option [value]="item.id">
+                            {{ item.enseignant }} - {{ item.matiere }} - {{ item.classe }} -
+                            {{ item.anneeScolaire }}
+                          </option>
+                        }
+                      </select>
+                      @if (
+                        exerciceFormGroup.get('enseignement')?.invalid &&
+                        exerciceFormGroup.get('enseignement')?.touched
+                      ) {
+                        <div class="invalid-feedback">L'enseignement est requise</div>
+                      }
+                    </div>
                   </div>
                 </div>
-              </ng-container>
 
-              <div class="row mt-3">
-                <div class="col-12 d-flex justify-content-between">
-                  <button
-                    type="button"
-                    class="btn btn-danger si_accept_cancel"
-                    (click)="goBack()"
-                  >
-                    Annuler
-                  </button>
-                  <button
-                    type="button"
-                    class="upload-text text-white"
-                    style="
-                      align-items: center;
-                      border: 1px solid #028ee1;
-                      box-shadow: 0 1px 2px rgba(16, 24, 40, 0.05);
-                      background-color: #028ee1;
-                      min-height: 44px;
-                      padding: 10px 16px;
-                      cursor: pointer;
-                    "
-                    [disabled]="!exerciceFormGroup.valid"
-                    (click)="ajouteditExerciceWithFiles()"
-                  >
-                    Enregistrer
-                  </button>
+                <div class="row form-row">
+                  <div class="col-lg-4 col-sm-12">
+                    <div class="form-group">
+                      <label class="form-label">
+                        Page
+                        <i class="fas fa-file-alt ms-1 text-muted"></i>
+                      </label>
+                      <input
+                        type="text"
+                        class="form-control"
+                        formControlName="page"
+                        placeholder="Ex: 45-50"
+                      />
+                    </div>
+                  </div>
+
+                  <div class="col-lg-4 col-sm-12">
+                    <div class="form-group">
+                      <label class="form-label">
+                        Numéro exercice
+                        <i class="fas fa-hashtag ms-1 text-muted"></i>
+                      </label>
+                      <input
+                        type="number"
+                        class="form-control"
+                        formControlName="numeroExercice"
+                        placeholder="Ex: 3"
+                      />
+                    </div>
+                  </div>
+
+                  <div class="col-lg-4 col-sm-12">
+                    <div class="form-group">
+                      <label class="form-label">
+                        Lien
+                        <i class="fas fa-link ms-1 text-muted"></i>
+                      </label>
+                      <input
+                        type="text"
+                        class="form-control"
+                        formControlName="url"
+                        placeholder="https://..."
+                      />
+                    </div>
+                  </div>
                 </div>
+
+                <div class="row form-row">
+                  <div class="col-lg-6 col-sm-12">
+                    <div class="form-group">
+                      <label class="form-label">
+                        Date début <span class="text-danger">*</span>
+                        <i class="fas fa-calendar-alt ms-1 text-muted"></i>
+                      </label>
+                      <input
+                        type="date"
+                        class="form-control"
+                        formControlName="dateDebut"
+                        required
+                      />
+                      @if (
+                        exerciceFormGroup.get('dateDebut')?.invalid &&
+                        exerciceFormGroup.get('dateDebut')?.touched
+                      ) {
+                        <div class="invalid-feedback">La date de début est requise</div>
+                      }
+                    </div>
+                  </div>
+
+                  <div class="col-lg-6 col-sm-12">
+                    <div class="form-group">
+                      <label class="form-label">
+                        Date fin
+                        <i class="fas fa-calendar-check ms-1 text-muted"></i>
+                      </label>
+                      <input type="date" class="form-control" formControlName="dateFin" />
+                    </div>
+                  </div>
+                </div>
+
+                <div class="row form-row">
+                  <div class="col-12">
+                    <div class="form-group">
+                      <label class="form-label">
+                        Description <span class="text-danger">*</span>
+                        <i class="fas fa-align-left ms-1 text-muted"></i>
+                      </label>
+                      <textarea
+                        class="form-control"
+                        formControlName="description"
+                        rows="4"
+                        placeholder="Décrivez l'exercice..."
+                      ></textarea>
+                      @if (
+                        exerciceFormGroup.get('description')?.invalid &&
+                        exerciceFormGroup.get('description')?.touched
+                      ) {
+                        <div class="invalid-feedback">La description est requise</div>
+                      }
+                    </div>
+                  </div>
+                </div>
+
+                <div class="row form-row">
+                  <div class="col-12">
+                    <div class="form-group">
+                      <label class="form-label">
+                        <i class="fas fa-paperclip me-1"></i>
+                        Pièces jointes
+                      </label>
+
+                      <div class="upload-container">
+                        <label class="upload-button">
+                          <i class="fas fa-plus"></i>
+                          <input type="file" multiple (change)="onFileSelected($event)" />
+                          Ajouter une pièce jointe
+                        </label>
+                      </div>
+
+                      @if (errorMessage) {
+                        <div class="error-message">
+                          {{ errorMessage }}
+                        </div>
+                      }
+
+                      <div class="file-preview">
+                        @if (exercice?.piecesJointesDTO) {
+                          <div class="file-item">
+                            <img
+                              alt="File icon"
+                              [src]="getFileIcon(exercice?.piecesJointesDTO!.nomTechnique!)"
+                              class="file-icon"
+                              [title]="exercice?.piecesJointesDTO?.nomFichier"
+                            />
+                            <span
+                              class="file-name"
+                              [title]="exercice?.piecesJointesDTO?.nomFichier"
+                            >
+                              {{
+                                exercice?.piecesJointesDTO?.nomFichier?.length! > 15
+                                  ? (exercice?.piecesJointesDTO?.nomFichier | slice: 0 : 15) + '...'
+                                  : exercice?.piecesJointesDTO?.nomFichier
+                              }}
+                            </span>
+                            <span class="file-status saved-file">Enregistré</span>
+                            <button class="remove-button" (click)="removeFileNoApi(true)">
+                              <i class="fas fa-trash"></i>
+                            </button>
+                          </div>
+                        }
+
+                        @if (currentFile) {
+                          <div class="file-item newItem">
+                            <img
+                              [src]="getFileIcon(currentFile!.name)"
+                              alt="File icon"
+                              class="file-icon"
+                              [title]="currentFile!.name"
+                            />
+                            <span class="file-name" [title]="currentFile!.name">
+                              {{
+                                currentFile!.name.length > 15
+                                  ? (currentFile!.name | slice: 0 : 15) + '...'
+                                  : currentFile!.name
+                              }}
+                            </span>
+                            <span class="file-status new-file">Nouveau</span>
+                            <button class="remove-button" (click)="removeFileNoApi(false)">
+                              <i class="fas fa-trash"></i>
+                            </button>
+                          </div>
+                        }
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="form-actions">
+                <button type="button" class="btn btn-secondary" (click)="goBack()">
+                  <i class="fas fa-times me-2"></i>Annuler
+                </button>
+                <button type="submit" class="btn btn-primary" [disabled]="!exerciceFormGroup.valid">
+                  <i class="fas fa-save me-2"></i>Enregistrer l'exercice
+                </button>
+              </div>
+
+              <div class="alert-help mt-4" role="alert">
+                <i class="fas fa-info-circle me-2"></i>
+                <span
+                  >Les exercices permettent aux élèves de pratiquer et consolider leurs
+                  connaissances.</span
+                >
               </div>
             </form>
           </div>

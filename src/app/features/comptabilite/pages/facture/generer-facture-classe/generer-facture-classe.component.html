@@ -5,7 +5,7 @@
         <div class="col-sm-7 col-auto">
           <h3 class="page-title">{{ title || 'Générer une facture' }}</h3>
           <p class="text-muted mt-1 mb-0">
-            <i class="fas fa-file-invoice me-1"></i> Création de facture par classe
+            <i class="fas fa-file-invoice me-1"></i> Création de facture pour classe
           </p>
         </div>
       </div>
@@ -15,9 +15,8 @@
       <div class="col-md-8 col-lg-6 col-xl-5">
         <div class="card">
           <div class="card-body p-4 p-md-5">
-            <!-- Indicateur d'étape -->
             <div class="step-indicator mb-4">
-              <div class="step" [class.active]="!selectedClasse || !selectedMois || !selectedAnnee">
+              <div class="step" [class.active]="!isFormValid()">
                 <span class="step-number">1</span>
                 <span class="step-label">Sélection</span>
               </div>
@@ -32,35 +31,51 @@
             </div>
 
             <form (ngSubmit)="genererFacture()">
-              <!-- Champ Classe -->
-              <div class="form-group mb-4">
-                <label class="form-label">
-                  Classe <span class="text-danger">*</span>
-                  <i class="fas fa-graduation-cap ms-1 text-muted"></i>
-                </label>
-                <select
-                  class="form-select"
-                  name="classe"
-                  [(ngModel)]="selectedClasse"
-                  (change)="onTypeClasseSelected()"
-                  required
-                >
-                  <option value="" disabled selected>— Sélectionnez une classe —</option>
+              <div class="row g-3 mb-4">
+                <div class="col-md-6">
+                  <label class="form-label">
+                    Classe <span class="text-danger">*</span>
+                    <i class="fas fa-graduation-cap ms-1 text-muted"></i>
+                  </label>
+                  <select
+                    class="form-select"
+                    name="classe"
+                    [(ngModel)]="selectedClasse"
+                    (change)="onTypeClasseSelected()"
+                    required
+                  >
+                    <option value="" disabled selected>— Sélectionnez une classe —</option>
 
-                  @for (item of classList; track item.id) {
-                    <option [value]="item.id">
-                      {{ item.libelle }}
-                    </option>
+                    @for (item of classList; track item.id) {
+                      <option [value]="item.id">
+                        {{ item.libelle }}
+                      </option>
+                    }
+                  </select>
+                  @if (!selectedClasse) {
+                    <small class="form-text text-muted">
+                      Choisissez la classe pour laquelle générer la facture
+                    </small>
                   }
-                </select>
-                @if (!selectedClasse) {
-                  <small class="form-text text-muted">
-                    Choisissez la classe pour laquelle générer la facture
-                  </small>
-                }
+                </div>
+
+                <div class="col-md-6">
+                  <div class="form-group">
+                    <label class="form-label">
+                      Date échéance <span class="text-danger">*</span>
+                      <i class="fas fa-calendar-day ms-1 text-muted"></i>
+                    </label>
+                    <input
+                      type="date"
+                      class="form-control"
+                      name="echeanceDate"
+                      [(ngModel)]="echeanceDate"
+                      required
+                    />
+                  </div>
+                </div>
               </div>
 
-              <!-- Ligne Mois + Année -->
               <div class="row g-3 mb-4">
                 <div class="col-md-6">
                   <div class="form-group">
@@ -115,7 +130,6 @@
                 </div>
               </div>
 
-              <!-- Récapitulatif visuel -->
               @if (selectedClasse && selectedMois && selectedAnnee) {
                 <div class="recap-card p-3 mb-4">
                   <div class="d-flex align-items-center gap-3">
@@ -132,7 +146,6 @@
                 </div>
               }
 
-              <!-- Actions -->
               <div class="form-actions">
                 <button type="button" class="btn btn-secondary" (click)="goBack()">
                   <i class="fas fa-times me-2"></i>Annuler
@@ -142,7 +155,6 @@
                 </button>
               </div>
 
-              <!-- Message d'aide -->
               <div class="alert-help mt-4" role="alert">
                 <i class="fas fa-info-circle me-2"></i>
                 <span>La facture sera générée pour tous les élèves de la classe sélectionnée.</span>

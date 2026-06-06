@@ -1,339 +1,3 @@
-<!-- <div class="page-wrapper">
-  <div class="content container-fluid">
-    <div class="page-header">
-      <div class="row">
-        <div class="col-sm-7 col-auto">
-          <h3 class="page-title"></h3>
-          <ul class="breadcrumb"></ul>
-        </div>
-      </div>
-    </div>
-
-    <div class="row justify-content-center">
-      <div class="col-md-12 col-lg-12 col-xl-12">
-        <div class="card">
-          <h3 class="page-title text-center" style="margin-top: 50px">
-            {{ title }}
-          </h3>
-
-          <div class="col-md-3 col-lg-3 col-xl-3 col-sm-3">
-            <button
-              class="btn btn-primary"
-              (click)="onAddEnseignementItems()"
-              [disabled]="isEdit || disableAddButton"
-              style="
-                align-items: center;
-                border: 1px solid #028ee1;
-                box-shadow: 0 1px 2px rgba(16, 24, 40, 0.05);
-                background-color: #028ee1;
-                min-height: 44px;
-                padding: 10px 16px;
-                cursor: pointer;
-              "
-            >
-              <i class="fas fa-plus-circle"></i>
-              {{ isEdit ? "Modification en cours" : "Ajouter un enseignement" }}
-            </button>
-          </div>
-          <div class="card-body">
-            <form [formGroup]="enseignementFormGroup">
-              <div formArrayName="enseignements">
-                <div
-                  *ngFor="
-                    let enseignement of enseignementsArray.controls;
-                    let i = index
-                  "
-                  [formGroupName]="i"
-                  class="enseignement-item mb-4 p-3 border rounded"
-                >
-                  <div
-                    class="d-flex justify-content-between align-items-center mb-3"
-                  >
-                    <h5>Enseignement {{ i + 1 }}</h5>
-                    <button
-                      *ngIf="enseignementsArray.length > 1"
-                      type="button"
-                      class="btn btn-danger btn-sm"
-                      (click)="removeEnseignementItem(i)"
-                    >
-                      <i class="fas fa-trash"></i> Supprimer
-                    </button>
-                  </div>
-                  <input
-                    type="text"
-                    readonly="true"
-                    hidden="true"
-                    formControlName="id"
-                  />
-
-                  <div class="row form-row">
-                    <div class="col-3 col-sm-3">
-                      <div class="form-group">
-                        <label
-                          >Enseignant <span class="text-danger">*</span></label
-                        >
-                        <select
-                          [class.is-invalid]="
-                            enseignement.get('enseignant')?.invalid &&
-                            enseignement.get('enseignant')?.touched
-                          "
-                          class="form-control select"
-                          formControlName="enseignant"
-                          required=""
-                        >
-                          <option value="">Selectionnez enseignant</option>
-                          <option
-                            *ngFor="let item of enseigantList"
-                            [value]="item.id"
-                          >
-                            {{ item.nomComplet }}
-                          </option>
-                        </select>
-                        <span
-                          class="invalid-feedback"
-                          *ngIf="
-                            enseignement.get('enseignant')?.invalid &&
-                            enseignement.get('enseignant')?.touched
-                          "
-                        >
-                          L'enseignant est requis
-                        </span>
-                      </div>
-                    </div>
-                    <div class="col-3 col-sm-3">
-                      <div class="form-group">
-                        <label>Classe <span class="text-danger">*</span></label>
-                        <select
-                          class="form-control select"
-                          formControlName="classe"
-                          required=""
-                          [class.is-invalid]="
-                            enseignement.get('classe')?.invalid &&
-                            enseignement.get('classe')?.touched
-                          "
-                        >
-                          <option value="">Selectionnez une classe</option>
-                          <option
-                            *ngFor="let item of classeList"
-                            [value]="item.id"
-                          >
-                            {{ item.libelle }}
-                          </option>
-                        </select>
-                        <span
-                          class="invalid-feedback"
-                          *ngIf="
-                            enseignement.get('classe')?.invalid &&
-                            enseignement.get('classe')?.touched
-                          "
-                        >
-                          La classe est requise
-                        </span>
-                      </div>
-                    </div>
-                    <div class="col-3 col-sm-3">
-                      <div class="form-group">
-                        <label
-                          >Matière <span class="text-danger">*</span></label
-                        >
-                        <select
-                          class="form-control select"
-                          formControlName="matiere"
-                          [class.is-invalid]="
-                            enseignement.get('matiere')?.invalid &&
-                            enseignement.get('matiere')?.touched
-                          "
-                        >
-                          <option value="">Selectionnez une matière</option>
-                          <option
-                            *ngFor="let item of matiereList"
-                            [value]="item.id"
-                          >
-                            {{ item?.libelle }}
-                          </option>
-                        </select>
-
-                        <span
-                          class="invalid-feedback"
-                          *ngIf="
-                            enseignement.get('matiere')?.invalid &&
-                            enseignement.get('matiere')?.touched
-                          "
-                        >
-                          La matière est requise
-                        </span>
-                      </div>
-                    </div>
-
-                    <div class="col-3 col-sm-3">
-                      <div class="form-group">
-                        <label
-                          >Semestre <span class="text-danger">*</span></label
-                        >
-                        <select
-                          class="form-control select"
-                          formControlName="semestre"
-                          [class.is-invalid]="
-                            enseignement.get('semestre')?.invalid &&
-                            enseignement.get('semestre')?.touched
-                          "
-                        >
-                          <option value="">Selectionnez un semestre</option>
-                          <option
-                            *ngFor="let semestre of semestreList"
-                            [value]="semestre.id"
-                          >
-                            {{ semestre?.libelle }}
-                          </option>
-                        </select>
-
-                        <span
-                          class="invalid-feedback"
-                          *ngIf="
-                            enseignement.get('semestre')?.invalid &&
-                            enseignement.get('semestre')?.touched
-                          "
-                        >
-                          La matière est requise
-                        </span>
-                      </div>
-                    </div>
-                  </div>
-
-                  <div class="row form-row">
-                    <div class="col-4 col-sm-4">
-                      <div class="form-group">
-                        <label
-                          >Année scolaire
-                          <span class="text-danger">*</span></label
-                        >
-                        <select
-                          class="form-control select"
-                          formControlName="anneeScolaire"
-                          [class.is-invalid]="
-                            enseignement.get('anneeScolaire')?.invalid &&
-                            enseignement.get('anneeScolaire')?.touched
-                          "
-                        >
-                          <option value="">
-                            Selectionnez une année scolaire
-                          </option>
-                          <option
-                            *ngFor="let item of anneeScolaireList"
-                            [value]="item.id"
-                          >
-                            {{ item?.libelle }}
-                          </option>
-                        </select>
-
-                        <span
-                          class="invalid-feedback"
-                          *ngIf="
-                            enseignement.get('anneeScolaire')?.invalid &&
-                            enseignement.get('anneeScolaire')?.touched
-                          "
-                        >
-                          L'année scolaire est requise
-                        </span>
-                      </div>
-                    </div>
-
-                    <div class="col-lg-4 col-sm-4">
-                      <div class="form-group">
-                        <label
-                          >Date de début
-                          <span class="text-danger">*</span></label
-                        >
-                        <input
-                          type="date"
-                          formControlName="dateDebut"
-                          required
-                          class="form-control"
-                          [class.is-invalid]="
-                            enseignement.get('dateDebut')?.invalid &&
-                            enseignement.get('dateDebut')?.touched
-                          "
-                        />
-
-                        <span
-                          class="invalid-feedback"
-                          *ngIf="
-                            enseignement.get('dateDebut')?.invalid &&
-                            enseignement.get('dateDebut')?.touched
-                          "
-                        >
-                          La date de début est requise
-                        </span>
-                      </div>
-                    </div>
-
-                    <div class="col-lg-4 col-sm-4">
-                      <div class="form-group">
-                        <label>Date de fin</label>
-                        <input
-                          type="date"
-                          formControlName="dateFin"
-                          class="form-control"
-                        />
-                      </div>
-                    </div>
-                  </div>
-
-                  <div class="row form-row">
-                    <div class="col-12 col-sm-12">
-                      <div class="form-group">
-                        <label
-                          >Description <span class="text-danger">*</span></label
-                        >
-                        <textarea
-                          name=""
-                          type="text"
-                          formControlName="description"
-                          class="form-control"
-                          id=""
-                        ></textarea>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              <div class="row mt-3">
-                <div class="col-12 d-flex justify-content-between">
-                  <button
-                    type="button"
-                    class="btn btn-danger si_accept_cancel"
-                    (click)="goBack()"
-                  >
-                    Annuler
-                  </button>
-                  <button
-                    type="button"
-                    class="upload-text text-white"
-                    style="
-                      align-items: center;
-                      border: 1px solid #028ee1;
-                      box-shadow: 0 1px 2px rgba(16, 24, 40, 0.05);
-                      background-color: #028ee1;
-                      min-height: 44px;
-                      padding: 10px 16px;
-                      cursor: pointer;
-                    "
-                    (click)="ajouteditEnseignement()"
-                  >
-                    Enregistrer
-                  </button>
-                </div>
-              </div>
-            </form>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
- -->
-
 <div class="page-wrapper">
   <div class="content container-fluid">
     <div class="page-header">
@@ -360,7 +24,6 @@
 
     <div class="card">
       <div class="card-body p-4 p-md-5">
-        <!-- Step Indicator -->
         <div class="step-indicator">
           <div class="step active">
             <span class="step-number">1</span>
@@ -374,7 +37,6 @@
         </div>
 
         <form [formGroup]="enseignementFormGroup" (ngSubmit)="ajouteditEnseignement()">
-          <!-- Bouton Ajouter un enseignement -->
           <div class="add-button-container">
             <button
               type="button"
@@ -415,9 +77,8 @@
 
                 <input type="hidden" formControlName="id" />
 
-                <!-- Ligne 1: Enseignant + Classe + Matière + Semestre -->
                 <div class="row form-row">
-                  <div class="col-lg-3 col-sm-12">
+                  <div class="col-lg-4 col-sm-12">
                     <div class="form-group">
                       <label class="form-label">
                         Enseignant <span class="text-danger">*</span>
@@ -438,7 +99,7 @@
                     </div>
                   </div>
 
-                  <div class="col-lg-3 col-sm-12">
+                  <div class="col-lg-4 col-sm-12">
                     <div class="form-group">
                       <label class="form-label">
                         Classe <span class="text-danger">*</span>
@@ -458,7 +119,7 @@
                     </div>
                   </div>
 
-                  <div class="col-lg-3 col-sm-12">
+                  <div class="col-lg-4 col-sm-12">
                     <div class="form-group">
                       <label class="form-label">
                         Matière <span class="text-danger">*</span>
@@ -477,30 +138,8 @@
                       }
                     </div>
                   </div>
-
-                  <div class="col-lg-3 col-sm-12">
-                    <div class="form-group">
-                      <label class="form-label">
-                        Semestre <span class="text-danger">*</span>
-                        <i class="fas fa-book-open ms-1 text-muted"></i>
-                      </label>
-                      <select class="form-select" formControlName="semestre" required>
-                        <option value="" disabled selected>— Sélectionnez un semestre —</option>
-                        @for (semestre of semestreList; track semestre.id) {
-                          <option [value]="semestre.id">{{ semestre?.libelle }}</option>
-                        }
-                      </select>
-                      @if (
-                        enseignement.get('semestre')?.invalid &&
-                        enseignement.get('semestre')?.touched
-                      ) {
-                        <div class="invalid-feedback">Le semestre est requis</div>
-                      }
-                    </div>
-                  </div>
                 </div>
 
-                <!-- Ligne 2: Année scolaire + Date début + Date fin -->
                 <div class="row form-row">
                   <div class="col-lg-4 col-sm-12">
                     <div class="form-group">
@@ -557,8 +196,28 @@
                   </div>
                 </div>
 
-                <!-- Ligne 3: Description -->
                 <div class="row form-row">
+                  <div class="col-12 mb-3">
+                    <div class="form-check form-switch-custom p-0">
+                      <label
+                        class="form-check-label d-flex align-items-center style-label-check"
+                        style="cursor: pointer"
+                      >
+                        <input
+                          type="checkbox"
+                          class="form-check-input me-2 ms-0"
+                          formControlName="estProfPrincipal"
+                          style="width: 40px; height: 20px"
+                        />
+                        <span>
+                          <i class="fas fa-star text-warning me-1"></i>
+                          Définir cet enseignant comme <strong>Professeur Principal</strong> de
+                          cette classe
+                        </span>
+                      </label>
+                    </div>
+                  </div>
+
                   <div class="col-12">
                     <div class="form-group">
                       <label class="form-label">

@@ -15,3 +15,33 @@ export interface NoteEditRequest {
   actif?: number;
 
 }
+
+export interface NoteEdit {
+
+  id?: number;
+
+  eleve?: number;
+
+  nomCompletEleve?: string;
+
+  classe?: number;
+
+  libelleClasse?: string;
+
+  evaluation?: number;
+
+  evaluationTitre?: string;
+
+  note?: number;
+
+  type?: string;
+
+  appreciation?: string;
+
+  createur?: number;
+
+  dateCreation?: Date;
+
+  actif?: number;
+
+}

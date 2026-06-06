@@ -1,6 +1,8 @@
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, DestroyRef, inject, OnInit } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
+import { ToastrService } from 'ngx-toastr';
 import { Constants } from '../../../../../../core/constants/constants';
 import { Enseignant } from '../../../../../../core/models/enseignant/enseignant';
 import { Enseignement } from '../../../../../../core/models/planification/enseignement';
@@ -9,9 +11,7 @@ import { ListeClasse } from '../../../../../../core/models/referentiels/classe';
 import { NiveauEducation } from '../../../../../../core/models/referentiels/niveau-eduction';
 import { PieceJointeService } from '../../../../../../core/services/piece-jointe';
 import { EnseignantService } from '../../../../../enseignant/service/enseignant.service';
-import { PlanificationResourceService } from '../../../../planification/services/planification-resource.service';
 import { ReferentielService } from '../../../../referentiel/service/referentiel.service';
-import { ToastrService } from 'ngx-toastr';
 
 
 @Component({
@@ -44,18 +44,16 @@ export class CreateEnseignantComponent implements OnInit {
   private readonly referentielService = inject(ReferentielService);
   private readonly enseignanService = inject(EnseignantService);
   private readonly pieceJointeService = inject(PieceJointeService);
-  private readonly planification = inject(PlanificationResourceService);
   private readonly toastService = inject(ToastrService);
   private readonly _formBuilder = inject(FormBuilder);
   private readonly router = inject(Router);
   private readonly activeRoute = inject(ActivatedRoute);
+  private readonly destroyRef = inject(DestroyRef);
 
 
   ngOnInit(): void {
     this.enseignantId = this.activeRoute.snapshot.params['id'];
-    this.getNiveauEducations();
-    this.getClasseList();
-    this.getAnneeScolaireList();
+    this.loadReferentiels();
     this.initializeForm(null);
     if (this.enseignantId != null && this.enseignantId != undefined) {
       this.getEnseignantById(this.enseignantId);
@@ -63,36 +61,16 @@ export class CreateEnseignantComponent implements OnInit {
     }
   }
 
-
-  getNiveauEducations() {
-    this.referentielService.getAllNiveauEducations().subscribe(
-      (data: any[]) => {
-        this.listEducations = data;
-      },
-      (error: any) => (this.errorMessage = <any>error)
-    );
-  }
-
-  getClasseList() {
-    this.referentielService.getAllClasses().subscribe({
-      next: (data) => {
-        this.classeList = data;
-      }
+  private loadReferentiels() {
+    this.referentielService.getAllNiveauEducations().pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
+      next: data => this.listEducations = data
     });
   }
 
-  getSelectedClasseName(): string {
-    const classId = this.enseignantFormGroup.get('classe')?.value;
-    const salle = this.classeList.find(c => Number(c.id) === Number(classId));
-    return salle?.libelle || '';
-  }
-
-  getAnneeScolaireList() {
-    this.referentielService.getAllAnneeScolaires().subscribe({
-      next: (data) => {
-        this.anneeScolaireList = data;
-      }
-    });
+  getSelectedNiveauName(): string {
+    const niveauId = this.enseignantFormGroup.get('niveauEducation')?.value;
+    const niveau = this.listEducations.find(c => Number(c.id) === Number(niveauId));
+    return niveau?.libelle || '';
   }
 
 
@@ -113,13 +91,6 @@ export class CreateEnseignantComponent implements OnInit {
       //    dateDebut: [moment(enseignant?.dateDebut).format('YYYY-MM-DD')],
       dateDebut: [enseignant?.dateDebut],
       dateFin: [enseignant?.dateFin ? enseignant.dateFin : ''],
-
-      idEnseignement: [enseignant?.idEnseignement ? enseignant.idEnseignement : ''],
-      description: [enseignant?.description ? enseignant.description : ''],
-      classe: [enseignant?.classe ? enseignant.classe : '', Validators.required],
-      anneeScolaire: [enseignant?.anneeScolaire ? enseignant.anneeScolaire : '', Validators.required],
-      //   dateDebutEnseignement: [moment(enseignant?.dateDebutEnseignement).format('YYYY-MM-DD')],
-      dateDebutEnseignement: [enseignant?.dateDebutEnseignement]
     });
   }
 
@@ -134,31 +105,6 @@ export class CreateEnseignantComponent implements OnInit {
         if (this.enseignant?.piecesJointesDTO?.content) {
           this.preview = 'data:image/png;base64,' + this.enseignant.piecesJointesDTO.content;
         }
-      }
-    });
-
-    this.planification.getSingleResource('enseignement/byenseignant', this.enseignant!.id!).subscribe({
-      next: (data: any) => {
-        console.log("Enseignement reçu:", data);
-
-        this.enseignementId = data.id;
-        this.enseignement = data;
-
-        this.enseignantFormGroup.patchValue({
-          idEnseignement: this.enseignement?.id || '',
-          classe: this.enseignement?.classe || '',
-          anneeScolaire: this.enseignement?.anneeScolaire || '',
-          description: this.enseignement?.description || '',
-          //     dateDebut: [moment(this.enseignement?.dateDebut).format('YYYY-MM-DD')]
-          dateDebut: [this.enseignement?.dateDebut]
-        });
-
-
-        console.log("Formulaire après mise à jour:", this.enseignantFormGroup.value);
-      },
-      error: (error: any) => {
-        console.error("Erreur lors de la récupération de l'enseignement:", error);
-        console.log("Aucun enseignement trouvé pour cet enseignant");
       }
     });
   }
@@ -218,10 +164,8 @@ export class CreateEnseignantComponent implements OnInit {
         next: (data) => {
           if (data) {
             this.enseignantId = data;
-            this.ajouteditEnseignement();
-
             this.toastService.success('success', 'Le compte de l\'enseignant a été crée avec succès.');
-            this.router.navigate(['/admin/utilisateur/enseignant']);
+            this.router.navigate(['/admin/utilisateur/enseignants']);
           } else if (!data) {
             this.toastService.warning('error', 'Erreur lors de la création : ' + data);
           }
@@ -236,9 +180,8 @@ export class CreateEnseignantComponent implements OnInit {
         next: data => {
           if (this.currentFile) {
             this.uploadPhotoEnseignant(data);
-            this.ajouteditEnseignement();
             this.toastService.success('success', 'Le compte de l\'enseignant a été modifié avec succès.');
-            this.router.navigate(['/admin/utilisateur/enseignant']);
+            this.router.navigate(['/admin/utilisateur/enseignants']);
           }
         },
         error: (data: any) => {
@@ -246,49 +189,6 @@ export class CreateEnseignantComponent implements OnInit {
           this.toastService.warning('error', 'Erreur lors de la modification : ' + data.error);
         }
       });
-    }
-  }
-
-  ajouteditEnseignement() {
-    const payload: Enseignement = {
-      id: this.enseignantFormGroup.get("idEnseignement")!.value,
-      classe: this.enseignantFormGroup.get("classe")!.value,
-      anneeScolaire: this.enseignantFormGroup.get("anneeScolaire")!.value,
-      description: this.enseignantFormGroup.get("description")!.value,
-      dateDebut: this.enseignantFormGroup.get("dateDebutEnseignement")!.value,
-    }
-    payload.enseignant = this.enseignantId;
-    if (!this.enseignementId) {
-      this.planification.createRessource('enseignement', payload).subscribe({
-        next: (data) => {
-          if (data.statut === 'OK') {
-            this.toastService.success('succès', 'L\'enseignement a été enregistrées avec succès !!! ');
-            this.router.navigate(['admin/utilisateur/enseignant'])
-          } else if (data.statut === 'FAILED') {
-            this.toastService.error('error', 'Erreur lors de la création : ' + data.message);
-          }
-        },
-        error: (data) => {
-          console.log('error', 'Erreur lors de la création : ' + data.error);
-          this.toastService.error('error', 'Erreur lors de la création : ' + data.error);
-        }
-      });
-    } else {
-      this.planification.updateResource('enseignement', this.enseignementId, payload).subscribe({
-        next: (data: any) => {
-          if (data.statut === 'OK') {
-            this.toastService.success('succès', 'L\'enseignement a été modifiées avec succès !!! ');
-            this.router.navigate(['admin/utilisateur/enseignant'])
-          } else if (data.statut === 'FAILED') {
-            this.toastService.error('error', 'Erreur lors de la modification : ' + data.message);
-          }
-        },
-        error: (data: any) => {
-          console.log('error', 'Erreur lors de la création : ' + data.error);
-          this.toastService.error('error', 'Erreur lors de la modification : ' + data.error);
-        }
-      });
-
     }
   }
 

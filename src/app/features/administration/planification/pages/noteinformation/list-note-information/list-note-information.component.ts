@@ -1,8 +1,8 @@
 import { Component, inject, OnInit } from '@angular/core';
-import { GenericTableDossierComponent } from '../../../../../../core/generic/generic-table-dossier/generic-table-dossier.component';
 import { IFilterConfig } from '../../../../../../core/filtered-config/FiltreConfiguration';
-import { PlanificationResourceService } from '../../../services/planification-resource.service';
+import { GenericTableDossierComponent } from '../../../../../../core/generic/generic-table-dossier/generic-table-dossier.component';
 import { CommonService } from '../../../../../../core/services/common.service';
+import { PlanificationResourceService } from '../../../services/planification-resource.service';
 
 @Component({
   selector: 'app-list-note-information',
@@ -146,7 +146,7 @@ export class ListNoteInformationComponent implements OnInit {
     }
     apiCall.subscribe({
       next: (response) => {
-        this.noteInformationData = response.data?.content || [];
+        const rawContent = response.data?.content || [];
         this.totalElements = response.data?.totalElements || 0;
 
         this.columns = [
@@ -155,9 +155,19 @@ export class ListNoteInformationComponent implements OnInit {
           { key: 'description', header: 'Description' }
 
         ];
-        this.noteInformationData = this.noteInformationData?.map((item: any) => ({
-          ...item,
-        }));
+        this.noteInformationData = rawContent.map((item: any) => {
+          let cleanDescription = '';
+
+          if (item.description) {
+            const doc = new DOMParser().parseFromString(item.description, 'text/html');
+            cleanDescription = doc.body.textContent || '';
+          }
+
+          return {
+            ...item,
+            description: cleanDescription
+          };
+        });
 
         this.isLoading = false;
       },

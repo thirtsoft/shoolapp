@@ -362,26 +362,39 @@ export class DetailsFactureComponent implements OnInit {
           columns: [
             [
               {
-                text: `Sous total : ${this.getTotalMontantFacture()}`,
-                fontSize: 9,
-                alignment: 'left',
-                margin: [0, 5, 0, 2]
-              }
-            ],
-            [
-              ...(this.detailsFacture?.remise ? [{
-                text: `Remise : ${this.detailsFacture?.remise}%`,
-                fontSize: 9,
-                alignment: 'right',
-                margin: [0, 5, 0, 2]
-              }] : []),
+                text: '',
+                width: '*'
+              },
+
               {
-                text: `TOTAL À PAYER : ${this.formatMontant(this.detailsFacture?.montant!)}`,
-                fontSize: 13,
-                bold: true,
-                alignment: 'right',
-                color: '#2c5282',
-                margin: [0, 10, 0, 5]
+                stack: [
+                  {
+                    text: `Sous total : ${this.getTotalMontantFacture()}`,
+                    fontSize: 9,
+                    alignment: 'right',
+                    margin: [0, 10, 0, 5]
+                  },
+                  {
+                    text: `Somme avancée : ${this.detailsFacture?.montantPayement || 0} FCFA`,
+                    fontSize: 9,
+                    alignment: 'right',
+                    margin: [0, 5, 0, 2]
+                  },
+                  ...(this.detailsFacture?.remise ? [{
+                    text: `Remise : ${this.detailsFacture?.remise}%`,
+                    fontSize: 9,
+                    alignment: 'right',
+                    margin: [0, 5, 0, 2]
+                  }] : []),
+                  {
+                    text: `TOTAL À PAYER : ${this.formatMontant(this.detailsFacture?.montant!)}`,
+                    fontSize: 13,
+                    bold: true,
+                    alignment: 'right',
+                    color: '#2c5282',
+                    margin: [0, 10, 0, 5]
+                  }
+                ]
               }
             ]
           ]
@@ -414,11 +427,6 @@ export class DetailsFactureComponent implements OnInit {
       }
     };
   }
-
-  /*
-  private getTotalMontantFacture(): string {
-    return this.formatMontant(this.detailsFacture?.montant || 0);
-  }*/
 
   private getStatusColor(status: string): string {
     switch (status) {

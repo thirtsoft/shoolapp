@@ -9,6 +9,7 @@
   [pageSize]="pageSize"
   [isLoading]="isLoading"
   [isEditIcon]="isEdit"
+    [isEyesIcon]="true"
   [isLockableIcon]="isLockable"
   (pageChange)="changePage($event)"
   addButtonLink="/admin/planification/reunion/create"
@@ -20,5 +21,7 @@
   [showFilters]="true"
   (resetFilters)="resetFilters()"
   (sizeChange)="changeSize($event)"
+  detailButtonLink="/admin/planification/reunion/details"
 >
 </app-generic-table-referentiel>
+

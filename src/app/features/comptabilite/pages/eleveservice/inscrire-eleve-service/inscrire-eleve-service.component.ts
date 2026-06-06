@@ -73,10 +73,8 @@ export class InscrireEleveServiceComponent implements OnInit, AfterViewInit {
   }
 
   ngAfterViewInit() {
-    // S'assurer que le container est disponible
   }
 
-  // HostListener pour fermer le dropdown quand on clique en dehors
   @HostListener('document:click', ['$event'])
   handleClickOutside(event: MouseEvent) {
     if (this.serviceDropdownOpen && this.serviceSelectContainer) {
@@ -87,7 +85,6 @@ export class InscrireEleveServiceComponent implements OnInit, AfterViewInit {
     }
   }
 
-  // Empêcher la propagation du clic à l'intérieur du dropdown
   onDropdownClick(event: MouseEvent) {
     event.stopPropagation();
   }

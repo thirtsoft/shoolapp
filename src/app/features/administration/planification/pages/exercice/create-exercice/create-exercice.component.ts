@@ -1,16 +1,16 @@
 import { CommonModule, SlicePipe } from '@angular/common';
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, DestroyRef, inject, OnInit } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
 import { Constants } from '../../../../../../core/constants/constants';
-import { EnseigantList } from '../../../../../../core/models/enseignant/enseignant-list';
-import { Exercice } from '../../../../../../core/models/planification/exercice';
+import { ExerciceAddEdit } from '../../../../../../core/models/planification/exercice';
+import { ListeEnseignement } from '../../../../../../core/models/planification/liste-enseignement';
 import { ListeClasse } from '../../../../../../core/models/referentiels/classe';
 import { Utilisateur } from '../../../../../../core/models/utilisateur/utilisateur';
 import { PieceJointeService } from '../../../../../../core/services/piece-jointe';
-import { EnseignantService } from '../../../../../enseignant/service/enseignant.service';
-import { ReferentielService } from '../../../../referentiel/service/referentiel.service';
+import { ReferentielResourceService } from '../../../../referentiel/service/referentiel-resource.service';
 import { UtilisateurService } from '../../../../utilisateur/service/utilisateur.service';
 import { PlanificationResourceService } from '../../../services/planification-resource.service';
 
@@ -26,31 +26,31 @@ export class CreateExerciceComponent implements OnInit {
   errorMessage?: string;
   exerciceId: number;
   exerciceFormGroup!: FormGroup;
-  exercice?: Exercice;
+  exercice?: ExerciceAddEdit;
   isEdit: boolean = false;
-  classeList: ListeClasse[] = [];
   livreList: any;
-  enseigantList: EnseigantList[] = [];
+  enseignementList: ListeEnseignement[] = [];
+  classeList: ListeClasse[] = [];
 
   currentFile: File | null = null;
   message = '';
   preview = '';
 
   ecoleId: any;
-  userId: number;
+  userId?: number;
   utilisateur: Utilisateur = {};
 
   title = "Ajouter un exercice";
 
   private readonly planification = inject(PlanificationResourceService);
-  private readonly referentielService = inject(ReferentielService);
-  private readonly enseignantService = inject(EnseignantService);
   private readonly pieceJointeService = inject(PieceJointeService);
   private readonly utilisateurService = inject(UtilisateurService);
+  private readonly referentielService = inject(ReferentielResourceService);
   private readonly _formBuilder = inject(FormBuilder);
   private readonly toastService = inject(ToastrService);
   private readonly activeRoute = inject(ActivatedRoute);
   private readonly router = inject(Router);
+  private readonly destroyRef = inject(DestroyRef);
 
 
   constructor(
@@ -60,10 +60,7 @@ export class CreateExerciceComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.getConnectedUserInfos();
-    this.getClasseList();
-    this.getLivreList();
-    //  this.getEnseignantList();
+    this.chargerLesDonnees();
     this.initializeForm(null);
     if (this.exerciceId != null && this.exerciceId != undefined) {
       this.getExercice(this.exerciceId);
@@ -72,46 +69,48 @@ export class CreateExerciceComponent implements OnInit {
     }
   }
 
-  getConnectedUserInfos() {
-    this.utilisateurService.getUtilisateur(this.userId).subscribe({
+  private chargerLesDonnees() {
+    this.utilisateurService.getUtilisateur(this.userId!).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
+      next: data => this.utilisateur = data
+    });
+    this.referentielService.getResourceList('classe').pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
+      next: (data: any) => this.classeList = data
+    });
+  }
+
+  private getEnseignementByClass(classId: number) {
+    this.planification.getAllEnseignementByclasse(classId).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
       next: data => {
-        this.utilisateur = data;
-      },
-      error: error => { console.log(error) },
-    });
-  }
-
-  getClasseList() {
-    this.referentielService.getAllClasses().subscribe({
-      next: (data) => {
-        this.classeList = data;
+        this.enseignementList = data;
       }
     });
   }
 
-  getLivreList() {
-    this.planification.getResourceList('livre').subscribe({
-      next: (data) => {
-        this.livreList = data;
-      }
-    });
-  }
+  onClasseSelected() {
+    const classId = this.exerciceFormGroup.get('classId')?.value;
+    if (classId) {
+      this.getEnseignementByClass(classId);
+    }
 
-  /*
-  getEnseignantList() {
-    this.enseignantService.getAllEnseignants().subscribe({
-      next: (data: any) => {
-        this.enseigantList = data;
-      }
-    });
-  }*/
+    if (this.isEdit && this.exercice?.enseignement) {
+      this.exerciceFormGroup.patchValue({
+        enseignement: this.exercice.enseignement
+      });
+    }
+
+  }
 
   getExercice(exerciceId: number) {
     this.planification.getExercicet(exerciceId).subscribe({
       next: (data) => {
         this.exercice = data;
+
         this.initializeForm(this.exercice);
-        console.log("Details exercice {} ", this.exercice);
+
+        if (this.exercice?.classId && this.exercice?.enseignement) {
+          this.getEnseignementByClass(this.exercice.classId);
+          this.exerciceFormGroup.get('enseignement')?.setValue(this.exercice?.enseignement);
+        }
 
         if (this.exercice?.piecesJointesDTO?.content) {
         }
@@ -120,18 +119,18 @@ export class CreateExerciceComponent implements OnInit {
   }
 
 
-  initializeForm(exercice: Exercice | null) {
+  initializeForm(exercice: ExerciceAddEdit | null) {
     this.exerciceFormGroup = this._formBuilder.group({
       id: [exercice?.id ? exercice.id : ''],
       titre: [exercice?.titre ? exercice.titre : '', Validators.required],
+      classId: [exercice?.classId ? exercice.classId : '', Validators.required],
       page: [exercice?.page ? exercice.page : ''],
       numeroExercice: [exercice?.numeroExercice ? exercice.numeroExercice : ''],
       description: [exercice?.description ? exercice.description : '', Validators.required],
       url: [exercice?.url ? exercice.url : ''],
       dateDebut: [exercice?.dateDebut ? exercice.dateDebut : ''],
       dateFin: [exercice?.description ? exercice.dateFin : ''],
-      enseignant: [exercice?.enseignant ? exercice.enseignant : '', Validators.required],
-      classe: [exercice?.classe ? exercice.classe : '', Validators.required],
+      enseignement: [exercice?.enseignement ? exercice.enseignement : '', Validators.required],
       livre: [exercice?.livre ? exercice.livre : ''],
     });
   }
@@ -149,12 +148,12 @@ export class CreateExerciceComponent implements OnInit {
 
       this.currentFile = file;
     }
-    console.log("Le fichier choisi est ", this.currentFile);
   }
 
   ajouteditExercice() {
     const payload = this.exerciceFormGroup.value;
     payload.ecole = this.ecoleId;
+    payload.createur = this.userId;
     if (!this.isEdit) {
       this.planification.createRessource('exercice', payload).subscribe({
         next: (data) => {
@@ -171,7 +170,6 @@ export class CreateExerciceComponent implements OnInit {
         }
       });
     } else {
-      payload.ecole = this.ecoleId;
       this.planification.updateResource('exercice', this.exerciceId, payload).subscribe({
         next: (data) => {
           if (data.statut === 'OK') {
@@ -193,9 +191,14 @@ export class CreateExerciceComponent implements OnInit {
   ajouteditExerciceWithFiles() {
     const formData: FormData = new FormData();
     const payload = this.exerciceFormGroup.value;
+    payload.ecole = this.ecoleId;
+    payload.createur = this.userId;
+
+    formData.append('file', this.currentFile!);
+    formData.append('piecejointeexercice', JSON.stringify(payload));
+
     if (!this.isEdit) {
-      formData.append('file', this.currentFile!);
-      formData.append('piecejointeexercice', JSON.stringify(payload));
+
       this.planification.enregistrerExercicetWithFiles(formData).subscribe({
         next: (data) => {
           if (data) {

@@ -24,6 +24,7 @@
     "file-saver": "^2.0.5",
     "jspdf": "^4.2.1",
     "jspdf-autotable": "^5.0.7",
+    "ngx-editor": "^19.0.0-beta.1",
     "ngx-toastr": "^20.0.5",
     "pdfmake": "^0.2.12",
     "rxjs": "~7.8.0",

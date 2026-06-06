@@ -170,7 +170,7 @@
                 </button>
               </div>
               <div class="action-buttons-right">
-                @if (detailsFacture?.etat === 'Encours') {
+                @if (detailsFacture?.etat != 'Payée') {
                   <button type="button" class="btn-pay" (click)="openPaiementModal()">
                     <i class="fas fa-hand-holding-usd me-2"></i>Payer cette facture
                   </button>
@@ -190,7 +190,6 @@
   </div>
 </div>
 
-<!-- Modal de paiement -->
 @if (showPaiementModal) {
   <div class="modal-overlay" (click)="closePaiementModal()">
     <div class="modal-container" (click)="$event.stopPropagation()">
@@ -205,7 +204,6 @@
       </div>
 
       <div class="modal-body">
-        <!-- Informations récapitulatives -->
         <div class="recap-section mb-4">
           <div class="recap-item">
             <span class="recap-label">Facture N° :</span>
@@ -245,7 +243,6 @@
           </div>
         </div>
 
-        <!-- Formulaire de paiement -->
         <form [formGroup]="paiementForm">
           <div class="form-group">
             <label class="form-label"> Montant à payer <span class="text-danger">*</span> </label>

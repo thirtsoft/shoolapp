@@ -124,6 +124,11 @@ export class ComptabiliteResourceService {
     return this.http.post<ResponseMessage>(url, this.httpOptions);
   }
 
+  genererUneResourceClasse<T>(endpoint: string, resource: T) {
+    const url = `${this.comptabiliteUrl}/${endpoint}/generer`;
+    return this.http.post<ResponseMessage>(url, resource, this.httpOptions);
+  }
+
   modifierUneRessource<T>(endpoint: string, id: number, resource: T) {
     const url = `${this.comptabiliteUrl}/${endpoint}/update/${id}`;
     return this.http.put<ResponseMessage>(url, resource, this.httpOptions);

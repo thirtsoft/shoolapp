@@ -21,6 +21,7 @@ import { ListNotesComponent } from './pages/note/list-notes/list-notes.component
 import { EditParentComponent } from './pages/parent/edit-parent/edit-parent.component';
 import { ParentDetailsComponent } from './pages/parent/parent-details/parent-details.component';
 import { ParentListComponent } from './pages/parent/parent-list/parent-list.component';
+import { EditNoteComponent } from './pages/note/edit-note-component/edit-note-component';
 
 
 export const DOSSIERS_ELEVES_ROUTES: Routes = [
@@ -109,7 +110,7 @@ export const DOSSIERS_ELEVES_ROUTES: Routes = [
       },
       {
         path: 'edit-note/:id',
-        component: AjoutNoteComponent
+        component: EditNoteComponent
       },
       {
         path: 'bulletin',

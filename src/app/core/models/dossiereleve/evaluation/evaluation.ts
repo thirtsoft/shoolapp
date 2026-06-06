@@ -12,11 +12,15 @@ export interface Evaluation {
 
   enseignementId?: number;
 
+  classeId?: number;
+
   evaluationType?: string;
 
   evaluationMode?: string;
 
   etatId?: number;
+
+  semestre?: number;
 
   createur?: number;
 

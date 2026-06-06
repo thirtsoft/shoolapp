@@ -1,11 +1,10 @@
 import { Component, inject, OnInit } from '@angular/core';
 import { IFilterConfig } from '../../../../../../core/filtered-config/FiltreConfiguration';
-import { GenericTableReferentielComponent } from '../../../../../../core/generic/generic-table-referentiel/generic-table-referentiel.component';
+import { GenericTableDossierComponent } from '../../../../../../core/generic/generic-table-dossier/generic-table-dossier.component';
 import { ListeClasse } from '../../../../../../core/models/referentiels/classe';
 import { CommonService } from '../../../../../../core/services/common.service';
 import { ReferentielService } from '../../../../referentiel/service/referentiel.service';
 import { PlanificationResourceService } from '../../../services/planification-resource.service';
-import { GenericTableDossierComponent } from '../../../../../../core/generic/generic-table-dossier/generic-table-dossier.component';
 
 @Component({
   selector: 'app-list-exercice',
@@ -92,20 +91,6 @@ export class ListExerciceComponent implements OnInit {
       });
     });
   }
-
-  /*
-  getEnseignantList(): Promise<EnseigantList[]> {
-    return new Promise((resolve, reject) => {
-      this.enseigantService.getAllEnseignants().subscribe({
-        next: (data:any) => {
-          this.enseignantList = data;
-          console.log('List livre', this.enseignantList);
-          resolve(data);
-        },
-        error: (err:any) => reject(err)
-      });
-    });
-  }*/
 
   getMoisList(): Promise<any[]> {
     return new Promise((resolve, reject) => {
@@ -206,13 +191,13 @@ export class ListExerciceComponent implements OnInit {
       const filtreParam = this.construireParametreFiltre();
 
       apiCall = this.planificationResource.fetchFilterDataTable(
-        'exercice',
+        'planification/exercice',
         this.currentPage,
         this.pageSize,
         filtreParam)
 
     } else {
-      apiCall = this.planificationResource.getResourcePaged('exercice', this.currentPage, this.pageSize);
+      apiCall = this.planificationResource.getResourcePaged('planification/exercice', this.currentPage, this.pageSize);
     }
     apiCall.subscribe({
       next: (response) => {
@@ -223,7 +208,7 @@ export class ListExerciceComponent implements OnInit {
           { key: 'titre', header: 'Titre' },
           { key: 'livre', header: 'Livre' },
           { key: 'classe', header: 'Classe' },
-          { key: 'enseignant', header: 'Enseignant' },
+          { key: 'matiere', header: 'Enseignant' },
           { key: 'page', header: 'Page' },
           { key: 'numeroExercice', header: 'N°' },
           { key: 'description', header: 'Description' },

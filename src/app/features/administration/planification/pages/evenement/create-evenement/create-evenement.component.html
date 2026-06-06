@@ -1,133 +1,3 @@
-<!-- <div class="page-wrapper">
-  <div class="content container-fluid">
-    <div class="page-header">
-      <div class="row">
-        <div class="col-sm-7 col-auto">
-          <h3 class="page-title"></h3>
-          <ul class="breadcrumb"></ul>
-        </div>
-      </div>
-    </div>
-
-    <div class="row justify-content-center">
-      <div class="col-md-6 col-lg-6 col-xl-6">
-        <div class="card">
-          <h3 class="page-title text-center">{{ title }}</h3>
-          <div class="card-body">
-            <form [formGroup]="evenementFormGroup">
-              <input
-                type="text"
-                readonly="true"
-                hidden="true"
-                formControlName="id"
-              />
-              <div class="row form-row">
-                <div class="col-12">
-                  <div class="form-group">
-                    <label>Libellé <span class="text-danger">*</span></label>
-                    <input
-                      type="text"
-                      formControlName="libelle"
-                      required
-                      class="form-control"
-                    />
-                  </div>
-                </div>
-              </div>
-              <div class="row form-row">
-                <div class="col-lg-12 col-sm-12">
-                  <div class="form-group">
-                    <label>Date prévu <span class="text-danger">*</span></label>
-                    <input
-                      type="date"
-                      formControlName="dateEvenement"
-                      required
-                      class="form-control"
-                    />
-                  </div>
-                </div>
-              </div>
-              <div class="row form-row">
-                <div class="col-lg-6 col-sm-6">
-                  <div class="form-group">
-                    <label
-                      >Heure début <span class="text-danger">*</span></label
-                    >
-                    <input
-                      type="time"
-                      formControlName="heureDebut"
-                      class="form-control"
-                    />
-                  </div>
-                </div>
-                <div class="col-lg-6 col-sm-6">
-                  <div class="form-group">
-                    <label
-                      >Heure début <span class="text-danger">*</span></label
-                    >
-                    <input
-                      type="time"
-                      formControlName="heureFin"
-                      class="form-control"
-                    />
-                  </div>
-                </div>
-              </div>
-
-              <div class="row form-row">
-                <div class="col-lg-12 col-sm-12">
-                  <div class="form-group">
-                    <label
-                      >Description <span class="text-danger">*</span></label
-                    >
-                    <textarea
-                      name=""
-                      type="text"
-                      formControlName="description"
-                      class="form-control"
-                      id=""
-                    ></textarea>
-                  </div>
-                </div>
-              </div>
-
-              <div class="row mt-3">
-                <div class="col-12 d-flex justify-content-between">
-                  <button
-                    type="button"
-                    class="btn btn-danger si_accept_cancel"
-                    (click)="goBack()"
-                  >
-                    Annuler
-                  </button>
-                  <button
-                    type="button"
-                    class="upload-text text-white"
-                    style="
-                      align-items: center;
-                      border: 1px solid #028ee1;
-                      box-shadow: 0 1px 2px rgba(16, 24, 40, 0.05);
-                      background-color: #028ee1;
-                      min-height: 44px;
-                      padding: 10px 16px;
-                      cursor: pointer;
-                    "
-                    [disabled]="!evenementFormGroup.valid"
-                    (click)="ajoutereditEvenement()"
-                  >
-                    Enregistrer
-                  </button>
-                </div>
-              </div>
-            </form>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
- -->
-
 <div class="page-wrapper">
   <div class="content container-fluid">
     <!-- Page Header -->
@@ -142,7 +12,6 @@
       </div>
     </div>
 
-    <!-- Badge -->
     <div class="badge-container">
       <span class="badge badge-primary">
         <i class="fas fa-plus-circle me-1"></i>
@@ -154,7 +23,6 @@
       </span>
     </div>
 
-    <!-- Formulaire pleine largeur -->
     <div class="card">
       <div class="card-body p-4 p-md-5">
         <!-- Step Indicator -->
@@ -173,7 +41,6 @@
         <form [formGroup]="evenementFormGroup" (ngSubmit)="ajoutereditEvenement()">
           <input type="hidden" formControlName="id" />
 
-          <!-- Ligne 1: Libellé -->
           <div class="form-group">
             <label class="form-label">
               Libellé <span class="text-danger">*</span>
@@ -194,53 +61,56 @@
             }
           </div>
 
-          <!-- Ligne 2: Date prévue -->
-          <div class="form-group">
-            <label class="form-label">
-              Date prévue <span class="text-danger">*</span>
-              <i class="fas fa-calendar-day ms-1 text-muted"></i>
-            </label>
-            <input type="date" class="form-control" formControlName="dateEvenement" required />
-            @if (
-              evenementFormGroup.get('dateEvenement')?.invalid &&
-              evenementFormGroup.get('dateEvenement')?.touched
-            ) {
-              <div class="invalid-feedback">La date est requise</div>
-            }
-          </div>
-
-          <!-- Ligne 3: Heure début + Heure fin (2 colonnes) -->
-          <div class="two-columns-row">
-            <div class="form-group">
-              <label class="form-label">
-                Heure début <span class="text-danger">*</span>
-                <i class="fas fa-clock ms-1 text-muted"></i>
-              </label>
-              <input type="time" class="form-control" formControlName="heureDebut" required />
-              @if (
-                evenementFormGroup.get('heureDebut')?.invalid &&
-                evenementFormGroup.get('heureDebut')?.touched
-              ) {
-                <div class="invalid-feedback">L'heure de début est requise</div>
-              }
+          <div class="row">
+            <div class="col-12 col-md-4">
+              <div class="form-group">
+                <label class="form-label">
+                  Date prévue <span class="text-danger">*</span>
+                  <i class="fas fa-calendar-day ms-1 text-muted"></i>
+                </label>
+                <input type="date" class="form-control" formControlName="dateEvenement" required />
+                @if (
+                  evenementFormGroup.get('dateEvenement')?.invalid &&
+                  evenementFormGroup.get('dateEvenement')?.touched
+                ) {
+                  <div class="invalid-feedback">La date est requise</div>
+                }
+              </div>
             </div>
 
-            <div class="form-group">
-              <label class="form-label">
-                Heure fin <span class="text-danger">*</span>
-                <i class="fas fa-clock ms-1 text-muted"></i>
-              </label>
-              <input type="time" class="form-control" formControlName="heureFin" required />
-              @if (
-                evenementFormGroup.get('heureFin')?.invalid &&
-                evenementFormGroup.get('heureFin')?.touched
-              ) {
-                <div class="invalid-feedback">L'heure de fin est requise</div>
-              }
+            <div class="col-12 col-md-4">
+              <div class="form-group">
+                <label class="form-label">
+                  Heure début <span class="text-danger">*</span>
+                  <i class="fas fa-clock ms-1 text-muted"></i>
+                </label>
+                <input type="time" class="form-control" formControlName="heureDebut" required />
+                @if (
+                  evenementFormGroup.get('heureDebut')?.invalid &&
+                  evenementFormGroup.get('heureDebut')?.touched
+                ) {
+                  <div class="invalid-feedback">L'heure de début est requise</div>
+                }
+              </div>
+            </div>
+
+            <div class="col-12 col-md-4">
+              <div class="form-group">
+                <label class="form-label">
+                  Heure fin <span class="text-danger">*</span>
+                  <i class="fas fa-clock ms-1 text-muted"></i>
+                </label>
+                <input type="time" class="form-control" formControlName="heureFin" required />
+                @if (
+                  evenementFormGroup.get('heureFin')?.invalid &&
+                  evenementFormGroup.get('heureFin')?.touched
+                ) {
+                  <div class="invalid-feedback">L'heure de fin est requise</div>
+                }
+              </div>
             </div>
           </div>
 
-          <!-- Ligne 4: Description -->
           <div class="form-group">
             <label class="form-label">
               Description
@@ -254,7 +124,6 @@
             ></textarea>
           </div>
 
-          <!-- Récapitulatif -->
           @if (evenementFormGroup.valid) {
             <div class="recap-card">
               <div class="d-flex align-items-center gap-3">
@@ -277,7 +146,6 @@
             </div>
           }
 
-          <!-- Actions -->
           <div class="form-actions">
             <button type="button" class="btn btn-secondary" (click)="goBack()">
               <i class="fas fa-times me-2"></i>Annuler

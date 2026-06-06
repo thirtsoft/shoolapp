@@ -1,8 +1,3 @@
-/* ============================================
-   NOTE D'INFORMATION - STYLE BLEU-BLANC
-   PLEINE LARGEUR
-   ============================================ */
-
 .page-wrapper {
   min-height: 100vh;
   background: linear-gradient(135deg, #f8fafc 0%, #ebf4ff 100%);
@@ -432,4 +427,47 @@
 
 .mb-0 {
   margin-bottom: 0;
+}
+
+.word-page-container {
+  background-color: #f0f2f5;
+  padding: 3rem 1rem;
+  display: flex;
+  justify-content: center;
+  border: 1.5px solid #cbd5e0;
+  border-top: none;
+  box-shadow: inset 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+  border-radius: 0 0 16px 16px;
+}
+
+.word-document-page {
+  background-color: #ffffff;
+  width: 100%;
+  max-width: 800px;
+  min-height: 842px;
+  padding: 60px 60px;
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.05);
+  border: 1px solid #e2e8f0;
+  border-radius: 4px;
+}
+
+:host ::ng-deep .NgxEditor {
+  background: transparent !important;
+  border: none !important;
+  outline: none !important;
+  box-shadow: none !important;
+  min-height: 700px;
+}
+
+:host ::ng-deep .NgxEditor__Wrapper {
+  border: none !important;
+}
+
+:host ::ng-deep .NgxEditor__MenuBar {
+  background: #ffffff !important;
+  border: 1.5px solid #cbd5e0 !important;
+  border-bottom: 1px solid #e2e8f0 !important;
+  border-radius: 16px 16px 0 0 !important;
+  padding: 0.75rem !important;
+  margin-bottom: 0 !important;
 }

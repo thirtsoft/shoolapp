@@ -20,6 +20,7 @@ import { ListCoursComponent } from "./pages/cours/list-cours/list-cours.componen
 import { DetailsEmploiDuTempsAdminComponent } from "./pages/emploietemps/details-emploi-du-temps-admin/details-emploi-du-temps-admin.component";
 import { CreateEmploieDuTempsComponent } from "./pages/emploietemps/create-emploie-du-temps/create-emploie-du-temps.component";
 import { EmploieDuTempsComponent } from "./pages/emploietemps/emploie-du-temps/emploie-du-temps.component";
+import { DetailsMeetingComponent } from "./pages/meeting/details-meeting-component/details-meeting-component";
 
 
 export const PLANIFICATION_ROUTES: Routes = [
@@ -132,6 +133,11 @@ export const PLANIFICATION_ROUTES: Routes = [
       {
         path: 'reunion/edit/:id',
         component: CreateMeetingComponent
+      },
+
+      {
+        path: 'reunion/details/:id',
+        component: DetailsMeetingComponent
       },
 
       {

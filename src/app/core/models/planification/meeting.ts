@@ -12,10 +12,16 @@ export interface Meeting {
 
     description?: string;
 
-    type?: string;
-
-    typeMeeting?: string;
+    typeReunionId?: number;
 
     typeReunion?: string;
+
+    salleId?: number;
+
+    salle?: string;
+
+    createurId?: number;
+
+    actif?: number;
 
 }

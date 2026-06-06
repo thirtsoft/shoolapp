@@ -1,7 +1,8 @@
 import { SlicePipe } from '@angular/common';
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, inject, OnDestroy, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
+import { Editor, NgxEditorModule, Toolbar } from 'ngx-editor';
 import { ToastrService } from 'ngx-toastr';
 import { NoteInformation } from '../../../../../../core/models/planification/note-information';
 import { Utilisateur } from '../../../../../../core/models/utilisateur/utilisateur';
@@ -11,22 +12,31 @@ import { PlanificationResourceService } from '../../../services/planification-re
 @Component({
   selector: 'app-create-edit-note-information',
   standalone: true,
-  imports: [ReactiveFormsModule, SlicePipe],
+  imports: [ReactiveFormsModule, SlicePipe, NgxEditorModule],
   templateUrl: './create-edit-note-information.component.html',
   styleUrls: ['./create-edit-note-information.component.css']
 })
-export class CreateEditNoteInformationComponent implements OnInit {
+export class CreateEditNoteInformationComponent implements OnInit, OnDestroy {
   errorMessage?: string;
   noteId: number;
   noteInformation: any;
   noteInformationFormGroup!: FormGroup;
-
+  editor!: Editor;
   isEdit: boolean = false;
   ecoleId: any;
   userId: number;
   utilisateur: Utilisateur = {};
 
   title = "Saisir une note d'information";
+
+  toolbar: Toolbar = [
+    ['bold', 'italic', 'underline', 'strike'],
+    ['code', 'blockquote'],
+    ['ordered_list', 'bullet_list'],
+    [{ heading: ['h1', 'h2', 'h3', 'h4', 'h5', 'h6'] }],
+    ['link', 'image'],
+    ['align_left', 'align_center', 'align_right', 'align_justify'],
+  ];
 
 
   private readonly planificationResouce = inject(PlanificationResourceService);
@@ -43,6 +53,7 @@ export class CreateEditNoteInformationComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    this.editor = new Editor();
     this.getConnectedUserInfos();
     this.initializeForm(null);
     if (this.noteId != null && this.noteId != undefined) {
@@ -50,6 +61,10 @@ export class CreateEditNoteInformationComponent implements OnInit {
       this.title = 'Modifier une note d\'information';
       this.isEdit = true;
     }
+  }
+
+  ngOnDestroy(): void {
+    this.editor.destroy();
   }
 
   getConnectedUserInfos() {
@@ -63,9 +78,10 @@ export class CreateEditNoteInformationComponent implements OnInit {
   }
 
   getNoteInformation(noteId: number) {
-    this.planificationResouce.getSingleResource('noteinformation', noteId).subscribe({
+    this.planificationResouce.getSingleResource('planification/noteinformation', noteId).subscribe({
       next: (data) => {
         this.noteInformation = data;
+        console.log('Note info', this.noteInformation);
         this.initializeForm(this.noteInformation);
       }
     });
@@ -81,6 +97,8 @@ export class CreateEditNoteInformationComponent implements OnInit {
   ajoutereditNoteInformation() {
     const payload = this.noteInformationFormGroup.value;
     payload.ecole = this.ecoleId;
+    payload.createur = this.userId;
+    console.log(this.noteInformationFormGroup.value);
     if (!this.isEdit) {
       this.planificationResouce.createRessource('planification/noteinformation', payload).subscribe({
         next: (data) => {
@@ -101,7 +119,7 @@ export class CreateEditNoteInformationComponent implements OnInit {
       this.planificationResouce.updateResource('planification/noteinformation', this.noteId, payload).subscribe({
         next: (data) => {
           if (data.statut === 'OK') {
-            this.toastService.success('succès', 'La note onformation a été modifiées avec succès !!! ');
+            this.toastService.success('succès', 'La note d\'information a été modifiées avec succès !!! ');
             this.goBack();
           } else if (data.statut === 'FAILED') {
             this.toastService.error('error', 'Erreur lors de la mofication : ' + data.message);

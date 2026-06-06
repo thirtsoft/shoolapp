@@ -1,303 +1,5 @@
-<!-- <div class="page-wrapper">
-  <div class="content container-fluid">
-    <div class="page-header">
-      <div class="row">
-        <div class="col-sm-7 col-auto">
-          <h3 class="page-title"></h3>
-          <ul class="breadcrumb"></ul>
-        </div>
-      </div>
-    </div>
-
-    <div class="row justify-content-center">
-      <div class="col-md-12 col-lg-12 col-xl-12">
-        <div class="card">
-          <h3 class="page-title text-center" style="margin-top: 50px">
-            {{ title }}
-          </h3>
-
-          <div class="col-md-3 col-lg-3 col-xl-3 col-sm-3"></div>
-          <div class="card-body">
-            <form [formGroup]="evaluationFormGroup">
-              <div class="enseignement-item mb-4 p-3 border rounded">
-                <input
-                  type="text"
-                  readonly="true"
-                  hidden="true"
-                  formControlName="id"
-                />
-
-                <div class="row form-row">
-                  <div class="col-lg-3 col-sm-3">
-                    <div class="form-group">
-                      <label
-                        >Titre évaluation
-                        <span class="text-danger">*</span></label
-                      >
-                      <input
-                        type="text"
-                        formControlName="titre"
-                        required
-                        class="form-control"
-                        [class.is-invalid]="
-                          evaluationFormGroup.get('titre')?.invalid &&
-                          evaluationFormGroup.get('titre')?.touched
-                        "
-                      />
-
-                      <span
-                        class="invalid-feedback"
-                        *ngIf="
-                          evaluationFormGroup.get('titre')?.invalid &&
-                          evaluationFormGroup.get('titre')?.touched
-                        "
-                      >
-                        Le titre est requise
-                      </span>
-                    </div>
-                  </div>
-
-                  <div class="col-3 col-sm-3">
-                    <div class="form-group">
-                      <label
-                        >Enseignement <span class="text-danger">*</span></label
-                      >
-                      <select
-                        [class.is-invalid]="
-                          evaluationFormGroup.get('enseignementId')?.invalid &&
-                          evaluationFormGroup.get('enseignementId')?.touched
-                        "
-                        class="form-control select"
-                        formControlName="enseignementId"
-                        required=""
-                      >
-                        <option value="">Selectionnez enseignement</option>
-                        <option
-                          *ngFor="let item of enseignementList"
-                          [value]="item.id"
-                        >
-                          {{ item.enseignant }} - {{ item.classe }} -
-                          {{ item.anneeScolaire }}
-                        </option>
-                      </select>
-                      <span
-                        class="invalid-feedback"
-                        *ngIf="
-                          evaluationFormGroup.get('enseignementId')?.invalid &&
-                          evaluationFormGroup.get('enseignementId')?.touched
-                        "
-                      >
-                        L'enseignement est requis
-                      </span>
-                    </div>
-                  </div>
-                  <div class="col-3 col-sm-3">
-                    <div class="form-group">
-                      <label
-                        >Type évaluation
-                        <span class="text-danger">*</span></label
-                      >
-                      <select
-                        class="form-control select"
-                        formControlName="evaluationType"
-                        required=""
-                        [class.is-invalid]="
-                          evaluationFormGroup.get('evaluationType')?.invalid &&
-                          evaluationFormGroup.get('evaluationType')?.touched
-                        "
-                      >
-                        <option value="">Selectionnez un type</option>
-                        <option
-                          *ngFor="let item of typeEvaluations"
-                          [value]="item"
-                        >
-                          {{ item }}
-                        </option>
-                      </select>
-                      <span
-                        class="invalid-feedback"
-                        *ngIf="
-                          evaluationFormGroup.get('evaluationType')?.invalid &&
-                          evaluationFormGroup.get('evaluationType')?.touched
-                        "
-                      >
-                        Le type est requise
-                      </span>
-                    </div>
-                  </div>
-
-                  <div class="col-3 col-sm-3">
-                    <div class="form-group">
-                      <label
-                        >Mode évaluation
-                        <span class="text-danger">*</span></label
-                      >
-                      <select
-                        class="form-control select"
-                        formControlName="evaluationMode"
-                        required=""
-                        [class.is-invalid]="
-                          evaluationFormGroup.get('evaluationMode')?.invalid &&
-                          evaluationFormGroup.get('evaluationMode')?.touched
-                        "
-                      >
-                        <option value="">Selectionnez un mode</option>
-                        <option
-                          *ngFor="let item of modeEvaluations"
-                          [value]="item"
-                        >
-                          {{ item }}
-                        </option>
-                      </select>
-                      <span
-                        class="invalid-feedback"
-                        *ngIf="
-                          evaluationFormGroup.get('evaluationMode')?.invalid &&
-                          evaluationFormGroup.get('evaluationMode')?.touched
-                        "
-                      >
-                        Le mode est requise
-                      </span>
-                    </div>
-                  </div>
-                </div>
-
-                <div class="row form-row">
-                  <div class="col-lg-4 col-sm-4">
-                    <div class="form-group">
-                      <label>Date <span class="text-danger">*</span></label>
-                      <input
-                        type="date"
-                        formControlName="dateEvaluation"
-                        required
-                        class="form-control"
-                        [class.is-invalid]="
-                          evaluationFormGroup.get('dateEvaluation')?.invalid &&
-                          evaluationFormGroup.get('dateEvaluation')?.touched
-                        "
-                      />
-
-                      <span
-                        class="invalid-feedback"
-                        *ngIf="
-                          evaluationFormGroup.get('dateEvaluation')?.invalid &&
-                          evaluationFormGroup.get('dateEvaluation')?.touched
-                        "
-                      >
-                        La date est requise
-                      </span>
-                    </div>
-                  </div>
-
-                  <div class="col-lg-4 col-sm-4">
-                    <div class="form-group">
-                      <label
-                        >Heure début <span class="text-danger">*</span></label
-                      >
-                      <input
-                        type="time"
-                        formControlName="heureDebut"
-                        class="form-control"
-                      />
-                      <span
-                        class="invalid-feedback"
-                        *ngIf="
-                          evaluationFormGroup.get('heureDebut')?.invalid &&
-                          evaluationFormGroup.get('heureDebut')?.touched
-                        "
-                      >
-                        Heure début est requise
-                      </span>
-                    </div>
-                  </div>
-                  <div class="col-lg-4 col-sm-4">
-                    <div class="form-group">
-                      <label
-                        >Heure fin <span class="text-danger">*</span></label
-                      >
-                      <input
-                        type="time"
-                        formControlName="heureFin"
-                        class="form-control"
-                      />
-                      <span
-                        class="invalid-feedback"
-                        *ngIf="
-                          evaluationFormGroup.get('heureFin')?.invalid &&
-                          evaluationFormGroup.get('heureFin')?.touched
-                        "
-                      >
-                        Heure fin est requise
-                      </span>
-                    </div>
-                  </div>
-                </div>
-
-                <div class="row form-row">
-                  <div class="col-12 col-sm-12">
-                    <div class="form-group">
-                      <label
-                        >Description <span class="text-danger">*</span></label
-                      >
-                      <textarea
-                        name=""
-                        type="text"
-                        formControlName="description"
-                        class="form-control"
-                      ></textarea>
-                      <span
-                        class="invalid-feedback"
-                        *ngIf="
-                          evaluationFormGroup.get('description')?.invalid &&
-                          evaluationFormGroup.get('description')?.touched
-                        "
-                      >
-                        Description est requise
-                      </span>
-                    </div>
-                  </div>
-                </div>
-
-                <div class="row mt-3">
-                  <div class="col-12 d-flex justify-content-between">
-                    <button
-                      type="button"
-                      class="btn btn-danger si_accept_cancel"
-                      (click)="goBack()"
-                    >
-                      Annuler
-                    </button>
-                    <button
-                      type="button"
-                      class="upload-text text-white"
-                      style="
-                        align-items: center;
-                        border: 1px solid #028ee1;
-                        box-shadow: 0 1px 2px rgba(16, 24, 40, 0.05);
-                        background-color: #028ee1;
-                        min-height: 44px;
-                        padding: 10px 16px;
-                        cursor: pointer;
-                      "
-                      (click)="ajouterEditEvaluation()"
-                    >
-                      Enregistrer
-                    </button>
-                  </div>
-                </div>
-              </div>
-            </form>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
- -->
-
 <div class="page-wrapper">
   <div class="content container-fluid">
-    <!-- Page Header -->
     <div class="page-header">
       <div class="row align-items-center">
         <div class="col-sm-12">
@@ -309,7 +11,6 @@
       </div>
     </div>
 
-    <!-- Badge -->
     <div class="row mb-3">
       <div class="col-sm-12">
         <div class="badge-container">
@@ -324,7 +25,6 @@
       <div class="col-12">
         <div class="card">
           <div class="card-body p-4 p-md-5">
-            <!-- Step Indicator -->
             <div class="step-indicator">
               <div class="step active">
                 <span class="step-number">1</span>
@@ -341,9 +41,8 @@
               <input type="hidden" formControlName="id" />
 
               <div class="enseignement-item">
-                <!-- Ligne 1: Titre + Enseignement + Type + Mode -->
                 <div class="row form-row">
-                  <div class="col-lg-3 col-sm-12">
+                  <div class="col-lg-4 col-sm-12">
                     <div class="form-group">
                       <label class="form-label">
                         Titre évaluation <span class="text-danger">*</span>
@@ -364,30 +63,7 @@
                     </div>
                   </div>
 
-                  <div class="col-lg-3 col-sm-12">
-                    <div class="form-group">
-                      <label class="form-label">
-                        Enseignement <span class="text-danger">*</span>
-                        <i class="fas fa-chalkboard-teacher ms-1 text-muted"></i>
-                      </label>
-                      <select class="form-select" formControlName="enseignementId" required>
-                        <option value="" disabled selected>— Sélectionnez un enseignement —</option>
-                        @for (item of enseignementList; track item.id) {
-                          <option [value]="item.id">
-                            {{ item.enseignant }} - {{ item.classe }} - {{ item.anneeScolaire }}
-                          </option>
-                        }
-                      </select>
-                      @if (
-                        evaluationFormGroup.get('enseignementId')?.invalid &&
-                        evaluationFormGroup.get('enseignementId')?.touched
-                      ) {
-                        <div class="invalid-feedback">L'enseignement est requis</div>
-                      }
-                    </div>
-                  </div>
-
-                  <div class="col-lg-3 col-sm-12">
+                  <div class="col-lg-4 col-sm-12">
                     <div class="form-group">
                       <label class="form-label">
                         Type évaluation <span class="text-danger">*</span>
@@ -410,7 +86,7 @@
                     </div>
                   </div>
 
-                  <div class="col-lg-3 col-sm-12">
+                  <div class="col-lg-4 col-sm-12">
                     <div class="form-group">
                       <label class="form-label">
                         Mode évaluation <span class="text-danger">*</span>
@@ -434,7 +110,82 @@
                   </div>
                 </div>
 
-                <!-- Ligne 2: Date + Heure début + Heure fin -->
+                <div class="row form-row">
+                  <div class="col-lg-4 col-sm-12">
+                    <div class="form-group">
+                      <label class="form-label">
+                        Classe <span class="text-danger">*</span>
+                        <i class="fas fa-chalkboard-user ms-1 text-muted"></i>
+                      </label>
+                      <select
+                        class="form-select"
+                        formControlName="classeId"
+                        (change)="onClasseSelected()"
+                        required
+                      >
+                        <option value="" disabled selected>— Sélectionnez une classe —</option>
+                        @for (item of classeList; track item.id) {
+                          <option [value]="item.id">
+                            {{ item.libelle }}
+                          </option>
+                        }
+                      </select>
+                      @if (
+                        evaluationFormGroup.get('classeId')?.invalid &&
+                        evaluationFormGroup.get('classeId')?.touched
+                      ) {
+                        <div class="invalid-feedback">La classe est requise</div>
+                      }
+                    </div>
+                  </div>
+                  <div class="col-lg-4 col-sm-12">
+                    <div class="form-group">
+                      <label class="form-label">
+                        Enseignement <span class="text-danger">*</span>
+                        <i class="fas fa-chalkboard-teacher ms-1 text-muted"></i>
+                      </label>
+                      <select class="form-select" formControlName="enseignementId" required>
+                        <option value="" disabled selected>— Sélectionnez un enseignement —</option>
+                        @for (item of enseignementList; track item.id) {
+                          <option [value]="item.id">
+                            {{ item.enseignant }} - {{ item.matiere }} - {{ item.classe }} -
+                            {{ item.anneeScolaire }}
+                          </option>
+                        }
+                      </select>
+                      @if (
+                        evaluationFormGroup.get('enseignementId')?.invalid &&
+                        evaluationFormGroup.get('enseignementId')?.touched
+                      ) {
+                        <div class="invalid-feedback">L'enseignement est requis</div>
+                      }
+                    </div>
+                  </div>
+
+                  <div class="col-lg-4 col-sm-12">
+                    <div class="form-group">
+                      <label class="form-label">
+                        Semestre <span class="text-danger">*</span>
+                        <i class="fas fa-calendar-alt ms-1 text-muted"></i>
+                      </label>
+                      <select class="form-select" formControlName="semestre" required>
+                        <option value="" disabled selected>— Sélectionnez un semestre —</option>
+                        @for (item of semestreList; track item.id) {
+                          <option [value]="item.id">
+                            {{ item.libelle }}
+                          </option>
+                        }
+                      </select>
+                      @if (
+                        evaluationFormGroup.get('semestre')?.invalid &&
+                        evaluationFormGroup.get('semestre')?.touched
+                      ) {
+                        <div class="invalid-feedback">Le semestre est requis</div>
+                      }
+                    </div>
+                  </div>
+                </div>
+
                 <div class="row form-row">
                   <div class="col-lg-4 col-sm-12">
                     <div class="form-group">
@@ -490,7 +241,6 @@
                   </div>
                 </div>
 
-                <!-- Ligne 3: Description -->
                 <div class="row form-row">
                   <div class="col-12">
                     <div class="form-group">
@@ -515,7 +265,6 @@
                 </div>
               </div>
 
-              <!-- Actions -->
               <div class="form-actions">
                 <button type="button" class="btn btn-secondary" (click)="goBack()">
                   <i class="fas fa-times me-2"></i>Annuler
@@ -529,7 +278,6 @@
                 </button>
               </div>
 
-              <!-- Help Message -->
               <div class="alert-help mt-4" role="alert">
                 <i class="fas fa-info-circle me-2"></i>
                 <span

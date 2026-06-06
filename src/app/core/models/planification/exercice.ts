@@ -29,3 +29,35 @@ export interface Exercice {
     //
 
 }
+
+export interface ExerciceAddEdit {
+    id?: number;
+
+    titre?: string;
+
+    page?: string;
+
+    numeroExercice?: string;
+
+    description?: string;
+
+    url?: string;
+
+    piece_jointe?: string;
+
+    classId?: number;
+
+    enseignement?: number;
+
+    livre?: number;
+
+    createur?: number;
+
+    dateDebut?: Date;
+
+    dateFin?: Date;
+
+    piecesJointesDTO?: PieceJointe;
+    //
+
+}

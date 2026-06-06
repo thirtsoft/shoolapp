@@ -8,21 +8,21 @@
   padding: 2rem !important;
 }
 
-/* ── Indicateur d'étapes (Wizard) ───────────── */
 .step-indicator {
   display: flex;
   align-items: center;
   justify-content: center;
   gap: 1rem;
-  margin-bottom: 2.5rem;
+  margin-bottom: 2rem;
 }
 
 .step {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 0.75rem;
+  gap: 0.5rem;
 }
+
 
 .step-number {
   width: 44px;
@@ -30,12 +30,18 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  background: var(--gray-100);
+  background: #e2e8f0;
   border-radius: 50%;
   font-weight: 700;
-  font-size: 1.125rem;
-  color: var(--gray-500);
+  font-size: 1rem;
+  color: #718096;
   transition: all 0.3s ease;
+}
+
+.step.active .step-number {
+  background: linear-gradient(135deg, #2c5282, #1e3a5f);
+  color: white;
+  box-shadow: 0 4px 12px rgba(30, 58, 95, 0.2);
 }
 
 .step-label {
@@ -236,8 +242,15 @@
 
 /* ── Animations Functional ──────────────────── */
 @keyframes fadeIn {
-  from { opacity: 0; transform: translateY(-10px); }
-  to   { opacity: 1; transform: translateY(0); }
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 /* ══════════════════════════════════════════════
@@ -247,11 +260,13 @@
   .card-body {
     padding: 2.5rem !important;
   }
+
   .row.g-3 {
     display: flex;
     gap: 1.5rem;
   }
-  .row.g-3 > div {
+
+  .row.g-3>div {
     flex: 1;
   }
 }
@@ -260,41 +275,51 @@
   .card-body {
     padding: 1.5rem !important;
   }
+
   .step-indicator {
     gap: 0.5rem;
     margin-bottom: 2rem;
   }
+
   .step-line {
     width: 40px;
   }
+
   .step-number {
     width: 38px;
     height: 38px;
     font-size: 1rem;
   }
+
   .form-group {
     margin-bottom: 1.5rem;
   }
+
   .form-select {
     padding: 0.75rem 0.875rem;
   }
+
   .recap-card {
     padding: 1rem !important;
   }
+
   .recap-icon {
     width: 40px;
     height: 40px;
     font-size: 1.25rem;
   }
+
   .form-actions {
     flex-direction: column;
     gap: 0.875rem;
     margin-top: 1.5rem;
   }
+
   .btn {
     width: 100%;
     padding: 0.75rem 1rem;
   }
+
   .alert-help {
     padding: 0.875rem 1rem;
     margin-top: 1.5rem !important;
@@ -305,14 +330,17 @@
   .card-body {
     padding: 1.25rem !important;
   }
+
   .step-number {
     width: 34px;
     height: 34px;
     font-size: 0.875rem;
   }
+
   .step-label {
     font-size: 0.6875rem;
   }
+
   .form-label {
     font-size: 0.875rem;
     margin-bottom: 0.625rem;

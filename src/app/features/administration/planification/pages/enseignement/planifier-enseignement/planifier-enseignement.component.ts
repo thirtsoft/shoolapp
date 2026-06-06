@@ -1,4 +1,5 @@
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, DestroyRef, inject, OnInit } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormArray, FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
@@ -7,7 +8,6 @@ import { Enseignement } from '../../../../../../core/models/planification/enseig
 import { AnneeScolaire } from '../../../../../../core/models/referentiels/annee-scolaire';
 import { ListeClasse } from '../../../../../../core/models/referentiels/classe';
 import { Matiere } from '../../../../../../core/models/referentiels/matiere';
-import { Semestre } from '../../../../../../core/models/referentiels/semestre';
 import { Utilisateur } from '../../../../../../core/models/utilisateur/utilisateur';
 import { EnseignantService } from '../../../../../enseignant/service/enseignant.service';
 import { ReferentielService } from '../../../../referentiel/service/referentiel.service';
@@ -24,7 +24,7 @@ import { PlanificationResourceService } from '../../../services/planification-re
 export class PlanifierEnseignementComponent implements OnInit {
 
   errorMessage?: string;
-  enseignementId: number;
+  enseignementId?: number;
   enseignementFormGroup!: FormGroup;
   enseignement: any;
   isEdit: boolean = false;
@@ -33,8 +33,7 @@ export class PlanifierEnseignementComponent implements OnInit {
   matiereList: Matiere[] = [];
   enseigantList: EnseigantList[] = [];
   anneeScolaireList: AnneeScolaire[] = [];
-  semestreList: Semestre[] = [];
-  ecoleId: any;
+  ecoleId?: number;
   userId: number;
   utilisateur: Utilisateur = {};
 
@@ -44,7 +43,6 @@ export class PlanifierEnseignementComponent implements OnInit {
 
   disableAddButton = false;
 
-
   private readonly planification = inject(PlanificationResourceService);
   private readonly referentielService = inject(ReferentielService);
   private readonly enseignantService = inject(EnseignantService);
@@ -53,104 +51,81 @@ export class PlanifierEnseignementComponent implements OnInit {
   private readonly toastService = inject(ToastrService);
   private readonly activeRoute = inject(ActivatedRoute);
   private readonly router = inject(Router);
+  private readonly destroyRef = inject(DestroyRef);
 
   constructor(
   ) {
-    this.enseignementId = this.activeRoute.snapshot.params['id'];
+    this.enseignementId = this.activeRoute.snapshot.params['id'] ? Number(this.activeRoute.snapshot.params['id']) : undefined;
     this.userId = Number(localStorage.getItem('id'));
   }
 
   ngOnInit(): void {
     this.getConnectedUserInfos();
-    this.getClasseList();
-    this.getAnneeScolaireList();
-    this.getEnseignantList();
-    this.getMatiereList();
-    this.getSemestreList();
+    this.loadReferentiels();
     this.initializeForm();
-    if (this.enseignementId != null && this.enseignementId != undefined) {
-      this.getEnseignement(this.enseignementId);
+    if (this.enseignementId) {
       this.title = 'Modifier un enseignement';
       this.isEdit = true;
+      this.getEnseignement(this.enseignementId);
     }
   }
 
-  getConnectedUserInfos() {
-    this.utilisateurService.getUtilisateur(this.userId).subscribe({
-      next: data => {
-        this.utilisateur = data;
-      },
-      error: error => { console.log(error) },
+  private getConnectedUserInfos() {
+    this.utilisateurService.getUtilisateur(this.userId)
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: data => this.utilisateur = data,
+        error: error => console.error('Erreur utilisateur:', error)
+      });
+  }
+
+  private loadReferentiels() {
+    this.referentielService.getAllClasses().pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
+      next: data => this.classeList = data
+    });
+
+    this.referentielService.getAllMatieres().pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
+      next: data => this.matiereList = data
+    });
+
+    this.referentielService.getAllAnneeScolaires().pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
+      next: data => this.anneeScolaireList = data
+    });
+
+    this.enseignantService.getAllEnseignants().pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
+      next: data => this.enseigantList = data
     });
   }
 
-  getClasseList() {
-    this.referentielService.getAllClasses().subscribe({
-      next: (data) => {
-        this.classeList = data;
-      }
-    });
+
+  private getEnseignement(enseignementId: number) {
+    this.planification.getSingleResource('planification/enseignement', enseignementId)
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: (data: any) => {
+          this.populateFormForEdit(data);
+        },
+        error: (error) => {
+          console.error('Erreur chargement enseignement:', error);
+          this.toastService.error('Erreur', 'Erreur lors du chargement de l\'enseignement');
+        }
+      });
   }
 
-  getMatiereList() {
-    this.referentielService.getAllMatieres().subscribe({
-      next: (data) => {
-        this.matiereList = data;
-      }
-    });
-  }
-
-  getAnneeScolaireList() {
-    this.referentielService.getAllAnneeScolaires().subscribe({
-      next: (data) => {
-        this.anneeScolaireList = data;
-      }
-    });
-  }
-
-  getEnseignantList() {
-    this.enseignantService.getAllEnseignants().subscribe({
-      next: (data) => {
-        this.enseigantList = data;
-      }
-    });
-  }
-
-  getSemestreList() {
-    this.referentielService.getAllSemestres().subscribe({
-      next: (data) => {
-        this.semestreList = data;
-      }
-    });
-  }
-
-  getEnseignement(enseignementId: number) {
-    this.planification.getSingleResource('planification/enseignement', enseignementId).subscribe({
-      next: (data) => {
-        this.enseignement = data;
-        this.populateFormForEdit(this.enseignement);
-      },
-      error: (error) => {
-        console.error('Erreur chargement enseignement:', error);
-        this.toastService.error('Erreur', 'Erreur lors du chargement de l\'enseignement');
-      }
-    });
-  }
-
-  populateFormForEdit(enseignement: any) {
-    this.enseignementsArray.clear();
-    this.enseignementsArray.push(this.createEnseignementItem(enseignement));
-    this.disableAddButton = true;
-  }
-
-  initializeForm() {
+  private initializeForm() {
     this.enseignementFormGroup = this._formBuilder.group({
       enseignements: this._formBuilder.array([])
     });
 
-    if (!this.isEdit) {
+    if (!this.enseignementId) {
       this.addEnseignementItem();
     }
+  }
+
+  private populateFormForEdit(enseignement: Enseignement) {
+    this.enseignementsArray.clear();
+    this.enseignementsArray.push(this.createEnseignementItem(enseignement));
+    this.disableAddButton = true;
   }
 
   get enseignementsArray(): FormArray {
@@ -166,9 +141,9 @@ export class PlanifierEnseignementComponent implements OnInit {
         classe: ['', Validators.required],
         anneeScolaire: ['', Validators.required],
         matiere: ['', Validators.required],
-        semestre: ['', Validators.required],
         dateDebut: ['', Validators.required],
         dateFin: [''],
+        estProfPrincipal: [false]
       });
     }
     return this._formBuilder.group({
@@ -178,13 +153,12 @@ export class PlanifierEnseignementComponent implements OnInit {
       classe: [enseignement.classe?.id || enseignement.classe || '', Validators.required],
       anneeScolaire: [enseignement.anneeScolaire?.id || enseignement.anneeScolaire || '', Validators.required],
       matiere: [enseignement.matiere?.id || enseignement.matiere || '', Validators.required],
-      semestre: [enseignement.semestre?.id || enseignement.semestre || '', Validators.required],
       dateDebut: [enseignement.dateDebut || '', Validators.required],
       dateFin: [enseignement.dateFin || ''],
+      estProfPrincipal: [enseignement.estProfPrincipal || false],
       ecole: this.ecoleId
     });
   }
-
 
   onAddEnseignementItems() {
     if (this.isEdit) {
@@ -194,18 +168,14 @@ export class PlanifierEnseignementComponent implements OnInit {
     this.addEnseignementItem();
   }
 
-  /*
-  addEnseignementItem(enseignement: Enseignement | null = null) {
-    this.enseignementsArray.push(this.createEnseignementItem(enseignement));
-  }*/
-
-
   addEnseignementItem(enseignement: Enseignement | null = null) {
     this.enseignementsArray.insert(0, this.createEnseignementItem(enseignement));
   }
 
   removeEnseignementItem(index: number) {
-    this.enseignementsArray.removeAt(index);
+    if (this.enseignementsArray.length > 1) {
+      this.enseignementsArray.removeAt(index);
+    }
   }
 
   getEnseignementsValues(): any[] {
@@ -227,11 +197,9 @@ export class PlanifierEnseignementComponent implements OnInit {
   }
 
   creerPlusieursEnseignements(enseignements: any[]) {
-
     const payload = {
       enseignementAddEditDTOList: enseignements.map(enseignement => this.formatEnseignementForAPI(enseignement))
     };
-    console.log('Payload envoyé:', payload);
 
     this.planification.createMultipleRessource('planification/enseignement', payload).subscribe({
       next: (data) => {
@@ -249,13 +217,12 @@ export class PlanifierEnseignementComponent implements OnInit {
     });
   }
 
+  /*
   formatEnseignementForAPI(enseignement: any): any {
     const enseignantId = enseignement.enseignant?.id || enseignement.enseignant;
     const classeId = enseignement.classe?.id || enseignement.classe;
     const anneeScolaireId = enseignement.anneeScolaire?.id || enseignement.anneeScolaire;
     const matiereId = enseignement.matiere?.id || enseignement.matiere;
-    const semestreId = enseignement?.semestre.id || enseignement?.semestre;
-
     return {
       id: enseignement.id || null,
       description: enseignement.description || '',
@@ -263,17 +230,33 @@ export class PlanifierEnseignementComponent implements OnInit {
       classe: Number(classeId),
       anneeScolaire: Number(anneeScolaireId),
       matiere: Number(matiereId),
-      semestre: Number(semestreId),
       dateDebut: enseignement.dateDebut,
       dateFin: enseignement.dateFin || null,
       actif: 1,
+      estProfPrincipal: enseignement.estProfPrincipal || false,
+      ecole: this.ecoleId
+    };
+  }*/
+
+  private formatEnseignementForAPI(enseignement: any): any {
+    return {
+      id: enseignement.id ? Number(enseignement.id) : null,
+      description: enseignement.description || '',
+      enseignant: Number(enseignement.enseignant),
+      classe: Number(enseignement.classe),
+      anneeScolaire: Number(enseignement.anneeScolaire),
+      matiere: Number(enseignement.matiere),
+      dateDebut: enseignement.dateDebut,
+      dateFin: enseignement.dateFin || null,
+      actif: 1,
+      estProfPrincipal: !!enseignement.estProfPrincipal,
       ecole: this.ecoleId
     };
   }
 
   updateSingleEnseignement(enseignement: any) {
     const payload = this.formatEnseignementForAPI(enseignement);
-
+    if (!this.enseignementId) return;
     this.planification.updateResource('planification/enseignement', this.enseignementId, payload).subscribe({
       next: (data) => {
         if (data.statut === 'OK') {
@@ -301,7 +284,6 @@ export class PlanifierEnseignementComponent implements OnInit {
     });
 
   }
-
 
   goBack() {
     this.router.navigate(['admin/planification/enseignement'])

@@ -42,13 +42,15 @@ export class SideBarAdminComponent {
     { route: '/admin/dossier-eleve/eleves', ico: '🎒', label: 'Élèves', section: 'GESTION SCOLAIRE', badge: '1 200' },
     { route: '/admin/dossier-eleve/inscriptions', ico: '📝', label: 'Inscriptions', section: '', badge: '24' },
     { route: '/admin/dossier-eleve/parent', ico: '👪', label: 'Parents', section: '', badge: '' },
-    //  { route: '/admin/dossier-eleve/enseignants', ico: '👨‍🏫', label: 'Enseignants', section: '', badge: '85' },
+    { route: '/admin/utilisateur/enseignants', ico: '👨‍🏫', label: 'Enseignants' },
 
     // VIE SCOLAIRE
     { route: '/admin/dossier-eleve/absences', ico: '❌', label: 'Absences', section: 'VIE SCOLAIRE', badge: '7' },
     { route: '/admin/dossier-eleve/evaluations', ico: '🎯', label: 'Évaluations', section: '', badge: '' },
     { route: '/admin/dossier-eleve/notes', ico: '📝', label: 'Notes', section: '', badge: '' },
     { route: '/admin/dossier-eleve/bulletin', ico: '📋', label: 'Bulletins', section: '', badge: '' },
+    { route: '/admin/planification/exercice', ico: '📅', label: 'Exercice', section: '', badge: '' },
+
 
     // ═══════════ PLANIFICATION ═══════════
     { route: '/admin/planification/emploi-du-temps', ico: '🕐', label: 'Emplois du temps', section: 'PLANIFICATION', badge: '' },
@@ -84,7 +86,6 @@ export class SideBarAdminComponent {
         // Services
         { route: '/admin/referentiel/typeservices', ico: '🛎️', label: 'Types de service' },
         { route: '/admin/referentiel/tarifs', ico: '💲', label: 'Tarifs' },
-        //    { route: '/admin/referentiel/type-paiements', ico: '💳', label: 'Types de paiement' },
         { route: '/admin/referentiel/moyenpaiements', ico: '🏦', label: 'Modes de paiement' },
         { route: '/admin/referentiel/menus', ico: '🍽️', label: 'Menus' },
         { route: '/admin/referentiel/category-menu', ico: '📋', label: 'Catégories menu' },
@@ -95,7 +96,6 @@ export class SideBarAdminComponent {
         // Système
         { route: '/admin/profils', ico: '🔑', label: 'Profils & Rôles', section: '', badge: '' },
         { route: '/admin/utilisateur', ico: '👥', label: 'Utilisateurs' },
-        { route: '/admin/utilisateur/enseignants', ico: '👨‍🏫', label: 'Enseignants' },
         { route: '/admin/referentiel/parametrage', ico: '🔧', label: 'Paramètres établissement' }
 
       ]

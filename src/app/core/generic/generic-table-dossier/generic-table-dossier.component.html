@@ -1,4 +1,4 @@
-<div class="page-wrapper">
+<!-- <div class="page-wrapper">
   <div class="content container-fluid">
     <div class="row">
       <div class="col-sm-12">
@@ -46,7 +46,6 @@
                           (input)="filterChange.emit({ filter, value: $event.target.value })"
                         />
                       </div>
-                      <!-- Select -->
                       <div *ngIf="filter.type === 'select'">
                         <label>{{ filter.label }}</label>
                         <select
@@ -327,6 +326,390 @@
                   {{ totalElements }}
                 </div>
               </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+ -->
+
+ <div class="page-wrapper">
+  <div class="content container-fluid">
+    <div class="row">
+      <div class="col-sm-12">
+        <div class="card">
+          <div class="card-body">
+            <h1 class="text-center">{{ title }}</h1>
+            <div class="export-section">
+              <button class="export-button" aria-label="Export to PDF file" (click)="exportToPDF()">
+                <img
+                  loading="lazy"
+                  src="assets/img/pdf.png"
+                  alt="PDF export icon"
+                  class="export-icon"
+                />
+                <span class="export-text">Exporter en fichier PDF</span>
+              </button>
+              <button
+                class="export-button"
+                aria-label="Export to Excel file"
+                (click)="exportToExcel()"
+                title="exporter sous excel"
+              >
+                <img
+                  loading="lazy"
+                  src="assets/img/excel.png"
+                  alt="Excel export icon"
+                  class="export-icon"
+                />
+                <span class="export-text">Exporter en fichier Excel</span>
+              </button>
+            </div>
+            
+            <div class="search-valid">
+              <div class="newSearch">
+                <div class="search-section-container">
+                  @if (showFilters && filtered.length) {
+                    <div class="search-section">
+                      @for (filter of filtered; track filter) {
+                        <div class="filter-group">
+                          @if (filter.type === 'text') {
+                            <div>
+                              <label>{{ filter.label }}</label>
+                              <input
+                                type="text"
+                                class="form-control"
+                                [placeholder]="filter.placeholder || ''"
+                                [disabled]="filter.disabled"
+                                (input)="filterChange.emit({ filter, value: $any($event.target).value })"
+                              />
+                            </div>
+                          }
+
+                          @if (filter.type === 'select') {
+                            <div>
+                              <label>{{ filter.label }}</label>
+                              <select
+                                class="form-control"
+                                [disabled]="filter.disabled"
+                                (change)="onFilterChange(filter, $event)"
+                              >
+                                <option value="">
+                                  {{ filter.placeholder || '-- Sélectionner --' }}
+                                </option>
+                                @for (opt of filter.options; track opt.value) {
+                                  <option [value]="opt.value">
+                                    {{ opt.label }}
+                                  </option>
+                                }
+                              </select>
+                            </div>
+                          }
+
+                          @if (filter.type === 'date-range') {
+                            <div class="date-range-filter">
+                              <label>{{ filter.label }}</label>
+                              <div class="row">
+                                <div class="col">
+                                  <input
+                                    type="date"
+                                    class="form-control"
+                                    placeholder="De"
+                                    (change)="
+                                      onDateRangeChange(filter.fromKey!, filter.toKey!, {
+                                        from: $any($event.target).value,
+                                        to: currentDateTo,
+                                      })
+                                    "
+                                  />
+                                </div>
+                                <div class="col">
+                                  <input
+                                    type="date"
+                                    class="form-control"
+                                    placeholder="À"
+                                    (change)="
+                                      onDateRangeChange(filter.fromKey!, filter.toKey!, {
+                                        from: currentDateFrom,
+                                        to: $any($event.target).value,
+                                      })
+                                    "
+                                  />
+                                </div>
+                              </div>
+                            </div>
+                          }
+                        </div>
+                      }
+                    </div>
+                  }
+                </div>
+
+                @if (generatedButton === true) {
+                  <div class="upload-container">
+                    <button
+                      class="upload-button"
+                      [routerLink]="generatedButtonLink"
+                      aria-label="Upload file button"
+                      [title]="addButtonLabel"
+                    >
+                      <span class="upload-text text-white">{{ generateButtonLabel }}</span>
+                    </button>
+                  </div>
+                }
+
+                @if (isNoAjout !== true) {
+                  <div class="upload-container">
+                    <button
+                      class="upload-button"
+                      [routerLink]="addButtonLink"
+                      aria-label="Upload file button"
+                      [title]="addButtonLabel"
+                    >
+                      <span class="upload-text text-white">{{ addButtonLabel }}</span>
+                    </button>
+                  </div>
+                }
+              </div>
+
+              @if (isLoading) {
+                <div class="containerLoader">
+                  <div class="boxLoader">
+                    <div class="loader2"></div>
+                    <p>Chargement ...</p>
+                  </div>
+                </div>
+              }
+
+              <div class="table-responsive">
+                @if (!isLoading) {
+                  <table id="customers" title="">
+                    <thead>
+                      <tr>
+                        @for (column of tableColumns; track column.key) {
+                          <th
+                            (click)="sortTable(column.key)"
+                            class="sortable-column"
+                          >
+                            {{ column.header }}
+                            @if (sortColumn === column.key) {
+                              <span class="sort-icons">
+                                @if (sortDirection === 'asc') {
+                                  <i class="fas fa-sort-up active"></i>
+                                }
+                                @if (sortDirection === 'desc') {
+                                  <i class="fas fa-sort-down active"></i>
+                                }
+                              </span>
+                            }
+                          </th>
+                        }
+                        <th class="options-column">Options</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      @if (filteredData.length === 0) {
+                        <tr>
+                          <td [attr.colspan]="tableColumns.length + 2" class="text-center">
+                            Aucun élément disponible.
+                          </td>
+                        </tr>
+                      }
+                      @for (row of filteredData; track row.id || row) {
+                        <tr>
+                          @for (column of tableColumns; track column.key) {
+                            <td [title]="row[column.key]">
+                              @if (column.key === 'bulletin') {
+                                <button
+                                  class="icon-button"
+                                  title="Générer le bulletin PDF"
+                                  (click)="generatePdfDuBulletin(row)"
+                                >
+                                  <i class="fas fa-file-pdf text-danger fa-lg"></i>
+                                </button>
+                              } @else {
+                                @if (isNumber(row[column.key])) {
+                                  <span>{{ row[column.key] }}</span>
+                                } @else {
+                                  {{ row[column.key] }}
+                                }
+                              }
+                            </td>
+                          }
+                          <td class="icon-container options-column">
+                            <div class="icon-position left">
+                              @if (isEditIcon && showEditOrDeleteCondition(row)) {
+                                <button
+                                  class="icon-button"
+                                  aria-label="Edit"
+                                  title="Modifier"
+                                  (click)="generateLink(modifierButtonLink, row)"
+                                >
+                                  <img src="assets/img/edit.png" class="icon" />
+                                </button>
+                              }
+                            </div>
+
+                            <div class="icon-position left">
+                              @if (isPrnterIcon && showEditOrDeleteCondition(row)) {
+                                <button
+                                  class="icon-button"
+                                  aria-label="Imprimer"
+                                  title="Imprimer"
+                                  (click)="imprimer(row)"
+                                >
+                                  <img
+                                    src="assets/img/printing.png"
+                                    class="icon"
+                                    style="width: 14px; height: 15px"
+                                  />
+                                </button>
+                              }
+                            </div>
+                            
+                            <div class="icon-position center">
+                              @if (isLockableIcon && showEditOrDeleteCondition(row)) {
+                                <button
+                                  class="icon-button"
+                                  aria-label="Toggle Lock"
+                                  [title]="row.actif === 1 || row.est_valide ? 'Desactiver' : 'Activer'"
+                                  (click)="
+                                    row.actif === 1 || row.est_valide
+                                      ? openConfirmationDialog('desactiver', deleteEndPoint, row)
+                                      : openConfirmationDialog('activer', deleteEndPoint, row)
+                                  "
+                                >
+                                  <img
+                                    [src]="
+                                      row.actif === 1 || row.est_valide
+                                        ? 'assets/img/lock.png'
+                                        : 'assets/img/unlock.png'
+                                    "
+                                    class="icon"
+                                    style="width: 14px; height: 15px"
+                                  />
+                                </button>
+                              }
+                            </div>
+
+                            <div class="icon-position right">
+                              @if (isEyesIcon) {
+                                <button
+                                  class="icon-button"
+                                  title="Afficher les détails"
+                                  aria-label="View"
+                                  (click)="generateLink(detailButtonLink, row)"
+                                >
+                                  <img
+                                    src="assets/img/eyes.png"
+                                    alt="view"
+                                    class="icon"
+                                    style="width: 15px; height: 15px"
+                                  />
+                                </button>
+                              }
+
+                              @if (isReinscrireIcon) {
+                                <button
+                                  class="icon-button"
+                                  title="Réinscrire élève "
+                                  aria-label="View"
+                                  (click)="generateReinscriptionLink(reinscriptionButtonLink, row)"
+                                >
+                                  <img
+                                    src="assets/img/eyes.png"
+                                    alt="view"
+                                    class="icon"
+                                    style="width: 15px; height: 15px"
+                                  />
+                                </button>
+                              }
+
+                              @if (isPopupVisible) {
+                                <div class="popup-container">
+                                  <div class="popup-content">
+                                    <button class="close-button" (click)="closePopup()">X</button>
+                                    <div style="margin-bottom: 20px; text-align: center; width: 100%"></div>
+                                    <div class="details-grid">
+                                      <div class="details-column">
+                                        @for (key of splitKeys[0]; track key) {
+                                          <div class="details-item">
+                                            <span class="details-key">{{ formatKey(key) }}:</span>
+                                            <span class="details-value">{{ selectedItem[key] || 'N/A' }}</span>
+                                          </div>
+                                        }
+                                      </div>
+                                      <div class="details-column">
+                                        @for (key of splitKeys[1]; track key) {
+                                          <div class="details-item">
+                                            <span class="details-key">{{ formatKey(key) }}:</span>
+                                            <span class="details-value">{{ selectedItem[key] || 'N/A' }}</span>
+                                          </div>
+                                        }
+                                      </div>
+                                    </div>
+                                  </div>
+                                </div>
+                              }
+
+                              @if (isTableIcon) {
+                                <button
+                                  class="icon-button"
+                                  title="Afficher le tableau"
+                                  aria-label="Edit"
+                                  (click)="generateLink(iconTableLink, row)"
+                                >
+                                  <i class="fa fa-table"></i>
+                                </button>
+                              }
+                            </div>
+                          </td>
+                        </tr>
+                      }
+                    </tbody>
+                  </table>
+                }
+              </div>
+              
+              @if (totalElements > 0) {
+                <div class="pagination-container-center">
+                  <button (click)="changePage(currentPage - 1)" [disabled]="currentPage === 0">
+                    &larr; Précédent
+                  </button>
+                  @for (page of visiblePages; track page) {
+                    <button (click)="changePage(page)" [class.active]="page === currentPage">
+                      {{ page + 1 }}
+                    </button>
+                  }
+
+                  <button
+                    (click)="changePage(currentPage + 1)"
+                    [disabled]="currentPage + 1 >= totalPages"
+                  >
+                    Suivant &rarr;
+                  </button>
+
+                  <div class="items-per-page">
+                    <select
+                      [(ngModel)]="pageSize"
+                      (change)="changeSize($any($event.target).value)"
+                      id="pageSize"
+                    >
+                      @for (size of tableSizes; track size) {
+                        <option [value]="size">
+                          {{ size }}
+                        </option>
+                      }
+                    </select>
+                  </div>
+
+                  <div class="pagination-summary">
+                    Éléments affichés : {{ startItem }} – {{ endItem }} sur {{ totalElements }}
+                  </div>
+                </div>
+              }
             </div>
           </div>
         </div>

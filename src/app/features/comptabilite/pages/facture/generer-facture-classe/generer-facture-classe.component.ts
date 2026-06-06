@@ -1,17 +1,13 @@
 import { Component, inject, OnInit } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
+import { ToastrService } from 'ngx-toastr';
+import { GenereFactureClasse } from '../../../../../core/models/comptabilite/generer-facture-classe';
 import { ListeClasse } from '../../../../../core/models/referentiels/classe';
 import { Utilisateur } from '../../../../../core/models/utilisateur/utilisateur';
 import { ReferentielResourceService } from '../../../../administration/referentiel/service/referentiel-resource.service';
 import { UtilisateurService } from '../../../../administration/utilisateur/service/utilisateur.service';
 import { ComptabiliteResourceService } from '../../../services/comptabilite-resource.service';
-import { ToastrService } from 'ngx-toastr';
-
-interface Mois {
-  id: number;
-  libelle: string;
-}
 
 @Component({
   selector: 'app-generer-facture-classe',
@@ -28,6 +24,7 @@ export class GenererFactureClasseComponent implements OnInit {
   classList?: ListeClasse[];
   moisList?: any[] = [];
   anneesList?: any[] = [];
+  echeanceDate: any;
 
   montant?: any;
   selectedClasse: any;
@@ -77,7 +74,6 @@ export class GenererFactureClasseComponent implements OnInit {
 
   getClasseLibelle(): string {
     if (!this.classList || !this.selectedClasse) {
-      console.log('Liste des classes ou classe non sélectionnée');
       return '';
     }
     const selectedId = Number(this.selectedClasse);
@@ -97,7 +93,6 @@ export class GenererFactureClasseComponent implements OnInit {
 
   getMoisLibelle(): string {
     if (!this.moisList || !this.selectedMois) {
-      console.log('Liste des classes ou classe non sélectionnée');
       return '';
     }
     const selectedId = Number(this.selectedMois);
@@ -109,7 +104,6 @@ export class GenererFactureClasseComponent implements OnInit {
     this.referentielResource.getResourceBaseList('annees')?.subscribe({
       next: (data) => {
         this.anneesList = data;
-        console.log('anneesList', this.anneesList);
       }
     });
   }
@@ -126,14 +120,11 @@ export class GenererFactureClasseComponent implements OnInit {
   }
 
   onMoisSelected() {
-    console.log('selectedMois', this.selectedMois);
-
     if (this.selectedMois) {
       this.selectedMois = Number(this.selectedMois);
     }
     this.getMoisLibelle();
   }
-
 
   onAnneeSelected() {
     console.log('selectedAnnee', this.selectedAnnee);
@@ -144,7 +135,14 @@ export class GenererFactureClasseComponent implements OnInit {
       this.toastService.warning('Attention', 'Veuillez remplir tous les champs obligatoires');
       return;
     }
-    this.comptabiliteResource.genererUneResource('facture', this.selectedClasse, this.selectedMois, this.selectedAnnee).subscribe({
+    const payload: GenereFactureClasse = {
+      classeId: this.selectedClasse,
+      mois: this.selectedMois,
+      annee: this.selectedAnnee,
+      echeanceDate: this.echeanceDate,
+    };
+    //  this.comptabiliteResource.genererUneResource('facture', this.selectedClasse, this.selectedMois, this.selectedAnnee).subscribe({
+    this.comptabiliteResource.genererUneResourceClasse('facture', payload).subscribe({
       next: (data) => {
         if (data.statut === 'OK') {
           this.toastService.success('succès', data.message);

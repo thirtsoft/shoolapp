@@ -3,22 +3,21 @@ import { Router, RouterLink, RouterModule } from '@angular/router';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ExportFileService } from '../../services/export-file.service';
 
-import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ToastrService } from 'ngx-toastr';
-import * as pdfMake from 'pdfmake/build/pdfmake';
+import { ReferentielService } from '../../../features/administration/referentiel/service/referentiel.service';
 import { ConfirmationDialogModalComponent } from '../../components/confirmation-dialog-modal/confirmation-dialog-modal.component';
 import { EncodateLogo } from '../../enumeration/encodage-logo-data';
 import { IFilterConfig } from '../../filtered-config/FiltreConfiguration';
+import { ParametresEtablissement } from '../../models/referentiels/parametre-etablissement';
 import { CommonService } from '../../services/common.service';
 import { SharedResourceService } from '../../services/shared-resource.service';
-//pdfMake!.vfs = pdfFonts.pdfMake.vfs;
+declare const pdfMake: any;
 
 @Component({
   selector: 'app-generic-table-dossier',
   standalone: true,
   imports: [
-    CommonModule,        // ✅ AJOUTER CommonModule ICI
     RouterModule,
     FormsModule,
     RouterLink
@@ -151,6 +150,9 @@ export class GenericTableDossierComponent implements OnInit {
   totalCoef?: any;
   moyenneGeneraleEleve?: any;
 
+  parametresEtablissement: ParametresEtablissement = {};
+  logoUrl: string = '';
+
   onDateRangeChange(fromKey: string, toKey: string, event: any) {
     this.filterChange.emit({
       filter: { key: 'dateRange', fromKey, toKey } as IFilterConfig,
@@ -165,6 +167,7 @@ export class GenericTableDossierComponent implements OnInit {
   private readonly modalService = inject(NgbModal);
   private readonly toast = inject(ToastrService);
   private readonly cdr = inject(ChangeDetectorRef);
+  private readonly referentielService = inject(ReferentielService);
 
   onFilterChange(key: any, value: any) {
     this.currentFilters[key] = value;
@@ -204,7 +207,54 @@ export class GenericTableDossierComponent implements OnInit {
   }
 
   imprimer(row: any) {
-    console.log('data imprimé', row);
+    const docDefinition: any = {
+      content: [
+        { text: 'NOTE D\'INFORMATION', style: 'header', alignment: 'center' },
+        { text: `Date de création : ${row.dateCreation || 'N/A'}`, alignment: 'right', italics: true, margin: [0, 0, 0, 20] },
+
+        {
+          table: {
+            widths: ['30%', '70%'],
+            body: [
+              [
+                { text: 'Référence :', bold: true, fillColor: '#f2f2f2' },
+                { text: row.reference || 'N/A', bold: true }
+              ]
+            ]
+          },
+          margin: [0, 0, 0, 20]
+        },
+
+        { canvas: [{ type: 'line', x1: 0, y1: 5, x2: 515, y2: 5, lineWidth: 1.5, lineColor: '#cccccc' }] },
+
+        { text: 'Contenu / Description :', style: 'subHeader', margin: [0, 15, 0, 10] },
+        { text: row.description || 'Aucune description fournie.', style: 'bodyText' }
+      ],
+
+      styles: {
+        header: {
+          fontSize: 20,
+          bold: true,
+          color: '#1a365d',
+          margin: [0, 0, 0, 10]
+        },
+        subHeader: {
+          fontSize: 14,
+          bold: true,
+          color: '#2c5282',
+          decoration: 'underline'
+        },
+        bodyText: {
+          fontSize: 12,
+          lineHeight: 1.5,
+          alignment: 'justify'
+        }
+      },
+      footer: (currentPage: number, pageCount: number) => {
+        return { text: `Page ${currentPage} sur ${pageCount}`, alignment: 'center', fontSize: 9, margin: [0, 10, 0, 0] };
+      }
+    };
+    pdfMake.createPdf(docDefinition).open();
   }
 
 
@@ -331,7 +381,20 @@ export class GenericTableDossierComponent implements OnInit {
     if (changes['p']) {
       this.onPageChange.emit(this.p);
     }
+    this.getParametresEtablissement();
   }
+
+  getParametresEtablissement(): void {
+    this.referentielService.getParametresEtablissement().subscribe(
+      (config: ParametresEtablissement) => {
+        this.parametresEtablissement = config;
+      },
+      error => {
+        console.error('Erreur chargement config', error);
+      }
+    );
+  }
+
 
   applyFilters(): void {
     this.filteredData = this.tableData.filter((row) => {

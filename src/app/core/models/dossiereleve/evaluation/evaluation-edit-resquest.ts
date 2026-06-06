@@ -14,7 +14,11 @@ export interface EvaluationEditRequest {
 
   dateCreation?: Date;
 
+  classeId?: number;
+
   enseignementId?: number;
+
+  semestre?: number;
 
   evaluationType?: string;
 
