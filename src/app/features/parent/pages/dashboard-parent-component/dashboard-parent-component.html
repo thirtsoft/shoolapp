@@ -1,5 +1,4 @@
 <div class="dashboard-parent">
-  <!-- En-tête -->
   <div class="dp-header">
     <div>
       <h1>👋 Bonjour, {{ parent().nom }} - {{ parent().prenom }}</h1>
@@ -15,38 +14,32 @@
     </div>
   </div>
 
-  <!-- Statistiques rapides -->
   <div class="dp-stats">
     <div class="stat-card bleu">
       <span class="stat-ico">📊</span>
-      <span class="stat-val">{{ dernierBulletin().moyenne }}/20</span>
-      <span class="stat-lbl">Moyenne générale</span>
+      <span class="stat-val">{{ formatFCFA(montantTotalImpayeEleve) }}</span>
+      <span class="stat-lbl">Total impayé</span>
     </div>
     <div class="stat-card vert">
       <span class="stat-ico">🏆</span>
-      <span class="stat-val"
-        >{{ dernierBulletin().rang }}<small>/{{ dernierBulletin().effectif }}</small></span
-      >
-      <span class="stat-lbl">Classement</span>
+      <span class="stat-val">{{ formatFCFA(montantTotalEnRetardEleve) }}</span>
+      <span class="stat-lbl">Paiement en retard</span>
     </div>
     <div class="stat-card warning">
       <span class="stat-ico">⚠️</span>
-      <span class="stat-val">{{ totalAbsences() }}</span>
-      <span class="stat-lbl">Absences ce mois</span>
-      <span class="stat-detail">{{ absencesJustifiees() }} justifiées</span>
+      <span class="stat-val">{{ nombreAbsenceEleve }} </span>
+      <span class="stat-lbl">Absences</span>
+      <span class="stat-detail">{{ nombreAbsenceJustifieEleve }} justifiées</span>
     </div>
     <div class="stat-card warning">
       <span class="stat-ico">⏰</span>
-      <span class="stat-val">{{ totalRetards() }}</span>
-      <span class="stat-lbl">Retards ce mois</span>
+      <span class="stat-val">{{ nombreRetardEleve }} </span>
+      <span class="stat-lbl">Retards</span>
     </div>
   </div>
 
-  <!-- DISPOSITION PRINCIPALE EN 2 COLONNES -->
   <div class="dp-main-layout">
-    <!-- Colonne gauche : Notes + Emploi du temps -->
     <div class="dp-col-left">
-      <!-- Notes récentes -->
       <div class="card" style="flex: 1; min-height: 0">
         <div class="card-head">
           <h2>📋 Dernières notes</h2>
@@ -72,14 +65,14 @@
         </button>
       </div>
 
-      <!-- Emploi du temps du jour -->
       <div class="card" style="flex: 1; min-height: 0">
         <div class="card-head">
           <h2>🕐 Aujourd'hui</h2>
-          <span class="card-badge">{{ edtJour().jour }}</span>
+          <span class="card-badge">{{ semaine }}</span>
         </div>
+
         <div class="edt-list">
-          @for (c of edtJour().creneaux; track c.heure) {
+          @for (c of coursEleveDTOList; track c.heure) {
             <div
               class="edt-item"
               [class.pause]="c.matiere === 'Récréation' || c.matiere === 'Pause déjeuner'"
@@ -87,22 +80,29 @@
               <span class="edt-heure">{{ c.heure }}</span>
               <div class="edt-info">
                 <span class="edt-matiere">{{ c.matiere }}</span>
-                <span class="edt-detail">{{
-                  c.professeur !== '-' ? c.professeur + ' · ' + c.salle : c.salle
-                }}</span>
+                <span class="edt-detail">
+                  {{ c.professeur !== '-' ? c.professeur + ' · ' + c.salle : c.salle }}
+                </span>
               </div>
             </div>
           }
         </div>
+
+        @if (!coursEleveDTOList || coursEleveDTOList.length === 0) {
+          <div class="edt-list">
+            <div class="danger" style="padding: 15px; text-align: center; color: #dc3545">
+              Pas de cours disponible cette semaine
+            </div>
+          </div>
+        }
+
         <button class="card-link" (click)="toutVoir('/parent/emploi-temps')">
           Voir la semaine complète →
         </button>
       </div>
     </div>
 
-    <!-- Colonne droite : Factures + Messages -->
     <div class="dp-col-right">
-      <!-- Factures -->
       <div class="card" style="flex: 1; min-height: 0">
         <div class="card-head">
           <h2>💰 Factures</h2>
@@ -141,7 +141,6 @@
         </button>
       </div>
 
-      <!-- Messages -->
       <div class="card" style="flex: 1; min-height: 0">
         <div class="card-head">
           <h2>📬 Derniers messages</h2>
@@ -170,7 +169,6 @@
     </div>
   </div>
 
-  <!-- Événements à venir -->
   <div class="card events-section">
     <div class="card-head">
       <h2>📅 Événements à venir</h2>

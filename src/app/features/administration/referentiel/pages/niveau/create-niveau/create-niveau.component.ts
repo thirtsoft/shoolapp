@@ -101,7 +101,7 @@ export class CreateNiveauComponent implements OnInit {
         next: (data) => {
           if (data.statut === 'OK') {
             this.toastService.success('succès', 'Le niveau a été modifiées avec succès !!! ');
-            this.router.navigate(['admin/referentiels/niveau'])
+            this.router.navigate(['admin/referentiel/niveau'])
           } else if (data.statut === 'FAILED') {
             this.toastService.error('error', 'Erreur lors de la modification : ' + data.message);
           }
@@ -117,7 +117,7 @@ export class CreateNiveauComponent implements OnInit {
 
 
   goBack() {
-    this.router.navigate(['admin/referentiels/niveau'])
+    this.router.navigate(['admin/referentiel/niveau'])
   }
 
 

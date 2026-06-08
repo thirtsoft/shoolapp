@@ -161,7 +161,7 @@ export class PlanifierCoursComponent implements OnInit {
 
     if (this.coursId === null || this.coursId === undefined) {
       payload.ecole = this.ecoleId;
-      this.coursService.createEditRessource('cours', payload).subscribe({
+      this.coursService.createEditRessource('planification/cours', payload).subscribe({
         next: (data) => {
           console.log('payload after : ', data);
           this.toastService.success('success', 'Le cours a été planifié avec succès.');
@@ -174,7 +174,7 @@ export class PlanifierCoursComponent implements OnInit {
       });
     } else {
       payload.ecole = this.ecoleId;
-      this.coursService.createEditRessource('cours', payload).subscribe({
+      this.coursService.createEditRessource('planification/cours', payload).subscribe({
         next: data => {
           this.toastService.success('success', 'Le compte de l\'enseignant a été modifié avec succès.');
           this.router.navigate(['/admin/planification/cours']);
