@@ -1,4 +1,5 @@
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, DestroyRef, inject, OnInit } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormArray, FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
@@ -8,9 +9,9 @@ import { ListeEnseignement } from '../../../../../../core/models/planification/l
 import { ListeClasse } from '../../../../../../core/models/referentiels/classe';
 import { Matiere } from '../../../../../../core/models/referentiels/matiere';
 import { Salle } from '../../../../../../core/models/referentiels/salle';
-import { Semestre } from '../../../../../../core/models/referentiels/semestre';
+import { SessionSemestre } from '../../../../../../core/models/referentiels/session-semestre';
 import { Utilisateur } from '../../../../../../core/models/utilisateur/utilisateur';
-import { ReferentielService } from '../../../../referentiel/service/referentiel.service';
+import { ReferentielResourceService } from '../../../../referentiel/service/referentiel-resource.service';
 import { UtilisateurService } from '../../../../utilisateur/service/utilisateur.service';
 import { PlanificationResourceService } from '../../../services/planification-resource.service';
 
@@ -28,7 +29,7 @@ export class CreateEmploieDuTempsComponent implements OnInit {
   addEditEmploie: EmploiDuTemps = {};
   typeSalles?: string[] = ["Ordinaire", "Spécialisée", "Extérieure"];
   classList: ListeClasse[] = [];
-  semestreList: Semestre[] = [];
+  sessionSemestreList: SessionSemestre[] = [];
   salleList: Salle[] = [];
   matiereList: Matiere[] = [];
   enseignantList: EnseigantList[] = [];
@@ -41,12 +42,13 @@ export class CreateEmploieDuTempsComponent implements OnInit {
 
   private readonly planificationService = inject(PlanificationResourceService);
   private readonly utilisateurService = inject(UtilisateurService);
-  private readonly referentielService = inject(ReferentielService);
+  private readonly referentielService = inject(ReferentielResourceService);
   //  private readonly enseignantService = inject(EnseignantService);
   private readonly _formBuilder = inject(FormBuilder);
   private readonly toastService = inject(ToastrService);
   private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
+  private readonly destroyRef = inject(DestroyRef);
 
   constructor(
   ) {
@@ -55,76 +57,65 @@ export class CreateEmploieDuTempsComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.getConnectedUserInfos();
-    this.getClassList();
-    this.getSalleList();
-    this.getMatiereList();
-    this.getSemestreList();
-    this.getEnseignements();
+    this.chargerLesDonnees();
     this.initializeForm(null);
     if (this.emploieId != null && this.emploieId != undefined) {
       this.getEmploieDuTemps(this.emploieId);
     }
   }
 
-  getConnectedUserInfos() {
-    this.utilisateurService.getUtilisateur(this.userId).subscribe({
+  private chargerLesDonnees() {
+    this.utilisateurService.getUtilisateur(this.userId!).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
+      next: data => this.utilisateur = data
+    });
+
+    this.referentielService.getResourceList('sessionsemestre').pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
+      next: (data: any) => {
+        this.sessionSemestreList = data;
+      }
+    });
+
+    this.referentielService.getResourceList('classe').pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
+      next: (data: any) => this.classList = data
+    });
+
+    this.referentielService.getResourceList('salle').pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
+      next: (data: any) => this.salleList = data
+    });
+
+    this.referentielService.getResourceList('matiere').pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
+      next: (data: any) => this.matiereList = data
+    });
+  }
+
+  onClasseSelected() {
+    const classe = this.emploiFormGroup.get('classe')?.value;
+    if (classe) {
+      this.getEnseignementByClass(classe);
+    }
+  }
+
+  private getEnseignementByClass(classId: number) {
+    this.planificationService.getAllEnseignementByclasse(classId).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
       next: data => {
-        this.utilisateur = data;
-      },
-      error: error => { console.log(error) },
-    });
-  }
-
-  getClassList() {
-    this.referentielService.getAllClasses().subscribe({
-      next: (data) => {
-        this.classList = data;
-      }
-    });
-  }
-
-  getSalleList() {
-    this.referentielService.getAllSalles().subscribe({
-      next: (data) => {
-        this.salleList = data;
-      }
-    });
-  }
-
-  getEnseignements() {
-    this.planificationService.getAllEnseignement().subscribe({
-      next: (data) => {
         this.enseignementList = data;
       }
     });
   }
 
-  getMatiereList() {
-    this.referentielService.getAllMatieres().subscribe({
-      next: (data) => {
-        this.matiereList = data;
-      }
-    });
-  }
-
-  getSemestreList() {
-    this.referentielService.getAllSemestres().subscribe({
-      next: (data) => {
-        this.semestreList = data;
-      }
-    });
-  }
 
   getEmploieDuTemps(batId: number) {
     this.planificationService.getEmploiDuTemps(batId).subscribe({
       next: (data) => {
         this.addEditEmploie = data;
+        if (this.addEditEmploie?.classe) {
+          this.getEnseignementByClass(this.addEditEmploie.classe);
+        }
         this.emploiFormGroup = this._formBuilder.group({
-          id: [this.addEditEmploie?.id ? this.addEditEmploie.id : ''],
-          classe: [this.addEditEmploie?.classe ? this.addEditEmploie.classe : '', Validators.required],
-          semestre: [this.addEditEmploie?.classe ? this.addEditEmploie.semestre : '', Validators.required],
-          semaine: [this.addEditEmploie?.semaine ? this.addEditEmploie.semaine : ''],
+          id: [this.addEditEmploie?.id ?? ''],
+          classe: [this.addEditEmploie?.classe ?? '', Validators.required],
+          sessionSemestre: [this.addEditEmploie?.sessionSemestre ?? '', Validators.required],
+          semaine: [this.addEditEmploie?.semaine ?? ''],
           coursEditDTOList: this._formBuilder.array([])
         });
         for (let i = 0; i < this.addEditEmploie.coursEditDTOList!.length; i++) {
@@ -151,10 +142,10 @@ export class CreateEmploieDuTempsComponent implements OnInit {
 
   initializeForm(emploie: EmploiDuTemps | null) {
     this.emploiFormGroup = this._formBuilder.group({
-      id: [emploie?.id ? emploie.id : ''],
-      classe: [emploie?.classe ? emploie.classe : '', Validators.required],
-      semestre: [emploie?.semestre ? emploie.semestre : '', Validators.required],
-      semaine: [emploie?.semaine ? emploie.semaine : '', Validators.required],
+      id: [emploie?.id ?? ''],
+      classe: [emploie?.classe ?? '', Validators.required],
+      sessionSemestre: [emploie?.sessionSemestre ?? '', Validators.required],
+      semaine: [emploie?.semaine ?? '', Validators.required],
       coursEditDTOList: this._formBuilder.array([
         this.newCourseItem()
       ])
@@ -190,12 +181,11 @@ export class CreateEmploieDuTempsComponent implements OnInit {
     const payload: EmploiDuTemps = {
       id: this.emploiFormGroup.get("id")!.value,
       classe: this.emploiFormGroup.get("classe")!.value,
-      semestre: this.emploiFormGroup.get("semestre")!.value,
+      sessionSemestre: this.emploiFormGroup.get("sessionSemestre")!.value,
       semaine: this.emploiFormGroup.get("semaine")!.value,
       coursEditDTOList: this.emploiFormGroup.get("coursEditDTOList")!.value,
     }
     payload.ecole = this.ecoleId;
-    console.log('Emploi du temps', payload);
     if (!this.emploieId && this.emploieId == undefined) {
       this.planificationService.createEmploiDuTemps(payload).subscribe({
         next: (data) => {

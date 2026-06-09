@@ -8,7 +8,7 @@ import { ListeEleve } from '../../../../../../core/models/dossiereleve/liste-ele
 import { Enseignement } from '../../../../../../core/models/planification/enseignement';
 import { ListeEnseignement } from '../../../../../../core/models/planification/liste-enseignement';
 import { ListeClasse } from '../../../../../../core/models/referentiels/classe';
-import { Semestre } from '../../../../../../core/models/referentiels/semestre';
+import { SessionSemestre } from '../../../../../../core/models/referentiels/session-semestre';
 import { PlanificationResourceService } from '../../../../planification/services/planification-resource.service';
 import { ReferentielResourceService } from '../../../../referentiel/service/referentiel-resource.service';
 import { DossierResourceService } from '../../../service/dossier-resource.service';
@@ -30,13 +30,12 @@ export class EditEvaluationComponent implements OnInit {
   enseignementList: ListeEnseignement[] = [];
   typeEvaluations: string[] = ['DEVOIR', 'COMPOSITION'];
   modeEvaluations: string[] = ['NORMAL', 'RATTRAPAGE'];
-  semestreList: Semestre[] = [];
+  sessionSemestreList: SessionSemestre[] = [];
   addEditEvaluation: EvaluationEditRequest = {};
   isEditMode = false;
   title = "Modifier une évaluation";
 
   disableAddButton = false;
-
   elevesList?: ListeEleve[] = [];
   enseignement?: Enseignement = {};
   classeList: ListeClasse[] = [];
@@ -67,8 +66,10 @@ export class EditEvaluationComponent implements OnInit {
   }
 
   private chargerLesDonnees() {
-    this.referentielService.getResourceList('semestre').pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
-      next: (data: any) => this.semestreList = data
+    this.referentielService.getResourceList('sessionsemestre').pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
+      next: (data: any) => {
+        this.sessionSemestreList = data;
+      }
     });
 
     this.referentielService.getResourceList('classe').pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
@@ -104,7 +105,7 @@ export class EditEvaluationComponent implements OnInit {
       description: [''],
       classeId: ['', Validators.required],
       enseignementId: ['', Validators.required],
-      semestre: ['', Validators.required],
+      sessionSemestre: ['', Validators.required],
       dateEvaluation: ['', Validators.required],
       evaluationType: ['', Validators.required],
       evaluationMode: ['', Validators.required],
@@ -155,7 +156,7 @@ export class EditEvaluationComponent implements OnInit {
           description: [this.addEditEvaluation?.description ?? ''],
           classeId: [this.addEditEvaluation?.classeId ?? '', Validators.required],
           enseignementId: [this.addEditEvaluation?.enseignementId ?? '', Validators.required],
-          semestre: [this.addEditEvaluation?.semestre ?? '', Validators.required],
+          sessionSemestre: [this.addEditEvaluation?.sessionSemestre ?? '', Validators.required],
           dateEvaluation: [this.addEditEvaluation?.dateEvaluation ?? '', Validators.required],
           evaluationType: [this.addEditEvaluation?.evaluationType ?? '', Validators.required],
           evaluationMode: [this.addEditEvaluation?.evaluationMode ?? '', Validators.required],

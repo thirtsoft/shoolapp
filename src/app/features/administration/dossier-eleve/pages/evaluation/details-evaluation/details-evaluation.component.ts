@@ -43,7 +43,6 @@ export class DetailsEvaluationComponent implements OnInit {
     this.planification.getDetailsResource('evaluation', devoirId).subscribe({
       next: (data: any) => {
         this.detailsEvaluation = data;
-        console.log('Details devoir', this.detailsEvaluation);
       },
       error: (data: any) => {
         console.log('error', 'Erreur lors de la récupération des information du devoir : ' + data.error);
@@ -84,7 +83,6 @@ export class DetailsEvaluationComponent implements OnInit {
   changerEtat(action: 'valider', evalId: number) {
     this.planification.changerEtatResource('evaluation', evalId).subscribe({
       next: (data: any) => {
-        console.log('response', data);
 
         const successMessages: { [key: string]: string } = {
           valider: `Evaluation ${this.detailsEvaluation?.titre} validée avec succès.`,

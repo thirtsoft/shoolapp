@@ -178,7 +178,6 @@
                 }
               </div>
 
-              <!-- Ligne 2: Semestre + Année scolaire (2 colonnes) -->
               <div class="two-columns-row">
                 <div class="form-group">
                   <label class="form-label">
@@ -187,14 +186,16 @@
                   </label>
                   <select
                     class="form-select"
-                    name="semestre"
+                    name="sessionSemestre"
                     required
                     [(ngModel)]="selectedSemestre"
                     (change)="onSemestreSelected()"
                   >
                     <option value="" disabled selected>— Sélectionnez un semestre —</option>
-                    @for (item of semestreList; track item.id) {
-                      <option [value]="item?.id">{{ item?.libelle }}</option>
+                    @for (item of sessionSemestreList; track item.sessionSemestreId) {
+                      <option [value]="item.sessionSemestreId">
+                        {{ item.semestre }} - {{ item.anneeScolaire }}
+                      </option>
                     }
                   </select>
                 </div>

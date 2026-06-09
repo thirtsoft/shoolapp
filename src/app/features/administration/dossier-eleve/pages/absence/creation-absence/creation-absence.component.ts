@@ -1,4 +1,4 @@
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, DestroyRef, inject, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
@@ -15,6 +15,9 @@ import { PlanificationResourceService } from '../../../../planification/services
 import { ReferentielService } from '../../../../referentiel/service/referentiel.service';
 import { UtilisateurService } from '../../../../utilisateur/service/utilisateur.service';
 import { DossierResourceService } from '../../../service/dossier-resource.service';
+import { SessionSemestre } from '../../../../../../core/models/referentiels/session-semestre';
+import { ReferentielResourceService } from '../../../../referentiel/service/referentiel-resource.service';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 @Component({
   selector: 'app-creation-absence',
@@ -32,6 +35,7 @@ export class CreationAbsenceComponent implements OnInit {
   eleveId?: number;
   anneeScolaireList: AnneeScolaire[] = [];
   semestreList: Semestre[] = [];
+  sessionSemestreList: SessionSemestre[] = [];
   eleveList: ListeEleve[] = [];
   classeList: ListeClasse[] = [];
   coursList: ListeCours[] = [];
@@ -52,22 +56,21 @@ export class CreationAbsenceComponent implements OnInit {
 
   private readonly dossierResource = inject(DossierResourceService);
   private readonly coursService = inject(PlanificationResourceService);
-  private readonly referentielService = inject(ReferentielService);
   private readonly utilisateurService = inject(UtilisateurService);
   private readonly router = inject(Router);
   private readonly toastService = inject(ToastrService);
   private readonly _formBuilder = inject(FormBuilder);
   private readonly activeRoute = inject(ActivatedRoute);
   private readonly localStorage = inject(LocalStorageService);
+  private readonly destroyRef = inject(DestroyRef);
+  private readonly referentielResourceService = inject(ReferentielResourceService);
 
   ngOnInit(): void {
     this.attendanceRecordId = this.activeRoute.snapshot.params['id'];
     this.userId = this.localStorage.getItem('id');
     this.eleveId = this.localStorage.getItem('eleveId')!;
-    this.getConnectedUserInfos();
-    this.getClasseList();
-    this.getAnneeSclaireList();
-    this.getSemestresList();
+
+    this.chargerLesDonnees();
     this.initializeForm(null);
 
     this.setupAttendanceStatusListener();
@@ -78,49 +81,32 @@ export class CreationAbsenceComponent implements OnInit {
     }
   }
 
-  getConnectedUserInfos() {
-    this.utilisateurService.getUtilisateur(this.userId!).subscribe({
+  private chargerLesDonnees() {
+    this.utilisateurService.getUtilisateur(this.userId!).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
       next: (data: any) => {
         this.utilisateur = data;
-      },
-      error: (error: any) => { console.log(error) },
+      }
+    });
+
+    this.referentielResourceService.getResourceList('sessionsemestre').pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
+      next: (data: any) => {
+        this.sessionSemestreList = data;
+      }
+    });
+
+    this.referentielResourceService.getResourceList('classe').pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
+      next: (data: any) => this.classeList = data
+    });
+
+    this.referentielResourceService.getResourceList('anneescolaire').pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
+      next: (data: any) => this.anneeScolaireList = data
     });
   }
 
-  getClasseList() {
-    this.referentielService.getAllClasses().subscribe(
-      (data: any[]) => {
-        this.classeList = data;
-      },
-      (error: any) => (this.errorMessage = <any>error)
-    );
-  }
-
-  getSemestresList() {
-    this.referentielService.getAllSemestres().subscribe(
-      (data: any[]) => {
-        this.semestreList = data;
-      },
-      (error: any) => (this.errorMessage = <any>error)
-    );
-  }
-
-  getAnneeSclaireList() {
-    this.referentielService.getAllAnneeScolaires().subscribe(
-      (data: any[]) => {
-        this.anneeScolaireList = data;
-      },
-      (error: any) => (this.errorMessage = <any>error)
-    );
-  }
-
   getCoursList(classId: number) {
-    this.coursService.getListeCoursByClasse(classId).subscribe(
-      (data: any[]) => {
-        this.coursList = data;
-      },
-      (error: any) => (this.errorMessage = <any>error)
-    );
+    this.coursService.getListeCoursByClasse(classId).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
+      next: (data: any) => this.coursList = data
+    });
   }
 
   onClasseSelected() {
@@ -132,12 +118,11 @@ export class CreationAbsenceComponent implements OnInit {
   }
 
   getEleveList(classId: number) {
-    this.dossierResource.getResourceListByElement('inscription/classe', classId)?.subscribe({
-      next: (data: any) => {
-        this.eleveList = data;
-      }
+    this.dossierResource.getResourceListByElement('inscription/classe', classId).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
+      next: (data: any) => this.eleveList = data
     });
   }
+
 
   setupAttendanceStatusListener() {
     this.attendanceRecordFormGroup.get('attendanceStatus')?.valueChanges.subscribe((status) => {
@@ -209,20 +194,19 @@ export class CreationAbsenceComponent implements OnInit {
   initializeForm(absence: AttendanceRecord | null) {
     this.attendanceRecordFormGroup = this._formBuilder.group({
       id: [absence?.id ? absence.id : ''],
-      eleveId: [absence?.eleveId ? absence.eleveId : '', Validators.required],
-      semestre: [absence?.semestre ? absence.semestre : '', Validators.required],
-      anneeScolaireId: [absence?.anneeScolaireId ? absence.anneeScolaireId : '', Validators.required],
-      courseId: [absence?.courseId ? absence.courseId : ''],
-      justificationReason: [absence?.justificationReason ? absence.justificationReason : ''],
-      attendanceDate: [absence?.attendanceDate ? absence.attendanceDate : ''],
-      classId: [absence?.classId ? absence.classId : '', Validators.required],
-      attendanceStatus: [absence?.attendanceStatus ? absence.attendanceStatus : '', Validators.required],
-      justified: [absence?.justified ? absence.justified : '', Validators.required],
-      expectedTime: [absence?.expectedTime ? absence.expectedTime : ''],
-      arrivalTime: [absence?.arrivalTime ? absence.arrivalTime : ''],
-      lateMinutes: [absence?.lateMinutes ? absence.lateMinutes : ''],
+      eleveId: [absence?.eleveId ?? '', Validators.required],
+      sessionSemestre: [absence?.sessionSemestre ?? '', Validators.required],
+      anneeScolaireId: [absence?.anneeScolaireId ?? '', Validators.required],
+      courseId: [absence?.courseId ?? ''],
+      justificationReason: [absence?.justificationReason ??''],
+      attendanceDate: [absence?.attendanceDate ?? ''],
+      classId: [absence?.classId ??'', Validators.required],
+      attendanceStatus: [absence?.attendanceStatus ?? '', Validators.required],
+      justified: [absence?.justified ?? '', Validators.required],
+      expectedTime: [absence?.expectedTime ?? ''],
+      arrivalTime: [absence?.arrivalTime ?? ''],
+      lateMinutes: [absence?.lateMinutes ?? ''],
     })
-
   }
 
   getAttendanceRecordById(absenceId: number, source: string) {
@@ -255,7 +239,7 @@ export class CreationAbsenceComponent implements OnInit {
       eleveId: recordData.eleveId,
       classId: recordData.classeId,
       anneeScolaireId: recordData.anneeScolaireId,
-      semestre: recordData.semestre,
+      sessionSemestre: recordData.sessionSemestre,
       attendanceStatus: recordData.status,
       justificationReason: recordData.justificationReason || '',
       justified: recordData.justified ? 'true' : 'false',

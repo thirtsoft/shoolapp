@@ -37,6 +37,8 @@ export interface DetailsEvaluation {
 
   semestre?: string;
 
+  sessionSemestre?: string;
+
   matiere?: string;
 
   actif?: number;

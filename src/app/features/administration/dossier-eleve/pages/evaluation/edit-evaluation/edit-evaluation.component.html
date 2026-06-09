@@ -188,21 +188,23 @@
                       </label>
                       <select
                         class="form-select"
-                        formControlName="semestre"
+                        formControlName="sessionSemestre"
                         required
                         [class.is-invalid]="
-                          evaluationFormGroup!.get('semestre')?.invalid &&
-                          evaluationFormGroup!.get('semestre')?.touched
+                          evaluationFormGroup!.get('sessionSemestre')?.invalid &&
+                          evaluationFormGroup!.get('sessionSemestre')?.touched
                         "
                       >
                         <option value="" disabled selected>— Sélectionnez un semestre —</option>
-                        @for (item of semestreList; track item.id) {
-                          <option [value]="item.id">{{ item.libelle }}</option>
+                        @for (item of sessionSemestreList; track item.sessionSemestreId) {
+                          <option [value]="item.sessionSemestreId">
+                            {{ item.semestre }} - {{ item.anneeScolaire }}
+                          </option>
                         }
                       </select>
                       @if (
-                        evaluationFormGroup!.get('semestre')?.invalid &&
-                        evaluationFormGroup!.get('semestre')?.touched
+                        evaluationFormGroup!.get('sessionSemestre')?.invalid &&
+                        evaluationFormGroup!.get('sessionSemestre')?.touched
                       ) {
                         <div class="invalid-feedback">Le semestre est requis</div>
                       }

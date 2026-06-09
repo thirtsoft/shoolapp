@@ -20,6 +20,8 @@ export interface EvaluationEditRequest {
 
   semestre?: number;
 
+  sessionSemestre?: number;
+
   evaluationType?: string;
 
   evaluationMode?: string;

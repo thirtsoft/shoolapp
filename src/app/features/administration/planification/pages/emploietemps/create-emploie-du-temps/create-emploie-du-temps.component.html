@@ -47,7 +47,12 @@
                       Classe <span class="text-danger">*</span>
                       <i class="fas fa-chalkboard-user ms-1 text-muted"></i>
                     </label>
-                    <select class="form-select" formControlName="classe" required>
+                    <select 
+                      class="form-select" 
+                      formControlName="classe" 
+                      (change)="onClasseSelected()"
+                      required
+                      >
                       <option value="" disabled selected>— Sélectionnez une classe —</option>
                       @for (item of classList; track item.id) {
                         <option [value]="item.id">{{ item.libelle }}</option>
@@ -68,15 +73,17 @@
                       Semestre <span class="text-danger">*</span>
                       <i class="fas fa-book-open ms-1 text-muted"></i>
                     </label>
-                    <select class="form-select" formControlName="semestre" required>
-                      <option value="" disabled selected>— Sélectionnez un semestre —</option>
-                      @for (item of semestreList; track item.id) {
-                        <option [value]="item.id">{{ item.libelle }}</option>
-                      }
+                    <select class="form-select" formControlName="sessionSemestre" required>
+                      <option value="" disabled selected>— Sélectionnez une session —</option>
+                        @for (item of sessionSemestreList; track item.sessionSemestreId) {
+                          <option [value]="item.sessionSemestreId">
+                            {{ item.semestre }} - {{ item.anneeScolaire }}
+                          </option>
+                        }
                     </select>
                     @if (
-                      emploiFormGroup.get('semestre')?.invalid &&
-                      emploiFormGroup.get('semestre')?.touched
+                      emploiFormGroup.get('sessionSemestre')?.invalid &&
+                      emploiFormGroup.get('sessionSemestre')?.touched
                     ) {
                       <div class="invalid-feedback">Le semestre est requis</div>
                     }
@@ -162,10 +169,17 @@
                             </option>
                             @for (item of enseignementList; track item.id) {
                               <option [value]="item.id">
-                                {{ item.enseignant }} - {{ item.classe }} - {{ item.anneeScolaire }}
-                              </option>
+                            {{ item.enseignant }} - {{ item.matiere }} - {{ item.classe }} -
+                            {{ item.anneeScolaire }}
+                          </option>
                             }
                           </select>
+                          @if (
+                        emploiFormGroup.get('enseignement')?.invalid &&
+                        emploiFormGroup.get('enseignement')?.touched
+                      ) {
+                        <div class="invalid-feedback">L'enseignement est requis</div>
+                      }
                         </div>
                       </div>
 

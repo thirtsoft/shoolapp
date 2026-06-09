@@ -7,7 +7,7 @@ import { ToastrService } from 'ngx-toastr';
 import { Evaluation } from '../../../../../../core/models/dossiereleve/evaluation/evaluation';
 import { ListeEnseignement } from '../../../../../../core/models/planification/liste-enseignement';
 import { ListeClasse } from '../../../../../../core/models/referentiels/classe';
-import { Semestre } from '../../../../../../core/models/referentiels/semestre';
+import { SessionSemestre } from '../../../../../../core/models/referentiels/session-semestre';
 import { Utilisateur } from '../../../../../../core/models/utilisateur/utilisateur';
 import { PlanificationResourceService } from '../../../../planification/services/planification-resource.service';
 import { ReferentielResourceService } from '../../../../referentiel/service/referentiel-resource.service';
@@ -30,8 +30,9 @@ export class CreateEvaluationComponent implements OnInit {
   enseignementList: ListeEnseignement[] = [];
   typeEvaluations: string[] = ['DEVOIR', 'COMPOSITION'];
   modeEvaluations: string[] = ['NORMAL', 'RATTRAPAGE'];
-  semestreList: Semestre[] = [];
   classeList: ListeClasse[] = [];
+  sessionSemestreList: SessionSemestre[] = [];
+
 
   ecoleId: any;
   utilisateur: Utilisateur = {};
@@ -60,14 +61,15 @@ export class CreateEvaluationComponent implements OnInit {
     this.initializeForm(null);
   }
 
-
   private chargerLesDonnees() {
     this.utilisateurService.getUtilisateur(this.userId!).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
       next: data => this.utilisateur = data
     });
 
-    this.referentielService.getResourceList('semestre').pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
-      next: (data: any) => this.semestreList = data
+    this.referentielService.getResourceList('sessionsemestre').pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
+      next: (data: any) => {
+        this.sessionSemestreList = data;
+      }
     });
 
     this.referentielService.getResourceList('classe').pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
@@ -76,31 +78,33 @@ export class CreateEvaluationComponent implements OnInit {
   }
 
   onClasseSelected() {
-    const classId = this.evaluationFormGroup.get('classId')?.value;
-    if (classId) {
-      this.getEnseignementByClass(classId);
+    const classeId = this.evaluationFormGroup.get('classeId')?.value;
+    if (classeId) {
+      this.getEnseignementByClass(classeId);
     }
   }
 
   private getEnseignementByClass(classId: number) {
     this.planification.getAllEnseignementByclasse(classId).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
-      next: data => this.enseignementList = data
+      next: data => {
+        this.enseignementList = data;
+      }
     });
   }
 
   initializeForm(evaluation: Evaluation | null) {
     this.evaluationFormGroup = this._formBuilder.group({
-      id: [evaluation?.id ? evaluation.id : ''],
-      titre: [evaluation?.titre ? evaluation.titre : '', Validators.required],
-      description: [evaluation?.description ? evaluation.description : '', Validators.required],
-      classeId: [evaluation?.classeId ? evaluation.classeId : '', Validators.required],
-      enseignementId: [evaluation?.enseignementId ? evaluation.enseignementId : '', Validators.required],
-      semestre: [evaluation?.semestre ? evaluation.semestre : '', Validators.required],
-      dateEvaluation: [evaluation?.dateEvaluation ? evaluation.dateEvaluation : '', Validators.required],
-      evaluationType: [evaluation?.evaluationType ? evaluation.evaluationType : '', Validators.required],
-      evaluationMode: [evaluation?.evaluationMode ? evaluation.evaluationMode : '', Validators.required],
-      heureDebut: [evaluation?.heureDebut ? evaluation.heureDebut : '', Validators.required],
-      heureFin: [evaluation?.heureFin ? evaluation.heureFin : '', Validators.required],
+      id: [evaluation?.id ?? ''],
+      titre: [evaluation?.titre ?? '', Validators.required],
+      description: [evaluation?.description ?? ''],
+      classeId: [evaluation?.classeId ?? '', Validators.required],
+      enseignementId: [evaluation?.enseignementId ?? '', Validators.required],
+      sessionSemestre: [evaluation?.sessionSemestre ?? '', Validators.required],
+      dateEvaluation: [evaluation?.dateEvaluation ?? '', Validators.required],
+      evaluationType: [evaluation?.evaluationType ?? '', Validators.required],
+      evaluationMode: [evaluation?.evaluationMode ?? '', Validators.required],
+      heureDebut: [evaluation?.heureDebut ?? '', Validators.required],
+      heureFin: [evaluation?.heureFin ?? '', Validators.required],
     });
   }
 
@@ -110,7 +114,8 @@ export class CreateEvaluationComponent implements OnInit {
       titre: this.evaluationFormGroup.get("titre")!.value,
       description: this.evaluationFormGroup.get("description")!.value,
       enseignementId: this.evaluationFormGroup.get("enseignementId")!.value,
-      semestre: this.evaluationFormGroup.get("semestre")!.value,
+      //  semestre: this.evaluationFormGroup.get("semestre")!.value,
+      sessionSemestre: this.evaluationFormGroup.get("sessionSemestre")!.value,
       dateEvaluation: this.evaluationFormGroup.get("dateEvaluation")!.value,
       evaluationType: this.evaluationFormGroup.get("evaluationType")!.value,
       evaluationMode: this.evaluationFormGroup.get("evaluationMode")!.value,

@@ -142,7 +142,7 @@ export class ListeAbsenceComponent implements OnInit {
 
         this.columns = [
           { key: 'nomCompletEleve', header: 'Elève' },
-          { key: 'semestre', header: 'Semestre' },
+          { key: 'sessionSemestre', header: 'Semestre' },
           { key: 'anneeScolare', header: 'Année scolaire' },
           { key: 'attendanceStatus', header: 'Type absence' },
           {

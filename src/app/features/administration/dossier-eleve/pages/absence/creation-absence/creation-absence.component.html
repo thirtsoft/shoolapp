@@ -207,12 +207,20 @@
                         Semestre <span class="text-danger">*</span>
                         <i class="fas fa-book-open ms-1 text-muted"></i>
                       </label>
-                      <select class="form-select" formControlName="semestre" required>
+                      <select class="form-select" formControlName="sessionSemestre" required>
                         <option value="" disabled selected>— Sélectionnez un semestre —</option>
-                        @for (item of semestreList; track item.id) {
-                          <option [value]="item.id">{{ item.libelle }}</option>
+                        @for (item of sessionSemestreList; track item.sessionSemestreId) {
+                          <option [value]="item.sessionSemestreId">
+                            {{ item.semestre }} - {{ item.anneeScolaire }}
+                          </option>
                         }
                       </select>
+                      @if (
+                        attendanceRecordFormGroup!.get('sessionSemestre')?.invalid &&
+                        attendanceRecordFormGroup!.get('sessionSemestre')?.touched
+                      ) {
+                        <div class="invalid-feedback">Le semestre est requis</div>
+                      }
                     </div>
 
                     <div class="form-group">
@@ -240,7 +248,6 @@
                       />
                     </div>
 
-                    
                     <div class="form-group placeholder-field"></div>
                     <div class="form-group placeholder-field"></div>
                   </div>

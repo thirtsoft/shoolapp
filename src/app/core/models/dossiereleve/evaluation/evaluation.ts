@@ -22,6 +22,8 @@ export interface Evaluation {
 
   semestre?: number;
 
+  sessionSemestre?: number;
+
   createur?: number;
 
   heureDebut?: string;

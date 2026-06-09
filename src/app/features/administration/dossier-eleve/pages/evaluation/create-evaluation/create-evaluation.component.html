@@ -168,11 +168,11 @@
                         Semestre <span class="text-danger">*</span>
                         <i class="fas fa-calendar-alt ms-1 text-muted"></i>
                       </label>
-                      <select class="form-select" formControlName="semestre" required>
-                        <option value="" disabled selected>— Sélectionnez un semestre —</option>
-                        @for (item of semestreList; track item.id) {
-                          <option [value]="item.id">
-                            {{ item.libelle }}
+                      <select class="form-select" formControlName="sessionSemestre" required>
+                        <option value="" disabled selected>— Sélectionnez une session —</option>
+                        @for (item of sessionSemestreList; track item.sessionSemestreId) {
+                          <option [value]="item.sessionSemestreId">
+                            {{ item.semestre }} - {{ item.anneeScolaire }}
                           </option>
                         }
                       </select>
@@ -245,7 +245,7 @@
                   <div class="col-12">
                     <div class="form-group">
                       <label class="form-label">
-                        Description <span class="text-danger">*</span>
+                        Description
                         <i class="fas fa-align-left ms-1 text-muted"></i>
                       </label>
                       <textarea

@@ -5,7 +5,7 @@ export interface EmploiDuTemps {
 
   classe?: number;
 
-  semestre?: number;
+  sessionSemestre?: number;
 
   semaine?: number;
 
@@ -23,7 +23,7 @@ export interface EmploiDuTempsList {
 
   classe?: number;
 
-  semestre?: number;
+  sessionSemestre?: number;
 
   semaine?: number;
 

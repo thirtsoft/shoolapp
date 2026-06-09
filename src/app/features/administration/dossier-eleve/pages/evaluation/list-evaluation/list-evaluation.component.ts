@@ -1,14 +1,15 @@
 import { Component, inject, OnInit } from '@angular/core';
-import { DossierResourceService } from '../../../service/dossier-resource.service';
 import { ReactiveFormsModule } from '@angular/forms';
-import { GenericTableDossierComponent } from '../../../../../../core/generic/generic-table-dossier/generic-table-dossier.component';
 import { IFilterConfig } from '../../../../../../core/filtered-config/FiltreConfiguration';
-import { CommonService } from '../../../../../../core/services/common.service';
-import { ReferentielService } from '../../../../referentiel/service/referentiel.service';
-import { PlanificationResourceService } from '../../../../planification/services/planification-resource.service';
-import { ListeClasse } from '../../../../../../core/models/referentiels/classe';
-import { Semestre } from '../../../../../../core/models/referentiels/semestre';
+import { GenericTableDossierComponent } from '../../../../../../core/generic/generic-table-dossier/generic-table-dossier.component';
 import { ListeEnseignement } from '../../../../../../core/models/planification/liste-enseignement';
+import { ListeClasse } from '../../../../../../core/models/referentiels/classe';
+import { SessionSemestre } from '../../../../../../core/models/referentiels/session-semestre';
+import { CommonService } from '../../../../../../core/services/common.service';
+import { PlanificationResourceService } from '../../../../planification/services/planification-resource.service';
+import { ReferentielResourceService } from '../../../../referentiel/service/referentiel-resource.service';
+import { ReferentielService } from '../../../../referentiel/service/referentiel.service';
+import { DossierResourceService } from '../../../service/dossier-resource.service';
 
 @Component({
   selector: 'app-list-evaluation',
@@ -39,6 +40,7 @@ export class ListEvaluationComponent implements OnInit {
   matieresList: any[] = [];
   classesList: any[] = [];
   semestreList: any[] = [];
+  sessionSemestreList: any[] = [];
   enseignementList: any[] = [];
 
   etatEvaluationOptions: any[] = [];
@@ -53,6 +55,7 @@ export class ListEvaluationComponent implements OnInit {
 
   private readonly dossierResource = inject(DossierResourceService);
   private readonly referentielService = inject(ReferentielService);
+  private readonly referentielResourceService = inject(ReferentielResourceService);
   private readonly planification = inject(PlanificationResourceService);
   private readonly commonService = inject(CommonService);
 
@@ -66,7 +69,6 @@ export class ListEvaluationComponent implements OnInit {
       await Promise.all([
         this.getClassList(),
         this.getEnseignementList(),
-        this.getSemestreList(),
         this.getEtatEvaluationList(),
         this.getMoisList(),
         this.getAnneesList()
@@ -92,12 +94,11 @@ export class ListEvaluationComponent implements OnInit {
     });
   }
 
-  getSemestreList(): Promise<Semestre[]> {
+  getSessionSemestreList(): Promise<SessionSemestre[]> {
     return new Promise((resolve, reject) => {
-      this.referentielService.getAllSemestres().subscribe({
+      this.referentielResourceService.getResourceList('sessionsemestre').subscribe({
         next: (data: any) => {
-          this.semestreList = data;
-          console.log('semestre', this.semestreList);
+          this.sessionSemestreList = data;
           resolve(data);
         },
         error: (err: any) => reject(err)
@@ -110,7 +111,6 @@ export class ListEvaluationComponent implements OnInit {
       this.planification.getAllEnseignement().subscribe({
         next: (data: any) => {
           this.enseignementList = data;
-          console.log('Enseign', this.enseignementList);
           resolve(data);
         },
         error: (err: any) => reject(err)
@@ -123,7 +123,6 @@ export class ListEvaluationComponent implements OnInit {
       this.commonService.getEtatEvaluations().subscribe({
         next: (data: any) => {
           this.etatEvaluationOptions = data;
-          console.log('Etat facture', this.etatEvaluationOptions);
           resolve(data);
         },
         error: (err: any) => reject(err)
@@ -148,7 +147,6 @@ export class ListEvaluationComponent implements OnInit {
       this.commonService.getAllAnnees().subscribe({
         next: (data) => {
           this.anneeList = data;
-          console.log('annees facture', this.anneeList);
           resolve(data);
         },
         error: (err) => reject(err)
@@ -260,7 +258,7 @@ export class ListEvaluationComponent implements OnInit {
           { key: 'titre', header: 'Titre' },
           { key: 'classe', header: 'Classe' },
           { key: 'matiere', header: 'Matière' },
-          { key: 'semestre', header: 'Semestre' },
+          { key: 'sessionSemestre', header: 'Semestre' },
           { key: 'evaluationType', header: 'Type' },
           { key: 'etat', header: 'Etat' },
           { key: 'dateEvaluation', header: 'Date' },

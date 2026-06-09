@@ -5,7 +5,7 @@ export interface AttendanceRecord {
 
   anneeScolaireId?: number;
 
-  semestre?: number;
+  sessionSemestre?: number;
 
   courseId?: number;
 

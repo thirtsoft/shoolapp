@@ -1,4 +1,4 @@
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, DestroyRef, inject, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
@@ -7,6 +7,9 @@ import { ListeClasse } from '../../../../../../core/models/referentiels/classe';
 import { Semestre } from '../../../../../../core/models/referentiels/semestre';
 import { ReferentielResourceService } from '../../../../referentiel/service/referentiel-resource.service';
 import { DossierResourceService } from '../../../service/dossier-resource.service';
+import { SessionSemestre } from '../../../../../../core/models/referentiels/session-semestre';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { GenerationBulletinClasse } from '../../../../../../core/models/dossiereleve/bulletin/generation-bulletin-classe';
 
 
 interface Mois {
@@ -25,7 +28,7 @@ export class GenererBulletinClasseComponent implements OnInit {
 
   errorMessage?: string;
   classList?: ListeClasse[] = [];
-  semestreList?: Semestre[] = [];
+  sessionSemestreList: SessionSemestre[] = [];
   anneeScolaireList?: AnneeScolaire[] = [];
   selectedClasse: any;
   selectedSemestre: any;
@@ -36,47 +39,38 @@ export class GenererBulletinClasseComponent implements OnInit {
   private readonly referentielResource = inject(ReferentielResourceService);
   private readonly toastService = inject(ToastrService);
   private readonly router = inject(Router);
+  private readonly destroyRef = inject(DestroyRef);
 
   ngOnInit(): void {
-    this.getClassList();
-    this.getSemestreList();
-    this.getAnneeScolaireList();
+    this.chargerLesDonnees();
   }
 
-  getClassList() {
-    this.referentielResource.getResourceList('classe')?.subscribe({
+  private chargerLesDonnees() {
+    this.referentielResource.getResourceList('sessionsemestre').pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
       next: (data: any) => {
-        this.classList = data;
+        this.sessionSemestreList = data;
       }
     });
+
+    this.referentielResource.getResourceList('classe').pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
+      next: (data: any) => this.classList = data
+    });
+
+    this.referentielResource.getResourceList('anneescolaire').pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
+      next: (data: any) => this.anneeScolaireList = data
+    });
   }
+
 
   getSelectedClasseName(): string {
     const classe = this.classList?.find(s => Number(s.id) === Number(this.selectedClasse));
     return classe?.libelle || '';
   }
 
-  getSemestreList() {
-    this.referentielResource.getResourceList('semestre')?.subscribe({
-      next: (data: any) => {
-        this.semestreList = data;
-      }
-    });
-  }
-
   getSelectedSemestreName(): string {
-    const semestre = this.semestreList?.find(s => Number(s.id) === Number(this.selectedSemestre));
-    return semestre?.libelle || '';
+    const semestre = this.sessionSemestreList?.find(s => Number(s.sessionSemestreId) === Number(this.selectedSemestre));
+    return semestre?.semestre || '';
   }
-
-  getAnneeScolaireList() {
-    this.referentielResource.getResourceList('anneescolaire')?.subscribe({
-      next: (data: any) => {
-        this.anneeScolaireList = data;
-      }
-    });
-  }
-
 
   getSelectedAnneeName(): string {
     const annee = this.anneeScolaireList?.find(a => Number(a.id) === Number(this.selectedAnneeScolaire));
@@ -97,10 +91,18 @@ export class GenererBulletinClasseComponent implements OnInit {
 
 
 
+
   genererBulletinPourUneClasse() {
     console.info("Classe selected", this.selectedClasse);
     console.info("semestre selected", this.selectedSemestre);
     console.info("annee scolaire selected", this.selectedAnneeScolaire);
+    const payload: GenerationBulletinClasse = {
+      classe: this.selectedClasse,
+      anneeScolaire: this.selectedAnneeScolaire,
+      sessionSemestre: this.selectedSemestre
+    }
+    console.log('payload', payload);
+
     return;
     this.dossierResource.genererUneResource('bulletin/generer', this.selectedClasse, this.selectedSemestre, this.selectedAnneeScolaire).subscribe({
       next: (data) => {
