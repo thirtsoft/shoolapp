@@ -1,0 +1,19 @@
+<app-generic-table-dossier
+  title="Liste des inscriptions aux services annexes"
+  titleFitre="EleveService"
+  [tableColumns]="columns"
+  [tableData]="inscriptionServiceData"
+  [isLoading]="isLoading"
+  [tableSizes]="tableSizes"
+  [totalElements]="totalElements"
+  [currentPage]="currentPage"
+  [pageSize]="pageSize"
+  (pageChange)="changePage($event)"
+  [showSearch]="false"
+  [filtered]="tableFilters"
+  (filterChange)="onFilterChange($event.filter, $event.value)"
+  [showFilters]="true"
+  (resetFilters)="resetFilters()"
+  (sizeChange)="changeSize($event)"
+>
+</app-generic-table-dossier>

@@ -1,4 +1,4 @@
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, DestroyRef, inject, OnInit } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
 import { IFilterConfig } from '../../../../../core/filtered-config/FiltreConfiguration';
 import { GenericTableDossierComponent } from '../../../../../core/generic/generic-table-dossier/generic-table-dossier.component';
@@ -8,6 +8,8 @@ import { DossierResourceService } from '../../../../administration/dossier-eleve
 import { ReferentielService } from '../../../../administration/referentiel/service/referentiel.service';
 import { AnneeScolaire } from '../../../../../core/models/referentiels/annee-scolaire';
 import { Semestre } from '../../../../../core/models/referentiels/semestre';
+import { ReferentielResourceService } from '../../../../administration/referentiel/service/referentiel-resource.service';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 
 @Component({
@@ -38,6 +40,7 @@ export class ListAbsenceEleveComponent implements OnInit {
 
   anneesScolairesList: any[] = [];
   semestreList: any[] = [];
+   sessionSemestreList: any[] = [];
   classeList: any[] = [];
   moisList: any[] = [];
   anneeList: any[] = [];
@@ -48,8 +51,10 @@ export class ListAbsenceEleveComponent implements OnInit {
 
   private readonly dossierEleveService = inject(DossierResourceService);
   private readonly referentielService = inject(ReferentielService);
+   private readonly referentielResourceService = inject(ReferentielResourceService);
   private readonly commonService = inject(CommonService);
   private readonly localStorage = inject(LocalStorageService);
+  private readonly destroyRef = inject(DestroyRef);
 
   constructor(
   ) {
@@ -64,10 +69,7 @@ export class ListAbsenceEleveComponent implements OnInit {
   async chargerLesAbsencesEleve() {
     try {
       await Promise.all([
-        this.getSemestreList(),
-        this.getAnneeScolaires(),
-        this.getMoisList(),
-        this.getAnneesList()
+        this.chargerLesDonneesFiltre()
 
       ]);
       this.initialisationDesFiltres();
@@ -76,51 +78,28 @@ export class ListAbsenceEleveComponent implements OnInit {
       console.error('Erreur chargement données:', error);
     }
   }
-  getAnneeScolaires(): Promise<AnneeScolaire[]> {
-    return new Promise((resolve, reject) => {
-      this.referentielService.getAllAnneeScolaires().subscribe({
-        next: (data) => {
-          this.anneesScolairesList = data;
-          resolve(data);
-        },
-        error: (err) => reject(err)
-      });
-    });
-  }
 
-  getSemestreList(): Promise<Semestre[]> {
-    return new Promise((resolve, reject) => {
-      this.referentielService.getAllSemestres().subscribe({
-        next: (data) => {
-          this.semestreList = data;
-          resolve(data);
-        },
-        error: (err) => reject(err)
-      });
+   private chargerLesDonneesFiltre() {
+    this.referentielResourceService.getResourceList('sessionsemestre').pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
+      next: (data: any) => {
+        this.sessionSemestreList = data;
+      }
     });
-  }
 
-  getMoisList(): Promise<any[]> {
-    return new Promise((resolve, reject) => {
-      this.commonService.getAllMois().subscribe({
-        next: (data) => {
-          this.moisList = data;
-          resolve(data);
-        },
-        error: (err) => reject(err)
-      });
+    this.referentielResourceService.getResourceList('classe').pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
+      next: (data: any) => this.classeList = data
     });
-  }
 
-  getAnneesList(): Promise<any[]> {
-    return new Promise((resolve, reject) => {
-      this.commonService.getAllAnnees().subscribe({
-        next: (data) => {
-          this.anneeList = data;
-          resolve(data);
-        },
-        error: (err) => reject(err)
-      });
+    this.referentielResourceService.getResourceList('anneescolaire').pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
+      next: (data: any) => this.anneesScolairesList = data
+    });
+
+     this.commonService.getAllMois().pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
+      next: (data: any) => this.moisList = data
+    });
+
+     this.commonService.getAllAnnees().pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
+      next: (data: any) => this.anneeList = data
     });
   }
 
@@ -133,14 +112,14 @@ export class ListAbsenceEleveComponent implements OnInit {
       const filtreParam = this.construireLesParametreDeFiltre();
 
       resultatAPI = this.dossierEleveService.fetchFilterByElementDataTable(
-        'absence/eleve',
+        'attendancerecord/eleve',
         this.eleveId!,
         this.currentPage,
         this.pageSize,
         filtreParam)
 
     } else {
-      resultatAPI = this.dossierEleveService.getResourcesByIdPaged('absence/eleve', this.eleveId!, this.currentPage, this.pageSize);
+      resultatAPI = this.dossierEleveService.getResourcesByIdPaged('attendancerecord/eleve', this.eleveId!, this.currentPage, this.pageSize);
     }
     resultatAPI.subscribe({
       next: (response) => {
@@ -148,9 +127,10 @@ export class ListAbsenceEleveComponent implements OnInit {
         this.totalElements = response.data?.totalElements || 0;
 
         this.columns = [
-          { key: 'semestre', header: 'Semestre' },
+          { key: 'sessionSemestre', header: 'Semestre' },
           { key: 'anneeScolare', header: 'Année scolaire' },
           { key: 'libelleJustifiee', header: 'Etat absence' },
+          { key: 'attendanceStatus', header: 'Type absence' },
           { key: 'dateAbsence', header: 'Date absence' },
           { key: 'date_declaration', header: 'Date déclaration' },
         ];

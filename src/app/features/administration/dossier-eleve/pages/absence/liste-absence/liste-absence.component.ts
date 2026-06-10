@@ -1,10 +1,10 @@
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, DestroyRef, inject, OnInit } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { GenericTableDossierComponent } from '../../../../../../core/generic/generic-table-dossier/generic-table-dossier.component';
 import { IFilterConfig } from '../../../../../../core/models/filtreconfiguration/FiltreConfiguration';
-import { AnneeScolaire } from '../../../../../../core/models/referentiels/annee-scolaire';
-import { Semestre } from '../../../../../../core/models/referentiels/semestre';
 import { CommonService } from '../../../../../../core/services/common.service';
 import { LocalStorageService } from '../../../../../../core/services/local-storage.service';
+import { ReferentielResourceService } from '../../../../referentiel/service/referentiel-resource.service';
 import { ReferentielService } from '../../../../referentiel/service/referentiel.service';
 import { DossierResourceService } from '../../../service/dossier-resource.service';
 
@@ -36,6 +36,7 @@ export class ListeAbsenceComponent implements OnInit {
 
   anneesScolairesList: any[] = [];
   semestreList: any[] = [];
+  sessionSemestreList: any[] = [];
   classeList: any[] = [];
   moisList: any[] = [];
   anneeList: any[] = [];
@@ -47,7 +48,9 @@ export class ListeAbsenceComponent implements OnInit {
   private readonly dossierEleveService = inject(DossierResourceService);
   private readonly referentielService = inject(ReferentielService);
   private readonly commonService = inject(CommonService);
+  private readonly referentielResourceService = inject(ReferentielResourceService);
   private readonly localStorage = inject(LocalStorageService);
+  private readonly destroyRef = inject(DestroyRef);
 
   ngOnInit(): void {
     this.userId = this.localStorage.getItem('id');
@@ -58,10 +61,7 @@ export class ListeAbsenceComponent implements OnInit {
   async chargerLesAttendRecordsEleve() {
     try {
       await Promise.all([
-        this.getSemestreList(),
-        this.getAnneeScolaires(),
-        this.getMoisList(),
-        this.getAnneesList()
+        this.chargerLesDonneesFiltre(),
       ]);
       this.initialisationDesFiltres();
       this.chargerLesDonnees(false);
@@ -70,53 +70,34 @@ export class ListeAbsenceComponent implements OnInit {
     }
   }
 
-  getAnneeScolaires(): Promise<AnneeScolaire[]> {
-    return new Promise((resolve, reject) => {
-      this.referentielService.getAllAnneeScolaires().subscribe({
-        next: (data: any) => {
-          this.anneesScolairesList = data;
-          resolve(data);
-        },
-        error: (err: any) => reject(err)
-      });
+  private chargerLesDonneesFiltre() {
+    this.referentielResourceService.getResourceList('sessionsemestre').pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
+      next: (data: any) => {
+        this.sessionSemestreList = data;
+      }
+    });
+
+    this.referentielResourceService.getResourceList('classe').pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
+      next: (data: any) => this.classeList = data
+    });
+
+    this.referentielResourceService.getResourceList('anneescolaire').pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
+      next: (data: any) => this.anneesScolairesList = data
+    });
+
+    this.commonService.getAllMois().pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
+      next: (data: any) => this.moisList = data
+    });
+
+    this.commonService.getAllAnnees().pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
+      next: (data: any) => this.anneeList = data
     });
   }
 
-  getSemestreList(): Promise<Semestre[]> {
-    return new Promise((resolve, reject) => {
-      this.referentielService.getAllSemestres().subscribe({
-        next: (data: any) => {
-          this.semestreList = data;
-          resolve(data);
-        },
-        error: (err: any) => reject(err)
-      });
-    });
-  }
 
-  getMoisList(): Promise<any[]> {
-    return new Promise((resolve, reject) => {
-      this.commonService.getAllMois().subscribe({
-        next: (data) => {
-          this.moisList = data;
-          resolve(data);
-        },
-        error: (err) => reject(err)
-      });
-    });
-  }
 
-  getAnneesList(): Promise<any[]> {
-    return new Promise((resolve, reject) => {
-      this.commonService.getAllAnnees().subscribe({
-        next: (data) => {
-          this.anneeList = data;
-          resolve(data);
-        },
-        error: (err) => reject(err)
-      });
-    });
-  }
+
+
 
   chargerLesDonnees(useFilterApi: boolean) {
     this.isLoading = true;

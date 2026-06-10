@@ -34,7 +34,6 @@ export class CreationAbsenceComponent implements OnInit {
   attendanceRecordId?: number;
   eleveId?: number;
   anneeScolaireList: AnneeScolaire[] = [];
-  semestreList: Semestre[] = [];
   sessionSemestreList: SessionSemestre[] = [];
   eleveList: ListeEleve[] = [];
   classeList: ListeClasse[] = [];

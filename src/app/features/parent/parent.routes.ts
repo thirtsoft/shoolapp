@@ -19,6 +19,8 @@ import { ListeMenuComponent } from './pages/liste-menu/liste-menu.component';
 import { NoteInformationComponent } from './pages/note-information/note-information.component';
 import { ChangerPasswordParentComponent } from './pages/settings/changer-password-parent/changer-password-parent.component';
 import { ParentProfileComponent } from './pages/settings/parent-profile/parent-profile.component';
+import { EvaluationClasseComponent } from './pages/evaluation/evaluation-classe-component/evaluation-classe-component';
+import { InscriptionServiceEleveComponent } from './pages/inscriptionservice/inscription-service-eleve-component/inscription-service-eleve-component';
 
 export const PARENT_ROUTES: Routes = [
 
@@ -46,8 +48,12 @@ export const PARENT_ROUTES: Routes = [
         component: DetailsFactureParentComponent
       },
       {
-        path: 'paiements',
-        component: ListPaiementEleveComponent
+        path: 'evaluations',
+        component: EvaluationClasseComponent
+      },
+       {
+        path: 'services',
+        component: InscriptionServiceEleveComponent
       },
       {
         path: 'emploi-temps',

@@ -1,31 +1,33 @@
-import { Component, inject, OnDestroy, OnInit } from '@angular/core';
-import { ReactiveFormsModule } from '@angular/forms';
-import { Subject, takeUntil } from 'rxjs';
-import { IFilterConfig } from '../../../../../core/filtered-config/FiltreConfiguration';
+import { Component, inject, OnInit } from '@angular/core';
 import { GenericTableDossierComponent } from '../../../../../core/generic/generic-table-dossier/generic-table-dossier.component';
-import { EnseigantList } from '../../../../../core/models/enseignant/enseignant-list';
+import { IFilterConfig } from '../../../../../core/filtered-config/FiltreConfiguration';
+import { DossierResourceService } from '../../../../administration/dossier-eleve/service/dossier-resource.service';
+import { ReferentielResourceService } from '../../../../administration/referentiel/service/referentiel-resource.service';
+import { PlanificationResourceService } from '../../../../administration/planification/services/planification-resource.service';
 import { CommonService } from '../../../../../core/services/common.service';
 import { LocalStorageService } from '../../../../../core/services/local-storage.service';
-import { PlanificationResourceService } from '../../../../administration/planification/services/planification-resource.service';
-import { EnseignantService } from '../../../../enseignant/service/enseignant.service';
-import { ParentSessionService } from '../../../service/parent-session.service';
+import { SessionSemestre } from '../../../../../core/models/referentiels/session-semestre';
 
 @Component({
-  selector: 'app-exercice-a-faire',
+  selector: 'app-evaluation-classe-component',
   standalone: true,
-  imports: [ReactiveFormsModule, GenericTableDossierComponent],
-  templateUrl: './exercice-a-faire.component.html',
-  styleUrls: ['./exercice-a-faire.component.css']
+  imports: [GenericTableDossierComponent],
+  templateUrl: './evaluation-classe-component.html',
+  styleUrl: './evaluation-classe-component.css',
 })
-export class ExerciceAFaireComponent implements OnInit, OnDestroy {
+export class EvaluationClasseComponent implements OnInit {
 
+  errorMessage?: string;
+  today = new Date();
+  noteId?: number | null;
+  isEdit: boolean = true;
   isLoading: boolean = false;
+  filteredDataEvaluation: any;
   isLockable: boolean = true;
   isTable: boolean = true;
+  deleteEndpoint = "evaluation";
   columns: any = [];
-  exerciceData: any = [];
-
-  private readonly destroy$ = new Subject<void>();
+  evaluationData: any = [];
 
   userId?: number;
   eleveId?: number;
@@ -37,24 +39,28 @@ export class ExerciceAFaireComponent implements OnInit, OnDestroy {
   totalElements = 0;
   tableSizes = [5, 10, 20, 50, 100];
 
-  livreList: any;
+  matieresList: any[] = [];
   classesList: any[] = [];
-  enseignantList: any[] = [];
+  semestreList: any[] = [];
+  sessionSemestreList: any[] = [];
+  enseignementList: any[] = [];
+
+  etatEvaluationOptions: any[] = [];
   moisList: any[] = [];
-  anneesList: any[] = [];
+  anneeList: any[] = [];
 
   tableFilters: IFilterConfig[] = [];
   activeFilters: any = {};
   hasActiveFilters: boolean = false;
 
-  private readonly planificationResource = inject(PlanificationResourceService);
-  private readonly enseigantService = inject(EnseignantService);
+  isSelected = false;
+
+  private readonly dossierResource = inject(DossierResourceService);
+  private readonly referentielResourceService = inject(ReferentielResourceService);
   private readonly commonService = inject(CommonService);
   private readonly localStorage = inject(LocalStorageService);
-  private readonly sessionService = inject(ParentSessionService);
 
   constructor(
-
   ) {
     this.userId = this.localStorage.getItem('id');
     this.eleveId = this.localStorage.getItem('eleveId');
@@ -62,63 +68,45 @@ export class ExerciceAFaireComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    this.chargerLesExercices();
-    this.sessionService.changement$
-      .pipe(takeUntil(this.destroy$))
-      .subscribe((changement) => {
-        if (changement && changement.classeId !== this.classeId) {
-          console.log('🔄 Nouvelle classe :', changement.classeId);
-          this.classeId = changement.classeId!;
+    this.chargerLesEvaluationsEleve();
 
-          this.currentPage = 0;
-          this.activeFilters = {};
-          this.hasActiveFilters = false;
-          this.chargerLesExercices();
-        }
-      });
   }
 
-  ngOnDestroy(): void {
-    this.destroy$.next();
-    this.destroy$.complete();
-  }
-
-  async chargerLesExercices() {
+  async chargerLesEvaluationsEleve() {
     try {
       await Promise.all([
-        this.getLivreList(),
-        this.getEnseignantList(),
+        this.getEtatEvaluationList(),
         this.getMoisList(),
-        this.getAnneesList(),
+        this.getAnneesList()
       ]);
-
       this.initialisationDesFiltres();
       this.chargerLesDonnees(false);
+
     } catch (error) {
       console.error('Erreur chargement données:', error);
     }
   }
 
-  getLivreList(): Promise<any> {
+  getSessionSemestreList(): Promise<SessionSemestre[]> {
     return new Promise((resolve, reject) => {
-      this.planificationResource.getResourceList('livre').subscribe({
-        next: (data) => {
-          this.livreList = data;
+      this.referentielResourceService.getResourceList('sessionsemestre').subscribe({
+        next: (data: any) => {
+          this.sessionSemestreList = data;
           resolve(data);
         },
-        error: (err) => reject(err)
+        error: (err: any) => reject(err)
       });
     });
   }
 
-  getEnseignantList(): Promise<EnseigantList[]> {
+  getEtatEvaluationList(): Promise<any[]> {
     return new Promise((resolve, reject) => {
-      this.enseigantService.getAllEnseignants().subscribe({
-        next: (data) => {
-          this.enseignantList = data;
+      this.commonService.getEtatEvaluations().subscribe({
+        next: (data: any) => {
+          this.etatEvaluationOptions = data;
           resolve(data);
         },
-        error: (err) => reject(err)
+        error: (err: any) => reject(err)
       });
     });
   }
@@ -139,7 +127,7 @@ export class ExerciceAFaireComponent implements OnInit, OnDestroy {
     return new Promise((resolve, reject) => {
       this.commonService.getAllAnnees().subscribe({
         next: (data) => {
-          this.anneesList = data;
+          this.anneeList = data;
           resolve(data);
         },
         error: (err) => reject(err)
@@ -150,27 +138,22 @@ export class ExerciceAFaireComponent implements OnInit, OnDestroy {
   initialisationDesFiltres() {
     this.tableFilters = [
       {
-        key: 'titre',
-        label: 'Titre exercice',
-        type: 'text',
-        placeholder: 'Rechercher un exercie...'
-      },
-      {
-        key: 'livre',
-        label: 'Livre',
+        key: 'semestre',
+        label: 'Semestre',
         type: 'select',
-        options: this.livreList.map((c: any) => ({
-          value: c.id,
-          label: c.titre
-        })),
-      },
-      {
-        key: 'enseignant',
-        label: 'Enseignant',
-        type: 'select',
-        options: this.enseignantList.map(a => ({
+        options: this.sessionSemestreList.map(a => ({
           value: a.id,
-          label: `${a.nomComplet}`
+          label: `${a.libelle}`
+        }))
+      },
+
+      {
+        key: 'etat',
+        label: 'Etat',
+        type: 'select',
+        options: this.etatEvaluationOptions.map(e => ({
+          value: e.etat,
+          label: e.etat
         }))
       },
       {
@@ -179,24 +162,26 @@ export class ExerciceAFaireComponent implements OnInit, OnDestroy {
         type: 'select',
         options: this.moisList.map(m => ({
           value: m.id,
-          label: `${m.mois}`
+          label: m.mois
         }))
       },
       {
         key: 'annee',
         label: 'Année',
         type: 'select',
-        options: this.anneesList.map(a => ({
+        options: this.anneeList.map(a => ({
           value: a.annee,
           label: a.annee
-        })),
+        }))
       },
+
+
+
     ];
   }
 
   onFilterChange(filter: IFilterConfig, value: any) {
     this.activeFilters[filter.key] = value;
-
     this.hasActiveFilters = Object.values(this.activeFilters).some(val =>
       val !== null && val !== undefined && val !== ''
     );
@@ -210,33 +195,33 @@ export class ExerciceAFaireComponent implements OnInit, OnDestroy {
 
     if (useFilterApi) {
 
-      const filtreParam = this.construireParametreFiltre();
+      const filtreParam = this.construireLesParamereDeFiltre();
 
-      apiCall = this.planificationResource.fetchFilterByElementDataTable(
-        'planification/exercice/classe',
+      apiCall = this.dossierResource.fetchFilterByElementDataTable(
+        'evaluation/classe',
         this.classeId!,
         this.currentPage,
         this.pageSize,
         filtreParam)
 
     } else {
-      apiCall = this.planificationResource.getResourceByIdPaged('planification/exercice/classe', this.classeId!, this.currentPage, this.pageSize);
+      apiCall = this.dossierResource.getResourcesByIdPaged('evaluation/classe', this.classeId!, this.currentPage, this.pageSize);
     }
     apiCall.subscribe({
       next: (response) => {
-        this.exerciceData = response.data?.content || [];
+        this.evaluationData = response.data?.content || [];
         this.totalElements = response.data?.totalElements || 0;
 
         this.columns = [
           { key: 'titre', header: 'Titre' },
-          { key: 'livre', header: 'Livre' },
-          { key: 'enseignant', header: 'Enseignant' },
-          { key: 'page', header: 'Page' },
-          { key: 'numeroExercice', header: 'N°' },
-          { key: 'description', header: 'Description' },
-          { key: 'dateDebut', header: 'Date' },
+          { key: 'matiere', header: 'Matière' },
+          { key: 'sessionSemestre', header: 'Semestre' },
+          { key: 'evaluationType', header: 'Type' },
+          { key: 'etat', header: 'Etat' },
+          { key: 'dateEvaluation', header: 'Date' },
         ];
-        this.exerciceData = this.exerciceData.map((item: any) => ({
+
+        this.evaluationData = this.evaluationData.map((item: any) => ({
           ...item,
         }));
 
@@ -249,17 +234,14 @@ export class ExerciceAFaireComponent implements OnInit, OnDestroy {
     });
   }
 
-  construireParametreFiltre(): any {
+  construireLesParamereDeFiltre(): any {
     const filtreObj: any = {};
 
-    if (this.activeFilters.titre) {
-      filtreObj.titre = this.activeFilters.titre;
+    if (this.activeFilters.numeroFacture) {
+      filtreObj.numeroFacture = this.activeFilters.numeroFacture;
     }
-    if (this.activeFilters.livre) {
-      filtreObj.livre = this.activeFilters.livre;
-    }
-    if (this.activeFilters?.enseignant) {
-      filtreObj.enseignant = this.activeFilters.enseignant;
+    if (this.activeFilters.etat) {
+      filtreObj.etat = this.activeFilters.etat;
     }
     if (this.activeFilters.mois) {
       filtreObj.mois = this.activeFilters.mois;

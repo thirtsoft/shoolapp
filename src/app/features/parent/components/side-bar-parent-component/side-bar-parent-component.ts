@@ -51,20 +51,20 @@ export class SideBarParentComponent {
   nav: NavItem[] = [
     { route: '/parent/dashboard', ico: '📊', label: 'Tableau de bord', section: '', badge: '' },
 
-    // FINANCES
-    { route: '/parent/notes', ico: '📝', label: 'Notes', section: 'Suivi quotidien', badge: '18' },
+    // Suivi quotidien
+    { route: '/parent/absences', ico: '❌', label: 'Absences', section: 'Suivi quotidien', badge: '18' },
+    { route: '/parent/evaluations', ico: '🎯', label: 'Évaluations', section: '', badge: '' },
+    { route: '/parent/notes', ico: '📝', label: 'Notes', section: '', badge: '' },
     { route: '/parent/bulletins', ico: '📋', label: 'Bulletins', section: '', badge: '' },
-    { route: '/parent/absences', ico: '❌', label: 'Absences', section: '', badge: '' },
+    { route: '/parent/exercices', ico: '✏️', label: 'Exercice', section: '', badge: '' },
 
     // FINANCES
     { route: '/parent/factures', ico: '💰', label: 'Factures', section: 'Finances', badge: '18' },
-    { route: '/parent/paiements', ico: '💳', label: 'Paiements', section: '', badge: '' },
-    //  { route: '/parent/comptabilite/services', ico: '📋', label: 'Inscriptions services', section: '', badge: '' },
+    { route: '/parent/services', ico: '📋', label: 'Inscriptions services', section: '', badge: '' },
 
 
     { route: '/parent/emploi-temps', ico: '🕐', label: 'Emploi du temps', section: 'Ressources', badge: '18' },
     { route: '/parent/cours', ico: '📚', label: 'Cours & Ressources', section: '', badge: '' },
-    { route: '/parent/exercices', ico: '✏️', label: 'Exercices', section: '', badge: '' },
 
     // VIE SCOLAIRE
     { route: '/parent/inscriptions', ico: '📝', label: 'Inscriptions', section: 'Vie scolaire', badge: '7' },
