@@ -1,4 +1,3 @@
-import { SlicePipe } from '@angular/common';
 import { Component, inject, OnDestroy, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -12,7 +11,7 @@ import { PlanificationResourceService } from '../../../services/planification-re
 @Component({
   selector: 'app-create-edit-note-information',
   standalone: true,
-  imports: [ReactiveFormsModule, SlicePipe, NgxEditorModule],
+  imports: [ReactiveFormsModule, NgxEditorModule],
   templateUrl: './create-edit-note-information.component.html',
   styleUrls: ['./create-edit-note-information.component.css']
 })

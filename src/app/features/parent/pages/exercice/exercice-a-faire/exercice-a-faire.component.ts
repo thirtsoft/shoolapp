@@ -41,7 +41,6 @@ export class ExerciceAFaireComponent implements OnInit, OnDestroy {
   classesList: any[] = [];
   enseignantList: any[] = [];
   moisList: any[] = [];
-  anneesList: any[] = [];
 
   tableFilters: IFilterConfig[] = [];
   activeFilters: any = {};
@@ -89,7 +88,6 @@ export class ExerciceAFaireComponent implements OnInit, OnDestroy {
         this.getLivreList(),
         this.getEnseignantList(),
         this.getMoisList(),
-        this.getAnneesList(),
       ]);
 
       this.initialisationDesFiltres();
@@ -135,18 +133,6 @@ export class ExerciceAFaireComponent implements OnInit, OnDestroy {
     });
   }
 
-  getAnneesList(): Promise<any[]> {
-    return new Promise((resolve, reject) => {
-      this.commonService.getAllAnnees().subscribe({
-        next: (data) => {
-          this.anneesList = data;
-          resolve(data);
-        },
-        error: (err) => reject(err)
-      });
-    });
-  }
-
   initialisationDesFiltres() {
     this.tableFilters = [
       {
@@ -181,15 +167,6 @@ export class ExerciceAFaireComponent implements OnInit, OnDestroy {
           value: m.id,
           label: `${m.mois}`
         }))
-      },
-      {
-        key: 'annee',
-        label: 'Année',
-        type: 'select',
-        options: this.anneesList.map(a => ({
-          value: a.annee,
-          label: a.annee
-        })),
       },
     ];
   }

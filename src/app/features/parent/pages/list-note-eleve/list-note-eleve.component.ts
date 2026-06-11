@@ -40,7 +40,6 @@ export class ListNoteEleveComponent implements OnInit, OnDestroy {
   tableSizes = [5, 10, 20, 50, 100];
 
   matieresList: any[] = [];
-  classesList: any[] = [];
   semestreList: any[] = [];
   typesNoteOptions: string[] = ['devoir', 'composition'];
 
@@ -88,13 +87,12 @@ export class ListNoteEleveComponent implements OnInit, OnDestroy {
 
   async chargerLesNotesEleve() {
     try {
-      const [classe, matiere, semestre] = await Promise.all([
-        this.getClassList(),
+      const [matiere, semestre] = await Promise.all([
         this.getMatiereList(),
         this.getSemestreList()
       ]);
 
-      this.initialisationDesFiltres(classe, matiere, semestre);
+      this.initialisationDesFiltres(matiere, semestre);
       this.chargerLesDonnees(false);
     } catch (error) {
       console.error('Erreur chargement données:', error);
@@ -106,17 +104,6 @@ export class ListNoteEleveComponent implements OnInit, OnDestroy {
       this.referentielService.getAllMatieres().subscribe({
         next: (data) => {
           this.matieresList = data;
-          resolve(data);
-        },
-        error: (err) => reject(err)
-      });
-    });
-  }
-  getClassList(): Promise<ListeClasse[]> {
-    return new Promise((resolve, reject) => {
-      this.referentielService.getAllClasses().subscribe({
-        next: (data) => {
-          this.classesList = data;
           resolve(data);
         },
         error: (err) => reject(err)
@@ -136,17 +123,8 @@ export class ListNoteEleveComponent implements OnInit, OnDestroy {
     });
   }
 
-  initialisationDesFiltres(classe: any[], matieres: any[], semestre: any[]) {
+  initialisationDesFiltres(matieres: any[], semestre: any[]) {
     this.tableFilters = [
-      {
-        key: 'classe',
-        label: 'Classe',
-        type: 'select',
-        options: classe.map(c => ({
-          value: c.id,
-          label: c.libelle
-        })),
-      },
       {
         key: 'matiere',
         label: 'Matière',
@@ -213,7 +191,6 @@ export class ListNoteEleveComponent implements OnInit, OnDestroy {
         this.totalElements = response.data?.totalElements || 0;
 
         this.columns = [
-          { key: 'classe', header: 'Classe' },
           { key: 'matiere', header: 'Matière' },
           { key: 'semestre', header: 'Semestre' },
           { key: 'note', header: 'Note' },
@@ -273,7 +250,7 @@ export class ListNoteEleveComponent implements OnInit, OnDestroy {
   resetFilters() {
     this.activeFilters = {};
     this.hasActiveFilters = false;
-    this.initialisationDesFiltres(this.matieresList, this.classesList, this.semestreList);
+    this.initialisationDesFiltres(this.matieresList, this.semestreList);
     this.currentPage = 0;
     this.chargerLesDonnees(false);
   }

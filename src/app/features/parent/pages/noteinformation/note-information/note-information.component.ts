@@ -1,8 +1,8 @@
 import { Component, inject, OnInit } from '@angular/core';
-import { IFilterConfig } from '../../../../core/filtered-config/FiltreConfiguration';
-import { GenericTableReferentielComponent } from '../../../../core/generic/generic-table-referentiel/generic-table-referentiel.component';
-import { CommonService } from '../../../../core/services/common.service';
-import { ReferentielResourceService } from '../../../administration/referentiel/service/referentiel-resource.service';
+import { IFilterConfig } from '../../../../../core/filtered-config/FiltreConfiguration';
+import { GenericTableReferentielComponent } from '../../../../../core/generic/generic-table-referentiel/generic-table-referentiel.component';
+import { CommonService } from '../../../../../core/services/common.service';
+import { PlanificationResourceService } from '../../../../administration/planification/services/planification-resource.service';
 
 @Component({
   selector: 'app-note-information',
@@ -12,40 +12,35 @@ import { ReferentielResourceService } from '../../../administration/referentiel/
   styleUrls: ['./note-information.component.css']
 })
 export class NoteInformationComponent implements OnInit {
+
   errorMessage?: string;
-  isEdit: boolean = true;
   isLoading: boolean = false;
-  filteredDataMeeting: any;
-  isLockable: boolean = true;
+  noteInformationData: any;
   isTable: boolean = true;
   columns: any = [];
-  meetingData: any = [];
 
   currentPage = 0;
   pageSize = 5;
   totalElements = 0;
   tableSizes = [5, 10, 20, 50, 100];
 
-  etatfactureOptions: any[] = [];
   moisList: any[] = [];
-  anneeList: any[] = [];
 
   tableFilters: IFilterConfig[] = [];
   activeFilters: any = {};
   hasActiveFilters: boolean = false;
 
-  private readonly refentielResource = inject(ReferentielResourceService);
+  private readonly planificationResource = inject(PlanificationResourceService);
   private readonly commonService = inject(CommonService);
 
   ngOnInit(): void {
-    this.chargerLesMeetings();
+    this.chargerLesNoteInformations();
   }
 
-  async chargerLesMeetings() {
+  async chargerLesNoteInformations() {
     try {
       await Promise.all([
-        this.getMoisList(),
-        this.getAnneesList()
+        this.getMoisList()
       ]);
       this.initialisationDesFiltres();
       this.chargerLesDonnees(false);
@@ -67,26 +62,8 @@ export class NoteInformationComponent implements OnInit {
     });
   }
 
-  getAnneesList(): Promise<any[]> {
-    return new Promise((resolve, reject) => {
-      this.commonService.getAllAnnees().subscribe({
-        next: (data) => {
-          this.anneeList = data;
-          resolve(data);
-        },
-        error: (err) => reject(err)
-      });
-    });
-  }
-
   initialisationDesFiltres() {
     this.tableFilters = [
-      {
-        key: 'libelle',
-        label: 'Libellé',
-        type: 'text',
-        placeholder: 'Rechercher une réunion...'
-      },
       {
         key: 'mois',
         label: 'Mois',
@@ -95,16 +72,7 @@ export class NoteInformationComponent implements OnInit {
           value: m.id,
           label: m.mois
         }))
-      },
-      {
-        key: 'annee',
-        label: 'Année',
-        type: 'select',
-        options: this.anneeList.map(a => ({
-          value: a.annee,
-          label: a.annee
-        }))
-      },
+      }
     ];
   }
 
@@ -125,28 +93,26 @@ export class NoteInformationComponent implements OnInit {
 
       const filtreParam = this.construireLesParamereDeFiltre();
 
-      apiCall = this.refentielResource.fetchFilterDataTable(
-        'meeting/parent',
+      apiCall = this.planificationResource.fetchFilterDataTable(
+        'planification/noteinformation',
         this.currentPage,
         this.pageSize,
         filtreParam)
 
     } else {
-      apiCall = this.refentielResource.getResourcePaged('meeting/parent', this.currentPage, this.pageSize);
+      apiCall = this.planificationResource.getResourcePaged('planification/noteinformation', this.currentPage, this.pageSize);
     }
     apiCall.subscribe({
       next: (response) => {
-        this.meetingData = response.data?.content || [];
+        this.noteInformationData = response.data?.content || [];
         this.totalElements = response.data?.totalElements || 0;
         this.columns = [
-          { key: 'libelle', header: 'Libellé' },
-          { key: 'dateMeeting', header: 'Date' },
-          { key: 'heureDebut', header: 'Heure début' },
-          { key: 'heureFin', header: 'Heure fin' },
-          { key: 'typeMeeting', header: 'Nature reunion' },
+          { key: 'reference', header: 'Référence' },
+          { key: 'dateCreation', header: 'Date' },
+
         ]
 
-        this.meetingData = this.meetingData.map((item: any) => ({
+        this.noteInformationData = this.noteInformationData.map((item: any) => ({
           ...item,
 
         }),);
@@ -163,15 +129,8 @@ export class NoteInformationComponent implements OnInit {
 
   construireLesParamereDeFiltre(): any {
     const filtreObj: any = {};
-
-    if (this.activeFilters.libelle) {
-      filtreObj.libelle = this.activeFilters.libelle;
-    }
     if (this.activeFilters.mois) {
       filtreObj.mois = this.activeFilters.mois;
-    }
-    if (this.activeFilters.annee) {
-      filtreObj.annee = this.activeFilters.annee;
     }
     return Object.keys(filtreObj).length > 0 ? filtreObj : null;
   }

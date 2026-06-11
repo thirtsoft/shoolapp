@@ -1,15 +1,13 @@
 import { Component, DestroyRef, inject, OnInit } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ReactiveFormsModule } from '@angular/forms';
 import { IFilterConfig } from '../../../../../core/filtered-config/FiltreConfiguration';
 import { GenericTableDossierComponent } from '../../../../../core/generic/generic-table-dossier/generic-table-dossier.component';
 import { CommonService } from '../../../../../core/services/common.service';
 import { LocalStorageService } from '../../../../../core/services/local-storage.service';
 import { DossierResourceService } from '../../../../administration/dossier-eleve/service/dossier-resource.service';
-import { ReferentielService } from '../../../../administration/referentiel/service/referentiel.service';
-import { AnneeScolaire } from '../../../../../core/models/referentiels/annee-scolaire';
-import { Semestre } from '../../../../../core/models/referentiels/semestre';
 import { ReferentielResourceService } from '../../../../administration/referentiel/service/referentiel-resource.service';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { ReferentielService } from '../../../../administration/referentiel/service/referentiel.service';
 
 
 @Component({
@@ -38,12 +36,8 @@ export class ListAbsenceEleveComponent implements OnInit {
   totalElements = 0;
   tableSizes = [5, 10, 20, 50, 100];
 
-  anneesScolairesList: any[] = [];
-  semestreList: any[] = [];
-   sessionSemestreList: any[] = [];
-  classeList: any[] = [];
+  sessionSemestreList: any[] = [];
   moisList: any[] = [];
-  anneeList: any[] = [];
 
   tableFilters: IFilterConfig[] = [];
   activeFilters: any = {};
@@ -51,7 +45,7 @@ export class ListAbsenceEleveComponent implements OnInit {
 
   private readonly dossierEleveService = inject(DossierResourceService);
   private readonly referentielService = inject(ReferentielService);
-   private readonly referentielResourceService = inject(ReferentielResourceService);
+  private readonly referentielResourceService = inject(ReferentielResourceService);
   private readonly commonService = inject(CommonService);
   private readonly localStorage = inject(LocalStorageService);
   private readonly destroyRef = inject(DestroyRef);
@@ -79,28 +73,17 @@ export class ListAbsenceEleveComponent implements OnInit {
     }
   }
 
-   private chargerLesDonneesFiltre() {
+  private chargerLesDonneesFiltre() {
     this.referentielResourceService.getResourceList('sessionsemestre').pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
       next: (data: any) => {
         this.sessionSemestreList = data;
       }
     });
 
-    this.referentielResourceService.getResourceList('classe').pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
-      next: (data: any) => this.classeList = data
-    });
-
-    this.referentielResourceService.getResourceList('anneescolaire').pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
-      next: (data: any) => this.anneesScolairesList = data
-    });
-
-     this.commonService.getAllMois().pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
+    this.commonService.getAllMois().pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
       next: (data: any) => this.moisList = data
     });
 
-     this.commonService.getAllAnnees().pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
-      next: (data: any) => this.anneeList = data
-    });
   }
 
   chargerLesDonnees(useFilterApi: boolean) {
@@ -153,21 +136,12 @@ export class ListAbsenceEleveComponent implements OnInit {
         key: 'semestre',
         label: 'Semestre',
         type: 'select',
-        options: this.semestreList.map(c => ({
+        options: this.sessionSemestreList.map(c => ({
           value: c.id,
           label: c.libelle
         })),
       },
 
-      {
-        key: 'anneeScolaire',
-        label: 'Année scolaire',
-        type: 'select',
-        options: this.anneesScolairesList.map(a => ({
-          value: a.id,
-          label: `${a.libelle}`
-        }))
-      },
       {
         key: 'mois',
         label: 'Mois',
@@ -175,15 +149,6 @@ export class ListAbsenceEleveComponent implements OnInit {
         options: this.moisList.map(m => ({
           value: m.id,
           label: m.mois
-        }))
-      },
-      {
-        key: 'annee',
-        label: 'Année',
-        type: 'select',
-        options: this.anneeList.map(a => ({
-          value: a.annee,
-          label: a.annee
         }))
       },
     ];
@@ -204,15 +169,8 @@ export class ListAbsenceEleveComponent implements OnInit {
     if (this.activeFilters.semestre) {
       filtreObj.semestre = this.activeFilters.semestre;
     }
-
-    if (this.activeFilters?.anneeScolaire) {
-      filtreObj.anneeScolaire = this.activeFilters.anneeScolaire;
-    }
     if (this.activeFilters.mois) {
       filtreObj.mois = this.activeFilters.mois;
-    }
-    if (this.activeFilters.annee) {
-      filtreObj.annee = this.activeFilters.annee;
     }
     return Object.keys(filtreObj).length > 0 ? filtreObj : null;
   }

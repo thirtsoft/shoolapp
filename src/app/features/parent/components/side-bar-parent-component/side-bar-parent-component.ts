@@ -63,8 +63,8 @@ export class SideBarParentComponent {
     { route: '/parent/services', ico: '📋', label: 'Inscriptions services', section: '', badge: '' },
 
 
-    { route: '/parent/emploi-temps', ico: '🕐', label: 'Emploi du temps', section: 'Ressources', badge: '18' },
-    { route: '/parent/cours', ico: '📚', label: 'Cours & Ressources', section: '', badge: '' },
+  //  { route: '/parent/emploi-temps', ico: '🕐', label: 'Emploi du temps', section: 'Ressources', badge: '18' },
+    { route: '/parent/cours', ico: '📚', label: 'Cours & Ressources', section: 'Ressources', badge: '18' },
 
     // VIE SCOLAIRE
     { route: '/parent/inscriptions', ico: '📝', label: 'Inscriptions', section: 'Vie scolaire', badge: '7' },

@@ -6,6 +6,8 @@ import { ReferentielService } from '../../../administration/referentiel/service/
 import { LocalStorageService } from '../../../../core/services/local-storage.service';
 import { AnneeScolaire } from '../../../../core/models/referentiels/annee-scolaire';
 import { Semestre } from '../../../../core/models/referentiels/semestre';
+import { ReferentielResourceService } from '../../../administration/referentiel/service/referentiel-resource.service';
+import { SessionSemestre } from '../../../../core/models/referentiels/session-semestre';
 
 @Component({
   selector: 'app-liste-bulletin-eleve',
@@ -32,16 +34,14 @@ export class ListeBulletinEleveComponent implements OnInit {
   totalElements = 0;
   tableSizes = [5, 10, 20, 50, 100];
 
-  anneesScolairesList: any[] = [];
-  semestreList: any[] = [];
-  classeList: any[] = [];
+  sessionSemestreList: any[] = [];
 
   tableFilters: IFilterConfig[] = [];
   activeFilters: any = {};
   hasActiveFilters: boolean = false;
 
   private readonly dossierEleveService = inject(DossierResourceService);
-  private readonly referentielService = inject(ReferentielService);
+  private readonly referentielResourceService = inject(ReferentielResourceService);
   private readonly localStorage = inject(LocalStorageService);
 
   constructor(
@@ -57,34 +57,22 @@ export class ListeBulletinEleveComponent implements OnInit {
 
   async chargerLesBulletinsEleve() {
     try {
-      const [semestre, annees] = await Promise.all([
+      const [semestre] = await Promise.all([
         this.getSemestreList(),
-        this.getAnneeScolaires(),
 
       ]);
-      this.initialisationDesFiltres(semestre, annees);
+      this.initialisationDesFiltres(semestre);
       this.chargerLesDonnees(false);
     } catch (error) {
       console.error('Erreur chargement données:', error);
     }
   }
-  getAnneeScolaires(): Promise<AnneeScolaire[]> {
-    return new Promise((resolve, reject) => {
-      this.referentielService.getAllAnneeScolaires().subscribe({
-        next: (data) => {
-          this.anneesScolairesList = data;
-          resolve(data);
-        },
-        error: (err) => reject(err)
-      });
-    });
-  }
 
-  getSemestreList(): Promise<Semestre[]> {
+  getSemestreList(): Promise<any[]> {
     return new Promise((resolve, reject) => {
-      this.referentielService.getAllSemestres().subscribe({
+      this.referentielResourceService.getResourceList('sessionsemestre').subscribe({
         next: (data) => {
-          this.semestreList = data;
+          this.sessionSemestreList = data;
           resolve(data);
         },
         error: (err) => reject(err)
@@ -136,7 +124,7 @@ export class ListeBulletinEleveComponent implements OnInit {
     });
   }
 
-  initialisationDesFiltres(semestre: any[], annees: any[]) {
+  initialisationDesFiltres(semestre: any[]) {
     this.tableFilters = [
       {
         key: 'semestre',
@@ -147,18 +135,6 @@ export class ListeBulletinEleveComponent implements OnInit {
           label: c.libelle
         })),
       },
-
-      {
-        key: 'anneeScolaire',
-        label: 'Année scolaire',
-        type: 'select',
-        options: annees.map(a => ({
-          value: a.id,
-          label: `${a.libelle}`
-        }))
-      },
-
-
     ];
   }
 
@@ -176,10 +152,6 @@ export class ListeBulletinEleveComponent implements OnInit {
     const filtreObj: any = {};
     if (this.activeFilters.semestre) {
       filtreObj.semestre = this.activeFilters.semestre;
-    }
-
-    if (this.activeFilters?.anneeScolaire) {
-      filtreObj.anneeScolaire = this.activeFilters.anneeScolaire;
     }
     return Object.keys(filtreObj).length > 0 ? filtreObj : null;
   }
@@ -208,7 +180,7 @@ export class ListeBulletinEleveComponent implements OnInit {
   resetFilters() {
     this.activeFilters = {};
     this.hasActiveFilters = false;
-    this.initialisationDesFiltres(this.semestreList, this.anneesScolairesList);
+    this.initialisationDesFiltres(this.sessionSemestreList);
     this.currentPage = 0;
     this.chargerLesDonnees(false);
   }

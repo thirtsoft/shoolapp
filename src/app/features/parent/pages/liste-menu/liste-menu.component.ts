@@ -20,6 +20,7 @@ export class ListeMenuComponent implements OnInit {
   deleteEndpoint = "menu";
   columns: any = [];
   menuData: any = [];
+  categoryMenuList: any[] = [];
 
   currentPage = 0;
   pageSize = 5;
@@ -38,6 +39,7 @@ export class ListeMenuComponent implements OnInit {
   async chargerLesMenus() {
     try {
       await Promise.all([
+        this.getCategoryMenuList()
       ]);
 
       this.initialisationDesFiltres();
@@ -47,6 +49,18 @@ export class ListeMenuComponent implements OnInit {
     }
   }
 
+  getCategoryMenuList(): Promise<any[]> {
+    return new Promise((resolve, reject) => {
+      this.refentielResource.getResourceList('categorymenu').subscribe({
+        next: (data) => {
+          this.categoryMenuList = data;
+          resolve(data);
+        },
+        error: (err) => reject(err)
+      });
+    });
+  }
+
   initialisationDesFiltres() {
     this.tableFilters = [
       {
@@ -54,7 +68,16 @@ export class ListeMenuComponent implements OnInit {
         label: 'Libellé',
         type: 'text',
         placeholder: 'Rechercher un menu'
-      }
+      },
+      {
+        key: 'categorymenu',
+        label: 'Catégorie menu',
+        type: 'select',
+        options: this.categoryMenuList.map(e => ({
+          value: e.id,
+          label: e.libelle
+        }))
+      },
     ];
   }
 
@@ -111,6 +134,9 @@ export class ListeMenuComponent implements OnInit {
 
     if (this.activeFilters.libelle) {
       filtreObj.libelle = this.activeFilters.libelle;
+    }
+    if (this.activeFilters.categorymenu) {
+      filtreObj.categorymenu = this.activeFilters.categorymenu;
     }
     return Object.keys(filtreObj).length > 0 ? filtreObj : null;
   }

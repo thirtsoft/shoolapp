@@ -1,12 +1,11 @@
 import { Component, inject, OnInit } from '@angular/core';
-import { GenericTableDossierComponent } from '../../../../../core/generic/generic-table-dossier/generic-table-dossier.component';
 import { IFilterConfig } from '../../../../../core/filtered-config/FiltreConfiguration';
-import { DossierResourceService } from '../../../../administration/dossier-eleve/service/dossier-resource.service';
-import { ReferentielResourceService } from '../../../../administration/referentiel/service/referentiel-resource.service';
-import { PlanificationResourceService } from '../../../../administration/planification/services/planification-resource.service';
+import { GenericTableDossierComponent } from '../../../../../core/generic/generic-table-dossier/generic-table-dossier.component';
+import { SessionSemestre } from '../../../../../core/models/referentiels/session-semestre';
 import { CommonService } from '../../../../../core/services/common.service';
 import { LocalStorageService } from '../../../../../core/services/local-storage.service';
-import { SessionSemestre } from '../../../../../core/models/referentiels/session-semestre';
+import { DossierResourceService } from '../../../../administration/dossier-eleve/service/dossier-resource.service';
+import { ReferentielResourceService } from '../../../../administration/referentiel/service/referentiel-resource.service';
 
 @Component({
   selector: 'app-evaluation-classe-component',
@@ -40,14 +39,9 @@ export class EvaluationClasseComponent implements OnInit {
   tableSizes = [5, 10, 20, 50, 100];
 
   matieresList: any[] = [];
-  classesList: any[] = [];
-  semestreList: any[] = [];
   sessionSemestreList: any[] = [];
-  enseignementList: any[] = [];
-
   etatEvaluationOptions: any[] = [];
   moisList: any[] = [];
-  anneeList: any[] = [];
 
   tableFilters: IFilterConfig[] = [];
   activeFilters: any = {};
@@ -75,9 +69,9 @@ export class EvaluationClasseComponent implements OnInit {
   async chargerLesEvaluationsEleve() {
     try {
       await Promise.all([
+        this.getSessionSemestreList(),
         this.getEtatEvaluationList(),
-        this.getMoisList(),
-        this.getAnneesList()
+        this.getMoisList()
       ]);
       this.initialisationDesFiltres();
       this.chargerLesDonnees(false);
@@ -123,18 +117,6 @@ export class EvaluationClasseComponent implements OnInit {
     });
   }
 
-  getAnneesList(): Promise<any[]> {
-    return new Promise((resolve, reject) => {
-      this.commonService.getAllAnnees().subscribe({
-        next: (data) => {
-          this.anneeList = data;
-          resolve(data);
-        },
-        error: (err) => reject(err)
-      });
-    });
-  }
-
   initialisationDesFiltres() {
     this.tableFilters = [
       {
@@ -165,18 +147,6 @@ export class EvaluationClasseComponent implements OnInit {
           label: m.mois
         }))
       },
-      {
-        key: 'annee',
-        label: 'Année',
-        type: 'select',
-        options: this.anneeList.map(a => ({
-          value: a.annee,
-          label: a.annee
-        }))
-      },
-
-
-
     ];
   }
 
@@ -236,18 +206,11 @@ export class EvaluationClasseComponent implements OnInit {
 
   construireLesParamereDeFiltre(): any {
     const filtreObj: any = {};
-
-    if (this.activeFilters.numeroFacture) {
-      filtreObj.numeroFacture = this.activeFilters.numeroFacture;
-    }
     if (this.activeFilters.etat) {
       filtreObj.etat = this.activeFilters.etat;
     }
     if (this.activeFilters.mois) {
       filtreObj.mois = this.activeFilters.mois;
-    }
-    if (this.activeFilters.annee) {
-      filtreObj.annee = this.activeFilters.annee;
     }
     return Object.keys(filtreObj).length > 0 ? filtreObj : null;
   }

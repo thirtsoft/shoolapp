@@ -1,0 +1,48 @@
+<div class="page-wrapper">
+  <div class="content container-fluid">
+    <div class="page-header">
+      <div class="row align-items-center">
+        <div class="col-sm-12">
+          <h3 class="page-title">{{ title }}</h3>
+        </div>
+      </div>
+    </div>
+
+    <div class="badge-container">
+      <span class="badge badge-primary" routerLink="/parent/informations" style="cursor: pointer">
+        <i class="fas fa-arrow-left me-2"></i>
+        Retour
+      </span>
+    </div>
+
+    <div class="card">
+      <div class="card-body p-4 p-md-5">
+        <form [formGroup]="noteInformationFormGroup">
+          <input type="hidden" formControlName="id" />
+          <label class="form-label">
+            Description <span class="text-danger">*</span>
+            <i class="fas fa-align-left ms-1 text-muted"></i>
+          </label>
+
+          <div class="ngx-editor-word-wrapper">
+            <ngx-editor-menu [editor]="editor" [toolbar]="toolbar"></ngx-editor-menu>
+
+            <div class="word-page-container">
+              <div class="word-document-page">
+                <ngx-editor [editor]="editor" formControlName="description"></ngx-editor>
+              </div>
+            </div>
+          </div>
+
+          <div class="alert-help mt-4" role="alert">
+            <i class="fas fa-info-circle me-2"></i>
+            <span>
+              Les notes d'information permettent de communiquer des messages importants à l'ensemble
+              de la communauté scolaire.
+            </span>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
