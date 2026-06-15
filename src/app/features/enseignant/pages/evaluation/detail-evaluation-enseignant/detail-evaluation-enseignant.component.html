@@ -1,159 +1,164 @@
 <div class="page-wrapper">
   <div class="content container-fluid">
-    <div class="data">
-      <h1 class="titlePage">Détails {{ title }}</h1>
-
-      <div class="block_button">
-        <button class="custom-btn btn-1" routerLink="/enseignant/evaluations">
-          <i class="fa fa-arrow-left"></i>
-          <b style="margin-left: 5px">Retour</b>
-        </button>
-
-        <button
-          *ngIf="detailsEvaluation.etat === 'Remise'"
-          class="custom-btn btn-1"
-          (click)="openConfirmationDialog('envoyer')"
-        >
-          <i class="fa fa-paper-plane"></i>
-          <b style="margin-left: 5px">Envoyer</b>
-        </button>
-
-        <button
-          *ngIf="detailsEvaluation.etat === 'Envoyée'"
-          class="custom-btn btn-1"
-          (click)="openConfirmationDialog('valider')"
-        >
-          <i class="fa fa-paper-plane"></i>
-          <b style="margin-left: 5px">Valider</b>
-        </button>
-      </div>
-
-      <div class="profile-container">
-        <div class="profile-card">
-          <div class="card-header">
-            <img src="../../../assets/img/chapitre.png" alt="" class="img-section" />
-
-            <h1 style="color: #000000">Details Evaluation</h1>
-          </div>
-          <div class="info-row">
-            <span class="label"> Titre</span>
-            <span class="value">{{ detailsEvaluation.titre }}</span>
-          </div>
-          <div class="info-row">
-            <span class="label">Date évaluation </span>
-            <span class="value">{{ detailsEvaluation.dateEvaluation }}</span>
-          </div>
-          <div class="info-row">
-            <span class="label">Heure début </span>
-            <span class="value">{{ detailsEvaluation.heureDebut }}</span>
-          </div>
-          <div class="info-row">
-            <span class="label">Heure fin </span>
-            <span class="value">{{ detailsEvaluation.heureFin }}</span>
-          </div>
-          <div
-            class="info-row"
-            *ngIf="['Remise', 'Envoyée', 'Validée'].includes(detailsEvaluation.etat!)"
-          >
-            <span class="label">Date remise </span>
-            <span class="value">{{ detailsEvaluation.dateRemise }}</span>
-          </div>
-
-          <div class="info-row" *ngIf="['Envoyée', 'Validée'].includes(detailsEvaluation.etat!)">
-            <span class="label">Date envoie </span>
-            <span class="value">{{ detailsEvaluation.dateEnvoi }}</span>
-          </div>
-
-          <div class="info-row" *ngIf="['Validée'].includes(detailsEvaluation.etat!)">
-            <span class="label">Date validation </span>
-            <span class="value">{{ detailsEvaluation.dateValidation }}</span>
-          </div>
-          <div class="info-row">
-            <span class="label">Etat </span>
-            <span class="value">{{ detailsEvaluation.etat }} </span>
-          </div>
-
-          <div class="info-row">
-            <span class="label">Type </span>
-            <span class="value">{{ detailsEvaluation.evaluationType }}</span>
-          </div>
-
-          <div class="info-row">
-            <span class="label">Mode évaluation </span>
-            <span class="value">{{ detailsEvaluation.evaluationMode }}</span>
-          </div>
-
-          <div class="info-row">
-            <span class="label">Description </span>
-            <span class="value">{{ detailsEvaluation.description }}</span>
-          </div>
+    <!-- Page Header -->
+    <div class="page-header">
+      <div class="row">
+        <div class="col-sm-12">
+          <h3 class="page-title">Détails évaluation</h3>
+          <p class="text-muted mt-1 mb-0">
+            <i class="fas fa-clipboard-list me-1"></i> Visualisation des informations de
+            l'évaluation
+          </p>
         </div>
+      </div>
+    </div>
 
-        <div class="profile-card">
-          <div class="card-header">
-            <img src="../../../assets/img/chapitre.png" alt="" class="img-section" />
+    <div class="action-bar">
+      <div class="action-left">
+        <button class="btn-back" (click)="goBack()">
+          <i class="fas fa-arrow-left me-2"></i>Retour
+        </button>
+        @if (['Remise', 'Envoyée'].includes(detailsEvaluation.etat!)) {
+          <button class="btn-validate" (click)="openConfirmationDialog('valider')">
+            <i class="fas fa-check-circle me-2"></i>Valider
+          </button>
+        }
+        @if (['Validée'].includes(detailsEvaluation.etat!)) {
+          <button class="btn-print" (click)="imprimerUneEvaluation(detailsEvaluation.id)">
+            <i class="fas fa-print me-2"></i>Imprimer
+          </button>
+        }
+      </div>
+      <div class="action-right">
+        <span class="status-badge" [class]="getStatusClass()">
+          <i class="fas fa-info-circle me-1"></i>
+          État : {{ detailsEvaluation.etat || 'Brouillon' }}
+        </span>
+      </div>
+    </div>
 
-            <h1 style="color: #000000">Autres information</h1>
+    <div class="two-cards-grid">
+      <div class="info-card">
+        <div class="card-header-custom">
+          <i class="fas fa-clipboard-list"></i>
+          <h4>Détails évaluation</h4>
+        </div>
+        <div class="info-list">
+          <div class="info-row">
+            <div class="info-label">Titre</div>
+            <div class="info-value">{{ detailsEvaluation.titre || '-' }}</div>
           </div>
           <div class="info-row">
-            <span class="label"> Classe</span>
-            <span class="value">{{ detailsEvaluation.libelleClasse }}</span>
+            <div class="info-label">Date évaluation</div>
+            <div class="info-value">
+              {{ detailsEvaluation.dateEvaluation | date: 'dd/MM/yyyy' }}
+            </div>
           </div>
           <div class="info-row">
-            <span class="label">Année scolaire </span>
-            <span class="value">{{ detailsEvaluation.anneeScolaire }}</span>
+            <div class="info-label">Heure début</div>
+            <div class="info-value">{{ detailsEvaluation.heureDebut || '-' }}</div>
           </div>
           <div class="info-row">
-            <span class="label">Matière </span>
-            <span class="value">{{ detailsEvaluation.matiere }}</span>
+            <div class="info-label">Heure fin</div>
+            <div class="info-value">{{ detailsEvaluation.heureFin || '-' }}</div>
           </div>
           <div class="info-row">
-            <span class="label">Semestre </span>
-            <span class="value">{{ detailsEvaluation.semestre }} </span>
+            <div class="info-label">État</div>
+            <div class="info-value">
+              <span class="status-inline" [class]="getStatusClass()">
+                {{ detailsEvaluation.etat || 'Brouillon' }}
+              </span>
+            </div>
           </div>
           <div class="info-row">
-            <span class="label">Enseignant </span>
-            <span class="value">{{ detailsEvaluation.nomCompletEnseignant }} </span>
+            <div class="info-label">Type</div>
+            <div class="info-value">{{ detailsEvaluation.evaluationType || '-' }}</div>
+          </div>
+          <div class="info-row">
+            <div class="info-label">Mode évaluation</div>
+            <div class="info-value">{{ detailsEvaluation.evaluationMode || '-' }}</div>
+          </div>
+          <div class="info-row">
+            <div class="info-label">Description</div>
+            <div class="info-value description-text">
+              {{ detailsEvaluation.description || '-' }}
+            </div>
           </div>
         </div>
       </div>
 
-      <div class="profile-container">
-        <div class="profile-card">
-          <div class="card-header">
-            <img src="../../../assets/img/paiement.png" alt="" class="img-section" />
-            <h1 style="color: #000000">Notes élèves</h1>
+      <div class="info-card">
+        <div class="card-header-custom">
+          <i class="fas fa-school"></i>
+          <h4>Autres informations</h4>
+        </div>
+        <div class="info-list">
+          <div class="info-row">
+            <div class="info-label">Classe</div>
+            <div class="info-value">{{ detailsEvaluation.libelleClasse || '-' }}</div>
           </div>
+          <div class="info-row">
+            <div class="info-label">Année scolaire</div>
+            <div class="info-value">{{ detailsEvaluation.anneeScolaire || '-' }}</div>
+          </div>
+          <div class="info-row">
+            <div class="info-label">Matière</div>
+            <div class="info-value">{{ detailsEvaluation.matiere || '-' }}</div>
+          </div>
+          <div class="info-row">
+            <div class="info-label">Semestre</div>
+            <div class="info-value">{{ detailsEvaluation.sessionSemestre || '-' }}</div>
+          </div>
+          <div class="info-row">
+            <div class="info-label">Enseignant</div>
+            <div class="info-value">{{ detailsEvaluation.nomCompletEnseignant || '-' }}</div>
+          </div>
+        </div>
+      </div>
+    </div>
 
-          <table class="table table-striped table-center">
-            <thead>
+    <div class="info-card full-width">
+      <div class="card-header-custom">
+        <i class="fas fa-star"></i>
+        <h4>Notes des élèves</h4>
+      </div>
+      <div class="table-responsive">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Nom & Prénom</th>
+              <th>Type note</th>
+              <th>Note /20</th>
+              <th>Appréciation</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (note of detailsEvaluation.detailsNoteEleveDTOList; track $index) {
               <tr>
-                <th style="min-width: 200px">Nom&Prénom</th>
-                <th style="min-width: 80px">Type note</th>
-                <th style="min-width: 80px">Note</th>
-                <th style="min-width: 100px">Appréciation</th>
+                <td class="eleve-cell">
+                  <div class="eleve-avatar">
+                    <div class="avatar-circle">
+                      {{ (note?.nomCompletEleve || '?').charAt(0) }}
+                    </div>
+                    <span>{{ note?.nomCompletEleve || '-' }}</span>
+                  </div>
+                </td>
+                <td class="type-cell">
+                  <span class="badge-type">{{ note?.type || '-' }}</span>
+                </td>
+                <td class="note-value">{{ note?.note || '-' }}</td>
+                <td class="appreciation-cell">{{ note?.appreciation || '-' }}</td>
               </tr>
-            </thead>
-            <tbody>
-              <tr *ngFor="let note of detailsEvaluation.detailsNoteEleveDTOList">
-                <td></td>
-                <td>
-                  <span class="value">{{ note?.type }}</span>
-                </td>
-                <td>
-                  <span class="value">{{ note?.note }}</span>
-                </td>
-                <td>
-                  <span class="value">{{ note?.appreciation }}</span>
-                </td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
+            }
+          </tbody>
+        </table>
       </div>
-
-      <div class="centerModal"></div>
-      <div></div>
+      @if (!detailsEvaluation.detailsNoteEleveDTOList?.length) {
+        <div class="empty-state">
+          <i class="fas fa-chart-line"></i>
+          <p>Aucune note disponible pour cette évaluation</p>
+        </div>
+      }
     </div>
   </div>
 </div>

@@ -22,9 +22,25 @@
           <span></span>
         </button>
         <div class="breadcrumb">
-          <span class="breadcrumb-matiere">{{ professeur.matiere }}</span>
+          <span class="breadcrumb-matiere">{{ matiereActive() }}</span>
           <span class="breadcrumb-sep">/</span>
-          <h1 class="page-title">{{ sectionLabel }}</h1>
+          @if (classeContext.mesClasses().length > 0) {
+            <div class="topbar-context-container">
+              <select 
+                [value]="classeContext.activeClasseId()" 
+                (change)="onClasseChange($event)"
+                class="topbar-classe-select"
+              >
+                @for (ens of classeContext.mesClasses(); track ens.id) {
+                  <option [value]="ens.classId">
+                    {{ ens.classe }} ({{ ens.anneeScolaire }})
+                  </option>
+                }
+              </select>
+            </div>
+          } @else {
+            <h1 class="page-title">{{ sectionLabel }}</h1>
+          }
         </div>
       </div>
 

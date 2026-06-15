@@ -1,0 +1,23 @@
+<app-generic-table-dossier
+  [title]="'Liste des notes de ' + libelleClasse()"
+  titleFitre="Note"
+  [tableColumns]="columns"
+  [tableData]="notesData"
+  [isLoading]="isLoading"
+  [isEditIcon]="true"
+  [isLockableIcon]="isLockable"
+  [tableSizes]="tableSizes"
+  [totalElements]="totalElements"
+  [currentPage]="currentPage"
+  [pageSize]="pageSize"
+  (pageChange)="changePage($event)"
+  [showSearch]="false"
+  [filtered]="tableFilters"
+  (filterChange)="onFilterChange($event.filter, $event.value)"
+  [showFilters]="true"
+  (resetFilters)="resetFilters()"
+  (sizeChange)="changeSize($event)"
+  modifierButtonLink="/enseignant/note/edit"
+  [deleteEndPoint]="deleteEndpoint"
+>
+</app-generic-table-dossier>

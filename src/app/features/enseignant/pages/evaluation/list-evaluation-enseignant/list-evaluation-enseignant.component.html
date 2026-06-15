@@ -1,5 +1,5 @@
 <app-generic-table-dossier
-  title="Liste des evaluations des élèves"
+  [title]="'Liste des évaluation de ' + libelleClasse()"
   titleFitre="Composition"
   [tableColumns]="columns"
   [tableData]="evaluationData"

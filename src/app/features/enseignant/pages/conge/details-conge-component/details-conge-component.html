@@ -1,0 +1,117 @@
+<div class="page-wrapper">
+  <div class="content container-fluid">
+    <div class="page-header">
+      <div class="row">
+        <div class="col-sm-12">
+          <h3 class="page-title">Détails congé</h3>
+          <p class="text-muted mt-1 mb-0">
+            <i class="fas fa-clipboard-list me-1"></i> Visualisation des informations du congé
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <div class="action-bar">
+      <div class="action-left">
+        <button class="btn-back" (click)="goBack()">
+          <i class="fas fa-arrow-left me-2"></i>Retour
+        </button>
+        <div class="action-group-buttons">
+          @if (['En cours'].includes(detailsConges.etat!)) {
+            <button class="btn-validate" (click)="openEtatModal(etatModal, 'envoyer')">
+              <i class="fas fa-check-circle me-2"></i>Envoyer la demande
+            </button>
+          }
+        </div>
+      </div>
+      <div class="action-right">
+        <span class="status-badge" [class]="getStatusClass()">
+          <i class="fas fa-info-circle me-1"></i>
+          État : {{ detailsConges.etat || 'En cours' }}
+        </span>
+      </div>
+    </div>
+
+    <div class="two-cards-grid">
+      <div class="info-card">
+        <div class="card-header-custom">
+          <i class="fas fa-clipboard-list"></i>
+          <h4>Détails congé</h4>
+        </div>
+        <div class="info-list">
+          <div class="info-row">
+            <div class="info-label">Objet</div>
+            <div class="info-value">{{ detailsConges.objet || '-' }}</div>
+          </div>
+          <div class="info-row">
+            <div class="info-label">Date début</div>
+            <div class="info-value">{{ detailsConges.dateDebut }}</div>
+          </div>
+          <div class="info-row">
+            <div class="info-label">Date fin</div>
+            <div class="info-value">{{ detailsConges.dateFin }}</div>
+          </div>
+
+          <div class="info-row">
+            <div class="info-label">Motif</div>
+            <div class="info-value">{{ detailsConges.motifRejet }}</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="info-card">
+        <div class="card-header-custom">
+          <i class="fas fa-school"></i>
+          <h4>Autres informations</h4>
+        </div>
+        <div class="info-list">
+          <div class="info-row">
+            <div class="info-label">Date création</div>
+            <div class="info-value">{{ detailsConges.dateCreation }}</div>
+          </div>
+          <div class="info-row">
+            <div class="info-label">Description</div>
+            <div class="info-value">{{ detailsConges.description || '-' }}</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<ng-template #etatModal let-modal>
+  <div class="modal-custom-overlay" (click)="modal.dismiss()">
+    <div class="modal-custom-container" (click)="$event.stopPropagation()">
+      <div class="modal-header-custom">
+        <h5 class="modal-title-custom">
+          <i class="fas fa-question-circle me-2"></i>
+          Confirmer l'action : {{ modalActionLabel | titlecase }}
+        </h5>
+        <button type="button" class="btn-close-custom" (click)="modal.dismiss()">
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
+
+      <div class="modal-body-custom">
+        <p class="modal-message">
+          Êtes-vous sûr de vouloir
+          <strong class="action-highlight">{{ modalActionLabel }}</strong> cette demande ?
+        </p>
+      </div>
+
+      <div class="modal-footer-custom">
+        <button type="button" class="btn-cancel" (click)="modal.dismiss()">
+          <i class="fas fa-times me-2"></i>Annuler
+        </button>
+        <button
+          type="button"
+          class="btn-confirm"
+          [class.btn-confirm-publish]="modalActionLabel === 'envoyer'"
+          (click)="modal.close('confirm')"
+        >
+          <i class="fas fa-check-circle me-2"></i>Confirmer
+        </button>
+      </div>
+    </div>
+  </div>
+</ng-template>

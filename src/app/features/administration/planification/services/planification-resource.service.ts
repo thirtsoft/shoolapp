@@ -39,6 +39,11 @@ export class PlanificationResourceService {
     return this.http.get<T>(url, this.httpOptions);
   }
 
+  getResources<T>(endpoint: string, userId: number): Observable<T> {
+    const url = `${this.planificationUrl}/${endpoint}?userId=${userId}`;
+    return this.http.get<T>(url, this.httpOptions);
+  }
+
   getResourceListByElement<T>(endpoint: string, id: number): Observable<T[]> {
     const url = `${this.planificationUrl}/${endpoint}/${id}`;
     return this.http.get<T[]>(url, this.httpOptions);
@@ -166,6 +171,11 @@ export class PlanificationResourceService {
   changeEtatResource<T>(endpoint: string, id: number, resource: Partial<T>): Observable<any> {
     const url = `${this.planificationUrl}/${endpoint}/${id}/changeretat`;
     return this.http.patch<ResponseMessage>(url, resource, this.httpOptions);
+  }
+
+  envoyerUneDemande<T>(endpoint: string, id: number): Observable<any> {
+    const url = `${this.planificationUrl}/${endpoint}/${id}/envoyer`;
+    return this.http.patch<ResponseMessage>(url, this.httpOptions);
   }
 
 

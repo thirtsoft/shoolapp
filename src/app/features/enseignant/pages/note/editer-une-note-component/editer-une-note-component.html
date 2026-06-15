@@ -1,0 +1,174 @@
+<div class="page-wrapper">
+  <div class="content container-fluid">
+    <div class="page-header">
+      <div class="row align-items-center">
+        <div class="col-sm-12">
+          <h3 class="page-title">{{ title }}</h3>
+          <p class="text-muted mt-1 mb-0">
+            <i class="fas fa-edit me-1"></i> Modification d'une note
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <div class="badge-container">
+      <span class="badge badge-primary"> <i class="fas fa-edit me-1"></i> Modification </span>
+    </div>
+
+    <div class="row">
+      <div class="col-12">
+        <div class="card">
+          <div class="card-body p-4 p-md-5">
+            <div class="step-indicator">
+              <div class="step active">
+                <span class="step-number">1</span>
+                <span class="step-label">Informations</span>
+              </div>
+              <div class="step-line"></div>
+              <div class="step active">
+                <span class="step-number">2</span>
+                <span class="step-label">Notes</span>
+              </div>
+            </div>
+
+            <form [formGroup]="noteFormGroup" (ngSubmit)="editerUneNote()">
+              <input type="hidden" formControlName="id" />
+              <input type="hidden" formControlName="eleve" />
+              <input type="hidden" formControlName="classe" />
+              <input type="hidden" formControlName="evaluation" />
+              <div class="enseignement-item">
+                <div class="row form-row">
+                  <div class="col-lg-4 col-sm-12">
+                    <div class="form-group">
+                      <label class="form-label">
+                        <i class="fas fa-user-graduate me-1"></i>Nom & Prénom
+                        <span class="text-danger">*</span>
+                      </label>
+                      <input
+                        type="text"
+                        class="form-control"
+                        formControlName="nomCompletEleve"
+                        readonly
+                      />
+                    </div>
+                  </div>
+
+                  <div class="col-lg-4 col-sm-12">
+                    <div class="form-group">
+                      <label class="form-label">
+                        <i class="fas fa-chalkboard-teacher ms-1 text-muted"></i>
+                        Evaluation <span class="text-danger">*</span>
+                      </label>
+                      <input
+                        type="text"
+                        class="form-control"
+                        formControlName="evaluationTitre"
+                        readonly
+                      />
+                    </div>
+                  </div>
+
+                  <div class="col-lg-4 col-sm-12">
+                    <div class="form-group">
+                      <label class="form-label">
+                        <i class="fas fa-chalkboard-teacher ms-1 text-muted"></i>
+                        Classe <span class="text-danger">*</span>
+                      </label>
+                      <input
+                        type="text"
+                        class="form-control"
+                        formControlName="libelleClasse"
+                        readonly
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                <div class="row form-row">
+                  <div class="col-lg-4 col-sm-12">
+                    <div class="form-group">
+                      <label class="form-label">
+                        <i class="fas fa-tag me-1"></i>Type note
+                        <span class="text-danger">*</span>
+                      </label>
+                      <input type="texte" class="form-control" formControlName="type" readonly />
+                    </div>
+                  </div>
+
+                  <div class="col-lg-4 col-sm-12">
+                    <div class="form-group">
+                      <label class="form-label">
+                        <i class="fas fa-chart-line me-1"></i>Note /20
+                        <span class="text-danger">*</span>
+                      </label>
+                      <input
+                        type="number"
+                        class="form-control form-control-sm"
+                        formControlName="note"
+                        placeholder="0"
+                        min="0"
+                        max="20"
+                        step="0.5"
+                        required
+                        [class.is-invalid]="
+                          noteFormGroup!.get('note')?.invalid && noteFormGroup!.get('note')?.touched
+                        "
+                      />
+                      @if (
+                        noteFormGroup!.get('note')?.invalid && noteFormGroup!.get('note')?.touched
+                      ) {
+                        <div class="invalid-feedback">La note est requise</div>
+                      }
+                    </div>
+                  </div>
+
+                  <div class="col-lg-4 col-sm-12">
+                    <div class="form-group">
+                      <label class="form-label">
+                        <i class="fas fa-comment me-1"></i>Appréciation
+                        <span class="text-danger">*</span>
+                      </label>
+                      <input
+                        type="text"
+                        class="form-control"
+                        formControlName="appreciation"
+                        [class.is-invalid]="
+                          noteFormGroup!.get('appreciation')?.invalid &&
+                          noteFormGroup!.get('appreciation')?.touched
+                        "
+                      />
+                      @if (
+                        noteFormGroup!.get('appreciation')?.invalid &&
+                        noteFormGroup!.get('appreciation')?.touched
+                      ) {
+                        <div class="invalid-feedback">L'appreciation est requise</div>
+                      }
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="form-actions">
+                <button type="button" class="btn btn-secondary" (click)="goBack()">
+                  <i class="fas fa-times me-2"></i>Annuler
+                </button>
+                <button type="submit" class="btn btn-primary" [disabled]="!noteFormGroup!.valid">
+                  <i class="fas fa-save me-2"></i>
+                  Enregistrer les modifications
+                </button>
+              </div>
+
+              <div class="alert-help mt-4" role="alert">
+                <i class="fas fa-info-circle me-2"></i>
+                <span>
+                  La note doit être comprise entre 0 et 20. Vous pouvez modifier la note et
+                  l'appréciation pour cet élève.
+                </span>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

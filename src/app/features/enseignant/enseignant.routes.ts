@@ -1,10 +1,12 @@
 import { Routes } from '@angular/router';
 import { MainLayoutProfesseurComponent } from './component/main-layout-professeur-component/main-layout-professeur-component';
-import { CreateAbsenceComponent } from './pages/absence/create-absence-component/create-absence-component';
+import { EditAbsenceComponent } from './pages/absence/edit-absence-component/edit-absence-component';
+import { FaireAppelComponent } from './pages/absence/faire-appel-component/faire-appel-component';
+import { ListAbsenceComponent } from './pages/absence/list-absence-component/list-absence-component';
 import { ClasseManagementComponent } from './pages/classe-management-component/classe-management-component';
-import { CreationAbsenceComponent } from './pages/creation-absence/creation-absence.component';
-import { CreationNoteComponent } from './pages/creation-note/creation-note.component';
-import { DemandeAbsenceComponent } from './pages/demande-absence/demande-absence.component';
+import { DemanderUnCongeComponent } from './pages/conge/demander-un-conge-component/demander-un-conge-component';
+import { DetailsCongeComponent } from './pages/conge/details-conge-component/details-conge-component';
+import { MesCongesComponent } from './pages/conge/mes-conges-component/mes-conges-component';
 import { ListEleveEnseignantComponent } from './pages/eleve/list-eleve-enseignant/list-eleve-enseignant.component';
 import { CreateEvaluationEnseignantComponent } from './pages/evaluation/create-evaluation-enseignant/create-evaluation-enseignant.component';
 import { DetailEvaluationEnseignantComponent } from './pages/evaluation/detail-evaluation-enseignant/detail-evaluation-enseignant.component';
@@ -13,13 +15,14 @@ import { ListEvaluationEnseignantComponent } from './pages/evaluation/list-evalu
 import { CreationExerciceComponent } from './pages/exercice/creation-exercice/creation-exercice.component';
 import { DetailsExerciceComponent } from './pages/exercice/details-exercice/details-exercice.component';
 import { ListExerciceComponent } from './pages/exercice/list-exercice/list-exercice.component';
-import { ListAbsenceComponent } from './pages/list-absence/list-absence.component';
 import { ListCoursComponent } from './pages/list-cours/list-cours.component';
-import { ListNoteClasseComponent } from './pages/list-note-classe/list-note-classe.component';
 import { ListReunionComponent } from './pages/list-reunion/list-reunion.component';
 import { MesEnseignementComponent } from './pages/mes-enseignement-component/mes-enseignement-component';
 import { MonAgendaComponent } from './pages/mon-agenda-component/mon-agenda-component';
 import { MyAccountComponent } from './pages/my-account/my-account.component';
+import { EditerUneNoteComponent } from './pages/note/editer-une-note-component/editer-une-note-component';
+import { ListNotesElevesComponent } from './pages/note/list-notes-eleves-component/list-notes-eleves-component';
+import { SaisirNotesEleveComponent } from './pages/note/saisir-notes-eleve-component/saisir-notes-eleve-component';
 
 
 export const ENSEIGNANTS_ROUTES: Routes = [
@@ -45,18 +48,17 @@ export const ENSEIGNANTS_ROUTES: Routes = [
         path: 'gestion-classe/:id',
         component: ClasseManagementComponent
       },
-
+      {
+        path: 'appel',
+        component: FaireAppelComponent
+      },
       {
         path: 'absences',
         component: ListAbsenceComponent
       },
       {
-        path: 'absence/create',
-        component: CreateAbsenceComponent
-      },
-      {
         path: 'absence/edit/:id',
-        component: CreateAbsenceComponent
+        component: EditAbsenceComponent
       },
 
       {
@@ -77,20 +79,8 @@ export const ENSEIGNANTS_ROUTES: Routes = [
         component: DetailsExerciceComponent
       },
       {
-        path: 'demande-conge',
-        component: CreationAbsenceComponent
-      },
-      {
-        path: 'mes-conges',
-        component: ListAbsenceComponent
-      },
-      {
         path: 'mes-eleves',
         component: ListEleveEnseignantComponent
-      },
-      {
-        path: 'detailsdemandeconge',
-        component: DemandeAbsenceComponent
       },
 
       {
@@ -110,26 +100,46 @@ export const ENSEIGNANTS_ROUTES: Routes = [
         path: 'evaluation/detail/:id',
         component: DetailEvaluationEnseignantComponent
       },
-
-      {
-        path: 'note',
-        component: CreationNoteComponent
-      },
       {
         path: 'notes',
-        component: ListNoteClasseComponent
+        component: ListNotesElevesComponent
       },
+      {
+        path: 'saisir-notes',
+        component: SaisirNotesEleveComponent
+      },
+      {
+        path: 'note/edit/:id',
+        component: EditerUneNoteComponent
+      },
+
       {
         path: 'mes-cours',
         component: ListCoursComponent
       },
       {
-        path: 'mes-enseignements',
+        path: 'mes-classes',
         component: MesEnseignementComponent
       },
       {
         path: 'mes-reunions',
         component: ListReunionComponent
+      },
+      {
+        path: 'mes-conges',
+        component: MesCongesComponent
+      },
+      {
+        path: 'demandeconge',
+        component: DemanderUnCongeComponent
+      },
+      {
+        path: 'demandeconge/edit/:id',
+        component: DemanderUnCongeComponent
+      },
+      {
+        path: 'detailsdemandeconge/detail/:id',
+        component: DetailsCongeComponent
       },
       {
         path: 'mon-compte',

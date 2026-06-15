@@ -2,7 +2,6 @@ import { Component, inject, OnInit } from '@angular/core';
 import { GenericTableReferentielComponent } from '../../../../core/generic/generic-table-referentiel/generic-table-referentiel.component';
 import { IFilterConfig } from '../../../../core/filtered-config/FiltreConfiguration';
 import { CommonService } from '../../../../core/services/common.service';
-import { ReferentielResourceService } from '../../../administration/referentiel/service/referentiel-resource.service';
 import { PlanificationResourceService } from '../../../administration/planification/services/planification-resource.service';
 
 @Component({
@@ -35,7 +34,6 @@ export class ListeEvenementComponent implements OnInit {
   activeFilters: any = {};
   hasActiveFilters: boolean = false;
 
-  private readonly refentielResource = inject(ReferentielResourceService);
   private readonly refentielResourceService = inject(PlanificationResourceService);
   private readonly commonService = inject(CommonService);
 
@@ -107,13 +105,13 @@ export class ListeEvenementComponent implements OnInit {
       const filtreParam = this.construireLesParamereDeFiltre();
 
       apiCall = this.refentielResourceService.fetchFilterDataTable(
-        'planification/evenementpublie',
+        'planification/activitespubliees',
         this.currentPage,
         this.pageSize,
         filtreParam)
 
     } else {
-      apiCall = this.refentielResourceService.getResourcePaged('planification/evenementpublie', this.currentPage, this.pageSize);
+      apiCall = this.refentielResourceService.getResourcePaged('planification/activitespubliees', this.currentPage, this.pageSize);
     }
     apiCall.subscribe({
       next: (response) => {

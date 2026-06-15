@@ -1,1 +1,24 @@
-<p>list-absence-component works!</p>
+<app-generic-table-dossier
+  [title]="'Liste des absence de ' + libelleClasse()"
+  titleFitre="Absence"
+  [tableColumns]="columns"
+  [tableData]="attendRecordData"
+  [isLoading]="isLoading"
+  [isEditIcon]="true"
+  [isLockableIcon]="isLockable"
+  [tableSizes]="tableSizes"
+  [totalElements]="totalElements"
+  [currentPage]="currentPage"
+  [pageSize]="pageSize"
+  (pageChange)="changePage($event)"
+  [showSearch]="false"
+  [filtered]="tableFilters"
+  (filterChange)="onFilterChange($event.filter, $event.value)"
+  [showFilters]="true"
+  (resetFilters)="resetFilters()"
+  (sizeChange)="changeSize($event)"
+  addButtonLink="/admin/dossier-eleve/absence/create"
+  modifierButtonLink="/admin/dossier-eleve/absence/edit"
+  [deleteEndPoint]="deleteEndpoint"
+>
+</app-generic-table-dossier>

@@ -1,0 +1,157 @@
+<div class="classe-management">
+  <header class="page-header">
+    <div class="header-top">
+      <button class="btn-back" routerLink="/enseignant/absences" title="Retour">← Retour</button>
+      <h1 class="header-title">
+        <span class="matiere-badge">{{ matiereActive() }}</span>
+        <span class="separator">•</span>
+        <span class="classe-badge">{{ libelleClasse() }}</span>
+      </h1>
+      <span class="annee-scolaire">{{ anneeScolaireActive() }}</span>
+    </div>
+  </header>
+
+  @if (activeTab() === 'appel') {
+    <div class="tab-content">
+      <div class="tab-header">
+        <h2>📋 Appel des absences</h2>
+        <span class="date-jour">{{ today() }}</span>
+        <button class="btn btn-primary" (click)="sauvegarderAppel()">💾 Sauvegarder l'appel</button>
+      </div>
+      <div class="table-responsive">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>N°</th>
+              <th>Nom</th>
+              <th>Prénom</th>
+              <th>Statut</th>
+              <th>Motif</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (eleve of eleves(); track eleve.id; let i = $index) {
+              <tr [class.absent-row]="eleve.absent">
+                <td class="text-center">{{ i + 1 }}</td>
+                <td>
+                  <strong>{{ eleve.nom }}</strong>
+                </td>
+                <td>{{ eleve.prenom }}</td>
+                <td>
+                  <span
+                    class="status-badge"
+                    [class.status-present]="!eleve.absent"
+                    [class.status-absent]="eleve.absent"
+                  >
+                    {{ eleve.absent ? 'Absent' : 'Présent' }}
+                  </span>
+                </td>
+                <td>
+                  @if (eleve.motif) {
+                    {{ eleve.motif }}
+                  } @else {
+                    <span class="no-motif">—</span>
+                  }
+                </td>
+                <td>
+                  <button class="btn-absence" (click)="ouvrirFormulaireAbsence(eleve)">
+                    📝 Signaler absence
+                  </button>
+                  <!--  <button
+                    class="btn-action"
+                    [class.btn-justify]="eleve.absent"
+                    [class.btn-mark]="!eleve.absent"
+                  >
+                    {{ eleve.absent ? '✅ Justifier' : '❌ Marquer absent' }}
+                  </button> -->
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    </div>
+  }
+
+  @if (showAbsenceFormModal()) {
+    <div class="modal-overlay" (click)="fermerFormulaireAbsence()">
+      <div class="modal-container" (click)="$event.stopPropagation()">
+        <div class="modal-header">
+          <h3>📝 Signaler une absence</h3>
+          <button class="close-btn" (click)="fermerFormulaireAbsence()">✕</button>
+        </div>
+
+        <div class="modal-body">
+          <!-- Informations élève -->
+          <div class="info-card">
+            <div class="info-label">Élève :</div>
+            <div class="info-value">
+              {{ currentEleveForAbsence?.prenom }} {{ currentEleveForAbsence?.nom }}
+            </div>
+          </div>
+
+          <!-- Date absence -->
+          <div class="form-group">
+            <label>Date de l'absence <span class="required">*</span></label>
+            <input type="date" class="form-control" [(ngModel)]="absenceForm.dateAbsence" />
+          </div>
+
+          <!-- Semestre -->
+          <div class="form-group">
+            <label>Semestre <span class="required">*</span></label>
+            <select class="form-control" [(ngModel)]="absenceForm.semestre">
+              <option value="1">1er Semestre</option>
+              <option value="2">2ème Semestre</option>
+            </select>
+          </div>
+
+          <!-- Année scolaire -->
+          <div class="form-group">
+            <label>Année scolaire <span class="required">*</span></label>
+            <input
+              type="text"
+              class="form-control"
+              [(ngModel)]="absenceForm.anneeScolaire"
+              readonly
+              disabled
+            />
+          </div>
+
+          <!-- Statut absence (justifiée / non justifiée) -->
+          <div class="form-group">
+            <label>Statut <span class="required">*</span></label>
+            <div class="radio-group">
+              <label class="radio-label">
+                <input type="radio" [value]="true" [(ngModel)]="absenceForm.justifiee" />
+                <span>✅ Justifiée</span>
+              </label>
+              <label class="radio-label">
+                <input type="radio" [value]="false" [(ngModel)]="absenceForm.justifiee" />
+                <span>❌ Non justifiée</span>
+              </label>
+            </div>
+          </div>
+
+          <!-- Motif -->
+          <div class="form-group">
+            <label>Motif de l'absence <span class="required">*</span></label>
+            <textarea
+              class="form-control"
+              rows="3"
+              [(ngModel)]="absenceForm.motif"
+              placeholder="Ex: Maladie, Rendez-vous médical, Convocation familiale, Retard..."
+            ></textarea>
+          </div>
+        </div>
+
+        <div class="modal-footer">
+          <button class="btn-secondary" (click)="fermerFormulaireAbsence()">Annuler</button>
+          <button class="btn-primary" (click)="sauvegarderAbsence()">
+            💾 Enregistrer l'absence
+          </button>
+        </div>
+      </div>
+    </div>
+  }
+</div>

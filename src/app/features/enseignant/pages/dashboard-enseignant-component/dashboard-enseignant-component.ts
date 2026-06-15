@@ -1,9 +1,18 @@
 import { CommonModule } from '@angular/common';
 import { Component, computed, inject, OnInit, signal } from '@angular/core';
 import { Router } from '@angular/router';
+import { DetailsEnseignantUtilisateur } from '../../../../core/models/enseignant/details-enseignant-utilisateur';
+import { AgendaSemaine } from '../../../../core/models/planification/agenda-semaine';
 import { ListeCours } from '../../../../core/models/planification/liste-cours';
+import { ActiviteAvenirEnseignant } from '../../../../core/models/statistique/enseignant/activite-a-venir-enseignant';
+import { CoursJourEnseignant } from '../../../../core/models/statistique/enseignant/cours-jour-enseignant';
+import { EnseignantDashboardKpis } from '../../../../core/models/statistique/enseignant/enseignant-dashboard-kpis';
+import { EnseignantDashboardListData } from '../../../../core/models/statistique/enseignant/enseignant-dashboard-list-data';
+import { NoteASaisirEnseignant } from '../../../../core/models/statistique/enseignant/note-a-saiair-enseignant';
+import { ResponsabiliteClasseEnseignant } from '../../../../core/models/statistique/enseignant/responsabilite-classe-enseignant';
 import { LocalStorageService } from '../../../../core/services/local-storage.service';
 import { PlanificationResourceService } from '../../../administration/planification/services/planification-resource.service';
+import { EnseigantResourceService } from '../../service/enseigant-resource.service';
 
 
 interface ClasseProfesseur {
@@ -68,15 +77,26 @@ export class DashboardEnseignantComponent implements OnInit {
 
 
   coursList: ListeCours[] = [];
-  ensId: number;
+  agendaSemaineList: AgendaSemaine[] = [];
+  enseignantDetails: DetailsEnseignantUtilisateur = {};
+  enseignantDashboardKpis: EnseignantDashboardKpis = {};
+  enseignantDashboardListData: EnseignantDashboardListData = {};
+
+  coursJournes = signal<CoursJourEnseignant[]>([]);
+  mesResponsabilites = signal<ResponsabiliteClasseEnseignant[]>([]);
+  activitesAvenir = signal<ActiviteAvenirEnseignant[]>([]);
+  notesARemplir = signal<NoteASaisirEnseignant[]>([]);
+
+  userId: number;
 
 
   private readonly router = inject(Router);
   private readonly planificationService = inject(PlanificationResourceService);
+  private readonly enseigantResourceService = inject(EnseigantResourceService);
   private readonly localStorage = inject(LocalStorageService);
 
   constructor() {
-    this.ensId = this.localStorage.getItem('id');
+    this.userId = this.localStorage.getItem('id');
   }
 
   // ── Informations professeur ────────────────────────
@@ -87,11 +107,36 @@ export class DashboardEnseignantComponent implements OnInit {
   });
 
   // ── KPIs principaux ────────────────────────────────
+
   kpis = signal([
-    { label: 'Mes classes', val: '3', ico: '🏫', detail: '120 élèves', couleur: 'bleu' },
-    { label: 'Moyenne générale', val: '13.8/20', ico: '📊', detail: 'Toutes classes', couleur: 'vert' },
-    { label: 'Cours aujourd\'hui', val: '4', ico: '🕐', detail: '8h de cours', couleur: 'or' },
-    { label: 'Notes à saisir', val: '28', ico: '📝', detail: '3 évaluations', couleur: 'rouge' },
+    {
+      label: 'Cours aujourd\'hui',
+      val: '3 cours',
+      ico: '🕐',
+      detail: '6 heures de face-à-face',
+      couleur: 'bleu'
+    },
+    {
+      label: 'Notes en attente',
+      val: '3 évals',
+      ico: '📝',
+      detail: '28 copies restant à saisir',
+      couleur: 'rouge'
+    },
+    {
+      label: 'Élèves à soutenir',
+      val: '5 élèves',
+      ico: '⚠️',
+      detail: 'En difficulté ce trimestre',
+      couleur: 'or'
+    },
+    {
+      label: 'Suivi des appels',
+      val: '1 manquant',
+      ico: '📌',
+      detail: 'Classe de Première S1',
+      couleur: 'vert'
+    }
   ]);
 
   // ── Emploi du temps du jour ────────────────────────
@@ -111,11 +156,12 @@ export class DashboardEnseignantComponent implements OnInit {
   ]);
 
   // ── Notes à remplir ────────────────────────────────
+  /*
   notesARemplir = signal<NoteARemplir[]>([
     { classe: 'Terminale S2', evaluation: 'DS n°4 - Fonctions', date: '15 Mars', nbNotes: 12, nbEleves: 38, progression: 32 },
     { classe: 'Première S1', evaluation: 'Interro - Dérivées', date: '12 Mars', nbNotes: 8, nbEleves: 42, progression: 19 },
     { classe: 'Seconde S2', evaluation: 'DM - Géométrie', date: '10 Mars', nbNotes: 8, nbEleves: 40, progression: 20 },
-  ]);
+  ])*/
 
   // ── Élèves remarquables ────────────────────────────
   elevesRemarquables = signal<EleveRemarquable[]>([
@@ -142,8 +188,8 @@ export class DashboardEnseignantComponent implements OnInit {
   messagesNonLus = computed(() => this.messages().filter(m => m.nonLu).length);
 
   ngOnInit(): void {
-    if (this.ensId && this.ensId != undefined) {
-      this.getCoursSemaineEnseignant(this.ensId);
+    if (this.userId && this.userId != undefined) {
+      this.getEnseignantByUtilisateurId(this.userId);
     }
   }
 
@@ -157,19 +203,112 @@ export class DashboardEnseignantComponent implements OnInit {
     return classes[statut] || '';
   }
 
-  /*
-  getCoursSemaineEnseignant(enseiId: number): Promise<[ListeCours]> {
+  getEnseignantByUtilisateurId(userId: number): Promise<[DetailsEnseignantUtilisateur]> {
     return new Promise((resolve, reject) => {
-      this.planificationService.getListeCoursSemaineByEnseignant(enseiId).subscribe({
+      this.enseigantResourceService.getSingleResource('enseignant/utilisateur', userId).subscribe({
         next: (data: any) => {
-          this.coursList = data;
-          console.log('Cours list', this.coursList);
+          this.enseignantDetails = data;
+          console.log('enseignantDetails', this.enseignantDetails);
+          this.getEnseignantDashboardKpis(this.enseignantDetails.id!);
+          this.getEnseignantDashboardListData(this.enseignantDetails.id!)
           resolve(data);
         },
         error: (err) => reject(err)
       });
     });
-  }*/
+  }
+
+  getEnseignantDashboardKpis(ensId: number): Promise<EnseignantDashboardKpis> {
+    return new Promise((resolve, reject) => {
+      this.enseigantResourceService.getSingleResource('statistique/enseignant', ensId).subscribe({
+        next: (data: any) => {
+          this.enseignantDashboardKpis = data;
+          console.log('enseignantDashboardKpis', this.enseignantDashboardKpis);
+
+          if (data && typeof data === 'object') {
+            this.mapApiDataToSignals(data);
+          }
+
+          resolve(data);
+        },
+        error: (err) => {
+          console.error('Erreur API KPIs, conservation des données mockées.', err);
+          reject(err);
+        }
+      });
+    });
+  }
+
+  private mapApiDataToSignals(data: EnseignantDashboardKpis): void {
+    this.kpis.set([
+      {
+        label: 'Cours aujourd\'hui',
+        val: '3 cours',
+        ico: '🕐',
+        detail: '6 heures de face-à-face',
+        couleur: 'bleu'
+      },
+      {
+        label: 'Notes en attente',
+        val: '3 évals',
+        ico: '📝',
+        detail: '28 copies restant à saisir',
+        couleur: 'rouge'
+      },
+      {
+        label: 'Élèves à soutenir',
+        val: '5 élèves',
+        ico: '⚠️',
+        detail: 'En difficulté ce trimestre',
+        couleur: 'or'
+      },
+      {
+        label: 'Suivi des appels',
+        val: '1 manquant',
+        ico: '📌',
+        detail: 'Classe de Première S1',
+        couleur: 'vert'
+      }
+    ]);
+  }
+
+  getEnseignantDashboardListData(ensId: number): Promise<EnseignantDashboardListData> {
+    return new Promise((resolve, reject) => {
+      this.enseigantResourceService.getSingleResource('statistique/list/enseignant', ensId).subscribe({
+        next: (data: any) => {
+          this.enseignantDashboardListData = data;
+          console.log('enseignantDashboardListData', this.enseignantDashboardListData);
+
+          if (data) {
+            if (data.coursDuJour) this.coursJournes.set(data.coursDuJour);
+            if (data.mesResponsabilites) this.mesResponsabilites.set(data.mesResponsabilites);
+            if (data.activitesAvenir) this.activitesAvenir.set(data.activitesAvenir);
+            if (data.notesASaisir) this.notesARemplir.set(data.notesASaisir);
+          }
+
+          resolve(data);
+        },
+        error: (err) => {
+          console.error('Erreur API KPIs, conservation des données.', err);
+          reject(err);
+        }
+      });
+    });
+  }
+
+
+  getAgendatSemaineEnseignant(userId: number): Promise<[AgendaSemaine]> {
+    return new Promise((resolve, reject) => {
+      this.planificationService.getResources('enseignant/agenda/semaine', this.userId).subscribe({
+        next: (data: any) => {
+          this.agendaSemaineList = data;
+          console.log('Cours list', this.agendaSemaineList);
+          resolve(data);
+        },
+        error: (err) => reject(err)
+      });
+    });
+  }
 
   getCoursSemaineEnseignant(enseiId: number): Promise<ListeCours[]> {
     return new Promise((resolve, reject) => {

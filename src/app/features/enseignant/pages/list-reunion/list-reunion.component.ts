@@ -16,19 +16,18 @@ export class ListReunionComponent implements OnInit {
   errorMessage?: string;
   isEdit: boolean = true;
   isLoading: boolean = false;
-  filteredDataMeeting: any;
+  filteredDataActivites: any;
   isLockable: boolean = true;
   isTable: boolean = true;
-  deleteEndpoint = "reunion";
   columns: any = [];
-  meetingData: any = [];
+  activiteData: any = [];
 
   currentPage = 0;
   pageSize = 5;
   totalElements = 0;
   tableSizes = [5, 10, 20, 50, 100];
 
-  etatfactureOptions: any[] = [];
+  statusEvenementOptions: any[] = [];
   moisList: any[] = [];
   anneeList: any[] = [];
 
@@ -36,19 +35,17 @@ export class ListReunionComponent implements OnInit {
   activeFilters: any = {};
   hasActiveFilters: boolean = false;
 
-
-  private readonly panificationResource = inject(PlanificationResourceService);
+  private readonly refentielResourceService = inject(PlanificationResourceService);
   private readonly commonService = inject(CommonService);
 
   ngOnInit(): void {
-    this.chargerLesMeetings();
+    this.chargerLesEvenements();
   }
 
-  async chargerLesMeetings() {
+  async chargerLesEvenements() {
     try {
       await Promise.all([
         this.getMoisList(),
-        this.getAnneesList()
       ]);
       this.initialisationDesFiltres();
       this.chargerLesDonnees(false);
@@ -70,25 +67,13 @@ export class ListReunionComponent implements OnInit {
     });
   }
 
-  getAnneesList(): Promise<any[]> {
-    return new Promise((resolve, reject) => {
-      this.commonService.getAllAnnees().subscribe({
-        next: (data) => {
-          this.anneeList = data;
-          resolve(data);
-        },
-        error: (err) => reject(err)
-      });
-    });
-  }
-
   initialisationDesFiltres() {
     this.tableFilters = [
       {
         key: 'libelle',
-        label: 'Libellé',
+        label: 'Libelle',
         type: 'text',
-        placeholder: 'Rechercher une réunion...'
+        placeholder: 'Rechercher un évenement...'
       },
       {
         key: 'mois',
@@ -99,17 +84,9 @@ export class ListReunionComponent implements OnInit {
           label: m.mois
         }))
       },
-      {
-        key: 'annee',
-        label: 'Année',
-        type: 'select',
-        options: this.anneeList.map(a => ({
-          value: a.annee,
-          label: a.annee
-        }))
-      },
     ];
   }
+
 
   onFilterChange(filter: IFilterConfig, value: any) {
     this.activeFilters[filter.key] = value;
@@ -128,33 +105,32 @@ export class ListReunionComponent implements OnInit {
 
       const filtreParam = this.construireLesParamereDeFiltre();
 
-      apiCall = this.panificationResource.fetchFilterDataTable(
-        'planification/meeting',
+      apiCall = this.refentielResourceService.fetchFilterDataTable(
+        'planification/activitespubliees',
         this.currentPage,
         this.pageSize,
         filtreParam)
 
     } else {
-      apiCall = this.panificationResource.getResourcePaged('planification/meeting', this.currentPage, this.pageSize);
+      apiCall = this.refentielResourceService.getResourcePaged('planification/activitespubliees', this.currentPage, this.pageSize);
     }
     apiCall.subscribe({
       next: (response) => {
-        this.meetingData = response.data?.content || [];
+        this.activiteData = response.data?.content || [];
         this.totalElements = response.data?.totalElements || 0;
+
         this.columns = [
           { key: 'libelle', header: 'Libellé' },
-          { key: 'dateMeeting', header: 'Date' },
-          { key: 'heureDebut', header: 'Heure début' },
-          { key: 'heureFin', header: 'Heure fin' },
-          { key: 'typeReunion', header: 'Nature reunion' },
+          { key: 'type', header: 'Type événement' },
+          { key: 'typeActivite', header: 'Type activité' },
+          { key: 'date', header: 'Date' },
+          { key: 'heure', header: 'Heure' },
         ]
 
-        this.meetingData = this.meetingData.map((item: any) => ({
+        this.activiteData = this.activiteData.map((item: any) => ({
           ...item,
 
-        }),);
-
-
+        }));
         this.isLoading = false;
       },
       error: (error) => {
@@ -172,9 +148,6 @@ export class ListReunionComponent implements OnInit {
     }
     if (this.activeFilters.mois) {
       filtreObj.mois = this.activeFilters.mois;
-    }
-    if (this.activeFilters.annee) {
-      filtreObj.annee = this.activeFilters.annee;
     }
     return Object.keys(filtreObj).length > 0 ? filtreObj : null;
   }
@@ -205,10 +178,6 @@ export class ListReunionComponent implements OnInit {
     this.initialisationDesFiltres();
     this.currentPage = 0;
     this.chargerLesDonnees(false);
-  }
-
-  formatLocalDate(utcDate: string): string {
-    return new Date(utcDate).toLocaleString('fr-FR'); // Adaptez la locale
   }
 
 }

@@ -1,5 +1,5 @@
 <app-generic-table-dossier
-  title="Liste des exercices"
+  [title]="'Liste des exercices de ' + libelleClasse()"
   titleFitre="Exercice"
   [tableColumns]="columns"
   [tableData]="exerciceData"
