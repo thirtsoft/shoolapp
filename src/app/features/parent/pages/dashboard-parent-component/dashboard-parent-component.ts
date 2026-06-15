@@ -10,6 +10,8 @@ import { LocalStorageService } from '../../../../core/services/local-storage.ser
 import { DataService } from '../../../../shared/data.service';
 import { DashboardParentService } from '../../service/dashboard-parent.service';
 import { ParentService } from '../../service/parent.service';
+import { DossierResourceService } from '../../../administration/dossier-eleve/service/dossier-resource.service';
+import { Inscription } from '../../../../core/models/dossiereleve/request/inscription';
 
 interface FactureLocal {
   id: string;
@@ -52,6 +54,7 @@ export class DashboardParentComponent implements OnInit {
   private readonly localStorage = inject(LocalStorageService);
   private readonly parentService = inject(ParentService);
   private readonly dashboardService = inject(DashboardParentService);
+  private readonly dossierResourceService = inject(DossierResourceService);
   private readonly destroyRef = inject(DestroyRef);
 
   eleveId?: number;
@@ -63,6 +66,7 @@ export class DashboardParentComponent implements OnInit {
   montantTotalEnAttanteEleve: number = 0;
   montantTotalEnRetardEleve: number = 0;
   montantTotalImpayeEleve: number = 0;
+  inscription: Inscription = {};
 
   coursEleveDTOList: any[] = [];
   semaine: string = "Cette semaine";
@@ -196,6 +200,13 @@ export class DashboardParentComponent implements OnInit {
     this.dashboardService.afficherLesListDeStatsGlobaleEleve(eleveId)
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({ next: data => this.mettreAJourLesListe(data) });
+/* 
+    this.dossierResourceService.getSingleResource('inscription/eleve', eleveId).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
+      next: (data: any) => {
+        this.inscription = data;
+        console.log('Inscription', this.inscription);
+      }
+    }); */
   }
 
   private mettreAJourDataStatsEleve(stats: DashboardStatsEleve) {

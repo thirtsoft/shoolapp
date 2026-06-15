@@ -41,6 +41,7 @@ export class EmploieDuTempsComponent implements OnInit {
   ngOnInit(): void {
     this.chargerLesEmploiDuTemps();
   }
+  
 
   async chargerLesEmploiDuTemps() {
     try {

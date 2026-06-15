@@ -1,16 +1,15 @@
 
 <app-generic-table-referentiel
-  title="Liste des reunions"
+  title="Liste des activités scolaire"
   titleFitre="Reunions"
   [tableColumns]="columns"
-  [tableData]="meetingData"
+  [tableData]="activiteData"
   [tableSizes]="tableSizes"
   [totalElements]="totalElements"
   [currentPage]="currentPage"
   [pageSize]="pageSize"
   [isLoading]="isLoading"
   (pageChange)="changePage($event)"
-  [deleteEndPoint]="deleteEndpoint"
   [showSearch]="false"
   [filtered]="tableFilters"
   (filterChange)="onFilterChange($event.filter, $event.value)"

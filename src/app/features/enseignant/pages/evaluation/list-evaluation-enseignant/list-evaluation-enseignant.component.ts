@@ -1,16 +1,16 @@
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, computed, effect, inject, OnInit } from '@angular/core';
+import { ReactiveFormsModule } from '@angular/forms';
 import { IFilterConfig } from '../../../../../core/filtered-config/FiltreConfiguration';
+import { GenericTableDossierComponent } from '../../../../../core/generic/generic-table-dossier/generic-table-dossier.component';
 import { DetailsEnseignantUtilisateur } from '../../../../../core/models/enseignant/details-enseignant-utilisateur';
 import { ListeEnseignement } from '../../../../../core/models/planification/liste-enseignement';
-import { ListeClasse } from '../../../../../core/models/referentiels/classe';
 import { Matiere } from '../../../../../core/models/referentiels/matiere';
-import { Semestre } from '../../../../../core/models/referentiels/semestre';
+import { SessionSemestre } from '../../../../../core/models/referentiels/session-semestre';
 import { DossierResourceService } from '../../../../administration/dossier-eleve/service/dossier-resource.service';
 import { PlanificationResourceService } from '../../../../administration/planification/services/planification-resource.service';
-import { ReferentielService } from '../../../../administration/referentiel/service/referentiel.service';
+import { ReferentielResourceService } from '../../../../administration/referentiel/service/referentiel-resource.service';
 import { EnseignantService } from '../../../service/enseignant.service';
-import { ReactiveFormsModule } from '@angular/forms';
-import { GenericTableDossierComponent } from '../../../../../core/generic/generic-table-dossier/generic-table-dossier.component';
+import { EnseignementContextService } from '../../../service/enseignement-contexte.service';
 
 @Component({
   selector: 'app-list-evaluation-enseignant',
@@ -51,63 +51,58 @@ export class ListEvaluationEnseignantComponent implements OnInit {
   detailsEnseignant: DetailsEnseignantUtilisateur = {};
   userId: number;
   enseignantId?: number;
+  classeId?: number;
+  titile: string = '';
 
-  private readonly referentielService = inject(ReferentielService);
+
+  private readonly referentielResourceService = inject(ReferentielResourceService);
   private readonly planification = inject(PlanificationResourceService);
-  private readonly enseignantSerivce = inject(EnseignantService);
   private readonly dossierResource = inject(DossierResourceService);
+  private readonly classeContext = inject(EnseignementContextService);
 
   constructor(
   ) {
     this.userId = Number(localStorage.getItem('id'));
+    this.userId = Number(localStorage.getItem('id'));
+    effect(() => {
+      const activeClassId = Number(this.classeContext.activeClasseId());
+      console.log('active classe is', activeClassId);
+      if (activeClassId) {
+        this.classeId = Number(activeClassId);
+        this.chargerLesEvaluations();
+      }
+    });
   }
+
+  readonly libelleClasse = computed(() => {
+    const classes = this.classeContext.mesClasses();
+    const activeId = this.classeContext.activeClasseId();
+    const enseignementActif = classes.find(ens => String(ens.classId) === String(activeId));
+    return enseignementActif?.classe;
+  });
 
   ngOnInit(): void {
-    this.getEnseignementByUtilisateur(this.userId);
-  }
 
-  getEnseignementByUtilisateur(userId: number) {
-    this.enseignantSerivce.getDetailsEnseignantUtilisateur(userId).subscribe({
-      next: (data) => {
-        this.detailsEnseignant = data;
-        this.enseignantId = this.detailsEnseignant?.id;
-        this.chargerLesEvaluations();
-      },
-      error: (err) => (err)
-    });
   }
 
   async chargerLesEvaluations() {
     try {
-      const [classe, matiere, semestre] = await Promise.all([
-        this.getClassList(),
+      const [matiere, semestre] = await Promise.all([
         this.getMatiereList(),
         this.getSemestreList(),
       ]);
 
-      this.initialisationDesFiltres(classe, matiere, semestre);
+      this.initialisationDesFiltres(matiere, semestre);
       this.chargerLesDonnees(false);
     } catch (error) {
       console.error('Erreur chargement données:', error);
     }
   }
 
-  getClassList(): Promise<ListeClasse[]> {
-    return new Promise((resolve, reject) => {
-      this.referentielService.getAllClasses().subscribe({
-        next: (data) => {
-          this.classesList = data;
-          resolve(data);
-        },
-        error: (err) => reject(err)
-      });
-    });
-  }
-
   getMatiereList(): Promise<Matiere[]> {
     return new Promise((resolve, reject) => {
-      this.referentielService.getAllMatieres().subscribe({
-        next: (data) => {
+      this.referentielResourceService.getResourceList('matiere').subscribe({
+        next: (data: any) => {
           this.matiereList = data;
           resolve(data);
         },
@@ -116,10 +111,10 @@ export class ListEvaluationEnseignantComponent implements OnInit {
     });
   }
 
-  getSemestreList(): Promise<Semestre[]> {
+  getSemestreList(): Promise<SessionSemestre[]> {
     return new Promise((resolve, reject) => {
-      this.referentielService.getAllSemestres().subscribe({
-        next: (data) => {
+      this.referentielResourceService.getResourceList('sessionsemestre').subscribe({
+        next: (data: any) => {
           this.semestreList = data;
           resolve(data);
         },
@@ -140,7 +135,7 @@ export class ListEvaluationEnseignantComponent implements OnInit {
     });
   }
 
-  initialisationDesFiltres(classe: any[], matieres: any[], semestre: any[]) {
+  initialisationDesFiltres(matieres: any[], semestre: any[]) {
     this.tableFilters = [
       {
         key: 'nomPrenom',
@@ -149,23 +144,13 @@ export class ListEvaluationEnseignantComponent implements OnInit {
         placeholder: 'Rechercher un élève...'
       },
       {
-        key: 'classe',
-        label: 'Classe',
+        key: 'matiere',
+        label: 'Matière',
         type: 'select',
-        options: classe.map(c => ({
+        options: matieres.map(c => ({
           value: c.id,
           label: c.libelle
         })),
-      },
-
-      {
-        key: 'enseignant',
-        label: 'Enseignement',
-        type: 'select',
-        options: this.enseignementList.map(e => ({
-          value: e.id,
-          label: e.matiere
-        }))
       },
 
       {
@@ -201,13 +186,13 @@ export class ListEvaluationEnseignantComponent implements OnInit {
       const filtreParam = this.construireParametreDeFiltre();
 
       apiCall = this.dossierResource.fetchFilterByElementDataTable(
-        'evaluation/enseignant',
+        'evaluation/classe',
         this.currentPage,
         this.pageSize,
         filtreParam)
 
     } else {
-      apiCall = this.planification.getResourceByIdPaged('evaluation/enseignant', this.enseignantId!, this.currentPage, this.pageSize);
+      apiCall = this.planification.getResourceByIdPaged('evaluation/classe', this.classeId!, this.currentPage, this.pageSize);
     }
     apiCall.subscribe({
       next: (response) => {
@@ -216,7 +201,6 @@ export class ListEvaluationEnseignantComponent implements OnInit {
 
         this.columns = [
           { key: 'titre', header: 'Titre' },
-          { key: 'classe', header: 'Classe' },
           { key: 'matiere', header: 'Matière' },
           { key: 'semestre', header: 'Semestre' },
           { key: 'evaluationType', header: 'Type' },
@@ -242,9 +226,6 @@ export class ListEvaluationEnseignantComponent implements OnInit {
 
     if (this.activeFilters.nomPrenom) {
       filtreObj.nomPrenom = this.activeFilters.nomPrenom;
-    }
-    if (this.activeFilters.classe) {
-      filtreObj.classe = this.activeFilters.classe;
     }
     if (this.activeFilters.matiere) {
       filtreObj.matiere = this.activeFilters.matiere;
@@ -283,7 +264,7 @@ export class ListEvaluationEnseignantComponent implements OnInit {
   resetFilters() {
     this.activeFilters = {};
     this.hasActiveFilters = false;
-    this.initialisationDesFiltres(this.classesList, this.matiereList, this.semestreList);
+    this.initialisationDesFiltres(this.matiereList, this.semestreList);
     this.currentPage = 0;
     this.chargerLesDonnees(false);
   }

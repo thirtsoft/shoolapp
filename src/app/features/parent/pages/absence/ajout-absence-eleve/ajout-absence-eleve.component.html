@@ -1,114 +1,240 @@
 <div class="page-wrapper">
   <div class="content container-fluid">
-    <div class="row">
-      <div class="col-sm-12">
-        <h3 class="page-title text-center mb-2">{{ title }}</h3>
-        <div class="card">
-          <div class="card-body">
-            <form [formGroup]="absenceFormGroup">
-              <div style="margin-top: 5px">
-                <input
-                  type="text"
-                  readonly="true"
-                  hidden="true"
-                  formControlName="id"
-                />
+    <div class="page-header">
+      <div class="row align-items-center">
+        <div class="col-sm-12">
+          <h3 class="page-title">{{ title }}</h3>
+          <p class="text-muted mt-1 mb-0">
+            <i class="fas fa-calendar-times me-1"></i> Gestion des absences des élèves
+          </p>
+        </div>
+      </div>
+    </div>
 
-                <div class="row form-row">
-                  <div class="col-lg-12 col-sm-12">
+    <div class="row mb-3">
+      <div class="col-sm-12">
+        <div class="badge-container">
+          <span class="badge badge-primary">
+            @if (!attendanceRecordId) {
+              <i class="fas fa-plus-circle me-1"></i> Nouvelle absence
+            } @else {
+              <i class="fas fa-edit me-1"></i> Modification absence
+            }
+          </span>
+        </div>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-12">
+        <div class="card">
+          <div class="card-body p-4 p-md-5">
+            <div class="step-indicator">
+              <div class="step active">
+                <span class="step-number">1</span>
+                <span class="step-label">Information</span>
+              </div>
+              <div class="step-line"></div>
+              <div class="step">
+                <span class="step-number">2</span>
+                <span class="step-label">Confirmation</span>
+              </div>
+            </div>
+
+            <form [formGroup]="attendanceRecordFormGroup" (ngSubmit)="ajouterEditAbsence()">
+              <input type="hidden" formControlName="id" />
+
+              <div class="two-columns-layout">
+                <div class="info-column">
+                  <div class="info-section">
+                    <h4 class="section-title">
+                      <i class="fas fa-info-circle me-2"></i>Informations
+                    </h4>
+
                     <div class="form-group">
-                      <label
-                        >Année scolaire
-                        <span class="text-danger">*</span></label
-                      >
-                      <select
-                        class="form-control select"
-                        name="classe"
-                        formControlName="anneeScolaireId"
-                        required=""
-                      >
-                        <option>Selectionnez</option>
-                        <option
-                          *ngFor="let item of anneeScolaireList"
-                          [value]="item.id"
-                        >
-                          {{ item.libelle }}
-                        </option>
+                      <label class="form-label">
+                        type absence <span class="text-danger">*</span>
+                        <i class="fas fa-check-circle ms-1 text-muted"></i>
+                      </label>
+                      <select class="form-select" formControlName="attendanceStatus" required>
+                        <option value="" disabled selected>— Sélectionnez —</option>
+                        @for (item of attendanceStatusList; track item) {
+                          <option [value]="item">
+                            {{ item }}
+                          </option>
+                        }
                       </select>
+                    </div>
+
+                    <!-- Champs spécifiques au RETARD (affichés uniquement si RETARD est sélectionné) -->
+                    @if (attendanceRecordFormGroup.get('attendanceStatus')?.value === 'RETARD') {
+                      <div class="retard-fields">
+                        <div class="form-group">
+                          <label class="form-label">
+                            Cours <span class="text-danger">*</span>
+                            <i class="fas fa-book ms-1 text-muted"></i>
+                          </label>
+                          <select class="form-select" formControlName="courseId" required>
+                            <option value="" disabled selected>— Sélectionnez un cours —</option>
+                            @for (item of coursList; track item.id) {
+                              <option [value]="item.id">
+                                {{ item.libelle }}
+                              </option>
+                            }
+                          </select>
+                          @if (
+                            attendanceRecordFormGroup.get('courseId')?.invalid &&
+                            attendanceRecordFormGroup.get('courseId')?.touched
+                          ) {
+                            <div class="text-danger small">
+                              Le cours est obligatoire pour un retard
+                            </div>
+                          }
+                        </div>
+
+                        <div class="form-group">
+                          <label class="form-label">
+                            Heure prévue (début du cours) <span class="text-danger">*</span>
+                            <i class="fas fa-clock ms-1 text-muted"></i>
+                          </label>
+                          <input
+                            type="time"
+                            class="form-control"
+                            formControlName="expectedTime"
+                            (change)="calculateLateMinutes()"
+                          />
+                        </div>
+
+                        <div class="form-group">
+                          <label class="form-label">
+                            Heure d'arrivée réelle <span class="text-danger">*</span>
+                            <i class="fas fa-clock ms-1 text-muted"></i>
+                          </label>
+                          <input
+                            type="time"
+                            class="form-control"
+                            formControlName="arrivalTime"
+                            (change)="calculateLateMinutes()"
+                          />
+                        </div>
+
+                        <div class="form-group">
+                          <label class="form-label">
+                            Minutes de retard
+                            <i class="fas fa-hourglass-half ms-1 text-muted"></i>
+                          </label>
+                          <input
+                            type="number"
+                            class="form-control"
+                            formControlName="lateMinutes"
+                            readonly
+                            [class.is-invalid]="lateMinutes > 0 && !isRetardJustifie()"
+                          />
+                          <small class="text-muted">Calculé automatiquement</small>
+                        </div>
+                      </div>
+                    }
+
+                    <div class="form-group">
+                      <label class="form-label">
+                        Motif <span class="text-danger">*</span>
+                        <i class="fas fa-pen ms-1 text-muted"></i>
+                      </label>
+                      <textarea
+                        class="form-control"
+                        formControlName="justificationReason"
+                        rows="4"
+                        placeholder="Décrivez le motif de l'absence..."
+                      ></textarea>
                     </div>
                   </div>
                 </div>
-              </div>
 
-              <div class="row form-row">
-                <div class="col-lg-12 col-sm-12">
-                  <div class="form-group">
-                    <label>Semestre <span class="text-danger">*</span></label>
-                    <select
-                      class="form-control select"
-                      name="semestre"
-                      formControlName="semestre"
-                      required=""
-                    >
-                      <option>Selectionnez</option>
-                      <option
-                        *ngFor="let item of semestreList"
-                        [value]="item.id"
-                      >
-                        {{ item.libelle }}
-                      </option>
-                    </select>
+                <div class="confirmation-column">
+                  <div class="info-section">
+                    <h4 class="section-title">
+                      <i class="fas fa-check-circle me-2"></i>Confirmation
+                    </h4>
+
+                    <div class="form-group">
+                      <label class="form-label">
+                        Année scolaire <span class="text-danger">*</span>
+                        <i class="fas fa-calendar-alt ms-1 text-muted"></i>
+                      </label>
+                      <select class="form-select" formControlName="anneeScolaireId" required>
+                        <option value="" disabled selected>— Sélectionnez une année —</option>
+                        @for (item of anneeScolaireList; track item.id) {
+                          <option [value]="item.id">{{ item.libelle }}</option>
+                        }
+                      </select>
+                    </div>
+
+                    <div class="form-group">
+                      <label class="form-label">
+                        Semestre <span class="text-danger">*</span>
+                        <i class="fas fa-book-open ms-1 text-muted"></i>
+                      </label>
+                      <select class="form-select" formControlName="sessionSemestre" required>
+                        <option value="" disabled selected>— Sélectionnez un semestre —</option>
+                        @for (item of sessionSemestreList; track item.sessionSemestreId) {
+                          <option [value]="item.sessionSemestreId">
+                            {{ item.semestre }} - {{ item.anneeScolaire }}
+                          </option>
+                        }
+                      </select>
+                      @if (
+                        attendanceRecordFormGroup!.get('sessionSemestre')?.invalid &&
+                        attendanceRecordFormGroup!.get('sessionSemestre')?.touched
+                      ) {
+                        <div class="invalid-feedback">Le semestre est requis</div>
+                      }
+                    </div>
+
+                    <div class="form-group">
+                      <label class="form-label">
+                        Date absence <span class="text-danger">*</span>
+                        <i class="fas fa-calendar-day ms-1 text-muted"></i>
+                      </label>
+                      <input
+                        type="date"
+                        class="form-control"
+                        formControlName="attendanceDate"
+                        required
+                      />
+                    </div>
+
+                    <div class="form-group placeholder-field"></div>
+                    <div class="form-group placeholder-field"></div>
                   </div>
                 </div>
               </div>
 
-              <div class="row form-row">
-                <div class="col-lg-12 col-sm-12">
-                  <div class="form-group">
-                    <label
-                      >Date absence <span class="text-danger">*</span></label
-                    >
-                    <input
-                      type="date"
-                      required
-                      class="form-control"
-                      formControlName="date_declaration"
-                    />
-                  </div>
-                </div>
+              <div class="form-actions">
+                <button type="button" class="btn btn-secondary" (click)="goBack()">
+                  <i class="fas fa-times me-2"></i>Annuler
+                </button>
+                <button
+                  type="submit"
+                  class="btn btn-primary"
+                  [disabled]="!attendanceRecordFormGroup.valid"
+                >
+                  <i class="fas fa-save me-2"></i>
+                  @if (!attendanceRecordId) {
+                    Enregistrer l'absence
+                  } @else {
+                    Modifier l'absence
+                  }
+                </button>
               </div>
 
-              <div class="row form-row">
-                <div class="col-lg-12 col-sm-12">
-                  <div class="form-group">
-                    <label>Motif <span class="text-danger">*</span></label>
-                    <textarea
-                      class="form-control select"
-                      formControlName="motif"
-                      required=""
-                    ></textarea>
-                  </div>
-                </div>
+              <div class="alert-help mt-4" role="alert">
+                <i class="fas fa-info-circle me-2"></i>
+                <span
+                  >Les absences permettent de suivre l'assiduité des élèves tout au long de l'année
+                  scolaire.</span
+                >
               </div>
             </form>
-            <div style="margin-top: 75px col-sm-12">
-              <button
-                type="button"
-                class="btn btn-primary si_accept_confirm float-lg-right"
-                id="btn-yes"
-                [disabled]="!absenceFormGroup.valid"
-                (click)="ajouterEditAbsence()"
-              >
-                Enregistrer
-              </button>
-              <button
-                type="button"
-                class="btn btn-danger si_accept_cancel float-left"
-                routerLink="/parent/absence"
-              >
-                Annuler
-              </button>
-            </div>
           </div>
         </div>
       </div>

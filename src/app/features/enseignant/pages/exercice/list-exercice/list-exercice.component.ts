@@ -1,12 +1,10 @@
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, computed, effect, inject, OnInit } from '@angular/core';
 import { IFilterConfig } from '../../../../../core/filtered-config/FiltreConfiguration';
 import { GenericTableDossierComponent } from '../../../../../core/generic/generic-table-dossier/generic-table-dossier.component';
 import { DetailsEnseignantUtilisateur } from '../../../../../core/models/enseignant/details-enseignant-utilisateur';
-import { ListeClasse } from '../../../../../core/models/referentiels/classe';
 import { CommonService } from '../../../../../core/services/common.service';
 import { PlanificationResourceService } from '../../../../administration/planification/services/planification-resource.service';
-import { ReferentielService } from '../../../../administration/referentiel/service/referentiel.service';
-import { EnseignantService } from '../../../service/enseignant.service';
+import { EnseignementContextService } from '../../../service/enseignement-contexte.service';
 
 @Component({
   selector: 'app-list-exercice',
@@ -45,39 +43,42 @@ export class ListExerciceComponent implements OnInit {
   detailsEnseignant: DetailsEnseignantUtilisateur = {};
   userId: number;
   enseignantId?: number;
+  classeId?: number;
+  titile: string = '';
 
   private readonly planificationResource = inject(PlanificationResourceService);
-  private readonly referentielService = inject(ReferentielService)
-  private readonly enseignantSerivce = inject(EnseignantService);
   private readonly commonService = inject(CommonService);
+  private readonly classeContext = inject(EnseignementContextService);
+
+  readonly libelleClasse = computed(() => {
+    const classes = this.classeContext.mesClasses();
+    const activeId = this.classeContext.activeClasseId();
+    const enseignementActif = classes.find(ens => String(ens.classId) === String(activeId));
+    return enseignementActif?.classe || '5ème A';
+  });
 
   constructor(
   ) {
     this.userId = Number(localStorage.getItem('id'));
+    effect(() => {
+      const activeClasseId = this.classeContext.activeClasseId();
+      console.log('active classe is', this.classeId);
+      if (activeClasseId) {
+        this.classeId = Number(activeClasseId);
+         this.chargerLesExercices();
+      }
+    });
   }
 
   ngOnInit(): void {
-    this.getEnseignementByUtilisateur(this.userId);
-  }
-
-  getEnseignementByUtilisateur(userId: number) {
-    this.enseignantSerivce.getDetailsEnseignantUtilisateur(userId).subscribe({
-      next: (data) => {
-        this.detailsEnseignant = data;
-        this.enseignantId = this.detailsEnseignant?.id;
-        this.chargerLesExercices();
-      },
-      error: (err) => (err)
-    });
+   
   }
 
   async chargerLesExercices() {
     try {
       await Promise.all([
-        this.getClassList(),
         this.getLivreList(),
         this.getMoisList(),
-        this.getAnneesList(),
       ]);
 
       this.initialisationDesFiltres();
@@ -85,18 +86,6 @@ export class ListExerciceComponent implements OnInit {
     } catch (error) {
       console.error('Erreur chargement données:', error);
     }
-  }
-
-  getClassList(): Promise<ListeClasse[]> {
-    return new Promise((resolve, reject) => {
-      this.referentielService.getAllClasses().subscribe({
-        next: (data) => {
-          this.classesList = data;
-          resolve(data);
-        },
-        error: (err) => reject(err)
-      });
-    });
   }
 
   getLivreList(): Promise<any> {
@@ -123,18 +112,6 @@ export class ListExerciceComponent implements OnInit {
     });
   }
 
-  getAnneesList(): Promise<any[]> {
-    return new Promise((resolve, reject) => {
-      this.commonService.getAllAnnees().subscribe({
-        next: (data) => {
-          this.anneesList = data;
-          resolve(data);
-        },
-        error: (err) => reject(err)
-      });
-    });
-  }
-
   initialisationDesFiltres() {
     this.tableFilters = [
       {
@@ -144,19 +121,10 @@ export class ListExerciceComponent implements OnInit {
         placeholder: 'Rechercher un exercie...'
       },
       {
-        key: 'classe',
-        label: 'Classe',
-        type: 'select',
-        options: this.classesList.map(c => ({
-          value: c.id,
-          label: c.libelle
-        })),
-      },
-      {
         key: 'livre',
         label: 'Livre',
         type: 'select',
-        options: this.livreList.map((c:any) => ({
+        options: this.livreList.map((c: any) => ({
           value: c.id,
           label: c.titre
         })),
@@ -169,15 +137,6 @@ export class ListExerciceComponent implements OnInit {
           value: m.id,
           label: `${m.mois}`
         }))
-      },
-      {
-        key: 'annee',
-        label: 'Année',
-        type: 'select',
-        options: this.anneesList.map(a => ({
-          value: a.annee,
-          label: a.annee
-        })),
       },
     ];
   }
@@ -201,13 +160,13 @@ export class ListExerciceComponent implements OnInit {
       const filtreParam = this.construireParametreFiltre();
 
       apiCall = this.planificationResource.fetchFilterDataTable(
-        'planification/exercice/enseignant',
+        'planification/exercice/classe',
         this.currentPage,
         this.pageSize,
         filtreParam)
 
     } else {
-      apiCall = this.planificationResource.getResourceByIdPaged('planification/exercice/enseignant', this.enseignantId!, this.currentPage, this.pageSize);
+      apiCall = this.planificationResource.getResourceByIdPaged('planification/exercice/classe', this.classeId!, this.currentPage, this.pageSize);
     }
     apiCall.subscribe({
       next: (response) => {
@@ -217,7 +176,6 @@ export class ListExerciceComponent implements OnInit {
         this.columns = [
           { key: 'titre', header: 'Titre' },
           { key: 'livre', header: 'Livre' },
-          { key: 'classe', header: 'Classe' },
           { key: 'page', header: 'Page' },
           { key: 'numeroExercice', header: 'N°' },
           { key: 'dateDebut', header: 'Date' },
@@ -241,25 +199,13 @@ export class ListExerciceComponent implements OnInit {
     if (this.activeFilters.titre) {
       filtreObj.titre = this.activeFilters.titre;
     }
-
-    if (this.activeFilters.classe) {
-      filtreObj.classe = this.activeFilters.classe;
-    }
     if (this.activeFilters.livre) {
       filtreObj.livre = this.activeFilters.livre;
-    }
-    if (this.activeFilters?.enseignant) {
-      filtreObj.enseignant = this.activeFilters.enseignant;
     }
     if (this.activeFilters.mois) {
       filtreObj.mois = this.activeFilters.mois;
     }
-    if (this.activeFilters.annee) {
-      filtreObj.annee = this.activeFilters.annee;
-    }
-
     return Object.keys(filtreObj).length > 0 ? filtreObj : null;
-
   }
 
   get totalPages(): number {

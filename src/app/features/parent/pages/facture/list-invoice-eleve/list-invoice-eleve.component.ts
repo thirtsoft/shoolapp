@@ -33,7 +33,6 @@ export class ListInvoiceEleveComponent implements OnInit {
 
   etatfactureOptions: any[] = [];
   moisList: any[] = [];
-  anneeList: any[] = [];
 
   tableFilters: IFilterConfig[] = [];
   activeFilters: any = {};
@@ -59,8 +58,7 @@ export class ListInvoiceEleveComponent implements OnInit {
     try {
       await Promise.all([
         this.getStatusFactureList(),
-        this.getMoisList(),
-        this.getAnneesList()
+        this.getMoisList()
       ]);
       this.initialisationDesFiltres();
       this.chargerLesDonnees(false);
@@ -94,18 +92,6 @@ export class ListInvoiceEleveComponent implements OnInit {
     });
   }
 
-  getAnneesList(): Promise<any[]> {
-    return new Promise((resolve, reject) => {
-      this.commonService.getAllAnnees().subscribe({
-        next: (data) => {
-          this.anneeList = data;
-          resolve(data);
-        },
-        error: (err) => reject(err)
-      });
-    });
-  }
-
   initialisationDesFiltres() {
     this.tableFilters = [
       {
@@ -130,15 +116,6 @@ export class ListInvoiceEleveComponent implements OnInit {
         options: this.moisList.map(m => ({
           value: m.id,
           label: m.mois
-        }))
-      },
-      {
-        key: 'annee',
-        label: 'Année',
-        type: 'select',
-        options: this.anneeList.map(a => ({
-          value: a.annee,
-          label: a.annee
         }))
       },
     ];

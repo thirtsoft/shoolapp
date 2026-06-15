@@ -17,39 +17,33 @@ import { PlanificationResourceService } from '../../../../administration/planifi
 export class DetailEvaluationEnseignantComponent implements OnInit {
 
   errorMessage?: string;
-  evaluationId: number;
+  evaluationId?: number;
   isEdit: boolean = false;
   detailsEvaluation: DetailsEvaluation = {};
   isEditMode = false;
-  title: string = ''
+  title = "Détails évaluation";
 
   disableAddButton = false;
-  libelleEvaluation: string = '';
 
-  private readonly planification = inject(PlanificationResourceService);
-  private readonly toastService = inject(ToastrService)
-  private readonly router = inject(Router);
-  private readonly activeRoute = inject(ActivatedRoute);
   private readonly modalService = inject(NgbModal);
-
-  constructor(
-  ) {
-    this.evaluationId = this.activeRoute.snapshot.params['id'];
-  }
+  private readonly planification = inject(PlanificationResourceService);
+  private readonly toastService = inject(ToastrService);
+  private readonly activeRoute = inject(ActivatedRoute);
+  private readonly router = inject(Router);
 
   ngOnInit(): void {
+    this.evaluationId = this.activeRoute.snapshot.params['id'];
     if (this.evaluationId != null && this.evaluationId != undefined) {
       this.getDetailsEvaluation(this.evaluationId);
     }
   }
 
-  getDetailsEvaluation(evalId: number) {
-    this.planification.getDetailsResource('evaluation', evalId).subscribe({
+  getDetailsEvaluation(devoirId: number) {
+    this.planification.getDetailsResource('evaluation', devoirId).subscribe({
       next: (data: any) => {
         this.detailsEvaluation = data;
-        this.title = this.detailsEvaluation?.evaluationType!;
       },
-      error: (data) => {
+      error: (data: any) => {
         console.log('error', 'Erreur lors de la récupération des information du devoir : ' + data.error);
         this.toastService.error('error', 'Erreur lors de la création : ' + data.error);
       }
@@ -57,19 +51,17 @@ export class DetailEvaluationEnseignantComponent implements OnInit {
     );
   }
 
-  openConfirmationDialog(action: 'envoyer' | 'valider'): void {
+  openConfirmationDialog(action: 'valider'): void {
     const modalRef = this.modalService.open(ConfirmationDialogModalComponent, {
       centered: true,
       backdrop: 'static',
     });
 
     const titles: { [key: string]: string } = {
-      envoyer: 'Confirmer l\'envoie',
       valider: 'Confirmer la validation',
     };
 
     const messages: { [key: string]: string } = {
-      envoyer: 'Êtes-vous sûr de vouloir envoyer cette évaluation ?',
       valider: 'Êtes-vous sûr de vouloir valider cette évaluation ?',
     };
 
@@ -81,25 +73,23 @@ export class DetailEvaluationEnseignantComponent implements OnInit {
     modalRef.result
       .then((result) => {
         if (result) {
-          this.changerEtat(action, this.evaluationId);
+          this.changerEtat(action, this.evaluationId!);
         }
       })
       .catch(() => { });
   }
 
-  changerEtat(action: 'envoyer' | 'valider', evalId: number) {
+  changerEtat(action: 'valider', evalId: number) {
     this.planification.changerEtatResource('evaluation', evalId).subscribe({
-      next: (data) => {
-        console.log('response', data);
+      next: (data: any) => {
 
         const successMessages: { [key: string]: string } = {
-          envoyer: `Evaluation ${this.detailsEvaluation?.titre} envoyée avec succès.`,
           valider: `Evaluation ${this.detailsEvaluation?.titre} validée avec succès.`,
         };
         this.toastService.success('succès', successMessages[action]);
-        this.getDetailsEvaluation(this.evaluationId);
+        this.getDetailsEvaluation(this.evaluationId!);
       },
-      error: (data) => {
+      error: (data: any) => {
         console.log('error', 'Erreur lors de la récupération des information du devoir : ' + data.error);
         this.toastService.error('error', 'Erreur lors de la création : ' + data.error);
       }
@@ -107,6 +97,15 @@ export class DetailEvaluationEnseignantComponent implements OnInit {
     );
   }
 
+  getStatusClass(): string {
+    const etat = this.detailsEvaluation.etat;
+    if (etat === 'Validée') return 'status-validated';
+    if (etat === 'Envoyée') return 'status-sent';
+    if (etat === 'Remise') return 'status-remise';
+    return '';
+  }
+
+  imprimerUneEvaluation(event: any) { }
 
   goBack() {
     window.history.back();

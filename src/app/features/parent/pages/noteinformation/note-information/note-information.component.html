@@ -1,0 +1,22 @@
+<app-generic-table-referentiel
+  title="Liste des notes d'informations"
+  titleFitre="Reunions"
+  [tableColumns]="columns"
+  [tableData]="noteInformationData"
+  [tableSizes]="tableSizes"
+  [totalElements]="totalElements"
+  [currentPage]="currentPage"
+  [pageSize]="pageSize"
+  [isLoading]="isLoading"
+  [isNoAjout]="true"
+  [isEyesIcon]="true"
+  (pageChange)="changePage($event)"
+  [showSearch]="false"
+  [filtered]="tableFilters"
+  (filterChange)="onFilterChange($event.filter, $event.value)"
+  [showFilters]="true"
+  (resetFilters)="resetFilters()"
+  (sizeChange)="changeSize($event)"
+  detailButtonLink="/parent/information/details"
+>
+</app-generic-table-referentiel>

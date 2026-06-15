@@ -1,0 +1,166 @@
+<div class="page-wrapper">
+  <div class="content container-fluid">
+    <div class="page-header">
+      <div class="row align-items-center">
+        <div class="col-sm-6 col-auto">
+          <h3 class="page-title">Saisie des notes</h3>
+          <p class="text-muted mt-1 mb-0">
+            <i class="fas fa-chart-line me-1"></i> Gestion des notes des élèves
+          </p>
+        </div>
+        <div class="col-sm-6 col-auto text-end">
+          <div class="notes-summary">
+            <span class="badge-summary"
+              >Moyenne : <strong>{{ moyenneClasse }}/20</strong></span
+            >
+            <span class="badge-summary"
+              >Max : <strong>{{ noteMaximale }}/20</strong></span
+            >
+            <span class="badge-summary"
+              >Min : <strong>{{ noteMinimale }}/20</strong></span
+            >
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-body p-4 p-md-5">
+
+          <div class="evaluation-selector">
+            <div class="form-group full-width">
+              <label class="form-label">
+                <i class="fas fa-clipboard-list me-1"></i> Choisir une évaluation
+                <span class="text-danger">*</span>
+              </label>
+              <select class="form-select" (change)="onEvaluationChange($event)">
+                <option value="" disabled selected>— Sélectionnez une évaluation —</option>
+                @for (evaluation of evaluationList; track evaluation.id) {
+                  <!--  <option [value]="evaluation.id">
+                    {{ evaluation.titre }} ({{ evaluation.typeEvaluation}} - Coef.
+                    {{ evaluation.coefficient }})
+                  </option> -->
+
+                  <option [value]="evaluation.id">
+                    {{ evaluation.titre }} {{ evaluation.evaluationType }} - Coef.
+                  </option>
+                }
+              </select>
+            </div>
+
+            @if (selectedEvaluationForNotes) {
+              <div class="selected-info">
+                <span class="badge-info">
+                  <i class="fas fa-book-open me-1"></i> {{ selectedEvaluationForNotes.titre }}
+                </span>
+                <span class="badge-info">
+                  <i class="fas fa-calendar-alt me-1"></i>
+                  {{ selectedEvaluationForNotes.date | date: 'dd/MM/yyyy' }}
+                </span>
+                <span class="badge-info">
+                  <i class="fas fa-calculator me-1"></i> Coefficient ×{{
+                    selectedEvaluationForNotes.coefficient
+                  }}
+                </span>
+              </div>
+            }
+          </div>
+        
+
+        @if (selectedEvaluationForNotes) {
+          <!-- Actions -->
+          <div class="form-actions">
+            <button class="btn btn-primary" (click)="sauvegarderNotes()">
+              <i class="fas fa-save me-2"></i> Sauvegarder toutes les notes
+            </button>
+          </div>
+
+          <!-- Tableau des notes -->
+          <div class="table-responsive">
+            <table class="data-table notes-table">
+              <thead>
+                <tr>
+                  <th class="sticky-col">Élève</th>
+                  <th class="text-center">Note /{{ selectedEvaluationForNotes.noteMax }}</th>
+                  <th class="text-center">
+                    Coefficient ×{{ selectedEvaluationForNotes.coefficient }}
+                  </th>
+                  <th>Appréciation</th>
+                </tr>
+              </thead>
+              <tbody>
+                @for (note of notesData(); track note.eleveId; let i = $index) {
+                  <tr>
+                    <td class="sticky-col">
+                      <div class="eleve-cell">
+                        <div class="eleve-avatar-small">
+                          @if (note.prenom && note.nom) {
+                            {{ (note.prenom.charAt(0) || '') + (note.nom.charAt(0) || '') }}
+                          } @else {
+                            {{ note.eleveId }}
+                          }
+                        </div>
+                        <span class="eleve-name">
+                          @if (note.nom && note.prenom) {
+                            {{ note.nom }} {{ note.prenom }}
+                          } @else {
+                            Élève {{ note.eleveId }}
+                          }
+                        </span>
+                      </div>
+                    </td>
+                    <td class="text-center">
+                      <input
+                        type="number"
+                        class="note-input"
+                        [(ngModel)]="note.noteValue"
+                        (change)="updateNote(note.eleveId, note.noteValue)"
+                        min="0"
+                        [max]="selectedEvaluationForNotes.noteMax || 20"
+                        step="0.5"
+                      />
+                    </td>
+                    <td class="text-center">
+                      <span class="coefficient-badge"
+                        >×{{ selectedEvaluationForNotes.coefficient || 1 }}</span
+                      >
+                    </td>
+                    <td>
+                      <input
+                        type="text"
+                        class="appreciation-input"
+                        [(ngModel)]="note.appreciation"
+                        (change)="updateAppreciation(note.eleveId, note.appreciation)"
+                        placeholder="Saisir une appréciation..."
+                      />
+                    </td>
+                  </tr>
+                }
+              </tbody>
+            </table>
+          </div>
+        } @else if (selectedClasseId && !selectedEvaluationForNotes) {
+          <div class="empty-notes-state">
+            <i class="fas fa-clipboard-list fa-3x"></i>
+            <p>Veuillez sélectionner une évaluation pour commencer la saisie des notes</p>
+          </div>
+        } @else if (!selectedClasseId) {
+          <div class="empty-notes-state">
+            <i class="fas fa-chalkboard-user fa-3x"></i>
+            <p>Veuillez d'abord sélectionner une classe</p>
+          </div>
+        }
+
+        <!-- Message d'aide -->
+        <div class="alert-help mt-4" role="alert">
+          <i class="fas fa-info-circle me-2"></i>
+          <span>
+            Les notes doivent être comprises entre 0 et
+            {{ selectedEvaluationForNotes?.noteMax || 20 }}. Saisissez une appréciation pour chaque
+            élève afin de suivre ses progrès.
+          </span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

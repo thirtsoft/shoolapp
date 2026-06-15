@@ -1,0 +1,163 @@
+<div class="page-wrapper">
+  <div class="content container-fluid">
+    <div class="page-header">
+      <div class="row align-items-center">
+        <div class="col-sm-12">
+          <h3 class="page-title">{{ title }}</h3>
+        </div>
+      </div>
+    </div>
+
+    <div class="badge-container">
+      <span class="badge badge-primary">
+        <i class="fas fa-plus-circle me-1"></i>
+        @if (!isEdit) {
+          Faire une demande de congé
+        } @else {
+          Modification une demande
+        }
+      </span>
+    </div>
+
+    <div class="card">
+      <div class="card-body p-4 p-md-5">
+        <div class="step-indicator">
+          <div class="step active">
+            <span class="step-number">1</span>
+            <span class="step-label">Rédaction</span>
+          </div>
+          <div class="step-line"></div>
+          <div class="step">
+            <span class="step-number">2</span>
+            <span class="step-label">Confirmation</span>
+          </div>
+        </div>
+
+        <form [formGroup]="congeFormGroup" (ngSubmit)="ajouterEditUneDemandeConge()">
+          <input type="hidden" formControlName="id" />
+
+          <div class="enseignement-item">
+            <div class="row form-row">
+              <div class="col-lg-4 col-sm-12">
+                <div class="form-group">
+                  <label class="form-label">
+                    Object congé <span class="text-danger">*</span>
+                    <i class="fas fa-tag ms-1 text-muted"></i>
+                  </label>
+                  <input
+                    type="text"
+                    class="form-control"
+                    formControlName="objet"
+                    placeholder="Ex: Voyage urgence"
+                    [class.is-invalid]="
+                      congeFormGroup!.get('objet')?.invalid && congeFormGroup!.get('objet')?.touched
+                    "
+                  />
+                  @if (
+                    congeFormGroup!.get('objet')?.invalid && congeFormGroup!.get('objet')?.touched
+                  ) {
+                    <div class="invalid-feedback">L'objet est requis</div>
+                  }
+                </div>
+              </div>
+
+              <div class="col-lg-4 col-sm-12">
+                <div class="form-group">
+                  <label class="form-label">
+                    Date début <span class="text-danger">*</span>
+                    <i class="fas fa-calendar-alt ms-1 text-muted"></i>
+                  </label>
+                  <input
+                    type="date"
+                    class="form-control"
+                    formControlName="dateDebut"
+                    required
+                    [class.is-invalid]="
+                      congeFormGroup!.get('dateDebut')?.invalid &&
+                      congeFormGroup!.get('dateDebut')?.touched
+                    "
+                  />
+                  @if (
+                    congeFormGroup!.get('dateDebut')?.invalid &&
+                    congeFormGroup!.get('dateDebut')?.touched
+                  ) {
+                    <div class="invalid-feedback">La date début est requise</div>
+                  }
+                </div>
+              </div>
+
+              <div class="col-lg-4 col-sm-12">
+                <div class="form-group">
+                  <label class="form-label">
+                    Date fin <span class="text-danger">*</span>
+                    <i class="fas fa-calendar-alt ms-1 text-muted"></i>
+                  </label>
+                  <input
+                    type="date"
+                    class="form-control"
+                    formControlName="dateFin"
+                    required
+                    [class.is-invalid]="
+                      congeFormGroup!.get('dateFin')?.invalid &&
+                      congeFormGroup!.get('dateFin')?.touched
+                    "
+                  />
+                  @if (
+                    congeFormGroup!.get('dateDebut')?.invalid &&
+                    congeFormGroup!.get('dateDebut')?.touched
+                  ) {
+                    <div class="invalid-feedback">La date fin est requise</div>
+                  }
+                </div>
+              </div>
+            </div>
+
+            <div class="row form-row">
+              <div class="col-12">
+                <label class="form-label">
+                  Description <span class="text-danger">*</span>
+                  <i class="fas fa-align-left ms-1 text-muted"></i>
+                </label>
+                <div class="ngx-editor-word-wrapper">
+                  <ngx-editor-menu [editor]="editor" [toolbar]="toolbar"></ngx-editor-menu>
+
+                  <div class="word-page-container">
+                    <div class="word-document-page">
+                      <ngx-editor
+                        [editor]="editor"
+                        formControlName="description"
+                        placeholder="Saisissez le contenu de la note d'information..."
+                      ></ngx-editor>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="form-actions">
+            <button type="button" class="btn btn-secondary" (click)="goBack()">
+              <i class="fas fa-times me-2"></i>Annuler
+            </button>
+            <button type="submit" class="btn btn-primary" [disabled]="!congeFormGroup.valid">
+              <i class="fas fa-save me-2"></i>
+              @if (!isEdit) {
+                Enregistrer la demande
+              } @else {
+                Modifier la demande
+              }
+            </button>
+          </div>
+
+          <div class="alert-help mt-4" role="alert">
+            <i class="fas fa-info-circle me-2"></i>
+            <span>
+              Les congés d'information permettent de communiquer des messages importants à
+              l'ensemble de la communauté scolaire.
+            </span>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>

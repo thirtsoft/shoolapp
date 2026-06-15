@@ -46,7 +46,7 @@ export class ChoisirEleveComponent implements OnInit {
   afficherLesEleves(): any[] {
     return this.eleveList;
   }
-  
+
   getAvatar(eleve: any): string {
     const prenom = (eleve?.prenom || '').toLowerCase();
     const prenomsFeminins = [

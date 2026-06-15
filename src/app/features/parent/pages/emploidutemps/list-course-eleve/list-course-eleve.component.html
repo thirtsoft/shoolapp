@@ -1,1 +1,20 @@
-<p>list-course-eleve works!</p>
+<app-generic-table-dossier
+  title="Liste des cours de la classe"
+  titleFitre="cours"
+  [tableColumns]="columns"
+  [tableData]="coursData"
+  [isLoading]="isLoading"
+  [isNoAjout]="true"
+  [tableSizes]="tableSizes"
+  [totalElements]="totalElements"
+  [currentPage]="currentPage"
+  [pageSize]="pageSize"
+  (pageChange)="changePage($event)"
+  [showSearch]="false"
+  [filtered]="tableFilters"
+  (filterChange)="onFilterChange($event.filter, $event.value)"
+  [showFilters]="true"
+  (resetFilters)="resetFilters()"
+  (sizeChange)="changeSize($event)"
+>
+</app-generic-table-dossier>

@@ -2,7 +2,7 @@ import { Component, inject, OnInit } from '@angular/core';
 import { GenericTableReferentielComponent } from '../../../../core/generic/generic-table-referentiel/generic-table-referentiel.component';
 import { IFilterConfig } from '../../../../core/filtered-config/FiltreConfiguration';
 import { CommonService } from '../../../../core/services/common.service';
-import { ReferentielResourceService } from '../../../administration/referentiel/service/referentiel-resource.service';
+import { PlanificationResourceService } from '../../../administration/planification/services/planification-resource.service';
 
 @Component({
   selector: 'app-liste-evenement',
@@ -34,7 +34,7 @@ export class ListeEvenementComponent implements OnInit {
   activeFilters: any = {};
   hasActiveFilters: boolean = false;
 
-  private readonly refentielResource = inject(ReferentielResourceService);
+  private readonly refentielResourceService = inject(PlanificationResourceService);
   private readonly commonService = inject(CommonService);
 
   ngOnInit(): void {
@@ -44,9 +44,7 @@ export class ListeEvenementComponent implements OnInit {
   async chargerLesEvenements() {
     try {
       await Promise.all([
-        this.getStatusEvenementList(),
         this.getMoisList(),
-        this.getAnneesList()
       ]);
       this.initialisationDesFiltres();
       this.chargerLesDonnees(false);
@@ -55,35 +53,12 @@ export class ListeEvenementComponent implements OnInit {
       console.error('Erreur chargement données:', error);
     }
   }
-  getStatusEvenementList(): Promise<any[]> {
-    return new Promise((resolve, reject) => {
-      this.commonService.getAllStatusEvenements().subscribe({
-        next: (data) => {
-          this.statusEvenementOptions = data;
-          resolve(data);
-        },
-        error: (err) => reject(err)
-      });
-    });
-  }
 
   getMoisList(): Promise<any[]> {
     return new Promise((resolve, reject) => {
       this.commonService.getAllMois().subscribe({
         next: (data) => {
           this.moisList = data;
-          resolve(data);
-        },
-        error: (err) => reject(err)
-      });
-    });
-  }
-
-  getAnneesList(): Promise<any[]> {
-    return new Promise((resolve, reject) => {
-      this.commonService.getAllAnnees().subscribe({
-        next: (data) => {
-          this.anneeList = data;
           resolve(data);
         },
         error: (err) => reject(err)
@@ -100,30 +75,12 @@ export class ListeEvenementComponent implements OnInit {
         placeholder: 'Rechercher un évenement...'
       },
       {
-        key: 'etat',
-        label: 'Status',
-        type: 'select',
-        options: this.statusEvenementOptions.map(e => ({
-          value: e.id,
-          label: e.status
-        }))
-      },
-      {
         key: 'mois',
         label: 'Mois',
         type: 'select',
         options: this.moisList.map(m => ({
           value: m.id,
           label: m.mois
-        }))
-      },
-      {
-        key: 'annee',
-        label: 'Année',
-        type: 'select',
-        options: this.anneeList.map(a => ({
-          value: a.annee,
-          label: a.annee
         }))
       },
     ];
@@ -147,14 +104,14 @@ export class ListeEvenementComponent implements OnInit {
 
       const filtreParam = this.construireLesParamereDeFiltre();
 
-      apiCall = this.refentielResource.fetchFilterDataTable(
-        'evenement/posted',
+      apiCall = this.refentielResourceService.fetchFilterDataTable(
+        'planification/activitespubliees',
         this.currentPage,
         this.pageSize,
         filtreParam)
 
     } else {
-      apiCall = this.refentielResource.getResourcePaged('evenement/posted', this.currentPage, this.pageSize);
+      apiCall = this.refentielResourceService.getResourcePaged('planification/activitespubliees', this.currentPage, this.pageSize);
     }
     apiCall.subscribe({
       next: (response) => {
@@ -163,9 +120,10 @@ export class ListeEvenementComponent implements OnInit {
 
         this.columns = [
           { key: 'libelle', header: 'Libellé' },
-          { key: 'dateEvenement', header: 'Date' },
-          { key: 'libelleEtat', header: 'Etat' },
-          { key: 'description', header: 'Description' },
+          { key: 'type', header: 'Type événement' },
+          { key: 'typeActivite', header: 'Type activité' },
+          { key: 'date', header: 'Date' },
+          { key: 'heure', header: 'Heure' },
         ]
 
         this.evenementData = this.evenementData.map((item: any) => ({
@@ -187,17 +145,8 @@ export class ListeEvenementComponent implements OnInit {
     if (this.activeFilters.libelle) {
       filtreObj.libelle = this.activeFilters.libelle;
     }
-    if (this.activeFilters.nomPrenom) {
-      filtreObj.nomPrenom = this.activeFilters.nomPrenom;
-    }
-    if (this.activeFilters.etat) {
-      filtreObj.etat = this.activeFilters.etat;
-    }
     if (this.activeFilters.mois) {
       filtreObj.mois = this.activeFilters.mois;
-    }
-    if (this.activeFilters.annee) {
-      filtreObj.annee = this.activeFilters.annee;
     }
     return Object.keys(filtreObj).length > 0 ? filtreObj : null;
   }

@@ -3,10 +3,10 @@
     <div class="page-header">
       <div class="row">
         <div class="col-sm-7 col-auto">
-          <h3 class="page-title">Les Détails de la Facture</h3>
+          <h3 class="page-title">Facture</h3>
           <ul class="breadcrumb">
             <li class="breadcrumb-item">
-              <a [routerLink]="'/parent/'">Tableau de bord</a>
+              <a [routerLink]="'/parent/dashboard'">Tableau de bord</a>
             </li>
             <li class="breadcrumb-item active">{{ title }}</li>
           </ul>
@@ -18,205 +18,168 @@
       <div class="col-sm-12">
         <div class="card">
           <div class="card-body">
-            <!-- Page Content -->
-
-            <div class="invoice-item">
-              <div class="row">
-                <div class="col-md-6">
-                  <div class="invoice-logo">
-                    <img src="assets/img/logo-dauphin.png" alt="logo" />
-                  </div>
+            <div class="invoice-header">
+              <div class="invoice-header-left">
+                <div class="invoice-logo">
+                  @if (parametresEtablissement.logoBase64) {
+                    <img
+                      [src]="'data:image/png;base64,' + parametresEtablissement.logoBase64"
+                      alt="logo"
+                    />
+                  } @else {
+                    <i class="fas fa-school"></i>
+                  }
                 </div>
-                <div class="col-md-6">
-                  <p class="invoice-details">
-                    <strong>N°:</strong> {{ detailsFacture?.numeroFacture }}
-                    <br />
-                    <strong>Date:</strong> {{ detailsFacture?.dateFacture }}
-                    <br />
-                    <strong>status:</strong> {{ detailsFacture?.etat }}
-                    <br />
+              </div>
+              <div class="invoice-header-right">
+                <p class="invoice-details">
+                  <strong>N°:</strong> {{ detailsFacture?.numeroFacture }}
+                  <br />
+                  <strong>Date:</strong> {{ detailsFacture?.dateFacture | date: 'dd/MM/yyyy' }}
+                  <br />
+                  <strong>Statut:</strong>
+                  <span [class]="'status-badge ' + getStatusClass(detailsFacture?.etat!)">
+                    {{ detailsFacture?.etat }}
+                  </span>
+                </p>
+              </div>
+            </div>
+
+            <div class="info-row">
+              <div class="info-col">
+                <div class="invoice-info">
+                  <strong class="customer-text">
+                    <i class="fas fa-building me-2"></i>Informations école
+                  </strong>
+                  <p class="invoice-details-left">
+                    <strong>{{ parametresEtablissement.nom || 'Établissement' }}</strong
+                    ><br />
+                    @if (parametresEtablissement.slogan) {
+                      {{ parametresEtablissement.slogan }}<br />
+                    }
+                    {{ parametresEtablissement.adresse || 'Adresse non renseignée' }}<br />
+                    @if (parametresEtablissement.telephone) {
+                      <i class="fas fa-phone me-1"></i> {{ parametresEtablissement.telephone
+                      }}<br />
+                    }
+                    @if (parametresEtablissement.email) {
+                      <i class="fas fa-envelope me-1"></i> {{ parametresEtablissement.email }}
+                    }
+                  </p>
+                </div>
+              </div>
+              <div class="info-col">
+                <div class="invoice-info invoice-info2">
+                  <strong class="customer-text">
+                    <i class="fas fa-user-graduate me-2"></i>Facture de :
+                  </strong>
+                  <p class="invoice-details-left">
+                    <strong>{{ detailEleve?.prenom }} {{ detailEleve?.nom }}</strong
+                    ><br />
+                    {{ detailEleve?.lieuNaissance }}, {{ detailEleve?.nationalite }}<br />
+                    {{ detailEleve?.address }}
                   </p>
                 </div>
               </div>
             </div>
 
-            <!-- Invoice Item -->
             <div class="invoice-item">
-              <div class="row">
-                <div class="col-md-6">
-                  <div class="invoice-info">
-                    <strong class="customer-text">Information école</strong>
-                    <p class="invoice-details float-left">
-                      Ecole élémentaire <br />
-                      Les dauphins<br />
-                      Ngor, Dakar <br />
-                    </p>
-                  </div>
-                </div>
-                <div class="col-md-6">
-                  <div class="invoice-info invoice-info2">
-                    <strong class="customer-text">Facture de : </strong>
-                    <p class="invoice-details">
-                      {{ detailEleve?.prenom }} {{ detailEleve?.nom }}
-                      <br />
-                      {{ detailEleve?.lieuNaissance }}, {{ detailEleve?.nationalite }} <br />
-                      {{ detailEleve?.address }} <br />
-                      <strong>Mois : </strong>{{ detailsFacture?.mois }}
-                      <br />
-                    </p>
-                  </div>
+              <div class="invoice-info full-width">
+                <div class="payment-method-row">
+                  <strong class="customer-text">
+                    <i class="fas fa-credit-card me-2"></i>Méthode paiement
+                  </strong>
+                  <p class="payment-value">
+                    {{ detailsFacture?.modePaiement || 'Virement bancaire' }}
+                  </p>
                 </div>
               </div>
             </div>
-            <!-- /Invoice Item -->
 
-            <!-- Invoice Item -->
-            <div class="invoice-item">
-              <div class="row">
-                <div class="col-md-12">
-                  <div class="invoice-info">
-                    <strong class="customer-text">Méthode paiement </strong>
-                    <p class="invoice-details invoice-details-two float-left">
-                      <strong *ngIf="detailsFacture?.modePaiement">
-                        {{ detailsFacture?.modePaiement }}
-                      </strong>
-                      <strong *ngIf="!detailsFacture?.modePaiement"> Virement bancaire </strong>
-                      <br />
-                    </p>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <!-- /Invoice Item -->
-
-            <!-- Invoice Item -->
-            <div class="invoice-item invoice-table-wrap">
-              <div class="row">
-                <div class="col-md-12">
-                  <div class="table-responsive">
-                    <table class="invoice-table table table-bordered">
-                      <thead>
-                        <tr>
-                          <th>N° facture</th>
-                          <th class="text-center">Type service</th>
-                          <th class="text-center">Montant</th>
-                          <th class="text-right">Total</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        <tr
-                          *ngFor="
-                            let tarif of detailsFacture?.detailsLigneFactureDTOS;
-                            let i = index
-                          "
-                        >
-                          <td>{{ tarif?.numeroFacture }}</td>
-                          <td class="center">
-                            {{ tarif?.typeServiceOffertDTO?.libelle }}
-                          </td>
-                          <!-- Montant initial -->
-                          <td class="text-right">
-                            {{ tarif?.montantInitial | number: '1.0-0' }} FCFA
-                          </td>
-
-                          <td
-                            class="text-right"
-                            *ngIf="
-                              montantRemise && tarif?.typeServiceOffertDTO?.libelle === 'Mensualité'
-                            "
-                          >
+            <div class="invoice-table-wrap">
+              <div class="table-responsive">
+                <table class="invoice-table">
+                  <thead>
+                    <tr>
+                      <th>N° facture</th>
+                      <th>Type service</th>
+                      <th class="text-right">Montant initial</th>
+                      <th class="text-right">Montant après remise</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    @for (tarif of detailsFacture?.detailsLigneFactureDTOS; track tarif.id) {
+                      <tr>
+                        <td>{{ tarif?.numeroFacture }}</td>
+                        <td>{{ tarif?.typeServiceOffertDTO?.libelle }}</td>
+                        <td class="text-right">
+                          {{ tarif?.montantInitial | number: '1.0-0' }} FCFA
+                        </td>
+                        <td class="text-right">
+                          @if (
+                            tarif?.typeServiceOffertDTO?.libelle === 'Mensualité' && remisePourcent
+                          ) {
                             {{
-                              tarif.montantInitial! * (1 - remisePourcent! / 100) | number: '1.0-0'
+                              tarif?.montantInitial! * (1 - remisePourcent! / 100) | number: '1.0-0'
                             }}
                             FCFA
-                          </td>
-
-                          
-                          <td
-                            class="text-right"
-                            *ngIf="tarif?.typeServiceOffertDTO?.libelle != 'Mensualité'"
-                          >
+                          } @else {
                             {{ tarif?.montantInitial | number: '1.0-0' }} FCFA
-                          </td>
-                        </tr>
-                      </tbody>
-                    </table>
-                  </div>
-                </div>
-                <div class="col-md-6 col-xl-4 ml-auto">
-                  <div class="table-responsive">
-                    <table class="invoice-table-two table">
-                      <tbody>
-                        <tr>
-                          <th>Sous total:</th>
-                          <td>
-                            <span>{{ detailsFacture?.montant }}</span>
-                          </td>
-                        </tr>
-
-                       <!--  <tr
-                          *ngIf="
-                            detailsFacture?.montantPayement &&
-                            detailsFacture!.montantPayement < detailsFacture!.montant
-                          "
-                        > -->
-
-                        <tr>
-                          <th>Somme avancée:</th>
-                          <td>
-                            <span>{{ detailsFacture?.montantPayement }}</span>
-                          </td>
-                        </tr>
-
-                        <!--                 <tr>
-                          <th>Discount:</th>
-                          <td><span>-10%</span></td>
-                        </tr> -->
-                        <tr>
-                          <th>Total facture:</th>
-                          <td>
-                            <span>{{ detailsFacture?.montant }}</span>
-                          </td>
-                        </tr>
-                      </tbody>
-                    </table>
-                  </div>
-                </div>
+                          }
+                        </td>
+                      </tr>
+                    }
+                  </tbody>
+                </table>
               </div>
             </div>
-            <!-- /Invoice Item -->
 
-            <!-- Invoice Information -->
-            <div class="other-info">
-              <button
-                type="button"
-                class="btn btn-primary float-lg-right"
-                id="btn-yes"
-                style="
-                  align-items: center;
-                  border: 1px solid #028ee1;
-                  box-shadow: 0 1px 2px rgba(16, 24, 40, 0.05);
-                  background-color: #028ee1;
-                  min-height: 44px;
-                  padding: 10px 16px;
-                  cursor: pointer;
-                "
-                (click)="imprimerFacture()"
-              >
-                <i class="fa fa-print"></i>
-                Imprimer
-              </button>
-              <button
-                type="button"
-                class="btn btn-danger si_accept_cancel float-left"
-                routerLink="/parent/facture"
-              >
-                Retour
-              </button>
+            <div class="totals-container">
+              <div class="totals-box">
+                <table class="totals-table">
+                  <tbody>
+                    <tr>
+                      <th>Sous total :</th>
+                      <td>{{ detailsFacture?.montant | number: '1.0-0' }} FCFA</td>
+                    </tr>
+                    @if (
+                      detailsFacture?.montantPayement && detailEleve.montantPayement != 'undefined'
+                    ) {
+                      <tr>
+                        <th>Somme avancée :</th>
+                        <td>{{ detailsFacture!.montantPayement | number: '1.0-0' }} FCFA</td>
+                      </tr>
+                    }
+                    @if (remisePourcent) {
+                      <tr>
+                        <th>Remise :</th>
+                        <td>{{ remisePourcent }}%</td>
+                      </tr>
+                    }
+                    <tr class="total-row">
+                      <th>Total facture :</th>
+                      <td>{{ getTotalFinal() | number: '1.0-0' }} FCFA</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
             </div>
-            <!-- /Invoice Information -->
 
-            <!-- /Page Content -->
+            <div class="action-buttons">
+              <div class="action-buttons-left">
+                <button type="button" class="btn-back" routerLink="/parent/factures">
+                  <i class="fas fa-arrow-left me-2"></i>Retour
+                </button>
+              </div>
+              <div class="action-buttons-right">
+                <button type="button" class="btn-print" (click)="imprimerFacture()">
+                  <i class="fas fa-print me-2"></i>Imprimer
+                </button>
+                <button type="button" class="btn-download" (click)="DownloadPdf()">
+                  <i class="fas fa-download me-2"></i>Télécharger
+                </button>
+              </div>
+            </div>
           </div>
         </div>
       </div>

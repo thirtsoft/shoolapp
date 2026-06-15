@@ -1,18 +1,19 @@
 import { CommonModule, SlicePipe } from '@angular/common';
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, computed, DestroyRef, effect, inject, OnInit } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
 import { Constants } from '../../../../../core/constants/constants';
-import { DetailsEnseignantUtilisateur } from '../../../../../core/models/enseignant/details-enseignant-utilisateur';
-import { EnseigantList } from '../../../../../core/models/enseignant/enseignant-list';
-import { Exercice } from '../../../../../core/models/planification/exercice';
+import { ExerciceAddEdit } from '../../../../../core/models/planification/exercice';
 import { ListeEnseignement } from '../../../../../core/models/planification/liste-enseignement';
 import { ListeClasse } from '../../../../../core/models/referentiels/classe';
+import { Utilisateur } from '../../../../../core/models/utilisateur/utilisateur';
 import { PieceJointeService } from '../../../../../core/services/piece-jointe';
 import { PlanificationResourceService } from '../../../../administration/planification/services/planification-resource.service';
-import { ReferentielService } from '../../../../administration/referentiel/service/referentiel.service';
-import { EnseignantService } from '../../../service/enseignant.service';
+import { ReferentielResourceService } from '../../../../administration/referentiel/service/referentiel-resource.service';
+import { UtilisateurService } from '../../../../administration/utilisateur/service/utilisateur.service';
+import { EnseignementContextService } from '../../../service/enseignement-contexte.service';
 
 
 @Component({
@@ -27,180 +28,130 @@ export class CreationExerciceComponent implements OnInit {
   errorMessage?: string;
   exerciceId: number;
   exerciceFormGroup!: FormGroup;
-  exercice: Exercice = {};
+  exercice?: ExerciceAddEdit;
   isEdit: boolean = false;
-
-  classeList: ListeClasse[] = [];
   livreList: any;
-  enseigantList: EnseigantList[] = [];
   enseignementList: ListeEnseignement[] = [];
+  classeList: ListeClasse[] = [];
 
   currentFile: File | null = null;
   message = '';
   preview = '';
 
-  title = "Ajouter un exercice";
-  detailsEnseignant: DetailsEnseignantUtilisateur = {};
-  enseignantId?: number;
+  ecoleId: any;
   userId?: number;
+  classeId?: number;
+  utilisateur: Utilisateur = {};
 
-  private readonly referentielService = inject(ReferentielService);
+  titile: string = '';
+
+  title = "Ajouter un exercice";
+
   private readonly planification = inject(PlanificationResourceService);
-  private readonly enseignantService = inject(EnseignantService);
   private readonly pieceJointeService = inject(PieceJointeService);
-  private readonly toastService = inject(ToastrService)
+  private readonly _formBuilder = inject(FormBuilder);
+  private readonly toastService = inject(ToastrService);
   private readonly activeRoute = inject(ActivatedRoute);
   private readonly router = inject(Router);
-  private readonly _formBuilder = inject(FormBuilder);
+  private readonly classeContext = inject(EnseignementContextService);
 
-  constructor(
-  ) {
+  readonly enseignementIdActive = computed(() => {
+    const classes = this.classeContext.mesClasses();
+    const activeId = this.classeContext.activeClasseId();
+    const enseignementActif = classes.find(ens => String(ens.classId) === String(activeId));
+    return enseignementActif?.id;
+  });
+
+
+  constructor() {
     this.exerciceId = this.activeRoute.snapshot.params['id'];
     this.userId = Number(localStorage.getItem('id'));
+
+    effect(() => {
+      const activeEnseignementId = this.enseignementIdActive();
+      if (activeEnseignementId && !this.isEdit && this.exerciceFormGroup) {
+        console.log('Mode création - Enseignement ID appliqué automatiquement :', activeEnseignementId);
+        this.exerciceFormGroup.get('enseignement')?.setValue(activeEnseignementId);
+      }
+    });
   }
 
   ngOnInit(): void {
-    this.getClasseList();
-    this.getLivreList();
-    this.getEnseignementByUtilisateur(this.userId!);
     this.initializeForm(null);
     if (this.exerciceId != null && this.exerciceId != undefined) {
       this.getExercice(this.exerciceId);
       this.title = 'Modifier un exercice';
       this.isEdit = true;
+    } else {
+      const currentId = this.enseignementIdActive();
+      if (currentId) {
+        this.exerciceFormGroup.get('enseignement')?.setValue(currentId);
+      }
     }
   }
 
-  getEnseignementByUtilisateur(userId: number) {
-    this.enseignantService.getDetailsEnseignantUtilisateur(userId).subscribe({
-      next: (data) => {
-        this.detailsEnseignant = data;
-        console.log('enseignement', data);
-        this.enseignantId = this.detailsEnseignant?.id;
-        this.getEnseignementList(this.enseignantId!);
-      },
-      error: (err) => (err)
-    });
-  }
-
-  getEnseignementList(ensId: number) {
-    this.planification.getAllEnseignementByEnseignant(ensId).subscribe({
-      next: (data) => {
-        this.enseignementList = data;
-        console.log('List enseignement', data);
-      }
-    });
-  }
-
-  getClasseList() {
-    this.referentielService.getAllClasses().subscribe({
-      next: (data) => {
-        this.classeList = data;
-      }
-    });
-  }
-
-  getLivreList() {
-    this.planification.getResourceList('livre').subscribe({
-      next: (data) => {
-        this.livreList = data;
-      }
-    });
-  }
 
   getExercice(exerciceId: number) {
     this.planification.getExercicet(exerciceId).subscribe({
       next: (data) => {
         this.exercice = data;
-        this.initializeForm(this.exercice);
-        console.log("Details exercice {} ", this.exercice);
 
-        if (this.exercice?.piecesJointesDTO?.content) { }
+        this.initializeForm(this.exercice);
+
+        if (this.exercice?.enseignement) {
+          this.exerciceFormGroup.get('enseignement')?.setValue(this.exercice.enseignement);
+        }
+
+        if (this.exercice?.piecesJointesDTO?.content) {
+        }
       }
     });
   }
 
 
-  initializeForm(exercice: Exercice | null) {
+  initializeForm(exercice: ExerciceAddEdit | null) {
     this.exerciceFormGroup = this._formBuilder.group({
-      id: [exercice?.id ? exercice.id : ''],
-      titre: [exercice?.titre ? exercice.titre : '', Validators.required],
-      page: [exercice?.page ? exercice.page : ''],
-      numeroExercice: [exercice?.numeroExercice ? exercice.numeroExercice : ''],
-      description: [exercice?.description ? exercice.description : '', Validators.required],
-      url: [exercice?.url ? exercice.url : ''],
-      dateDebut: [exercice?.dateDebut ? exercice.dateDebut : ''],
-      dateFin: [exercice?.description ? exercice.dateFin : ''],
-      classe: [exercice?.classe ? exercice.classe : '', Validators.required],
-      livre: [exercice?.livre ? exercice.livre : ''],
+      id: [exercice?.id ?? ''],
+      titre: [exercice?.titre ?? '', Validators.required],
+      page: [exercice?.page ?? ''],
+      numeroExercice: [exercice?.numeroExercice ?? ''],
+      description: [exercice?.description ?? '', Validators.required],
+      enseignement: [exercice?.enseignement ?? '', Validators.required],
+      url: [exercice?.url ?? ''],
+      dateDebut: [exercice?.dateDebut ?? ''],
+      dateFin: [exercice?.dateFin ?? ''],
+      livre: [exercice?.livre ?? ''],
     });
   }
 
   onFileSelected(event: any): void {
     const selectedFiles = event.target.files;
-
     if (selectedFiles && selectedFiles.item(0)) {
       const file: File = selectedFiles.item(0);
 
-      if (file.size > 2097152) {
+      if (file.size > 2097152) { // 2MB en octets
         this.errorMessage = 'L\'image ne doit pas dépasser 2MB!';
         return;
       }
-
       this.currentFile = file;
-    }
-    console.log("Le fichier choisi est ", this.currentFile);
-  }
-
-  ajouteditExercice() {
-    const payload = this.exerciceFormGroup.value;
-    payload.enseignant = this.enseignantId;
-    if (!this.isEdit) {
-      this.planification.createRessource('exercice', payload).subscribe({
-        next: (data) => {
-          if (data.statut === 'OK') {
-            this.toastService.success('succès', 'L\'exercice a été enregistrées avec succès !!! ');
-            this.router.navigate(['admin/planification/exercice'])
-          } else if (data.statut === 'FAILED') {
-            this.toastService.error('error', 'Erreur lors de la création : ' + data.message);
-          }
-        },
-        error: (data) => {
-          console.log('error', 'Erreur lors de la création : ' + data.error);
-          this.toastService.error('error', 'Erreur lors de la création : ' + data.error);
-        }
-      });
-    } else {
-      this.planification.updateResource('exercice', this.exerciceId, payload).subscribe({
-        next: (data) => {
-          if (data.statut === 'OK') {
-            this.toastService.success('succès', 'L\'exercice a été modifiées avec succès !!! ');
-            this.router.navigate(['admin/planification/exercice'])
-          } else if (data.statut === 'FAILED') {
-            this.toastService.error('error', 'Erreur lors de la modification : ' + data.message);
-          }
-        },
-        error: (data) => {
-          console.log('error', 'Erreur lors de la création : ' + data.error);
-          this.toastService.error('error', 'Erreur lors de la modification : ' + data.error);
-        }
-      });
-
     }
   }
 
   ajouteditExerciceWithFiles() {
     const formData: FormData = new FormData();
     const payload = this.exerciceFormGroup.value;
-    payload.enseignant = this.enseignantId;
+    payload.ecole = this.ecoleId;
+    payload.createur = this.userId;
+
+    formData.append('file', this.currentFile!);
+    formData.append('piecejointeexercice', JSON.stringify(payload));
+
     if (!this.isEdit) {
-      formData.append('file', this.currentFile!);
-      formData.append('piecejointeexercice', JSON.stringify(payload));
       this.planification.enregistrerExercicetWithFiles(formData).subscribe({
         next: (data) => {
           if (data) {
             this.toastService.success('succès', 'L\'exercice a été enregistrées avec succès !!! ');
-            this.goBack();
+            this.router.navigate(['enseignant/exercices'])
           } else if (!data) {
             this.toastService.error('error', 'Erreur lors de la création : ' + data);
           }
@@ -216,7 +167,7 @@ export class CreationExerciceComponent implements OnInit {
           if (data && this.currentFile) {
             this.uploadFichierExercice(data);
             this.toastService.success('succès', 'L\'exercice a été modifiées avec succès !!! ');
-            this.goBack();
+            this.router.navigate(['enseignant/exercices'])
           }
         },
         error: (data) => {
@@ -238,7 +189,10 @@ export class CreationExerciceComponent implements OnInit {
       };
 
       this.pieceJointeService.uploadUnePieceJointe(this.currentFile, piecesJointesDTO).subscribe({
-        next: () => { },
+        next: () => {
+          this.toastService.success('Succès', 'Fichier exercice mise à jour avec succès');
+          this.router.navigate(['enseignant/exercices']);
+        },
         error: error => {
           console.log(error);
           this.toastService.error('Erreur', 'Erreur lors de l\'upload de la photo');

@@ -64,16 +64,35 @@ export class SideBarProfesseurComponent {
 
   nav: NavItem[] = [
     { route: '/enseignant/dashboard', ico: '📊', label: 'Tableau de bord' },
-    { route: '/enseignant/agenda', ico: '📅', label: 'Mon agenda', section: 'QUOTIDIEN' },
+    { route: '/enseignant/agenda', ico: '📖', label: 'Mon agenda', section: 'QUOTIDIEN' },
 
     // enseignements & classes
     { route: '/enseignant/mes-classes', ico: '🏫', label: 'Mes classes', section: 'CLASSES et ENSEIGNEMENTS' },
-    { route: '/enseignant/mes-enseignements', ico: '📖', label: 'Mes enseignements' },
+    //  { route: '/enseignant/notes', ico: '📝', label: 'Notes' },
+
+    { route: '/enseignant/appel', ico: '✅', label: 'Faire l\'appel', section: 'GESTION DE CLASSE' },
+    { route: '/enseignant/exercices', ico: '✏️', label: 'Exercices' },
+    { route: '/enseignant/evaluations', ico: '🎯', label: 'Évaluations' },
+    { route: '/enseignant/saisir-notes', ico: '✍️', label: 'Saisie des notes' },
+    { route: '/enseignant/absences', ico: '❌', label: 'Absences', section: '', badge: '7' },
     { route: '/enseignant/notes', ico: '📝', label: 'Notes' },
-    { route: '/enseignant/absences', ico: '✅', label: 'Appel' },
+
+    /*
+    {
+      ico: '📝',
+      label: 'Notes et Évaluations',
+      section: '',
+      children: [
+        { route: '/enseignant/mes-enseignements', ico: '🎯', label: 'Évaluations' },
+        { route: '/enseignant/notes', ico: '✍️', label: 'Liste notes' },
+        { route: '/enseignant/notes', ico: '✍️', label: 'Saisie des notes' },
+      ]
+    },
+    { route: '/enseignant/absences', ico: '✅', label: 'Appel' }, */
+
 
     // vie scolaire
-    { route: '/enseignant/mes-reunions', ico: '🗓️', label: 'Réunions', section: 'VIE SCOLAIRE' },
+    { route: '/enseignant/mes-reunions', ico: '🗓️', label: 'Activités & Réunions', section: 'VIE SCOLAIRE' },
     { route: '/enseignant/mes-conges', ico: '🌴', label: 'Mes congés' },
 
     // compte
