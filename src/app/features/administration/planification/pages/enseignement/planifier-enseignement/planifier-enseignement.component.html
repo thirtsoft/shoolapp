@@ -4,9 +4,6 @@
       <div class="row align-items-center">
         <div class="col-sm-12">
           <h3 class="page-title">{{ title }}</h3>
-          <p class="text-muted mt-1 mb-0">
-            <i class="fas fa-chalkboard-teacher me-1"></i> Planification des enseignements
-          </p>
         </div>
       </div>
     </div>
@@ -55,19 +52,20 @@
 
           <div class="divider"></div>
 
-          <div formArrayName="enseignements">
-            @for (enseignement of enseignementsArray.controls; track $index) {
-              <div class="enseignement-card" [formGroupName]="$index">
+          <div formArrayName="enseignements" class="enseignements-list-container">
+           @for (enseignement of enseignementsArray.controls; track enseignement; let idx = $index) {
+
+              <div class="enseignement-card" [formGroupName]="idx">
                 <div class="card-header-custom">
                   <h4 class="card-title-custom">
-                    <i class="fas fa-book me-2"></i>Enseignement {{ $index + 1 }}
+                    <i class="fas fa-book me-2"></i>Enseignement {{ idx + 1 }}
                   </h4>
                   <div class="card-actions">
                     @if (enseignementsArray.length > 1) {
                       <button
                         type="button"
                         class="btn-remove"
-                        (click)="removeEnseignementItem($index)"
+                        (click)="removeEnseignementItem(idx)"
                       >
                         <i class="fas fa-trash-alt me-1"></i> Supprimer
                       </button>
@@ -84,7 +82,7 @@
                         Enseignant <span class="text-danger">*</span>
                         <i class="fas fa-user-tie ms-1 text-muted"></i>
                       </label>
-                      <select class="form-select" formControlName="enseignant" required>
+                      <select class="form-select" formControlName="enseignant">
                         <option value="" disabled selected>— Sélectionnez un enseignant —</option>
                         @for (item of enseigantList; track item.id) {
                           <option [value]="item.id">{{ item.nomComplet }}</option>
@@ -105,7 +103,7 @@
                         Classe <span class="text-danger">*</span>
                         <i class="fas fa-chalkboard-user ms-1 text-muted"></i>
                       </label>
-                      <select class="form-select" formControlName="classe" required>
+                      <select class="form-select" formControlName="classe">
                         <option value="" disabled selected>— Sélectionnez une classe —</option>
                         @for (item of classeList; track item.id) {
                           <option [value]="item.id">{{ item.libelle }}</option>
@@ -125,7 +123,7 @@
                         Matière <span class="text-danger">*</span>
                         <i class="fas fa-book ms-1 text-muted"></i>
                       </label>
-                      <select class="form-select" formControlName="matiere" required>
+                      <select class="form-select" formControlName="matiere">
                         <option value="" disabled selected>— Sélectionnez une matière —</option>
                         @for (item of matiereList; track item.id) {
                           <option [value]="item.id">{{ item?.libelle }}</option>
@@ -147,7 +145,7 @@
                         Année scolaire <span class="text-danger">*</span>
                         <i class="fas fa-calendar-alt ms-1 text-muted"></i>
                       </label>
-                      <select class="form-select" formControlName="anneeScolaire" required>
+                      <select class="form-select" formControlName="anneeScolaire">
                         <option value="" disabled selected>
                           — Sélectionnez une année scolaire —
                         </option>
@@ -170,12 +168,7 @@
                         Date de début <span class="text-danger">*</span>
                         <i class="fas fa-calendar-day ms-1 text-muted"></i>
                       </label>
-                      <input
-                        type="date"
-                        class="form-control"
-                        formControlName="dateDebut"
-                        required
-                      />
+                      <input type="date" class="form-control" formControlName="dateDebut" />
                       @if (
                         enseignement.get('dateDebut')?.invalid &&
                         enseignement.get('dateDebut')?.touched

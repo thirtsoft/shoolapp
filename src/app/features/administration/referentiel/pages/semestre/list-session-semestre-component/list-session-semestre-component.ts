@@ -1,31 +1,27 @@
 import { Component, inject, OnInit } from '@angular/core';
-import { FormGroup } from '@angular/forms';
-import { IFilterConfig } from '../../../../../../core/filtered-config/FiltreConfiguration';
 import { GenericTableReferentielComponent } from '../../../../../../core/generic/generic-table-referentiel/generic-table-referentiel.component';
-import { AnneeScolaire } from '../../../../../../core/models/referentiels/annee-scolaire';
+import { SessionSemestre } from '../../../../../../core/models/referentiels/session-semestre';
+import { IFilterConfig } from '../../../../../../core/filtered-config/FiltreConfiguration';
 import { ReferentielResourceService } from '../../../service/referentiel-resource.service';
 
 @Component({
-  selector: 'app-annee-scolaire',
+  selector: 'app-list-session-semestre-component',
   standalone: true,
   imports: [GenericTableReferentielComponent],
-  templateUrl: './annee-scolaire.component.html',
-  styleUrls: ['./annee-scolaire.component.css']
+  templateUrl: './list-session-semestre-component.html',
+  styleUrl: './list-session-semestre-component.css',
 })
-export class AnneeScolaireComponent implements OnInit {
+export class ListSessionSemestreComponent implements OnInit {
   errorMessage?: string;
-  anneeScolaires: AnneeScolaire[] = [];
-  anneeScolaireId?: number;
-  anneeScolairesFormGroup!: FormGroup;
-
+  sessionSemestre: SessionSemestre[] = [];
   isEdit: boolean = true;
   isLoading: boolean = false;
-  filteredDataAnneeScolaire: any;
+  filteredDataSessionSemestre: any;
   isLockable: boolean = true;
   isTable: boolean = true;
-  deleteEndpoint = "anneeScolaire";
+  deleteEndpoint = "sessionSemestre";
   columns: any[] = [];
-  anneeScolaireData: any = [];
+  sessionSemestreData: any = [];
 
   currentPage = 0;
   pageSize = 5;
@@ -38,10 +34,10 @@ export class AnneeScolaireComponent implements OnInit {
   private readonly refentielResource = inject(ReferentielResourceService);
 
   ngOnInit(): void {
-    this.chargerLesAnneesScolaire();
+    this.chargerLesSessionSemestres();
   }
 
-  async chargerLesAnneesScolaire() {
+  async chargerLesSessionSemestres() {
     try {
       await Promise.all([
       ]);
@@ -58,7 +54,7 @@ export class AnneeScolaireComponent implements OnInit {
         key: 'libelle',
         label: 'Libellé',
         type: 'text',
-        placeholder: 'Rechercher une annéé scolaire...'
+        placeholder: 'Rechercher une session...'
       }
     ];
   }
@@ -81,26 +77,27 @@ export class AnneeScolaireComponent implements OnInit {
       const filtreParam = this.construireParametreDeFiltre();
 
       apiCall = this.refentielResource.fetchFilterDataTable(
-        'anneescolaire',
+        'sessionsemestre',
         this.currentPage,
         this.pageSize,
         filtreParam)
 
     } else {
-      apiCall = this.refentielResource.getResourcePaged('anneescolaire', this.currentPage, this.pageSize);
+      apiCall = this.refentielResource.getResourcePaged('sessionsemestre', this.currentPage, this.pageSize);
     }
     apiCall.subscribe({
       next: (response) => {
-        this.anneeScolaireData = response.data?.content || [];
+        this.sessionSemestreData = response.data?.content || [];
         this.totalElements = response.data?.totalElements || 0;
         this.columns = [
-          { key: 'libelle', header: 'Libellé' },
+          { key: 'semestre', header: 'Semestre' },
+          { key: 'anneeScolaire', header: 'Année scolaire' },
           { key: 'etat', header: 'Etat' },
           { key: 'dateDebut', header: 'Date début' },
           { key: 'dateFin', header: 'Date fin' },
 
         ];
-        this.anneeScolaireData = this.anneeScolaireData.map((item: any) => ({
+        this.sessionSemestreData = this.sessionSemestreData.map((item: any) => ({
           ...item,
         }));
 
@@ -151,3 +148,4 @@ export class AnneeScolaireComponent implements OnInit {
   }
 
 }
+

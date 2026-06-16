@@ -13,11 +13,12 @@ import { EnseignantService } from '../../../../../enseignant/service/enseignant.
 import { ReferentielService } from '../../../../referentiel/service/referentiel.service';
 import { UtilisateurService } from '../../../../utilisateur/service/utilisateur.service';
 import { PlanificationResourceService } from '../../../services/planification-resource.service';
+import { ReversePipe } from '../../../../../../core/pipe/reverse-pipe';
 
 @Component({
   selector: 'app-planifier-enseignement',
   standalone: true,
-  imports: [ReactiveFormsModule],
+  imports: [ReactiveFormsModule, ReversePipe],
   templateUrl: './planifier-enseignement.component.html',
   styleUrls: ['./planifier-enseignement.component.css']
 })
@@ -169,7 +170,8 @@ export class PlanifierEnseignementComponent implements OnInit {
   }
 
   addEnseignementItem(enseignement: Enseignement | null = null) {
-    this.enseignementsArray.insert(0, this.createEnseignementItem(enseignement));
+   // this.enseignementsArray.insert(0, this.createEnseignementItem(enseignement));
+      this.enseignementsArray.push(this.createEnseignementItem(enseignement));
   }
 
   removeEnseignementItem(index: number) {
