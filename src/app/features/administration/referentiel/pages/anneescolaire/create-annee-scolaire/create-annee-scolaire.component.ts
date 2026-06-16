@@ -2,11 +2,11 @@ import { DatePipe } from '@angular/common';
 import { Component, inject, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
+import { ToastrService } from 'ngx-toastr';
 import { AnneeScolaire } from '../../../../../../core/models/referentiels/annee-scolaire';
 import { Utilisateur } from '../../../../../../core/models/utilisateur/utilisateur';
 import { UtilisateurService } from '../../../../utilisateur/service/utilisateur.service';
 import { ReferentielService } from '../../../service/referentiel.service';
-import { ToastrService } from 'ngx-toastr';
 
 @Component({
   selector: 'app-create-annee-scolaire',
@@ -84,11 +84,11 @@ export class CreateAnneeScolaireComponent implements OnInit {
     const payload = this.anneeScolairesFormGroup.value;
     payload.ecole = this.ecoleId;
     if (!this.isEdit) {
-      this.referentielService.createAnneeScolaire(payload).subscribe({
+      this.referentielService.initierNouvelleAnneeScolaire(payload).subscribe({
         next: (data) => {
           if (data.statut === 'OK') {
             this.toastService.success('succès', 'Les informations de année scolaire ont été enregistrées avec succès !!! ');
-            this.router.navigate(['admin/referentiels/annee-scolaire'])
+            this.goBack();
           } else if (data.statut === 'FAILED') {
             this.toastService.error('error', 'Erreur lors de la création : ' + data.message);
           }
@@ -104,7 +104,7 @@ export class CreateAnneeScolaireComponent implements OnInit {
         next: (data) => {
           if (data.statut === 'OK') {
             this.toastService.success('succès', 'Les informations de année scolaire ont été modifiées avec succès !!! ');
-            this.router.navigate(['admin/referentiels/annee-scolaire'])
+            this.goBack();
           } else if (data.statut === 'FAILED') {
             this.toastService.error('error', 'Erreur lors de la modification : ' + data.message);
           }
@@ -120,7 +120,7 @@ export class CreateAnneeScolaireComponent implements OnInit {
 
 
   goBack() {
-    this.router.navigate(['admin/referentiels/annee-scolaire'])
+    this.router.navigate(['admin/referentiel/annee-scolaire'])
   }
 
 

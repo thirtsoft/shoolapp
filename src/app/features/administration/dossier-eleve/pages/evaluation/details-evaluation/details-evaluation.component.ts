@@ -30,7 +30,6 @@ export class DetailsEvaluationComponent implements OnInit {
   private readonly planification = inject(PlanificationResourceService);
   private readonly toastService = inject(ToastrService);
   private readonly activeRoute = inject(ActivatedRoute);
-  private readonly router = inject(Router);
 
   ngOnInit(): void {
     this.evaluationId = this.activeRoute.snapshot.params['id'];

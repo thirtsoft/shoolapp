@@ -125,6 +125,11 @@ export class ReferentielService {
     return this.http.post<ResponseMessage>(`${this.referentiel}/anneescolaire/save`, info);
   }
 
+  initierNouvelleAnneeScolaire(info: AnneeScolaire) {
+    return this.http.post<ResponseMessage>(`${this.referentiel}/anneescolaire/initiernouvelleannee`, info);
+  }
+
+
   updateAnneeScolaire(id: number, value: AnneeScolaire) {
     return this.http.put<ResponseMessage>(`${this.referentiel}/anneescolaire/update/${id}`, value);
   }
