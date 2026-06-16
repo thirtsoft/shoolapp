@@ -2,6 +2,7 @@
 import { Routes } from '@angular/router';
 import { AnneeScolaireComponent } from './pages/anneescolaire/annee-scolaire/annee-scolaire.component';
 import { CreateAnneeScolaireComponent } from './pages/anneescolaire/create-annee-scolaire/create-annee-scolaire.component';
+import { DetailsAnneeScolaireComponent } from './pages/anneescolaire/details-annee-scolaire-component/details-annee-scolaire-component';
 import { BatimentComponent } from './pages/batiment/batiment.component';
 import { CreationBatimentComponent } from './pages/batiment/creation-batiment/creation-batiment.component';
 import { CategoryMenuComponent } from './pages/category-menu/category-menu.component';
@@ -13,6 +14,7 @@ import { CreateCoefficientmatclasseComponent } from './pages/coefficientmatclass
 import { ConfigEtablissementComponent } from './pages/config-etablissement/config-etablissement.component';
 import { CreateMatiereAvecCoefficientComponent } from './pages/matiere/create-matiere-avec-coefficient/create-matiere-avec-coefficient.component';
 import { MatiereComponent } from './pages/matiere/matiere.component';
+import { CreationMenuComponent } from './pages/menu/creation-menu-component/creation-menu-component';
 import { MenuComponent } from './pages/menu/menu.component';
 import { CreateModePaiementComponent } from './pages/modepaiement/create-mode-paiement/create-mode-paiement.component';
 import { ListeModePaiementComponent } from './pages/modepaiement/liste-mode-paiement/liste-mode-paiement.component';
@@ -20,8 +22,11 @@ import { CreateNiveauEducationComponent } from './pages/niveau-education/create-
 import { NiveauEducationComponent } from './pages/niveau-education/niveau-education.component';
 import { CreateNiveauComponent } from './pages/niveau/create-niveau/create-niveau.component';
 import { ListNiveauComponent } from './pages/niveau/list-niveau/list-niveau.component';
+import { AjoutEditSalleComponent } from './pages/salle/ajout-edit-salle-component/ajout-edit-salle-component';
 import { SallesComponent } from './pages/salle/salles/salles.component';
 import { CreateSemestreComponent } from './pages/semestre/create-semestre/create-semestre.component';
+import { EditerSessionSemestreComponent } from './pages/semestre/editer-session-semestre-component/editer-session-semestre-component';
+import { ListSessionSemestreComponent } from './pages/semestre/list-session-semestre-component/list-session-semestre-component';
 import { SemestreComponent } from './pages/semestre/semestre.component';
 import { CreateTarifComponent } from './pages/tarif/create-tarif/create-tarif.component';
 import { ListTarifComponent } from './pages/tarif/list-tarif/list-tarif.component';
@@ -31,9 +36,6 @@ import { TypePaiementComponent } from './pages/type-paiement/type-paiement.compo
 import { CreateTypeServiceOffertComponent } from './pages/typeservice/create-type-service-offert/create-type-service-offert.component';
 import { ListTypeServiceOffertComponent } from './pages/typeservice/list-type-service-offert/list-type-service-offert.component';
 import { ReferentielsComponent } from './referentiels.component';
-import { AjoutEditSalleComponent } from './pages/salle/ajout-edit-salle-component/ajout-edit-salle-component';
-import { CreationMenuComponent } from './pages/menu/creation-menu-component/creation-menu-component';
-import { ListSessionSemestreComponent } from './pages/semestre/list-session-semestre-component/list-session-semestre-component';
 
 export const REFERENTIELS_ROUTES: Routes = [
   {
@@ -66,6 +68,11 @@ export const REFERENTIELS_ROUTES: Routes = [
         path: 'annee-scolaire/edit/:id',
         component: CreateAnneeScolaireComponent,
       },
+      {
+        path: 'annee-scolaire/details/:id',
+        component: DetailsAnneeScolaireComponent,
+      },
+
       {
         path: 'matieres',
         component: MatiereComponent
@@ -102,9 +109,13 @@ export const REFERENTIELS_ROUTES: Routes = [
         path: 'semestre/edit/:id',
         component: CreateSemestreComponent
       },
-            {
+      {
         path: 'sessions',
         component: ListSessionSemestreComponent
+      },
+      {
+        path: 'session/edit/:id',
+        component: EditerSessionSemestreComponent
       },
       {
         path: 'category-menu',

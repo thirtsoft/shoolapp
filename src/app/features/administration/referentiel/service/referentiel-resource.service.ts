@@ -72,6 +72,11 @@ export class ReferentielResourceService {
     return this.http.get<T>(url, this.httpOptions);
   }
 
+  recupererDetailsUneResource<T>(endpoint: string, id: number): Observable<T> {
+    const url = `${this.referentielUrl}/${endpoint}/${id}/details`;
+    return this.http.get<T>(url, this.httpOptions);
+  }
+
   creerUneRessource<T>(endpoint: string, resource: T) {
     const url = `${this.referentielUrl}/${endpoint}/save`;
     return this.http.post<ResponseMessage>(url, resource, this.httpOptions);
@@ -80,6 +85,11 @@ export class ReferentielResourceService {
   modifierUneRessource<T>(endpoint: string, id: number, resource: T) {
     const url = `${this.referentielUrl}/${endpoint}/update/${id}`;
     return this.http.put<ResponseMessage>(url, resource, this.httpOptions);
+  }
+
+  modifierEtatResource<T>(endpoint: string, id: number, resource: Partial<T>): Observable<any> {
+    const url = `${this.referentielUrl}/${endpoint}/${id}/changeretat`;
+    return this.http.patch<ResponseMessage>(url, resource, this.httpOptions);
   }
 
   supprimerUneResource<T>(endpoint: string, id: number) {
