@@ -33,6 +33,7 @@ import { ListTypeServiceOffertComponent } from './pages/typeservice/list-type-se
 import { ReferentielsComponent } from './referentiels.component';
 import { AjoutEditSalleComponent } from './pages/salle/ajout-edit-salle-component/ajout-edit-salle-component';
 import { CreationMenuComponent } from './pages/menu/creation-menu-component/creation-menu-component';
+import { ListSessionSemestreComponent } from './pages/semestre/list-session-semestre-component/list-session-semestre-component';
 
 export const REFERENTIELS_ROUTES: Routes = [
   {
@@ -100,6 +101,10 @@ export const REFERENTIELS_ROUTES: Routes = [
       {
         path: 'semestre/edit/:id',
         component: CreateSemestreComponent
+      },
+            {
+        path: 'sessions',
+        component: ListSessionSemestreComponent
       },
       {
         path: 'category-menu',

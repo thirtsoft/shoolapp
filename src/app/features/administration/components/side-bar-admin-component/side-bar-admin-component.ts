@@ -56,6 +56,9 @@ export class SideBarAdminComponent {
     { route: '/admin/planification/emploi-du-temps', ico: '🕐', label: 'Emplois du temps', section: 'PLANIFICATION', badge: '' },
     { route: '/admin/planification/cours', ico: '📖', label: 'Cours', section: '', badge: '' },
     { route: '/admin/planification/enseignement', ico: '👨‍🏫', label: 'Enseignements', section: '', badge: '' },
+    { route: '/admin/referentiel/annee-scolaires', ico: '🏫', label: 'Années scolaires' },
+    { route: '/admin/referentiel/sessions', ico: '⏱️', label: 'Session Semestres' },
+
 
 
     // COMMUNICATION
@@ -75,8 +78,7 @@ export class SideBarAdminComponent {
         { route: '/admin/referentiel/salles', ico: '🚪', label: 'Salles' },
 
         // Pédagogie
-        { route: '/admin/referentiel/annee-scolaires', ico: '📅', label: 'Années scolaires' },
-        { route: '/admin/referentiel/semestres', ico: '🗓️', label: 'Semestres' },
+        { route: '/admin/referentiel/semestres', ico: '📅', label: 'Semestres' },
         { route: '/admin/referentiel/matieres', ico: '📚', label: 'Matières' },
         { route: '/admin/referentiel/coefficients', ico: '⚖️', label: 'Coefficients' },
         { route: '/admin/referentiel/classes', ico: '🏫', label: 'Classes' },
