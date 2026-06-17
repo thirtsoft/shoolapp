@@ -176,8 +176,8 @@
                       </label>
                       <select class="form-select" formControlName="sessionSemestre" required>
                         <option value="" disabled selected>— Sélectionnez un semestre —</option>
-                        @for (item of sessionSemestreList; track item.sessionSemestreId) {
-                          <option [value]="item.sessionSemestreId">
+                        @for (item of sessionSemestreList; track item.id) {
+                          <option [value]="item.id">
                             {{ item.semestre }} - {{ item.anneeScolaire }}
                           </option>
                         }

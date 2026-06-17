@@ -1,12 +1,12 @@
 import { Component, inject, OnInit } from '@angular/core';
 import { IFilterConfig } from '../../../../../../core/filtered-config/FiltreConfiguration';
-import { DossierResourceService } from '../../../service/dossier-resource.service';
 import { GenericTableDossierComponent } from '../../../../../../core/generic/generic-table-dossier/generic-table-dossier.component';
-import { ReferentielService } from '../../../../referentiel/service/referentiel.service';
-import { LocalStorageService } from '../../../../../../core/services/local-storage.service';
-import { ListeClasse } from '../../../../../../core/models/referentiels/classe';
 import { AnneeScolaire } from '../../../../../../core/models/referentiels/annee-scolaire';
+import { ListeClasse } from '../../../../../../core/models/referentiels/classe';
 import { Semestre } from '../../../../../../core/models/referentiels/semestre';
+import { LocalStorageService } from '../../../../../../core/services/local-storage.service';
+import { ReferentielService } from '../../../../referentiel/service/referentiel.service';
+import { DossierResourceService } from '../../../service/dossier-resource.service';
 
 
 @Component({
@@ -128,9 +128,9 @@ export class ListeBulletinEleveComponent implements OnInit {
 
         this.columns = [
           { key: 'eleve', header: 'Elève' },
-          { key: 'semestre', header: 'Semestre' },
+          { key: 'sessionSemestre', header: 'Semestre' },
           { key: 'anneeScolaire', header: 'Année scolaire' },
-          { key: 'appreciation_general', header: 'Appreciation générale' },
+          { key: 'appreciation_general', header: 'Appreciation' },
           { key: 'bulletin', header: 'Bulletin' },
           { key: 'dateCreation', header: 'Date' },
         ];

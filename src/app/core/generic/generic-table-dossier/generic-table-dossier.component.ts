@@ -381,7 +381,7 @@ export class GenericTableDossierComponent implements OnInit {
     if (changes['p']) {
       this.onPageChange.emit(this.p);
     }
-    this.getParametresEtablissement();
+    console.log('log colums', this.tableColumns)
   }
 
   getParametresEtablissement(): void {
@@ -539,7 +539,9 @@ export class GenericTableDossierComponent implements OnInit {
 
   ngOnInit(): void {
     this.sortTable('dateEngagement');
+    console.log('Is bulletin', this.tableColumns);
     this.matieres = this.detailsBulletinEleve?.bulletinMatiereDetailsDTOS || [];
+    this.getParametresEtablissement();
   }
 
   splitObjectKeys(): string[][] {
@@ -661,23 +663,23 @@ export class GenericTableDossierComponent implements OnInit {
     this.sharedResourceService.afficherDetailsResource('bulletin', bulletinId).subscribe({
       next: (data) => {
         this.detailsBulletinEleve = data;
-        this.imprimerPaiement();
+        this.imprimerBulletin();
       }
     });
   }
 
-  imprimerPaiement() {
-    pdfMake.createPdf(this.getDocumentFichePaiement()).open();
+  imprimerBulletin() {
+    pdfMake.createPdf(this.getDocumentFicheBulletin()).open();
   }
 
   DownloadPdf() {
-    const document: any = this.getDocumentFichePaiement();
+    const document: any = this.getDocumentFicheBulletin();
     pdfMake.createPdf(document).download('"BULLETIN_"' + this.detailsBulletinEleve.classe + '.pdf');
   }
 
 
 
-  getDocumentFichePaiement(): any {
+  getDocumentFichePaiement1(): any {
     const matieres = this.detailsBulletinEleve?.bulletinMatiereDetailsDTOS || [];
 
     const totalCoef = matieres.reduce((sum: any, m: any) => sum + (Number(m.coefficient) || 0), 0);
@@ -804,7 +806,7 @@ export class GenericTableDossierComponent implements OnInit {
             ],
             [
               {
-                text: ` Semestre : ${this.detailsBulletinEleve?.semestre} `,
+                text: ` Semestre : ${this.detailsBulletinEleve?.sessionSemestre} `,
                 fontSize: 10,
                 margin: [0, 5, 0, 5],
                 alignment: 'left'
@@ -961,7 +963,7 @@ export class GenericTableDossierComponent implements OnInit {
 
             [
               {
-                text: ` Semestre : ${this.detailsBulletinEleve?.semestre}`,
+                text: ` Semestre : ${this.detailsBulletinEleve?.sessionSemestre}`,
                 fontSize: 11,
                 margin: [0, 15, 0, 5],
                 alignment: 'left'
@@ -970,7 +972,7 @@ export class GenericTableDossierComponent implements OnInit {
             ],
             [
               {
-                text: ` Appréciation globale : ${this.detailsBulletinEleve?.appreciation_general}`,
+                text: ` Appréciation : ${this.detailsBulletinEleve?.appreciation_general}`,
                 fontSize: 11,
                 margin: [0, 15, 0, 5],
                 alignment: 'center'
@@ -1033,6 +1035,240 @@ export class GenericTableDossierComponent implements OnInit {
     };
 
   }
+
+  getDocumentFicheBulletin(): any {
+    const details = this.detailsBulletinEleve;
+    const matieres = details?.bulletinMatiereDetailsDTOS || [];
+
+    // Calculs financiers/académiques des totaux
+    const totalCoef = matieres.reduce((sum: number, m: any) => sum + (Number(m.coefficient) || 0), 0);
+    const totalNotePonderee = matieres.reduce((sum: number, m: any) => {
+      const coef = Number(m.coefficient) || 0;
+      const moyenne = Number(m.moyenne_finale) || 0;
+      return sum + (coef * moyenne);
+    }, 0);
+
+    // Utilisation des bonnes variables camelCase provenant du JSON corrigé
+    const moyenneGeneraleEleve = details?.moyenneEleve ? details.moyenneEleve.toFixed(2) : '0.00';
+    const moyenneClasse = details?.moyenneClasse ? details.moyenneClasse.toFixed(2) : '0.00';
+    const nombreEleves = details?.nombreEleve || 0;
+    const rangEleve = details?.rangEleve || '-';
+    const totalAbsences = details?.absenceRetard !== undefined ? details.absenceRetard : 0;
+    const appreciationGenerale = details?.appreciationGenerale || 'Non renseignée';
+
+    return {
+      pageSize: 'A4',
+      pageMargins: [40, 40, 40, 40],
+      content: [
+        // EN-TÊTE DE L'ÉTABLISSEMENT
+        {
+          columns: [
+            {
+              image: EncodateLogo.image,
+              width: 100,
+              alignment: 'left'
+            },
+            {
+              text: [
+                { text: "ÉCOLE LES DAUPHINS\n", fontSize: 12, bold: true },
+                { text: "Derrière le casino du cap vert, Dakar\n", fontSize: 9, color: '#555555' },
+                { text: "Tél: 33 820 10 92 - BP 6268 Dakar étoile\n", fontSize: 9, color: '#555555' },
+                { text: "Web: www.ecolelesdauphins.org\n", fontSize: 9, color: '#4A90E2', link: 'http://www.ecolelesdauphins.org' },
+                { text: "« L'école pour grandir »", fontSize: 10, italic: true, bold: true }
+              ],
+              alignment: 'right',
+              margin: [0, 5, 0, 0]
+            }
+          ]
+        },
+
+        { canvas: [{ type: 'line', x1: 0, y1: 0, x2: 515, y2: 0, lineWidth: 1, lineColor: '#E0E0E0' }], margin: [0, 15, 0, 15] },
+
+        // TITRE DU DOCUMENT & ANNÉE
+        {
+          columns: [
+            { text: `ANNÉE SCOLAIRE : ${details?.anneeScolaire || ''}`, fontSize: 11, bold: true, color: '#333333' },
+            { text: `${details?.sessionSemestre?.toUpperCase() || ''}`, fontSize: 11, bold: true, alignment: 'right', color: '#1A5276' }
+          ]
+        },
+        { text: 'BULLETIN DE NOTES', fontSize: 18, alignment: 'center', bold: true, color: '#1A5276', margin: [0, 15, 0, 20], letterSpacing: 1 },
+
+        // BLOC INFORMATIONS ÉLÈVE
+        {
+          style: 'infoTable',
+          table: {
+            widths: ['*', '*'],
+            body: [
+              [
+                { text: [{ text: 'Élève : ', bold: true }, { text: details?.nomCompletEleve || '' }], fontSize: 11 },
+                { text: [{ text: 'Classe : ', bold: true }, { text: details?.classe || '' }], fontSize: 11 }
+              ],
+              [
+                { text: [{ text: 'Né(e) le : ', bold: true }, { text: details?.dateNaissanceEleve || '' }, { text: ' à ' }, { text: details?.lieuNaissanceEleve || '' }], fontSize: 10 },
+                { text: [{ text: 'Effectif de la classe : ', bold: true }, { text: `${nombreEleves} élèves` }], fontSize: 10 }
+              ]
+            ]
+          },
+          layout: {
+            paddingLeft: () => 10,
+            paddingRight: () => 10,
+            paddingTop: () => 8,
+            paddingBottom: () => 8,
+            fillColor: '#F8F9F9',
+            hLineWidth: () => 1,
+            vLineWidth: () => 1,
+            hLineColor: () => '#E5E7E9',
+            vLineColor: () => '#E5E7E9'
+          },
+          margin: [0, 0, 0, 25]
+        },
+
+        // TABLEAU DES NOTES
+        {
+          table: {
+            widths: ['*', 40, 50, 70, 60, 65, '*'],
+            headerRows: 1,
+            body: [
+              // Header du tableau
+              [
+                { text: 'Matière', style: 'tableHeader', alignment: 'left' },
+                { text: 'Coéf', style: 'tableHeader' },
+                { text: 'MCC', style: 'tableHeader' },
+                { text: 'Compo.', style: 'tableHeader' },
+                { text: 'Moy/20', style: 'tableHeader' },
+                { text: 'Total', style: 'tableHeader' },
+                { text: 'Appréciation', style: 'tableHeader', alignment: 'left' }
+              ],
+              // Contenu dynamique
+              ...matieres.map((m: any) => {
+                const moy = Number(m.moyenne_finale) || 0;
+                const coef = Number(m.coefficient) || 0;
+                const totalMatiere = (moy * coef).toFixed(2);
+                return [
+                  { text: m.matiere, alignment: 'left', fontSize: 10, bold: true },
+                  { text: coef.toString(), alignment: 'center', fontSize: 10 },
+                  { text: m.moyenne_devoirs.toFixed(2), alignment: 'center', fontSize: 10 },
+                  { text: m.note_composition.toFixed(2), alignment: 'center', fontSize: 10 },
+                  { text: moy.toFixed(2), alignment: 'center', fontSize: 10, bold: true, color: moy < 10 ? '#C0392B' : '#2C3E50' },
+                  { text: totalMatiere, alignment: 'center', fontSize: 10 },
+                  { text: m.appreciation_matiere || '', alignment: 'left', fontSize: 9, italic: true }
+                ];
+              }),
+              // Ligne de Totalisation
+              [
+                { text: 'TOTAL', bold: true, alignment: 'left', fontSize: 10, fillColor: '#EAEDED' },
+                { text: totalCoef.toString(), bold: true, alignment: 'center', fontSize: 10, fillColor: '#EAEDED' },
+                { text: '', fillColor: '#EAEDED' },
+                { text: '', fillColor: '#EAEDED' },
+                { text: '', fillColor: '#EAEDED' },
+                { text: totalNotePonderee.toFixed(2), bold: true, alignment: 'center', fontSize: 10, fillColor: '#EAEDED', color: '#1A5276' },
+                { text: '', fillColor: '#EAEDED' }
+              ]
+            ]
+          },
+          layout: {
+            hLineWidth: (i: number, node: any) => (i === 0 || i === node.table.body.length) ? 1.5 : 1,
+            vLineWidth: () => 1,
+            hLineColor: (i: number, node: any) => (i === 0 || i === node.table.body.length) ? '#2C3E50' : '#E5E7E9',
+            vLineColor: () => '#E5E7E9',
+            paddingTop: () => 6,
+            paddingBottom: () => 6
+          },
+          margin: [0, 0, 0, 25]
+        },
+
+        // SECTION SYNTHÈSE ET RÉSULTATS
+        {
+          columns: [
+            // Bloc de gauche : Les statistiques de notes
+            {
+              width: '55%',
+              table: {
+                widths: ['*', 60],
+                body: [
+                  [
+                    { text: 'Moyenne Générale de l\'élève', bold: true, fontSize: 10 },
+                    { text: `${moyenneGeneraleEleve} / 20`, bold: true, alignment: 'right', fontSize: 11, color: Number(moyenneGeneraleEleve) >= 10 ? '#27AE60' : '#C0392B' }
+                  ],
+                  [
+                    { text: 'Moyenne de la classe', fontSize: 10 },
+                    { text: `${moyenneClasse} / 20`, alignment: 'right', fontSize: 10 }
+                  ],
+                  [
+                    { text: 'Rang de l\'élève', bold: true, fontSize: 10 },
+                    { text: `${rangEleve} ${rangEleve === 1 ? 'er' : 'ème'}`, bold: true, alignment: 'right', fontSize: 10, color: '#1A5276' }
+                  ],
+                  [
+                    { text: 'Absences & Retards non justifiés', fontSize: 10 },
+                    { text: `${totalAbsences} incident(s)`, alignment: 'right', fontSize: 10, color: totalAbsences > 0 ? '#E67E22' : '#2C3E50' }
+                  ]
+                ]
+              },
+              layout: {
+                paddingTop: () => 6,
+                paddingBottom: () => 6,
+                hLineColor: () => '#F2F4F4'
+              }
+            },
+            // Espace de séparation
+            { width: '5%', text: '' },
+            // Bloc de droite : Observations & Conseil des professeurs
+            {
+              width: '40%',
+              table: {
+                widths: ['*'],
+                body: [
+                  [{ text: 'OBSERVATIONS DU CONSEIL', bold: true, fontSize: 9, color: '#7F8C8D', alignment: 'center', fillColor: '#F2F4F4' }],
+                  [{
+                    text: appreciationGenerale,
+                    fontSize: 11,
+                    bold: true,
+                    alignment: 'center',
+                    margin: [0, 15, 0, 15],
+                    italic: true
+                  }]
+                ]
+              },
+              layout: {
+                hLineWidth: () => 1,
+                vLineWidth: () => 1,
+                hLineColor: () => '#BDC3C7',
+                vLineColor: () => '#BDC3C7'
+              }
+            }
+          ]
+        },
+
+        // ZONE SIGNATURE
+        {
+          margin: [0, 50, 0, 0],
+          columns: [
+            { text: '', width: '*' },
+            {
+              width: 200,
+              stack: [
+                { text: `Fait à Dakar, le ${details?.dateCreation || ''}`, fontSize: 9, italic: true, alignment: 'center' },
+                { text: 'Le Chef d\'Établissement', bold: true, fontSize: 10, alignment: 'center', margin: [0, 5, 0, 45] },
+                { text: 'Signature & Cachet', fontSize: 9, alignment: 'center', color: '#BDC3C7', decoration: 'underline' }
+              ]
+            }
+          ]
+        }
+      ],
+
+      styles: {
+        tableHeader: {
+          bold: true,
+          fontSize: 10,
+          color: '#FFFFFF',
+          fillColor: '#2C3E50',
+          alignment: 'center',
+          margin: [0, 2, 0, 2]
+        }
+      }
+    };
+  }
+
 
 
 }

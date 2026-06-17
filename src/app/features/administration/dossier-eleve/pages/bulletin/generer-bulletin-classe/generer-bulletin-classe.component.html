@@ -168,7 +168,7 @@
                 >
                   <option value="" disabled selected>— Sélectionnez une classe —</option>
                   @for (item of classList; track item.id) {
-                    <option [value]="item.id">{{ item?.libelle }}</option>
+                    <option [ngValue]="item.id">{{ item?.libelle }}</option>
                   }
                 </select>
                 @if (!selectedClasse) {
@@ -192,8 +192,8 @@
                     (change)="onSemestreSelected()"
                   >
                     <option value="" disabled selected>— Sélectionnez un semestre —</option>
-                    @for (item of sessionSemestreList; track item.sessionSemestreId) {
-                      <option [value]="item.sessionSemestreId">
+                    @for (item of sessionSemestreList; track item.id) {
+                      <option [ngValue]="item.id">
                         {{ item.semestre }} - {{ item.anneeScolaire }}
                       </option>
                     }
@@ -214,7 +214,7 @@
                   >
                     <option value="" disabled selected>— Sélectionnez une année —</option>
                     @for (item of anneeScolaireList; track item.id) {
-                      <option [value]="item.id">{{ item?.libelle }}</option>
+                      <option [ngValue]="item.id">{{ item?.libelle }}</option>
                     }
                   </select>
                 </div>

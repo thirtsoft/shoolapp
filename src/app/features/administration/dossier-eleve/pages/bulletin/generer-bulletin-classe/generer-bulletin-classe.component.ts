@@ -1,15 +1,14 @@
 import { Component, DestroyRef, inject, OnInit } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
+import { GenerationBulletinClasse } from '../../../../../../core/models/dossiereleve/bulletin/generation-bulletin-classe';
 import { AnneeScolaire } from '../../../../../../core/models/referentiels/annee-scolaire';
 import { ListeClasse } from '../../../../../../core/models/referentiels/classe';
-import { Semestre } from '../../../../../../core/models/referentiels/semestre';
+import { SessionSemestre } from '../../../../../../core/models/referentiels/session-semestre';
 import { ReferentielResourceService } from '../../../../referentiel/service/referentiel-resource.service';
 import { DossierResourceService } from '../../../service/dossier-resource.service';
-import { SessionSemestre } from '../../../../../../core/models/referentiels/session-semestre';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { GenerationBulletinClasse } from '../../../../../../core/models/dossiereleve/bulletin/generation-bulletin-classe';
 
 
 interface Mois {
@@ -68,7 +67,7 @@ export class GenererBulletinClasseComponent implements OnInit {
   }
 
   getSelectedSemestreName(): string {
-    const semestre = this.sessionSemestreList?.find(s => Number(s.sessionSemestreId) === Number(this.selectedSemestre));
+    const semestre = this.sessionSemestreList?.find(s => Number(s.id) === Number(this.selectedSemestre));
     return semestre?.semestre || '';
   }
 
@@ -102,14 +101,12 @@ export class GenererBulletinClasseComponent implements OnInit {
       sessionSemestre: this.selectedSemestre
     }
     console.log('payload', payload);
-
-    return;
-    this.dossierResource.genererUneResource('bulletin/generer', this.selectedClasse, this.selectedSemestre, this.selectedAnneeScolaire).subscribe({
+    this.dossierResource.genererUneResourceClasse('bulletin', payload).subscribe({
       next: (data) => {
-        if (data.statut === 'OK') {
-          this.toastService.success('succès', 'Les factures pour cette classe ont a été enregistrées avec succès !!! ');
-          this.router.navigate(['admin/dossier-eleve/bulletin'])
-        } else if (data.statut === 'FAILED') {
+        if (data) {
+          this.toastService.success('succès', 'Les bulletins pour cette classe ont a été enregistrées avec succès !!! ');
+          this.goBack();
+        } else if (!data) {
           this.toastService.error('error', 'Erreur lors de la création : ' + data.message);
         }
       },
