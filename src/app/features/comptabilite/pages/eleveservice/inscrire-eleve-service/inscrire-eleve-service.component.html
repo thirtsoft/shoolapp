@@ -216,29 +216,6 @@
             }
           </div>
 
-          <div class="row g-3 mb-4">
-            <div class="col-12">
-              <div class="form-group">
-                <label class="form-label">
-                  Motif <span class="text-danger">*</span>
-                  <i class="fas fa-pen ms-1 text-muted"></i>
-                </label>
-                <textarea
-                  class="form-textarea"
-                  formControlName="motif"
-                  rows="3"
-                  placeholder="Décrivez le motif de l'inscription..."
-                ></textarea>
-                @if (
-                  eleveinscrireFormGroup.get('motif')?.invalid &&
-                  eleveinscrireFormGroup.get('motif')?.touched
-                ) {
-                  <small class="form-text text-danger"> Veuillez saisir un motif </small>
-                }
-              </div>
-            </div>
-          </div>
-
           @if (
             selectedTypeServiceOfferts.length > 0 && eleveinscrireFormGroup.get('eleve')?.value
           ) {

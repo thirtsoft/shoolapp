@@ -221,7 +221,6 @@ export class InscrireEleveServiceComponent implements OnInit, AfterViewInit {
       typeServiceOffertDTOList: [serviceIds, Validators.required],
       benefice_remise: [eleveservice?.benefice_remise ?? '0', Validators.required],
       remise: [eleveservice?.remise ?? ''],
-      motif: ['', Validators.required],
     });
 
     this.selectedTypeServiceOfferts = serviceIds;
@@ -241,17 +240,15 @@ export class InscrireEleveServiceComponent implements OnInit, AfterViewInit {
       anneeScolaire: this.eleveinscrireFormGroup.get('anneeScolaire')?.value,
       benefice_remise: this.eleveinscrireFormGroup.get('benefice_remise')?.value,
       remise: this.eleveinscrireFormGroup.get('remise')?.value,
-      motif: this.eleveinscrireFormGroup.get('motif')?.value,
       typeServiceOffertDTOList: this.typeServiceList.filter((action: any) => typeServiceOffertSelected.includes(Number(action.id))),
       ecole: this.ecoleId
     };
-
     if (!this.isEdit) {
       this.comptabiliteResource.creerUneRessource('eleveservice', payload).subscribe({
         next: (data) => {
           if (data.statut === 'OK') {
             this.toastService.success('Succès', 'L\'inscription a été enregistrée avec succès !');
-            this.router.navigate(['admin/comptabilite/service']);
+            this.router.navigate(['admin/comptabilite/services']);
           } else if (data.statut === 'FAILED') {
             this.toastService.error('Erreur', 'Erreur lors de la création : ' + data.message);
           }
@@ -265,7 +262,7 @@ export class InscrireEleveServiceComponent implements OnInit, AfterViewInit {
         next: (data) => {
           if (data.statut === 'OK') {
             this.toastService.success('Succès', 'L\'inscription a été modifiée avec succès !');
-            this.router.navigate(['admin/comptabilite/service']);
+            this.router.navigate(['admin/comptabilite/services']);
           } else if (data.statut === 'FAILED') {
             this.toastService.error('Erreur', 'Erreur lors de la modification : ' + data.message);
           }
