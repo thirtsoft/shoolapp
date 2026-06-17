@@ -345,13 +345,8 @@
                               <td class="eleve-name">
                                 <div class="d-flex align-items-center gap-2">
                                   <div class="avatar-circle">
-                                    {{
-                                      getEleveNomCompletEleve(note.get('eleve')?.value).charAt(0)
-                                    }}
+                                    {{ note.get('nomCompletEleve')?.value }}
                                   </div>
-                                  <span>{{
-                                    getEleveNomCompletEleve(note.get('eleve')?.value)
-                                  }}</span>
                                 </div>
                               </td>
                               <td>

@@ -113,7 +113,7 @@ export class CreateEvaluationComponent implements OnInit {
       id: this.evaluationFormGroup.get("id")!.value,
       titre: this.evaluationFormGroup.get("titre")!.value,
       description: this.evaluationFormGroup.get("description")!.value,
-      enseignementId: this.evaluationFormGroup.get("enseignementId")!.value,
+      enseignementId: Number(this.evaluationFormGroup.get("enseignementId")!.value),
       //  semestre: this.evaluationFormGroup.get("semestre")!.value,
       sessionSemestre: this.evaluationFormGroup.get("sessionSemestre")!.value,
       dateEvaluation: this.evaluationFormGroup.get("dateEvaluation")!.value,
@@ -124,6 +124,7 @@ export class CreateEvaluationComponent implements OnInit {
     }
     payload.createur = this.userId;
     payload.ecole = this.ecoleId;
+    console.log('Log', payload);
     this.dossierResource.ajouterEditResource('evaluation', payload).subscribe({
       next: (data) => {
         if (data.statut === 'OK') {
