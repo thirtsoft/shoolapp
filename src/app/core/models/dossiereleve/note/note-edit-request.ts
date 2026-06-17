@@ -4,6 +4,8 @@ export interface NoteEditRequest {
 
   eleve?: number;
 
+  nomCompletEleve?: string;
+
   note?: number;
 
   type?: string;

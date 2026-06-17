@@ -155,7 +155,7 @@ export class EditEvaluationComponent implements OnInit {
           titre: [this.addEditEvaluation?.titre ?? '', Validators.required],
           description: [this.addEditEvaluation?.description ?? ''],
           classeId: [this.addEditEvaluation?.classeId ?? '', Validators.required],
-          enseignementId: [this.addEditEvaluation?.enseignementId ?? '', Validators.required],
+          enseignementId: [Number(this.addEditEvaluation?.enseignementId) ?? '', Validators.required],
           sessionSemestre: [this.addEditEvaluation?.sessionSemestre ?? '', Validators.required],
           dateEvaluation: [this.addEditEvaluation?.dateEvaluation ?? '', Validators.required],
           evaluationType: [this.addEditEvaluation?.evaluationType ?? '', Validators.required],
@@ -169,6 +169,7 @@ export class EditEvaluationComponent implements OnInit {
           this.notes.push(this._formBuilder.group({
             id: [n.id],
             eleve: [n.eleve, Validators.required],
+            nomCompletEleve: [n.nomCompletEleve],
             note: [n.note],
             type: [n.type],
             dateCreation: [n.dateCreation],
@@ -202,7 +203,7 @@ export class EditEvaluationComponent implements OnInit {
     payload.dateRemise = this.addEditEvaluation.dateRemise;
     payload.ecole = this.ecoleId;
 
-    this.dossierResource.updateUneReource('evaluation', payload.id, payload).subscribe({
+    this.dossierResource.updateUneReource('evaluation', this.evaluationId, payload).subscribe({
       next: (data) => {
         if (data.statut === 'OK') {
           this.toastService.success('succès', 'L\'évaluation a été modifiées avec succès !!! ');

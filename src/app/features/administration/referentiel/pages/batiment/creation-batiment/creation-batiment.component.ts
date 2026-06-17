@@ -133,7 +133,7 @@ export class CreationBatimentComponent implements OnInit {
         next: (data) => {
           if (data.statut === 'OK') {
             this.toastService.success('succès', 'Les informations du batiment ont été enregistrées avec succès !!! ');
-            this.router.navigate(['/admin/referentiels/batiment']);
+            this.router.navigate(['/admin/referentiel/batiments']);
           } else if (data.statut === 'FAILED') {
             this.toastService.error('error', 'Erreur lors de la création : ' + data.message);
           }
@@ -149,7 +149,7 @@ export class CreationBatimentComponent implements OnInit {
         next: (data) => {
           if (data.statut === 'OK') {
             this.toastService.success('succès', 'Les informations du batiment ont été modifiées avec succès !!! ');
-            this.router.navigate(['/admin/referentiels/batiment']);
+            this.router.navigate(['/admin/referentiel/batiments']);
           } else if (data.statut === 'FAILED') {
             this.toastService.error('error', 'Erreur lors de la modification : ' + data.message);
           }
