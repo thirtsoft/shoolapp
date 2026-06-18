@@ -125,7 +125,7 @@
                       >
                         <option value="" disabled selected>— Sélectionnez une classe —</option>
                         @for (item of classeList; track item.id) {
-                          <option [value]="item.id">
+                          <option [ngValue]="item.id">
                             {{ item.libelle }}
                           </option>
                         }
@@ -147,7 +147,7 @@
                       <select class="form-select" formControlName="enseignementId" required>
                         <option value="" disabled selected>— Sélectionnez un enseignement —</option>
                         @for (item of enseignementList; track item.id) {
-                          <option [value]="item.id">
+                          <option [ngValue]="item.id">
                             {{ item.enseignant }} - {{ item.matiere }} - {{ item.classe }} -
                             {{ item.anneeScolaire }}
                           </option>
@@ -170,8 +170,8 @@
                       </label>
                       <select class="form-select" formControlName="sessionSemestre" required>
                         <option value="" disabled selected>— Sélectionnez une session —</option>
-                        @for (item of sessionSemestreList; track item.sessionSemestreId) {
-                          <option [value]="item.sessionSemestreId">
+                        @for (item of sessionSemestreList; track item.id) {
+                          <option [ngValue]="item.id">
                             {{ item.semestre }} - {{ item.anneeScolaire }}
                           </option>
                         }

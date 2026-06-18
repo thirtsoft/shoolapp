@@ -33,10 +33,11 @@ export class ListeInscriptionComponent implements OnInit {
   columns: any[] = [
     { key: 'code', header: 'Code' },
     { key: 'nomCompletEleve', header: 'Elève' },
+    { key: 'sexeEleve', header: 'Sexe' },
     { key: 'anneeScolare', header: 'Année scolaire' },
     { key: 'classe', header: 'Classe' },
     { key: 'montantInscription', header: 'Montant' },
-    { key: 'sexeEleve', header: 'Sexe' },
+    { key: 'recu', header: 'Reçu' },
     { key: 'dateInscription', header: 'Date' }
   ];
 
@@ -208,6 +209,7 @@ export class ListeInscriptionComponent implements OnInit {
         this.inscriptionData = this.inscriptionData.map((item: any) => ({
           ...item,
           dateInscription: this.formatDate(item.dateInscription),
+          recu: '',
         }));
 
         this.isLoading = false;

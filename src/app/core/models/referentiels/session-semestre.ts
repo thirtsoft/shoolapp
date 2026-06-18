@@ -1,6 +1,6 @@
 
 export interface SessionSemestre {
-    sessionSemestreId?: number;
+    id?: number;
 
     semestre?: string;
 

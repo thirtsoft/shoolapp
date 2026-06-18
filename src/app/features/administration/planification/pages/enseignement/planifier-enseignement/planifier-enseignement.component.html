@@ -85,7 +85,7 @@
                       <select class="form-select" formControlName="enseignant">
                         <option value="" disabled selected>— Sélectionnez un enseignant —</option>
                         @for (item of enseigantList; track item.id) {
-                          <option [value]="item.id">{{ item.nomComplet }}</option>
+                          <option [ngValue]="item.id">{{ item.nomComplet }}</option>
                         }
                       </select>
                       @if (
@@ -106,7 +106,7 @@
                       <select class="form-select" formControlName="classe">
                         <option value="" disabled selected>— Sélectionnez une classe —</option>
                         @for (item of classeList; track item.id) {
-                          <option [value]="item.id">{{ item.libelle }}</option>
+                          <option [ngValue]="item.id">{{ item.libelle }}</option>
                         }
                       </select>
                       @if (
@@ -126,7 +126,7 @@
                       <select class="form-select" formControlName="matiere">
                         <option value="" disabled selected>— Sélectionnez une matière —</option>
                         @for (item of matiereList; track item.id) {
-                          <option [value]="item.id">{{ item?.libelle }}</option>
+                          <option [ngValue]="item.id">{{ item?.libelle }}</option>
                         }
                       </select>
                       @if (
@@ -150,7 +150,7 @@
                           — Sélectionnez une année scolaire —
                         </option>
                         @for (item of anneeScolaireList; track item.id) {
-                          <option [value]="item.id">{{ item?.libelle }}</option>
+                          <option [ngValue]="item.id">{{ item?.libelle }}</option>
                         }
                       </select>
                       @if (

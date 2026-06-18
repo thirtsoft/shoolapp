@@ -199,6 +199,11 @@ export class DossierResourceService {
     return this.http.post<ResponseMessage>(url, this.httpOptions);
   }
 
+  genererUneResourceClasse<T>(endpoint: string, resource: Partial<T>) {
+    const url = `${this.baseUrl_1}/${endpoint}/generer/classe`;
+    return this.http.post<any>(url, resource, this.httpOptions);
+  }
+
   updateResource<T>(endpoint: string, id: number, resource: Partial<T>): Observable<T> {
     const url = `${this.baseUrl_1}/${endpoint}/update/${id}`;
     return this.http.put<T>(url, resource, this.httpOptions);

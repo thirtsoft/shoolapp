@@ -1,15 +1,14 @@
-import { DatePipe } from '@angular/common';
 import { Component, computed, effect, inject, OnInit, signal } from '@angular/core';
 import { FormBuilder, FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
+import { ListeEleve } from '../../../../../core/models/dossiereleve/liste-eleve';
 import { PieceJointeService } from '../../../../../core/services/piece-jointe';
+import { DossierResourceService } from '../../../../administration/dossier-eleve/service/dossier-resource.service';
 import { PlanificationResourceService } from '../../../../administration/planification/services/planification-resource.service';
 import { ReferentielService } from '../../../../administration/referentiel/service/referentiel.service';
 import { EnseignantService } from '../../../service/enseignant.service';
 import { EnseignementContextService } from '../../../service/enseignement-contexte.service';
-import { ListeEleve } from '../../../../../core/models/dossiereleve/liste-eleve';
-import { DossierResourceService } from '../../../../administration/dossier-eleve/service/dossier-resource.service';
 
 
 interface Absence {
@@ -30,7 +29,7 @@ interface Absence {
 @Component({
   selector: 'app-faire-appel-component',
   standalone: true,
-  imports: [RouterModule, FormsModule, DatePipe],
+  imports: [RouterModule, FormsModule],
   templateUrl: './faire-appel-component.html',
   styleUrl: './faire-appel-component.css',
 })

@@ -65,6 +65,7 @@ export class SideBarAdminComponent {
     { route: '/admin/planification/reunion', ico: '👥', label: 'Réunions', section: 'COMMUNICATION', badge: '5' },
     { route: '/admin/planification/noteinformations', ico: '📢', label: 'Notes d\'info', section: '' },
     { route: '/admin/planification/evenement', ico: '🎪', label: 'Événements', section: '' },
+     { route: '/admin/planification/conges', ico: '🌴', label: 'Congés' },
 
     // ═══════════ PARAMÉTRAGE DE BASE (DROPDOWN) ═══════════
     {

@@ -335,7 +335,7 @@
 </div>
  -->
 
- <div class="page-wrapper">
+<div class="page-wrapper">
   <div class="content container-fluid">
     <div class="row">
       <div class="col-sm-12">
@@ -367,7 +367,7 @@
                 <span class="export-text">Exporter en fichier Excel</span>
               </button>
             </div>
-            
+
             <div class="search-valid">
               <div class="newSearch">
                 <div class="search-section-container">
@@ -383,7 +383,9 @@
                                 class="form-control"
                                 [placeholder]="filter.placeholder || ''"
                                 [disabled]="filter.disabled"
-                                (input)="filterChange.emit({ filter, value: $any($event.target).value })"
+                                (input)="
+                                  filterChange.emit({ filter, value: $any($event.target).value })
+                                "
                               />
                             </div>
                           }
@@ -489,10 +491,7 @@
                     <thead>
                       <tr>
                         @for (column of tableColumns; track column.key) {
-                          <th
-                            (click)="sortTable(column.key)"
-                            class="sortable-column"
-                          >
+                          <th (click)="sortTable(column.key)" class="sortable-column">
                             {{ column.header }}
                             @if (sortColumn === column.key) {
                               <span class="sort-icons">
@@ -527,7 +526,15 @@
                                   title="Générer le bulletin PDF"
                                   (click)="generatePdfDuBulletin(row)"
                                 >
-                                  <i class="fas fa-file-pdf text-danger fa-lg"></i>
+                                  <i class="fas fa-file-pdf fa-lg" style="color: #dc3545"></i>
+                                </button>
+                              } @else if (column.key === 'recu') {
+                                <button
+                                  class="icon-button"
+                                  title="Générer le reçu"
+                                  (click)="generatePdfDuRecu(row)"
+                                >
+                                  <i class="fas fa-file-pdf fa-lg" style="color: #dc3545"></i>
                                 </button>
                               } @else {
                                 @if (isNumber(row[column.key])) {
@@ -568,13 +575,15 @@
                                 </button>
                               }
                             </div>
-                            
+
                             <div class="icon-position center">
                               @if (isLockableIcon && showEditOrDeleteCondition(row)) {
                                 <button
                                   class="icon-button"
                                   aria-label="Toggle Lock"
-                                  [title]="row.actif === 1 || row.est_valide ? 'Desactiver' : 'Activer'"
+                                  [title]="
+                                    row.actif === 1 || row.est_valide ? 'Desactiver' : 'Activer'
+                                  "
                                   (click)="
                                     row.actif === 1 || row.est_valide
                                       ? openConfirmationDialog('desactiver', deleteEndPoint, row)
@@ -631,13 +640,17 @@
                                 <div class="popup-container">
                                   <div class="popup-content">
                                     <button class="close-button" (click)="closePopup()">X</button>
-                                    <div style="margin-bottom: 20px; text-align: center; width: 100%"></div>
+                                    <div
+                                      style="margin-bottom: 20px; text-align: center; width: 100%"
+                                    ></div>
                                     <div class="details-grid">
                                       <div class="details-column">
                                         @for (key of splitKeys[0]; track key) {
                                           <div class="details-item">
                                             <span class="details-key">{{ formatKey(key) }}:</span>
-                                            <span class="details-value">{{ selectedItem[key] || 'N/A' }}</span>
+                                            <span class="details-value">{{
+                                              selectedItem[key] || 'N/A'
+                                            }}</span>
                                           </div>
                                         }
                                       </div>
@@ -645,7 +658,9 @@
                                         @for (key of splitKeys[1]; track key) {
                                           <div class="details-item">
                                             <span class="details-key">{{ formatKey(key) }}:</span>
-                                            <span class="details-value">{{ selectedItem[key] || 'N/A' }}</span>
+                                            <span class="details-value">{{
+                                              selectedItem[key] || 'N/A'
+                                            }}</span>
                                           </div>
                                         }
                                       </div>
@@ -672,7 +687,7 @@
                   </table>
                 }
               </div>
-              
+
               @if (totalElements > 0) {
                 <div class="pagination-container-center">
                   <button (click)="changePage(currentPage - 1)" [disabled]="currentPage === 0">
