@@ -146,6 +146,7 @@ export class GenericTableDossierComponent implements OnInit {
 
 
   detailsBulletinEleve?: any;
+  detailsInscriptionEleve?: any;
   matieres?: any;
   totalCoef?: any;
   moyenneGeneraleEleve?: any;
@@ -381,7 +382,6 @@ export class GenericTableDossierComponent implements OnInit {
     if (changes['p']) {
       this.onPageChange.emit(this.p);
     }
-    console.log('log colums', this.tableColumns)
   }
 
   getParametresEtablissement(): void {
@@ -509,7 +509,6 @@ export class GenericTableDossierComponent implements OnInit {
         const valueB = b[columnKey];
 
         if (valueA == null || valueB == null) return 0;
-        console.log("columnKey ", columnKey)
         // Gestion spécifique pour les dates
         if (columnKey === 'dateEngagement' || columnKey === 'dateDemande' || columnKey === 'dateValeur') {
           const dateA = new Date(valueA);
@@ -539,7 +538,6 @@ export class GenericTableDossierComponent implements OnInit {
 
   ngOnInit(): void {
     this.sortTable('dateEngagement');
-    console.log('Is bulletin', this.tableColumns);
     this.matieres = this.detailsBulletinEleve?.bulletinMatiereDetailsDTOS || [];
     this.getParametresEtablissement();
   }
@@ -651,7 +649,384 @@ export class GenericTableDossierComponent implements OnInit {
 
   }
 
+  // reçu
 
+  generatePdfDuRecu(row: any) {
+    if (row.id) {
+      this.getDetailsInscriptionEleve(row.id);
+    }
+  }
+
+  getDetailsInscriptionEleve(inscriptionId: number) {
+    this.sharedResourceService.afficherDetailsResource('inscription', inscriptionId).subscribe({
+      next: (data) => {
+        this.detailsInscriptionEleve = data;
+        console.log('details inscription', this.detailsInscriptionEleve)
+        this.imprimerRecu();
+      }
+    });
+  }
+
+  imprimerRecu() {
+    pdfMake.createPdf(this.getDocumentRecuInscription()).open();
+  }
+
+  DownloadPdfRecu() {
+    const document: any = this.getDocumentRecuInscription();
+    pdfMake.createPdf(document).download('"Recu_"' + this.detailsInscriptionEleve.classe + '.pdf');
+  }
+
+  getDocumentRecuInscription(): any {
+    if (!this.detailsInscriptionEleve) return {};
+
+    // Extraction et formatage des données du JSON d'inscription
+    const codeDossier = this.detailsInscriptionEleve.code || '';
+    const eleve = this.detailsInscriptionEleve.eleveDTO || {};
+    const classe = this.detailsInscriptionEleve.classeDTO?.libelle || '';
+    const anneeScolaire = this.detailsInscriptionEleve.anneeScolaireDTO?.libelle || '';
+    const montant = this.detailsInscriptionEleve.montantInscription || 0;
+
+    // Formatage de la date d'inscription (ex: 30/05/2026)
+    let dateInscriptionFormatted = '';
+    if (this.detailsInscriptionEleve.dateInscription) {
+      const d = new Date(this.detailsInscriptionEleve.dateInscription);
+      dateInscriptionFormatted = d.toLocaleDateString('fr-FR');
+    }
+
+    // Correction du montant : Remplacement des espaces bizarres par un espace standard
+    const formatDevise = (val: number) => {
+      const brute = new Intl.NumberFormat('fr-FR', { style: 'currency', currency: 'XOF', minimumFractionDigits: 0 }).format(val);
+      return brute.replace(/[\u00A0\u202F]/g, ' ').replace('F CFA', 'F CFA');
+    };
+
+    return {
+      pageSize: 'A4',
+      pageMargins: [40, 40, 40, 40],
+      content: [
+        // EN-TÊTE DE L'ÉTABLISSEMENT
+        {
+          columns: [
+            {
+              text: 'LOGO ECOLE', // Diminué de 16 à 12
+              fontSize: 12,
+              bold: true,
+              color: '#1A5276',
+              width: 100,
+              alignment: 'left'
+            },
+            {
+              text: [
+                { text: "ÉCOLE LES DAUPHINS\n", fontSize: 11, bold: true, color: '#1A5276' }, // Diminué de 13 à 11
+                { text: "Derrière le casino du cap vert, Dakar\n", fontSize: 8, color: '#555555' }, // Diminué à 8
+                { text: "Tél: 33 820 10 92 - BP 6268 Dakar étoile\n", fontSize: 8, color: '#555555' },
+                { text: "Web: www.ecolelesdauphins.org\n", fontSize: 8, color: '#4A90E2' },
+                { text: "« L'école pour grandir »", fontSize: 8, italic: true, bold: true }
+              ],
+              alignment: 'right',
+              margin: [0, 0, 0, 0]
+            }
+          ]
+        },
+
+        // Séparateur discret
+        { canvas: [{ type: 'line', x1: 0, y1: 0, x2: 515, y2: 0, lineWidth: 1, lineColor: '#E0E0E0' }], margin: [0, 12, 0, 12] },
+
+        // TITRE DU REÇU & NUMÉRO DE DOSSIER
+        {
+          columns: [
+            { text: `ANNÉE SCOLAIRE : ${anneeScolaire}`, fontSize: 9.5, bold: true, color: '#333333' }, // Diminué de 11 à 9.5
+            { text: `Date : ${dateInscriptionFormatted}`, fontSize: 9.5, bold: true, alignment: 'right', color: '#555555' } // Diminué de 11 à 9.5
+          ]
+        },
+        {
+          text: 'REÇU D\'INSCRIPTION', // Diminué de 20 à 15
+          fontSize: 15,
+          alignment: 'center',
+          bold: true,
+          color: '#1A5276',
+          margin: [0, 15, 0, 4],
+          letterSpacing: 1
+        },
+        {
+          text: `N° ${codeDossier}`, // Diminué de 11 à 9.5
+          fontSize: 9.5,
+          alignment: 'center',
+          bold: true,
+          color: '#7F8C8D',
+          margin: [0, 0, 0, 20]
+        },
+
+        // BLOC INFORMATIONS ÉLÈVE & INSCRIPTION
+        {
+          style: 'infoTable',
+          table: {
+            widths: ['*', '*'],
+            body: [
+              [
+                { text: [{ text: 'Code Élève : ', bold: true }, { text: eleve.matricule || '' }], fontSize: 10 },
+                { text: [{ text: 'Classe Cible : ', bold: true }, { text: classe }], fontSize: 10 }
+              ],
+              [
+                { text: [{ text: 'Nom complet : ', bold: true }, { text: `${eleve.prenom || ''} ${eleve.nom || ''}`.toUpperCase() }], fontSize: 10 },
+                { text: [{ text: 'Sexe : ', bold: true }, { text: eleve.sexe || '' }], fontSize: 10 }
+              ],
+              [
+                { text: [{ text: 'Né(e) le : ', bold: true }, { text: eleve.dateNaissance ? new Date(eleve.dateNaissance).toLocaleDateString('fr-FR') : '' }, { text: ' à ' }, { text: eleve.lieuNaissance || '' }], fontSize: 10 },
+                { text: [{ text: 'Nationalité : ', bold: true }, { text: eleve.nationalite || '' }], fontSize: 10 }
+              ]
+            ]
+          },
+          layout: {
+            paddingLeft: () => 12,
+            paddingRight: () => 12,
+            paddingTop: () => 10,
+            paddingBottom: () => 10,
+            fillColor: '#F8F9F9',
+            hLineWidth: () => 1,
+            vLineWidth: () => 1,
+            hLineColor: () => '#E5E7E9',
+            vLineColor: () => '#E5E7E9'
+          },
+          margin: [0, 0, 0, 25]
+        },
+
+        // TABLEAU FINANCIER
+        {
+          table: {
+            widths: ['*', 120],
+            headerRows: 1,
+            body: [
+              [
+                { text: 'Désignation / Libellé de l\'opération', style: 'tableHeader', alignment: 'left' },
+                { text: 'Montant versé', style: 'tableHeader', alignment: 'right' }
+              ],
+              [
+                { text: `Frais d'inscription scolaire — Classe de ${classe}\n(Dossier de candidature validé)`, alignment: 'left', fontSize: 10.5, margin: [0, 8, 0, 8] },
+                { text: formatDevise(montant), alignment: 'right', fontSize: 10.5, bold: true, margin: [0, 8, 0, 8] }
+              ],
+              [
+                { text: 'TOTAL PAYÉ', bold: true, alignment: 'left', fontSize: 10.5, fillColor: '#EAEDED', margin: [0, 6, 0, 6] },
+                { text: formatDevise(montant), bold: true, alignment: 'right', fontSize: 11, fillColor: '#EAEDED', color: '#27AE60', margin: [0, 6, 0, 6] }
+              ]
+            ]
+          },
+          layout: {
+            hLineWidth: (i: any, node: any) => { return (i === 0 || i === node.table.body.length) ? 1.5 : 1; },
+            vLineWidth: () => 1,
+            hLineColor: (i: any, node: any) => { return (i === 0 || i === node.table.body.length) ? '#1A5276' : '#E5E7E9'; },
+            vLineColor: () => '#E5E7E9',
+            paddingLeft: () => 10,
+            paddingRight: () => 10
+          },
+          margin: [0, 0, 0, 35]
+        },
+
+        // MENTION LÉGALE & SIGNATURE
+        {
+          columns: [
+            {
+              width: '50%',
+              stack: [
+                { text: 'IMPORTANT :', bold: true, fontSize: 8.5, color: '#C0392B', margin: [0, 0, 0, 4] },
+                { text: 'Ce reçu tient lieu de preuve officielle d\'inscription pour l\'année scolaire en cours. Il doit être conservé soigneusement par les parents pour toute réclamation administrative ou fiscale.', fontSize: 8, color: '#7F8C8D', leadingLineHeight: 1.2 }
+              ]
+            },
+            { width: '10%', text: '' },
+            {
+              width: '40%',
+              stack: [
+                { text: `Fait à Dakar, le ${dateInscriptionFormatted}`, fontSize: 8.5, italic: true, alignment: 'center' },
+                { text: 'L\'Agent Comptable / Le Trésorier', bold: true, fontSize: 9.5, alignment: 'center', margin: [0, 6, 0, 45] },
+                { text: 'Signature & Cachet de l\'École', fontSize: 8, alignment: 'center', color: '#BDC3C7', decoration: 'underline' }
+              ]
+            }
+          ]
+        }
+      ],
+
+      styles: {
+        tableHeader: {
+          bold: true,
+          fontSize: 10,
+          color: '#FFFFFF',
+          fillColor: '#1A5276',
+          margin: [0, 4, 0, 4]
+        }
+      }
+    };
+  }
+
+  getDocumentRecuInscription11(): any {
+    if (!this.detailsInscriptionEleve) return {};
+
+    const codeDossier = this.detailsInscriptionEleve.code || '';
+    const eleve = this.detailsInscriptionEleve.eleveDTO || {};
+    const classe = this.detailsInscriptionEleve.classeDTO?.libelle || '';
+    const anneeScolaire = this.detailsInscriptionEleve.anneeScolaireDTO?.libelle || '';
+    const montant = this.detailsInscriptionEleve.montantInscription || 0;
+
+    let dateInscriptionFormatted = '';
+    if (this.detailsInscriptionEleve.dateInscription) {
+      const d = new Date(this.detailsInscriptionEleve.dateInscription);
+      dateInscriptionFormatted = d.toLocaleDateString('fr-FR');
+    }
+
+    const formatDevise = (val: number) => {
+      return new Intl.NumberFormat('fr-FR', { style: 'currency', currency: 'XOF', minimumFractionDigits: 0 }).format(val);
+    };
+
+    return {
+      pageSize: 'A4',
+      pageMargins: [40, 40, 40, 40],
+      content: [
+        {
+          columns: [
+            {
+              text: 'LOGO\nECOLE',
+              fontSize: 16,
+              bold: true,
+              color: '#1A5276',
+              width: 100,
+              alignment: 'left'
+            },
+            {
+              text: [
+                { text: "ÉCOLE LES DAUPHINS\n", fontSize: 13, bold: true, color: '#1A5276' },
+                { text: "Derrière le casino du cap vert, Dakar\n", fontSize: 9, color: '#555555' },
+                { text: "Tél: 33 820 10 92 - BP 6268 Dakar étoile\n", fontSize: 9, color: '#555555' },
+                { text: "Web: www.ecolelesdauphins.org\n", fontSize: 9, color: '#4A90E2' },
+                { text: "« L'école pour grandir »", fontSize: 9, italic: true, bold: true }
+              ],
+              alignment: 'right',
+              margin: [0, 0, 0, 0]
+            }
+          ]
+        },
+
+        { canvas: [{ type: 'line', x1: 0, y1: 0, x2: 515, y2: 0, lineWidth: 1, lineColor: '#E0E0E0' }], margin: [0, 15, 0, 15] },
+
+        {
+          columns: [
+            { text: `ANNÉE SCOLAIRE : ${anneeScolaire}`, fontSize: 11, bold: true, color: '#333333' },
+            { text: `Date : ${dateInscriptionFormatted}`, fontSize: 11, bold: true, alignment: 'right', color: '#555555' }
+          ]
+        },
+        {
+          text: 'REÇU D\'INSCRIPTION',
+          fontSize: 20,
+          alignment: 'center',
+          bold: true,
+          color: '#1A5276',
+          margin: [0, 20, 0, 5],
+          letterSpacing: 1
+        },
+        {
+          text: `N° ${codeDossier}`,
+          fontSize: 11,
+          alignment: 'center',
+          bold: true,
+          color: '#7F8C8D',
+          margin: [0, 0, 0, 25]
+        },
+
+        {
+          style: 'infoTable',
+          table: {
+            widths: ['*', '*'],
+            body: [
+              [
+                { text: [{ text: 'Code Élève : ', bold: true }, { text: eleve.matricule || '' }], fontSize: 10 },
+                { text: [{ text: 'Classe Cible : ', bold: true }, { text: classe }], fontSize: 10 }
+              ],
+              [
+                { text: [{ text: 'Nom complet : ', bold: true }, { text: `${eleve.prenom || ''} ${eleve.nom || ''}`.toUpperCase() }], fontSize: 10 },
+                { text: [{ text: 'Sexe : ', bold: true }, { text: eleve.sexe || '' }], fontSize: 10 }
+              ],
+              [
+                { text: [{ text: 'Né(e) le : ', bold: true }, { text: eleve.dateNaissance ? new Date(eleve.dateNaissance).toLocaleDateString('fr-FR') : '' }, { text: ' à ' }, { text: eleve.lieuNaissance || '' }], fontSize: 10 },
+                { text: [{ text: 'Nationalité : ', bold: true }, { text: eleve.nationalite || '' }], fontSize: 10 }
+              ]
+            ]
+          },
+          layout: {
+            paddingLeft: () => 12,
+            paddingRight: () => 12,
+            paddingTop: () => 10,
+            paddingBottom: () => 10,
+            fillColor: '#F8F9F9',
+            hLineWidth: () => 1,
+            vLineWidth: () => 1,
+            hLineColor: () => '#E5E7E9',
+            vLineColor: () => '#E5E7E9'
+          },
+          margin: [0, 0, 0, 30]
+        },
+
+        {
+          table: {
+            widths: ['*', 120],
+            headerRows: 1,
+            body: [
+              [
+                { text: 'Désignation / Libellé de l\'opération', style: 'tableHeader', alignment: 'left' },
+                { text: 'Montant versé', style: 'tableHeader', alignment: 'right' }
+              ],
+              [
+                { text: `Frais d'inscription scolaire — Classe de ${classe}\n(Dossier de candidature validé)`, alignment: 'left', fontSize: 11, margin: [0, 8, 0, 8] },
+                { text: formatDevise(montant), alignment: 'right', fontSize: 11, bold: true, margin: [0, 8, 0, 8] }
+              ],
+              [
+                { text: 'TOTAL PAYÉ', bold: true, alignment: 'left', fontSize: 11, fillColor: '#EAEDED', margin: [0, 6, 0, 6] },
+                { text: formatDevise(montant), bold: true, alignment: 'right', fontSize: 12, fillColor: '#EAEDED', color: '#27AE60', margin: [0, 6, 0, 6] }
+              ]
+            ]
+          },
+          layout: {
+            hLineWidth: (i: any, node: any) => { return (i === 0 || i === node.table.body.length) ? 1.5 : 1; },
+            vLineWidth: () => 1,
+            hLineColor: (i: any, node: any) => { return (i === 0 || i === node.table.body.length) ? '#1A5276' : '#E5E7E9'; },
+            vLineColor: () => '#E5E7E9',
+            paddingLeft: () => 10,
+            paddingRight: () => 10
+          },
+          margin: [0, 0, 0, 40]
+        },
+
+        {
+          columns: [
+            {
+              width: '50%',
+              stack: [
+                { text: 'IMPORTANT :', bold: true, fontSize: 9, color: '#C0392B', margin: [0, 0, 0, 4] },
+                { text: 'Ce reçu tient lieu de preuve officielle d\'inscription pour l\'année scolaire en cours. Il doit être conservé soigneusement par les parents pour toute réclamation administrative ou fiscale.', fontSize: 8.5, color: '#7F8C8D', leadingLineHeight: 1.2 }
+              ]
+            },
+            { width: '10%', text: '' },
+            {
+              width: '40%',
+              stack: [
+                { text: `Fait à Dakar, le ${dateInscriptionFormatted}`, fontSize: 9, italic: true, alignment: 'center' },
+                { text: 'L\'Agent Comptable / Le Trésorier', bold: true, fontSize: 10, alignment: 'center', margin: [0, 6, 0, 50] },
+                { text: 'Signature & Cachet de l\'École', fontSize: 8.5, alignment: 'center', color: '#BDC3C7', decoration: 'underline' }
+              ]
+            }
+          ]
+        }
+      ],
+
+      styles: {
+        tableHeader: {
+          bold: true,
+          fontSize: 10.5,
+          color: '#FFFFFF',
+          fillColor: '#1A5276',
+          margin: [0, 4, 0, 4]
+        }
+      }
+    };
+  }
+
+  // Bulletin
 
   generatePdfDuBulletin(row: any) {
     if (row.id) {
@@ -676,8 +1051,6 @@ export class GenericTableDossierComponent implements OnInit {
     const document: any = this.getDocumentFicheBulletin();
     pdfMake.createPdf(document).download('"BULLETIN_"' + this.detailsBulletinEleve.classe + '.pdf');
   }
-
-
 
   getDocumentFichePaiement1(): any {
     const matieres = this.detailsBulletinEleve?.bulletinMatiereDetailsDTOS || [];
@@ -1268,6 +1641,8 @@ export class GenericTableDossierComponent implements OnInit {
       }
     };
   }
+
+
 
 
 

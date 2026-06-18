@@ -1,26 +1,29 @@
 import { Routes } from "@angular/router";
-import { PlanificationComponent } from "./planification.component";
-import { CreateEditNoteInformationComponent } from "./pages/noteinformation/create-edit-note-information/create-edit-note-information.component";
-import { ListNoteInformationComponent } from "./pages/noteinformation/list-note-information/list-note-information.component";
-import { CreateMeetingComponent } from "./pages/meeting/create-meeting/create-meeting.component";
-import { MeetingComponent } from "./pages/meeting/meeting.component";
-import { DetailEvenementComponent } from "./pages/evenement/detail-evenement/detail-evenement.component";
-import { CreateEvenementComponent } from "./pages/evenement/create-evenement/create-evenement.component";
-import { EvenementComponent } from "./pages/evenement/evenement.component";
-import { PlanifierEnseignementComponent } from "./pages/enseignement/planifier-enseignement/planifier-enseignement.component";
+import { DemandeCongesComponent } from "./pages/conges/demande-conges-component/demande-conges-component";
+import { DetailsCongesComponent } from "./pages/conges/details-conges-component/details-conges-component";
+import { ListCongesComponent } from "./pages/conges/list-conges-component/list-conges-component";
+import { ListCoursComponent } from "./pages/cours/list-cours/list-cours.component";
+import { PlanifierCoursComponent } from "./pages/cours/planifier-cours/planifier-cours.component";
+import { CreateEmploieDuTempsComponent } from "./pages/emploietemps/create-emploie-du-temps/create-emploie-du-temps.component";
+import { DetailsEmploiDuTempsAdminComponent } from "./pages/emploietemps/details-emploi-du-temps-admin/details-emploi-du-temps-admin.component";
+import { EmploieDuTempsComponent } from "./pages/emploietemps/emploie-du-temps/emploie-du-temps.component";
 import { ListEnseignementComponent } from "./pages/enseignement/list-enseignement/list-enseignement.component";
+import { PlanifierEnseignementComponent } from "./pages/enseignement/planifier-enseignement/planifier-enseignement.component";
+import { CreateEvenementComponent } from "./pages/evenement/create-evenement/create-evenement.component";
+import { DetailEvenementComponent } from "./pages/evenement/detail-evenement/detail-evenement.component";
+import { EvenementComponent } from "./pages/evenement/evenement.component";
 import { CreateExerciceComponent } from "./pages/exercice/create-exercice/create-exercice.component";
 import { ListExerciceComponent } from "./pages/exercice/list-exercice/list-exercice.component";
 import { CreateLeconComponent } from "./pages/lecon/create-lecon/create-lecon.component";
 import { LeconsComponent } from "./pages/lecon/lecons/lecons.component";
 import { CreateLivreComponent } from "./pages/livre/create-livre/create-livre.component";
 import { LivresComponent } from "./pages/livre/livres/livres.component";
-import { PlanifierCoursComponent } from "./pages/cours/planifier-cours/planifier-cours.component";
-import { ListCoursComponent } from "./pages/cours/list-cours/list-cours.component";
-import { DetailsEmploiDuTempsAdminComponent } from "./pages/emploietemps/details-emploi-du-temps-admin/details-emploi-du-temps-admin.component";
-import { CreateEmploieDuTempsComponent } from "./pages/emploietemps/create-emploie-du-temps/create-emploie-du-temps.component";
-import { EmploieDuTempsComponent } from "./pages/emploietemps/emploie-du-temps/emploie-du-temps.component";
+import { CreateMeetingComponent } from "./pages/meeting/create-meeting/create-meeting.component";
 import { DetailsMeetingComponent } from "./pages/meeting/details-meeting-component/details-meeting-component";
+import { MeetingComponent } from "./pages/meeting/meeting.component";
+import { CreateEditNoteInformationComponent } from "./pages/noteinformation/create-edit-note-information/create-edit-note-information.component";
+import { ListNoteInformationComponent } from "./pages/noteinformation/list-note-information/list-note-information.component";
+import { PlanificationComponent } from "./planification.component";
 
 
 export const PLANIFICATION_ROUTES: Routes = [
@@ -151,6 +154,23 @@ export const PLANIFICATION_ROUTES: Routes = [
       {
         path: 'noteinformation/edit/:id',
         component: CreateEditNoteInformationComponent
+      },
+
+      {
+        path: 'conges',
+        component: ListCongesComponent
+      },
+      {
+        path: 'conge/create',
+        component: DemandeCongesComponent
+      },
+      {
+        path: 'conge/edit/:id',
+        component: DemandeCongesComponent
+      },
+      {
+        path: 'conge/details/:id',
+        component: DetailsCongesComponent
       },
     ]
   }

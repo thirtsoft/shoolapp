@@ -1,33 +1,33 @@
 import { Component, inject, OnInit } from '@angular/core';
-import { PlanificationResourceService } from '../../services/planification-resource.service';
-import { IFilterConfig } from '../../../../../core/filtered-config/FiltreConfiguration';
-import { CommonService } from '../../../../../core/services/common.service';
-import { GenericTableReferentielComponent } from '../../../../../core/generic/generic-table-referentiel/generic-table-referentiel.component';
+import { IFilterConfig } from '../../../../../../core/filtered-config/FiltreConfiguration';
+import { PlanificationResourceService } from '../../../services/planification-resource.service';
+import { CommonService } from '../../../../../../core/services/common.service';
+import { GenericTableReferentielComponent } from '../../../../../../core/generic/generic-table-referentiel/generic-table-referentiel.component';
 
 @Component({
-  selector: 'app-meeting',
+  selector: 'app-list-conges-component',
   standalone: true,
   imports: [GenericTableReferentielComponent],
-  templateUrl: './meeting.component.html',
-  styleUrls: ['./meeting.component.css']
+  templateUrl: './list-conges-component.html',
+  styleUrl: './list-conges-component.css',
 })
-export class MeetingComponent implements OnInit {
+export class ListCongesComponent implements OnInit {
   errorMessage?: string;
   isEdit: boolean = true;
   isLoading: boolean = false;
-  filteredDataMeeting: any;
+  filteredDataConges: any;
   isLockable: boolean = true;
   isTable: boolean = true;
-  deleteEndpoint = "reunion";
+  deleteEndpoint = "conges";
   columns: any = [];
-  meetingData: any = [];
+  congesData: any = [];
 
   currentPage = 0;
   pageSize = 5;
   totalElements = 0;
   tableSizes = [5, 10, 20, 50, 100];
 
-  etatfactureOptions: any[] = [];
+  statusEvenementOptions: any[] = [];
   moisList: any[] = [];
   anneeList: any[] = [];
 
@@ -35,15 +35,14 @@ export class MeetingComponent implements OnInit {
   activeFilters: any = {};
   hasActiveFilters: boolean = false;
 
-
-  private readonly panificationResource = inject(PlanificationResourceService);
+  private readonly planificationResource = inject(PlanificationResourceService);
   private readonly commonService = inject(CommonService);
 
   ngOnInit(): void {
-    this.chargerLesMeetings();
+    this.chargerLesConges();
   }
 
-  async chargerLesMeetings() {
+  async chargerLesConges() {
     try {
       await Promise.all([
         this.getMoisList(),
@@ -85,9 +84,9 @@ export class MeetingComponent implements OnInit {
     this.tableFilters = [
       {
         key: 'libelle',
-        label: 'Libellé',
+        label: 'Libelle',
         type: 'text',
-        placeholder: 'Rechercher une réunion...'
+        placeholder: 'Rechercher un évenement...'
       },
       {
         key: 'mois',
@@ -110,6 +109,7 @@ export class MeetingComponent implements OnInit {
     ];
   }
 
+
   onFilterChange(filter: IFilterConfig, value: any) {
     this.activeFilters[filter.key] = value;
     this.hasActiveFilters = Object.values(this.activeFilters).some(val =>
@@ -127,33 +127,33 @@ export class MeetingComponent implements OnInit {
 
       const filtreParam = this.construireLesParamereDeFiltre();
 
-      apiCall = this.panificationResource.fetchFilterDataTable(
-        'planification/meeting',
+      apiCall = this.planificationResource.fetchFilterDataTable(
+        'conges',
         this.currentPage,
         this.pageSize,
         filtreParam)
 
     } else {
-      apiCall = this.panificationResource.getResourcePaged('planification/meeting', this.currentPage, this.pageSize);
+      apiCall = this.planificationResource.getResourcePaged('conges', this.currentPage, this.pageSize);
     }
     apiCall.subscribe({
       next: (response) => {
-        this.meetingData = response.data?.content || [];
+        this.congesData = response.data?.content || [];
         this.totalElements = response.data?.totalElements || 0;
+
         this.columns = [
-          { key: 'libelle', header: 'Libellé' },
-          { key: 'dateMeeting', header: 'Date' },
-          { key: 'heureDebut', header: 'Heure début' },
-          { key: 'heureFin', header: 'Heure fin' },
-          { key: 'typeReunion', header: 'Nature reunion' },
+          { key: 'objet', header: 'Objet' },
+          { key: 'demandeur', header: 'Demandeur' },
+          { key: 'etat', header: 'Etat' },
+          { key: 'dateDebut', header: 'Date début' },
+          { key: 'dateFin', header: 'Date fin' },
+
         ]
 
-        this.meetingData = this.meetingData.map((item: any) => ({
+        this.congesData = this.congesData.map((item: any) => ({
           ...item,
 
-        }),);
-
-
+        }));
         this.isLoading = false;
       },
       error: (error) => {
@@ -168,6 +168,9 @@ export class MeetingComponent implements OnInit {
 
     if (this.activeFilters.libelle) {
       filtreObj.libelle = this.activeFilters.libelle;
+    }
+    if (this.activeFilters.etat) {
+      filtreObj.etat = this.activeFilters.etat;
     }
     if (this.activeFilters.mois) {
       filtreObj.mois = this.activeFilters.mois;
@@ -206,8 +209,5 @@ export class MeetingComponent implements OnInit {
     this.chargerLesDonnees(false);
   }
 
-  // Dans votre composant (.ts)
-  formatLocalDate(utcDate: string): string {
-    return new Date(utcDate).toLocaleString('fr-FR'); // Adaptez la locale
-  }
 }
+

@@ -67,7 +67,7 @@ export class SideBarProfesseurComponent {
     { route: '/enseignant/agenda', ico: '📖', label: 'Mon agenda', section: 'QUOTIDIEN' },
 
     // enseignements & classes
-    { route: '/enseignant/mes-classes', ico: '🏫', label: 'Mes classes', section: 'CLASSES et ENSEIGNEMENTS' },
+  //  { route: '/enseignant/mes-classes', ico: '🏫', label: 'Mes classes', section: 'CLASSES et ENSEIGNEMENTS' },
     //  { route: '/enseignant/notes', ico: '📝', label: 'Notes' },
 
     { route: '/enseignant/appel', ico: '✅', label: 'Faire l\'appel', section: 'GESTION DE CLASSE' },
