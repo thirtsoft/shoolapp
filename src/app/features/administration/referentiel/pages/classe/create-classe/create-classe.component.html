@@ -12,7 +12,6 @@
       </div>
     </div>
 
-    <!-- Badge -->
     <div class="badge-container">
       <span class="badge badge-primary">
         <i class="fas fa-plus-circle me-1"></i>
@@ -24,7 +23,6 @@
       </span>
     </div>
 
-    <!-- Formulaire pleine largeur -->
     <div class="card">
       <div class="card-body p-4 p-md-5">
         <!-- Step Indicator -->
@@ -43,7 +41,6 @@
         <form [formGroup]="classeFormGroup" (ngSubmit)="ajouteditClasse()">
           <input type="hidden" formControlName="id" />
 
-          <!-- Ligne 1: Libellé -->
           <div class="form-group">
             <label class="form-label">
               Libellé <span class="text-danger">*</span>
@@ -63,7 +60,6 @@
             }
           </div>
 
-          <!-- Ligne 2: Niveau -->
           <div class="form-group">
             <label class="form-label">
               Niveau <span class="text-danger">*</span>
@@ -80,7 +76,6 @@
             }
           </div>
 
-          <!-- Récapitulatif -->
           @if (classeFormGroup.get('libelle')?.value && classeFormGroup.get('niveau')?.value) {
             <div class="recap-card">
               <div class="d-flex align-items-center gap-3">
@@ -98,7 +93,6 @@
             </div>
           }
 
-          <!-- Actions -->
           <div class="form-actions">
             <button type="button" class="btn btn-secondary" (click)="goBack()">
               <i class="fas fa-times me-2"></i>Annuler
@@ -113,7 +107,6 @@
             </button>
           </div>
 
-          <!-- Message d'aide -->
           <div class="alert-help mt-4" role="alert">
             <i class="fas fa-info-circle me-2"></i>
             <span>

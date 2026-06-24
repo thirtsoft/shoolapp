@@ -30,6 +30,8 @@ export interface CoursEdit {
 
     libelle?: string;
 
+    classe?: number;
+
     enseignement?: number;
 
     enseignant?: number;

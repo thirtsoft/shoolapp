@@ -1,122 +1,5 @@
-<!-- <div class="page-wrapper">
-  <div class="content container-fluid">
-    <div class="page-header">
-      <div class="row">
-        <div class="col-sm-7 col-auto">
-          <h3 class="page-title"></h3>
-          <ul class="breadcrumb"></ul>
-        </div>
-      </div>
-    </div>
-
-    <div class="row justify-content-center">
-      <div class="col-md-6 col-lg-6 col-xl-6">
-        <div class="card">
-          <h3 class="page-title text-center">{{ title }}</h3>
-          <div class="card-body">
-            <form [formGroup]="tarifFormGroup">
-              <input
-                type="text"
-                readonly="true"
-                hidden="true"
-                formControlName="id"
-              />
-
-              <div class="row form-row">
-                <div class="col-12">
-                  <div class="form-group">
-                    <label
-                      >Type service <span class="text-danger">*</span></label
-                    >
-                    <select
-                      class="form-control select"
-                      formControlName="typeService"
-                      required=""
-                    >
-                      <option>Selectionnez</option>
-                      <option
-                        *ngFor="let item of typeServiceList"
-                        [value]="item.id"
-                      >
-                        {{ item.libelle }}
-                      </option>
-                    </select>
-                  </div>
-                </div>
-              </div>
-
-              <div class="row form-row">
-                <div class="col-12">
-                  <div class="form-group">
-                    <label>Classe <span class="text-danger">*</span></label>
-                    <select
-                      class="form-control select"
-                      formControlName="classe"
-                      required=""
-                    >
-                      <option>Selectionnez</option>
-                      <option *ngFor="let item of classList" [value]="item.id">
-                        {{ item.libelle }}
-                      </option>
-                    </select>
-                  </div>
-                </div>
-              </div>
-
-              <div class="row form-row">
-                <div class="col-12">
-                  <div class="form-group">
-                    <label>Montant <span class="text-danger">*</span></label>
-                    <input
-                      type="number"
-                      formControlName="montant"
-                      required
-                      class="form-control"
-                    />
-                  </div>
-                </div>
-              </div>
-
-              <div class="row mt-3">
-                <div class="col-12 d-flex justify-content-between">
-                  <button
-                    type="button"
-                    class="btn btn-danger si_accept_cancel"
-                    (click)="goBack()"
-                  >
-                    Annuler
-                  </button>
-                  <button
-                    type="button"
-                    class="upload-text text-white"
-                    style="
-                      align-items: center;
-                      border: 1px solid #028ee1;
-                      box-shadow: 0 1px 2px rgba(16, 24, 40, 0.05);
-                      background-color: #028ee1;
-                      min-height: 44px;
-                      padding: 10px 16px;
-                      cursor: pointer;
-                    "
-                    [disabled]="!tarifFormGroup.valid"
-                    (click)="ajouteditTarif()"
-                  >
-                    Enregistrer
-                  </button>
-                </div>
-              </div>
-            </form>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
- -->
-
 <div class="page-wrapper">
   <div class="content container-fluid">
-    <!-- Page Header -->
     <div class="page-header">
       <div class="row align-items-center">
         <div class="col-sm-12">
@@ -128,7 +11,6 @@
       </div>
     </div>
 
-    <!-- Badge -->
     <div class="badge-container">
       <span class="badge badge-primary">
         <i class="fas fa-plus-circle me-1"></i>
@@ -140,7 +22,6 @@
       </span>
     </div>
 
-    <!-- Formulaire pleine largeur -->
     <div class="card">
       <div class="card-body p-4 p-md-5">
         <!-- Step Indicator -->
@@ -159,7 +40,6 @@
         <form [formGroup]="tarifFormGroup" (ngSubmit)="ajouteditTarif()">
           <input type="hidden" formControlName="id" />
 
-          <!-- Ligne 1: Type service -->
           <div class="form-group">
             <label class="form-label">
               Type de service <span class="text-danger">*</span>
@@ -179,7 +59,6 @@
             }
           </div>
 
-          <!-- Ligne 2: Classe -->
           <div class="form-group">
             <label class="form-label">
               Classe <span class="text-danger">*</span>
@@ -196,7 +75,25 @@
             }
           </div>
 
-          <!-- Ligne 3: Montant -->
+          <div class="form-group">
+            <label class="form-label">
+              Année scolaire <span class="text-danger">*</span>
+              <i class="fas fa-chalkboard-user ms-1 text-muted"></i>
+            </label>
+            <select class="form-select" formControlName="anneeScolaire" required>
+              <option value="" disabled selected>— Sélectionnez une année scolaire —</option>
+              @for (item of anneeScolaireList; track item.id) {
+                <option [value]="item.id">{{ item.libelle }}</option>
+              }
+            </select>
+            @if (
+              tarifFormGroup.get('anneeScolaire')?.invalid &&
+              tarifFormGroup.get('anneeScolaire')?.touched
+            ) {
+              <div class="invalid-feedback">L'année scolaire est requise</div>
+            }
+          </div>
+
           <div class="form-group">
             <label class="form-label">
               Montant <span class="text-danger">*</span>
@@ -219,7 +116,6 @@
             }
           </div>
 
-          <!-- Récapitulatif -->
           @if (
             tarifFormGroup.get('typeService')?.value &&
             tarifFormGroup.get('classe')?.value &&
@@ -234,15 +130,16 @@
                   <span class="recap-label">Récapitulatif du tarif</span>
                   <span class="recap-value">
                     Service <strong>{{ getSelectedTypeServiceName() }}</strong> pour la classe
-                    <strong>{{ getSelectedClasseName() }}</strong> :
+                    <strong>{{ getSelectedClasseName() }}</strong> s'élève à
                     <strong>{{ tarifFormGroup.get('montant')?.value | number }} CFA</strong>
+                    pour l'année scolaire
+                    <strong>{{ getSelectedAnneeScolaire() }}</strong>
                   </span>
                 </div>
               </div>
             </div>
           }
 
-          <!-- Actions -->
           <div class="form-actions">
             <button type="button" class="btn btn-secondary" (click)="goBack()">
               <i class="fas fa-times me-2"></i>Annuler
@@ -257,7 +154,6 @@
             </button>
           </div>
 
-          <!-- Message d'aide -->
           <div class="alert-help mt-4" role="alert">
             <i class="fas fa-info-circle me-2"></i>
             <span>

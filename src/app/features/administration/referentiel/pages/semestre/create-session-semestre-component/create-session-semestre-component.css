@@ -1,5 +1,5 @@
 /* ============================================
-   CRÉATION EMPLOI DU TEMPS - STYLE BLEU-BLANC
+   CRÉATION SEMESTRE - STYLE BLEU-BLANC
    PLEINE LARGEUR
    ============================================ */
 
@@ -149,7 +149,7 @@
 
 /* Form Group */
 .form-group {
-  margin-bottom: 1rem;
+  margin-bottom: 1.5rem;
 }
 
 .form-label {
@@ -171,8 +171,7 @@
 }
 
 /* Form Controls */
-.form-control,
-.form-select {
+.form-control {
   width: 100%;
   padding: 0.75rem 1rem;
   font-size: 0.875rem;
@@ -183,16 +182,29 @@
   font-family: inherit;
 }
 
-.form-control:focus,
-.form-select:focus {
+.form-control:focus {
   outline: none;
   border-color: #4299e1;
   box-shadow: 0 0 0 3px rgba(66, 153, 225, 0.15);
 }
 
-.form-control:hover,
-.form-select:hover {
+.form-control:hover {
   border-color: #90cdf4;
+}
+
+/* Two Columns Layout */
+.two-columns-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.5rem;
+  margin-bottom: 1.5rem;
+}
+
+@media (max-width: 768px) {
+  .two-columns-row {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
 }
 
 /* Invalid Feedback */
@@ -204,133 +216,75 @@
   color: #e53e3e;
 }
 
-/* Grid System */
-.row {
-  display: flex;
-  flex-wrap: wrap;
-  margin-right: -0.75rem;
-  margin-left: -0.75rem;
-}
-
-.form-row {
-  margin-bottom: 1rem;
-}
-
-.col-lg-4,
-.col-lg-12,
-.col-sm-12 {
-  padding-right: 0.75rem;
-  padding-left: 0.75rem;
-}
-
-.col-lg-4 {
-  flex: 0 0 auto;
-  width: 33.333333%;
-}
-
-.col-6 {
-  flex: 0 0 auto;
-  width: 50%;
-  padding-right: 0.75rem;
-  padding-left: 0.75rem;
-}
-
-.col-12 {
-  flex: 0 0 auto;
-  width: 100%;
-}
-
-@media (max-width: 992px) {
-  .col-lg-4 {
-    width: 100%;
-    margin-bottom: 0.5rem;
-  }
-
-  .form-row {
-    margin-bottom: 0.5rem;
-  }
-}
-
-/* Divider */
-.divider {
-  height: 1px;
-  background: #e2e8f0;
+/* Recap Card */
+.recap-card {
+  background: linear-gradient(135deg, #ebf4ff 0%, #f8fafc 100%);
+  border-radius: 12px;
+  border-left: 4px solid #2c5282;
+  padding: 1rem;
   margin: 1.5rem 0;
+  animation: fadeIn 0.3s ease;
 }
 
-/* Add Button Container */
-.add-button-container {
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.recap-icon {
+  width: 44px;
+  height: 44px;
   display: flex;
-  justify-content: flex-start;
-  margin: 1rem 0;
-}
-
-.btn-add-course {
-  display: inline-flex;
   align-items: center;
-  padding: 0.625rem 1.25rem;
-  background: linear-gradient(135deg, #2c5282, #1e3a5f);
-  color: white;
-  border: none;
-  border-radius: 10px;
-  font-size: 0.875rem;
-  font-weight: 500;
-  cursor: pointer;
-  transition: all 0.2s ease;
+  justify-content: center;
+  background: rgba(44, 82, 130, 0.1);
+  border-radius: 12px;
+  color: #2c5282;
+  font-size: 1.25rem;
+  flex-shrink: 0;
 }
 
-.btn-add-course:hover {
-  transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(30, 58, 95, 0.2);
+.recap-content {
+  flex: 1;
 }
 
-/* Course Card */
-.course-card {
-  background: #f8fafc;
-  border-radius: 16px;
-  padding: 1.25rem;
-  margin-bottom: 1.25rem;
-  border: 1px solid #e2e8f0;
-  transition: all 0.2s ease;
-}
-
-.course-card:hover {
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-}
-
-.course-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 1rem;
-  padding-bottom: 0.75rem;
-  border-bottom: 1px solid #e2e8f0;
-}
-
-.course-title {
-  font-size: 1rem;
+.recap-label {
+  font-size: 0.625rem;
   font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: #718096;
+  display: block;
+  margin-bottom: 0.25rem;
+}
+
+.recap-value {
+  font-size: 0.875rem;
+  color: #4a5568;
+}
+
+.recap-value strong {
   color: #1e3a5f;
-  margin: 0;
+  font-weight: 700;
+}
+
+.d-flex {
   display: flex;
+}
+
+.align-items-center {
   align-items: center;
 }
 
-.btn-remove-course {
-  background: #fee2e2;
-  border: none;
-  color: #e53e3e;
-  padding: 0.5rem 1rem;
-  border-radius: 8px;
-  font-size: 0.75rem;
-  font-weight: 500;
-  cursor: pointer;
-  transition: all 0.2s ease;
-}
-
-.btn-remove-course:hover {
-  background: #fecaca;
-  transform: scale(1.02);
+.gap-3 {
+  gap: 1rem;
 }
 
 /* Form Actions */
@@ -433,19 +387,14 @@
     font-size: 0.65rem;
   }
 
-  .course-card {
-    padding: 1rem;
+  .recap-icon {
+    width: 36px;
+    height: 36px;
+    font-size: 1rem;
   }
 
-  .course-header {
-    flex-direction: column;
-    gap: 0.75rem;
-    align-items: flex-start;
-  }
-
-  .btn-remove-course {
-    width: 100%;
-    text-align: center;
+  .recap-value {
+    font-size: 0.8125rem;
   }
 }
 
@@ -454,17 +403,14 @@
     padding: 1rem !important;
   }
 
-  .form-control,
-  .form-select {
+  .form-control {
     padding: 0.625rem 0.875rem;
   }
 }
 
 /* Focus visible */
 .form-control:focus-visible,
-.form-select:focus-visible,
-.btn:focus-visible,
-.btn-add-course:focus-visible {
+.btn:focus-visible {
   outline: 2px solid #4299e1;
   outline-offset: 2px;
 }

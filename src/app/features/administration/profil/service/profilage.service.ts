@@ -4,6 +4,7 @@ import { Observable } from 'rxjs';
 import { environment } from '../../../../../environments/environment';
 import { Action } from '../../../../core/models/profil/action';
 import { Profil } from '../../../../core/models/profil/profil';
+import { TypeCompte } from '../../../../core/models/profil/typecompte';
 import { ResponseMessage } from '../../../../core/response/response-message';
 
 @Injectable({
@@ -19,10 +20,9 @@ export class ProfilageService {
     return this.http.get<Action[]>(`${this.baseUrl_1}/profilage/action/list`);
   }
 
-  getAllActionsByTypeCompte(typeCompte: string): Observable<Action[]> {
-    return this.http.get<Action[]>(`${this.baseUrl_1}/profilage/action/typecompte/${typeCompte}`);
+  getAllActionsByTypeCompte(typeCompteId: number): Observable<Action[]> {
+    return this.http.get<Action[]>(`${this.baseUrl_1}/profilage/action/typecompte/${typeCompteId}`);
   }
-
 
   getAction(id: number): Observable<Action> {
     return this.http.get<Action>(`${this.baseUrl_1}/profilage/action/${id}`);
@@ -65,4 +65,15 @@ export class ProfilageService {
   deleteProfil(id?: number): Observable<any> {
     return this.http.delete<ResponseMessage>(`${this.baseUrl_1}/profilage/profile/delete/${id}`);
   }
+
+  getTypeCompte(id: number): Observable<TypeCompte> {
+    return this.http.get<TypeCompte>(`${this.baseUrl_1}/typecompte/${id}`);
+  }
+
+  getLesTypeComptes(): Observable<TypeCompte[]> {
+    return this.http.get<TypeCompte[]>(`${this.baseUrl_1}/typecompte/list`);
+  }
+
+
+
 }

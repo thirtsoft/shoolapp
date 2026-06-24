@@ -1,9 +1,9 @@
 import { Component, inject, OnInit } from '@angular/core';
 import { FormGroup } from '@angular/forms';
-import { ReferentielResourceService } from '../../service/referentiel-resource.service';
+import { IFilterConfig } from '../../../../../core/filtered-config/FiltreConfiguration';
 import { GenericTableReferentielComponent } from '../../../../../core/generic/generic-table-referentiel/generic-table-referentiel.component';
 import { Matiere } from '../../../../../core/models/referentiels/matiere';
-import { IFilterConfig } from '../../../../../core/filtered-config/FiltreConfiguration';
+import { ReferentielResourceService } from '../../service/referentiel-resource.service';
 
 @Component({
   selector: 'app-matiere',
@@ -28,9 +28,9 @@ export class MatiereComponent implements OnInit {
   matiereData: any = [];
 
   currentPage = 0;
-  pageSize = 5;
+  pageSize = 10;
   totalElements = 0;
-  tableSizes = [5, 10, 20, 50, 100];
+  tableSizes = [10, 20, 50, 100];
   tableFilters: IFilterConfig[] = [];
   activeFilters: any = {};
   hasActiveFilters: boolean = false;

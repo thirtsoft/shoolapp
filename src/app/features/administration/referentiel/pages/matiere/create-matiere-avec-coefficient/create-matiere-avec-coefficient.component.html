@@ -1,172 +1,5 @@
-<!-- <div class="page-wrapper">
-  <div class="content container-fluid">
-    <div class="page-header">
-      <div class="row">
-        <div class="col-sm-7 col-auto">
-          <h3 class="page-title">Matière</h3>
-          <ul class="breadcrumb">
-            <li class="breadcrumb-item">
-              <a [routerLink]="'/admin/'">Tableau de bord</a>
-            </li>
-            <li class="breadcrumb-item active">{{ title }}</li>
-          </ul>
-        </div>
-      </div>
-    </div>
-
-    <div class="row">
-      <div class="col-sm-12">
-        <div class="card">
-          <div class="card-body">
-            <form [formGroup]="matiereAvecCoeficientFormGroup">
-              <input
-                type="text"
-                readonly="true"
-                hidden="true"
-                matInput
-                formControlName="id"
-              />
-              <div class="row form-row">
-                <div class="col-lg-6 col-sm-6">
-                  <div class="form-group">
-                    <label>Code <span class="text-danger">*</span></label>
-                    <input
-                      type="text"
-                      formControlName="code"
-                      required
-                      placeholder="code de la matière"
-                      class="form-control"
-                    />
-                  </div>
-                </div>
-                <div class="col-lg-6 col-sm-6">
-                  <div class="form-group">
-                    <label>Libelle <span class="text-danger">*</span></label>
-                    <input
-                      type="text"
-                      formControlName="libelle"
-                      required
-                      placeholder="libelle de la matière"
-                      class="form-control"
-                    />
-                  </div>
-                </div>
-              </div>
-              <hr />
-              <button
-                class="btn btn-primary"
-                (click)="onAddCoefficientItem()"
-                style="
-                  align-items: center;
-                  border: 1px solid #028ee1;
-                  box-shadow: 0 1px 2px rgba(16, 24, 40, 0.05);
-                  background-color: #028ee1;
-                  min-height: 44px;
-                  padding: 10px 16px;
-                  cursor: pointer;
-                "
-              >
-                <i class="fas fa-plus-circle"></i> Ajouter un coefficient
-              </button>
-              <hr />
-
-              <div formArrayName="coefficientMatiereClasseAddEditDTOList">
-                <div
-                  *ngFor="
-                    let coeffItem of coefficientMatiereClasseAddEditDTOList()
-                      .controls;
-                    let coeffItemIndex = index
-                  "
-                  [formGroupName]="coeffItemIndex"
-                >
-                  <div class="row form-row">
-                    <div class="col-lg-5 col-sm-5">
-                      <div class="form-group">
-                        <label>Classe <span class="text-danger">*</span></label>
-
-                        <select
-                          class="form-control select"
-                          formControlName="classe"
-                          required=""
-                        >
-                          <option>Selectionnez</option>
-                          <option
-                            *ngFor="let item of classList"
-                            [value]="item.id"
-                          >
-                            {{ item.libelle }}
-                          </option>
-                        </select>
-                      </div>
-                    </div>
-                    <div class="col-lg-5 col-sm-5">
-                      <div class="form-group">
-                        <label
-                          >Coéfficient <span class="text-danger">*</span></label
-                        >
-                        <input
-                          type="number"
-                          formControlName="coefficient"
-                          required
-                          class="form-control"
-                        />
-                      </div>
-                    </div>
-
-                    <div class="col-lg-1 col-sm-1" *ngIf="coeffItemIndex > 0">
-                      <div class="mb-3" style="margin-top: 30px">
-                        <button
-                          style="width: unset"
-                          class="btn btn-danger ml-3 espace-bouton col-sm-5"
-                          (click)="removeCoefficientItem(coeffItemIndex)"
-                        >
-                          <i class="fas fa-trash"></i>
-                        </button>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              <div style="margin-top: 25px col-sm-12">
-                <button
-                  type="button"
-                  class="btn btn-primary float-lg-right"
-                  id="btn-yes"
-                  (click)="ajouterUneMAtiereAvecCoefficient()"
-                  [disabled]="!matiereAvecCoeficientFormGroup.valid"
-                  style="
-                    align-items: center;
-                    border: 1px solid #028ee1;
-                    box-shadow: 0 1px 2px rgba(16, 24, 40, 0.05);
-                    background-color: #028ee1;
-                    min-height: 44px;
-                    padding: 10px 16px;
-                    cursor: pointer;
-                  "
-                >
-                  Enregistrer
-                </button>
-                <button
-                  type="button"
-                  class="btn btn-danger si_accept_cancel float-left"
-                  routerLink="/admin/referentiels/matiere"
-                >
-                  Annuler
-                </button>
-              </div>
-            </form>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
- -->
-
 <div class="page-wrapper">
   <div class="content container-fluid">
-    <!-- Page Header -->
     <div class="page-header">
       <div class="row align-items-center">
         <div class="col-sm-12">
@@ -178,7 +11,6 @@
       </div>
     </div>
 
-    <!-- Badge -->
     <div class="badge-container">
       <span class="badge badge-primary">
         <i class="fas fa-plus-circle me-1"></i>
@@ -192,7 +24,6 @@
 
     <div class="card">
       <div class="card-body p-4 p-md-5">
-        <!-- Step Indicator -->
         <div class="step-indicator">
           <div class="step active">
             <span class="step-number">1</span>
@@ -211,7 +42,6 @@
         >
           <input type="hidden" formControlName="id" />
 
-          <!-- Ligne 1: Code + Libellé -->
           <div class="row form-row">
             <div class="col-lg-6 col-sm-12">
               <div class="form-group">
@@ -260,7 +90,6 @@
 
           <div class="divider"></div>
 
-          <!-- Bouton Ajouter un coefficient -->
           <div class="add-button-container">
             <button type="button" class="btn-add" (click)="onAddCoefficientItem()">
               <i class="fas fa-plus-circle me-2"></i>Ajouter un coefficient
@@ -269,7 +98,6 @@
 
           <div class="divider"></div>
 
-          <!-- Liste des coefficients par classe -->
           <div formArrayName="coefficientMatiereClasseAddEditDTOList">
             @for (coeffItem of coefficientMatiereClasseAddEditDTOList().controls; track $index) {
               <div class="coefficient-card" [formGroupName]="$index">
@@ -326,7 +154,6 @@
             }
           </div>
 
-          <!-- Récapitulatif -->
           @if (
             matiereAvecCoeficientFormGroup.get('libelle')?.value &&
             coefficientMatiereClasseAddEditDTOList().length > 0
@@ -353,12 +180,11 @@
             </div>
           }
 
-          <!-- Actions -->
           <div class="form-actions">
             <button
               type="button"
               class="btn btn-secondary"
-              routerLink="/admin/referentiels/matiere"
+              routerLink="/admin/referentiel/matieres"
             >
               <i class="fas fa-times me-2"></i>Annuler
             </button>

@@ -7,6 +7,7 @@ import { ToastrService } from 'ngx-toastr';
 import { ConfirmationDialogModalComponent } from '../../../../../../core/components/confirmation-dialog-modal/confirmation-dialog-modal.component';
 import { DetailsMeeting } from '../../../../../../core/models/planification/details-meeting';
 import { PlanificationResourceService } from '../../../services/planification-resource.service';
+import { EtatLibelle } from '../../../../../../core/constants/etat-libelle';
 
 @Component({
   selector: 'app-details-meeting-component',
@@ -28,6 +29,8 @@ export class DetailsMeetingComponent implements OnInit {
   modalActionLabel: string = '';
   targetEtatCode: string = '';
   isMotifRequired: boolean = false;
+
+  libelleEtat = EtatLibelle;
 
   private readonly modalService = inject(NgbModal);
   private readonly planification = inject(PlanificationResourceService);

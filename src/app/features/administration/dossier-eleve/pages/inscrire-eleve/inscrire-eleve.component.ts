@@ -305,35 +305,15 @@ export class InscrireEleveComponent implements OnInit {
         .map((item: any) => item.telephone)
         .filter((telephone: string) => telephone !== undefined);
     }
-    console.log('matricules list parent', this.telephonesList);
   }
-
-  /*
-  ajouterParent() {
-    const circles = document.querySelectorAll(".circle");
-    const progressBar: any = document.querySelector(".indicator");
-    const payload = this.parentFormGroup.value;
-    this.telephonesList = [];
-    if (payload) {
-      this.currentStep = this.currentStep + 1;
-      progressBar.style.width = `${((this.currentStep - 1) / (circles.length - 1)) * 100}%`;
-
-      if (payload?.utilisateurDTOs) {
-        this.telephonesList = payload.utilisateurDTOs
-          .map((item: any) => item.telephone)
-          .filter((telephone: string) => telephone !== undefined);
-      }
-    }
-    console.log('matricules list parent', this.telephonesList);
-  }*/
 
   initializeMedecinTraitantForm(medecin: MedecinTraitant | null) {
     this.medecinTraitantFormGroup = this._formBuilder.group({
-      id: [medecin?.id ? medecin.id : ''],
-      prenom: [medecin?.prenom ? medecin.prenom : '', Validators.required],
-      nom: [medecin?.nom ? medecin.nom : '', Validators.required],
-      telephone: [medecin?.telephone ? medecin.telephone : ''],
-      email: [medecin?.email ? medecin.email : ''],
+      id: [medecin?.id ?? ''],
+      prenom: [medecin?.prenom ?? ''],
+      nom: [medecin?.nom ?? ''],
+      telephone: [medecin?.telephone ?? ''],
+      email: [medecin?.email ??''],
     });
   }
 

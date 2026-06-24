@@ -312,6 +312,14 @@ export class PlanificationResourceService {
     return this.http.put<ResponseMessage>(`${this.planificationUrl}/planification/emploidutemps/update/${id}`, value);
   }
 
+  createEmploiDuTempsAnneeScolaire(info: EmploiDuTemps) {
+    return this.http.post<ResponseMessage>(`${this.planificationUrl}/planification/emploidutemps/saveedit`, info);
+  }
+
+  updateEmploiDuTempsAnneeScolaire(id: number, value: EmploiDuTemps) {
+    return this.http.put<ResponseMessage>(`${this.planificationUrl}/planification/emploidutemps/edit/${id}`, value);
+  }
+
   deleteEmploiDuTemps(id?: number) {
     return this.http.delete<ResponseMessage>(`${this.planificationUrl}/planification/emploidutemps/delete/${id}`);
   }

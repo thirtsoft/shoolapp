@@ -40,7 +40,26 @@
 
             <form [formGroup]="emploiFormGroup" (ngSubmit)="ajouterEmploieDuTemps()">
               <input type="hidden" formControlName="id" />
-              <div class="row form-row">
+              <div class="form-group">
+                <label class="form-label">
+                  Année scolaire <span class="text-danger">*</span>
+                  <i class="fas fa-book-open ms-1 text-muted"></i>
+                </label>
+                <select class="form-select" formControlName="anneeScolaire" required>
+                  <option value="" disabled selected>— Sélectionnez une année scolaire —</option>
+                  @for (item of anneeScolaireList; track item.id) {
+                    <option [value]="item.id">{{ item.libelle }}</option>
+                  }
+                </select>
+                @if (
+                  emploiFormGroup.get('anneeScolaire')?.invalid &&
+                  emploiFormGroup.get('anneeScolaire')?.touched
+                ) {
+                  <div class="invalid-feedback">L'année scolaire est requise</div>
+                }
+              </div>
+
+              <!--       <div class="row form-row">
                 <div class="col-lg-4 col-sm-12">
                   <div class="form-group">
                     <label class="form-label">
@@ -111,7 +130,7 @@
                     }
                   </div>
                 </div>
-              </div>
+              </div> -->
 
               <div class="divider"></div>
 
@@ -142,7 +161,7 @@
                     </div>
 
                     <div class="row form-row">
-                      <div class="col-lg-4 col-sm-12">
+                      <div class="col-6">
                         <div class="form-group">
                           <label class="form-label">
                             Libellé <span class="text-danger">*</span>
@@ -157,7 +176,29 @@
                         </div>
                       </div>
 
-                      <div class="col-lg-4 col-sm-12">
+                      <div class="col-6">
+                        <div class="form-group">
+                          <label class="form-label">
+                            Classe <span class="text-danger">*</span>
+                            <i class="fas fa-chalkboard-user ms-1 text-muted"></i>
+                          </label>
+                          <select
+                            class="form-select"
+                            formControlName="classe"
+                            (change)="onClasseSelected($index)"
+                            required
+                          >
+                            <option value="" disabled selected>— Sélectionnez une classe —</option>
+                            @for (item of classList; track item.id) {
+                              <option [value]="item.id">{{ item.libelle }}</option>
+                            }
+                          </select>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div class="row form-row">
+                      <div class="col-6">
                         <div class="form-group">
                           <label class="form-label">
                             Enseignement <span class="text-danger">*</span>
@@ -167,23 +208,17 @@
                             <option value="" disabled selected>
                               — Sélectionnez un enseignement —
                             </option>
-                            @for (item of enseignementList; track item.id) {
+                            @for (item of enseignementsParCours[$index]; track item.id) {
                               <option [value]="item.id">
                                 {{ item.enseignant }} - {{ item.matiere }} - {{ item.classe }} -
                                 {{ item.anneeScolaire }}
                               </option>
                             }
                           </select>
-                          @if (
-                            emploiFormGroup.get('enseignement')?.invalid &&
-                            emploiFormGroup.get('enseignement')?.touched
-                          ) {
-                            <div class="invalid-feedback">L'enseignement est requis</div>
-                          }
                         </div>
                       </div>
 
-                      <div class="col-lg-4 col-sm-12">
+                      <div class="col-6">
                         <div class="form-group">
                           <label class="form-label">
                             Salle <span class="text-danger">*</span>

@@ -1,6 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, inject, input, output, signal } from '@angular/core';
 import { Router } from '@angular/router';
+import { LocalStorageService } from '../../../../core/services/local-storage.service';
 
 interface NavItem {
   route?: string;
@@ -27,6 +28,7 @@ export class SideBarAdminComponent {
   close = output<void>();
 
   readonly router = inject(Router);
+  readonly localStorage = inject(LocalStorageService);
 
   expandedMenus = signal<Set<string>>(new Set());
 
@@ -151,6 +153,8 @@ export class SideBarAdminComponent {
   }
 
   deconnecter(): void {
+     this.localStorage.clear();
     this.router.navigate(['/auth/login']);
+    
   }
 }

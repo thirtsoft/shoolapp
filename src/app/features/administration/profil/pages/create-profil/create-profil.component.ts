@@ -4,6 +4,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
 import { Action } from '../../../../../core/models/profil/action';
 import { Profil } from '../../../../../core/models/profil/profil';
+import { TypeCompte } from '../../../../../core/models/profil/typecompte';
 import { ProfilageService } from '../../service/profilage.service';
 
 @Component({
@@ -22,7 +23,8 @@ export class CreateProfilComponent implements OnInit {
 
   actionList: (Action | 'selectAll')[] = [];
   selectedActions: number[] = [];
-  typeCompeList: string[] = ['ECOLE', 'ENSEIGNANT', 'PARENT'];
+  //typeCompeList: string[] = ['ECOLE', 'ENSEIGNANT', 'PARENT'];
+  typeCompeList: TypeCompte[] = [];
   actionsDropdownOpen: boolean = false;
   @ViewChild('actionsSelectContainer') actionsSelectContainer!: ElementRef;
   today = new Date();
@@ -41,10 +43,19 @@ export class CreateProfilComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    this.getTypeComptes();
     this.initializeForm(null);
     if (this.profilId && this.profilId != null) {
       this.getProfileById(this.profilId);
     }
+  }
+
+  getTypeComptes() {
+    this.profilageService.getLesTypeComptes().subscribe({
+      next: (data) => {
+        this.typeCompeList = data;
+      }
+    });
   }
 
   toggleActionsDropdown(event?: MouseEvent) {
@@ -101,12 +112,13 @@ export class CreateProfilComponent implements OnInit {
 
 
   onTypeCompteChange(event: any) {
+    console.log('typecompte', event.target.value);
     if (event.target.value != null && event.target.value != undefined) {
       this.getActionByTypeCompte(event.target.value);
     }
   }
 
-  getActionByTypeCompte(typeCompte: string) {
+  getActionByTypeCompte(typeCompte: number) {
     this.profilageService.getAllActionsByTypeCompte(typeCompte).subscribe(
       (data: any[]) => {
         //   this.listActions = data;
@@ -152,7 +164,7 @@ export class CreateProfilComponent implements OnInit {
     this.profilFormGroup = this._formBuilder.group({
       id: [profil?.id ?? ''],
       libelle: [profil?.libelle ?? '', Validators.required],
-      typeCompte: [profil?.typeCompte ?? '', Validators.required],
+      typeCompteId: [profil?.typeCompteId ?? '', Validators.required],
       actionDTOs: [profil?.actionDTOs?.map(a => a.id) ?? [], Validators.required],
     });
   }
@@ -172,11 +184,13 @@ export class CreateProfilComponent implements OnInit {
     const typeActionSelected = this.profilFormGroup.value.actionDTOs;
     this.profil = {
       id: this.profil?.id,
-      typeCompte: this.profilFormGroup.get('typeCompte')?.value,
       libelle: this.profilFormGroup.get('libelle')?.value,
       actionDTOs: this.actionList
         .filter((action): action is Action => action !== 'selectAll')
-        .filter(action => typeActionSelected.includes(Number(action.id)))
+        .filter(action => typeActionSelected.includes(Number(action.id))),
+
+      typeCompteId: this.profilFormGroup.get('typeCompteId')?.value
+
 
     };
     this.profilageService.createProfil(this.profil).subscribe({
@@ -184,7 +198,7 @@ export class CreateProfilComponent implements OnInit {
         console.log('payload after : ', data);
         if (data.statut === 'OK') {
           this.toastService.success('succès', 'Le profile ont été enregistré avec succès !!! ');
-          this.router.navigate(['/admin/profils/all']);
+          this.goBack();
         } else if (data.statut === 'FAILED') {
           this.toastService.error('error', 'Erreur lors de la création : ' + data.message);
         }
@@ -198,7 +212,7 @@ export class CreateProfilComponent implements OnInit {
   }
 
   goBack() {
-    this.router.navigate(['/admin/profils/all']);
+    this.router.navigate(['/admin/profils']);
   }
 
 

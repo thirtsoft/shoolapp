@@ -127,7 +127,7 @@ export class CreationCategoryMenuComponent implements OnInit {
         next: (data) => {
           if (data.statut === 'OK') {
             this.toastService.success('succès', 'Le menu a été enregistrées avec succès !!! ');
-            this.router.navigate(['/admin/referentiel/category-menu']);
+             this.goBack();
           } else if (data.statut === 'FAILED') {
             this.toastService.error('error', 'Erreur lors de la création : ' + data.message);
           }
@@ -144,7 +144,8 @@ export class CreationCategoryMenuComponent implements OnInit {
         next: (data) => {
           if (data.statut === 'OK') {
             this.toastService.success('succès', 'Le menu a été modifiés avec succès !!! ');
-            this.router.navigate(['/admin/referentiel/category-menu']);
+            this.goBack();
+
           } else if (data.statut === 'FAILED') {
             this.toastService.error('error', 'Erreur lors de la modification : ' + data.message);
           }
@@ -155,5 +156,9 @@ export class CreationCategoryMenuComponent implements OnInit {
         }
       });
     }
+  }
+
+  goBack() {
+    this.router.navigate(['/admin/referentiel/category-menu']);
   }
 }

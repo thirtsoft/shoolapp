@@ -105,7 +105,7 @@ export class CreateCoefficientmatclasseComponent implements OnInit {
         next: (data) => {
           if (data.statut === 'OK') {
             this.toastService.success('succès', 'Le tarif a été enregistrées avec succès !!! ');
-            this.router.navigate(['admin/referentiels/coefficient'])
+            this.goBack();
           } else if (data.statut === 'FAILED') {
             this.toastService.error('error', 'Erreur lors de la création : ' + data.message);
           }
@@ -120,7 +120,7 @@ export class CreateCoefficientmatclasseComponent implements OnInit {
         next: (data) => {
           if (data.statut === 'OK') {
             this.toastService.success('succès', 'Le tarif a été modifiées avec succès !!! ');
-            this.router.navigate(['admin/referentiels/coefficient'])
+            this.goBack();
           } else if (data.statut === 'FAILED') {
             this.toastService.error('error', 'Erreur lors de la modification : ' + data.message);
           }
@@ -136,7 +136,7 @@ export class CreateCoefficientmatclasseComponent implements OnInit {
 
 
   goBack() {
-    this.router.navigate(['admin/referentiels/coefficient'])
+    this.router.navigate(['admin/referentiel/coefficients'])
   }
 
 

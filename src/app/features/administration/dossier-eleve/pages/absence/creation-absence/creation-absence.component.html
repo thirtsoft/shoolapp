@@ -99,73 +99,71 @@
                       </select>
                     </div>
 
-                    @if (attendanceRecordFormGroup.get('attendanceStatus')?.value === 'RETARD') {
-                      <div class="retard-fields">
-                        <div class="form-group">
-                          <label class="form-label">
-                            Cours <span class="text-danger">*</span>
-                            <i class="fas fa-book ms-1 text-muted"></i>
-                          </label>
-                          <select class="form-select" formControlName="courseId" required>
-                            <option value="" disabled selected>— Sélectionnez un cours —</option>
-                            @for (item of coursList; track item.id) {
-                              <option [ngValue]="item.id">
-                                {{ item.libelle }}
-                              </option>
-                            }
-                          </select>
-                          @if (
-                            attendanceRecordFormGroup.get('courseId')?.invalid &&
-                            attendanceRecordFormGroup.get('courseId')?.touched
-                          ) {
-                            <div class="text-danger small">
-                              Le cours est obligatoire pour un retard
-                            </div>
+                    <div class="retard-fields">
+                      <div class="form-group">
+                        <label class="form-label">
+                          Cours <span class="text-danger">*</span>
+                          <i class="fas fa-book ms-1 text-muted"></i>
+                        </label>
+                        <select class="form-select" formControlName="courseId" required>
+                          <option value="" disabled selected>— Sélectionnez un cours —</option>
+                          @for (item of coursList; track item.id) {
+                            <option [ngValue]="item.id">
+                              {{ item.libelle }}
+                            </option>
                           }
-                        </div>
-
-                        <div class="form-group">
-                          <label class="form-label">
-                            Heure prévue (début du cours) <span class="text-danger">*</span>
-                            <i class="fas fa-clock ms-1 text-muted"></i>
-                          </label>
-                          <input
-                            type="time"
-                            class="form-control"
-                            formControlName="expectedTime"
-                            (change)="calculateLateMinutes()"
-                          />
-                        </div>
-
-                        <div class="form-group">
-                          <label class="form-label">
-                            Heure d'arrivée réelle <span class="text-danger">*</span>
-                            <i class="fas fa-clock ms-1 text-muted"></i>
-                          </label>
-                          <input
-                            type="time"
-                            class="form-control"
-                            formControlName="arrivalTime"
-                            (change)="calculateLateMinutes()"
-                          />
-                        </div>
-
-                        <div class="form-group">
-                          <label class="form-label">
-                            Minutes de retard
-                            <i class="fas fa-hourglass-half ms-1 text-muted"></i>
-                          </label>
-                          <input
-                            type="number"
-                            class="form-control"
-                            formControlName="lateMinutes"
-                            readonly
-                            [class.is-invalid]="lateMinutes > 0 && !isRetardJustifie()"
-                          />
-                          <small class="text-muted">Calculé automatiquement</small>
-                        </div>
+                        </select>
+                        @if (
+                          attendanceRecordFormGroup.get('courseId')?.invalid &&
+                          attendanceRecordFormGroup.get('courseId')?.touched
+                        ) {
+                          <div class="text-danger small">
+                            Le cours est obligatoire pour un retard
+                          </div>
+                        }
                       </div>
-                    }
+
+                      <div class="form-group">
+                        <label class="form-label">
+                          Heure prévue (début du cours) <span class="text-danger">*</span>
+                          <i class="fas fa-clock ms-1 text-muted"></i>
+                        </label>
+                        <input
+                          type="time"
+                          class="form-control"
+                          formControlName="expectedTime"
+                          (change)="calculateLateMinutes()"
+                        />
+                      </div>
+
+                      <div class="form-group">
+                        <label class="form-label">
+                          Heure d'arrivée réelle <span class="text-danger">*</span>
+                          <i class="fas fa-clock ms-1 text-muted"></i>
+                        </label>
+                        <input
+                          type="time"
+                          class="form-control"
+                          formControlName="arrivalTime"
+                          (change)="calculateLateMinutes()"
+                        />
+                      </div>
+
+                      <div class="form-group">
+                        <label class="form-label">
+                          Minutes de retard
+                          <i class="fas fa-hourglass-half ms-1 text-muted"></i>
+                        </label>
+                        <input
+                          type="number"
+                          class="form-control"
+                          formControlName="lateMinutes"
+                          readonly
+                          [class.is-invalid]="lateMinutes > 0 && !isRetardJustifie()"
+                        />
+                        <small class="text-muted">Calculé automatiquement</small>
+                      </div>
+                    </div>
 
                     <div class="form-group">
                       <label class="form-label">

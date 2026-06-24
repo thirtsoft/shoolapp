@@ -1,0 +1,27 @@
+export const EtatLibelle = {
+  LIBELLE_ETAT_BROUILLON: 'Brouillon',
+  LIBELLE_ETAT_REMISE: 'Remise',
+  LIBELLE_ETAT_ENVOYEE: 'Envoyée',
+  LIBELLE_ETAT_VALIDEE: 'Validée',
+
+  LIBELLE_ETAT_PUBLIE: 'Publié',
+  LIBELLE_ETAT_DEPUBLIE: 'Dépublié',
+  LIBELLE_ETAT_PROGRAMME: 'Programmé',
+  LIBELLE_ETAT_ENCOURS: 'En cours',
+
+  LIBELLE_ETAT_TERMINE: 'Terminé',
+  LIBELLE_ETAT_REPROGRAMME: 'Reprogrammé',
+  LIBELLE_ETAT_ANNULE: 'Annulé',
+  LIBELLE_ETAT_CLOTURE: 'Clôturé',
+
+  LIBELLE_ETAT_REACTIVATION: 'Réactivation',
+  LIBELLE_ETAT_AVENIR: 'A venir',
+  LIBELLE_ETAT_ACCEPTE: 'Accepte',
+  LIBELLE_ETAT_REJETE: 'Rejete',
+
+  LIBELLE_ETAT_PAYEE_PARTIELLE: 'Payée partielle',
+  LIBELLE_ETAT_A_CONFIRMEE: 'A confirmée',
+  LIBELLE_ETAT_PAY_REJETE: 'Paiement rejeté',
+  LIBELLE_ETAT_PAYEE: 'Payée',
+
+};

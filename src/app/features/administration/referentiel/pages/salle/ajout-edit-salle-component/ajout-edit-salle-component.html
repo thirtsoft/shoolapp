@@ -1,167 +1,3 @@
-<!-- <div class="page-wrapper">
-  <div class="content container-fluid">
-    <div class="row">
-      <div class="col-sm-12">
-        <h3 class="page-title text-center mb-2">{{ title }}</h3>
-        <div class="card">
-          <div class="card-body">
-            <form [formGroup]="coursFormGroup">
-              <div style="margin-top: 5px">
-                <input
-                  type="text"
-                  readonly="true"
-                  hidden="true"
-                  formControlName="id"
-                />
-                <div class="row form-row">
-                  <div class="col-lg-4 col-sm-4">
-                    <div class="form-group">
-                      <label>Libelle <span class="text-danger">*</span></label>
-                      <input
-                        type="text"
-                        formControlName="libelle"
-                        required
-                        placeholder="libelle"
-                        class="form-control"
-                      />
-                    </div>
-                  </div>
-                  <div class="col-lg-4 col-sm-4">
-                    <div class="form-group">
-                      <label
-                        >Enseignement <span class="text-danger">*</span></label
-                      >
-                      <select
-                        class="form-control select"
-                        name="enseignement"
-                        formControlName="enseignement"
-                        required=""
-                      >
-                        <option value="">Selectionnez enseignement</option>
-                        <option
-                          *ngFor="let item of enseignementtList"
-                          [value]="item.id"
-                        >
-                          {{ item.libelle }}
-                        </option>
-                      </select>
-                    </div>
-                  </div>
-
-                  <div class="col-lg-4 col-sm-4">
-                    <div class="form-group">
-                      <label
-                        >Emploi du temps
-                        <span class="text-danger">*</span></label
-                      >
-                      <select
-                        class="form-control select"
-                        name="emploiDuTemps"
-                        formControlName="emploiDuTemps"
-                        required=""
-                      >
-                        <option value="">Selectionnez un emploi</option>
-                        <option
-                          *ngFor="let item of epmloiDuTempsList"
-                          [value]="item.id"
-                        >
-                          {{ item.nomComplet }}
-                        </option>
-                      </select>
-                    </div>
-                  </div>
-                </div>
-
-                <div class="row form-row">
-                  <div class="col-lg-4 col-sm-4">
-                    <div class="form-group">
-                      <label>Salle <span class="text-danger">*</span></label>
-                      <select
-                        class="form-control select"
-                        name="salle"
-                        formControlName="salle"
-                        required=""
-                      >
-                        <option value="">Selectionnez une salle</option>
-                        <option
-                          *ngFor="let item of salleList"
-                          [value]="item.id"
-                        >
-                          {{ item.libelle }}
-                        </option>
-                      </select>
-                    </div>
-                  </div>
-
-                  <div class="col-lg-4 col-sm-4">
-                    <div class="form-group">
-                      <label
-                        >Date du cours <span class="text-danger">*</span></label
-                      >
-                      <input
-                        type="date"
-                        formControlName="dateCours"
-                        required
-                        class="form-control"
-                      />
-                    </div>
-                  </div>
-
-                  <div class="col-lg-2 col-sm-2">
-                    <div class="form-group">
-                      <label
-                        >Heure début <span class="text-danger">*</span></label
-                      >
-                      <input
-                        type="time"
-                        formControlName="heureDebut"
-                        required
-                        class="form-control"
-                      />
-                    </div>
-                  </div>
-
-                  <div class="col-lg-2 col-sm-2">
-                    <div class="form-group">
-                      <label
-                        >Heure fin <span class="text-danger">*</span></label
-                      >
-                      <input
-                        type="time"
-                        formControlName="heureFin"
-                        required
-                        class="form-control"
-                      />
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </form>
-            <div style="margin-top: 75px col-sm-12">
-              <button
-                type="button"
-                class="btn btn-primary si_accept_confirm float-lg-right"
-                id="btn-yes"
-                (click)="ajoutereditCours()"
-              >
-                Enregistrer
-              </button>
-              <button
-                type="button"
-                class="btn btn-danger si_accept_cancel float-left"
-                routerLink="/admin/planification/cours"
-              >
-                Annuler
-              </button>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
- -->
-
 <div class="page-wrapper">
   <div class="content container-fluid">
     <div class="page-header">
@@ -188,7 +24,6 @@
 
     <div class="card">
       <div class="card-body p-4 p-md-5">
-        <!-- Step Indicator -->
         <div class="step-indicator">
           <div class="step active">
             <span class="step-number">1</span>
@@ -287,7 +122,6 @@
             </div>
           </div>
 
-          <!-- Récapitulatif -->
           @if (salleFormGroup.valid) {
             <div class="recap-card">
               <div class="d-flex align-items-center gap-3">
@@ -306,9 +140,8 @@
             </div>
           }
 
-          <!-- Actions -->
           <div class="form-actions">
-            <button type="button" class="btn btn-secondary" routerLink="/admin/referentiel/salles">
+            <button type="button" class="btn btn-secondary" (click)="goBack()">
               <i class="fas fa-times me-2"></i>Annuler
             </button>
             <button type="submit" class="btn btn-primary" [disabled]="!salleFormGroup.valid">
@@ -321,7 +154,6 @@
             </button>
           </div>
 
-          <!-- Message d'aide -->
           <div class="alert-help mt-4" role="alert">
             <i class="fas fa-info-circle me-2"></i>
             <span>

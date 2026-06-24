@@ -1,11 +1,11 @@
 import { Component, inject, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
+import { ToastrService } from 'ngx-toastr';
 import { TypeServiceOffert } from '../../../../../../core/models/referentiels/type-service-offert';
 import { Utilisateur } from '../../../../../../core/models/utilisateur/utilisateur';
 import { UtilisateurService } from '../../../../utilisateur/service/utilisateur.service';
 import { ReferentielResourceService } from '../../../service/referentiel-resource.service';
-import { ToastrService } from 'ngx-toastr';
 
 @Component({
   selector: 'app-create-type-service-offert',
@@ -44,7 +44,6 @@ export class CreateTypeServiceOffertComponent implements OnInit {
 
 
   ngOnInit(): void {
-
     this.getConnectedUserInfos();
     this.initializeForm(null);
     if (this.typeServiceId != null && this.typeServiceId != undefined) {
@@ -58,7 +57,6 @@ export class CreateTypeServiceOffertComponent implements OnInit {
     this.utilisateurService.getUtilisateur(this.userId).subscribe({
       next: data => {
         this.utilisateur = data;
-        //      this.ecoleId = this.utilisateur.ecoleId;
       },
       error: error => { console.log(error) },
     });
@@ -90,7 +88,7 @@ export class CreateTypeServiceOffertComponent implements OnInit {
         next: (data) => {
           if (data.statut === 'OK') {
             this.toastService.success('succès', 'Le service a été enregistrées avec succès !!! ');
-            this.router.navigate(['admin/referentiels/typeservice'])
+            this.goBack();
           } else if (data.statut === 'FAILED') {
             this.toastService.error('error', 'Erreur lors de la création : ' + data.message);
           }
@@ -105,7 +103,7 @@ export class CreateTypeServiceOffertComponent implements OnInit {
         next: (data) => {
           if (data.statut === 'OK') {
             this.toastService.success('succès', 'Le service a été modifiées avec succès !!! ');
-            this.router.navigate(['admin/referentiels/typeservice'])
+            this.goBack();
           } else if (data.statut === 'FAILED') {
             this.toastService.error('error', 'Erreur lors de la modification : ' + data.message);
           }
@@ -120,7 +118,7 @@ export class CreateTypeServiceOffertComponent implements OnInit {
   }
 
   goBack() {
-    this.router.navigate(['admin/referentiels/typeservice'])
+    this.router.navigate(['admin/referentiel/typeservices'])
   }
 
 

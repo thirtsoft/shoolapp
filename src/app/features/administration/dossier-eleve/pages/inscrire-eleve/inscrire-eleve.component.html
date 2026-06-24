@@ -344,7 +344,7 @@
                 <div class="form-grid">
                   <div class="form-group">
                     <label class="form-label">
-                      Prénom <span class="text-danger">*</span>
+                      Prénom 
                       <i class="fas fa-user-md ms-1 text-muted"></i>
                     </label>
                     <input
@@ -353,28 +353,17 @@
                       formControlName="prenom"
                       placeholder="Prénom du médecin"
                     />
-                    @if (
-                      medecinTraitantFormGroup.get('prenom')?.invalid &&
-                      medecinTraitantFormGroup.get('prenom')?.touched
-                    ) {
-                      <small class="form-text text-danger">Le prénom est obligatoire</small>
-                    }
                   </div>
 
                   <div class="form-group">
-                    <label class="form-label">Nom <span class="text-danger">*</span></label>
+                    <label class="form-label">Nom </label>
                     <input
                       type="text"
                       class="form-control"
                       formControlName="nom"
                       placeholder="Nom du médecin"
                     />
-                    @if (
-                      medecinTraitantFormGroup.get('nom')?.invalid &&
-                      medecinTraitantFormGroup.get('nom')?.touched
-                    ) {
-                      <small class="form-text text-danger">Le nom est obligatoire</small>
-                    }
+
                   </div>
 
                   <div class="form-group">

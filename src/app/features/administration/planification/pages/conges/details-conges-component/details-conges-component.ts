@@ -1,4 +1,4 @@
-import { DatePipe, TitleCasePipe } from '@angular/common';
+import { TitleCasePipe } from '@angular/common';
 import { Component, inject, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -11,7 +11,7 @@ import { PlanificationResourceService } from '../../../services/planification-re
 @Component({
   selector: 'app-details-conges-component',
   standalone: true,
-  imports: [ReactiveFormsModule, DatePipe, TitleCasePipe],
+  imports: [ReactiveFormsModule, TitleCasePipe],
   templateUrl: './details-conges-component.html',
   styleUrl: './details-conges-component.css',
 })

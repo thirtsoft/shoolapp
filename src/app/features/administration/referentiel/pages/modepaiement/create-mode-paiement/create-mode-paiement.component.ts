@@ -85,7 +85,7 @@ export class CreateModePaiementComponent implements OnInit {
         next: (data) => {
           if (data.statut === 'OK') {
             this.toastService.success('succès', 'Le moyenpaiement a été enregistrées avec succès !!! ');
-            this.router.navigate(['admin/referentiels/moyenpaiement'])
+            this.goBack();
           } else if (data.statut === 'FAILED') {
             this.toastService.error('error', 'Erreur lors de la création : ' + data.message);
           }
@@ -100,7 +100,7 @@ export class CreateModePaiementComponent implements OnInit {
         next: (data) => {
           if (data.statut === 'OK') {
             this.toastService.success('succès', 'Le moyenpaiement a été modifiées avec succès !!! ');
-            this.router.navigate(['admin/referentiels/moyenpaiement'])
+            this.goBack();
           } else if (data.statut === 'FAILED') {
             this.toastService.error('error', 'Erreur lors de la modification : ' + data.message);
           }
@@ -116,7 +116,7 @@ export class CreateModePaiementComponent implements OnInit {
 
 
   goBack() {
-    this.router.navigate(['admin/referentiels/moyenpaiement'])
+    this.router.navigate(['admin/referentiel/moyenpaiements'])
   }
 
 }

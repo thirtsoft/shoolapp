@@ -17,7 +17,7 @@
           <i class="fas fa-arrow-left me-2"></i>Retour
         </button>
         <div class="action-group-buttons">
-          @if (['Programmé'].includes(detailsMeeting.etat!)) {
+          @if ([libelleEtat.LIBELLE_ETAT_PROGRAMME].includes(detailsMeeting.etat!)) {
             <button class="btn-validate" (click)="openEtatModal(etatModal, 'publier', 'E5')">
               <i class="fas fa-check-circle me-2"></i>Publier
             </button>
@@ -26,7 +26,7 @@
             </button>
           }
 
-          @if (['Publié'].includes(detailsMeeting.etat!)) {
+          @if ([libelleEtat.LIBELLE_ETAT_PUBLIE].includes(detailsMeeting.etat!)) {
             <button class="btn-secondary" (click)="openEtatModal(etatModal, 'dépublier', 'E6')">
               <i class="fas fa-eye-slash me-2"></i>Dépublier
             </button>
@@ -38,7 +38,7 @@
             </button>
           }
 
-          @if (['Dépublié'].includes(detailsMeeting.etat!)) {
+          @if ([libelleEtat.LIBELLE_ETAT_DEPUBLIE].includes(detailsMeeting.etat!)) {
             <button class="btn-primary" (click)="openEtatModal(etatModal, 'reprogrammer', 'E7')">
               <i class="fas fa-calendar-alt me-2"></i>Reprogrammer
             </button>

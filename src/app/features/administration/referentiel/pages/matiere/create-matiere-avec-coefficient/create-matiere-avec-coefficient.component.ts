@@ -147,7 +147,7 @@ export class CreateMatiereAvecCoefficientComponent implements OnInit {
         next: (data) => {
           if (data.statut === 'OK') {
             this.toastService.success('succès', 'Les informations du batiment ont été enregistrées avec succès !!! ');
-            this.router.navigate(['/admin/referentiels/matiere']);
+            this.goBack();
           } else if (data.statut === 'FAILED') {
             this.toastService.error('error', 'Erreur lors de la création : ' + data.message);
           }
@@ -165,7 +165,7 @@ export class CreateMatiereAvecCoefficientComponent implements OnInit {
         next: (data) => {
           if (data.statut === 'OK') {
             this.toastService.success('succès', 'Les informations du batiment ont été modifiées avec succès !!! ');
-            this.router.navigate(['/admin/referentiels/matiere']);
+            this.goBack();
           } else if (data.statut === 'FAILED') {
             this.toastService.error('error', 'Erreur lors de la modification : ' + data.message);
           }
@@ -180,7 +180,7 @@ export class CreateMatiereAvecCoefficientComponent implements OnInit {
 
 
   goBack() {
-    this.router.navigate(['admin/referentiels/matiere'])
+    this.router.navigate(['admin/referentiel/matieres'])
   }
 
 

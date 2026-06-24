@@ -103,7 +103,7 @@ export class CreateClasseComponent implements OnInit {
         next: (data) => {
           if (data.statut === 'OK') {
             this.toastService.success('succès', 'La classe a été enregistrées avec succès !!! ');
-            this.router.navigate(['admin/referentiel/classe'])
+            this.goBack();
           } else if (data.statut === 'FAILED') {
             this.toastService.error('error', 'Erreur lors de la création : ' + data.message);
           }
@@ -118,7 +118,7 @@ export class CreateClasseComponent implements OnInit {
         next: (data) => {
           if (data.statut === 'OK') {
             this.toastService.success('succès', 'La classe a été modifiées avec succès !!! ');
-            this.router.navigate(['admin/referentiel/classe'])
+            this.goBack();
           } else if (data.statut === 'FAILED') {
             this.toastService.error('error', 'Erreur lors de la modification : ' + data.message);
           }
@@ -133,7 +133,7 @@ export class CreateClasseComponent implements OnInit {
   }
 
   goBack() {
-    this.router.navigate(['admin/referentiel/classe'])
+    this.router.navigate(['admin/referentiel/classes'])
   }
 
 

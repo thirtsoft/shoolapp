@@ -1,10 +1,9 @@
 import { Component, inject, OnInit } from '@angular/core';
-import { ReferentielResourceService } from '../../../service/referentiel-resource.service';
-import { ReferentielService } from '../../../service/referentiel.service';
-import { GenericTableReferentielComponent } from '../../../../../../core/generic/generic-table-referentiel/generic-table-referentiel.component';
 import { IFilterConfig } from '../../../../../../core/filtered-config/FiltreConfiguration';
-import { TypeServiceOffert } from '../../../../../../core/models/referentiels/type-service-offert';
+import { GenericTableReferentielComponent } from '../../../../../../core/generic/generic-table-referentiel/generic-table-referentiel.component';
 import { ListeClasse } from '../../../../../../core/models/referentiels/classe';
+import { TypeServiceOffert } from '../../../../../../core/models/referentiels/type-service-offert';
+import { ReferentielResourceService } from '../../../service/referentiel-resource.service';
 
 @Component({
   selector: 'app-list-tarif',
@@ -26,9 +25,9 @@ export class ListTarifComponent implements OnInit {
   tarifData: any = [];
 
   currentPage = 0;
-  pageSize = 5;
+  pageSize = 10;
   totalElements = 0;
-  tableSizes = [5, 10, 20, 50, 100];
+  tableSizes = [10, 20, 50, 100];
   tableFilters: IFilterConfig[] = [];
   activeFilters: any = {};
   hasActiveFilters: boolean = false;
@@ -37,7 +36,6 @@ export class ListTarifComponent implements OnInit {
   classList: any[] = [];
 
   private readonly refentielResource = inject(ReferentielResourceService);
-  private readonly referentielService = inject(ReferentielService);
 
   ngOnInit(): void {
     this.chargerLesTarifs();
@@ -60,8 +58,9 @@ export class ListTarifComponent implements OnInit {
   getTypeServiceList(): Promise<TypeServiceOffert[]> {
     return new Promise((resolve, reject) => {
       this.refentielResource.getResourceList('typeserviceoffert').subscribe({
-        next: (data:any) => {
+        next: (data: any) => {
           this.typeServiceList = data;
+          console.log('type service', this.typeServiceList);
           resolve(data);
         },
         error: (err) => reject(err)
@@ -71,9 +70,10 @@ export class ListTarifComponent implements OnInit {
 
   getClasses(): Promise<ListeClasse[]> {
     return new Promise((resolve, reject) => {
-      this.referentielService.getAllClasses().subscribe({
-        next: (data) => {
+      this.refentielResource.getResourceList('classe').subscribe({
+        next: (data: any) => {
           this.classList = data;
+          console.log('classList', this.classList);
           resolve(data);
         },
         error: (err) => reject(err)
@@ -138,6 +138,7 @@ export class ListTarifComponent implements OnInit {
           { key: 'typeService', header: 'Type service' },
           { key: 'classe', header: 'Classe' },
           { key: 'montant', header: 'Montant' },
+          { key: 'anneeScolaire', header: 'Annee scolaire' }
         ];
         this.tarifData = this.tarifData.map((item: any) => ({
           ...item,

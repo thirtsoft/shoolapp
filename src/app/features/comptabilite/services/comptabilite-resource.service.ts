@@ -139,4 +139,10 @@ export class ComptabiliteResourceService {
     return this.http.delete<ResponseMessage>(url, this.httpOptions);
   }
 
+
+  changeEtatResource<T>(endpoint: string, id: number, resource: Partial<T>): Observable<any> {
+    const url = `${this.comptabiliteUrl}/${endpoint}/${id}/changeretat`;
+    return this.http.patch<ResponseMessage>(url, resource, this.httpOptions);
+  }
+
 }

@@ -1,4 +1,5 @@
 import { Action } from "./action";
+import { TypeCompte } from "./typecompte";
 
 export interface Profil {
     id?: number;
@@ -6,4 +7,9 @@ export interface Profil {
     libelle?: string;
     createdDate?: Date;
     actionDTOs?: Action[];
+
+    typeCompteDTO?: TypeCompte;
+
+    typeCompteId?: number;
+    
 }

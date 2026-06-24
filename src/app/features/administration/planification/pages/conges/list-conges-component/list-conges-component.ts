@@ -1,8 +1,8 @@
 import { Component, inject, OnInit } from '@angular/core';
 import { IFilterConfig } from '../../../../../../core/filtered-config/FiltreConfiguration';
-import { PlanificationResourceService } from '../../../services/planification-resource.service';
-import { CommonService } from '../../../../../../core/services/common.service';
 import { GenericTableReferentielComponent } from '../../../../../../core/generic/generic-table-referentiel/generic-table-referentiel.component';
+import { CommonService } from '../../../../../../core/services/common.service';
+import { PlanificationResourceService } from '../../../services/planification-resource.service';
 
 @Component({
   selector: 'app-list-conges-component',
@@ -23,9 +23,9 @@ export class ListCongesComponent implements OnInit {
   congesData: any = [];
 
   currentPage = 0;
-  pageSize = 5;
+  pageSize = 10;
   totalElements = 0;
-  tableSizes = [5, 10, 20, 50, 100];
+  tableSizes = [10, 20, 50, 100];
 
   statusEvenementOptions: any[] = [];
   moisList: any[] = [];

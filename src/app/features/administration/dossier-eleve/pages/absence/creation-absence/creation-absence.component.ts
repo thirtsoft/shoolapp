@@ -7,12 +7,10 @@ import { AttendanceRecord } from '../../../../../../core/models/dossiereleve/abs
 import { ListeEleve } from '../../../../../../core/models/dossiereleve/liste-eleve';
 import { ListeCours } from '../../../../../../core/models/planification/liste-cours';
 import { AnneeScolaire } from '../../../../../../core/models/referentiels/annee-scolaire';
-import { Classe, ListeClasse } from '../../../../../../core/models/referentiels/classe';
-import { Semestre } from '../../../../../../core/models/referentiels/semestre';
+import { ListeClasse } from '../../../../../../core/models/referentiels/classe';
 import { Utilisateur } from '../../../../../../core/models/utilisateur/utilisateur';
 import { LocalStorageService } from '../../../../../../core/services/local-storage.service';
 import { PlanificationResourceService } from '../../../../planification/services/planification-resource.service';
-import { ReferentielService } from '../../../../referentiel/service/referentiel.service';
 import { UtilisateurService } from '../../../../utilisateur/service/utilisateur.service';
 import { DossierResourceService } from '../../../service/dossier-resource.service';
 import { SessionSemestre } from '../../../../../../core/models/referentiels/session-semestre';
@@ -41,7 +39,7 @@ export class CreationAbsenceComponent implements OnInit {
   allClassesList: ListeClasse[] = [];
   selectedClass: any;
 
-  attendanceStatusList: string[] = ['ABSENCE', 'RETARD', 'PRESENCE', 'EXCLUSION', 'JUSTIFICATION', 'MALADIE'];
+  attendanceStatusList: string[] = ['ABSENCE', 'RETARD', 'EXCLUSION', 'JUSTIFICATION', 'MALADIE'];
 
   lateMinutes?: any;
 

@@ -6,6 +6,8 @@ export interface Tarif {
 
   typeService?: number;
 
+  anneeScolaire?: number;
+
   montant?: number;
 
 

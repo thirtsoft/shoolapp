@@ -7,6 +7,8 @@ export interface EmploiDuTemps {
 
   sessionSemestre?: number;
 
+  anneeScolaire?: number;
+
   semaine?: number;
 
   coursEditDTOList?: CoursEdit[];
@@ -24,6 +26,8 @@ export interface EmploiDuTempsList {
   classe?: number;
 
   sessionSemestre?: number;
+
+  anneeScolaire?: number;
 
   semaine?: number;
 

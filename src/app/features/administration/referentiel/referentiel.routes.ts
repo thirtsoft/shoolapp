@@ -36,6 +36,7 @@ import { TypePaiementComponent } from './pages/type-paiement/type-paiement.compo
 import { CreateTypeServiceOffertComponent } from './pages/typeservice/create-type-service-offert/create-type-service-offert.component';
 import { ListTypeServiceOffertComponent } from './pages/typeservice/list-type-service-offert/list-type-service-offert.component';
 import { ReferentielsComponent } from './referentiels.component';
+import { CreateSessionSemestreComponent } from './pages/semestre/create-session-semestre-component/create-session-semestre-component';
 
 export const REFERENTIELS_ROUTES: Routes = [
   {
@@ -112,6 +113,10 @@ export const REFERENTIELS_ROUTES: Routes = [
       {
         path: 'sessions',
         component: ListSessionSemestreComponent
+      },
+          {
+        path: 'session/create',
+        component: CreateSessionSemestreComponent
       },
       {
         path: 'session/edit/:id',

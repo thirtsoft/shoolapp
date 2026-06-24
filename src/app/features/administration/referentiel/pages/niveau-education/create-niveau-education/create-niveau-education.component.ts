@@ -89,7 +89,7 @@ export class CreateNiveauEducationComponent implements OnInit {
         next: (data) => {
           if (data.statut === 'OK') {
             this.toastService.success('succès', 'Le niveau a été enregistrées avec succès !!! ');
-            this.router.navigate(['admin/referentiels/niveau-education'])
+            this.goBack();
           } else if (data.statut === 'FAILED') {
             this.toastService.error('error', 'Erreur lors de la création : ' + data.message);
           }
@@ -104,7 +104,7 @@ export class CreateNiveauEducationComponent implements OnInit {
         next: (data) => {
           if (data.statut === 'OK') {
             this.toastService.success('succès', 'Le niveau a été modifiées avec succès !!! ');
-            this.router.navigate(['admin/referentiels/niveau-education'])
+            this.goBack();
           } else if (data.statut === 'FAILED') {
             this.toastService.error('error', 'Erreur lors de la modification : ' + data.message);
           }
@@ -120,7 +120,7 @@ export class CreateNiveauEducationComponent implements OnInit {
 
 
   goBack() {
-    this.router.navigate(['admin/referentiels/niveau-education'])
+    this.router.navigate(['admin/referentiel/grades'])
   }
 
 
