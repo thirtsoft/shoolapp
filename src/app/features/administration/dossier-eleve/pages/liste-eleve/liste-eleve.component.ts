@@ -30,9 +30,9 @@ export class ListeEleveComponent implements OnInit {
   public readonly String = String;
 
   currentPage = 0;
-  pageSize = 5;
+  pageSize = 10;
   totalElements = 0;
-  tableSizes = [5, 10, 20, 50, 100];
+  tableSizes = [10, 20, 50, 100];
 
   medeccinTraitantList: any[] = [];
   sexesOptions: string[] = ['Masculin', 'Féminin'];

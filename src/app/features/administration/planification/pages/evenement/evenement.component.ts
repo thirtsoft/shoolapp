@@ -23,9 +23,9 @@ export class EvenementComponent implements OnInit {
   evenementData: any = [];
 
   currentPage = 0;
-  pageSize = 5;
+  pageSize = 10;
   totalElements = 0;
-  tableSizes = [5, 10, 20, 50, 100];
+  tableSizes = [10, 20, 50, 100];
 
   statusEvenementOptions: any[] = [];
   moisList: any[] = [];
@@ -187,9 +187,6 @@ export class EvenementComponent implements OnInit {
 
     if (this.activeFilters.libelle) {
       filtreObj.libelle = this.activeFilters.libelle;
-    }
-    if (this.activeFilters.nomPrenom) {
-      filtreObj.nomPrenom = this.activeFilters.nomPrenom;
     }
     if (this.activeFilters.etat) {
       filtreObj.etat = this.activeFilters.etat;

@@ -9,6 +9,8 @@ export interface EmploiDuTemps {
 
   anneeScolaire?: number;
 
+  titre?: string;
+
   semaine?: number;
 
   coursEditDTOList?: CoursEdit[];
@@ -29,6 +31,8 @@ export interface EmploiDuTempsList {
 
   anneeScolaire?: number;
 
+  titre?: string;
+
   semaine?: number;
 
   coursEditDTOList?: CoursEdit[];
@@ -39,7 +43,7 @@ export interface EmploiDuTempsList {
 
   libelleSemestre?: string;
 
-  libelleClasse?:string;
+  libelleClasse?: string;
 
 
 }

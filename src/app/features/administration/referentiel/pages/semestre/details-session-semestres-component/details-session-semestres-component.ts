@@ -1,30 +1,30 @@
-import { DatePipe, TitleCasePipe } from '@angular/common';
 import { Component, inject, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ToastrService } from 'ngx-toastr';
 import { ConfirmationDialogModalComponent } from '../../../../../../core/components/confirmation-dialog-modal/confirmation-dialog-modal.component';
-import { DetailsAnneeScolaire } from '../../../../../../core/models/referentiels/annee-scolaire copy';
+import { DetailsSessionSemestre } from '../../../../../../core/models/referentiels/details-tsession-semestre';
 import { ReferentielResourceService } from '../../../service/referentiel-resource.service';
+import { DatePipe, TitleCasePipe } from '@angular/common';
 import { EtatLibelle } from '../../../../../../core/constants/etat-libelle';
 
 @Component({
-  selector: 'app-details-annee-scolaire-component',
+  selector: 'app-details-session-semestres-component',
   standalone: true,
   imports: [ReactiveFormsModule, DatePipe, TitleCasePipe],
-  templateUrl: './details-annee-scolaire-component.html',
-  styleUrl: './details-annee-scolaire-component.css',
+  templateUrl: './details-session-semestres-component.html',
+  styleUrl: './details-session-semestres-component.css',
 })
-export class DetailsAnneeScolaireComponent implements OnInit {
+export class DetailsSessionSemestresComponent implements OnInit {
 
   errorMessage?: string;
-  anneeScolaireId?: number;
+  sessionSemestreId?: number;
   isEdit: boolean = false;
-  detailsAnneeScolaire: DetailsAnneeScolaire = {};
+  detailsSessionSemestre: DetailsSessionSemestre = {};
   isEditMode = false;
-   etatLibelle = EtatLibelle;
-  title = "Détails année scolaire";
+  etatLibelle = EtatLibelle;
+  title = "Détails session semestre";
 
   actionForm!: FormGroup;
   modalActionLabel: string = '';
@@ -40,9 +40,9 @@ export class DetailsAnneeScolaireComponent implements OnInit {
   private readonly fb = inject(FormBuilder);
 
   ngOnInit(): void {
-    this.anneeScolaireId = this.activeRoute.snapshot.params['id'];
-    if (this.anneeScolaireId != null && this.anneeScolaireId != undefined) {
-      this.getDetailsAnneeScolaire(this.anneeScolaireId);
+    this.sessionSemestreId = this.activeRoute.snapshot.params['id'];
+    if (this.sessionSemestreId != null && this.sessionSemestreId != undefined) {
+      this.getDetailsSessionSemestre(this.sessionSemestreId);
     }
   }
 
@@ -52,13 +52,14 @@ export class DetailsAnneeScolaireComponent implements OnInit {
     });
   }
 
-  getDetailsAnneeScolaire(anneeId: number) {
-    this.referentielResourceService.recupererDetailsUneResource('anneescolaire', anneeId).subscribe({
+  getDetailsSessionSemestre(sessionsemestreId: number) {
+    this.referentielResourceService.recupererDetailsUneResource('sessionsemestre', sessionsemestreId).subscribe({
       next: (data: any) => {
-        this.detailsAnneeScolaire = data;
+        this.detailsSessionSemestre = data;
+        console.log('Detail session', this.detailsSessionSemestre);
       },
       error: (data: any) => {
-        console.log('error', 'Erreur lors de la récupération des information de l\'année : ' + data.error);
+        console.log('error', 'Erreur lors de la récupération des information session semestre : ' + data.error);
         this.toastService.error('error', 'Erreur lors de la création : ' + data.error);
       }
     }
@@ -97,7 +98,7 @@ export class DetailsAnneeScolaireComponent implements OnInit {
             nouvelEtatCode: this.targetEtatCode,
             motifAnnulation: this.actionForm.value.motifAnnulation || null
           };
-          this.changerEtat(action, Number(this.anneeScolaireId), payload);
+          this.changerEtat(action, Number(this.sessionSemestreId), payload);
         }
       },
       () => { }
@@ -113,7 +114,7 @@ export class DetailsAnneeScolaireComponent implements OnInit {
           reactiver: `L\'année scolaire a été réactivée avec succès.`,
         };
         this.toastService.success('Succès', successMessages[action] || 'Action effectuée.');
-        this.getDetailsAnneeScolaire(Number(this.anneeScolaireId));
+        this.getDetailsSessionSemestre(Number(this.sessionSemestreId));
       },
       error: (err: any) => {
         this.toastService.error('Erreur', 'Impossible de modifier l\'état : ' + (err.error?.message || err.message));
@@ -122,7 +123,7 @@ export class DetailsAnneeScolaireComponent implements OnInit {
   }
 
   getStatusClass(): string {
-    const etat = this.detailsAnneeScolaire.etat;
+    const etat = this.detailsSessionSemestre.libelleEtat;
     if (['Réactivation'].includes(etat!)) return 'status-validated';
     if (['En cours'].includes(etat!)) return 'status-sent';
     if (['Clôturé'].includes(etat!)) return 'status-remise';
@@ -153,18 +154,13 @@ export class DetailsAnneeScolaireComponent implements OnInit {
     modalRef.result
       .then((result) => {
         if (result) {
-          this.changerEtat(action, Number(this.anneeScolaireId), payload);
+          this.changerEtat(action, Number(this.sessionSemestreId), payload);
         }
       })
       .catch(() => { });
   }
 
-  imprimerUneEvaluation(event: any) { }
-
   goBack() {
     window.history.back();
   }
-
-
 }
-

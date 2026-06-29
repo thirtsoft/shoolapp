@@ -3,16 +3,16 @@ import { inject, Injectable } from '@angular/core';
 import { Observable, of, throwError } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 import { environment } from '../../../../../environments/environment';
+import { Paiement } from '../../../../core/models/comptabilite/paiement';
+import { DetailsEleve } from '../../../../core/models/dossiereleve/details-eleve';
+import { DetailsInscription } from '../../../../core/models/dossiereleve/details-inscription';
 import { Eleve } from '../../../../core/models/dossiereleve/request/eleve';
 import { EleveEdit } from '../../../../core/models/dossiereleve/request/eleve-edit';
-import { DetailsEleve } from '../../../../core/models/dossiereleve/details-eleve';
-import { ResponseEleve, ResponseMessage } from '../../../../core/models/message/response/response-message';
 import { EleveRequest, EleveRequeste } from '../../../../core/models/dossiereleve/request/eleve-request';
-import { ListeInscription } from '../../../../core/models/dossiereleve/request/liste-inscription';
 import { Inscription } from '../../../../core/models/dossiereleve/request/inscription';
-import { DetailsInscription } from '../../../../core/models/dossiereleve/details-inscription';
-import { Paiement } from '../../../../core/models/comptabilite/paiement';
+import { ListeInscription } from '../../../../core/models/dossiereleve/request/liste-inscription';
 import { PaiementAdd } from '../../../../core/models/dossiereleve/request/paiement-add';
+import { ResponseEleve, ResponseMessage } from '../../../../core/models/message/response/response-message';
 
 @Injectable({
   providedIn: 'root'
@@ -52,6 +52,10 @@ export class DossierEleveService {
 
   getDetailsEleve(id: number): Observable<DetailsEleve> {
     return this.http.get<DetailsEleve>(`${this.baseUrl}/eleve/details/${id}`);
+  }
+
+  getDetailsDossierEleve(id: number): Observable<any> {
+    return this.http.get<any>(`${this.baseUrl}/eleve/${id}/details`);
   }
 
   inscrireEleve(info: Eleve) {

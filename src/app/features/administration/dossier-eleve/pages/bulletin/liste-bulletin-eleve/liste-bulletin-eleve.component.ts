@@ -4,7 +4,6 @@ import { GenericTableDossierComponent } from '../../../../../../core/generic/gen
 import { AnneeScolaire } from '../../../../../../core/models/referentiels/annee-scolaire';
 import { ListeClasse } from '../../../../../../core/models/referentiels/classe';
 import { Semestre } from '../../../../../../core/models/referentiels/semestre';
-import { LocalStorageService } from '../../../../../../core/services/local-storage.service';
 import { ReferentielService } from '../../../../referentiel/service/referentiel.service';
 import { DossierResourceService } from '../../../service/dossier-resource.service';
 
@@ -32,9 +31,9 @@ export class ListeBulletinEleveComponent implements OnInit {
   readonly String = String;
 
   currentPage = 0;
-  pageSize = 5;
+  pageSize = 10;
   totalElements = 0;
-  tableSizes = [5, 10, 20, 50, 100];
+  tableSizes = [10, 20, 50, 100];
 
   anneesScolairesList: any[] = [];
   semestreList: any[] = [];
@@ -46,7 +45,6 @@ export class ListeBulletinEleveComponent implements OnInit {
 
   private readonly dossierEleveService = inject(DossierResourceService);
   private readonly referentielService = inject(ReferentielService);
-  private readonly localStorage = inject(LocalStorageService);
 
   ngOnInit(): void {
     this.chargerLesBulletins();

@@ -1,7 +1,7 @@
 import { Component, inject, OnInit } from '@angular/core';
+import { IFilterConfig } from '../../../../../../core/filtered-config/FiltreConfiguration';
 import { GenericTableReferentielComponent } from '../../../../../../core/generic/generic-table-referentiel/generic-table-referentiel.component';
 import { SessionSemestre } from '../../../../../../core/models/referentiels/session-semestre';
-import { IFilterConfig } from '../../../../../../core/filtered-config/FiltreConfiguration';
 import { ReferentielResourceService } from '../../../service/referentiel-resource.service';
 
 @Component({
@@ -22,11 +22,13 @@ export class ListSessionSemestreComponent implements OnInit {
   deleteEndpoint = "sessionSemestre";
   columns: any[] = [];
   sessionSemestreData: any = [];
+  anneeScolaireList: any[] = [];
+  semestreList: any[] = [];
 
   currentPage = 0;
-  pageSize = 5;
+  pageSize = 10;
   totalElements = 0;
-  tableSizes = [5, 10, 20, 50, 100];
+  tableSizes = [10, 20, 50, 100];
   tableFilters: IFilterConfig[] = [];
   activeFilters: any = {};
   hasActiveFilters: boolean = false;
@@ -40,6 +42,8 @@ export class ListSessionSemestreComponent implements OnInit {
   async chargerLesSessionSemestres() {
     try {
       await Promise.all([
+        this.getSemestreList(),
+        this.getAnneeScolaireList()
       ]);
       this.initialisationDesFiltres();
       this.chargerLesDonnees(false);
@@ -48,14 +52,50 @@ export class ListSessionSemestreComponent implements OnInit {
     }
   }
 
+  getAnneeScolaireList(): Promise<any[]> {
+    return new Promise((resolve, reject) => {
+      this.refentielResource.getResourceList('anneescolaire').subscribe({
+        next: (data: any) => {
+          this.anneeScolaireList = data;
+          resolve(data);
+        },
+        error: (err) => reject(err)
+      });
+    });
+  }
+
+  getSemestreList(): Promise<any[]> {
+    return new Promise((resolve, reject) => {
+      this.refentielResource.getResourceList('semestre').subscribe({
+        next: (data: any) => {
+          this.semestreList = data;
+          resolve(data);
+        },
+        error: (err) => reject(err)
+      });
+    });
+  }
+
   initialisationDesFiltres() {
     this.tableFilters = [
       {
-        key: 'libelle',
-        label: 'Libellé',
-        type: 'text',
-        placeholder: 'Rechercher une session...'
-      }
+        key: 'semestre',
+        label: 'Semestre',
+        type: 'select',
+        options: this.semestreList.map(s => ({
+          value: s.id,
+          label: s.libelle
+        }))
+      },
+      {
+        key: 'anneeScolaireId',
+        label: 'Année scolaire',
+        type: 'select',
+        options: this.anneeScolaireList.map(a => ({
+          value: a.id,
+          label: a.libelle
+        }))
+      },
     ];
   }
 
@@ -112,9 +152,11 @@ export class ListSessionSemestreComponent implements OnInit {
 
   construireParametreDeFiltre(): any {
     const filtreObj: any = {};
-
-    if (this.activeFilters.libelle) {
-      filtreObj.libelle = this.activeFilters.libelle;
+    if (this.activeFilters.semestre) {
+      filtreObj.semestre = this.activeFilters.semestre;
+    }
+    if (this.activeFilters.anneeScolaireId) {
+      filtreObj.anneeScolaireId = this.activeFilters.anneeScolaireId;
     }
     return Object.keys(filtreObj).length > 0 ? filtreObj : null;
   }

@@ -1,13 +1,120 @@
-<div class="modal-header">
-    <h4 class="modal-title">{{ title }}</h4>
-      <button type="button" class="btn-close" aria-label="Close" (click)="fermer()">
-        <span aria-hidden="true">&times;</span>
-    </button>
+<div
+  class="modal-header d-flex justify-content-between align-items-center"
+  style="
+    border-bottom: 1px solid #e5e7eb;
+    padding: 16px 24px;
+    background-color: #f8fafc;
+    border-top-left-radius: 16px;
+    border-top-right-radius: 16px;
+  "
+>
+  <h5
+    class="modal-title fw-bold d-flex align-items-center gap-2"
+    style="
+      color: #1e40af;
+      font-weight: 700;
+      font-family: sans-serif;
+      font-size: 1.15rem;
+      margin: 0;
+      width: 100%;
+    "
+  >
+    <span style="font-size: 1.3rem; display: inline-flex; align-items: center; margin-right: 4px"
+      >❓</span
+    >
+    {{ title }}
+  </h5>
+  <button
+    type="button"
+    class="btn-close"
+    aria-label="Close"
+    (click)="fermer()"
+    style="
+      background: none;
+      border: none;
+      font-size: 26px;
+      color: #9ca3af;
+      cursor: pointer;
+      padding: 0;
+      margin: 0;
+      line-height: 1;
+      transition: color 0.2s;
+    "
+  >
+    &times;
+  </button>
 </div>
-<div class="modal-body">
-      {{ message }}
+
+<div
+  class="modal-body"
+  style="
+    padding: 32px 24px;
+    font-family: sans-serif;
+    color: #374151;
+    font-size: 1rem;
+    line-height: 1.5;
+    background-color: #ffffff;
+  "
+>
+  <p class="mb-0" style="margin: 0">
+    {{ message }}
+  </p>
 </div>
-<div class="modal-footer">
-    <button type="button" class="btn btn-danger" (click)="annuler()">{{ btnCancelText }}</button>
-    <button type="button" class="btn btn-primary" (click)="valider()">{{ btnOkText }}</button>
+
+<div
+  class="modal-footer d-flex justify-content-end gap-2"
+  style="
+    border-top: 1px solid #e5e7eb;
+    padding: 14px 24px;
+    background-color: #f8fafc;
+    border-bottom-left-radius: 16px;
+    border-bottom-right-radius: 16px;
+    display: flex;
+    justify-content: flex-end;
+    gap: 12px;
+  "
+>
+  <button
+    #cancelBtn
+    type="button"
+    class="btn-annuler"
+    style="
+      background-color: #ffffff;
+      border: 1px solid #cbd5e1;
+      color: #334155;
+      padding: 8px 24px;
+      border-radius: 50px;
+      cursor: pointer;
+      font-weight: 600;
+      font-size: 0.95rem;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    "
+    (click)="annuler()"
+  >
+    <span style="font-size: 16px; font-weight: 400; line-height: 1">&times;</span>
+    {{ btnCancelText }}
+  </button>
+
+  <button
+    type="button"
+    class="btn-confirmer"
+    style="
+      background-color: #10b981;
+      border: none;
+      color: #ffffff;
+      padding: 8px 24px;
+      border-radius: 50px;
+      cursor: pointer;
+      font-weight: 600;
+      font-size: 0.95rem;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    "
+    (click)="valider()"
+  >
+    <span style="font-size: 12px; line-height: 1">✓</span> {{ btnOkText }}
+  </button>
 </div>

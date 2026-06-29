@@ -396,7 +396,9 @@
                               <select
                                 class="form-control"
                                 [disabled]="filter.disabled"
-                                (change)="onFilterChange(filter, $event)"
+                                (change)="
+                                  filterChange.emit({ filter, value: $any($event.target).value })
+                                "
                               >
                                 <option value="">
                                   {{ filter.placeholder || '-- Sélectionner --' }}

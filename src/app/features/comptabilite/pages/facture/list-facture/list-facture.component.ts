@@ -1,8 +1,8 @@
 import { Component, inject, OnInit } from '@angular/core';
-import { ComptabiliteResourceService } from '../../../services/comptabilite-resource.service';
-import { GenericTableDossierComponent } from '../../../../../core/generic/generic-table-dossier/generic-table-dossier.component';
 import { IFilterConfig } from '../../../../../core/filtered-config/FiltreConfiguration';
+import { GenericTableDossierComponent } from '../../../../../core/generic/generic-table-dossier/generic-table-dossier.component';
 import { CommonService } from '../../../../../core/services/common.service';
+import { ComptabiliteResourceService } from '../../../services/comptabilite-resource.service';
 
 @Component({
   selector: 'app-list-facture',
@@ -27,9 +27,9 @@ export class ListFactureComponent implements OnInit {
   isViewPopup: boolean = false;
 
   currentPage = 0;
-  pageSize = 5;
+  pageSize = 10;
   totalElements = 0;
-  tableSizes = [5, 10, 20, 50, 100];
+  tableSizes = [10, 20, 50, 100];
 
   etatfactureOptions: any[] = [];
   moisList: any[] = [];

@@ -96,14 +96,6 @@ export class CreateEmploieDuTempsComponent implements OnInit {
     });
   }
 
-  /*
-  onClasseSelected() {
-    const classe = this.emploiFormGroup.get('classe')?.value;
-    if (classe) {
-      this.getEnseignementByClass(classe);
-    }
-  }*/
-
   onClasseSelected(index: number) {
     const coursGroup = this.coursEditDTOList().at(index) as FormGroup;
     const classeId = coursGroup.get('classe')?.value;
@@ -115,15 +107,6 @@ export class CreateEmploieDuTempsComponent implements OnInit {
       coursGroup.get('enseignement')?.setValue('');
     }
   }
-
-  /*
-    private getEnseignementByClass(classId: number) {
-      this.planificationService.getAllEnseignementByclasse(classId).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
-        next: data => {
-          this.enseignementList = data;
-        }
-      });
-    }*/
 
   private getEnseignementByClass(classId: number, index: number) {
     this.planificationService
@@ -150,6 +133,7 @@ export class CreateEmploieDuTempsComponent implements OnInit {
           classe: [this.addEditEmploie?.classe ?? ''],
           sessionSemestre: [this.addEditEmploie?.sessionSemestre ?? ''],
           anneeScolaire: [this.addEditEmploie?.anneeScolaire ?? '', Validators.required],
+          titre: [this.addEditEmploie?.titre ?? '', Validators.required],
           semaine: [this.addEditEmploie?.semaine ?? ''],
           coursEditDTOList: this._formBuilder.array([])
         });
@@ -193,6 +177,7 @@ export class CreateEmploieDuTempsComponent implements OnInit {
             sessionSemestre: [emploie?.sessionSemestre ?? ''],
             semaine: [emploie?.semaine ?? ''], */
       anneeScolaire: [emploie?.anneeScolaire ?? '', Validators.required],
+      titre: [emploie?.titre ?? '', Validators.required],
       coursEditDTOList: this._formBuilder.array([
         this.newCourseItem()
       ])

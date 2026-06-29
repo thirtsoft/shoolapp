@@ -8,6 +8,8 @@
   [currentPage]="currentPage"
   [pageSize]="pageSize"
   [isLoading]="isLoading"
+  [isNoAjout]="true"
+  [isEyesIcon]="true"
   [isEditIcon]="isEdit"
   [isLockableIcon]="isLockable"
   (pageChange)="changePage($event)"
@@ -18,7 +20,7 @@
   [showFilters]="true"
   (resetFilters)="resetFilters()"
   (sizeChange)="changeSize($event)"
-  addButtonLink="/admin/referentiel/session/create"
   modifierButtonLink="/admin/referentiel/session/edit"
+  detailButtonLink="/admin/referentiel/session/details"
 >
 </app-generic-table-referentiel>

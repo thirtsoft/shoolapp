@@ -407,7 +407,7 @@ export class GenericTableReferentielComponent implements OnInit {
   openConfirmationDialog(action: 'desactiver' | 'activer', endpoint: string, row: any): void {
     const modalRef = this.modalService.open(ConfirmationDialogModalComponent, {
       centered: true,
-      backdrop: 'static'
+      backdrop: 'static',
     });
 
     modalRef.componentInstance.title = action === 'desactiver'

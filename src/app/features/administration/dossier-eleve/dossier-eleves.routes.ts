@@ -42,9 +42,10 @@ export const DOSSIERS_ELEVES_ROUTES: Routes = [
         component: CreationEleveComponent
       },
       {
-        path: 'details/:id',
+        path: 'eleve/details/:id',
         component: DetailsEleveComponent
       },
+
       {
         path: 'inscrire-eleve',
         component: InscrireEleveComponent

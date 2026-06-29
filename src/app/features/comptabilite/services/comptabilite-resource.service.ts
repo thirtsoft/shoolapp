@@ -80,7 +80,7 @@ export class ComptabiliteResourceService {
   }
 
   fetchFilterDataTable<T>(endpoint: string, page: number, size: number, filters?: any): Observable<DataResult<T>> {
-    let url = `${this.baseUrl_1}/${endpoint}`;
+    let url = `${this.comptabiliteUrl}/${endpoint}`;
 
     if (filters) {
       const encodedFilters = encodeURIComponent(JSON.stringify(filters));
