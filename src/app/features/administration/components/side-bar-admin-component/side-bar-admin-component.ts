@@ -60,6 +60,7 @@ export class SideBarAdminComponent {
     { route: '/admin/planification/enseignement', ico: '👨‍🏫', label: 'Enseignements', section: '', badge: '' },
     { route: '/admin/referentiel/annee-scolaires', ico: '🏫', label: 'Années scolaires' },
     { route: '/admin/referentiel/sessions', ico: '⏱️', label: 'Session Semestres' },
+    { route: '/admin/planification/cantine', ico: '🍽️', label: 'MenusPlats' },
 
 
 
@@ -67,7 +68,7 @@ export class SideBarAdminComponent {
     { route: '/admin/planification/reunion', ico: '👥', label: 'Réunions', section: 'COMMUNICATION', badge: '5' },
     { route: '/admin/planification/noteinformations', ico: '📢', label: 'Notes d\'info', section: '' },
     { route: '/admin/planification/evenement', ico: '🎪', label: 'Événements', section: '' },
-     { route: '/admin/planification/conges', ico: '🌴', label: 'Congés' },
+    { route: '/admin/planification/conges', ico: '🌴', label: 'Congés' },
 
     // ═══════════ PARAMÉTRAGE DE BASE (DROPDOWN) ═══════════
     {
@@ -153,8 +154,8 @@ export class SideBarAdminComponent {
   }
 
   deconnecter(): void {
-     this.localStorage.clear();
+    this.localStorage.clear();
     this.router.navigate(['/auth/login']);
-    
+
   }
 }

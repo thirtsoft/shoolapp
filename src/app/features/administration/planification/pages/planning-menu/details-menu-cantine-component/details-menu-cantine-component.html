@@ -1,0 +1,171 @@
+<div class="page-wrapper">
+  <div class="content container-fluid">
+    <div class="page-header">
+      <div class="row">
+        <div class="col-sm-12">
+          <h3 class="page-title">Détails planning repas</h3>
+          <p class="text-muted mt-1 mb-0">
+            <i class="fas fa-clipboard-list me-1"></i> Visualisation des informations des repas
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <div class="action-bar">
+      <div class="action-left">
+        <button class="btn-back" (click)="goBack()">
+          <i class="fas fa-arrow-left me-2"></i>Retour
+        </button>
+        <div class="action-group-buttons">
+          @if ([libelleEtat.LIBELLE_ETAT_PROGRAMME].includes(detailsPlanningRepas.etat!)) {
+            <button class="btn-validate" (click)="openEtatModal(etatModal, 'publier', 'E5')">
+              <i class="fas fa-check-circle me-2"></i>Publier
+            </button>
+            <button class="btn-danger" (click)="openEtatModal(etatModal, 'annuler', 'E11')">
+              <i class="fas fa-ban me-2"></i>Annuler
+            </button>
+          }
+
+          @if ([libelleEtat.LIBELLE_ETAT_PUBLIE].includes(detailsPlanningRepas.etat!)) {
+            <button class="btn-secondary" (click)="openEtatModal(etatModal, 'dépublier', 'E6')">
+              <i class="fas fa-eye-slash me-2"></i>Dépublier
+            </button>
+            <button class="btn-success" (click)="openEtatModal(etatModal, 'cloturer', 'E12')">
+              <i class="fas fa-flag-checkered me-2"></i>Cloturer
+            </button>
+          }
+
+          @if ([libelleEtat.LIBELLE_ETAT_DEPUBLIE].includes(detailsPlanningRepas.etat!)) {
+            <button class="btn-primary" (click)="openEtatModal(etatModal, 'reprogrammer', 'E7')">
+              <i class="fas fa-calendar-alt me-2"></i>Reprogrammer
+            </button>
+          }
+        </div>
+      </div>
+      <div class="action-right">
+        <span class="status-badge" [class]="getStatusClass()">
+          <i class="fas fa-info-circle me-1"></i>
+          État : {{ detailsPlanningRepas.etat || 'Brouillon' }}
+        </span>
+      </div>
+    </div>
+
+    <div class="info-card">
+      <div class="card-header-custom">
+        <i class="fas fa-clipboard-list"></i>
+        <h4>Détails réunion</h4>
+      </div>
+      <div class="info-list">
+        <div class="info-row">
+          <div class="info-label">Menu</div>
+          <div class="info-value">{{ detailsPlanningRepas.libelleMenu }}</div>
+        </div>
+        <div class="info-row">
+          <div class="info-label">Jour de la semaine</div>
+          <div class="info-value">
+            {{ detailsPlanningRepas.jourSemaine }}
+          </div>
+        </div>
+        <div class="info-row">
+          <div class="info-label">Date</div>
+          <div class="info-value">
+            {{ detailsPlanningRepas.dateConsommation | date: 'dd/MM/yyyy' }}
+          </div>
+        </div>
+
+        @if (detailsPlanningRepas.datePublication) {
+          <div class="info-row">
+            <div class="info-label">Date publication</div>
+            <div class="info-value">
+              {{ detailsPlanningRepas.datePublication | date: 'dd/MM/yyyy' }}
+            </div>
+          </div>
+        }
+
+        <div class="info-row">
+          <div class="info-label">Motif</div>
+          <div class="info-value">{{ detailsPlanningRepas.motifAnnulation || '-' }}</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<ng-template #etatModal let-modal>
+  <div class="modal-custom-overlay" (click)="modal.dismiss()">
+    <div class="modal-custom-container" (click)="$event.stopPropagation()">
+      <div class="modal-header-custom">
+        <h5 class="modal-title-custom">
+          <i class="fas fa-question-circle me-2"></i>
+          Confirmer l'action : {{ modalActionLabel | titlecase }}
+        </h5>
+        <button type="button" class="btn-close-custom" (click)="modal.dismiss()">
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
+
+      <div class="modal-body-custom">
+        <p class="modal-message">
+          Êtes-vous sûr de vouloir
+          <strong class="action-highlight">{{ modalActionLabel }}</strong> ce repas ?
+        </p>
+
+        <form [formGroup]="actionForm">
+          @if (isMotifRequired) {
+            <div class="form-group-motif">
+              <label for="motifAnnulation" class="motif-label">
+                <i class="fas fa-exclamation-triangle text-danger me-1"></i>
+                Motif requis pour l'action :
+              </label>
+              <textarea
+                id="motifAnnulation"
+                class="form-control-motif"
+                rows="3"
+                formControlName="motifAnnulation"
+                placeholder="Veuillez saisir la raison précise ici..."
+                [class.is-invalid]="
+                  actionForm.get('motifAnnulation')?.invalid &&
+                  actionForm.get('motifAnnulation')?.touched
+                "
+              ></textarea>
+              @if (
+                actionForm.get('motifAnnulation')?.invalid &&
+                actionForm.get('motifAnnulation')?.touched
+              ) {
+                <small class="error-message">
+                  <i class="fas fa-info-circle me-1"></i>
+                  Le motif est obligatoire pour effectuer cette action.
+                </small>
+              }
+            </div>
+          }
+        </form>
+      </div>
+
+      <div class="modal-footer-custom">
+        <button type="button" class="btn-cancel" (click)="modal.dismiss()">
+          <i class="fas fa-times me-2"></i>Annuler
+        </button>
+        <button
+          type="button"
+          class="btn-confirm"
+          [class.btn-confirm-publish]="modalActionLabel === 'publier'"
+          [class.btn-confirm-terminer]="modalActionLabel === 'cloturer'"
+          [class.btn-confirm-danger]="
+            modalActionLabel === 'annuler' || modalActionLabel === 'dépublier'
+          "
+          [class.btn-confirm-primary]="
+            modalActionLabel !== 'publier' &&
+            modalActionLabel !== 'cloturer' &&
+            modalActionLabel !== 'annuler' &&
+            modalActionLabel !== 'dépublier'
+          "
+          [disabled]="actionForm.invalid"
+          (click)="modal.close('confirm')"
+        >
+          <i class="fas fa-check-circle me-2"></i>Confirmer
+        </button>
+      </div>
+    </div>
+  </div>
+</ng-template>
