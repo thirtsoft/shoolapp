@@ -9,6 +9,7 @@ import { Tarif } from '../../../../../../core/models/referentiels/tarif';
 import { TypeServiceOffert } from '../../../../../../core/models/referentiels/type-service-offert';
 import { Utilisateur } from '../../../../../../core/models/utilisateur/utilisateur';
 import { ReferentielResourceService } from '../../../service/referentiel-resource.service';
+import { Niveau } from '../../../../../../core/models/referentiels/niveau';
 
 @Component({
   selector: 'app-create-tarif',
@@ -25,7 +26,7 @@ export class CreateTarifComponent implements OnInit {
   tarif: any;
   isEdit: boolean = false;
 
-  classList: ListeClasse[] = [];
+  niveauList: Niveau[] = [];
   typeServiceList: TypeServiceOffert[] = [];
   anneeScolaireList: AnneeScolaire[] = [];
 
@@ -48,7 +49,7 @@ export class CreateTarifComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.getClassList();
+    this.getNiveauList();
     this.getTypeServiceList();
     this.getAnneeScolaireList();
     this.initializeForm(null);
@@ -60,18 +61,18 @@ export class CreateTarifComponent implements OnInit {
   }
 
 
-  getClassList() {
-    this.referentielResource.getResourceList('classe').subscribe({
+  getNiveauList() {
+    this.referentielResource.getResourceList('niveau').subscribe({
       next: (data: any) => {
-        this.classList = data;
+        this.niveauList = data;
       }
     });
   }
 
-  getSelectedClasseName(): string {
-    const classeId = this.tarifFormGroup.get('classe')?.value;
-    const classe = this.classList.find(c => Number(c.id) === Number(classeId));
-    return classe?.libelle || '';
+  getSelectedNiveauName(): string {
+    const niveauId = this.tarifFormGroup.get('niveau')?.value;
+    const niveau = this.niveauList.find(c => Number(c.id) === Number(niveauId));
+    return niveau?.libelle || '';
   }
 
   getAnneeScolaireList() {
@@ -118,7 +119,7 @@ export class CreateTarifComponent implements OnInit {
   initializeForm(tarif: Tarif | null) {
     this.tarifFormGroup = this._formBuilder.group({
       id: [tarif?.id ?? ''],
-      classe: [tarif?.classe ?? '', Validators.required],
+      niveau: [tarif?.niveau ?? '', Validators.required],
       typeService: [tarif?.typeService ?? '', Validators.required],
       anneeScolaire: [tarif?.anneeScolaire ?? '', Validators.required],
       montant: [tarif?.montant ?? '', Validators.required],

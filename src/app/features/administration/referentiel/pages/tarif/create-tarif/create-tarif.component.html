@@ -61,17 +61,17 @@
 
           <div class="form-group">
             <label class="form-label">
-              Classe <span class="text-danger">*</span>
+              Niveau <span class="text-danger">*</span>
               <i class="fas fa-chalkboard-user ms-1 text-muted"></i>
             </label>
-            <select class="form-select" formControlName="classe" required>
-              <option value="" disabled selected>— Sélectionnez une classe —</option>
-              @for (item of classList; track item.id) {
+            <select class="form-select" formControlName="niveau" required>
+              <option value="" disabled selected>— Sélectionnez un niveau —</option>
+              @for (item of niveauList; track item.id) {
                 <option [value]="item.id">{{ item.libelle }}</option>
               }
             </select>
-            @if (tarifFormGroup.get('classe')?.invalid && tarifFormGroup.get('classe')?.touched) {
-              <div class="invalid-feedback">La classe est requise</div>
+            @if (tarifFormGroup.get('niveau')?.invalid && tarifFormGroup.get('niveau')?.touched) {
+              <div class="invalid-feedback">Le niveau est requise</div>
             }
           </div>
 
@@ -118,7 +118,7 @@
 
           @if (
             tarifFormGroup.get('typeService')?.value &&
-            tarifFormGroup.get('classe')?.value &&
+            tarifFormGroup.get('niveau')?.value &&
             tarifFormGroup.get('montant')?.value
           ) {
             <div class="recap-card">
@@ -129,8 +129,8 @@
                 <div class="recap-content">
                   <span class="recap-label">Récapitulatif du tarif</span>
                   <span class="recap-value">
-                    Service <strong>{{ getSelectedTypeServiceName() }}</strong> pour la classe
-                    <strong>{{ getSelectedClasseName() }}</strong> s'élève à
+                    Service <strong>{{ getSelectedTypeServiceName() }}</strong> pour le niveau
+                    <strong>{{ getSelectedNiveauName() }}</strong> s'élève à
                     <strong>{{ tarifFormGroup.get('montant')?.value | number }} CFA</strong>
                     pour l'année scolaire
                     <strong>{{ getSelectedAnneeScolaire() }}</strong>

@@ -94,6 +94,8 @@ export class ListTypeServiceOffertComponent implements OnInit {
         ];
         this.typeServiceOffertData = this.typeServiceOffertData.map((item: any) => ({
           ...item,
+          isEditIcone: item.estSysteme !== 1,
+          isLocakableIcone: item.estSysteme !== 1
         }));
 
         this.isLoading = false;

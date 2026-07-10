@@ -162,6 +162,11 @@ export class DossierResourceService {
     return this.http.get<T>(url, this.httpOptions);
   }
 
+  changeEtatResource<T>(endpoint: string, id: number, resource: Partial<T>): Observable<any> {
+    const url = `${this.baseUrl_1}/${endpoint}/${id}/changeretat`;
+    return this.http.patch<ResponseMessage>(url, resource, this.httpOptions);
+  }
+
   afficherListeEleveParClassEtAnneeScolaire<T>(endpoint: string, classId: number, anneeId: number): Observable<T[]> {
     const url = `${this.baseUrl_1}/${endpoint}/classe/${classId}/anneescolaire/${anneeId}`;
     return this.http.get<T[]>(url, this.httpOptions);

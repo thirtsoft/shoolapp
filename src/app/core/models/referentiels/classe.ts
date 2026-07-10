@@ -5,6 +5,12 @@ export interface Classe {
 
     niveau?: number;
 
+    capacite?: number;
+
+    serie?: number;
+
+    anneeScolaire?: number;
+
 }
 
 export interface ListeClasse {
@@ -13,5 +19,7 @@ export interface ListeClasse {
     libelle?: string;
 
     niveau?: string;
+
+    capacite?: number;
 
 }

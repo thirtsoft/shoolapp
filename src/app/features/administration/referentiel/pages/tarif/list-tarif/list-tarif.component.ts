@@ -93,8 +93,8 @@ export class ListTarifComponent implements OnInit {
         })),
       },
       {
-        key: 'classe',
-        label: 'Classe',
+        key: 'niveau',
+        label: 'Niveau',
         type: 'select',
         options: this.classList.map(c => ({
           value: c.id,
@@ -135,8 +135,8 @@ export class ListTarifComponent implements OnInit {
         this.tarifData = response.data?.content || [];
         this.totalElements = response.data?.totalElements || 0;
         this.columns = [
+          { key: 'niveau', header: 'Niveau' },
           { key: 'typeService', header: 'Type service' },
-          { key: 'classe', header: 'Classe' },
           { key: 'montant', header: 'Montant' },
           { key: 'anneeScolaire', header: 'Annee scolaire' }
         ];

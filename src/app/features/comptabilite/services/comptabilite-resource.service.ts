@@ -145,4 +145,9 @@ export class ComptabiliteResourceService {
     return this.http.patch<ResponseMessage>(url, resource, this.httpOptions);
   }
 
+  enregistrerExercicetWithFiles<T>(endpoint: string, formData: FormData) {
+    const url = `${this.comptabiliteUrl}/${endpoint}/enregistrerwithfiles`;
+    return this.http.post<ResponseMessage>(url, formData);
+  }
+
 }

@@ -133,9 +133,12 @@ export class CoefficientmatclasseComponent implements OnInit {
         this.coefficientData = response.data?.content || [];
         this.totalElements = response.data?.totalElements || 0;
         this.columns = [
+          { key: 'niveau', header: 'Niveau' },
           { key: 'matiere', header: 'Matière' },
-          { key: 'classe', header: 'Classe' },
           { key: 'coefficient', header: 'Coéfficient' },
+          { key: 'serie', header: 'Série' },
+
+
         ];
         this.coefficientData = this.coefficientData.map((item: any) => ({
           ...item,

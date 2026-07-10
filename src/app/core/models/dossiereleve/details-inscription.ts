@@ -8,17 +8,35 @@ export interface DetailsInscription {
 
     code?: string;
 
+    reference?: string;
+
     eleveDTO?: Eleve;
 
-    anneeScolaireDTODebut?: AnneeScolaire;
-
-    anneeScolaireDTOFin?: AnneeScolaire;
+    anneeScolaireDTO?: AnneeScolaire;
 
     classeDTO?: Classe;
 
+    classe?: string;
+
+    niveau?: string;
+
+    serie?: string;
+
+    etat?: string;
+
+    moyenPaiement?: string;
+
     montantInscription?: number;
+
+    montantRecu?: number;
+
+    resteAPaye?: number;
+
+    motifAnnulation?: string;
 
     dateInscription?: Date;
 
     createdBy?: number;
+
+    actif?: number;
 }

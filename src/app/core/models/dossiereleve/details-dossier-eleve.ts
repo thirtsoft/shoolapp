@@ -1,5 +1,6 @@
 import { Facture } from "../comptabilite/facture";
 import { InscriptionEleveTypeService } from "../comptabilite/inscrire-eleve-service";
+import { PieceJointe } from "../piecejointe/piece-jointe";
 import { Utilisateur } from "../utilisateur/utilisateur";
 import { AttendanceRecord } from "./absence/attendanceRecordedit";
 import { ListeBulletin } from "./bulletin/liste-bulletin";
@@ -9,26 +10,26 @@ import { Inscription } from "./request/inscription";
 
 
 export interface DetailsDossierEleve {
-    id?: number;
+  id?: number;
 
-    eleve?: Eleve;
+  eleve?: Eleve;
 
-    tuteurs?: Utilisateur[];
-    notes?: Note[];
-    bulletins?: ListeBulletin[];
-    absencesEtRetards?: AttendanceRecord[];
+  tuteurs?: Utilisateur[];
+  notes?: Note[];
+  bulletins?: ListeBulletin[];
+  absencesEtRetards?: AttendanceRecord[];
 
-    totalAbsences?: number;
+  totalAbsences?: number;
 
-    totalRetardsMinutes?: number;
+  totalRetardsMinutes?: number;
 
-    totalAbsencesJustifiees?: number;
+  totalAbsencesJustifiees?: number;
 
-    historiqueInscriptions?: Inscription[];
+  historiqueInscriptions?: Inscription[];
 
-    servicesSouscrits?: InscriptionEleveTypeService[];
+  servicesSouscrits?: InscriptionEleveTypeService[];
 
-    factures?: Facture[];
+  factures?: Facture[];
 
 }
 
@@ -36,9 +37,14 @@ export interface EleveData {
   eleve: {
     id: number;
     matriculeEleve: string;
+    sexe: string;
     nom: string;
     prenom: string;
     address: string;
+    nationalite: string;
+    lieuNaissance: string;
+    dateNaissance: string;
+    piecesJointesDTO?: PieceJointe;
     actif: boolean;
   };
   tuteurs: Array<{

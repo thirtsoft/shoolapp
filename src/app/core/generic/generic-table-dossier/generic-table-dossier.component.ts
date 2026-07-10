@@ -649,8 +649,6 @@ export class GenericTableDossierComponent implements OnInit {
 
   }
 
-  // reçu
-
   generatePdfDuRecu(row: any) {
     if (row.id) {
       this.getDetailsInscriptionEleve(row.id);

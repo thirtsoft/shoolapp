@@ -498,7 +498,7 @@
                             }
                             <td class="icon-container options-column">
                               <div class="icon-position left">
-                                @if (isEditIcon) {
+                                @if (isEditIcon && row.isEditIcone !== false) {
                                   <button
                                     class="icon-button"
                                     aria-label="Edit"
@@ -511,7 +511,7 @@
                               </div>
 
                               <div class="icon-position center">
-                                @if (isLockableIcon) {
+                                @if (isLockableIcon && row.isLocakableIcone !== false) {
                                   <button
                                     class="icon-button"
                                     aria-label="Toggle Lock"

@@ -7,6 +7,7 @@ export const EtatLibelle = {
   LIBELLE_ETAT_PUBLIE: 'Publié',
   LIBELLE_ETAT_DEPUBLIE: 'Dépublié',
   LIBELLE_ETAT_PROGRAMME: 'Programmé',
+  LIBELLE_ETAT_EN_ATTENTE: 'Payée',
   LIBELLE_ETAT_ENCOURS: 'En cours',
 
   LIBELLE_ETAT_TERMINE: 'Terminé',
@@ -23,5 +24,4 @@ export const EtatLibelle = {
   LIBELLE_ETAT_A_CONFIRMEE: 'A confirmée',
   LIBELLE_ETAT_PAY_REJETE: 'Paiement rejeté',
   LIBELLE_ETAT_PAYEE: 'Payée',
-
 };

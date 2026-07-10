@@ -39,6 +39,7 @@ export class SideBarAdminComponent {
     { route: '/admin/comptabilite/facture', ico: '💰', label: 'Factures', section: 'FINANCES', badge: '18' },
     { route: '/admin/comptabilite/paiement', ico: '💳', label: 'Frais scolarité', section: '', badge: '' },
     { route: '/admin/comptabilite/services', ico: '📋', label: 'Inscriptions services', section: '', badge: '' },
+    { route: '/admin/comptabilite/depenses', ico: '💸', label: 'Dépenses', section: '', badge: '' },
 
     // GESTION SCOLAIRE
     { route: '/admin/dossier-eleve/eleves', ico: '🎒', label: 'Élèves', section: 'GESTION SCOLAIRE', badge: '1 200' },
@@ -93,6 +94,7 @@ export class SideBarAdminComponent {
         { route: '/admin/referentiel/typeservices', ico: '🛎️', label: 'Types de service' },
         { route: '/admin/referentiel/tarifs', ico: '💲', label: 'Tarifs' },
         { route: '/admin/referentiel/moyenpaiements', ico: '🏦', label: 'Modes de paiement' },
+         { route: '/admin/referentiel/typedepense', ico: '💲', label: 'Type dépense' },
         { route: '/admin/referentiel/menus', ico: '🍽️', label: 'Menus' },
         { route: '/admin/referentiel/category-menu', ico: '📋', label: 'Catégories menu' },
 

@@ -6,6 +6,8 @@ import { Niveau } from '../../../../../../core/models/referentiels/niveau';
 import { Utilisateur } from '../../../../../../core/models/utilisateur/utilisateur';
 import { UtilisateurService } from '../../../../utilisateur/service/utilisateur.service';
 import { ReferentielService } from '../../../service/referentiel.service';
+import { Cycle } from '../../../../../../core/models/referentiels/cycle';
+import { ReferentielResourceService } from '../../../service/referentiel-resource.service';
 
 @Component({
   selector: 'app-create-niveau',
@@ -23,12 +25,14 @@ export class CreateNiveauComponent implements OnInit {
   isEdit: boolean = false;
   ecoleId: any;
   userId: number;
-
+  cycleList: Cycle[] = [];
   utilisateur: Utilisateur = {};
+
 
   title = "Ajouter un niveau";
 
   private readonly referentielService = inject(ReferentielService);
+  private readonly referentielResource = inject(ReferentielResourceService);
   private readonly utilisateurService = inject(UtilisateurService);
   private readonly _formBuilder = inject(FormBuilder);
   private readonly toastService = inject(ToastrService);
@@ -43,7 +47,7 @@ export class CreateNiveauComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.getConnectedUserInfos();
+    this.getCycleList();
     this.initializeForm(null);
     if (this.niveauId != null && this.niveauId != undefined) {
       this.getNiveau(this.niveauId);
@@ -61,6 +65,20 @@ export class CreateNiveauComponent implements OnInit {
     });
   }
 
+  getCycleList() {
+    this.referentielResource.getResourceList('cycle').subscribe({
+      next: (data: any) => {
+        this.cycleList = data;
+      }
+    });
+  }
+
+  getSelectedCycleName(): string {
+    const cycleId = this.niveauFormGroup.get('cycleId')?.value;
+    const cycle = this.cycleList.find(n => Number(n.id) === Number(cycleId));
+    return cycle?.libelle || '';
+  }
+
   getNiveau(niveauId: number) {
     this.referentielService.getNiveau(niveauId).subscribe({
       next: (data) => {
@@ -73,7 +91,8 @@ export class CreateNiveauComponent implements OnInit {
   initializeForm(niveau: Niveau | null) {
     this.niveauFormGroup = this._formBuilder.group({
       id: [niveau?.id ? niveau.id : ''],
-      libelle: [niveau?.libelle ? niveau.libelle : '', Validators.required]
+      libelle: [niveau?.libelle ?? '', Validators.required],
+      cycleId: [niveau?.cycleId ?? '', Validators.required],
     });
   }
 

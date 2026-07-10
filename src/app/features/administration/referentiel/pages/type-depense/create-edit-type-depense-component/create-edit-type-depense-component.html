@@ -1,0 +1,103 @@
+<div class="page-wrapper">
+  <div class="content container-fluid">
+    <!-- Page Header -->
+    <div class="page-header">
+      <div class="row align-items-center">
+        <div class="col-sm-12">
+          <h3 class="page-title">{{ title }}</h3>
+          <p class="text-muted mt-1 mb-0">
+            <i class="fas fa-chalkboard-user me-1"></i> Gestion des type de dépenses
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <div class="badge-container">
+      <span class="badge badge-primary">
+        <i class="fas fa-plus-circle me-1"></i>
+        @if (!isEdit) {
+          Nouvelle type de dépense
+        } @else {
+          Modification
+        }
+      </span>
+    </div>
+
+    <div class="card">
+      <div class="card-body p-4 p-md-5">
+        <!-- Step Indicator -->
+        <div class="step-indicator">
+          <div class="step active">
+            <span class="step-number">1</span>
+            <span class="step-label">Information</span>
+          </div>
+          <div class="step-line"></div>
+          <div class="step">
+            <span class="step-number">2</span>
+            <span class="step-label">Confirmation</span>
+          </div>
+        </div>
+
+        <form [formGroup]="typeDepenseFormGroup" (ngSubmit)="ajoutEditTypeDepnse()">
+          <input type="hidden" formControlName="id" />
+
+          <div class="form-group">
+            <label class="form-label">
+              Libellé <span class="text-danger">*</span>
+              <i class="fas fa-tag ms-1 text-muted"></i>
+            </label>
+            <input
+              type="text"
+              class="form-control"
+              formControlName="libelle"
+              placeholder="Ex: Location"
+              required
+            />
+            @if (
+              typeDepenseFormGroup.get('libelle')?.invalid &&
+              typeDepenseFormGroup.get('libelle')?.touched
+            ) {
+              <div class="invalid-feedback">Le libellé est requis</div>
+            }
+          </div>
+
+          @if (typeDepenseFormGroup.get('libelle')?.value) {
+            <div class="recap-card">
+              <div class="d-flex align-items-center gap-3">
+                <div class="recap-icon">
+                  <i class="fas fa-chalkboard-user"></i>
+                </div>
+                <div class="recap-content">
+                  <span class="recap-label">Récapitulatif du type de dépense</span>
+                  <span class="recap-value">
+                    Type de dépense
+                    <strong>{{ typeDepenseFormGroup.get('libelle')?.value }}</strong>
+                  </span>
+                </div>
+              </div>
+            </div>
+          }
+
+          <div class="form-actions">
+            <button type="button" class="btn btn-secondary" (click)="goBack()">
+              <i class="fas fa-times me-2"></i>Annuler
+            </button>
+            <button type="submit" class="btn btn-primary" [disabled]="!typeDepenseFormGroup.valid">
+              <i class="fas fa-save me-2"></i>
+              @if (!isEdit) {
+                Enregistrer le type de dépense
+              } @else {
+                Modifier le type de dépense
+              }
+            </button>
+          </div>
+
+          <div class="alert-help mt-4" role="alert">
+            <i class="fas fa-info-circle me-2"></i>
+            <span> Les type de dépenses permettent de regrouper les dépenses effectuées . </span>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>

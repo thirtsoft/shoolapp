@@ -60,21 +60,34 @@
 
           <div class="form-group">
             <label class="form-label">
-              Classe <span class="text-danger">*</span>
-              <i class="fas fa-chalkboard-user ms-1 text-muted"></i>
+              Niveau <span class="text-danger">*</span>
+              <i class="fas fa-layer-group ms-1 text-muted"></i>
             </label>
-            <select class="form-select" formControlName="classe" required>
-              <option value="" disabled selected>— Sélectionnez une classe —</option>
-              @for (item of classList; track item.id) {
+            <select class="form-select" formControlName="niveau" required>
+              <option value="" disabled selected>— Sélectionnez un niveau —</option>
+              @for (item of niveauList; track item.id) {
                 <option [value]="item.id">{{ item.libelle }}</option>
               }
             </select>
             @if (
-              coefficientFormGroup.get('classe')?.invalid &&
-              coefficientFormGroup.get('classe')?.touched
+              coefficientFormGroup.get('niveau')?.invalid &&
+              coefficientFormGroup.get('niveau')?.touched
             ) {
-              <div class="invalid-feedback">La classe est requise</div>
+              <div class="invalid-feedback">Le niveau est requis</div>
             }
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">
+              Série
+              <i class="fas fa-layer-group ms-1 text-muted"></i>
+            </label>
+            <select class="form-select" formControlName="serie">
+              <option value="" disabled selected>— Sélectionnez une série —</option>
+              @for (item of serieList; track item.id) {
+                <option [value]="item.id">{{ item.libelle }}</option>
+              }
+            </select>
           </div>
 
           <div class="form-group">
@@ -101,7 +114,7 @@
 
           @if (
             coefficientFormGroup.get('matiere')?.value &&
-            coefficientFormGroup.get('classe')?.value &&
+            coefficientFormGroup.get('niveau')?.value &&
             coefficientFormGroup.get('coefficient')?.value
           ) {
             <div class="recap-card">
@@ -114,8 +127,8 @@
                   <span class="recap-value">
                     Coefficient
                     <strong>{{ coefficientFormGroup.get('coefficient')?.value }}</strong> pour la
-                    matière <strong>{{ getSelectedMatiereName() }}</strong> en classe
-                    <strong>{{ getSelectedClasseName() }}</strong>
+                    matière <strong>{{ getSelectedMatiereName() }}</strong> en
+                    <strong>{{ getSelectedNiveauName() }}</strong>
                   </span>
                 </div>
               </div>

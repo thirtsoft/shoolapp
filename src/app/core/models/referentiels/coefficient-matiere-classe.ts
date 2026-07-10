@@ -1,7 +1,9 @@
 export interface CoefficientMatiereClasse {
   id?: number;
 
-  classe?: number;
+  niveau?: number;
+
+  serie?: number;
 
   matiere?: number;
 

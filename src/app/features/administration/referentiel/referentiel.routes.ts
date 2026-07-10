@@ -38,6 +38,8 @@ import { ListTypeServiceOffertComponent } from './pages/typeservice/list-type-se
 import { ReferentielsComponent } from './referentiels.component';
 import { CreateSessionSemestreComponent } from './pages/semestre/create-session-semestre-component/create-session-semestre-component';
 import { DetailsSessionSemestresComponent } from './pages/semestre/details-session-semestres-component/details-session-semestres-component';
+import { TypeDepenseComponent } from './pages/type-depense/type-depense-component/type-depense-component';
+import { CreateEditTypeDepenseComponent } from './pages/type-depense/create-edit-type-depense-component/create-edit-type-depense-component';
 
 export const REFERENTIELS_ROUTES: Routes = [
   {
@@ -175,8 +177,6 @@ export const REFERENTIELS_ROUTES: Routes = [
         path: 'niveau/edit/:id',
         component: CreateNiveauComponent
       },
-
-
       {
         path: 'type-paiements',
         component: TypePaiementComponent
@@ -254,6 +254,20 @@ export const REFERENTIELS_ROUTES: Routes = [
         path: 'moyenpaiement/edit/:id',
         component: CreateModePaiementComponent
       },
+
+       {
+        path: 'typedepense',
+        component: TypeDepenseComponent
+      },
+      {
+        path: 'typedepense/create',
+        component: CreateEditTypeDepenseComponent
+      },
+      {
+        path: 'typedepense/edit/:id',
+        component: CreateEditTypeDepenseComponent
+      },
+
       {
         path: 'parametrage',
         component: ConfigEtablissementComponent

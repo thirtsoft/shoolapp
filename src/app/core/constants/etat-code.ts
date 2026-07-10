@@ -19,5 +19,6 @@ export const EtatCode = {
   ETAT_A_CONFIRMEE: "E18",
   ETAT_PAY_REJETE: "E19",
   ETAT_PAYEE: "E20",
+  ETAT_EN_ATTENTE: "E21"
 
 };

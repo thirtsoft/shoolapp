@@ -59,7 +59,25 @@
             }
           </div>
 
-          @if (niveauFormGroup.get('libelle')?.value) {
+          <div class="form-group">
+            <label class="form-label">
+              Cycle <span class="text-danger">*</span>
+              <i class="fas fa-layer-group ms-1 text-muted"></i>
+            </label>
+            <select class="form-select" formControlName="cycleId" required>
+              <option value="" disabled selected>— Sélectionnez un cycle —</option>
+              @for (item of cycleList; track item.id) {
+                <option [value]="item.id">{{ item.libelle }}</option>
+              }
+            </select>
+            @if (
+              niveauFormGroup.get('cycleId')?.invalid && niveauFormGroup.get('cycleId')?.touched
+            ) {
+              <div class="invalid-feedback">Le cycle est requis</div>
+            }
+          </div>
+
+          @if (niveauFormGroup.get('libelle')?.value && niveauFormGroup.get('cycleId')?.value) {
             <div class="recap-card">
               <div class="d-flex align-items-center gap-3">
                 <div class="recap-icon">
@@ -68,7 +86,8 @@
                 <div class="recap-content">
                   <span class="recap-label">Récapitulatif du niveau</span>
                   <span class="recap-value">
-                    Niveau <strong>{{ niveauFormGroup.get('libelle')?.value }}</strong>
+                    Niveau <strong>{{ niveauFormGroup.get('libelle')?.value }}</strong> - Cycle
+                    <strong>{{ getSelectedCycleName() }}</strong>
                   </span>
                 </div>
               </div>

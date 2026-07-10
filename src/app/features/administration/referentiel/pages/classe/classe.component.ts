@@ -122,6 +122,9 @@ export class ClasseComponent implements OnInit {
         this.columns = [
           { key: 'niveau', header: 'Niveau' },
           { key: 'libelle', header: 'Libellé' },
+          { key: 'capacite', header: 'Capacité' },
+          { key: 'serie', header: 'Série' },
+          { key: 'anneeScolaire', header: 'année scolaire' },
         ];
 
         this.classeData = this.classeData.map((item: any) => ({
