@@ -1,13 +1,13 @@
 import { Component, inject, OnInit } from '@angular/core';
-import { TypeDocument } from '../../../../../../core/models/referentiels/type-document';
 import { IFilterConfig } from '../../../../../../core/filtered-config/FiltreConfiguration';
-import { ReferentielResourceService } from '../../../service/referentiel-resource.service';
 import { GenericTableReferentielComponent } from '../../../../../../core/generic/generic-table-referentiel/generic-table-referentiel.component';
+import { TypeDocument } from '../../../../../../core/models/referentiels/type-document';
+import { ReferentielResourceService } from '../../../service/referentiel-resource.service';
 
 @Component({
   selector: 'app-type-documents',
-    standalone: true,
-    imports: [GenericTableReferentielComponent],
+  standalone: true,
+  imports: [GenericTableReferentielComponent],
   templateUrl: './type-documents.component.html',
   styleUrls: ['./type-documents.component.css']
 })
@@ -27,9 +27,9 @@ export class TypeDocumentsComponent implements OnInit {
   readonly String = String;
 
   currentPage = 0;
-  pageSize = 5;
+  pageSize = 10;
   totalElements = 0;
-  tableSizes = [5, 10, 20, 50, 100];
+  tableSizes = [10, 20, 50, 100];
   tableFilters: IFilterConfig[] = [];
   activeFilters: any = {};
   hasActiveFilters: boolean = false;

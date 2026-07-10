@@ -3,6 +3,7 @@ import { IFilterConfig } from '../../../../../../core/filtered-config/FiltreConf
 import { GenericTableDossierComponent } from '../../../../../../core/generic/generic-table-dossier/generic-table-dossier.component';
 import { ReferentielService } from '../../../../referentiel/service/referentiel.service';
 import { PlanificationResourceService } from '../../../services/planification-resource.service';
+import { EnseignantService } from '../../../../../enseignant/service/enseignant.service';
 
 @Component({
   selector: 'app-list-enseignement',
@@ -25,9 +26,9 @@ export class ListEnseignementComponent implements OnInit {
   public readonly String = String;
 
   currentPage = 0;
-  pageSize = 5;
+  pageSize = 10;
   totalElements = 0;
-  tableSizes = [5, 10, 20, 50, 100];
+  tableSizes = [10, 20, 50, 100];
 
   enseignantList: any[] = [];
   classeList: any[] = [];
@@ -38,7 +39,7 @@ export class ListEnseignementComponent implements OnInit {
   hasActiveFilters: boolean = false;
 
   private readonly planificationResource = inject(PlanificationResourceService);
-  //  private readonly enseignantSerivce = inject(EnseignantService);
+  private readonly enseignantSerivce = inject(EnseignantService);
   private readonly referentielService = inject(ReferentielService);
 
   ngOnInit(): void {
@@ -49,7 +50,7 @@ export class ListEnseignementComponent implements OnInit {
   async chargerLesEnseignements() {
     try {
       await Promise.all([
-        //    this.getEnseignantList(),
+        this.getEnseignantList(),
         this.getClasseList(),
         this.getAnneesList()
       ]);
@@ -60,7 +61,6 @@ export class ListEnseignementComponent implements OnInit {
     }
   }
 
-  /*
   getEnseignantList(): Promise<any[]> {
     return new Promise((resolve, reject) => {
       this.enseignantSerivce.getAllEnseignants().subscribe({
@@ -71,7 +71,7 @@ export class ListEnseignementComponent implements OnInit {
         error: (err) => reject(err)
       });
     });
-  }*/
+  }
 
   getClasseList(): Promise<any[]> {
     return new Promise((resolve, reject) => {

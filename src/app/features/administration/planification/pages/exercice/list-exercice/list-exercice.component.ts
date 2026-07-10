@@ -27,9 +27,9 @@ export class ListExerciceComponent implements OnInit {
   public readonly String = String;
 
   currentPage = 0;
-  pageSize = 5;
+  pageSize = 10;
   totalElements = 0;
-  tableSizes = [5, 10, 20, 50, 100];
+  tableSizes = [10, 20, 50, 100];
 
   livreList: any;
   classesList: any[] = [];
@@ -43,7 +43,6 @@ export class ListExerciceComponent implements OnInit {
 
   private readonly planificationResource = inject(PlanificationResourceService);
   private readonly referentielService = inject(ReferentielService);
-  //  private readonly enseigantService = inject(EnseignantService);
   private readonly commonService = inject(CommonService);
 
 
@@ -56,7 +55,6 @@ export class ListExerciceComponent implements OnInit {
       await Promise.all([
         this.getClassList(),
         this.getLivreList(),
-        //  this.getEnseignantList(),
         this.getMoisList(),
         this.getAnneesList(),
       ]);
@@ -141,15 +139,6 @@ export class ListExerciceComponent implements OnInit {
           value: c.id,
           label: c.titre
         })),
-      },
-      {
-        key: 'enseignant',
-        label: 'Enseignant',
-        type: 'select',
-        options: this.enseignantList.map(a => ({
-          value: a.id,
-          label: `${a.nomComplet}`
-        }))
       },
       {
         key: 'mois',
@@ -239,9 +228,6 @@ export class ListExerciceComponent implements OnInit {
     }
     if (this.activeFilters.livre) {
       filtreObj.livre = this.activeFilters.livre;
-    }
-    if (this.activeFilters?.enseignant) {
-      filtreObj.enseignant = this.activeFilters.enseignant;
     }
     if (this.activeFilters.mois) {
       filtreObj.mois = this.activeFilters.mois;

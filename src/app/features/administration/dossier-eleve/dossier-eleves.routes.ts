@@ -6,22 +6,23 @@ import { CreateBulletinComponent } from './pages/bulletin/create-bulletin/create
 import { GenererBulletinClasseComponent } from './pages/bulletin/generer-bulletin-classe/generer-bulletin-classe.component';
 import { GenererBulletinComponent } from './pages/bulletin/generer-bulletin/generer-bulletin.component';
 import { ListeBulletinEleveComponent } from './pages/bulletin/liste-bulletin-eleve/liste-bulletin-eleve.component';
-import { CreationEleveComponent } from './pages/creation-eleve/creation-eleve.component';
-import { CreationInscriptionComponent } from './pages/creation-inscription/creation-inscription.component';
-import { DetailsEleveComponent } from './pages/details-eleve/details-eleve.component';
+import { CreationEleveComponent } from './pages/eleve/creation-eleve/creation-eleve.component';
+import { DetailsEleveComponent } from './pages/eleve/details-eleve/details-eleve.component';
+import { ListeEleveComponent } from './pages/eleve/liste-eleve/liste-eleve.component';
 import { CreateEvaluationComponent } from './pages/evaluation/create-evaluation/create-evaluation.component';
 import { DetailsEvaluationComponent } from './pages/evaluation/details-evaluation/details-evaluation.component';
 import { EditEvaluationComponent } from './pages/evaluation/edit-evaluation/edit-evaluation.component';
 import { ListEvaluationComponent } from './pages/evaluation/list-evaluation/list-evaluation.component';
-import { InscrireEleveComponent } from './pages/inscrire-eleve/inscrire-eleve.component';
-import { ListeEleveComponent } from './pages/liste-eleve/liste-eleve.component';
-import { ListeInscriptionComponent } from './pages/liste-inscription/liste-inscription.component';
+import { CreationInscriptionComponent } from './pages/inscription/creation-inscription/creation-inscription.component';
+import { InscrireEleveComponent } from './pages/inscription/inscrire-eleve/inscrire-eleve.component';
+import { ListeInscriptionComponent } from './pages/inscription/liste-inscription/liste-inscription.component';
 import { AjoutNoteComponent } from './pages/note/ajout-note/ajout-note.component';
+import { EditNoteComponent } from './pages/note/edit-note-component/edit-note-component';
 import { ListNotesComponent } from './pages/note/list-notes/list-notes.component';
 import { EditParentComponent } from './pages/parent/edit-parent/edit-parent.component';
 import { ParentDetailsComponent } from './pages/parent/parent-details/parent-details.component';
 import { ParentListComponent } from './pages/parent/parent-list/parent-list.component';
-import { EditNoteComponent } from './pages/note/edit-note-component/edit-note-component';
+import { DetailsInscriptionComponent } from './pages/inscription/details-inscription-component/details-inscription-component';
 
 
 export const DOSSIERS_ELEVES_ROUTES: Routes = [
@@ -42,9 +43,10 @@ export const DOSSIERS_ELEVES_ROUTES: Routes = [
         component: CreationEleveComponent
       },
       {
-        path: 'details/:id',
+        path: 'eleve/details/:id',
         component: DetailsEleveComponent
       },
+
       {
         path: 'inscrire-eleve',
         component: InscrireEleveComponent
@@ -64,6 +66,10 @@ export const DOSSIERS_ELEVES_ROUTES: Routes = [
       {
         path: 'inscription/edit/:id',
         component: CreationInscriptionComponent
+      },
+      {
+        path: 'inscription/details/:id',
+        component: DetailsInscriptionComponent
       },
       {
         path: 'reinscription/:id',

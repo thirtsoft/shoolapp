@@ -91,7 +91,7 @@ export class CreateSemestreComponent implements OnInit {
         next: (data) => {
           if (data.statut === 'OK') {
             this.toastService.success('succès', 'Le semestre a été enregistrées avec succès !!! ');
-            this.router.navigate(['admin/referentiels/semestre'])
+            this.goBack();
           } else if (data.statut === 'FAILED') {
             this.toastService.error('error', 'Erreur lors de la création : ' + data.message);
           }
@@ -106,7 +106,7 @@ export class CreateSemestreComponent implements OnInit {
         next: (data) => {
           if (data.statut === 'OK') {
             this.toastService.success('succès', 'Le semestre a été modifiées avec succès !!! ');
-            this.router.navigate(['admin/referentiels/semestre'])
+            this.goBack();
           } else if (data.statut === 'FAILED') {
             this.toastService.error('error', 'Erreur lors de la modification : ' + data.message);
           }
@@ -121,7 +121,7 @@ export class CreateSemestreComponent implements OnInit {
   }
 
   goBack() {
-    this.router.navigate(['admin/referentiels/semestre'])
+    this.router.navigate(['admin/referentiel/semestres'])
   }
 
 }

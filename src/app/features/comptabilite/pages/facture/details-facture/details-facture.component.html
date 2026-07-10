@@ -169,12 +169,32 @@
                   <i class="fas fa-arrow-left me-2"></i>Retour
                 </button>
               </div>
+
               <div class="action-buttons-right">
-                @if (detailsFacture?.etat != 'Payée') {
+                @if ([libelleEtat.LIBELLE_ETAT_ENCOURS].includes(detailsFacture?.etat!)) {
                   <button type="button" class="btn-pay" (click)="openPaiementModal()">
                     <i class="fas fa-hand-holding-usd me-2"></i>Payer cette facture
                   </button>
                 }
+
+                @if ([libelleEtat.LIBELLE_ETAT_PAYEE_PARTIELLE].includes(detailsFacture?.etat!)) {
+                  <button type="button" class="btn-validate" (click)="openPaiementModal()">
+                    <i class="fas fa-hand-holding-usd me-2"></i>Solder la facture
+                  </button>
+                }
+
+                @if ([libelleEtat.LIBELLE_ETAT_A_CONFIRMEE].includes(detailsFacture?.etat!)) {
+                  <button
+                    class="btn-secondary"
+                    (click)="openEtatModal(etatModal, 'confirmer', 'E20')"
+                  >
+                    <i class="fas fa-eye-slash me-2"></i>Confimer le paiement
+                  </button>
+                  <button class="btn-success" (click)="openEtatModal(etatModal, 'rejeter', 'E19')">
+                    <i class="fas fa-flag-checkered me-2"></i>Rejeté
+                  </button>
+                }
+
                 <button type="button" class="btn-print" (click)="imprimerFacture()">
                   <i class="fas fa-print me-2"></i>Imprimer
                 </button>
@@ -275,7 +295,7 @@
           <div class="form-group">
             <label class="form-label"> Moyen de paiement <span class="text-danger">*</span> </label>
             <select class="form-select" formControlName="moyenPaiement">
-              <option value="" disabled selected>— Sélectionnez un moyen de paiement —</option>
+              <option value="" disabled selected>— Sélectionnez un mode de paiement —</option>
               @for (item of moyenPayementList; track item.id) {
                 <option [value]="item.id">{{ item.libelle }}</option>
               }
@@ -305,3 +325,82 @@
     </div>
   </div>
 }
+
+<ng-template #etatModal let-modal>
+  <div class="modal-custom-overlay" (click)="modal.dismiss()">
+    <div class="modal-custom-container" (click)="$event.stopPropagation()">
+      <div class="modal-header-custom">
+        <h5 class="modal-title-custom">
+          <i class="fas fa-question-circle me-2"></i>
+          Confirmer l'action : {{ modalActionLabel | titlecase }}
+        </h5>
+        <button type="button" class="btn-close-custom" (click)="modal.dismiss()">
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
+
+      <div class="modal-body-custom">
+        <p class="modal-message">
+          Êtes-vous sûr de vouloir
+          <strong class="action-highlight">{{ modalActionLabel }}</strong> cette réunion ?
+        </p>
+
+        <form [formGroup]="actionForm">
+          @if (isMotifRequired) {
+            <div class="form-group-motif">
+              <label for="motifAnnulation" class="motif-label">
+                <i class="fas fa-exclamation-triangle text-danger me-1"></i>
+                Motif requis pour l'action :
+              </label>
+              <textarea
+                id="motifAnnulation"
+                class="form-control-motif"
+                rows="3"
+                formControlName="motifAnnulation"
+                placeholder="Veuillez saisir la raison précise ici..."
+                [class.is-invalid]="
+                  actionForm.get('motifAnnulation')?.invalid &&
+                  actionForm.get('motifAnnulation')?.touched
+                "
+              ></textarea>
+              @if (
+                actionForm.get('motifAnnulation')?.invalid &&
+                actionForm.get('motifAnnulation')?.touched
+              ) {
+                <small class="error-message">
+                  <i class="fas fa-info-circle me-1"></i>
+                  Le motif est obligatoire pour effectuer cette action.
+                </small>
+              }
+            </div>
+          }
+        </form>
+      </div>
+
+      <div class="modal-footer-custom">
+        <button type="button" class="btn-cancel" (click)="modal.dismiss()">
+          <i class="fas fa-times me-2"></i>Annuler
+        </button>
+        <button
+          type="button"
+          class="btn-confirm"
+          [class.btn-confirm-publish]="modalActionLabel === 'publier'"
+          [class.btn-confirm-terminer]="modalActionLabel === 'terminer'"
+          [class.btn-confirm-danger]="
+            modalActionLabel === 'annuler' || modalActionLabel === 'dépublier'
+          "
+          [class.btn-confirm-primary]="
+            modalActionLabel !== 'publier' &&
+            modalActionLabel !== 'terminer' &&
+            modalActionLabel !== 'annuler' &&
+            modalActionLabel !== 'dépublier'
+          "
+          [disabled]="actionForm.invalid"
+          (click)="modal.close('confirm')"
+        >
+          <i class="fas fa-check-circle me-2"></i>Confirmer
+        </button>
+      </div>
+    </div>
+  </div>
+</ng-template>

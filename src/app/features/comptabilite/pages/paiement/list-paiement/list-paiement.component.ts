@@ -1,10 +1,10 @@
 import { Component, inject, OnInit } from '@angular/core';
-import { ComptabiliteResourceService } from '../../../services/comptabilite-resource.service';
-import { MoyenPaiement } from '../../../../../core/models/referentiels/moyen-paiement';
 import { IFilterConfig } from '../../../../../core/filtered-config/FiltreConfiguration';
+import { GenericTableDossierComponent } from '../../../../../core/generic/generic-table-dossier/generic-table-dossier.component';
+import { MoyenPaiement } from '../../../../../core/models/referentiels/moyen-paiement';
 import { CommonService } from '../../../../../core/services/common.service';
 import { ReferentielResourceService } from '../../../../administration/referentiel/service/referentiel-resource.service';
-import { GenericTableDossierComponent } from '../../../../../core/generic/generic-table-dossier/generic-table-dossier.component';
+import { ComptabiliteResourceService } from '../../../services/comptabilite-resource.service';
 
 @Component({
   selector: 'app-list-paiement',
@@ -28,9 +28,9 @@ export class ListPaiementComponent implements OnInit {
   public readonly String = String;
 
   currentPage = 0;
-  pageSize = 5;
+  pageSize = 10;
   totalElements = 0;
-  tableSizes = [5, 10, 20, 50, 100];
+  tableSizes = [10, 20, 50, 100];
 
   anneeList: any[] = [];
   moisList: any[] = [];
@@ -90,7 +90,7 @@ export class ListPaiementComponent implements OnInit {
   getMoyenPaiementList(): Promise<MoyenPaiement[]> {
     return new Promise((resolve, reject) => {
       this.referentielResource.getResourceList('moyenpaiement').subscribe({
-        next: (data:any) => {
+        next: (data: any) => {
           this.moyenPaiementList = data;
           resolve(data);
         },

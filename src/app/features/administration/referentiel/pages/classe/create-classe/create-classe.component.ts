@@ -2,10 +2,13 @@ import { Component, inject, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
+import { AnneeScolaire } from '../../../../../../core/models/referentiels/annee-scolaire';
 import { Classe } from '../../../../../../core/models/referentiels/classe';
 import { Niveau } from '../../../../../../core/models/referentiels/niveau';
+import { Serie } from '../../../../../../core/models/referentiels/serie';
 import { Utilisateur } from '../../../../../../core/models/utilisateur/utilisateur';
 import { UtilisateurService } from '../../../../utilisateur/service/utilisateur.service';
+import { ReferentielResourceService } from '../../../service/referentiel-resource.service';
 import { ReferentielService } from '../../../service/referentiel.service';
 
 @Component({
@@ -23,6 +26,8 @@ export class CreateClasseComponent implements OnInit {
   classe: any;
   isEdit: boolean = false;
   niveauList: Niveau[] = [];
+  serieList: Serie[] = [];
+  anneeScolaireList: AnneeScolaire[] = [];
   ecoleId: any;
   userId: number;
   utilisateur: Utilisateur = {};
@@ -30,6 +35,7 @@ export class CreateClasseComponent implements OnInit {
   title = "Ajouter une classe";
 
   private readonly referentielService = inject(ReferentielService);
+  private readonly referentielResource = inject(ReferentielResourceService);
   private readonly utilisateurService = inject(UtilisateurService);
   private readonly _formBuilder = inject(FormBuilder);
   private readonly toastService = inject(ToastrService);
@@ -44,8 +50,9 @@ export class CreateClasseComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.getConnectedUserInfos();
     this.getNiveauList();
+    this.getAnneeScolaireList();
+    this.getSerieList();
     this.initializeForm(null);
     if (this.classeId != null && this.classeId != undefined) {
       this.getClasse(this.classeId);
@@ -64,8 +71,8 @@ export class CreateClasseComponent implements OnInit {
   }
 
   getNiveauList() {
-    this.referentielService.getAllNiveau().subscribe({
-      next: (data) => {
+    this.referentielResource.getResourceList('niveau').subscribe({
+      next: (data: any) => {
         this.niveauList = data;
       }
     });
@@ -75,6 +82,34 @@ export class CreateClasseComponent implements OnInit {
     const niveauId = this.classeFormGroup.get('niveau')?.value;
     const niveau = this.niveauList.find(n => Number(n.id) === Number(niveauId));
     return niveau?.libelle || '';
+  }
+
+  getSerieList() {
+    this.referentielResource.getResourceList('serie').subscribe({
+      next: (data: any) => {
+        this.serieList = data;
+      }
+    });
+  }
+
+  getSelectedSerieName(): string {
+    const serieId = this.classeFormGroup.get('serie')?.value;
+    const serie = this.serieList.find(n => Number(n.id) === Number(serieId));
+    return serie?.libelle || '';
+  }
+
+  getAnneeScolaireList() {
+    this.referentielResource.getResourceList('anneescolaire').subscribe({
+      next: (data: any) => {
+        this.anneeScolaireList = data;
+      }
+    });
+  }
+
+  getSelectedAnneeScolaireName(): string {
+    const anneeScolaireId = this.classeFormGroup.get('anneeScolaire')?.value;
+    const anneeScolaire = this.anneeScolaireList.find(n => Number(n.id) === Number(anneeScolaireId));
+    return anneeScolaire?.libelle || '';
   }
 
   getClasse(classeId: number) {
@@ -91,6 +126,9 @@ export class CreateClasseComponent implements OnInit {
       id: [classe?.id ? classe.id : ''],
       libelle: [classe?.libelle ? classe.libelle : '', Validators.required],
       niveau: [classe?.niveau ? classe.niveau : '', Validators.required],
+      capacite: [classe?.capacite ? classe.capacite : '', Validators.required],
+      anneeScolaire: [classe?.anneeScolaire ?? '', Validators.required],
+      serie: [classe?.serie ?? ''],
     });
   }
 
@@ -103,7 +141,7 @@ export class CreateClasseComponent implements OnInit {
         next: (data) => {
           if (data.statut === 'OK') {
             this.toastService.success('succès', 'La classe a été enregistrées avec succès !!! ');
-            this.router.navigate(['admin/referentiel/classe'])
+            this.goBack();
           } else if (data.statut === 'FAILED') {
             this.toastService.error('error', 'Erreur lors de la création : ' + data.message);
           }
@@ -118,7 +156,7 @@ export class CreateClasseComponent implements OnInit {
         next: (data) => {
           if (data.statut === 'OK') {
             this.toastService.success('succès', 'La classe a été modifiées avec succès !!! ');
-            this.router.navigate(['admin/referentiel/classe'])
+            this.goBack();
           } else if (data.statut === 'FAILED') {
             this.toastService.error('error', 'Erreur lors de la modification : ' + data.message);
           }
@@ -133,7 +171,7 @@ export class CreateClasseComponent implements OnInit {
   }
 
   goBack() {
-    this.router.navigate(['admin/referentiel/classe'])
+    this.router.navigate(['admin/referentiel/classes'])
   }
 
 

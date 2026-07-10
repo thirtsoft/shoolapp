@@ -14,6 +14,7 @@ import { Utilisateur } from '../../../../../../core/models/utilisateur/utilisate
 import { ReferentielResourceService } from '../../../../referentiel/service/referentiel-resource.service';
 import { UtilisateurService } from '../../../../utilisateur/service/utilisateur.service';
 import { PlanificationResourceService } from '../../../services/planification-resource.service';
+import { AnneeScolaire } from '../../../../../../core/models/referentiels/annee-scolaire';
 
 @Component({
   selector: 'app-create-emploie-du-temps',
@@ -34,16 +35,17 @@ export class CreateEmploieDuTempsComponent implements OnInit {
   matiereList: Matiere[] = [];
   enseignantList: EnseigantList[] = [];
   enseignementList: ListeEnseignement[] = [];
+  anneeScolaireList: AnneeScolaire[] = [];
   ecoleId: any;
   userId: number;
   utilisateur: Utilisateur = {};
+  enseignementsParCours: { [index: number]: ListeEnseignement[] } = {};
 
   title = "Création d'un emploi du temps ";
 
   private readonly planificationService = inject(PlanificationResourceService);
   private readonly utilisateurService = inject(UtilisateurService);
   private readonly referentielService = inject(ReferentielResourceService);
-  //  private readonly enseignantService = inject(EnseignantService);
   private readonly _formBuilder = inject(FormBuilder);
   private readonly toastService = inject(ToastrService);
   private readonly route = inject(ActivatedRoute);
@@ -65,7 +67,7 @@ export class CreateEmploieDuTempsComponent implements OnInit {
   }
 
   private chargerLesDonnees() {
-    this.utilisateurService.getUtilisateur(this.userId!).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
+    this.utilisateurService.getUtilisateur(this.userId).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
       next: data => this.utilisateur = data
     });
 
@@ -79,6 +81,12 @@ export class CreateEmploieDuTempsComponent implements OnInit {
       next: (data: any) => this.classList = data
     });
 
+    this.referentielService.getResourceList('anneescolaire').pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
+      next: (data: any) => {
+        this.anneeScolaireList = data;
+      }
+    });
+
     this.referentielService.getResourceList('salle').pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
       next: (data: any) => this.salleList = data
     });
@@ -88,64 +96,88 @@ export class CreateEmploieDuTempsComponent implements OnInit {
     });
   }
 
-  onClasseSelected() {
-    const classe = this.emploiFormGroup.get('classe')?.value;
-    if (classe) {
-      this.getEnseignementByClass(classe);
+  onClasseSelected(index: number) {
+    const coursGroup = this.coursEditDTOList().at(index) as FormGroup;
+    const classeId = coursGroup.get('classe')?.value;
+
+    if (classeId) {
+      this.getEnseignementByClass(classeId, index);
+    } else {
+      this.enseignementsParCours[index] = [];
+      coursGroup.get('enseignement')?.setValue('');
     }
   }
 
-  private getEnseignementByClass(classId: number) {
-    this.planificationService.getAllEnseignementByclasse(classId).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
-      next: data => {
-        this.enseignementList = data;
-      }
-    });
-  }
+  private getEnseignementByClass(classId: number, index: number) {
+    this.planificationService
+      .getAllEnseignementByclasse(classId)
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: (data) => {
+          this.enseignementsParCours[index] = data;
 
+          const coursGroup = this.coursEditDTOList().at(index);
+          coursGroup.get('enseignement')?.setValue('');
+        }
+      });
+  }
 
   getEmploieDuTemps(batId: number) {
     this.planificationService.getEmploiDuTemps(batId).subscribe({
       next: (data) => {
         this.addEditEmploie = data;
-        if (this.addEditEmploie?.classe) {
-          this.getEnseignementByClass(this.addEditEmploie.classe);
-        }
+
+        // 1. Initialisation du groupe principal du formulaire
         this.emploiFormGroup = this._formBuilder.group({
           id: [this.addEditEmploie?.id ?? ''],
-          classe: [this.addEditEmploie?.classe ?? '', Validators.required],
-          sessionSemestre: [this.addEditEmploie?.sessionSemestre ?? '', Validators.required],
+          classe: [this.addEditEmploie?.classe ?? ''],
+          sessionSemestre: [this.addEditEmploie?.sessionSemestre ?? ''],
+          anneeScolaire: [this.addEditEmploie?.anneeScolaire ?? '', Validators.required],
+          titre: [this.addEditEmploie?.titre ?? '', Validators.required],
           semaine: [this.addEditEmploie?.semaine ?? ''],
           coursEditDTOList: this._formBuilder.array([])
         });
-        for (let i = 0; i < this.addEditEmploie.coursEditDTOList!.length; i++) {
-          (this.emploiFormGroup.get('coursEditDTOList') as FormArray).push(
-            this._formBuilder.group({
-              id: [this.addEditEmploie.coursEditDTOList![i].id],
-              libelle: [this.addEditEmploie.coursEditDTOList![i].libelle, Validators.required],
-              enseignement: [this.addEditEmploie.coursEditDTOList![i].enseignement, Validators.required],
-              salle: [this.addEditEmploie.coursEditDTOList![i].salle, Validators.required],
-              dateCours: [this.addEditEmploie.coursEditDTOList![i].dateCours, Validators.required],
-              heureDebut: [this.addEditEmploie.coursEditDTOList![i].heureDebut, Validators.required],
-              heureFin: [this.addEditEmploie.coursEditDTOList![i].heureFin],
-            })
-          )
+
+        const coursArray = this.emploiFormGroup.get('coursEditDTOList') as FormArray;
+
+        // 2. Boucle pour ajouter les éléments au FormArray
+        if (this.addEditEmploie.coursEditDTOList) {
+          for (let i = 0; i < this.addEditEmploie.coursEditDTOList.length; i++) {
+            const coursData = this.addEditEmploie.coursEditDTOList[i];
+            coursArray.push(
+              this._formBuilder.group({
+                id: [coursData.id],
+                libelle: [coursData.libelle, Validators.required],
+                classe: [coursData.classe, Validators.required],
+                enseignement: [coursData.enseignement, Validators.required],
+                salle: [coursData.salle, Validators.required],
+                dateCours: [coursData.dateCours, Validators.required],
+                heureDebut: [coursData.heureDebut, Validators.required],
+                heureFin: [coursData.heureFin],
+              })
+            );
+
+            if (coursData.classe) {
+              this.getEnseignementByClass(coursData.classe, i);
+            }
+          }
         }
       },
-      error: (data) => {
-        console.log('error', 'Erreur lors de la création : ' + data.error);
-        this.toastService.error('error', 'Erreur lors de la création : ' + data.error);
+      error: (err) => {
+        console.error('Erreur lors de la récupération de l\'emploi du temps', err);
+        this.toastService.error('Erreur lors du chargement des données.');
       }
-    }
-    );
+    });
   }
 
   initializeForm(emploie: EmploiDuTemps | null) {
     this.emploiFormGroup = this._formBuilder.group({
       id: [emploie?.id ?? ''],
-      classe: [emploie?.classe ?? '', Validators.required],
-      sessionSemestre: [emploie?.sessionSemestre ?? '', Validators.required],
-      semaine: [emploie?.semaine ?? '', Validators.required],
+      /*       classe: [emploie?.classe ?? ''],
+            sessionSemestre: [emploie?.sessionSemestre ?? ''],
+            semaine: [emploie?.semaine ?? ''], */
+      anneeScolaire: [emploie?.anneeScolaire ?? '', Validators.required],
+      titre: [emploie?.titre ?? '', Validators.required],
       coursEditDTOList: this._formBuilder.array([
         this.newCourseItem()
       ])
@@ -159,6 +191,7 @@ export class CreateEmploieDuTempsComponent implements OnInit {
   newCourseItem(): FormGroup {
     return this._formBuilder.group({
       libelle: ['', Validators.required],
+      classe: ['', Validators.required],
       enseignement: ['', Validators.required],
       salle: ['', Validators.required],
       dateCours: ['', Validators.required],
@@ -174,7 +207,9 @@ export class CreateEmploieDuTempsComponent implements OnInit {
 
   removeCourseItem(classItemIndex: number) {
     this.coursEditDTOList().removeAt(classItemIndex);
+    delete this.enseignementsParCours[classItemIndex];
   }
+
 
 
   ajouterEmploieDuTemps() {
@@ -183,15 +218,16 @@ export class CreateEmploieDuTempsComponent implements OnInit {
       classe: this.emploiFormGroup.get("classe")!.value,
       sessionSemestre: this.emploiFormGroup.get("sessionSemestre")!.value,
       semaine: this.emploiFormGroup.get("semaine")!.value,
+      anneeScolaire: this.emploiFormGroup.get("anneeScolaire")!.value,
       coursEditDTOList: this.emploiFormGroup.get("coursEditDTOList")!.value,
     }
     payload.ecole = this.ecoleId;
     if (!this.emploieId && this.emploieId == undefined) {
-      this.planificationService.createEmploiDuTemps(payload).subscribe({
+      this.planificationService.createEmploiDuTempsAnneeScolaire(payload).subscribe({
         next: (data) => {
           if (data.statut === 'OK') {
             this.toastService.success('succès', 'Emploi du temps a été enregistrées avec succès !!! ');
-            this.router.navigate(['/admin/planification/emploi-du-temps']);
+            this.goBack();
           } else if (data.statut === 'FAILED') {
             this.toastService.error('error', 'Erreur lors de la création : ' + data.message);
           }
@@ -204,11 +240,11 @@ export class CreateEmploieDuTempsComponent implements OnInit {
     } else {
       this.addEditEmploie = this.emploiFormGroup.value;
       this.addEditEmploie.ecole = this.ecoleId;
-      this.planificationService.updateEmploiDuTemps(this.emploieId, this.addEditEmploie).subscribe({
+      this.planificationService.updateEmploiDuTempsAnneeScolaire(this.emploieId, this.addEditEmploie).subscribe({
         next: (data) => {
           if (data.statut === 'OK') {
             this.toastService.success('succès', 'Emploi du temps a été modifiées avec succès !!! ');
-            this.router.navigate(['/admin/planification/emploi-du-temps']);
+            this.goBack();
           } else if (data.statut === 'FAILED') {
             this.toastService.error('error', 'Erreur lors de la modification : ' + data.message);
           }

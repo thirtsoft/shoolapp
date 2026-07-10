@@ -104,7 +104,7 @@ export class EditerSessionSemestreComponent implements OnInit {
   }
 
   goBack() {
-    this.router.navigate(['admin/referentiel/sessions'])
+    this.router.navigate(['admin/referentiel/sessions']);
   }
 
 }

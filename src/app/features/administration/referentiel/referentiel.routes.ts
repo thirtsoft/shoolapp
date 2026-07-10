@@ -36,6 +36,10 @@ import { TypePaiementComponent } from './pages/type-paiement/type-paiement.compo
 import { CreateTypeServiceOffertComponent } from './pages/typeservice/create-type-service-offert/create-type-service-offert.component';
 import { ListTypeServiceOffertComponent } from './pages/typeservice/list-type-service-offert/list-type-service-offert.component';
 import { ReferentielsComponent } from './referentiels.component';
+import { CreateSessionSemestreComponent } from './pages/semestre/create-session-semestre-component/create-session-semestre-component';
+import { DetailsSessionSemestresComponent } from './pages/semestre/details-session-semestres-component/details-session-semestres-component';
+import { TypeDepenseComponent } from './pages/type-depense/type-depense-component/type-depense-component';
+import { CreateEditTypeDepenseComponent } from './pages/type-depense/create-edit-type-depense-component/create-edit-type-depense-component';
 
 export const REFERENTIELS_ROUTES: Routes = [
   {
@@ -113,10 +117,18 @@ export const REFERENTIELS_ROUTES: Routes = [
         path: 'sessions',
         component: ListSessionSemestreComponent
       },
+          {
+        path: 'session/create',
+        component: CreateSessionSemestreComponent
+      },
       {
         path: 'session/edit/:id',
         component: EditerSessionSemestreComponent
       },
+        {
+        path: 'session/details/:id',
+        component: DetailsSessionSemestresComponent,
+      }, 
       {
         path: 'category-menu',
         component: CategoryMenuComponent
@@ -165,8 +177,6 @@ export const REFERENTIELS_ROUTES: Routes = [
         path: 'niveau/edit/:id',
         component: CreateNiveauComponent
       },
-
-
       {
         path: 'type-paiements',
         component: TypePaiementComponent
@@ -244,6 +254,20 @@ export const REFERENTIELS_ROUTES: Routes = [
         path: 'moyenpaiement/edit/:id',
         component: CreateModePaiementComponent
       },
+
+       {
+        path: 'typedepense',
+        component: TypeDepenseComponent
+      },
+      {
+        path: 'typedepense/create',
+        component: CreateEditTypeDepenseComponent
+      },
+      {
+        path: 'typedepense/edit/:id',
+        component: CreateEditTypeDepenseComponent
+      },
+
       {
         path: 'parametrage',
         component: ConfigEtablissementComponent

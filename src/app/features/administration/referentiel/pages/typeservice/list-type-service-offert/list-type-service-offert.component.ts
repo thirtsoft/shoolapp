@@ -23,9 +23,9 @@ export class ListTypeServiceOffertComponent implements OnInit {
   typeServiceOffertData: any = [];
 
   currentPage = 0;
-  pageSize = 5;
+  pageSize = 10;
   totalElements = 0;
-  tableSizes = [5, 10, 20, 50, 100];
+  tableSizes = [10, 20, 50, 100];
   tableFilters: IFilterConfig[] = [];
   activeFilters: any = {};
   hasActiveFilters: boolean = false;
@@ -94,6 +94,8 @@ export class ListTypeServiceOffertComponent implements OnInit {
         ];
         this.typeServiceOffertData = this.typeServiceOffertData.map((item: any) => ({
           ...item,
+          isEditIcone: item.estSysteme !== 1,
+          isLocakableIcone: item.estSysteme !== 1
         }));
 
         this.isLoading = false;

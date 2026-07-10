@@ -18,21 +18,28 @@
           <i class="fas fa-arrow-left me-2"></i>Retour
         </button>
         <div class="action-group-buttons">
-          @if (['A venir'].includes(detailsAnneeScolaire.etat!)) {
+          @if ([etatLibelle.LIBELLE_ETAT_AVENIR].includes(detailsAnneeScolaire.etat!)) {
             <button class="btn-validate" (click)="openEtatModal(etatModal, 'demarrer', 'E8')">
               <i class="fas fa-check-circle me-2" style="margin-right: 5px"></i>Démarrer l'année
+              année scolaire
             </button>
           }
 
-          @if (['En cours', 'Réactivation'].includes(detailsAnneeScolaire.etat!)) {
-            <button class="btn-secondary" (click)="openEtatModal(etatModal, 'clôturer', 'E12')">
+          @if (
+            [etatLibelle.LIBELLE_ETAT_ENCOURS, etatLibelle.LIBELLE_ETAT_REACTIVATION].includes(
+              detailsAnneeScolaire.etat!
+            )
+          ) {
+            <button class="btn-danger" (click)="openEtatModal(etatModal, 'clôturer', 'E12')">
               <i class="fas fa-eye-slash me-2" style="margin-right: 5px"></i>Clôturer l'année
+              scolaire
             </button>
           }
 
-          @if (['Clôturé'].includes(detailsAnneeScolaire.etat!)) {
+          @if ([etatLibelle.LIBELLE_ETAT_CLOTURE].includes(detailsAnneeScolaire.etat!)) {
             <button class="btn-primary" (click)="openEtatModal(etatModal, 'reactiver', 'E13')">
               <i class="fas fa-calendar-alt me-2" style="margin-right: 5px"></i> Réactiver l'année
+              scolaire
             </button>
           }
         </div>
@@ -40,7 +47,7 @@
       <div class="action-right">
         <span class="status-badge" [class]="getStatusClass()">
           <i class="fas fa-info-circle me-1"></i>
-          État : {{ detailsAnneeScolaire.etat || 'Brouillon' }}
+          État : {{ detailsAnneeScolaire.etat || 'A venir' }}
         </span>
       </div>
     </div>
@@ -81,7 +88,7 @@
             <div class="info-row">
               <span class="status-badge" [class]="getStatusClass()">
                 <i class="fas fa-info-circle me-1"></i>
-                État : {{ item.etat || 'Brouillon' }}
+                État : {{ item.etat || 'A venir' }}
               </span>
             </div>
             <div class="info-row">
@@ -159,16 +166,13 @@
         <button
           type="button"
           class="btn-confirm"
-          [class.btn-confirm-publish]="modalActionLabel === 'publier'"
-          [class.btn-confirm-terminer]="modalActionLabel === 'terminer'"
-          [class.btn-confirm-danger]="
-            modalActionLabel === 'annuler' || modalActionLabel === 'dépublier'
-          "
+          [class.btn-confirm-publish]="modalActionLabel === 'demarrer'"
+          [class.btn-confirm-terminer]="modalActionLabel === 'reactiver'"
+          [class.btn-confirm-danger]="modalActionLabel === 'clôturer'"
           [class.btn-confirm-primary]="
-            modalActionLabel !== 'publier' &&
-            modalActionLabel !== 'terminer' &&
-            modalActionLabel !== 'annuler' &&
-            modalActionLabel !== 'dépublier'
+            modalActionLabel !== 'demarrer' &&
+            modalActionLabel !== 'reactiver' &&
+            modalActionLabel !== 'clôturer'
           "
           [disabled]="actionForm.invalid"
           (click)="modal.close('confirm')"

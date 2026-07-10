@@ -3,7 +3,7 @@ import { IFilterConfig } from '../../../../../../core/filtered-config/FiltreConf
 import { GenericTableDossierComponent } from '../../../../../../core/generic/generic-table-dossier/generic-table-dossier.component';
 import { ListeClasse } from '../../../../../../core/models/referentiels/classe';
 import { Semestre } from '../../../../../../core/models/referentiels/semestre';
-import { ReferentielService } from '../../../../referentiel/service/referentiel.service';
+import { ReferentielResourceService } from '../../../../referentiel/service/referentiel-resource.service';
 import { DossierResourceService } from '../../../service/dossier-resource.service';
 
 @Component({
@@ -28,14 +28,14 @@ export class ListNotesComponent implements OnInit {
   noteData: any = [];
 
   currentPage = 0;
-  pageSize = 5;
+  pageSize = 10;
   totalElements = 0;
-  tableSizes = [5, 10, 20, 50, 100];
+  tableSizes = [10, 20, 50, 100];
 
   ensegnementList: any[] = [];
   filteredEnseignementList: any[] = [];
   classesList: any[] = [];
-  semestreList: any[] = [];
+  sessionSemestreList: any[] = [];
   typesNoteOptions: string[] = ['DEVOIR', 'COMPOSITION'];
 
   tableFilters: IFilterConfig[] = [];
@@ -45,7 +45,7 @@ export class ListNotesComponent implements OnInit {
   isSelected = false;
 
   private readonly dossierResource = inject(DossierResourceService);
-  private readonly referentielService = inject(ReferentielService);
+  private readonly referentielService = inject(ReferentielResourceService);
 
   ngOnInit(): void {
     this.chargerLesNotes();
@@ -55,7 +55,7 @@ export class ListNotesComponent implements OnInit {
     try {
       await Promise.all([
         this.getClassList(),
-        this.getSemestreList()
+        this.getSessionSemestreList()
       ]);
 
       this.initialisationDesFiltres();
@@ -70,10 +70,8 @@ export class ListNotesComponent implements OnInit {
       if (!classeId) {
         return [];
       }
-
       console.log('Chargement des enseignements pour la classe:', classeId);
-
-      this.dossierResource.getResourceList(`planification/enseignement/list-by-classe/${classeId}`).subscribe({
+      this.dossierResource.getResourceList(`planification/enseignement/by-classe/${classeId}`).subscribe({
         next: (data) => {
           console.log('Enseignements reçus:', data);
           this.filteredEnseignementList = data || [];
@@ -122,7 +120,7 @@ export class ListNotesComponent implements OnInit {
 
   getClassList(): Promise<ListeClasse[]> {
     return new Promise((resolve, reject) => {
-      this.referentielService.getAllClasses().subscribe({
+      this.referentielService.getResourceList('classe').subscribe({
         next: (data: any) => {
           this.classesList = data;
           resolve(data);
@@ -132,11 +130,12 @@ export class ListNotesComponent implements OnInit {
     });
   }
 
-  getSemestreList(): Promise<Semestre[]> {
+  getSessionSemestreList(): Promise<Semestre[]> {
     return new Promise((resolve, reject) => {
-      this.referentielService.getAllSemestres().subscribe({
+      this.referentielService.getResourceList('sessionsemestre').subscribe({
         next: (data: any) => {
-          this.semestreList = data;
+          this.sessionSemestreList = data;
+          console.log('session semestre', this.sessionSemestreList)
           resolve(data);
         },
         error: (err: any) => reject(err)
@@ -173,12 +172,12 @@ export class ListNotesComponent implements OnInit {
       },
 
       {
-        key: 'semestre',
+        key: 'sessionSemestre',
         label: 'Semestre',
         type: 'select',
-        options: this.semestreList.map(a => ({
+        options: this.sessionSemestreList.map(a => ({
           value: a.id,
-          label: `${a.libelle}`
+          label: `${a.semestre}`
         })),
         placeholder: 'Selectionnez un semestre'
       },
@@ -234,7 +233,7 @@ export class ListNotesComponent implements OnInit {
           { key: 'eleve', header: 'Eleve' },
           { key: 'classe', header: 'Classe' },
           { key: 'matiere', header: 'Matière' },
-          { key: 'semestre', header: 'Semestre' },
+          { key: 'sessionSemestre', header: 'Semestre' },
           { key: 'note', header: 'Note' },
           { key: 'type', header: 'Type de note' },
 
@@ -258,14 +257,15 @@ export class ListNotesComponent implements OnInit {
     if (this.activeFilters.nomPrenom) {
       filtreObj.nomPrenom = this.activeFilters.nomPrenom;
     }
+
     if (this.activeFilters.classe) {
       filtreObj.classe = this.activeFilters.classe;
     }
     if (this.activeFilters.enseignement) {
       filtreObj.enseignement = this.activeFilters.enseignement;
     }
-    if (this.activeFilters?.semestre) {
-      filtreObj.semestre = this.activeFilters.semestre;
+    if (this.activeFilters?.sessionSemestre) {
+      filtreObj.sessionSemestre = this.activeFilters.sessionSemestre;
     }
     if (this.activeFilters.type) {
       filtreObj.type = this.activeFilters.type;

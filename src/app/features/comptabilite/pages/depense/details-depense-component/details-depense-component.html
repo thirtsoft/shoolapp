@@ -1,0 +1,241 @@
+<div class="page-wrapper">
+  <div class="content container-fluid">
+    <!-- En-tête -->
+    <div class="page-header">
+      <div class="row align-items-center">
+        <div class="col-12">
+          <h3 class="page-title">{{ title }}</h3>
+          <p class="text-muted mt-1 mb-0">
+            <i class="fas fa-receipt me-1"></i> Consultation des détails de la dépense
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Barre d'actions : Retour + Statut -->
+    <div class="row mb-4">
+      <div class="col-12">
+        <div class="action-bar">
+          <button type="button" class="btn btn-secondary" (click)="goBack()">
+            <i class="fas fa-arrow-left me-2"></i>Retour
+          </button>
+
+          <div class="status-badge" [class.active]="depense?.actif === 1">
+            <i
+              class="fas"
+              [class.fa-check-circle]="depense?.actif === 1"
+              [class.fa-times-circle]="depense?.actif !== 1"
+            ></i>
+            {{ depense?.actif === 1 ? 'Dépense active' : 'Dépense inactive' }}
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Bloc 1 : Informations de la dépense -->
+    <div class="row mb-4">
+      <div class="col-12">
+        <div class="card info-card">
+          <div class="card-header">
+            <div class="d-flex align-items-center">
+              <div class="icon-wrapper">
+                <i class="fas fa-info-circle"></i>
+              </div>
+              <h4 class="card-title mb-0">Informations de la dépense</h4>
+            </div>
+          </div>
+          <div class="card-body">
+            <div class="row">
+              <!-- Colonne gauche -->
+              <div class="col-lg-6">
+                <!-- Numéro de dépense -->
+                <div class="info-item">
+                  <label class="info-label">
+                    <i class="fas fa-hashtag me-2"></i>Numéro de dépense
+                  </label>
+                  <p class="info-value">{{ depense?.numeroDepense || 'Non renseigné' }}</p>
+                </div>
+
+                <!-- Désignation -->
+                <div class="info-item">
+                  <label class="info-label"> <i class="fas fa-tag me-2"></i>Désignation </label>
+                  <p class="info-value">{{ depense?.designation || 'Non renseignée' }}</p>
+                </div>
+
+                <!-- Type de dépense -->
+                <div class="info-item">
+                  <label class="info-label">
+                    <i class="fas fa-list-alt me-2"></i>Type de dépense
+                  </label>
+                  <p class="info-value">{{ depense?.typeDepense }}</p>
+                </div>
+
+                <!-- Mode de paiement -->
+                <div class="info-item">
+                  <label class="info-label">
+                    <i class="fas fa-credit-card me-2"></i>Mode de paiement
+                  </label>
+                  <p class="info-value">{{ depense?.modePaiement }}</p>
+                </div>
+              </div>
+
+              <!-- Colonne droite -->
+              <div class="col-lg-6">
+                <!-- Montant -->
+                <div class="info-item">
+                  <label class="info-label">
+                    <i class="fas fa-money-bill-wave me-2"></i>Montant
+                  </label>
+                  <p class="info-value montant-value">
+                    {{ formatMontant(depense?.montantDepense) }} FCFA
+                  </p>
+                </div>
+
+                <!-- Référence -->
+                <div class="info-item">
+                  <label class="info-label"> <i class="fas fa-barcode me-2"></i>Référence </label>
+                  <p class="info-value">{{ depense?.reference || 'Non renseignée' }}</p>
+                </div>
+
+                <!-- Date de la dépense -->
+                <div class="info-item">
+                  <label class="info-label">
+                    <i class="fas fa-calendar-day me-2"></i>Date de la dépense
+                  </label>
+                  <p class="info-value">
+                    {{ depense?.dateDepense | date: 'dd/MM/yyyy' }}
+                  </p>
+                </div>
+
+                <!-- Créée par -->
+                <div class="info-item">
+                  <label class="info-label"> <i class="fas fa-user me-2"></i>Créée par </label>
+                  <p class="info-value">{{ depense?.nomCompletCreateur }}</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Bloc 2 : Pièces jointes -->
+    <div class="row">
+      <div class="col-12">
+        <div class="card attachments-card">
+          <div class="card-header">
+            <div class="d-flex align-items-center">
+              <div class="icon-wrapper">
+                <i class="fas fa-paperclip"></i>
+              </div>
+              <h4 class="card-title mb-0">Pièces jointes</h4>
+            </div>
+          </div>
+          <div class="card-body">
+            @if (hasExistingFile()) {
+              <div class="attachment-file">
+                <div class="file-preview-card">
+                  <div class="file-icon-wrapper">
+                    <img
+                      [src]="getFileIcon(depense?.piecesJointesDTO?.nomTechnique || '')"
+                      [alt]="depense?.piecesJointesDTO?.nomFichier"
+                      class="file-type-icon"
+                    />
+                  </div>
+                  <div class="file-details">
+                    <h5 class="file-name">
+                      {{ depense?.piecesJointesDTO?.nomFichier || 'Fichier sans nom' }}
+                    </h5>
+                    <p class="file-meta">
+                      @if (depense?.piecesJointesDTO?.content) {
+                        <span class="file-size">
+                          {{ getFileSize(depense?.piecesJointesDTO?.content) }}
+                        </span>
+                      }
+                      @if (depense?.piecesJointesDTO?.dateCreation) {
+                        <span class="file-date">
+                          Ajouté le
+                          {{ depense?.piecesJointesDTO?.dateCreation | date: 'dd/MM/yyyy à HH:mm' }}
+                        </span>
+                      }
+                    </p>
+                    <div class="file-actions">
+                      <button class="btn btn-sm btn-outline-primary" (click)="downloadFile()">
+                        <i class="fas fa-download me-2"></i>Télécharger
+                      </button>
+                      <button class="btn btn-sm btn-outline-secondary" (click)="openPreviewModal()">
+                        <i class="fas fa-eye me-2"></i>Aperçu
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            } @else {
+              <div class="empty-state">
+                <div class="empty-icon">
+                  <i class="fas fa-cloud-upload-alt"></i>
+                </div>
+                <h5>Aucune pièce jointe</h5>
+                <p class="text-muted">Cette dépense n'a pas de document associé.</p>
+              </div>
+            }
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal d'aperçu -->
+@if (showPreviewModal) {
+  <div class="modal-overlay" (click)="closePreviewModal()">
+    <div class="modal-container" (click)="$event.stopPropagation()">
+      <!-- Header du modal avec les infos clés -->
+      <div class="modal-header">
+        <div class="modal-header-info">
+          <h5 class="modal-title">
+            <i class="fas fa-file-alt me-2"></i>
+            {{ depense?.piecesJointesDTO?.nomFichier || 'Aperçu du fichier' }}
+          </h5>
+          <div class="modal-header-summary">
+            <span class="modal-header-item">
+              <i class="fas fa-hashtag me-1"></i>
+              <strong>N°</strong> {{ depense?.numeroDepense }}
+            </span>
+            <span class="modal-header-separator">•</span>
+            <span class="modal-header-item highlight">
+              <i class="fas fa-money-bill-wave me-1"></i>
+              <strong>Montant :</strong> {{ formatMontant(depense?.montantDepense) }} FCFA
+            </span>
+            <span class="modal-header-separator">•</span>
+            <span class="modal-header-item">
+              <i class="fas fa-user me-1"></i>
+              <strong>Créée par :</strong> {{ depense?.nomCompletCreateur }}
+            </span>
+          </div>
+        </div>
+        <div class="modal-header-actions">
+          <button class="btn btn-sm btn-modal-download" (click)="downloadFile()">
+            <i class="fas fa-download me-2"></i>Télécharger
+          </button>
+          <button class="btn-close" (click)="closePreviewModal()">
+            <i class="fas fa-times"></i>
+          </button>
+        </div>
+      </div>
+
+      <!-- Corps du modal -->
+      <div class="modal-body">
+        @if (isImageFile()) {
+          <img
+            [src]="getPreviewUrl()"
+            [alt]="depense?.piecesJointesDTO?.nomFichier"
+            class="modal-preview-image"
+          />
+        } @else {
+          <iframe [src]="getPreviewUrl()" class="modal-preview-iframe" frameborder="0"></iframe>
+        }
+      </div>
+    </div>
+  </div>
+}

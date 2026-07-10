@@ -3,6 +3,8 @@ export interface Niveau {
 
   libelle?: string;
 
+  cycleId?: number;
+
   ecole?: number;
 
 }

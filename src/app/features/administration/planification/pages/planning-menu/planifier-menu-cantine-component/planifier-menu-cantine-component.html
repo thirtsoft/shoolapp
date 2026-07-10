@@ -1,0 +1,157 @@
+<div class="page-wrapper">
+  <div class="content container-fluid">
+    <!-- Page Header -->
+    <div class="page-header">
+      <div class="row align-items-center">
+        <div class="col-sm-12">
+          <h3 class="page-title">{{ title }}</h3>
+          <p class="text-muted mt-1 mb-0">
+            <i class="fas fa-calendar-alt me-1"></i> Gestion du planning des menus
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <div class="badge-container">
+      <span class="badge badge-primary">
+        <i class="fas fa-plus-circle me-1"></i>
+        @if (!isEdit) {
+          Planifier un menu
+        } @else {
+          Reprogrammation
+        }
+      </span>
+    </div>
+
+    <div class="card">
+      <div class="card-body p-4 p-md-5">
+        <!-- Step Indicator -->
+        <div class="step-indicator">
+          <div class="step active">
+            <span class="step-number">1</span>
+            <span class="step-label">Information</span>
+          </div>
+          <div class="step-line"></div>
+          <div class="step">
+            <span class="step-number">2</span>
+            <span class="step-label">Confirmation</span>
+          </div>
+        </div>
+
+        <form [formGroup]="planningRepasFormGroup" (ngSubmit)="ajouterEditPlanningRepas()">
+          <input type="hidden" formControlName="id" />
+
+          <div class="form-group">
+            <label class="form-label">
+              Menu <span class="text-danger">*</span>
+              <i class="fas fa-book ms-1 text-muted"></i>
+            </label>
+            <select class="form-select" formControlName="menuId" required>
+              <option value="" disabled selected>— Sélectionnez un menu —</option>
+              @for (item of menusList; track item.id) {
+                <option [value]="item.id">{{ item.libelle }}</option>
+              }
+            </select>
+            @if (
+              planningRepasFormGroup.get('menuId')?.invalid &&
+              planningRepasFormGroup.get('menuId')?.touched
+            ) {
+              <div class="invalid-feedback">Le menu est requise</div>
+            }
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">
+              Jour de la semaine <span class="text-danger">*</span>
+              <i class="fas fa-calendar-day ms-1 text-muted"></i>
+            </label>
+            <select class="form-select" formControlName="jourSemaine" required>
+              <option value="" disabled selected>— Sélectionnez un jour —</option>
+              @for (jour of joursSemaineList; track jour.code) {
+                <option [value]="jour.code">{{ jour.libelle }}</option>
+              }
+            </select>
+            @if (
+              planningRepasFormGroup.get('jourSemaine')?.invalid &&
+              planningRepasFormGroup.get('jourSemaine')?.touched
+            ) {
+              <div class="invalid-feedback">Le jour de la semaine est requis</div>
+            }
+          </div>
+          <div class="row">
+            <div class="col-12 col-md-4">
+              <div class="form-group">
+                <label class="form-label">
+                  Date prévue <span class="text-danger">*</span>
+                  <i class="fas fa-calendar-day ms-1 text-muted"></i>
+                </label>
+                <input
+                  type="datetime-local"
+                  class="form-control"
+                  formControlName="dateConsommation"
+                  required
+                />
+                @if (
+                  planningRepasFormGroup.get('dateConsommation')?.invalid &&
+                  planningRepasFormGroup.get('dateConsommation')?.touched
+                ) {
+                  <div class="invalid-feedback">La date est requise</div>
+                }
+              </div>
+            </div>
+          </div>
+
+          @if (planningRepasFormGroup.valid) {
+            <div class="recap-card">
+              <div class="d-flex align-items-center gap-3">
+                <div class="recap-icon">
+                  <i class="fas fa-calendar-check"></i>
+                </div>
+                <div class="recap-content">
+                  <span class="recap-label">Récapitulatif du menu</span>
+                  <span class="recap-value">
+                    Le/La
+                    <strong>{{ getSelectedLibelleMenu() }}</strong>
+                    est planifié pour le
+
+                    <strong>{{ planningRepasFormGroup.get('jourSemaine')?.value }}</strong> à
+                    <strong>{{
+                      planningRepasFormGroup.get('dateConsommation')?.value | date: 'dd/MM/yyyy'
+                    }}</strong>
+                  </span>
+                </div>
+              </div>
+            </div>
+          }
+
+          <div class="form-actions">
+            <button type="button" class="btn btn-secondary" (click)="goBack()">
+              <i class="fas fa-times me-2"></i>Annuler
+            </button>
+            <button
+              type="submit"
+              class="btn btn-primary"
+              [disabled]="!planningRepasFormGroup.valid"
+            >
+              <i class="fas fa-save me-2"></i>
+              @if (!isEdit) {
+                Programmer le menu
+              } @else {
+                Reprogrammer le menu
+              }
+            </button>
+          </div>
+
+          <!-- Message d'aide -->
+          <div class="alert-help mt-4" role="alert">
+            <i class="fas fa-info-circle me-2"></i>
+            <span>
+              La programmation des menus permet d'organiser et de communiquer le calendrier des
+              plats proposés chaque jour de la semaine.
+            </span>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>

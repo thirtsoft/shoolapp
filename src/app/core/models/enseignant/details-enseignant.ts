@@ -1,6 +1,7 @@
 import { PieceJointe } from "../piecejointe/piece-jointe";
-import { DetailsEnseignement } from "../planification/enseignement";
+import { ListConges } from "../planification/list-conge";
 import { ListeCours } from "../planification/liste-cours";
+import { ListeEnseignement } from "../planification/liste-enseignement";
 import { Utilisateur } from "../utilisateur/utilisateur";
 
 
@@ -41,10 +42,14 @@ export interface DetailsEnseignant {
 
     listeCoursDTOS?: ListeCours[];
 
-    congesDTOList?: ListeCours;
+    congesDTOList?: ListConges[];
 
-    detailsEnseignementDTO?: DetailsEnseignement;
+    listEnseignementDTOList?: ListeEnseignement[];
 
     utilisateurDTO?: Utilisateur;
+
+    active?: boolean;
+
+    actif?: number;
 
 }

@@ -4,7 +4,6 @@ import { GenericTableReferentielComponent } from '../../../../../../core/generic
 import { ListeClasse } from '../../../../../../core/models/referentiels/classe';
 import { Matiere } from '../../../../../../core/models/referentiels/matiere';
 import { ReferentielResourceService } from '../../../service/referentiel-resource.service';
-import { ReferentielService } from '../../../service/referentiel.service';
 
 @Component({
   selector: 'app-coefficientmatclasse',
@@ -26,9 +25,9 @@ export class CoefficientmatclasseComponent implements OnInit {
   isEdit: boolean = true;
 
   currentPage = 0;
-  pageSize = 5;
+  pageSize = 10;
   totalElements = 0;
-  tableSizes = [5, 10, 20, 50, 100];
+  tableSizes = [10, 20, 50, 100];
   tableFilters: IFilterConfig[] = [];
   activeFilters: any = {};
   hasActiveFilters: boolean = false;
@@ -37,7 +36,6 @@ export class CoefficientmatclasseComponent implements OnInit {
   classList: any[] = [];
 
   private readonly refentielResource = inject(ReferentielResourceService);
-  private readonly referentielService = inject(ReferentielService);
 
   ngOnInit(): void {
     this.chargerLesCoeffcientClasseMatiere();
@@ -59,8 +57,8 @@ export class CoefficientmatclasseComponent implements OnInit {
 
   getMatiereList(): Promise<Matiere[]> {
     return new Promise((resolve, reject) => {
-      this.referentielService.getAllMatieres().subscribe({
-        next: (data) => {
+      this.refentielResource.getResourceList('matiere').subscribe({
+        next: (data: any) => {
           this.matieresList = data;
           resolve(data);
         },
@@ -71,8 +69,8 @@ export class CoefficientmatclasseComponent implements OnInit {
 
   getClasses(): Promise<ListeClasse[]> {
     return new Promise((resolve, reject) => {
-      this.referentielService.getAllClasses().subscribe({
-        next: (data) => {
+      this.refentielResource.getResourceList('classe').subscribe({
+        next: (data: any) => {
           this.classList = data;
           resolve(data);
         },
@@ -135,9 +133,12 @@ export class CoefficientmatclasseComponent implements OnInit {
         this.coefficientData = response.data?.content || [];
         this.totalElements = response.data?.totalElements || 0;
         this.columns = [
+          { key: 'niveau', header: 'Niveau' },
           { key: 'matiere', header: 'Matière' },
-          { key: 'classe', header: 'Classe' },
           { key: 'coefficient', header: 'Coéfficient' },
+          { key: 'serie', header: 'Série' },
+
+
         ];
         this.coefficientData = this.coefficientData.map((item: any) => ({
           ...item,

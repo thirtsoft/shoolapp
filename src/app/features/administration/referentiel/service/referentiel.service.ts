@@ -18,6 +18,8 @@ import { Semestre } from '../../../../core/models/referentiels/semestre';
 import { Tarif } from '../../../../core/models/referentiels/tarif';
 import { TypePaiement } from '../../../../core/models/referentiels/type-paiement';
 import { ResponseMessage } from '../../../../core/response/response-message';
+import { FraisInscription } from '../../../../core/models/referentiels/frais-inscription';
+import { MoyenPaiement } from '../../../../core/models/referentiels/moyen-paiement';
 
 
 @Injectable({
@@ -396,6 +398,10 @@ export class ReferentielService {
 
   /*************     TypePaiement      ***********/
 
+  getAllTypeMoyenPaiements(): Observable<MoyenPaiement[]> {
+    return this.http.get<MoyenPaiement[]>(`${this.referentiel}/moyenpaiement`);
+  }
+
   getAllTypePaiements(): Observable<TypePaiement[]> {
     return this.http.get<TypePaiement[]>(`${this.referentiel}/typePaiement/allTypePaiement`);
   }
@@ -472,6 +478,14 @@ export class ReferentielService {
 
   miseAJouParametrageEtablissement(info: ParametrageEcole) {
     return this.http.put<ResponseMessage>(`${this.ecoleUrl}/config/update`, info);
+  }
+
+  obtenirFraisInscription(classeId: number, anneeScolaireId: number): Observable<FraisInscription> {
+    const params = new HttpParams()
+      .set('classeId', classeId.toString())
+      .set('anneeScolaireId', anneeScolaireId.toString());
+
+    return this.http.get<FraisInscription>(`${this.referentiel}/calculer-frais`, { params });
   }
 
 }

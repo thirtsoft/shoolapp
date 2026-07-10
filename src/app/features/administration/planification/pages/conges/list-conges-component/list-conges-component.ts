@@ -1,8 +1,10 @@
 import { Component, inject, OnInit } from '@angular/core';
 import { IFilterConfig } from '../../../../../../core/filtered-config/FiltreConfiguration';
-import { PlanificationResourceService } from '../../../services/planification-resource.service';
-import { CommonService } from '../../../../../../core/services/common.service';
 import { GenericTableReferentielComponent } from '../../../../../../core/generic/generic-table-referentiel/generic-table-referentiel.component';
+import { CommonService } from '../../../../../../core/services/common.service';
+import { PlanificationResourceService } from '../../../services/planification-resource.service';
+import { Etat } from '../../../../referentiel/pages/semestre/editer-session-semestre-component/editer-session-semestre-component';
+import { UtilisateurList } from '../../../../../../core/models/utilisateur/utilisateur-list';
 
 @Component({
   selector: 'app-list-conges-component',
@@ -23,13 +25,40 @@ export class ListCongesComponent implements OnInit {
   congesData: any = [];
 
   currentPage = 0;
-  pageSize = 5;
+  pageSize = 10;
   totalElements = 0;
-  tableSizes = [5, 10, 20, 50, 100];
+  tableSizes = [10, 20, 50, 100];
 
   statusEvenementOptions: any[] = [];
   moisList: any[] = [];
   anneeList: any[] = [];
+  etatCongesList: Etat[] = [
+    {
+      id: 8,
+      code: 'E8',
+      libelle: 'En cours',
+
+    },
+    {
+      id: 3,
+      code: 'E3',
+      libelle: 'Envoyée',
+
+    },
+    {
+      id: 15,
+      code: 'E15',
+      libelle: 'Accepte',
+
+    },
+    {
+      id: 16,
+      code: 'E16',
+      libelle: 'Rejete',
+
+    }
+  ];
+  demanderCongesList: UtilisateurList[] = [];
 
   tableFilters: IFilterConfig[] = [];
   activeFilters: any = {};
@@ -46,7 +75,8 @@ export class ListCongesComponent implements OnInit {
     try {
       await Promise.all([
         this.getMoisList(),
-        this.getAnneesList()
+        this.getAnneesList(),
+        this.getDemanderCongesList()
       ]);
       this.initialisationDesFiltres();
       this.chargerLesDonnees(false);
@@ -54,6 +84,18 @@ export class ListCongesComponent implements OnInit {
     } catch (error) {
       console.error('Erreur chargement données:', error);
     }
+  }
+
+   getDemanderCongesList(): Promise<any[]> {
+    return new Promise((resolve, reject) => {
+      this.planificationResource.getResourceList('utilisateur/demandeur-conges').subscribe({
+        next: (data:any) => {
+          this.demanderCongesList = data;
+          resolve(data);
+        },
+        error: (err) => reject(err)
+      });
+    });
   }
 
   getMoisList(): Promise<any[]> {
@@ -83,11 +125,31 @@ export class ListCongesComponent implements OnInit {
   initialisationDesFiltres() {
     this.tableFilters = [
       {
-        key: 'libelle',
+        key: 'objet',
         label: 'Libelle',
         type: 'text',
-        placeholder: 'Rechercher un évenement...'
+        placeholder: 'Rechercher un congé...'
       },
+       {
+        key: 'demandeurId',
+        label: 'Demandeur',
+        type: 'select',
+        options: this.demanderCongesList.map(d => ({
+          value: d.id,
+          label: d.nomComplet
+        }))
+      },
+
+      {
+        key: 'etat',
+        label: 'Etat',
+        type: 'select',
+        options: this.etatCongesList.map(e => ({
+          value: e.id,
+          label: e.libelle
+        }))
+      },
+
       {
         key: 'mois',
         label: 'Mois',
@@ -147,7 +209,6 @@ export class ListCongesComponent implements OnInit {
           { key: 'etat', header: 'Etat' },
           { key: 'dateDebut', header: 'Date début' },
           { key: 'dateFin', header: 'Date fin' },
-
         ]
 
         this.congesData = this.congesData.map((item: any) => ({
@@ -166,10 +227,13 @@ export class ListCongesComponent implements OnInit {
   construireLesParamereDeFiltre(): any {
     const filtreObj: any = {};
 
-    if (this.activeFilters.libelle) {
-      filtreObj.libelle = this.activeFilters.libelle;
+    if (this.activeFilters.objet) {
+      filtreObj.objet = this.activeFilters.objet;
     }
-    if (this.activeFilters.etat) {
+    if (this.activeFilters.demandeurId) {
+      filtreObj.demandeurId = this.activeFilters.demandeurId;
+    }
+     if (this.activeFilters.etat) {
       filtreObj.etat = this.activeFilters.etat;
     }
     if (this.activeFilters.mois) {

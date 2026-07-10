@@ -2,9 +2,9 @@ import { Component, inject, OnInit } from '@angular/core';
 import { IFilterConfig } from '../../../../../core/filtered-config/FiltreConfiguration';
 import { GenericTableReferentielComponent } from '../../../../../core/generic/generic-table-referentiel/generic-table-referentiel.component';
 import { Classe } from '../../../../../core/models/referentiels/classe';
+import { Niveau } from '../../../../../core/models/referentiels/niveau';
 import { ReferentielResourceService } from '../../service/referentiel-resource.service';
 import { ReferentielService } from '../../service/referentiel.service';
-import { Niveau } from '../../../../../core/models/referentiels/niveau';
 
 @Component({
   selector: 'app-classe',
@@ -28,9 +28,9 @@ export class ClasseComponent implements OnInit {
   classeData: any = [];
 
   currentPage = 0;
-  pageSize = 5;
+  pageSize = 10;
   totalElements = 0;
-  tableSizes = [5, 10, 20, 50, 100];
+  tableSizes = [10, 20, 50, 100];
   tableFilters: IFilterConfig[] = [];
   activeFilters: any = {};
   hasActiveFilters: boolean = false;
@@ -122,6 +122,9 @@ export class ClasseComponent implements OnInit {
         this.columns = [
           { key: 'niveau', header: 'Niveau' },
           { key: 'libelle', header: 'Libellé' },
+          { key: 'capacite', header: 'Capacité' },
+          { key: 'serie', header: 'Série' },
+          { key: 'anneeScolaire', header: 'année scolaire' },
         ];
 
         this.classeData = this.classeData.map((item: any) => ({

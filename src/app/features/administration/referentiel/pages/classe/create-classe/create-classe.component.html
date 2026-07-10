@@ -12,7 +12,6 @@
       </div>
     </div>
 
-    <!-- Badge -->
     <div class="badge-container">
       <span class="badge badge-primary">
         <i class="fas fa-plus-circle me-1"></i>
@@ -24,7 +23,6 @@
       </span>
     </div>
 
-    <!-- Formulaire pleine largeur -->
     <div class="card">
       <div class="card-body p-4 p-md-5">
         <!-- Step Indicator -->
@@ -43,7 +41,6 @@
         <form [formGroup]="classeFormGroup" (ngSubmit)="ajouteditClasse()">
           <input type="hidden" formControlName="id" />
 
-          <!-- Ligne 1: Libellé -->
           <div class="form-group">
             <label class="form-label">
               Libellé <span class="text-danger">*</span>
@@ -63,7 +60,25 @@
             }
           </div>
 
-          <!-- Ligne 2: Niveau -->
+          <div class="form-group">
+            <label class="form-label">
+              Capacite <span class="text-danger">*</span>
+              <i class="fas fa-tag ms-1 text-muted"></i>
+            </label>
+            <input
+              type="text"
+              class="form-control"
+              formControlName="capacite"
+              placeholder="Ex: 25"
+              required
+            />
+            @if (
+              classeFormGroup.get('capacite')?.invalid && classeFormGroup.get('capacite')?.touched
+            ) {
+              <div class="invalid-feedback">La Capacité est requise</div>
+            }
+          </div>
+
           <div class="form-group">
             <label class="form-label">
               Niveau <span class="text-danger">*</span>
@@ -80,8 +95,43 @@
             }
           </div>
 
-          <!-- Récapitulatif -->
-          @if (classeFormGroup.get('libelle')?.value && classeFormGroup.get('niveau')?.value) {
+          <div class="form-group">
+            <label class="form-label">
+              Année scolaire <span class="text-danger">*</span>
+              <i class="fas fa-layer-group ms-1 text-muted"></i>
+            </label>
+            <select class="form-select" formControlName="anneeScolaire" required>
+              <option value="" disabled selected>— Sélectionnez une année scolaire —</option>
+              @for (item of anneeScolaireList; track item.id) {
+                <option [value]="item.id">{{ item.libelle }}</option>
+              }
+            </select>
+            @if (
+              classeFormGroup.get('anneeScolaire')?.invalid &&
+              classeFormGroup.get('anneeScolaire')?.touched
+            ) {
+              <div class="invalid-feedback">L'année scolaire est requise</div>
+            }
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">
+              Série
+              <i class="fas fa-layer-group ms-1 text-muted"></i>
+            </label>
+            <select class="form-select" formControlName="serie">
+              <option value="" disabled selected>— Sélectionnez une série —</option>
+              @for (item of serieList; track item.id) {
+                <option [value]="item.id">{{ item.libelle }}</option>
+              }
+            </select>
+          </div>
+
+          @if (
+            classeFormGroup.get('libelle')?.value &&
+            classeFormGroup.get('niveau')?.value &&
+            classeFormGroup.get('anneeScolaire')?.value
+          ) {
             <div class="recap-card">
               <div class="d-flex align-items-center gap-3">
                 <div class="recap-icon">
@@ -91,14 +141,15 @@
                   <span class="recap-label">Récapitulatif de la classe</span>
                   <span class="recap-value">
                     Classe <strong>{{ classeFormGroup.get('libelle')?.value }}</strong> - Niveau
-                    <strong>{{ getSelectedNiveauName() }}</strong>
+                    <strong>{{ getSelectedNiveauName() }}</strong> - Série
+                    <strong>{{ getSelectedSerieName() }}</strong> Année scolaire
+                    <strong>{{ getSelectedAnneeScolaireName() }}</strong>
                   </span>
                 </div>
               </div>
             </div>
           }
 
-          <!-- Actions -->
           <div class="form-actions">
             <button type="button" class="btn btn-secondary" (click)="goBack()">
               <i class="fas fa-times me-2"></i>Annuler
@@ -113,7 +164,6 @@
             </button>
           </div>
 
-          <!-- Message d'aide -->
           <div class="alert-help mt-4" role="alert">
             <i class="fas fa-info-circle me-2"></i>
             <span>

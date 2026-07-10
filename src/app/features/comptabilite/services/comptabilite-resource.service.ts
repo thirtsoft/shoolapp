@@ -80,7 +80,7 @@ export class ComptabiliteResourceService {
   }
 
   fetchFilterDataTable<T>(endpoint: string, page: number, size: number, filters?: any): Observable<DataResult<T>> {
-    let url = `${this.baseUrl_1}/${endpoint}`;
+    let url = `${this.comptabiliteUrl}/${endpoint}`;
 
     if (filters) {
       const encodedFilters = encodeURIComponent(JSON.stringify(filters));
@@ -137,6 +137,17 @@ export class ComptabiliteResourceService {
   supprimerUneResource<T>(endpoint: string, id: number) {
     const url = `${this.comptabiliteUrl}/${endpoint}/'delete'/${id}`;
     return this.http.delete<ResponseMessage>(url, this.httpOptions);
+  }
+
+
+  changeEtatResource<T>(endpoint: string, id: number, resource: Partial<T>): Observable<any> {
+    const url = `${this.comptabiliteUrl}/${endpoint}/${id}/changeretat`;
+    return this.http.patch<ResponseMessage>(url, resource, this.httpOptions);
+  }
+
+  enregistrerExercicetWithFiles<T>(endpoint: string, formData: FormData) {
+    const url = `${this.comptabiliteUrl}/${endpoint}/enregistrerwithfiles`;
+    return this.http.post<ResponseMessage>(url, formData);
   }
 
 }

@@ -1,7 +1,7 @@
 import { Component, inject, OnInit } from '@angular/core';
-import { ReferentielResourceService } from '../../../service/referentiel-resource.service';
-import { GenericTableReferentielComponent } from '../../../../../../core/generic/generic-table-referentiel/generic-table-referentiel.component';
 import { IFilterConfig } from '../../../../../../core/filtered-config/FiltreConfiguration';
+import { GenericTableReferentielComponent } from '../../../../../../core/generic/generic-table-referentiel/generic-table-referentiel.component';
+import { ReferentielResourceService } from '../../../service/referentiel-resource.service';
 
 @Component({
   selector: 'app-liste-mode-paiement',
@@ -22,9 +22,9 @@ export class ListeModePaiementComponent implements OnInit {
   moyenPaiementData: any = [];
 
   currentPage = 0;
-  pageSize = 5;
+  pageSize = 10;
   totalElements = 0;
-  tableSizes = [5, 10, 20, 50, 100];
+  tableSizes = [10, 20, 50, 100];
   tableFilters: IFilterConfig[] = [];
   activeFilters: any = {};
   hasActiveFilters: boolean = false;

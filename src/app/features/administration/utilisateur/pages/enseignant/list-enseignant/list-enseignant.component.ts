@@ -1,7 +1,9 @@
 import { Component, inject, OnInit } from '@angular/core';
 import { IFilterConfig } from '../../../../../../core/filtered-config/FiltreConfiguration';
-import { UtilisateurResourceService } from '../../../service/utilisateur-resource.service';
 import { GenericTableReferentielComponent } from '../../../../../../core/generic/generic-table-referentiel/generic-table-referentiel.component';
+import { NiveauEducation } from '../../../../../../core/models/referentiels/niveau-eduction';
+import { ReferentielResourceService } from '../../../../referentiel/service/referentiel-resource.service';
+import { UtilisateurResourceService } from '../../../service/utilisateur-resource.service';
 
 @Component({
   selector: 'app-list-enseignant',
@@ -26,9 +28,9 @@ export class ListEnseignantComponent implements OnInit {
   readonly String = String;
 
   currentPage = 0;
-  pageSize = 5;
+  pageSize = 10;
   totalElements = 0;
-  tableSizes = [5, 10, 20, 50, 100];
+  tableSizes = [10, 20, 50, 100];
 
   niveauEducationList: any[] = [];
   tableFilters: IFilterConfig[] = [];
@@ -36,7 +38,7 @@ export class ListEnseignantComponent implements OnInit {
   hasActiveFilters: boolean = false;
 
   private readonly enseignantService = inject(UtilisateurResourceService);
-  // private readonly referentielService = inject(ReferentielService);
+  private readonly referentielService = inject(ReferentielResourceService);
 
 
   ngOnInit(): void {
@@ -46,7 +48,7 @@ export class ListEnseignantComponent implements OnInit {
   async chargerLesEnseignants() {
     try {
       await Promise.all([
-        //      this.getNiveauEducationList()
+        this.getNiveauEducationList()
       ]);
 
       this.initialisationDesFiltres();
@@ -56,18 +58,17 @@ export class ListEnseignantComponent implements OnInit {
     }
   }
 
-  /*
   getNiveauEducationList(): Promise<NiveauEducation[]> {
     return new Promise((resolve, reject) => {
-      this.referentielService.getAllNiveauEducations().subscribe({
-        next: (data) => {
+      this.referentielService.getResourceList('niveaueducation').subscribe({
+        next: (data: any) => {
           this.niveauEducationList = data;
           resolve(data);
         },
         error: (err) => reject(err)
       });
     });
-  }*/
+  }
 
   initialisationDesFiltres() {
     this.tableFilters = [

@@ -8,6 +8,8 @@ import { Utilisateur } from '../../../../../../core/models/utilisateur/utilisate
 import { UtilisateurService } from '../../../../utilisateur/service/utilisateur.service';
 import { ReferentielResourceService } from '../../../service/referentiel-resource.service';
 import { ReferentielService } from '../../../service/referentiel.service';
+import { Niveau } from '../../../../../../core/models/referentiels/niveau';
+import { Serie } from '../../../../../../core/models/referentiels/serie';
 
 @Component({
   selector: 'app-create-matiere-avec-coefficient',
@@ -23,7 +25,8 @@ export class CreateMatiereAvecCoefficientComponent implements OnInit {
   matiereAvecCoeficientFormGroup!: FormGroup;
   matiereAvecCoeeficient: MatiereAvecCoefficient = {};
   isEdit: boolean = false;
-  classList: ListeClasse[] = [];
+  niveauList: Niveau[] = [];
+  serieList: Serie[] = [];
   ecoleId: any;
   userId: number;
   utilisateur: Utilisateur = {};
@@ -46,8 +49,8 @@ export class CreateMatiereAvecCoefficientComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.getConnectedUserInfos();
-    this.getClassList();
+    this.getNiveauList();
+    this.getSerieList();
     this.initializeForm(null);
     if (this.matiereAvecCoefficientId != null && this.matiereAvecCoefficientId != undefined) {
       this.getMatiereAvecCoefficient(this.matiereAvecCoefficientId);
@@ -65,12 +68,32 @@ export class CreateMatiereAvecCoefficientComponent implements OnInit {
     });
   }
 
-  getClassList() {
-    this.referentielResource.getResourceList('classe').subscribe({
+  getNiveauList() {
+    this.referentielResource.getResourceList('niveau').subscribe({
       next: (data: any) => {
-        this.classList = data;
+        this.niveauList = data;
       }
     });
+  }
+
+  getSelectedNiveauName(): string {
+    const niveauId = this.matiereAvecCoeficientFormGroup.get('coefficientMatiereClasseAddEditDTOList')?.get('niveau')?.value;
+    const niveau = this.niveauList.find(n => Number(n.id) === Number(niveauId));
+    return niveau?.libelle || '';
+  }
+
+  getSerieList() {
+    this.referentielResource.getResourceList('serie').subscribe({
+      next: (data: any) => {
+        this.serieList = data;
+      }
+    });
+  }
+
+  getSelectedSerieName(): string {
+    const serieId = this.matiereAvecCoeficientFormGroup.get('coefficientMatiereClasseAddEditDTOList')?.get('serie')?.value;
+    const serie = this.serieList.find(n => Number(n.id) === Number(serieId));
+    return serie?.libelle || '';
   }
 
   getMatiereAvecCoefficient(batId: number) {
@@ -87,7 +110,8 @@ export class CreateMatiereAvecCoefficientComponent implements OnInit {
           (this.matiereAvecCoeficientFormGroup.get('coefficientMatiereClasseAddEditDTOList') as FormArray).push(
             this._formBuilder.group({
               id: [this.matiereAvecCoeeficient.coefficientMatiereClasseAddEditDTOList![i].id],
-              classe: [this.matiereAvecCoeeficient.coefficientMatiereClasseAddEditDTOList![i].classe, Validators.required],
+              niveau: [this.matiereAvecCoeeficient.coefficientMatiereClasseAddEditDTOList![i].niveau, Validators.required],
+              serie: [this.matiereAvecCoeeficient.coefficientMatiereClasseAddEditDTOList![i].serie, Validators.required],
               coefficient: [this.matiereAvecCoeeficient.coefficientMatiereClasseAddEditDTOList![i].coefficient, Validators.required],
             })
           )
@@ -120,7 +144,8 @@ export class CreateMatiereAvecCoefficientComponent implements OnInit {
   newCoefficientMatiereClasseItem(): FormGroup {
     return this._formBuilder.group({
       id: [''],
-      classe: ['', Validators.required],
+      niveau: ['', Validators.required],
+      serie: ['', Validators.required],
       coefficient: ['', Validators.required],
     })
   }
@@ -147,7 +172,7 @@ export class CreateMatiereAvecCoefficientComponent implements OnInit {
         next: (data) => {
           if (data.statut === 'OK') {
             this.toastService.success('succès', 'Les informations du batiment ont été enregistrées avec succès !!! ');
-            this.router.navigate(['/admin/referentiels/matiere']);
+            this.goBack();
           } else if (data.statut === 'FAILED') {
             this.toastService.error('error', 'Erreur lors de la création : ' + data.message);
           }
@@ -160,12 +185,11 @@ export class CreateMatiereAvecCoefficientComponent implements OnInit {
     } else {
       this.matiereAvecCoeeficient = this.matiereAvecCoeficientFormGroup.value;
       this.matiereAvecCoeeficient.ecole = this.ecoleId;
-      console.log("Edit batiment", this.matiereAvecCoeeficient);
       this.referentielService.updateMatiereAvecCoefficient(this.matiereAvecCoefficientId, this.matiereAvecCoeeficient).subscribe({
         next: (data) => {
           if (data.statut === 'OK') {
             this.toastService.success('succès', 'Les informations du batiment ont été modifiées avec succès !!! ');
-            this.router.navigate(['/admin/referentiels/matiere']);
+            this.goBack();
           } else if (data.statut === 'FAILED') {
             this.toastService.error('error', 'Erreur lors de la modification : ' + data.message);
           }
@@ -180,7 +204,7 @@ export class CreateMatiereAvecCoefficientComponent implements OnInit {
 
 
   goBack() {
-    this.router.navigate(['admin/referentiels/matiere'])
+    this.router.navigate(['admin/referentiel/matieres'])
   }
 
 

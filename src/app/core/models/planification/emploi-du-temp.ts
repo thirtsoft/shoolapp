@@ -7,6 +7,10 @@ export interface EmploiDuTemps {
 
   sessionSemestre?: number;
 
+  anneeScolaire?: number;
+
+  titre?: string;
+
   semaine?: number;
 
   coursEditDTOList?: CoursEdit[];
@@ -25,6 +29,10 @@ export interface EmploiDuTempsList {
 
   sessionSemestre?: number;
 
+  anneeScolaire?: number;
+
+  titre?: string;
+
   semaine?: number;
 
   coursEditDTOList?: CoursEdit[];
@@ -35,7 +43,7 @@ export interface EmploiDuTempsList {
 
   libelleSemestre?: string;
 
-  libelleClasse?:string;
+  libelleClasse?: string;
 
 
 }

@@ -2,13 +2,14 @@ import { DecimalPipe } from '@angular/common';
 import { Component, inject, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
+import { ToastrService } from 'ngx-toastr';
+import { AnneeScolaire } from '../../../../../../core/models/referentiels/annee-scolaire';
 import { ListeClasse } from '../../../../../../core/models/referentiels/classe';
 import { Tarif } from '../../../../../../core/models/referentiels/tarif';
 import { TypeServiceOffert } from '../../../../../../core/models/referentiels/type-service-offert';
 import { Utilisateur } from '../../../../../../core/models/utilisateur/utilisateur';
-import { UtilisateurService } from '../../../../utilisateur/service/utilisateur.service';
 import { ReferentielResourceService } from '../../../service/referentiel-resource.service';
-import { ToastrService } from 'ngx-toastr';
+import { Niveau } from '../../../../../../core/models/referentiels/niveau';
 
 @Component({
   selector: 'app-create-tarif',
@@ -25,8 +26,9 @@ export class CreateTarifComponent implements OnInit {
   tarif: any;
   isEdit: boolean = false;
 
-  classList: ListeClasse[] = [];
+  niveauList: Niveau[] = [];
   typeServiceList: TypeServiceOffert[] = [];
+  anneeScolaireList: AnneeScolaire[] = [];
 
   ecoleId: any;
   userId: number;
@@ -35,7 +37,6 @@ export class CreateTarifComponent implements OnInit {
   title = "Ajouter un tarif";
 
   private readonly referentielResource = inject(ReferentielResourceService);
-  private readonly utilisateurService = inject(UtilisateurService);
   private readonly _formBuilder = inject(FormBuilder);
   private readonly toastService = inject(ToastrService);
   private readonly activeRoute = inject(ActivatedRoute);
@@ -48,9 +49,9 @@ export class CreateTarifComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.getConnectedUserInfos();
-    this.getClassList();
+    this.getNiveauList();
     this.getTypeServiceList();
+    this.getAnneeScolaireList();
     this.initializeForm(null);
     if (this.tarifId != null && this.tarifId != undefined) {
       this.getTarif(this.tarifId);
@@ -59,30 +60,35 @@ export class CreateTarifComponent implements OnInit {
     }
   }
 
-  getConnectedUserInfos() {
-    this.utilisateurService.getUtilisateur(this.userId).subscribe({
-      next: data => {
-        this.utilisateur = data;
-        //    this.ecoleId = this.utilisateur.ecoleId;
-      },
-      error: error => { console.log(error) },
-    });
 
-  }
-
-  getClassList() {
-    this.referentielResource.getResourceList('classe').subscribe({
+  getNiveauList() {
+    this.referentielResource.getResourceList('niveau').subscribe({
       next: (data: any) => {
-        this.classList = data;
+        this.niveauList = data;
       }
     });
   }
 
-  getSelectedClasseName(): string {
-    const classeId = this.tarifFormGroup.get('classe')?.value;
-    const classe = this.classList.find(c => Number(c.id) === Number(classeId));
-    return classe?.libelle || '';
+  getSelectedNiveauName(): string {
+    const niveauId = this.tarifFormGroup.get('niveau')?.value;
+    const niveau = this.niveauList.find(c => Number(c.id) === Number(niveauId));
+    return niveau?.libelle || '';
   }
+
+  getAnneeScolaireList() {
+    this.referentielResource.getResourceList('anneescolaire').subscribe({
+      next: (data: any) => {
+        this.anneeScolaireList = data;
+      }
+    });
+  }
+
+  getSelectedAnneeScolaire(): string {
+    const anneeScolaireId = this.tarifFormGroup.get('anneeScolaire')?.value;
+    const anneeScolaire = this.anneeScolaireList.find(c => Number(c.id) === Number(anneeScolaireId));
+    return anneeScolaire?.libelle || '';
+  }
+
 
   getTypeServiceList() {
     this.referentielResource.getResourceList('typeserviceoffert').subscribe({
@@ -112,10 +118,11 @@ export class CreateTarifComponent implements OnInit {
 
   initializeForm(tarif: Tarif | null) {
     this.tarifFormGroup = this._formBuilder.group({
-      id: [tarif?.id ? tarif.id : ''],
-      classe: [tarif?.classe ? tarif.classe : '', Validators.required],
-      typeService: [tarif?.typeService ? tarif.typeService : '', Validators.required],
-      montant: [tarif?.montant ? tarif.montant : '', Validators.required],
+      id: [tarif?.id ?? ''],
+      niveau: [tarif?.niveau ?? '', Validators.required],
+      typeService: [tarif?.typeService ?? '', Validators.required],
+      anneeScolaire: [tarif?.anneeScolaire ?? '', Validators.required],
+      montant: [tarif?.montant ?? '', Validators.required],
     });
   }
 
@@ -128,7 +135,7 @@ export class CreateTarifComponent implements OnInit {
         next: (data) => {
           if (data.statut === 'OK') {
             this.toastService.success('succès', 'Le tarif a été enregistrées avec succès !!! ');
-            this.router.navigate(['admin/referentiels/tarif'])
+            this.goBack();
           } else if (data.statut === 'FAILED') {
             this.toastService.error('error', 'Erreur lors de la création : ' + data.message);
           }
@@ -143,7 +150,7 @@ export class CreateTarifComponent implements OnInit {
         next: (data) => {
           if (data.statut === 'OK') {
             this.toastService.success('succès', 'Le tarif a été modifiées avec succès !!! ');
-            this.router.navigate(['admin/referentiels/tarif'])
+            this.goBack();
           } else if (data.statut === 'FAILED') {
             this.toastService.error('error', 'Erreur lors de la modification : ' + data.message);
           }
@@ -159,7 +166,7 @@ export class CreateTarifComponent implements OnInit {
 
 
   goBack() {
-    this.router.navigate(['admin/referentiels/tarif'])
+    this.router.navigate(['admin/referentiel/tarifs'])
   }
 
 

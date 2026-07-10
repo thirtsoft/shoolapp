@@ -1,6 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, inject, input, output, signal } from '@angular/core';
 import { Router } from '@angular/router';
+import { LocalStorageService } from '../../../../core/services/local-storage.service';
 
 interface NavItem {
   route?: string;
@@ -27,6 +28,7 @@ export class SideBarAdminComponent {
   close = output<void>();
 
   readonly router = inject(Router);
+  readonly localStorage = inject(LocalStorageService);
 
   expandedMenus = signal<Set<string>>(new Set());
 
@@ -37,6 +39,7 @@ export class SideBarAdminComponent {
     { route: '/admin/comptabilite/facture', ico: '💰', label: 'Factures', section: 'FINANCES', badge: '18' },
     { route: '/admin/comptabilite/paiement', ico: '💳', label: 'Frais scolarité', section: '', badge: '' },
     { route: '/admin/comptabilite/services', ico: '📋', label: 'Inscriptions services', section: '', badge: '' },
+    { route: '/admin/comptabilite/depenses', ico: '💸', label: 'Dépenses', section: '', badge: '' },
 
     // GESTION SCOLAIRE
     { route: '/admin/dossier-eleve/eleves', ico: '🎒', label: 'Élèves', section: 'GESTION SCOLAIRE', badge: '1 200' },
@@ -58,6 +61,7 @@ export class SideBarAdminComponent {
     { route: '/admin/planification/enseignement', ico: '👨‍🏫', label: 'Enseignements', section: '', badge: '' },
     { route: '/admin/referentiel/annee-scolaires', ico: '🏫', label: 'Années scolaires' },
     { route: '/admin/referentiel/sessions', ico: '⏱️', label: 'Session Semestres' },
+    { route: '/admin/planification/cantine', ico: '🍽️', label: 'MenusPlats' },
 
 
 
@@ -65,7 +69,7 @@ export class SideBarAdminComponent {
     { route: '/admin/planification/reunion', ico: '👥', label: 'Réunions', section: 'COMMUNICATION', badge: '5' },
     { route: '/admin/planification/noteinformations', ico: '📢', label: 'Notes d\'info', section: '' },
     { route: '/admin/planification/evenement', ico: '🎪', label: 'Événements', section: '' },
-     { route: '/admin/planification/conges', ico: '🌴', label: 'Congés' },
+    { route: '/admin/planification/conges', ico: '🌴', label: 'Congés' },
 
     // ═══════════ PARAMÉTRAGE DE BASE (DROPDOWN) ═══════════
     {
@@ -90,6 +94,7 @@ export class SideBarAdminComponent {
         { route: '/admin/referentiel/typeservices', ico: '🛎️', label: 'Types de service' },
         { route: '/admin/referentiel/tarifs', ico: '💲', label: 'Tarifs' },
         { route: '/admin/referentiel/moyenpaiements', ico: '🏦', label: 'Modes de paiement' },
+         { route: '/admin/referentiel/typedepense', ico: '💲', label: 'Type dépense' },
         { route: '/admin/referentiel/menus', ico: '🍽️', label: 'Menus' },
         { route: '/admin/referentiel/category-menu', ico: '📋', label: 'Catégories menu' },
 
@@ -151,6 +156,8 @@ export class SideBarAdminComponent {
   }
 
   deconnecter(): void {
+    this.localStorage.clear();
     this.router.navigate(['/auth/login']);
+
   }
 }

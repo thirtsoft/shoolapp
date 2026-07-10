@@ -5,8 +5,10 @@ import { GenericTableDossierComponent } from '../../../../../../core/generic/gen
 import { Matiere } from '../../../../../../core/models/referentiels/matiere';
 import { Salle } from '../../../../../../core/models/referentiels/salle';
 import { CommonService } from '../../../../../../core/services/common.service';
+import { EnseignantService } from '../../../../../enseignant/service/enseignant.service';
 import { ReferentielService } from '../../../../referentiel/service/referentiel.service';
 import { PlanificationResourceService } from '../../../services/planification-resource.service';
+import { EnseigantList } from '../../../../../../core/models/enseignant/enseignant-list';
 
 @Component({
   selector: 'app-list-cours',
@@ -30,9 +32,9 @@ export class ListCoursComponent implements OnInit {
   public readonly String = String;
 
   currentPage = 0;
-  pageSize = 5;
+  pageSize = 10;
   totalElements = 0;
-  tableSizes = [5, 10, 20, 50, 100];
+  tableSizes = [10, 20, 50, 100];
 
   matieresList: any[] = [];
   salleList: any[] = [];
@@ -48,7 +50,7 @@ export class ListCoursComponent implements OnInit {
 
   private readonly coursService = inject(PlanificationResourceService);
   private readonly referentielService = inject(ReferentielService);
-  //  private readonly enseignantService = inject(EnseignantService);
+  private readonly enseignantService = inject(EnseignantService);
   private readonly commonService = inject(CommonService);
 
   ngOnInit(): void {
@@ -59,7 +61,7 @@ export class ListCoursComponent implements OnInit {
     try {
       const [matieres, enseignants, salles] = await Promise.all([
         this.getMatiereList(),
-        //      this.getEnseignantList(),
+        this.getEnseignantList(),
         this.getSalleList(),
         this.getMoistList(),
         this.getAnneetList()
@@ -97,18 +99,17 @@ export class ListCoursComponent implements OnInit {
     });
   }
 
-  /*
   getEnseignantList(): Promise<EnseigantList[]> {
     return new Promise((resolve, reject) => {
-      this.enseignanService.getAllEnseignants().subscribe({
-        next: (data:any) => {
+      this.enseignantService.getAllEnseignants().subscribe({
+        next: (data: any) => {
           this.enseignantList = data;
           resolve(data);
         },
-        error: (err:any) => reject(err)
+        error: (err: any) => reject(err)
       });
     });
-  }*/
+  }
 
   getMoistList(): Promise<any[]> {
     return new Promise((resolve, reject) => {
@@ -148,27 +149,27 @@ export class ListCoursComponent implements OnInit {
         key: 'matiere',
         label: 'Matiere',
         type: 'select',
-        options: matieres.map(c => ({
-          value: c.id,
-          label: c.libelle
+        options: matieres.map(m => ({
+          value: m.id,
+          label: m.libelle
         })),
       },
       {
         key: 'enseignant',
         label: 'Enseignant',
         type: 'select',
-        options: enseignants.map(a => ({
-          value: a.id,
-          label: `${a.nomComplet}`
+        options: enseignants.map(e => ({
+          value: e.id,
+          label: `${e.nomComplet}`
         }))
       },
       {
         key: 'salle',
         label: 'Salle',
         type: 'select',
-        options: salles.map(n => ({
-          value: n.id,
-          label: n.libelle
+        options: salles.map(s => ({
+          value: s.id,
+          label: s.libelle
         })),
       },
     ];

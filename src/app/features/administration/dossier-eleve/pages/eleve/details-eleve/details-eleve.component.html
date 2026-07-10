@@ -1,0 +1,518 @@
+<div class="page-wrapper">
+  <div class="content container-fluid">
+    <!-- En-tête -->
+    <div class="page-header">
+      <div class="row align-items-center">
+        <div class="col-12">
+          <h3 class="page-title">Fiche Individuelle de l'Élève</h3>
+          <p class="text-muted mt-1 mb-0">
+            <i class="fas fa-user-graduate me-1"></i> Dossier administratif et scolaire
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <div class="row mb-4">
+      <div class="col-12">
+        <div class="action-bar">
+          <div class="action-bar-left">
+            <button type="button" class="btn btn-secondary" (click)="goBack()">
+              <i class="fas fa-arrow-left me-2"></i>Retour
+            </button>
+            <button type="button" class="btn btn-outline-primary" (click)="telechargerDossier()">
+              <i class="fas fa-download me-2"></i>Télécharger dossier
+            </button>
+            <button
+              type="button"
+              class="btn btn-outline-primary"
+              (click)="imprimerDossier(eleveDetails)"
+            >
+              <i class="fas fa-print me-2"></i>Imprimer dossier
+            </button>
+          </div>
+
+          <div class="status-badge" [class.active]="eleve?.actif === 1">
+            <i
+              class="fas"
+              [class.fa-check-circle]="eleve?.actif === 1"
+              [class.fa-times-circle]="eleve?.actif !== 1"
+            ></i>
+            {{ eleve?.actif === 1 ? 'Élève scolarisé' : 'Élève inactif' }}
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-12">
+        <div class="card info-card">
+          <div class="card-header">
+            <div class="d-flex align-items-center justify-content-between">
+              <div class="d-flex align-items-center">
+                <div class="icon-wrapper">
+                  <i class="fas fa-user-graduate"></i>
+                </div>
+                <h4 class="card-title mb-0">
+                  {{ eleve?.prenom || 'Prénom' }} {{ eleve?.nom || 'Nom' }}
+                </h4>
+              </div>
+            </div>
+            <div class="nav-tabs-wrapper mt-3">
+              <div class="nav-tabs">
+                <button
+                  class="tab-button"
+                  [class.active]="activeTab === 'profil'"
+                  (click)="switchTab('profil')"
+                >
+                  <i class="fas fa-folder-open me-2"></i>Profil & Famille
+                  @if (tuteurs && tuteurs.length > 0) {
+                    <span class="tab-badge">{{ tuteurs.length }}</span>
+                  }
+                </button>
+                <button
+                  class="tab-button"
+                  [class.active]="activeTab === 'pedagogie'"
+                  (click)="switchTab('pedagogie')"
+                >
+                  <i class="fas fa-graduation-cap me-2"></i>Pédagogie
+                  @if ((notes && notes.length > 0) || (bulletins && bulletins.length > 0)) {
+                    <span class="tab-badge">{{
+                      (notes!.length || 0) + (bulletins!.length || 0)
+                    }}</span>
+                  }
+                </button>
+                <button
+                  class="tab-button"
+                  [class.active]="activeTab === 'assiduite'"
+                  (click)="switchTab('assiduite')"
+                >
+                  <i class="fas fa-calendar-check me-2"></i>Assiduité
+                  @if (absencesEtRetards && absencesEtRetards.length > 0) {
+                    <span class="tab-badge">{{ absencesEtRetards.length }}</span>
+                  }
+                </button>
+                <button
+                  class="tab-button"
+                  [class.active]="activeTab === 'finance'"
+                  (click)="switchTab('finance')"
+                >
+                  <i class="fas fa-file-invoice-dollar me-2"></i>Finances
+                  @if (
+                    (factures && factures.length > 0) || (inscriptions && inscriptions.length > 0)
+                  ) {
+                    <span class="tab-badge">{{
+                      (factures!.length || 0) + (inscriptions!.length || 0)
+                    }}</span>
+                  }
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <div class="card-body">
+            @if (activeTab === 'profil') {
+              <div class="tab-content">
+                <div class="row">
+                  <div class="col-lg-6 mb-4">
+                    <div class="mini-card">
+                      <div class="mini-card-header">
+                        <i class="fas fa-id-card me-2"></i>Informations Personnelles
+                      </div>
+                      <div class="mini-card-body">
+                        <div class="info-item">
+                          <label class="info-label"
+                            ><i class="fas fa-user me-2"></i>Nom complet</label
+                          >
+                          <p class="info-value">
+                            {{ eleve?.prenom || 'N/A' }} {{ eleve?.nom || 'N/A' }}
+                          </p>
+                        </div>
+                        <div class="info-item">
+                          <label class="info-label"
+                            ><i class="fas fa-id-card me-2"></i>Matricule</label
+                          >
+                          <p class="info-value">{{ eleve?.matriculeEleve || 'N/A' }}</p>
+                        </div>
+                        <div class="info-item">
+                          <label class="info-label"
+                            ><i class="fas fa-venus-mars me-2"></i>Sexe</label
+                          >
+                          <p class="info-value">{{ eleve?.sexe || 'Non renseigné' }}</p>
+                        </div>
+                        <div class="info-item">
+                          <label class="info-label"
+                            ><i class="fas fa-map-marker-alt me-2"></i>Adresse</label
+                          >
+                          <p class="info-value">{{ eleve?.address || 'Non renseignée' }}</p>
+                        </div>
+                        <div class="info-item">
+                          <label class="info-label"
+                            ><i class="fas fa-calendar-alt me-2"></i>Date de naissance</label
+                          >
+                          <p class="info-value">
+                            {{
+                              eleve?.dateNaissance
+                                ? (eleve?.dateNaissance | date: 'dd/MM/yyyy')
+                                : 'Non renseignée'
+                            }}
+                          </p>
+                        </div>
+                        <div class="info-item">
+                          <label class="info-label"
+                            ><i class="fas fa-map-pin me-2"></i>Lieu de naissance</label
+                          >
+                          <p class="info-value">{{ eleve?.lieuNaissance || 'Non renseigné' }}</p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="col-lg-6 mb-4">
+                    <div class="mini-card">
+                      <div class="mini-card-header">
+                        <i class="fas fa-users me-2"></i>Responsables Légaux
+                      </div>
+                      <div class="mini-card-body">
+                        @if (tuteurs && tuteurs.length > 0) {
+                          @for (parent of tuteurs; track parent.id) {
+                            <div class="info-item">
+                              <label class="info-label"
+                                ><i class="fas fa-user-tie me-2"></i>{{ parent.prenom }}
+                                {{ parent.nom }}</label
+                              >
+                              <p class="info-value">
+                                <i class="fas fa-phone me-1"></i> {{ parent.telephone || 'N/A'
+                                }}<br />
+                                <i class="fas fa-envelope me-1"></i> {{ parent.email || 'N/A' }}
+                              </p>
+                            </div>
+                          }
+                        } @else {
+                          <div class="empty-state">
+                            <div class="empty-icon"><i class="fas fa-user-slash"></i></div>
+                            <h5>Aucun tuteur</h5>
+                            <p class="text-muted">Aucun responsable légal enregistré.</p>
+                          </div>
+                        }
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            }
+
+            @if (activeTab === 'pedagogie') {
+              <div class="tab-content">
+                <h5 class="section-title"><i class="fas fa-star me-2"></i>Notes</h5>
+                @if (notes && notes.length > 0) {
+                  <div class="table-responsive mb-4">
+                    <table class="custom-table">
+                      <thead>
+                        <tr>
+                          <th><i class="fas fa-tasks me-2"></i>Type d'évaluation</th>
+                          <th><i class="fas fa-star me-2"></i>Note</th>
+                          <th><i class="fas fa-info-circle me-2"></i>Statut</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        @for (note of notes; track note.id) {
+                          <tr>
+                            <td>
+                              <strong>{{ note.type || 'Non spécifié' }}</strong>
+                            </td>
+                            <td>
+                              <span
+                                class="note-value"
+                                [class.note-excellent]="note.note >= 16"
+                                [class.note-good]="note.note >= 12 && note.note < 16"
+                                [class.note-average]="note.note >= 10 && note.note < 12"
+                                [class.note-poor]="note.note < 10"
+                              >
+                                {{ note.note || 'N/A' }}/20
+                              </span>
+                            </td>
+                            <td>
+                              <span class="badge-status" [class.active]="note.actif === 1">
+                                {{ note.actif === 1 ? 'Actif' : 'Inactif' }}
+                              </span>
+                            </td>
+                          </tr>
+                        }
+                      </tbody>
+                    </table>
+                  </div>
+                } @else {
+                  <div class="empty-state mb-4">
+                    <div class="empty-icon"><i class="fas fa-file-alt"></i></div>
+                    <h5>Aucune note</h5>
+                    <p class="text-muted">Aucune évaluation enregistrée.</p>
+                  </div>
+                }
+
+                <hr class="section-divider" />
+
+                <h5 class="section-title"><i class="fas fa-file-pdf me-2"></i>Bulletins</h5>
+                @if (bulletins && bulletins.length > 0) {
+                  <div class="table-responsive">
+                    <table class="custom-table">
+                      <thead>
+                        <tr>
+                          <th><i class="fas fa-calendar-alt me-2"></i>Période</th>
+                          <th><i class="fas fa-chart-bar me-2"></i>Moyenne</th>
+                          <th><i class="fas fa-trophy me-2"></i>Rang</th>
+                          <th><i class="fas fa-download me-2"></i>Action</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        @for (bulletin of bulletins; track bulletin.id) {
+                          <tr>
+                            <td>
+                              <strong>{{ bulletin.periode || 'N/A' }}</strong>
+                            </td>
+                            <td>{{ bulletin.moyenne || 'N/A' }}/20</td>
+                            <td>{{ bulletin.rang || 'N/A' }}</td>
+                            <td>
+                              <button
+                                class="btn btn-sm btn-outline-primary"
+                                (click)="telechargerBulletin(bulletin.id)"
+                              >
+                                <i class="fas fa-download me-1"></i>Télécharger
+                              </button>
+                            </td>
+                          </tr>
+                        }
+                      </tbody>
+                    </table>
+                  </div>
+                } @else {
+                  <div class="empty-state">
+                    <div class="empty-icon"><i class="fas fa-archive"></i></div>
+                    <h5>Aucun bulletin</h5>
+                    <p class="text-muted">Aucun bulletin disponible.</p>
+                  </div>
+                }
+              </div>
+            }
+
+            @if (activeTab === 'assiduite') {
+              <div class="tab-content">
+                <div class="row mb-4">
+                  <div class="col-lg-4 mb-3">
+                    <div class="mini-card text-center">
+                      <div class="mini-card-body">
+                        <div class="stat-number text-danger">{{ totalAbsences || 0 }}</div>
+                        <div class="stat-label">Absences non justifiées</div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="col-lg-4 mb-3">
+                    <div class="mini-card text-center">
+                      <div class="mini-card-body">
+                        <div class="stat-number" style="color: #f59e0b">
+                          {{ totalRetards || 0 }}
+                        </div>
+                        <div class="stat-label">Minutes de retard</div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="col-lg-4 mb-3">
+                    <div class="mini-card text-center">
+                      <div class="mini-card-body">
+                        <div class="stat-number text-success">{{ totalJustified || 0 }}</div>
+                        <div class="stat-label">Absences justifiées</div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                @if (absencesEtRetards && absencesEtRetards.length > 0) {
+                  <div class="table-responsive">
+                    <table class="custom-table">
+                      <thead>
+                        <tr>
+                          <th><i class="fas fa-calendar me-2"></i>Date</th>
+                          <th><i class="fas fa-tag me-2"></i>Type</th>
+                          <th><i class="fas fa-clock me-2"></i>Durée</th>
+                          <th><i class="fas fa-check-circle me-2"></i>Justification</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        @for (record of absencesEtRetards; track record.id) {
+                          <tr>
+                            <td>{{ record.attendanceDate | date: 'dd/MM/yyyy' }}</td>
+                            <td>
+                              <span
+                                class="badge-status"
+                                [class.active]="record.attendanceStatus === 'ABSENCE'"
+                                [style.background]="
+                                  record.attendanceStatus === 'LATE' ? '#fef3c7' : ''
+                                "
+                                [style.color]="record.attendanceStatus === 'LATE' ? '#92400e' : ''"
+                              >
+                                {{
+                                  record.attendanceStatus === 'ABSENCE'
+                                    ? 'Absence'
+                                    : record.attendanceStatus === 'LATE'
+                                      ? 'Retard'
+                                      : 'N/A'
+                                }}
+                              </span>
+                            </td>
+                            <td>
+                              {{
+                                record.lateMinutes && record.lateMinutes !== 'null'
+                                  ? record.lateMinutes + ' min'
+                                  : '--'
+                              }}
+                            </td>
+                            <td>
+                              <span class="badge-status" [class.active]="record.justified">
+                                {{ record.justified ? 'Justifié' : 'Non justifié' }}
+                              </span>
+                            </td>
+                          </tr>
+                        }
+                      </tbody>
+                    </table>
+                  </div>
+                } @else {
+                  <div class="empty-state">
+                    <div class="empty-icon"><i class="fas fa-check-circle"></i></div>
+                    <h5>Aucun incident</h5>
+                    <p class="text-muted">Aucun incident d'assiduité enregistré.</p>
+                  </div>
+                }
+              </div>
+            }
+
+            @if (activeTab === 'finance') {
+              <div class="tab-content">
+                <h5 class="section-title"><i class="fas fa-id-card-alt me-2"></i>Inscriptions</h5>
+                @if (inscriptions && inscriptions.length > 0) {
+                  <div class="table-responsive mb-3">
+                    <table class="custom-table">
+                      <thead>
+                        <tr>
+                          <th><i class="fas fa-file-alt me-2"></i>N° Dossier</th>
+                          <th><i class="fas fa-calendar me-2"></i>Date</th>
+                          <th><i class="fas fa-money-bill me-2"></i>Montant</th>
+                          <th><i class="fas fa-circle me-2"></i>Statut</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        @for (insc of inscriptions; track insc.id) {
+                          <tr>
+                            <td>
+                              <strong>{{ insc.code || 'N/A' }}</strong>
+                            </td>
+                            <td>{{ insc.dateInscription | date: 'dd/MM/yyyy' }}</td>
+                            <td>
+                              <strong>{{ insc.montantInscription | number }} XOF</strong>
+                            </td>
+                            <td>
+                              <span class="badge-status" [class.active]="insc.actif === 1">
+                                {{ insc.actif === 1 ? 'Actif' : 'Inactif' }}
+                              </span>
+                            </td>
+                          </tr>
+                        }
+                      </tbody>
+                    </table>
+                  </div>
+                } @else {
+                  <div class="empty-state mb-3">
+                    <div class="empty-icon"><i class="fas fa-file-alt"></i></div>
+                    <h5>Aucune inscription</h5>
+                  </div>
+                }
+
+                <hr class="section-divider" />
+
+                <h5 class="section-title">
+                  <i class="fas fa-concierge-bell me-2"></i>Services souscrits
+                </h5>
+                @if (services && services.length > 0) {
+                  <div class="row g-3 mb-3">
+                    @for (service of services; track service.id) {
+                      <div class="col-lg-4 col-md-6">
+                        <div class="info-item">
+                          <label class="info-label"
+                            ><i class="fas fa-utensils me-2"></i>Service scolaire</label
+                          >
+                          <p class="info-value">
+                            Date : {{ service.dateInscription | date: 'dd/MM/yyyy' }}<br />
+                            Statut :
+                            <span
+                              class="badge-status"
+                              [class.active]="service.actif === 1"
+                              style="margin-top: 4px"
+                            >
+                              {{ service.actif === 1 ? 'Actif' : 'Inactif' }}
+                            </span>
+                          </p>
+                        </div>
+                      </div>
+                    }
+                  </div>
+                } @else {
+                  <div class="empty-state mb-3">
+                    <div class="empty-icon"><i class="fas fa-box-open"></i></div>
+                    <h5>Aucun service</h5>
+                    <p class="text-muted">Aucun service souscrit.</p>
+                  </div>
+                }
+
+                <hr class="section-divider" />
+
+                <h5 class="section-title"><i class="fas fa-receipt me-2"></i>Factures</h5>
+                @if (factures && factures.length > 0) {
+                  <div class="table-responsive">
+                    <table class="custom-table">
+                      <thead>
+                        <tr>
+                          <th><i class="fas fa-hashtag me-2"></i>N° Facture</th>
+                          <th><i class="fas fa-calendar-alt me-2"></i>Période</th>
+                          <th><i class="fas fa-calendar me-2"></i>Date</th>
+                          <th><i class="fas fa-money-bill me-2"></i>Montant</th>
+                          <th><i class="fas fa-circle me-2"></i>Statut</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        @for (facture of factures; track facture.id) {
+                          <tr>
+                            <td>
+                              <strong>{{ facture.numeroFacture || 'N/A' }}</strong>
+                            </td>
+                            <td>
+                              {{ facture.mois ? 'Mois ' + facture.mois : ''
+                              }}{{ facture.annee ? '/' + facture.annee : '' }}
+                            </td>
+                            <td>{{ facture.dateFacture | date: 'dd/MM/yyyy' }}</td>
+                            <td>
+                              <strong>{{ facture.montant | number }} XOF</strong>
+                            </td>
+                            <td>
+                              <span class="badge-status" [class.active]="facture.etat === 'PAYÉ'">
+                                {{ facture.etat || 'En attente' }}
+                              </span>
+                            </td>
+                          </tr>
+                        }
+                      </tbody>
+                    </table>
+                  </div>
+                } @else {
+                  <div class="empty-state">
+                    <div class="empty-icon"><i class="fas fa-receipt"></i></div>
+                    <h5>Aucune facture</h5>
+                    <p class="text-muted">Aucune facture disponible.</p>
+                  </div>
+                }
+              </div>
+            }
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

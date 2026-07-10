@@ -110,7 +110,7 @@ export class AjoutEditSalleComponent implements OnInit {
         next: (data) => {
           console.log('payload after : ', data);
           this.toastService.success('success', 'La salle a été ajoutée avec succès.');
-          this.router.navigate(['/admin/referentiel/salles']);
+          this.goBack();
         },
         error: (data) => {
           console.log('error', 'Erreur lors de la création : ' + data.error);
@@ -121,7 +121,7 @@ export class AjoutEditSalleComponent implements OnInit {
       this.referentielService.updateSalle(this.salleId, payload).subscribe({
         next: data => {
           this.toastService.success('success', 'La salle a été modifié avec succès.');
-          this.router.navigate(['/admin/referentiel/salles']);
+          this.goBack();
 
         },
         error: (data) => {

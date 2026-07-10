@@ -1,119 +1,5 @@
-<!-- <div class="page-wrapper">
-  <div class="content container-fluid">
-    <div class="page-header">
-      <div class="row">
-        <div class="col-sm-7 col-auto">
-          <h3 class="page-title"></h3>
-          <ul class="breadcrumb"></ul>
-        </div>
-      </div>
-    </div>
-
-    <div class="row justify-content-center">
-      <div class="col-md-6 col-lg-6 col-xl-6">
-        <div class="card">
-          <h3 class="page-title text-center">{{ title }}</h3>
-          <div class="card-body">
-            <form [formGroup]="coefficientFormGroup">
-              <input
-                type="text"
-                readonly="true"
-                hidden="true"
-                formControlName="id"
-              />
-
-              <div class="row form-row">
-                <div class="col-12">
-                  <div class="form-group">
-                    <label>Matière <span class="text-danger">*</span></label>
-                    <select
-                      class="form-control select"
-                      formControlName="matiere"
-                      required=""
-                    >
-                      <option>Selectionnez</option>
-                      <option
-                        *ngFor="let item of matiereList"
-                        [value]="item.id"
-                      >
-                        {{ item.libelle }}
-                      </option>
-                    </select>
-                  </div>
-                </div>
-              </div>
-
-              <div class="row form-row">
-                <div class="col-12">
-                  <div class="form-group">
-                    <label>Classe <span class="text-danger">*</span></label>
-                    <select
-                      class="form-control select"
-                      formControlName="classe"
-                      required=""
-                    >
-                      <option>Selectionnez</option>
-                      <option *ngFor="let item of classList" [value]="item.id">
-                        {{ item.libelle }}
-                      </option>
-                    </select>
-                  </div>
-                </div>
-              </div>
-
-              <div class="row form-row">
-                <div class="col-12">
-                  <div class="form-group">
-                    <label>Coéfficient <span class="text-danger">*</span></label>
-                    <input
-                      type="number"
-                      formControlName="coefficient"
-                      required
-                      class="form-control"
-                    />
-                  </div>
-                </div>
-              </div>
-
-              <div class="row mt-3">
-                <div class="col-12 d-flex justify-content-between">
-                  <button
-                    type="button"
-                    class="btn btn-danger si_accept_cancel"
-                    (click)="goBack()"
-                  >
-                    Annuler
-                  </button>
-                  <button
-                    type="button"
-                    class="upload-text text-white"
-                    style="
-                      align-items: center;
-                      border: 1px solid #028ee1;
-                      box-shadow: 0 1px 2px rgba(16, 24, 40, 0.05);
-                      background-color: #028ee1;
-                      min-height: 44px;
-                      padding: 10px 16px;
-                      cursor: pointer;
-                    "
-                    (click)="ajouteditCoefficient()"
-                  >
-                    Enregistrer
-                  </button>
-                </div>
-              </div>
-            </form>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
- -->
-
 <div class="page-wrapper">
   <div class="content container-fluid">
-    <!-- Page Header -->
     <div class="page-header">
       <div class="row align-items-center">
         <div class="col-sm-12">
@@ -125,7 +11,6 @@
       </div>
     </div>
 
-    <!-- Badge -->
     <div class="badge-container">
       <span class="badge badge-primary">
         <i class="fas fa-plus-circle me-1"></i>
@@ -137,10 +22,8 @@
       </span>
     </div>
 
-    <!-- Formulaire pleine largeur -->
     <div class="card">
       <div class="card-body p-4 p-md-5">
-        <!-- Step Indicator -->
         <div class="step-indicator">
           <div class="step active">
             <span class="step-number">1</span>
@@ -156,7 +39,6 @@
         <form [formGroup]="coefficientFormGroup" (ngSubmit)="ajouteditCoefficient()">
           <input type="hidden" formControlName="id" />
 
-          <!-- Ligne 1: Matière -->
           <div class="form-group">
             <label class="form-label">
               Matière <span class="text-danger">*</span>
@@ -176,27 +58,38 @@
             }
           </div>
 
-          <!-- Ligne 2: Classe -->
           <div class="form-group">
             <label class="form-label">
-              Classe <span class="text-danger">*</span>
-              <i class="fas fa-chalkboard-user ms-1 text-muted"></i>
+              Niveau <span class="text-danger">*</span>
+              <i class="fas fa-layer-group ms-1 text-muted"></i>
             </label>
-            <select class="form-select" formControlName="classe" required>
-              <option value="" disabled selected>— Sélectionnez une classe —</option>
-              @for (item of classList; track item.id) {
+            <select class="form-select" formControlName="niveau" required>
+              <option value="" disabled selected>— Sélectionnez un niveau —</option>
+              @for (item of niveauList; track item.id) {
                 <option [value]="item.id">{{ item.libelle }}</option>
               }
             </select>
             @if (
-              coefficientFormGroup.get('classe')?.invalid &&
-              coefficientFormGroup.get('classe')?.touched
+              coefficientFormGroup.get('niveau')?.invalid &&
+              coefficientFormGroup.get('niveau')?.touched
             ) {
-              <div class="invalid-feedback">La classe est requise</div>
+              <div class="invalid-feedback">Le niveau est requis</div>
             }
           </div>
 
-          <!-- Ligne 3: Coefficient -->
+          <div class="form-group">
+            <label class="form-label">
+              Série
+              <i class="fas fa-layer-group ms-1 text-muted"></i>
+            </label>
+            <select class="form-select" formControlName="serie">
+              <option value="" disabled selected>— Sélectionnez une série —</option>
+              @for (item of serieList; track item.id) {
+                <option [value]="item.id">{{ item.libelle }}</option>
+              }
+            </select>
+          </div>
+
           <div class="form-group">
             <label class="form-label">
               Coefficient <span class="text-danger">*</span>
@@ -219,10 +112,9 @@
             }
           </div>
 
-          <!-- Récapitulatif -->
           @if (
             coefficientFormGroup.get('matiere')?.value &&
-            coefficientFormGroup.get('classe')?.value &&
+            coefficientFormGroup.get('niveau')?.value &&
             coefficientFormGroup.get('coefficient')?.value
           ) {
             <div class="recap-card">
@@ -235,15 +127,14 @@
                   <span class="recap-value">
                     Coefficient
                     <strong>{{ coefficientFormGroup.get('coefficient')?.value }}</strong> pour la
-                    matière <strong>{{ getSelectedMatiereName() }}</strong> en classe
-                    <strong>{{ getSelectedClasseName() }}</strong>
+                    matière <strong>{{ getSelectedMatiereName() }}</strong> en
+                    <strong>{{ getSelectedNiveauName() }}</strong>
                   </span>
                 </div>
               </div>
             </div>
           }
 
-          <!-- Actions -->
           <div class="form-actions">
             <button type="button" class="btn btn-secondary" (click)="goBack()">
               <i class="fas fa-times me-2"></i>Annuler
@@ -258,7 +149,6 @@
             </button>
           </div>
 
-          <!-- Message d'aide -->
           <div class="alert-help mt-4" role="alert">
             <i class="fas fa-info-circle me-2"></i>
             <span>

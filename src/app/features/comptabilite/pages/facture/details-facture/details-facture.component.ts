@@ -2,7 +2,7 @@ import { Component, inject, OnInit } from '@angular/core';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { ComptabiliteResourceService } from '../../../services/comptabilite-resource.service';
 
-import { DatePipe, DecimalPipe } from '@angular/common';
+import { DatePipe, DecimalPipe, TitleCasePipe } from '@angular/common';
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ToastrService } from 'ngx-toastr';
 import { DetailsFacture } from '../../../../../core/models/comptabilite/details-facture';
@@ -13,13 +13,16 @@ import { ParametresEtablissement } from '../../../../../core/models/referentiels
 import { DateformatService } from '../../../../../core/services/date-format.service';
 import { ReferentielResourceService } from '../../../../administration/referentiel/service/referentiel-resource.service';
 import { ReferentielService } from '../../../../administration/referentiel/service/referentiel.service';
+import { EtatLibelle } from '../../../../../core/constants/etat-libelle';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { ConfirmationDialogModalComponent } from '../../../../../core/components/confirmation-dialog-modal/confirmation-dialog-modal.component';
 
 declare const pdfMake: any;
 
 @Component({
   selector: 'app-details-facture',
   standalone: true,
-  imports: [ReactiveFormsModule, FormsModule, RouterLink, DecimalPipe, DatePipe],
+  imports: [ReactiveFormsModule, FormsModule, RouterLink, DecimalPipe, DatePipe, TitleCasePipe],
   templateUrl: './details-facture.component.html',
   styleUrls: ['./details-facture.component.css']
 })
@@ -34,12 +37,18 @@ export class DetailsFactureComponent implements OnInit {
   montantRemise: any;
   montantInitial: any;
   parametresEtablissement: ParametresEtablissement = {};
+  libelleEtat = EtatLibelle;
 
   logoUrl: string = '';
 
   showPaiementModal: boolean = false;
   paiementForm!: FormGroup;
   moyenPayementList: MoyenPaiement[] = [];
+
+  actionForm!: FormGroup;
+  modalActionLabel: string = '';
+  targetEtatCode: string = '';
+  isMotifRequired: boolean = false;
 
   private readonly comptabiliteResource = inject(ComptabiliteResourceService);
   private readonly referentielService = inject(ReferentielService);
@@ -49,11 +58,18 @@ export class DetailsFactureComponent implements OnInit {
   private readonly formBuilder = inject(FormBuilder);
   private readonly referentielResource = inject(ReferentielResourceService);
   private readonly toastService = inject(ToastrService);
+  private readonly modalService = inject(NgbModal);
 
   constructor(
   ) {
     this.factureId = this.activeRoute.snapshot.params['id'];
     this.initPaiementForm(null);
+  }
+
+    initActionForm() {
+    this.actionForm = this.formBuilder.group({
+      motifAnnulation: ['']
+    });
   }
 
   ngOnInit(): void {
@@ -437,9 +453,94 @@ export class DetailsFactureComponent implements OnInit {
     }
   }
 
+
   formatMontant(value: number): string {
     return `${value?.toString()} FCFA`;
   }
+
+   openEtatModal(content: any, action: 'confirmer' | 'rejeter', etatCode: string): void {
+    this.modalActionLabel = action;
+    this.targetEtatCode = etatCode;
+
+    this.isMotifRequired = ['annuler', 'dépublier'].includes(action);
+
+    if (!this.actionForm) {
+      this.initActionForm();
+    }
+
+    const motifControl = this.actionForm.get('motifAnnulation');
+
+    if (this.isMotifRequired) {
+      motifControl?.setValidators([Validators.required, Validators.minLength(5)]);
+    } else {
+      motifControl?.clearValidators();
+    }
+    motifControl?.updateValueAndValidity();
+
+    this.actionForm.reset();
+
+    this.modalService.open(content, {
+      centered: true,
+      backdrop: 'static',
+      size: 'md'
+    }).result.then(
+      (result) => {
+        if (result === 'confirm') {
+          const payload = {
+            nouvelEtatCode: this.targetEtatCode,
+            motifAnnulation: this.actionForm.value.motifAnnulation || null
+          };
+          this.changerEtat(action, this.factureId!, payload);
+        }
+      },
+      () => { }
+    );
+  }
+
+  changerEtat(action: string, evalId: number, payload: any) {
+    this.comptabiliteResource.changeEtatResource('comptabilite/facture', evalId, payload).subscribe({
+      next: (data: any) => {
+        const successMessages: { [key: string]: string } = {
+          confirmer: `La facture a été confirmée avec succès.`,
+          rejeter: `La facture a été rejetée avec succès.`,
+        };
+        this.toastService.success('Succès', successMessages[action] || 'Action effectuée.');
+        this.getDetailsFacture(this.factureId!);
+      },
+      error: (err: any) => {
+        this.toastService.error('Erreur', 'Impossible de modifier l\'état : ' + (err.error?.message || err.message));
+      }
+    });
+  }
+
+    openConfirmationDialog(action: 'confirmer' | 'rejeter'): void {
+      const modalRef = this.modalService.open(ConfirmationDialogModalComponent, {
+        centered: true,
+        backdrop: 'static',
+      });
+  
+      const titles: { [key: string]: string } = {
+        valider: 'Confirmer la validation',
+      };
+  
+      const messages: { [key: string]: string } = {
+        valider: 'Êtes-vous sûr de vouloir valider cette facture ?',
+      };
+      const payload = null;
+  
+      modalRef.componentInstance.title = titles[action];
+      modalRef.componentInstance.message = messages[action];
+      modalRef.componentInstance.btnOkText = 'Oui';
+      modalRef.componentInstance.btnCancelText = 'Non';
+  
+      modalRef.result
+        .then((result) => {
+          if (result) {
+            this.changerEtat(action, this.factureId!, payload);
+          }
+        })
+        .catch(() => { });
+    }
 
   getTotalMontantFacture(): string {
     const total = this.detailsFacture?.detailsLigneFactureDTOS

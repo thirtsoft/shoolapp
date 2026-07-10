@@ -1,0 +1,602 @@
+<div class="page-wrapper">
+  <div class="content container-fluid">
+    <div class="page-header">
+      <div class="row align-items-center">
+        <div class="col-sm-7 col-auto">
+          <h3 class="page-title">{{ title }}</h3>
+          <p class="text-muted mt-1 mb-0">
+            <i class="fas fa-user-graduate me-1"></i> Inscription d'un élève pour l'année scolaire
+          </p>
+        </div>
+        <div class="col-sm-5 col-auto text-end">
+          <span class="badge badge-primary">
+            @if (!isEdit) {
+              Nouvelle inscription
+            } @else {
+              Modification
+            }
+          </span>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-body p-4 p-md-5">
+        <div class="step-indicator">
+          <div class="step active">
+            <span class="step-number">1</span>
+            <span class="step-label">Inscription</span>
+          </div>
+          <div class="step-line"></div>
+          <div class="step">
+            <span class="step-number">2</span>
+            <span class="step-label">Confirmation</span>
+          </div>
+        </div>
+
+        <form [formGroup]="inscriptionFormGroup" (ngSubmit)="ajouterEditInscription()">
+          <input type="hidden" formControlName="id" />
+
+          <div class="mb-4">
+            <div class="form-group">
+              <label class="form-label">
+                Élève <span class="text-danger">*</span>
+                <i class="fas fa-user-graduate ms-1 text-muted"></i>
+              </label>
+
+              <div class="autocomplete-container" (click)="$event.stopPropagation()">
+                <div class="input-group">
+                  <span class="input-group-text">
+                    <i class="fas fa-search"></i>
+                  </span>
+                  <input
+                    type="text"
+                    class="form-control"
+                    [class.is-invalid]="
+                      inscriptionFormGroup.get('eleveId')?.invalid &&
+                      inscriptionFormGroup.get('eleveId')?.touched
+                    "
+                    [(ngModel)]="searchTerm"
+                    [ngModelOptions]="{ standalone: true }"
+                    (input)="onSearchInput($event)"
+                    (focus)="searchTerm && searchTerm.length >= 2 && (showDropdown = true)"
+                    placeholder="Rechercher par nom, prénom ou matricule... (min. 2 caractères)"
+                    autocomplete="off"
+                  />
+                  @if (searchTerm) {
+                    <button
+                      class="btn btn-outline-secondary py-0 px-3"
+                      type="button"
+                      (click)="
+                        searchTerm = '';
+                        selectedEleveInfo = null;
+                        inscriptionFormGroup.patchValue({ eleveId: '' })
+                      "
+                    >
+                      <i class="fas fa-times"></i>
+                    </button>
+                  }
+                </div>
+
+                @if (showDropdown) {
+                  <div class="dropdown-results">
+                    @if (isLoading) {
+                      <div class="dropdown-item text-center text-muted">
+                        <i class="fas fa-spinner fa-spin me-2"></i>Recherche...
+                      </div>
+                    }
+
+                    @if (!isLoading && filteredEleves.length === 0) {
+                      <div class="dropdown-item text-center text-muted">
+                        <i class="fas fa-user-slash me-2"></i>Aucun élève trouvé
+                      </div>
+                    }
+
+                    @for (eleve of filteredEleves; track eleve.id) {
+                      <button type="button" class="dropdown-item" (click)="selectEleve(eleve)">
+                        <div class="d-flex justify-content-between align-items-center">
+                          <div>
+                            <strong>{{ eleve.prenom }} {{ eleve.nom }}</strong>
+                            <div class="small text-muted flex-wrap d-flex gap-1 mt-1">
+                              <span class="badge bg-secondary">#{{ eleve.id }}</span>
+                              @if (eleve.matricule) {
+                                <span class="badge bg-info">{{ eleve.matricule }}</span>
+                              }
+                              @if (eleve.dateNaissance) {
+                                <span>
+                                  Né(e) le : {{ eleve.dateNaissance | date: 'dd/MM/yyyy' }}
+                                </span>
+                              }
+                            </div>
+                          </div>
+                          <i class="fas fa-chevron-right text-muted"></i>
+                        </div>
+                      </button>
+                    }
+                  </div>
+                }
+              </div>
+
+              <input type="hidden" formControlName="eleveId" />
+
+              @if (selectedEleveInfo) {
+                <div class="mt-2 p-2 bg-light rounded">
+                  <div class="d-flex align-items-center">
+                    <div class="me-2">
+                      <i class="fas fa-check-circle text-success"></i>
+                    </div>
+                    <div>
+                      <strong>Élève sélectionné :</strong> {{ selectedEleveInfo.prenom }}
+                      {{ selectedEleveInfo.nom }}
+                      @if (selectedEleveInfo.matricule) {
+                        <span class="text-muted ms-2">
+                          (Matricule: {{ selectedEleveInfo.matricule }})
+                        </span>
+                      }
+                    </div>
+                  </div>
+                </div>
+              }
+
+              @if (
+                inscriptionFormGroup.get('eleveId')?.invalid &&
+                inscriptionFormGroup.get('eleveId')?.touched
+              ) {
+                <small class="form-text text-danger d-block mt-1"
+                  >Veuillez sélectionner un élève</small
+                >
+              }
+            </div>
+          </div>
+
+          <div class="row g-3 mb-4">
+            <div class="col-md-6">
+              <label class="form-label">
+                Classe <span class="text-danger">*</span>
+                <i class="fas fa-chalkboard-user ms-1 text-muted"></i>
+              </label>
+              <select class="form-select" formControlName="classeId" required>
+                <option value="" disabled selected>— Sélectionnez une classe —</option>
+                @for (classItem of classes; track classItem.id) {
+                  <option [value]="classItem.id">{{ classItem.libelle }}</option>
+                }
+              </select>
+              @if (
+                inscriptionFormGroup.get('classeId')?.invalid &&
+                inscriptionFormGroup.get('classeId')?.touched
+              ) {
+                <small class="form-text text-danger d-block mt-1"
+                  >Veuillez sélectionner une classe</small
+                >
+              }
+            </div>
+
+            <div class="col-md-6">
+              <label class="form-label">
+                Année scolaire <span class="text-danger">*</span>
+                <i class="fas fa-calendar-alt ms-1 text-muted"></i>
+              </label>
+              <select class="form-select" formControlName="anneeScolaireId" required>
+                <option value="" disabled selected>— Sélectionnez une année scolaire —</option>
+                @for (annee of anneeScolaires; track annee.id) {
+                  <option [value]="annee.id">{{ annee.libelle }}</option>
+                }
+              </select>
+              @if (
+                inscriptionFormGroup.get('anneeScolaireId')?.invalid &&
+                inscriptionFormGroup.get('anneeScolaireId')?.touched
+              ) {
+                <small class="form-text text-danger d-block mt-1"
+                  >Veuillez sélectionner une année scolaire</small
+                >
+              }
+            </div>
+          </div>
+
+          <!-- SECTION MONTANTS -->
+          <div class="row g-3 mb-4">
+            <div class="col-md-6">
+              <label class="form-label">
+                Frais de scolarité <span class="text-danger">*</span>
+                <i class="fas fa-money-bill-wave ms-1 text-muted"></i>
+                @if (chargement()) {
+                  <i class="fas fa-spinner fa-spin ms-2 text-primary small"></i>
+                }
+              </label>
+              <div class="input-group">
+                <span class="input-group-text bg-light text-muted">CFA</span>
+                <input
+                  type="text"
+                  class="form-control bg-light fw-bold text-dark"
+                  [value]="
+                    inscriptionFormGroup.get('montantInscription')?.value
+                      ? (+inscriptionFormGroup.get('montantInscription')?.value).toLocaleString(
+                          'fr-FR'
+                        )
+                      : ''
+                  "
+                  placeholder="Sélectionnez classe/année..."
+                  readonly
+                />
+              </div>
+              <input type="hidden" formControlName="montantInscription" required />
+
+              @if (erreur()) {
+                <small class="form-text text-danger d-block mt-1">{{ erreur() }}</small>
+              }
+            </div>
+
+            <div class="col-md-6">
+              <label class="form-label">
+                Montant reçu / versé <span class="text-danger">*</span>
+                <i class="fas fa-coins ms-1 text-muted"></i>
+              </label>
+              <div class="input-group">
+                <span class="input-group-text bg-light text-muted">CFA</span>
+                <input
+                  type="number"
+                  class="form-control fw-bold"
+                  formControlName="montantRecu"
+                  placeholder="Saisir le montant versé..."
+                  required
+                />
+              </div>
+
+              @if (inscriptionFormGroup.get('montantRecu')?.hasError('montantDepasse')) {
+                <small class="form-text text-danger d-block mt-1 fw-bold">
+                  <i class="fas fa-exclamation-triangle me-1"></i> Impossible : le montant saisi est
+                  supérieure aux frais dus.
+                </small>
+              }
+
+              @if (isMontantInsuffisant()) {
+                <div
+                  class="alert alert-warning py-1 px-2 mt-2 border-0 rounded-3 mb-0"
+                  style="font-size: 0.8rem"
+                >
+                  <i class="fas fa-hand-holding-usd me-1 text-warning"></i>
+                  Paiement partiel : Reste à recouvrer :
+                  <strong>{{ getReliquat() | number: '1.0-0' : 'fr' }} CFA</strong>
+                </div>
+              }
+
+              @if (
+                inscriptionFormGroup.get('montantRecu')?.invalid &&
+                inscriptionFormGroup.get('montantRecu')?.touched &&
+                !inscriptionFormGroup.get('montantRecu')?.hasError('montantDepasse')
+              ) {
+                <small class="form-text text-danger d-block mt-1"
+                  >Le montant reçu est obligatoire</small
+                >
+              }
+            </div>
+          </div>
+
+          <!-- SECTION MOYEN DE PAIEMENT & RÉFÉRENCE -->
+          <div class="row g-3 mb-4">
+            <div class="col-md-6">
+              <label class="form-label">
+                Mode de paiement <span class="text-danger">*</span>
+                <i class="fas fa-credit-card ms-1 text-muted"></i>
+              </label>
+              <div class="input-group">
+                <span class="input-group-text bg-light text-muted">
+                  <i class="fas fa-wallet"></i>
+                </span>
+                <select
+                  class="form-select"
+                  formControlName="moyenPaiement"
+                  style="border-top-left-radius: 0; border-bottom-left-radius: 0"
+                  required
+                >
+                  <option value="" disabled selected>— Sélectionnez un moyen —</option>
+                  @for (moyen of moyenPaiementList; track moyen.id) {
+                    <option [value]="moyen.id">{{ moyen.libelle }}</option>
+                  }
+                </select>
+              </div>
+              @if (
+                inscriptionFormGroup.get('moyenPaiement')?.invalid &&
+                inscriptionFormGroup.get('moyenPaiement')?.touched
+              ) {
+                <small class="form-text text-danger d-block mt-1"
+                  >Veuillez sélectionner un moyen de paiement</small
+                >
+              }
+            </div>
+
+            <!-- Condition de visibilité alignée proprement à droite ou invisible selon l'état -->
+            <div class="col-md-6">
+              @if (doitAfficherReference()) {
+                <div class="animate-fadeIn">
+                  <label class="form-label">
+                    Référence de transaction <span class="text-danger">*</span>
+                    <i class="fas fa-receipt ms-1 text-muted"></i>
+                  </label>
+                  <div class="input-group">
+                    <span class="input-group-text bg-light text-muted">
+                      <i class="fas fa-hashtag"></i>
+                    </span>
+                    <input
+                      type="text"
+                      class="form-control fw-bold"
+                      style="border-top-left-radius: 0; border-bottom-left-radius: 0"
+                      formControlName="reference"
+                      placeholder="N° de transaction, chèque ou virement..."
+                    />
+                  </div>
+                  @if (
+                    inscriptionFormGroup.get('reference')?.invalid &&
+                    inscriptionFormGroup.get('reference')?.touched
+                  ) {
+                    <small class="form-text text-danger d-block mt-1"
+                      >La référence est obligatoire pour ce type de paiement</small
+                    >
+                  }
+                </div>
+              }
+            </div>
+          </div>
+
+          <!-- RÉCAPITULATIF -->
+          @if (
+            inscriptionFormGroup.get('eleveId')?.value &&
+            inscriptionFormGroup.get('classeId')?.value &&
+            inscriptionFormGroup.get('anneeScolaireId')?.value
+          ) {
+            <div class="recap-card p-3 mb-4">
+              <div class="d-flex align-items-center gap-3">
+                <div class="recap-icon">
+                  <i class="fas fa-clipboard-list"></i>
+                </div>
+                <div class="recap-content">
+                  <span class="recap-label">Récapitulatif de l'inscription</span>
+                  <span class="recap-value">
+                    Inscription de <strong>{{ getSelectedEleveName() }}</strong> en classe de
+                    <strong>{{ getSelectedClasseName() }}</strong> pour l'année
+                    <strong>{{ getSelectedAnneeName() }}</strong>
+                  </span>
+                </div>
+              </div>
+            </div>
+          }
+
+          <!-- BOUTONS ACTIONS -->
+          <div class="form-actions pt-2">
+            <button type="button" class="btn btn-secondary" (click)="goBack()">
+              <i class="fas fa-times me-2"></i>Annuler
+            </button>
+            <button type="submit" class="btn btn-primary" [disabled]="inscriptionFormGroup.invalid">
+              <i class="fas fa-save me-2"></i>
+              @if (!isEdit) {
+                Enregistrer l'inscription
+              } @else {
+                Modifier l'inscription
+              }
+            </button>
+          </div>
+
+          <div class="alert-help mt-4" role="alert">
+            <i class="fas fa-info-circle me-2"></i>
+            <span
+              >L'inscription permet à l'élève d'être officiellement enregistré pour l'année scolaire
+              sélectionnée.</span
+            >
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- <div class="page-wrapper" (click)="showDropdown = false">
+  <div class="content container-fluid">
+    <div class="page-header">
+      <div class="row align-items-center">
+        <div class="col-sm-7 col-auto">
+          <h3 class="page-title">{{ title }}</h3>
+          <p class="text-muted mt-1 mb-0">
+            <i class="fas fa-user-graduate me-1"></i> Réinscription d'un élève existant
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-body p-4 p-md-5">
+
+        <div class="d-flex justify-content-center align-items-center mb-5">
+          <div class="text-center" style="width: 150px;">
+            <div class="rounded-circle d-flex align-items-center justify-content-center mx-auto mb-2"
+                 [style.width.px]="40" [style.height.px]="40"
+                 [style.background-color]="currentStep === 1 ? '#1e3a8a' : '#cbd5e1'"
+                 [style.color]="'white'" style="font-weight: bold; font-size: 16px;">
+              1
+            </div>
+            <div [style.color]="currentStep === 1 ? '#1e3a8a' : '#64748b'" [style.font-weight]="currentStep === 1 ? '600' : 'normal'" style="font-size: 14px;">
+              Orientation & Classe
+            </div>
+          </div>
+          
+          <div style="width: 80px; height: 2px; background-color: #cbd5e1; margin-top: -20px;"></div>
+          
+          <div class="text-center" style="width: 150px;">
+            <div class="rounded-circle d-flex align-items-center justify-content-center mx-auto mb-2"
+                 [style.width.px]="40" [style.height.px]="40"
+                 [style.background-color]="currentStep === 2 ? '#1e3a8a' : '#e2e8f0'"
+                 [style.color]="currentStep === 2 ? 'white' : '#94a3b8'"
+                 style="font-weight: bold; font-size: 16px;">
+              2
+            </div>
+            <div [style.color]="currentStep === 2 ? '#1e3a8a' : '#94a3b8'" [style.font-weight]="currentStep === 2 ? '600' : 'normal'" style="font-size: 14px;">
+              Paiement & Validation
+            </div>
+          </div>
+        </div>
+
+        <form [formGroup]="inscriptionFormGroup" (ngSubmit)="validerEtapeFinale()">
+          <input type="hidden" formControlName="id" />
+
+          @if (currentStep === 1) {
+            <div>
+              <div class="form-group mb-4" style="position: relative;">
+                <label class="form-label text-dark fw-bold">Élève à réinscrire <span class="text-danger">*</span></label>
+                <div class="input-group" (click)="$event.stopPropagation()">
+                  <span class="input-group-text bg-white border-end-0"><i class="fas fa-search text-muted"></i></span>
+                  <input
+                    type="text"
+                    class="form-control border-start-0 ps-0"
+                    [(ngModel)]="searchTerm"
+                    [ngModelOptions]="{ standalone: true }"
+                    (input)="onSearchInput($event)"
+                    (focus)="searchTerm.length >= 2 && (showDropdown = true)"
+                    placeholder="Rechercher par nom, prénom ou matricule..."
+                    autocomplete="off"
+                  />
+                  @if (searchTerm) {
+                    <button class="btn btn-outline-secondary border-start-0" type="button" (click)="clearSearch()">
+                      <i class="fas fa-times"></i>
+                    </button>
+                  }
+                </div>
+
+                @if (showDropdown) {
+                  <div class="dropdown-results shadow-sm border rounded-3" style="position: absolute; z-index: 1050; width: 100%; background: white; max-height: 280px; overflow-y: auto; margin-top: 2px;">
+                    @if (isLoading) {
+                      <div class="p-3 text-center text-muted"><i class="fas fa-spinner fa-spin me-2"></i>Recherche en cours...</div>
+                    }
+                    @if (!isLoading && filteredEleves.length === 0) {
+                      <div class="p-3 text-center text-muted"><i class="fas fa-user-slash me-2"></i>Aucun élève trouvé</div>
+                    }
+                    @for (eleve of filteredEleves; track eleve.id) {
+                      <button type="button" class="list-group-item list-group-item-action border-bottom p-3 text-start position-relative d-flex justify-content-between align-items-center" (click)="selectEleve(eleve); $event.stopPropagation()">
+                        <div>
+                          <div class="fw-bold text-dark" style="font-size: 15px;">{{ eleve.prenom }} {{ eleve.nom }}</div>
+                          <div class="text-muted mt-1" style="font-size: 12px;">
+                            <span class="me-3">#{{ eleve.id }}</span>
+                            <span class="me-3 fw-bold text-secondary">{{ eleve.matricule || 'N/A' }}</span>
+                            @if (eleve.dateNaissance) {
+                              <span>Date naissance : {{ eleve.dateNaissance }}</span>
+                            }
+                          </div>
+                        </div>
+                        <i class="fas fa-chevron-right text-muted pe-2" style="font-size: 14px;"></i>
+                      </button>
+                    }
+                  </div>
+                }
+                <input type="hidden" formControlName="eleveId" />
+              </div>
+
+              @if (selectedEleveInfo) {
+                <div class="alert alert-info border-0 shadow-sm d-flex align-items-center mb-4" style="background-color: #f0fdf4; color: #166534;">
+                  <i class="fas fa-check-circle me-2 fs-5"></i>
+                  <span>Élève sélectionné avec succès : <strong>{{ selectedEleveInfo.prenom }} {{ selectedEleveInfo.nom }}</strong></span>
+                </div>
+              }
+
+              <div class="row">
+                <div class="col-md-6 form-group mb-4">
+                  <label class="form-label text-dark fw-bold">Nouvelle Année scolaire <span class="text-danger">*</span></label>
+                  <select class="form-select" formControlName="anneeScolaireId">
+                    <option value="" disabled>— Sélectionnez —</option>
+                    @for (annee of anneeScolaires; track annee.id) {
+                      <option [value]="annee.id">{{ annee.libelle }}</option>
+                    }
+                  </select>
+                </div>
+
+                <div class="col-md-6 form-group mb-4">
+                  <label class="form-label text-dark fw-bold">Cycle <span class="text-danger">*</span></label>
+                  <select class="form-select" formControlName="cycleId" (change)="onCycleChange()">
+                    <option value="" disabled>— Sélectionnez le cycle —</option>
+                    @for (c of cycles; track c.id) {
+                      <option [value]="c.id">{{ c.libelle }}</option>
+                    }
+                  </select>
+                </div>
+
+                <div class="col-md-6 form-group mb-4">
+                  <label class="form-label text-dark fw-bold">Niveau <span class="text-danger">*</span></label>
+                  <select class="form-select" formControlName="niveauId" (change)="onNiveauChange()">
+                    <option value="" disabled>— Sélectionnez le niveau —</option>
+                    @for (n of filteredNiveaux; track n.id) {
+                      <option [value]="n.id">{{ n.libelle }}</option>
+                    }
+                  </select>
+                </div>
+
+                <div class="col-md-6 form-group mb-4">
+                  <label class="form-label text-dark fw-bold">Classe d'affectation <span class="text-danger">*</span></label>
+                  <select class="form-select" formControlName="classeId" (change)="onClasseSelectionnee()">
+                    <option value="" disabled>— Sélectionnez la classe (ex: 3ème A) —</option>
+                    @for (classItem of filteredClasses; track classItem.id) {
+                      <option [value]="classItem.id">{{ classItem.libelle }}</option>
+                    }
+                  </select>
+                </div>
+              </div>
+
+              <div class="mt-4">
+                <button type="button" class="btn w-100 text-white fw-bold py-3" 
+                        style="background-color: #7c8ba1; border: none; border-radius: 6px; font-size: 16px;"
+                        [disabled]="!inscriptionFormGroup.get('eleveId')?.value || !inscriptionFormGroup.get('classeId')?.value" 
+                        (click)="passerALetapeFinanciere()">
+                  Suivant : Facturation <i class="fas fa-arrow-right ms-2"></i>
+                </button>
+              </div>
+            </div>
+          }
+
+          @if (currentStep === 2) {
+            <div>
+
+              <div class="row mb-4">
+                <div class="col-md-6 mb-3">
+                  <div class="p-3 border rounded shadow-sm text-center bg-white">
+                    <small class="text-muted uppercase fw-bold d-block mb-1" style="font-size: 11px; letter-spacing: 0.5px;">FRAIS DE RÉINSCRIPTION</small>
+                    <span class="fs-3 fw-bold text-dark">{{ montantInscriptionParDefaut | number:'1.0-0' }} <small style="font-size: 14px;">CFA</small></span>
+                  </div>
+                </div>
+                <div class="col-md-6 mb-3">
+                  <div class="p-3 border rounded shadow-sm text-center bg-white">
+                    <small class="text-muted uppercase fw-bold d-block mb-1" style="font-size: 11px; letter-spacing: 0.5px;">MENSUALITÉ PAR DÉFAUT</small>
+                    <span class="fs-3 fw-bold text-primary">{{ montantMensualiteParDefaut | number:'1.0-0' }} <small style="font-size: 14px; color: #64748b;">CFA / mois</small></span>
+                  </div>
+                </div>
+              </div>
+
+              <div class="row">
+                <div class="col-md-6 form-group mb-4">
+                  <label class="form-label text-dark fw-bold">Montant perçu au guichet <span class="text-danger">*</span></label>
+                  <div class="input-group">
+                    <span class="input-group-text bg-light fw-bold">CFA</span>
+                    <input type="number" class="form-control form-control-lg text-success fw-bold" formControlName="montantEncaisse" />
+                  </div>
+                </div>
+
+                <div class="col-md-6 form-group mb-4">
+                  <label class="form-label text-dark fw-bold">Mode de règlement <span class="text-danger">*</span></label>
+                  <select class="form-select form-select-lg" formControlName="modePaiement">
+                    <option value="ESPECE">Espèces</option>
+                    <option value="ORANGE_MONEY">Orange Money</option>
+                    <option value="WAVE">Wave</option>
+                  </select>
+                </div>
+              </div>
+
+              <div class="form-actions mt-5 d-flex justify-content-between">
+                <button type="button" class="btn btn-outline-secondary px-4 py-2" (click)="currentStep = 1">
+                  <i class="fas fa-arrow-left me-2"></i>Retour
+                </button>
+                <button type="submit" class="btn btn-success px-5 py-2 fw-bold" [disabled]="inscriptionFormGroup.invalid">
+                  <i class="fas fa-check-circle me-2"></i>Valider la Réinscription
+                </button>
+              </div>
+            </div>
+          }
+        </form>
+      </div>
+    </div>
+  </div>
+</div> -->

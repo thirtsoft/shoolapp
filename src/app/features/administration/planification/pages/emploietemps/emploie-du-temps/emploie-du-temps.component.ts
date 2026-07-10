@@ -24,12 +24,11 @@ export class EmploieDuTempsComponent implements OnInit {
   readonly String = String;
 
   currentPage = 0;
-  pageSize = 5;
+  pageSize = 10;
   totalElements = 0;
-  tableSizes = [5, 10, 20, 50, 100];
+  tableSizes = [10, 20, 50, 100];
 
-  classeList: any[] = [];
-  semestreList: any[] = [];
+  anneeScolaireList: any[] = [];
 
   tableFilters: IFilterConfig[] = [];
   activeFilters: any = {};
@@ -41,13 +40,12 @@ export class EmploieDuTempsComponent implements OnInit {
   ngOnInit(): void {
     this.chargerLesEmploiDuTemps();
   }
-  
+
 
   async chargerLesEmploiDuTemps() {
     try {
       await Promise.all([
-        this.getClassList(),
-        this.getSemestreList()
+        this.getAnneeScolaireList(),
       ]);
       this.initialisationDesFiltres();
       this.chargerLesDonnees(false);
@@ -56,23 +54,11 @@ export class EmploieDuTempsComponent implements OnInit {
     }
   }
 
-  getClassList(): Promise<any[]> {
+  getAnneeScolaireList(): Promise<any[]> {
     return new Promise((resolve, reject) => {
-      this.referentielService.getAllClasses().subscribe({
+      this.referentielService.getAllAnneeScolaires().subscribe({
         next: (data) => {
-          this.classeList = data;
-          resolve(data);
-        },
-        error: (err) => reject(err)
-      });
-    });
-  }
-
-  getSemestreList(): Promise<any[]> {
-    return new Promise((resolve, reject) => {
-      this.referentielService.getAllSemestres().subscribe({
-        next: (data) => {
-          this.semestreList = data;
+          this.anneeScolaireList = data;
           resolve(data);
         },
         error: (err) => reject(err)
@@ -83,21 +69,18 @@ export class EmploieDuTempsComponent implements OnInit {
   initialisationDesFiltres() {
     this.tableFilters = [
       {
-        key: 'classe',
-        label: 'Classe',
-        type: 'select',
-        options: this.classeList.map(c => ({
-          value: c.id,
-          label: c.libelle
-        })),
+        key: 'titre',
+        label: 'Titre',
+        type: 'text',
+        placeholder: 'Rechercher par titre ....'
       },
       {
-        key: 'semestre',
-        label: 'Semestre',
+        key: 'anneeScolaire',
+        label: 'Année scolaire',
         type: 'select',
-        options: this.semestreList.map(c => ({
-          value: c.id,
-          label: c.libelle
+        options: this.anneeScolaireList.map(a => ({
+          value: a.id,
+          label: a.libelle
         })),
       },
     ];
@@ -133,11 +116,11 @@ export class EmploieDuTempsComponent implements OnInit {
       next: (response) => {
         this.emploidutempsData = response.data?.content || [];
         this.totalElements = response.data?.totalElements || 0;
-
         this.columns = [
-          { key: 'libelleClasse', header: 'Classe' },
-          { key: 'libelleSemestre', header: 'Semestre' },
+          { key: 'titre', header: 'Titre' },
+          { key: 'libelleAnneeScolaire', header: 'Année scolaire' },
           { key: 'libelleSemaine', header: 'Semaine' },
+          { key: 'createdDate', header: 'Date création' },
         ];
         this.emploidutempsData = this.emploidutempsData.map((item: any) => ({
           ...item,
@@ -154,12 +137,12 @@ export class EmploieDuTempsComponent implements OnInit {
   construireParametreFiltre(): any {
     const filtreObj: any = {};
 
-    if (this.activeFilters.classe) {
-      filtreObj.classe = this.activeFilters.classe;
+    if (this.activeFilters.titre) {
+      filtreObj.titre = this.activeFilters.titre;
     }
 
-    if (this.activeFilters.semestre) {
-      filtreObj.semestre = this.activeFilters.semestre;
+    if (this.activeFilters.anneeScolaire) {
+      filtreObj.anneeScolaire = this.activeFilters.anneeScolaire;
     }
     return Object.keys(filtreObj).length > 0 ? filtreObj : null;
   }

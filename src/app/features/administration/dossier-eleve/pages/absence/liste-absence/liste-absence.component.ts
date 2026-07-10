@@ -1,5 +1,5 @@
 import { Component, DestroyRef, inject, OnInit } from '@angular/core';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { firstValueFrom } from 'rxjs';
 import { GenericTableDossierComponent } from '../../../../../../core/generic/generic-table-dossier/generic-table-dossier.component';
 import { IFilterConfig } from '../../../../../../core/models/filtreconfiguration/FiltreConfiguration';
 import { CommonService } from '../../../../../../core/services/common.service';
@@ -30,9 +30,9 @@ export class ListeAbsenceComponent implements OnInit {
   deleteEndpoint = "attendRecord";
 
   currentPage = 0;
-  pageSize = 5;
+  pageSize = 10;
   totalElements = 0;
-  tableSizes = [5, 10, 20, 50, 100];
+  tableSizes = [10, 20, 50, 100];
 
   anneesScolairesList: any[] = [];
   semestreList: any[] = [];
@@ -60,9 +60,8 @@ export class ListeAbsenceComponent implements OnInit {
 
   async chargerLesAttendRecordsEleve() {
     try {
-      await Promise.all([
-        this.chargerLesDonneesFiltre(),
-      ]);
+      await this.chargerLesDonneesFiltre();
+
       this.initialisationDesFiltres();
       this.chargerLesDonnees(false);
     } catch (error) {
@@ -70,34 +69,26 @@ export class ListeAbsenceComponent implements OnInit {
     }
   }
 
-  private chargerLesDonneesFiltre() {
-    this.referentielResourceService.getResourceList('sessionsemestre').pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
-      next: (data: any) => {
-        this.sessionSemestreList = data;
-      }
-    });
+  private async chargerLesDonneesFiltre(): Promise<void> {
+    try {
+      const [sessionSemestres, classes, anneesScolaires, mois, annees] = await Promise.all([
+        firstValueFrom(this.referentielResourceService.getResourceList('sessionsemestre')),
+        firstValueFrom(this.referentielResourceService.getResourceList('classe')),
+        firstValueFrom(this.referentielResourceService.getResourceList('anneescolaire')),
+        firstValueFrom(this.commonService.getAllMois()),
+        firstValueFrom(this.commonService.getAllAnnees())
+      ]);
 
-    this.referentielResourceService.getResourceList('classe').pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
-      next: (data: any) => this.classeList = data
-    });
-
-    this.referentielResourceService.getResourceList('anneescolaire').pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
-      next: (data: any) => this.anneesScolairesList = data
-    });
-
-    this.commonService.getAllMois().pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
-      next: (data: any) => this.moisList = data
-    });
-
-    this.commonService.getAllAnnees().pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
-      next: (data: any) => this.anneeList = data
-    });
+      this.sessionSemestreList = sessionSemestres || [];
+      this.classeList = classes || [];
+      this.anneesScolairesList = anneesScolaires || [];
+      this.moisList = mois || [];
+      this.anneeList = annees || [];
+    } catch (error) {
+      console.error('Erreur lors du chargement des données de filtre:', error);
+      throw error;
+    }
   }
-
-
-
-
-
 
   chargerLesDonnees(useFilterApi: boolean) {
     this.isLoading = true;
@@ -157,12 +148,12 @@ export class ListeAbsenceComponent implements OnInit {
         placeholder: 'Rechercher un élève...'
       },
       {
-        key: 'semestre',
+        key: 'sessionSemestre',
         label: 'Semestre',
         type: 'select',
-        options: this.semestreList.map(c => ({
-          value: c.id,
-          label: c.libelle
+        options: this.sessionSemestreList.map(s => ({
+          value: s.id,
+          label: s.semestre
         })),
       },
 
@@ -213,8 +204,8 @@ export class ListeAbsenceComponent implements OnInit {
       filtreObj.nomPrenom = this.activeFilters.nomPrenom;
     }
 
-    if (this.activeFilters.semestre) {
-      filtreObj.semestre = this.activeFilters.semestre;
+    if (this.activeFilters.sessionSemestre) {
+      filtreObj.sessionSemestre = this.activeFilters.sessionSemestre;
     }
 
     if (this.activeFilters?.anneeScolaire) {

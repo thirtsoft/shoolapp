@@ -1,0 +1,411 @@
+<div class="page-wrapper">
+  <div class="content container-fluid">
+    <div class="page-header">
+      <div class="row align-items-center">
+        <div class="col-sm-12">
+          <h3 class="page-title">{{ title }}</h3>
+          <p class="text-muted mt-1 mb-0">
+            <i class="fas fa-dumbbell me-1"></i> Gestion des dépenses scolaires
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <div class="row mb-3">
+      <div class="col-sm-12">
+        <div class="badge-container">
+          <span class="badge" [class.badge-primary]="!isEdit" [class.badge-warning]="isEdit">
+            @if (!isEdit) {
+              <i class="fas fa-plus-circle me-1"></i> Nouvelle dépense
+            } @else {
+              <i class="fas fa-edit me-1"></i> Modification dépense
+            }
+          </span>
+        </div>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-12">
+        <div class="card">
+          <div class="card-body p-4 p-md-5">
+            <div class="step-indicator mb-4">
+              <div class="step active">
+                <span class="step-number">1</span>
+                <span class="step-label">Information</span>
+              </div>
+              <div class="step-line"></div>
+              <div class="step">
+                <span class="step-number">2</span>
+                <span class="step-label">Confirmation</span>
+              </div>
+            </div>
+
+            <form [formGroup]="depenseForm" novalidate>
+              <input type="hidden" formControlName="id" />
+
+              <div class="enseignement-item">
+                <div class="row form-row">
+                  <div class="col-lg-6 col-sm-12">
+                    <div class="form-group">
+                      <label class="form-label">
+                        Désignation <span class="text-danger">*</span>
+                        <i class="fas fa-tag ms-1 text-muted"></i>
+                      </label>
+                      <input
+                        type="text"
+                        class="form-control"
+                        [class.is-invalid]="isFieldInvalid('designation')"
+                        formControlName="designation"
+                        placeholder="Ex: Achat matériels"
+                        maxlength="255"
+                      />
+                      @if (isFieldInvalid('designation')) {
+                        <div class="invalid-feedback">
+                          <i class="fas fa-exclamation-circle me-1"></i>
+                          {{ getFieldErrorMessage('designation') }}
+                        </div>
+                      }
+                    </div>
+                  </div>
+
+                  <div class="col-lg-6 col-sm-12">
+                    <div class="form-group">
+                      <label class="form-label">
+                        Type dépense <span class="text-danger">*</span>
+                        <i class="fas fa-book ms-1 text-muted"></i>
+                      </label>
+                      <select
+                        class="form-select"
+                        [class.is-invalid]="isFieldInvalid('typeDepense')"
+                        formControlName="typeDepense"
+                      >
+                        <option [ngValue]="null" disabled>— Sélectionnez un type dépense —</option>
+                        @for (item of typeDepenseList; track item.id) {
+                          <option [ngValue]="item.id">
+                            {{ item.libelle }}
+                          </option>
+                        }
+                      </select>
+                      @if (isFieldInvalid('typeDepense')) {
+                        <div class="invalid-feedback">
+                          <i class="fas fa-exclamation-circle me-1"></i>
+                          {{ getFieldErrorMessage('typeDepense') }}
+                        </div>
+                      }
+                    </div>
+                  </div>
+                </div>
+
+                <div class="row form-row">
+                  <div class="col-lg-6 col-sm-12">
+                    <div class="form-group">
+                      <label class="form-label">
+                        Montant (FCFA) <span class="text-danger">*</span>
+                        <i class="fas fa-money-bill-wave ms-1 text-muted"></i>
+                      </label>
+                      <div class="input-group">
+                        <input
+                          type="text"
+                          class="form-control"
+                          [class.is-invalid]="isFieldInvalid('montantDepense')"
+                          [value]="formatMontant(depenseForm.get('montantDepense')?.value)"
+                          (input)="onMontantInput($event)"
+                          (blur)="onMontantBlur()"
+                          placeholder="Ex: 45 000"
+                          autocomplete="off"
+                        />
+                        <span class="input-group-text">FCFA</span>
+                      </div>
+                      @if (isFieldInvalid('montantDepense')) {
+                        <div class="invalid-feedback d-block">
+                          <i class="fas fa-exclamation-circle me-1"></i>
+                          {{ getFieldErrorMessage('montantDepense') }}
+                        </div>
+                      }
+                    </div>
+                  </div>
+
+                  <div class="col-lg-6 col-sm-12">
+                    <div class="form-group">
+                      <label class="form-label">
+                        Mode paiement <span class="text-danger">*</span>
+                        <i class="fas fa-credit-card ms-1 text-muted"></i>
+                      </label>
+                      <select
+                        class="form-select"
+                        [class.is-invalid]="isFieldInvalid('modePaiement')"
+                        formControlName="modePaiement"
+                      >
+                        <option [ngValue]="null" disabled>— Sélectionnez mode paiement —</option>
+                        @for (item of moyenPaiementList; track item.id) {
+                          <option [ngValue]="item.id">
+                            {{ item.libelle }}
+                          </option>
+                        }
+                      </select>
+                      @if (isFieldInvalid('modePaiement')) {
+                        <div class="invalid-feedback">
+                          <i class="fas fa-exclamation-circle me-1"></i>
+                          {{ getFieldErrorMessage('modePaiement') }}
+                        </div>
+                      }
+                    </div>
+                  </div>
+                </div>
+
+                <div class="row form-row">
+                  <div class="col-12">
+                    @if (shouldShowReference()) {
+                      <div class="animate-fadeIn">
+                        <div class="form-group">
+                          <label class="form-label">
+                            Référence de transaction <span class="text-danger">*</span>
+                            <i class="fas fa-receipt ms-1 text-muted"></i>
+                          </label>
+                          <input
+                            type="text"
+                            class="form-control fw-bold"
+                            [class.is-invalid]="isFieldInvalid('reference')"
+                            formControlName="reference"
+                            placeholder="N° de transaction, chèque ou virement..."
+                            maxlength="100"
+                          />
+                          @if (isFieldInvalid('reference')) {
+                            <div class="invalid-feedback">
+                              <i class="fas fa-exclamation-circle me-1"></i>
+                              {{ getFieldErrorMessage('reference') }}
+                            </div>
+                          }
+                        </div>
+                      </div>
+                    }
+                  </div>
+                </div>
+
+                <div class="row form-row">
+                  <div class="col-12">
+                    <div class="form-group">
+                      <label class="form-label">
+                        <i class="fas fa-paperclip me-1"></i>
+                        Pièces jointes
+                        @if (!isEdit) {
+                          <span class="text-danger">*</span>
+                        }
+                      </label>
+
+                      @if (!isEdit) {
+                        <div class="upload-container">
+                          <label class="upload-button">
+                            <i class="fas fa-cloud-upload-alt me-2"></i>
+                            <input
+                              type="file"
+                              (change)="onFileSelected($event)"
+                              accept=".pdf,.doc,.docx,.xls,.xlsx,.jpg,.jpeg,.png,.gif,.bmp,.svg,.txt,.zip,.rar,.7z"
+                            />
+                            @if (!currentFile) {
+                              Choisir une pièce jointe
+                            } @else {
+                              Changer la pièce jointe
+                            }
+                          </label>
+                          <small class="text-muted d-block mt-2">
+                            Formats acceptés : PDF, Word, Excel, Images, Texte, Archives (max 2MB)
+                          </small>
+                        </div>
+
+                        @if (currentFile) {
+                          <div class="file-preview mt-3">
+                            <div class="file-item new-file">
+                              <img
+                                [src]="getFileIcon(currentFile.name)"
+                                alt="File icon"
+                                class="file-icon"
+                              />
+                              <div class="file-info">
+                                <span class="file-name" [title]="currentFile.name">
+                                  {{ currentFile.name | slice: 0 : 25 }}
+                                  @if (currentFile.name.length > 25) {
+                                    ...
+                                  }
+                                </span>
+                                <span class="file-status new">Fichier sélectionné</span>
+                              </div>
+                              <button
+                                type="button"
+                                class="btn btn-sm btn-outline-danger remove-button"
+                                (click)="removeCurrentFile()"
+                                title="Retirer le fichier"
+                              >
+                                <i class="fas fa-times"></i>
+                              </button>
+                            </div>
+                          </div>
+                        }
+                      }
+
+                      @if (isEdit) {
+                        <div class="file-preview mt-3">
+                          @if (hasExistingFile() && !currentFile) {
+                            <div class="file-item existing-file">
+                              <img
+                                alt="File icon"
+                                [src]="getFileIcon(depense?.piecesJointesDTO?.nomTechnique ?? '')"
+                                class="file-icon"
+                              />
+                              <div class="file-info">
+                                <span
+                                  class="file-name"
+                                  [title]="depense?.piecesJointesDTO?.nomFichier"
+                                >
+                                  {{
+                                    depense?.piecesJointesDTO?.nomFichier ?? 'Fichier'
+                                      | slice: 0 : 25
+                                  }}
+                                  @if ((depense?.piecesJointesDTO?.nomFichier?.length ?? 0) > 25) {
+                                    ...
+                                  }
+                                </span>
+                                <span class="file-status saved">Pièce jointe actuelle</span>
+                              </div>
+                              <div class="file-actions">
+                                <label class="btn btn-sm btn-outline-primary replace-button">
+                                  <i class="fas fa-exchange-alt me-1"></i> Remplacer
+                                  <input
+                                    type="file"
+                                    (change)="onFileSelected($event)"
+                                    accept=".pdf,.doc,.docx,.xls,.xlsx,.jpg,.jpeg,.png,.gif,.bmp,.svg,.txt,.zip,.rar,.7z"
+                                    hidden
+                                  />
+                                </label>
+                                <button
+                                  type="button"
+                                  class="btn btn-sm btn-outline-danger"
+                                  (click)="removeExistingFile()"
+                                  title="Supprimer la pièce jointe"
+                                >
+                                  <i class="fas fa-trash me-1"></i> Supprimer
+                                </button>
+                              </div>
+                            </div>
+                          }
+
+                          @if (!hasExistingFile() && !currentFile) {
+                            <div class="no-file-message">
+                              <i class="fas fa-info-circle me-2"></i>
+                              Aucune pièce jointe pour cette dépense.
+                              <label class="btn btn-sm btn-outline-primary ms-3 add-button">
+                                <i class="fas fa-plus me-1"></i> Ajouter une pièce jointe
+                                <input
+                                  type="file"
+                                  (change)="onFileSelected($event)"
+                                  accept=".pdf,.doc,.docx,.xls,.xlsx,.jpg,.jpeg,.png,.gif,.bmp,.svg,.txt,.zip,.rar,.7z"
+                                  hidden
+                                />
+                              </label>
+                            </div>
+                          }
+
+                          @if (currentFile) {
+                            <div class="file-item new-file">
+                              <img
+                                [src]="getFileIcon(currentFile.name)"
+                                alt="File icon"
+                                class="file-icon"
+                              />
+                              <div class="file-info">
+                                <span class="file-name" [title]="currentFile.name">
+                                  {{ currentFile.name | slice: 0 : 25 }}
+                                  @if (currentFile.name.length > 25) {
+                                    ...
+                                  }
+                                </span>
+                                <span class="file-status new">
+                                  @if (hasExistingFile()) {
+                                    Remplacera la pièce jointe actuelle
+                                  } @else {
+                                    Nouveau fichier à ajouter
+                                  }
+                                </span>
+                              </div>
+                              <div class="file-actions">
+                                <!-- Bouton pour uploader uniquement la pièce jointe -->
+                                <button
+                                  type="button"
+                                  class="btn btn-sm btn-success me-2"
+                                  (click)="uploadFileOnly()"
+                                  title="Mettre à jour la pièce jointe uniquement"
+                                >
+                                  <i class="fas fa-upload me-1"></i> Valider le fichier
+                                </button>
+                                <!-- Bouton pour annuler -->
+                                <button
+                                  type="button"
+                                  class="btn btn-sm btn-outline-danger"
+                                  (click)="removeCurrentFile()"
+                                  title="Annuler la sélection"
+                                >
+                                  <i class="fas fa-times me-1"></i> Annuler
+                                </button>
+                              </div>
+                            </div>
+                          }
+                        </div>
+                      }
+
+                      @if (errorMessage) {
+                        <div class="alert alert-danger mt-2 animate-fadeIn">
+                          <i class="fas fa-exclamation-triangle me-2"></i>
+                          {{ errorMessage }}
+                        </div>
+                      }
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="form-actions mt-4">
+                <button type="button" class="btn btn-secondary btn-lg" (click)="goBack()">
+                  <i class="fas fa-times me-2"></i>Annuler
+                </button>
+
+                <!-- Mode CRÉATION : un seul bouton pour tout envoyer -->
+                @if (!isEdit) {
+                  <button
+                    type="button"
+                    class="btn btn-primary btn-lg"
+                    [disabled]="!isFormValid"
+                    [title]="getButtonTooltip()"
+                    (click)="onSubmit()"
+                  >
+                    <i class="fas fa-save me-2"></i>Enregistrer la dépense
+                  </button>
+                }
+
+                @if (isEdit) {
+                  <button
+                    type="button"
+                    class="btn btn-primary btn-lg"
+                    [disabled]="!depenseForm.valid"
+                    title="Modifier les informations de la dépense (sans la pièce jointe)"
+                    (click)="updateDepenseInfo()"
+                  >
+                    <i class="fas fa-edit me-2"></i>Modifier les informations
+                  </button>
+                }
+              </div>
+
+              <div class="alert alert-info mt-4 animate-fadeIn" role="alert">
+                <i class="fas fa-info-circle me-2"></i>
+                <span>
+                  Les dépenses permettent à l'établissement de contrôler ses dépenses pendant une
+                  année scolaire pour mieux gérer ses finances.
+                </span>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

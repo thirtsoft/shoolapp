@@ -7,6 +7,7 @@ import { ToastrService } from 'ngx-toastr';
 import { ConfirmationDialogModalComponent } from '../../../../../../core/components/confirmation-dialog-modal/confirmation-dialog-modal.component';
 import { DetailsAnneeScolaire } from '../../../../../../core/models/referentiels/annee-scolaire copy';
 import { ReferentielResourceService } from '../../../service/referentiel-resource.service';
+import { EtatLibelle } from '../../../../../../core/constants/etat-libelle';
 
 @Component({
   selector: 'app-details-annee-scolaire-component',
@@ -22,6 +23,7 @@ export class DetailsAnneeScolaireComponent implements OnInit {
   isEdit: boolean = false;
   detailsAnneeScolaire: DetailsAnneeScolaire = {};
   isEditMode = false;
+   etatLibelle = EtatLibelle;
   title = "Détails année scolaire";
 
   actionForm!: FormGroup;

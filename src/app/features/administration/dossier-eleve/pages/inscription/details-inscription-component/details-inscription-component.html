@@ -1,0 +1,243 @@
+<div class="page-wrapper">
+  <div class="content container-fluid">
+    <div class="page-header">
+      <div class="row">
+        <div class="col-sm-12">
+          <h3 class="page-title">Détails inscription</h3>
+          <p class="text-muted mt-1 mb-0">
+            <i class="fas fa-clipboard-list me-1"></i> Visualisation des informations de
+            l'inscription
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <div class="action-bar">
+      <div class="action-left">
+        <button class="btn-back" (click)="goBack()">
+          <i class="fas fa-arrow-left me-2"></i>Retour
+        </button>
+
+        <div class="action-group-buttons">
+          @if ([libelleEtat.LIBELLE_ETAT_EN_ATTENTE].includes(detailsInscription.etat!)) {
+            <button class="btn-validate" (click)="openEtatModal(etatModal, 'confirmer', 'E18')">
+              <i class="fas fa-check-circle me-2"></i>Confirmer
+            </button>
+            <button class="btn-success" (click)="openEtatModal(etatModal, 'valider', 'E4')">
+              <i class="fas fa-check-circle me-2"></i>Valider
+            </button>
+            <button class="btn-danger" (click)="openEtatModal(etatModal, 'annuler', 'E11')">
+              <i class="fas fa-ban me-2"></i>Annuler
+            </button>
+          }
+
+          @if (
+            [libelleEtat.LIBELLE_ETAT_ENCOURS, libelleEtat.LIBELLE_ETAT_A_CONFIRMEE].includes(
+              detailsInscription.etat!
+            )
+          ) {
+            <button class="btn-success" (click)="openEtatModal(etatModal, 'valider', 'E4')">
+              <i class="fas fa-check-circle me-2"></i>Valider
+            </button>
+            <button class="btn-danger" (click)="openEtatModal(etatModal, 'annuler', 'E11')">
+              <i class="fas fa-ban me-2"></i>Annuler
+            </button>
+          }
+
+          <button class="btn-secondary" (click)="imprimerUneInscription()">
+            <i class="fas fa-print me-2"></i>Imprimer
+          </button>
+
+          <button class="btn-danger" (click)="DownloadPdfRecu()">
+            <i class="fas fa-file-pdf me-2"></i>Téléchager
+          </button>
+        </div>
+      </div>
+      <div class="action-right">
+        <span class="status-badge" [class]="getStatusClass()">
+          <i class="fas fa-info-circle me-1"></i>
+          État : {{ detailsInscription.etat || 'Brouillon' }}
+        </span>
+      </div>
+    </div>
+
+    <div class="two-cards-grid">
+      <div class="info-card">
+        <div class="card-header-custom">
+          <i class="fas fa-clipboard-list"></i>
+          <h4>Informations élève</h4>
+        </div>
+        <div class="info-list">
+          <div class="info-row">
+            <div class="info-label">Matricule</div>
+            <div class="info-value">{{ eleve?.matricule }}</div>
+          </div>
+          <div class="info-row">
+            <div class="info-label">Nom complet</div>
+            <div class="info-value">{{ eleve?.prenom }} - {{ eleve?.nom }}</div>
+          </div>
+          <div class="info-row">
+            <div class="info-label">Sexe</div>
+            <div class="info-value">{{ eleve?.sexe }}</div>
+          </div>
+          <div class="info-row">
+            <div class="info-label">Date naissance</div>
+            <div class="info-value">
+              {{ eleve?.dateNaissance | date: 'dd/MM/yyyy' }}
+            </div>
+          </div>
+
+          <div class="info-row">
+            <div class="info-label">Adresse</div>
+            <div class="info-value">{{ eleve?.address }}</div>
+          </div>
+
+          <div class="info-row">
+            <div class="info-label">Nationalité</div>
+            <div class="info-value">{{ eleve?.nationalite }}</div>
+          </div>
+
+          <div class="info-row">
+            <div class="info-label">État</div>
+            <div class="info-value">
+              <span class="status-inline" [class]="getStatusClass()">
+                {{ detailsInscription.etat || 'Brouillon' }}
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="info-card">
+        <div class="card-header-custom">
+          <i class="fas fa-school"></i>
+          <h4>Information inscription</h4>
+        </div>
+        <div class="info-list">
+          <div class="info-row">
+            <div class="info-label">Dossier inscription</div>
+            <div class="info-value">{{ detailsInscription.code || '-' }}</div>
+          </div>
+          <div class="info-row">
+            <div class="info-label">Frais inscription</div>
+            <div class="info-value">{{ detailsInscription.montantInscription }}</div>
+          </div>
+          <div class="info-row">
+            <div class="info-label">Montant reçu</div>
+            <div class="info-value">{{ detailsInscription.montantInscription }}</div>
+          </div>
+          @if (detailsInscription.resteAPaye) {
+            <div class="info-row">
+              <div class="info-label">Reste à payé</div>
+              <div class="info-value">{{ detailsInscription.resteAPaye }}</div>
+            </div>
+          }
+          <div class="info-row">
+            <div class="info-label">Mode de paiement</div>
+            <div class="info-value">{{ detailsInscription.moyenPaiement || 'Espèce' }}</div>
+          </div>
+          @if (detailsInscription.motifAnnulation) {
+            <div class="info-row">
+              <div class="info-label">Motif annulation inscription</div>
+              <div class="info-value">{{ detailsInscription.motifAnnulation }}</div>
+            </div>
+          }
+          <div class="info-row">
+            <div class="info-label">Classe</div>
+            <div class="info-value">{{ classe?.libelle }}</div>
+          </div>
+          <div class="info-row">
+            <div class="info-label">Niveau</div>
+            <div class="info-value">{{ detailsInscription.niveau }}</div>
+          </div>
+          @if (detailsInscription.serie) {
+            <div class="info-row">
+              <div class="info-label">Série</div>
+              <div class="info-value">{{ detailsInscription.serie }}</div>
+            </div>
+          }
+          <div class="info-row">
+            <div class="info-label">Année scolaire</div>
+            <div class="info-value">{{ anneeScolaire?.libelle }}</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<ng-template #etatModal let-modal>
+  <div class="modal-custom-overlay" (click)="modal.dismiss()">
+    <div class="modal-custom-container" (click)="$event.stopPropagation()">
+      <div class="modal-header-custom">
+        <h5 class="modal-title-custom">
+          <i class="fas fa-question-circle me-2"></i>
+          Confirmer l'action : {{ modalActionLabel | titlecase }}
+        </h5>
+        <button type="button" class="btn-close-custom" (click)="modal.dismiss()">
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
+
+      <div class="modal-body-custom">
+        <p class="modal-message">
+          Êtes-vous sûr de vouloir
+          <strong class="action-highlight">{{ modalActionLabel }}</strong> cette réunion ?
+        </p>
+
+        <form [formGroup]="actionForm">
+          @if (isMotifRequired) {
+            <div class="form-group-motif">
+              <label for="motifAnnulation" class="motif-label">
+                <i class="fas fa-exclamation-triangle text-danger me-1"></i>
+                Motif requis pour l'action :
+              </label>
+              <textarea
+                id="motifAnnulation"
+                class="form-control-motif"
+                rows="3"
+                formControlName="motifAnnulation"
+                placeholder="Veuillez saisir la raison précise ici..."
+                [class.is-invalid]="
+                  actionForm.get('motifAnnulation')?.invalid &&
+                  actionForm.get('motifAnnulation')?.touched
+                "
+              ></textarea>
+              @if (
+                actionForm.get('motifAnnulation')?.invalid &&
+                actionForm.get('motifAnnulation')?.touched
+              ) {
+                <small class="error-message">
+                  <i class="fas fa-info-circle me-1"></i>
+                  Le motif est obligatoire pour effectuer cette action.
+                </small>
+              }
+            </div>
+          }
+        </form>
+      </div>
+
+      <div class="modal-footer-custom">
+        <button type="button" class="btn-cancel" (click)="modal.dismiss()">
+          <i class="fas fa-times me-2"></i>Annuler
+        </button>
+        <button
+          type="button"
+          class="btn-confirm"
+          [class.btn-confirm-publish]="modalActionLabel === 'confirmer'"
+          [class.btn-confirm-terminer]="modalActionLabel === 'valider'"
+          [class.btn-confirm-danger]="modalActionLabel === 'annuler'"
+          [class.btn-confirm-primary]="
+            modalActionLabel !== 'confirmer' &&
+            modalActionLabel !== 'valider' &&
+            modalActionLabel !== 'annuler'
+          "
+          [disabled]="actionForm.invalid"
+          (click)="modal.close('confirm')"
+        >
+          <i class="fas fa-check-circle me-2"></i>Confirmer
+        </button>
+      </div>
+    </div>
+  </div>
+</ng-template>

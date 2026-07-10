@@ -24,6 +24,9 @@ import { MeetingComponent } from "./pages/meeting/meeting.component";
 import { CreateEditNoteInformationComponent } from "./pages/noteinformation/create-edit-note-information/create-edit-note-information.component";
 import { ListNoteInformationComponent } from "./pages/noteinformation/list-note-information/list-note-information.component";
 import { PlanificationComponent } from "./planification.component";
+import { ListMenuCantineComponent } from "./pages/planning-menu/list-menu-cantine-component/list-menu-cantine-component";
+import { PlanifierMenuCantineComponent } from "./pages/planning-menu/planifier-menu-cantine-component/planifier-menu-cantine-component";
+import { DetailsMenuCantineComponent } from "./pages/planning-menu/details-menu-cantine-component/details-menu-cantine-component";
 
 
 export const PLANIFICATION_ROUTES: Routes = [
@@ -171,6 +174,23 @@ export const PLANIFICATION_ROUTES: Routes = [
       {
         path: 'conge/details/:id',
         component: DetailsCongesComponent
+      },
+
+       {
+        path: 'cantine',
+        component: ListMenuCantineComponent
+      },
+      {
+        path: 'cantine/create',
+        component: PlanifierMenuCantineComponent
+      },
+      {
+        path: 'cantine/edit/:id',
+        component: PlanifierMenuCantineComponent
+      },
+      {
+        path: 'cantine/details/:id',
+        component: DetailsMenuCantineComponent
       },
     ]
   }

@@ -1,8 +1,9 @@
 import { Component, inject, OnInit } from '@angular/core';
-import { PlanificationResourceService } from '../../services/planification-resource.service';
 import { IFilterConfig } from '../../../../../core/filtered-config/FiltreConfiguration';
-import { CommonService } from '../../../../../core/services/common.service';
 import { GenericTableReferentielComponent } from '../../../../../core/generic/generic-table-referentiel/generic-table-referentiel.component';
+import { CommonService } from '../../../../../core/services/common.service';
+import { ReferentielResourceService } from '../../../referentiel/service/referentiel-resource.service';
+import { PlanificationResourceService } from '../../services/planification-resource.service';
 
 @Component({
   selector: 'app-meeting',
@@ -23,13 +24,13 @@ export class MeetingComponent implements OnInit {
   meetingData: any = [];
 
   currentPage = 0;
-  pageSize = 5;
+  pageSize = 10;
   totalElements = 0;
-  tableSizes = [5, 10, 20, 50, 100];
+  tableSizes = [10, 20, 50, 100];
 
-  etatfactureOptions: any[] = [];
   moisList: any[] = [];
   anneeList: any[] = [];
+  typeReunionList: any[] = [];
 
   tableFilters: IFilterConfig[] = [];
   activeFilters: any = {};
@@ -37,6 +38,7 @@ export class MeetingComponent implements OnInit {
 
 
   private readonly panificationResource = inject(PlanificationResourceService);
+  private readonly referentielServiceResource = inject(ReferentielResourceService);
   private readonly commonService = inject(CommonService);
 
   ngOnInit(): void {
@@ -46,6 +48,7 @@ export class MeetingComponent implements OnInit {
   async chargerLesMeetings() {
     try {
       await Promise.all([
+        this.getTypeReunionList(),
         this.getMoisList(),
         this.getAnneesList()
       ]);
@@ -56,6 +59,19 @@ export class MeetingComponent implements OnInit {
       console.error('Erreur chargement données:', error);
     }
   }
+
+  getTypeReunionList(): Promise<any[]> {
+    return new Promise((resolve, reject) => {
+      this.referentielServiceResource.getResourceList('typereunion').subscribe({
+        next: (data) => {
+          this.typeReunionList = data;
+          resolve(data);
+        },
+        error: (err) => reject(err)
+      });
+    });
+  }
+
 
   getMoisList(): Promise<any[]> {
     return new Promise((resolve, reject) => {
@@ -88,6 +104,15 @@ export class MeetingComponent implements OnInit {
         label: 'Libellé',
         type: 'text',
         placeholder: 'Rechercher une réunion...'
+      },
+      {
+        key: 'typeReunionId',
+        label: 'Nature réunion',
+        type: 'select',
+        options: this.typeReunionList.map(t => ({
+          value: t.id,
+          label: t.libelle
+        }))
       },
       {
         key: 'mois',
@@ -168,6 +193,9 @@ export class MeetingComponent implements OnInit {
 
     if (this.activeFilters.libelle) {
       filtreObj.libelle = this.activeFilters.libelle;
+    }
+    if (this.activeFilters.typeReunionId) {
+      filtreObj.typeReunionId = this.activeFilters.typeReunionId;
     }
     if (this.activeFilters.mois) {
       filtreObj.mois = this.activeFilters.mois;

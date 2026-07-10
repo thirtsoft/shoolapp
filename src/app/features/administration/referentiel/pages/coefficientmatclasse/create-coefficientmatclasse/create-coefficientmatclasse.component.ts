@@ -6,6 +6,8 @@ import { ListeClasse } from '../../../../../../core/models/referentiels/classe';
 import { Matiere } from '../../../../../../core/models/referentiels/matiere';
 import { ToastrService } from 'ngx-toastr';
 import { CoefficientMatiereClasse } from '../../../../../../core/models/referentiels/coefficient-matiere-classe';
+import { Serie } from '../../../../../../core/models/referentiels/serie';
+import { Niveau } from '../../../../../../core/models/referentiels/niveau';
 
 @Component({
   selector: 'app-create-coefficientmatclasse',
@@ -21,9 +23,9 @@ export class CreateCoefficientmatclasseComponent implements OnInit {
   coefficientFormGroup!: FormGroup;
   coefficent: any;
   isEdit: boolean = false;
-
-  classList: ListeClasse[] = [];
   matiereList: Matiere[] = [];
+  niveauList: Niveau[] = [];
+  serieList: Serie[] = [];
 
   title = "Ajouter un coefficient par matiere et classe";
 
@@ -39,7 +41,8 @@ export class CreateCoefficientmatclasseComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.getClassList();
+    this.getNiveauList();
+    this.getSerieList();
     this.getMatiereList();
     this.initializeForm(null);
     if (this.coeffId != null && this.coeffId != undefined) {
@@ -49,18 +52,32 @@ export class CreateCoefficientmatclasseComponent implements OnInit {
     }
   }
 
-  getClassList() {
-    this.referentielResource.getResourceList('classe').subscribe({
+  getNiveauList() {
+    this.referentielResource.getResourceList('niveau').subscribe({
       next: (data: any) => {
-        this.classList = data;
+        this.niveauList = data;
       }
     });
   }
 
-  getSelectedClasseName(): string {
-    const classeId = this.coefficientFormGroup.get('classe')?.value;
-    const classe = this.classList.find(c => Number(c.id) === Number(classeId));
-    return classe?.libelle || '';
+  getSelectedNiveauName(): string {
+    const niveauId = this.coefficientFormGroup.get('niveau')?.value;
+    const niveau = this.niveauList.find(n => Number(n.id) === Number(niveauId));
+    return niveau?.libelle || '';
+  }
+
+  getSerieList() {
+    this.referentielResource.getResourceList('serie').subscribe({
+      next: (data: any) => {
+        this.serieList = data;
+      }
+    });
+  }
+
+  getSelectedSerieName(): string {
+    const serieId = this.coefficientFormGroup.get('serie')?.value;
+    const serie = this.serieList.find(n => Number(n.id) === Number(serieId));
+    return serie?.libelle || '';
   }
 
   getMatiereList() {
@@ -90,10 +107,11 @@ export class CreateCoefficientmatclasseComponent implements OnInit {
 
   initializeForm(coeff: CoefficientMatiereClasse | null) {
     this.coefficientFormGroup = this._formBuilder.group({
-      id: [coeff?.id ? coeff.id : ''],
-      classe: [coeff?.classe ? coeff.classe : '', Validators.required],
-      matiere: [coeff?.matiere ? coeff.matiere : '', Validators.required],
-      coefficient: [coeff?.coefficient ? coeff.coefficient : '', Validators.required],
+      id: [coeff?.id ?? ''],
+      niveau: [coeff?.niveau ?? '', Validators.required],
+      serie: [coeff?.serie ?? '', Validators.required],
+      matiere: [coeff?.matiere ?? '', Validators.required],
+      coefficient: [coeff?.coefficient ?? '', Validators.required],
     });
   }
 
@@ -105,7 +123,7 @@ export class CreateCoefficientmatclasseComponent implements OnInit {
         next: (data) => {
           if (data.statut === 'OK') {
             this.toastService.success('succès', 'Le tarif a été enregistrées avec succès !!! ');
-            this.router.navigate(['admin/referentiels/coefficient'])
+            this.goBack();
           } else if (data.statut === 'FAILED') {
             this.toastService.error('error', 'Erreur lors de la création : ' + data.message);
           }
@@ -120,7 +138,7 @@ export class CreateCoefficientmatclasseComponent implements OnInit {
         next: (data) => {
           if (data.statut === 'OK') {
             this.toastService.success('succès', 'Le tarif a été modifiées avec succès !!! ');
-            this.router.navigate(['admin/referentiels/coefficient'])
+            this.goBack();
           } else if (data.statut === 'FAILED') {
             this.toastService.error('error', 'Erreur lors de la modification : ' + data.message);
           }
@@ -136,7 +154,7 @@ export class CreateCoefficientmatclasseComponent implements OnInit {
 
 
   goBack() {
-    this.router.navigate(['admin/referentiels/coefficient'])
+    this.router.navigate(['admin/referentiel/coefficients'])
   }
 
 
