@@ -90,7 +90,7 @@ export class ListNiveauComponent implements OnInit {
         this.totalElements = response.data?.totalElements || 0;
         this.columns = [
           { key: 'cycle', header: 'Cycle' },
-          { key: 'libelle', header: 'Libellé' },
+          { key: 'libelle', header: 'Niveau' },
         ]
 
         this.niveauData = this.niveauData.map((item: any) => ({

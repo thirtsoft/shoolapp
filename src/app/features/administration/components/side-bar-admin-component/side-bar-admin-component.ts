@@ -37,7 +37,7 @@ export class SideBarAdminComponent {
 
     // FINANCES
     { route: '/admin/comptabilite/facture', ico: '💰', label: 'Factures', section: 'FINANCES', badge: '18' },
-    { route: '/admin/comptabilite/paiement', ico: '💳', label: 'Frais scolarité', section: '', badge: '' },
+    { route: '/admin/comptabilite/paiement', ico: '💳', label: 'Paiements', section: '', badge: '' },
     { route: '/admin/comptabilite/services', ico: '📋', label: 'Inscriptions services', section: '', badge: '' },
     { route: '/admin/comptabilite/depenses', ico: '💸', label: 'Dépenses', section: '', badge: '' },
 
@@ -94,7 +94,7 @@ export class SideBarAdminComponent {
         { route: '/admin/referentiel/typeservices', ico: '🛎️', label: 'Types de service' },
         { route: '/admin/referentiel/tarifs', ico: '💲', label: 'Tarifs' },
         { route: '/admin/referentiel/moyenpaiements', ico: '🏦', label: 'Modes de paiement' },
-         { route: '/admin/referentiel/typedepense', ico: '💲', label: 'Type dépense' },
+        { route: '/admin/referentiel/typedepense', ico: '💲', label: 'Type dépense' },
         { route: '/admin/referentiel/menus', ico: '🍽️', label: 'Menus' },
         { route: '/admin/referentiel/category-menu', ico: '📋', label: 'Catégories menu' },
 

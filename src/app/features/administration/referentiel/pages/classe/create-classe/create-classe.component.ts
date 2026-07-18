@@ -123,12 +123,12 @@ export class CreateClasseComponent implements OnInit {
 
   initializeForm(classe: Classe | null) {
     this.classeFormGroup = this._formBuilder.group({
-      id: [classe?.id ? classe.id : ''],
+      id: [classe?.id || null],
       libelle: [classe?.libelle ? classe.libelle : '', Validators.required],
-      niveau: [classe?.niveau ? classe.niveau : '', Validators.required],
-      capacite: [classe?.capacite ? classe.capacite : '', Validators.required],
-      anneeScolaire: [classe?.anneeScolaire ?? '', Validators.required],
-      serie: [classe?.serie ?? ''],
+      niveau: [classe?.niveau || null, Validators.required],
+      capacite: [classe?.capacite || null, Validators.required],
+      anneeScolaire: [classe?.anneeScolaire || null, Validators.required],
+      serie: [classe?.serie || null],
     });
   }
 

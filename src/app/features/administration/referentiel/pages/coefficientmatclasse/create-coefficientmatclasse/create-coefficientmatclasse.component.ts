@@ -2,7 +2,6 @@ import { Component, inject, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ReferentielResourceService } from '../../../service/referentiel-resource.service';
-import { ListeClasse } from '../../../../../../core/models/referentiels/classe';
 import { Matiere } from '../../../../../../core/models/referentiels/matiere';
 import { ToastrService } from 'ngx-toastr';
 import { CoefficientMatiereClasse } from '../../../../../../core/models/referentiels/coefficient-matiere-classe';
@@ -107,10 +106,10 @@ export class CreateCoefficientmatclasseComponent implements OnInit {
 
   initializeForm(coeff: CoefficientMatiereClasse | null) {
     this.coefficientFormGroup = this._formBuilder.group({
-      id: [coeff?.id ?? ''],
-      niveau: [coeff?.niveau ?? '', Validators.required],
-      serie: [coeff?.serie ?? '', Validators.required],
-      matiere: [coeff?.matiere ?? '', Validators.required],
+      id: [coeff?.id || null],
+      niveau: [coeff?.niveau || null, Validators.required],
+      serie: [coeff?.serie || null, Validators.required],
+      matiere: [coeff?.matiere || null, Validators.required],
       coefficient: [coeff?.coefficient ?? '', Validators.required],
     });
   }
