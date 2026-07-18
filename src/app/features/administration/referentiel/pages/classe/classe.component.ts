@@ -121,7 +121,7 @@ export class ClasseComponent implements OnInit {
         this.totalElements = response.data?.totalElements || 0;
         this.columns = [
           { key: 'niveau', header: 'Niveau' },
-          { key: 'libelle', header: 'Libellé' },
+          { key: 'libelle', header: 'Classe' },
           { key: 'capacite', header: 'Capacité' },
           { key: 'serie', header: 'Série' },
           { key: 'anneeScolaire', header: 'année scolaire' },

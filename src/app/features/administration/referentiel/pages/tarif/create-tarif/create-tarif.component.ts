@@ -4,12 +4,11 @@ import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angula
 import { ActivatedRoute, Router } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
 import { AnneeScolaire } from '../../../../../../core/models/referentiels/annee-scolaire';
-import { ListeClasse } from '../../../../../../core/models/referentiels/classe';
+import { Niveau } from '../../../../../../core/models/referentiels/niveau';
 import { Tarif } from '../../../../../../core/models/referentiels/tarif';
 import { TypeServiceOffert } from '../../../../../../core/models/referentiels/type-service-offert';
 import { Utilisateur } from '../../../../../../core/models/utilisateur/utilisateur';
 import { ReferentielResourceService } from '../../../service/referentiel-resource.service';
-import { Niveau } from '../../../../../../core/models/referentiels/niveau';
 
 @Component({
   selector: 'app-create-tarif',
@@ -118,11 +117,11 @@ export class CreateTarifComponent implements OnInit {
 
   initializeForm(tarif: Tarif | null) {
     this.tarifFormGroup = this._formBuilder.group({
-      id: [tarif?.id ?? ''],
-      niveau: [tarif?.niveau ?? '', Validators.required],
-      typeService: [tarif?.typeService ?? '', Validators.required],
-      anneeScolaire: [tarif?.anneeScolaire ?? '', Validators.required],
-      montant: [tarif?.montant ?? '', Validators.required],
+      id: [tarif?.id || null],
+      niveau: [tarif?.niveau || null, Validators.required],
+      typeService: [tarif?.typeService || null, Validators.required],
+      anneeScolaire: [tarif?.anneeScolaire || null, Validators.required],
+      montant: [tarif?.montant || null, Validators.required],
     });
   }
 
