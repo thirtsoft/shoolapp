@@ -124,7 +124,7 @@ export class CreateClasseComponent implements OnInit {
   initializeForm(classe: Classe | null) {
     this.classeFormGroup = this._formBuilder.group({
       id: [classe?.id || null],
-      libelle: [classe?.libelle ? classe.libelle : '', Validators.required],
+      libelle: [classe?.libelle || '', Validators.required],
       niveau: [classe?.niveau || null, Validators.required],
       capacite: [classe?.capacite || null, Validators.required],
       anneeScolaire: [classe?.anneeScolaire || null, Validators.required],
@@ -134,7 +134,35 @@ export class CreateClasseComponent implements OnInit {
 
 
   ajouteditClasse() {
-    const payload = this.classeFormGroup.value;
+    //  const payload = this.classeFormGroup.value;
+
+    if (this.classeFormGroup.invalid) {
+      this.toastService.warning('Attention', 'Veuillez remplir tous les champs obligatoires');
+
+      Object.keys(this.classeFormGroup.controls).forEach(key => {
+        const control = this.classeFormGroup.get(key);
+        if (control?.invalid) {
+          control.markAsTouched();
+        }
+      });
+      return;
+    }
+
+    const formValue = this.classeFormGroup.getRawValue();
+
+    const payload: Classe = {
+      libelle: formValue.libelle?.trim(),
+      niveau: formValue.niveau ? Number(formValue.niveau) : undefined,
+      anneeScolaire: formValue.anneeScolaire ? Number(formValue.anneeScolaire) : undefined,
+      serie: formValue.serie ? Number(formValue.serie) : undefined,
+      capacite: formValue.capacite ? Number(formValue.capacite) : undefined,
+    };
+
+    if (this.classeId) {
+      payload.id = this.classeId;
+    }
+
+
     payload.ecole = this.ecoleId;
     if (!this.isEdit) {
       this.referentielService.createClasse(payload).subscribe({
