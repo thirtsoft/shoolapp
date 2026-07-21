@@ -40,6 +40,8 @@ import { CreateSessionSemestreComponent } from './pages/semestre/create-session-
 import { DetailsSessionSemestresComponent } from './pages/semestre/details-session-semestres-component/details-session-semestres-component';
 import { TypeDepenseComponent } from './pages/type-depense/type-depense-component/type-depense-component';
 import { CreateEditTypeDepenseComponent } from './pages/type-depense/create-edit-type-depense-component/create-edit-type-depense-component';
+import { ListeSerieComponent } from './pages/serie/liste-serie-component/liste-serie-component';
+import { CreateEditSerieComponent } from './pages/serie/create-edit-serie-component/create-edit-serie-component';
 
 export const REFERENTIELS_ROUTES: Routes = [
   {
@@ -117,7 +119,7 @@ export const REFERENTIELS_ROUTES: Routes = [
         path: 'sessions',
         component: ListSessionSemestreComponent
       },
-          {
+      {
         path: 'session/create',
         component: CreateSessionSemestreComponent
       },
@@ -125,10 +127,10 @@ export const REFERENTIELS_ROUTES: Routes = [
         path: 'session/edit/:id',
         component: EditerSessionSemestreComponent
       },
-        {
+      {
         path: 'session/details/:id',
         component: DetailsSessionSemestresComponent,
-      }, 
+      },
       {
         path: 'category-menu',
         component: CategoryMenuComponent
@@ -255,7 +257,7 @@ export const REFERENTIELS_ROUTES: Routes = [
         component: CreateModePaiementComponent
       },
 
-       {
+      {
         path: 'typedepense',
         component: TypeDepenseComponent
       },
@@ -266,6 +268,19 @@ export const REFERENTIELS_ROUTES: Routes = [
       {
         path: 'typedepense/edit/:id',
         component: CreateEditTypeDepenseComponent
+      },
+      //
+      {
+        path: 'series',
+        component: ListeSerieComponent
+      },
+      {
+        path: 'series/create',
+        component: CreateEditSerieComponent
+      },
+      {
+        path: 'series/edit/:id',
+        component: CreateEditSerieComponent
       },
 
       {

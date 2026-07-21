@@ -1,26 +1,24 @@
 import { Component, inject, OnInit } from '@angular/core';
-import { FormGroup } from '@angular/forms';
-import { IFilterConfig } from '../../../../../core/filtered-config/FiltreConfiguration';
-import { GenericTableReferentielComponent } from '../../../../../core/generic/generic-table-referentiel/generic-table-referentiel.component';
-import { Semestre } from '../../../../../core/models/referentiels/semestre';
-import { ReferentielResourceService } from '../../service/referentiel-resource.service';
+import { GenericTableReferentielComponent } from '../../../../../../core/generic/generic-table-referentiel/generic-table-referentiel.component';
+import { IFilterConfig } from '../../../../../../core/filtered-config/FiltreConfiguration';
+import { ReferentielResourceService } from '../../../service/referentiel-resource.service';
 
 @Component({
-  selector: 'app-semestre',
+  selector: 'app-liste-serie-component',
   standalone: true,
   imports: [GenericTableReferentielComponent],
-  templateUrl: './semestre.component.html',
-  styleUrls: ['./semestre.component.css']
+  templateUrl: './liste-serie-component.html',
+  styleUrl: './liste-serie-component.css',
 })
-export class SemestreComponent implements OnInit {
+export class ListeSerieComponent implements OnInit {
   errorMessage?: string;
-  isEdit: boolean = true;
   isLoading: boolean = false;
   isLockable: boolean = true;
   isTable: boolean = true;
-  deleteEndpoint = "semestre";
+  deleteEndpoint = "serie";
   columns: any = [];
-  semestreData: any = [];
+  serieData: any = [];
+  isEdit: boolean = true;
 
   currentPage = 0;
   pageSize = 10;
@@ -33,10 +31,10 @@ export class SemestreComponent implements OnInit {
   private readonly refentielResource = inject(ReferentielResourceService);
 
   ngOnInit(): void {
-    this.chargerLesSemestres()
+    this.chargerLesSeries()
   }
 
-  async chargerLesSemestres() {
+  async chargerLesSeries() {
     try {
       await Promise.all([
       ]);
@@ -54,7 +52,7 @@ export class SemestreComponent implements OnInit {
         key: 'libelle',
         label: 'Libelle',
         type: 'text',
-        placeholder: 'Rechercher un semestre'
+        placeholder: 'Rechercher une serie'
       },
     ];
   }
@@ -77,23 +75,23 @@ export class SemestreComponent implements OnInit {
       const filtreParam = this.construireParametreDeFiltre();
 
       apiCall = this.refentielResource.fetchFilterDataTable(
-        'semestre',
+        'serie',
         this.currentPage,
         this.pageSize,
         filtreParam)
 
     } else {
-      apiCall = this.refentielResource.getResourcePaged('semestre', this.currentPage, this.pageSize);
+      apiCall = this.refentielResource.getResourcePaged('serie', this.currentPage, this.pageSize);
     }
     apiCall.subscribe({
       next: (response) => {
-        this.semestreData = response.data?.content || [];
+        this.serieData = response.data?.content || [];
         this.totalElements = response.data?.totalElements || 0;
         this.columns = [
           { key: 'code', header: 'Code' },
           { key: 'libelle', header: 'Libellé' },
         ];
-        this.semestreData = this.semestreData.map((item: any) => ({
+        this.serieData = this.serieData.map((item: any) => ({
           ...item,
         }));
 
@@ -142,4 +140,5 @@ export class SemestreComponent implements OnInit {
     this.currentPage = 0;
     this.chargerLesDonnees(false);
   }
+
 }

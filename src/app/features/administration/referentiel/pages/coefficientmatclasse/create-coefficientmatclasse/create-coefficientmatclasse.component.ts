@@ -1,12 +1,12 @@
 import { Component, inject, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { ReferentielResourceService } from '../../../service/referentiel-resource.service';
-import { Matiere } from '../../../../../../core/models/referentiels/matiere';
 import { ToastrService } from 'ngx-toastr';
 import { CoefficientMatiereClasse } from '../../../../../../core/models/referentiels/coefficient-matiere-classe';
-import { Serie } from '../../../../../../core/models/referentiels/serie';
+import { Matiere } from '../../../../../../core/models/referentiels/matiere';
 import { Niveau } from '../../../../../../core/models/referentiels/niveau';
+import { Serie } from '../../../../../../core/models/referentiels/serie';
+import { ReferentielResourceService } from '../../../service/referentiel-resource.service';
 
 @Component({
   selector: 'app-create-coefficientmatclasse',
@@ -108,7 +108,7 @@ export class CreateCoefficientmatclasseComponent implements OnInit {
     this.coefficientFormGroup = this._formBuilder.group({
       id: [coeff?.id || null],
       niveau: [coeff?.niveau || null, Validators.required],
-      serie: [coeff?.serie || null, Validators.required],
+      serie: [coeff?.serie || null],
       matiere: [coeff?.matiere || null, Validators.required],
       coefficient: [coeff?.coefficient ?? '', Validators.required],
     });
@@ -121,7 +121,7 @@ export class CreateCoefficientmatclasseComponent implements OnInit {
       this.referentielResource.creerUneRessource('coefficientmatiereclasse', payload).subscribe({
         next: (data) => {
           if (data.statut === 'OK') {
-            this.toastService.success('succès', 'Le tarif a été enregistrées avec succès !!! ');
+            this.toastService.success('succès', 'Le coéfficient de cette matière a été enregistrées avec succès !!! ');
             this.goBack();
           } else if (data.statut === 'FAILED') {
             this.toastService.error('error', 'Erreur lors de la création : ' + data.message);
@@ -136,7 +136,7 @@ export class CreateCoefficientmatclasseComponent implements OnInit {
       this.referentielResource.modifierUneRessource('coefficientmatiereclasse', this.coeffId, payload).subscribe({
         next: (data) => {
           if (data.statut === 'OK') {
-            this.toastService.success('succès', 'Le tarif a été modifiées avec succès !!! ');
+            this.toastService.success('succès', 'Le coéfficient a été modifiées avec succès !!! ');
             this.goBack();
           } else if (data.statut === 'FAILED') {
             this.toastService.error('error', 'Erreur lors de la modification : ' + data.message);

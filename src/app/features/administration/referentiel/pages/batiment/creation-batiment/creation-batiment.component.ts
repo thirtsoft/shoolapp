@@ -66,7 +66,6 @@ export class CreationBatimentComponent implements OnInit {
         this.batimentFormGroup = this._formBuilder.group({
           id: [this.editBatiment?.id ? this.editBatiment.id : ''],
           libelle: [this.editBatiment?.libelle ? this.editBatiment.libelle : '', Validators.required],
-          ecole: [this.editBatiment?.ecole ? this.editBatiment.ecole : '', Validators.required],
           salleDTOList: this._formBuilder.array([])
         });
         for (let i = 0; i < this.editBatiment.salleDTOList!.length; i++) {
@@ -122,7 +121,7 @@ export class CreationBatimentComponent implements OnInit {
 
 
   ajouterBatiment() {
-    if (!this.batimentId && this.batimentId == undefined) {
+    if (!this.batimentId) {
       const payload: Batiment = {
         id: this.batimentFormGroup.get("id")!.value,
         libelle: this.batimentFormGroup.get("libelle")!.value,

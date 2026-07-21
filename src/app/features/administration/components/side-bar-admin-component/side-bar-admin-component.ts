@@ -79,14 +79,15 @@ export class SideBarAdminComponent {
       badge: '',
       children: [
         // Structures
-        { route: '/admin/referentiel/batiments', ico: '🏗️', label: 'Bâtiments' },
-        { route: '/admin/referentiel/salles', ico: '🚪', label: 'Salles' },
+        //  { route: '/admin/referentiel/batiments', ico: '🏗️', label: 'Bâtiments' },
+        { route: '/admin/referentiel/batiments', ico: '🚪', label: 'Salles' },
 
         // Pédagogie
         { route: '/admin/referentiel/semestres', ico: '📅', label: 'Semestres' },
         { route: '/admin/referentiel/matieres', ico: '📚', label: 'Matières' },
         { route: '/admin/referentiel/coefficients', ico: '⚖️', label: 'Coefficients' },
         { route: '/admin/referentiel/classes', ico: '🏫', label: 'Classes' },
+        { route: '/admin/referentiel/series', ico: '🧭', label: 'Series' },
         { route: '/admin/referentiel/niveau', ico: '📊', label: 'Niveaux' },
         { route: '/admin/referentiel/grades', ico: '🎓', label: 'Niveaux éducation' },
 
@@ -95,8 +96,8 @@ export class SideBarAdminComponent {
         { route: '/admin/referentiel/tarifs', ico: '💲', label: 'Tarifs' },
         { route: '/admin/referentiel/moyenpaiements', ico: '🏦', label: 'Modes de paiement' },
         { route: '/admin/referentiel/typedepense', ico: '💲', label: 'Type dépense' },
-        { route: '/admin/referentiel/menus', ico: '🍽️', label: 'Menus' },
-        { route: '/admin/referentiel/category-menu', ico: '📋', label: 'Catégories menu' },
+        //  { route: '/admin/referentiel/menus', ico: '🍽️', label: 'Menus' },
+        { route: '/admin/referentiel/category-menu', ico: '🍽️', label: 'Menus' },
 
         // Documents
         { route: '/admin/referentiel/type-documents', ico: '📄', label: 'Types de document' },

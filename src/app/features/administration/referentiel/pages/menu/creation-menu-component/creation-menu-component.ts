@@ -89,7 +89,7 @@ export class CreationMenuComponent implements OnInit {
     this.menuFormGroup = this._formBuilder.group({
       id: [menu?.id ? menu.id : ''],
       libelle: [menu?.libelle ? menu.libelle : '', Validators.required],
-      description: [menu?.description ? menu.description : '', Validators.required],
+      description: [menu?.description ? menu.description : ''],
       categoryMenuId: [menu?.categoryMenuId ? menu.categoryMenuId : '', Validators.required],
     });
   }
@@ -107,7 +107,7 @@ export class CreationMenuComponent implements OnInit {
         next: (data) => {
           console.log('payload after : ', data);
           this.toastService.success('success', 'Le menu a été ajoutée avec succès.');
-          this.router.navigate(['/admin/referentiel/menus']);
+          this.goBack();
         },
         error: (data) => {
           console.log('error', 'Erreur lors de la création : ' + data.error);
@@ -118,7 +118,7 @@ export class CreationMenuComponent implements OnInit {
       this.referentielService.updateMenu(this.menuId, payload).subscribe({
         next: data => {
           this.toastService.success('success', 'Le menu a été modifié avec succès.');
-          this.router.navigate(['/admin/referentiel/menus']);
+          this.goBack();
 
         },
         error: (data) => {
