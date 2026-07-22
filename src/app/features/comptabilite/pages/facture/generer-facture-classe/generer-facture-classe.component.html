@@ -16,6 +16,10 @@
         <div class="card">
           <div class="card-body p-4 p-md-5">
             <div class="step-indicator mb-4">
+              <button type="button" class="btn btn-outline-secondary" style="" (click)="goBack()">
+                <i class="fas fa-arrow-left"></i>
+                Retour
+              </button>
               <div class="step" [class.active]="!isFormValid()">
                 <span class="step-number">1</span>
                 <span class="step-label">Sélection</span>
@@ -139,7 +143,15 @@
                     <div class="recap-content">
                       <span class="recap-label">Récapitulatif de la facture</span>
                       <span class="recap-value">
-                        {{ getClasseLibelle() }} · {{ getMoisLibelle() }} {{ selectedAnnee }}
+                        Génération de factures
+                        <span class="recap-value">
+                          pour la classe
+                          {{ getClasseLibelle() }}
+                        </span>
+
+                        <span class="recap-value">
+                          pour {{ getMoisLibelle() }} {{ selectedAnnee }}
+                        </span>
                       </span>
                     </div>
                   </div>

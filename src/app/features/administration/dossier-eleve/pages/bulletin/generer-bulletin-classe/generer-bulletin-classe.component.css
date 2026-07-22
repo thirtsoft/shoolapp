@@ -402,3 +402,62 @@
     font-size: 0.8125rem;
   }
 }
+
+
+/*****/
+/* Wrapper qui contient le bouton et les steps */
+.step-indicator-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 1rem;
+}
+
+.btn-back {
+  position: absolute !important;
+  left: 0 !important;
+  top: 50% !important;
+  transform: translateY(-50%) !important;
+  z-index: 10 !important;
+  margin: 0 !important;
+  color: white;
+  background: linear-gradient(135deg, #2c5282, #1e3a5f);
+}
+
+@media (max-width: 768px) {
+  .step-indicator-wrapper {
+    padding: 0 80px 0 60px;
+  }
+
+  .step-label {
+    display: none;
+  }
+
+  .step-line {
+    width: 30px;
+    margin: 0 5px;
+  }
+
+  .btn-back {
+    font-size: 14px;
+    padding: 6px 12px;
+  }
+}
+
+@media (max-width: 480px) {
+  .step-indicator-wrapper {
+    padding: 0 50px 0 40px;
+  }
+
+  .step-number {
+    width: 28px;
+    height: 28px;
+    font-size: 12px;
+  }
+
+  .step-line {
+    width: 20px;
+    margin: 0 3px;
+  }
+}

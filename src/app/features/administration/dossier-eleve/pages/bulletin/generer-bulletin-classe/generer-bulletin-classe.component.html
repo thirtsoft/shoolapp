@@ -139,21 +139,25 @@
       <div class="col-12">
         <div class="card">
           <div class="card-body p-4 p-md-5">
-            <!-- Step Indicator -->
-            <div class="step-indicator">
-              <div class="step active">
-                <span class="step-number">1</span>
-                <span class="step-label">Sélection</span>
-              </div>
-              <div class="step-line"></div>
-              <div class="step">
-                <span class="step-number">2</span>
-                <span class="step-label">Génération</span>
+            <div class="step-indicator-wrapper">
+              <div class="step-indicator">
+                <button type="button" class="btn btn-outline-secondary btn-back" (click)="goBack()">
+                  <i class="fas fa-arrow-left"></i>
+                  Retour
+                </button>
+                <div class="step active">
+                  <span class="step-number">1</span>
+                  <span class="step-label">Sélection</span>
+                </div>
+                <div class="step-line"></div>
+                <div class="step">
+                  <span class="step-number">2</span>
+                  <span class="step-label">Génération</span>
+                </div>
               </div>
             </div>
 
             <form (ngSubmit)="genererBulletinPourUneClasse()">
-              <!-- Ligne 1: Classe -->
               <div class="form-group">
                 <label class="form-label">
                   Classe <span class="text-danger">*</span>
@@ -220,7 +224,6 @@
                 </div>
               </div>
 
-              <!-- Récapitulatif -->
               @if (selectedClasse && selectedSemestre && selectedAnneeScolaire) {
                 <div class="recap-card">
                   <div class="d-flex align-items-center gap-3">
@@ -240,7 +243,6 @@
                 </div>
               }
 
-              <!-- Actions -->
               <div class="form-actions">
                 <button type="button" class="btn btn-secondary" (click)="goBack()">
                   <i class="fas fa-times me-2"></i>Annuler

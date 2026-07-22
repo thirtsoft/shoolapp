@@ -640,4 +640,8 @@ export class InscrireEleveComponent implements OnInit {
       }
     });
   }
+
+  goBack() {
+    this.router.navigate(['admin/dossier-eleve/eleves'])
+  }
 }
