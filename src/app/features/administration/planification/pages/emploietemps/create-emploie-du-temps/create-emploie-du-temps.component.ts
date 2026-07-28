@@ -6,6 +6,7 @@ import { ToastrService } from 'ngx-toastr';
 import { EnseigantList } from '../../../../../../core/models/enseignant/enseignant-list';
 import { EmploiDuTemps } from '../../../../../../core/models/planification/emploi-du-temp';
 import { ListeEnseignement } from '../../../../../../core/models/planification/liste-enseignement';
+import { AnneeScolaire } from '../../../../../../core/models/referentiels/annee-scolaire';
 import { ListeClasse } from '../../../../../../core/models/referentiels/classe';
 import { Matiere } from '../../../../../../core/models/referentiels/matiere';
 import { Salle } from '../../../../../../core/models/referentiels/salle';
@@ -14,7 +15,6 @@ import { Utilisateur } from '../../../../../../core/models/utilisateur/utilisate
 import { ReferentielResourceService } from '../../../../referentiel/service/referentiel-resource.service';
 import { UtilisateurService } from '../../../../utilisateur/service/utilisateur.service';
 import { PlanificationResourceService } from '../../../services/planification-resource.service';
-import { AnneeScolaire } from '../../../../../../core/models/referentiels/annee-scolaire';
 
 @Component({
   selector: 'app-create-emploie-du-temps',
@@ -126,15 +126,10 @@ export class CreateEmploieDuTempsComponent implements OnInit {
     this.planificationService.getEmploiDuTemps(batId).subscribe({
       next: (data) => {
         this.addEditEmploie = data;
-
-        // 1. Initialisation du groupe principal du formulaire
         this.emploiFormGroup = this._formBuilder.group({
           id: [this.addEditEmploie?.id ?? ''],
-          classe: [this.addEditEmploie?.classe ?? ''],
-          sessionSemestre: [this.addEditEmploie?.sessionSemestre ?? ''],
           anneeScolaire: [this.addEditEmploie?.anneeScolaire ?? '', Validators.required],
           titre: [this.addEditEmploie?.titre ?? '', Validators.required],
-          semaine: [this.addEditEmploie?.semaine ?? ''],
           coursEditDTOList: this._formBuilder.array([])
         });
 
@@ -173,9 +168,6 @@ export class CreateEmploieDuTempsComponent implements OnInit {
   initializeForm(emploie: EmploiDuTemps | null) {
     this.emploiFormGroup = this._formBuilder.group({
       id: [emploie?.id ?? ''],
-      /*       classe: [emploie?.classe ?? ''],
-            sessionSemestre: [emploie?.sessionSemestre ?? ''],
-            semaine: [emploie?.semaine ?? ''], */
       anneeScolaire: [emploie?.anneeScolaire ?? '', Validators.required],
       titre: [emploie?.titre ?? '', Validators.required],
       coursEditDTOList: this._formBuilder.array([
@@ -215,9 +207,7 @@ export class CreateEmploieDuTempsComponent implements OnInit {
   ajouterEmploieDuTemps() {
     const payload: EmploiDuTemps = {
       id: this.emploiFormGroup.get("id")!.value,
-      classe: this.emploiFormGroup.get("classe")!.value,
-      sessionSemestre: this.emploiFormGroup.get("sessionSemestre")!.value,
-      semaine: this.emploiFormGroup.get("semaine")!.value,
+      titre: this.emploiFormGroup.get("titre")!.value,
       anneeScolaire: this.emploiFormGroup.get("anneeScolaire")!.value,
       coursEditDTOList: this.emploiFormGroup.get("coursEditDTOList")!.value,
     }

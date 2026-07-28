@@ -1,17 +1,16 @@
-import { DatePipe } from '@angular/common';
 import { Component, inject } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { Utilisateur } from '../../../../../../core/models/utilisateur/utilisateur';
-import { ReferentielResourceService } from '../../../service/referentiel-resource.service';
-import { UtilisateurService } from '../../../../utilisateur/service/utilisateur.service';
-import { ToastrService } from 'ngx-toastr';
 import { ActivatedRoute, Router } from '@angular/router';
+import { ToastrService } from 'ngx-toastr';
 import { Serie } from '../../../../../../core/models/referentiels/serie';
+import { Utilisateur } from '../../../../../../core/models/utilisateur/utilisateur';
+import { UtilisateurService } from '../../../../utilisateur/service/utilisateur.service';
+import { ReferentielResourceService } from '../../../service/referentiel-resource.service';
 
 @Component({
   selector: 'app-create-edit-serie-component',
   standalone: true,
-  imports: [ReactiveFormsModule, DatePipe],
+  imports: [ReactiveFormsModule],
   templateUrl: './create-edit-serie-component.html',
   styleUrl: './create-edit-serie-component.css',
 })
