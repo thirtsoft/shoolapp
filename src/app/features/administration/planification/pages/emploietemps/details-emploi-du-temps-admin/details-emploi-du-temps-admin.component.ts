@@ -52,6 +52,8 @@ export class DetailsEmploiDuTempsAdminComponent implements OnInit {
     this.planificationService.recupererUneResource('planification/emploidutemps/details', emploieId).subscribe({
       next: (data) => {
         this.emploie = data;
+
+        console.log('details emploi', this.emploie);
         this.coursesList = this.emploie.listeCoursDTOS || [];
 
         this.construireMatriceDynamique();
@@ -189,7 +191,7 @@ export class DetailsEmploiDuTempsAdminComponent implements OnInit {
         const imgHeight = (canvas.height * imgWidth) / canvas.width;
 
         pdf.addImage(imgData, 'PNG', 7, 7, imgWidth, imgHeight);
-        pdf.save(`Emploi_du_temps_${this.emploie?.libelleClasse || '6eme'}.pdf`);
+        pdf.save(`Emploi_du_temps_${this.emploie?.titre || '6eme'}.pdf`);
       }).catch(() => {
         element.style.position = 'absolute';
         element.style.left = '-9999px';
