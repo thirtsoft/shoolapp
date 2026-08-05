@@ -1,0 +1,80 @@
+@if (!loading()) {
+  @for (application of catalog()?.applications; track application.uuid) {
+    <section class="subscription-section">
+      <div class="section-header">
+        <h3>
+          <i class="fas fa-layer-group"></i>
+
+          {{ application.libelle }}
+        </h3>
+
+        <p>
+          {{ application.description }}
+        </p>
+      </div>
+
+      <div class="plans-container">
+        @for (plan of application.plans; track plan.uuid) {
+          <div
+            class="plan-card"
+            [class.selected]="isPlanSelected(plan.uuid)"
+            (click)="selectPlan(plan)"
+          >
+            @if (plan.recommande) {
+              <div class="badge">Recommandé</div>
+            }
+
+            <h4>
+              {{ plan.libelle }}
+            </h4>
+
+            <p>
+              {{ plan.description }}
+            </p>
+
+            @if (plan.type === 'TRIAL') {
+              <div class="trial">
+                <i class="fas fa-gift"></i>
+
+                Essai gratuit {{ plan.trialPeriodDays }} jours
+              </div>
+            }
+
+            @for (tarif of plan.tarifs; track tarif.uuid) {
+              <div
+                class="tarif-box"
+                [class.selected-tarif]="isTarifSelected(tarif.uuid)"
+                (click)="selectTarif(tarif); $event.stopPropagation()"
+              >
+                <strong>
+                  {{ tarif.libelle }}
+                </strong>
+
+                <p>
+                  {{ tarif.currencyCode }}
+                </p>
+
+                @for (detail of tarif.details; track detail.uuid) {
+                  <div
+                    class="detail-item"
+                    [class.selected-detail]="isDetailSelected(detail.uuid)"
+                    (click)="selectDetail(detail); $event.stopPropagation()"
+                  >
+                    <span>
+                      {{ detail.billingPeriod }}
+                    </span>
+
+                    <strong>
+                      {{ detail.montantTtc | number }}
+                      FCFA
+                    </strong>
+                  </div>
+                }
+              </div>
+            }
+          </div>
+        }
+      </div>
+    </section>
+  }
+}

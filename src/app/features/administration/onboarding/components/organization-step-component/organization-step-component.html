@@ -1,0 +1,286 @@
+<div class="step-container">
+  <div class="step-header">
+    <h2>Créer votre organisation</h2>
+
+    <p>
+      Configurez l'entité principale qui sera utilisée dans votre plateforme. Ces informations
+      permettront de personnaliser votre environnement.
+    </p>
+  </div>
+
+  @if (error()) {
+    <div class="alert-error">
+      {{ error() }}
+    </div>
+  }
+
+  @if (!loading()) {
+    <form [formGroup]="form">
+      <section class="form-section mb-4">
+        <h3>Informations générales</h3>
+
+        <p class="section-help">Renseignez les informations principales de votre organisation.</p>
+
+        <div class="row g-3">
+          <div class="col-md-6">
+            <label class="form-label">
+              Type d'organisation
+              <span class="text-danger">*</span>
+
+              <i class="fas fa-building ms-1 text-muted"></i>
+            </label>
+
+            <select class="form-select" formControlName="organizationTypeUuid">
+              <option value="">Sélectionnez un type d'organisation</option>
+
+              @for (type of organizationTypes(); track type.uuid) {
+                <option [value]="type.uuid">
+                  {{ type.libelle }}
+                </option>
+              }
+            </select>
+
+            @if (
+              form.controls.organizationTypeUuid.touched &&
+              form.controls.organizationTypeUuid.invalid
+            ) {
+              <small class="form-text text-danger"> Le type d'organisation est obligatoire. </small>
+            }
+          </div>
+
+          <div class="col-md-6">
+            <label class="form-label">
+              Nom de l'organisation
+              <span class="text-danger">*</span>
+
+              <i class="fas fa-school ms-1 text-muted"></i>
+            </label>
+
+            <input
+              type="text"
+              class="form-control"
+              formControlName="libelle"
+              placeholder="Ex : Groupe scolaire Horizon"
+            />
+
+            @if (form.controls.libelle.touched && form.controls.libelle.invalid) {
+              <small class="form-text text-danger">
+                Le nom de l'organisation est obligatoire.
+              </small>
+            }
+          </div>
+
+          <div class="col-md-6">
+            <label class="form-label">
+              Code organisation
+              <span class="text-danger">*</span>
+
+              <i class="fas fa-barcode ms-1 text-muted"></i>
+            </label>
+
+            <input
+              type="text"
+              class="form-control"
+              formControlName="code"
+              placeholder="Ex : GS-HORIZON"
+            />
+
+            @if (form.controls.code.touched && form.controls.code.invalid) {
+              <small class="form-text text-danger"> Le code organisation est obligatoire. </small>
+            }
+          </div>
+
+          <div class="col-md-6">
+            <label class="form-label">
+              Sigle
+
+              <i class="fas fa-tag ms-1 text-muted"></i>
+            </label>
+
+            <input
+              type="text"
+              class="form-control"
+              formControlName="sigle"
+              placeholder="Ex : GSH"
+            />
+          </div>
+        </div>
+      </section>
+
+      <section class="form-section mb-4">
+        <h3>Localisation</h3>
+
+        <p class="section-help">Indiquez la localisation administrative de votre organisation.</p>
+
+        <div class="row g-3">
+          <div class="col-md-6">
+            <label class="form-label">
+              Pays
+              <span class="text-danger">*</span>
+
+              <i class="fas fa-globe-africa ms-1 text-muted"></i>
+            </label>
+            <select class="form-select" formControlName="countryUuid" (change)="onCountryChange()">
+              <option value="">Sélectionnez un pays</option>
+
+              @for (country of countries(); track country.uuid) {
+                <option [value]="country.uuid">
+                  {{ country.libelle }}
+                </option>
+              }
+            </select>
+          </div>
+
+          <div class="col-md-6">
+            <label class="form-label">
+              Région
+              <span class="text-danger">*</span>
+
+              <i class="fas fa-map-marker-alt ms-1 text-muted"></i>
+            </label>
+
+            <select
+              class="form-select"
+              formControlName="regionUuid"
+              (change)="onRegionChange($any($event.target).value)"
+            >
+              <option value="">Sélectionnez une région</option>
+
+              @for (region of regions(); track region.uuid) {
+                <option [value]="region.uuid">
+                  {{ region.libelle }}
+                </option>
+              }
+            </select>
+          </div>
+
+          <div class="col-md-6">
+            <label class="form-label">
+              Département
+              <span class="text-danger">*</span>
+
+              <i class="fas fa-location-dot ms-1 text-muted"></i>
+            </label>
+
+            <select class="form-select" formControlName="departmentUuid">
+              <option value="">Sélectionnez un département</option>
+
+              @for (department of departments(); track department.uuid) {
+                <option [value]="department.uuid">
+                  {{ department.libelle }}
+                </option>
+              }
+            </select>
+          </div>
+
+          <div class="col-md-6">
+            <label class="form-label">
+              Boîte postale
+
+              <i class="fas fa-mailbox ms-1 text-muted"></i>
+            </label>
+
+            <input
+              type="text"
+              class="form-control"
+              formControlName="boitePostale"
+              placeholder="BP 123"
+            />
+          </div>
+
+          <div class="col-md-12">
+            <label class="form-label">
+              Adresse
+
+              <i class="fas fa-map ms-1 text-muted"></i>
+            </label>
+
+            <input
+              type="text"
+              class="form-control"
+              formControlName="adresse"
+              placeholder="Adresse complète"
+            />
+          </div>
+        </div>
+      </section>
+
+      <!-- CONTACT -->
+      <section class="form-section mb-4">
+        <h3>Coordonnées</h3>
+
+        <p class="section-help">Ces informations permettront de contacter votre organisation.</p>
+
+        <div class="row g-3">
+          <div class="col-md-6">
+            <label class="form-label">
+              Téléphone
+
+              <i class="fas fa-phone ms-1 text-muted"></i>
+            </label>
+
+            <input type="text" class="form-control" formControlName="telephone" />
+          </div>
+
+          <div class="col-md-6">
+            <label class="form-label">
+              Mobile
+              <span class="text-danger">*</span>
+
+              <i class="fas fa-mobile-screen ms-1 text-muted"></i>
+            </label>
+
+            <input type="text" class="form-control" formControlName="mobile" />
+          </div>
+
+          <div class="col-md-6">
+            <label class="form-label">
+              Email
+
+              <i class="fas fa-envelope ms-1 text-muted"></i>
+            </label>
+
+            <input type="email" class="form-control" formControlName="email" />
+          </div>
+
+          <div class="col-md-6">
+            <label class="form-label">
+              Site web
+
+              <i class="fas fa-globe ms-1 text-muted"></i>
+            </label>
+
+            <input
+              type="text"
+              class="form-control"
+              formControlName="siteWeb"
+              placeholder="https://..."
+            />
+          </div>
+        </div>
+      </section>
+
+      <!-- DESCRIPTION -->
+      <section class="form-section">
+        <h3>Description</h3>
+
+        <textarea
+          class="form-control"
+          rows="4"
+          formControlName="description"
+          placeholder="Présentez brièvement votre organisation..."
+        >
+        </textarea>
+      </section>
+
+      <div class="alert-help mt-4" role="alert">
+        <i class="fas fa-info-circle me-2"></i>
+
+        <span>
+          Cette organisation représente l'entité principale qui utilisera la plateforme. Vous
+          pourrez modifier ces informations ultérieurement depuis les paramètres de votre espace.
+        </span>
+      </div>
+    </form>
+  }
+</div>

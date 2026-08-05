@@ -1,0 +1,94 @@
+<div class="step-container">
+  <div class="step-header">
+    <h2>Bienvenue dans votre espace de création</h2>
+
+    <p>
+      Commencez par choisir l'application que vous souhaitez utiliser ainsi que votre mode de
+      démarrage.
+    </p>
+  </div>
+
+  <form [formGroup]="form">
+    <!-- APPLICATION -->
+
+    <section class="form-section">
+      <h3>Application</h3>
+
+      <p class="section-help">Sélectionnez la solution adaptée à votre activité.</p>
+
+      <div class="selection-list">
+        @for (app of applications; track app.code) {
+          <label
+            class="selection-card"
+            [class.selected]="form.controls.applicationCode.value === app.code"
+          >
+            <input type="radio" formControlName="applicationCode" [value]="app.code" />
+
+            <div class="selection-content">
+              <div class="selection-icon">
+                <i class="fas fa-layer-group"></i>
+              </div>
+
+              <div class="selection-text">
+                <strong>
+                  {{ app.label }}
+                </strong>
+
+                <p>
+                  {{ app.description }}
+                </p>
+              </div>
+
+              @if (form.controls.applicationCode.value === app.code) {
+                <i class="fas fa-check-circle check-icon"></i>
+              }
+            </div>
+          </label>
+        }
+      </div>
+
+      @if (form.controls.applicationCode.touched && form.controls.applicationCode.invalid) {
+        <small class="error-message"> Veuillez sélectionner une application. </small>
+      }
+    </section>
+
+    <!-- MODE -->
+
+    <section class="form-section">
+      <h3>Mode de démarrage</h3>
+
+      <p class="section-help">Choisissez comment vous souhaitez commencer votre utilisation.</p>
+
+      <div class="selection-list">
+        @for (mode of modes; track mode.code) {
+          <label
+            class="selection-card"
+            [class.selected]="form.controls.onboardingMode.value === mode.code"
+          >
+            <input type="radio" formControlName="onboardingMode" [value]="mode.code" />
+
+            <div class="selection-content">
+              <div class="selection-icon">
+                <i class="fas fa-rocket"></i>
+              </div>
+
+              <div class="selection-text">
+                <strong>
+                  {{ mode.label }}
+                </strong>
+
+                <p>
+                  {{ mode.description }}
+                </p>
+              </div>
+
+              @if (form.controls.onboardingMode.value === mode.code) {
+                <i class="fas fa-check-circle check-icon"></i>
+              }
+            </div>
+          </label>
+        }
+      </div>
+    </section>
+  </form>
+</div>

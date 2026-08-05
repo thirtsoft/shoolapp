@@ -195,6 +195,10 @@ export class DashboardAdministrationComponent implements OnInit {
     this.router.navigate(['/admin/dossier-eleve/inscriptions']);
   }
 
+  demarerOnboarding(): void {
+    this.router.navigate(['/admin/onboarding/start']);
+  }
+
   voirAbsenceEleves(): void {
     this.router.navigate(['/admin/dossier-eleve/absences']);
   }

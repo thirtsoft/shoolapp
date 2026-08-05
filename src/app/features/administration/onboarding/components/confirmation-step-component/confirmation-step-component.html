@@ -1,0 +1,124 @@
+<div class="step-container">
+  <div class="step-header">
+    <h2>
+      <i class="fas fa-check-circle"></i>
+      Vérification de votre inscription
+    </h2>
+
+    <p>Vérifiez les informations ci-dessous avant de créer votre espace.</p>
+  </div>
+
+  <div class="summary-grid">
+    <section class="summary-card">
+      <div class="icon">
+        <i class="fas fa-cubes"></i>
+      </div>
+
+      <div>
+        <h3>Application</h3>
+
+        <strong>
+          {{ summary().onboardingStartRequest?.applicationCode }}
+        </strong>
+
+        <p>Solution sélectionnée</p>
+      </div>
+    </section>
+
+    <section class="summary-card">
+      <div class="icon">
+        <i class="fas fa-building"></i>
+      </div>
+
+      <div>
+        <h3>Espace SaaS</h3>
+
+        <strong>
+          {{ summary().onboardingTenantRequest?.libelle }}
+        </strong>
+
+        <p>
+          {{ summary().onboardingTenantRequest?.domaine }}
+        </p>
+      </div>
+    </section>
+
+    <section class="summary-card">
+      <div class="icon">
+        <i class="fas fa-sitemap"></i>
+      </div>
+
+      <div>
+        <h3>Organisation</h3>
+
+        <strong>
+          {{ summary().onboardingOrganizationRequest?.libelle }}
+        </strong>
+
+        <p>
+          {{ summary().onboardingOrganizationRequest?.code }}
+        </p>
+      </div>
+    </section>
+
+    <section class="summary-card">
+      <div class="icon">
+        <i class="fas fa-user-shield"></i>
+      </div>
+
+      <div>
+        <h3>Administrateur</h3>
+
+        <strong>
+          {{ summary().onboardingUserRequest?.firstName }}
+          {{ summary().onboardingUserRequest?.lastName }}
+        </strong>
+
+        <p>
+          {{ summary().onboardingUserRequest?.emailContact }}
+        </p>
+      </div>
+    </section>
+
+    <section class="summary-card">
+      <div class="icon">
+        <i class="fas fa-credit-card"></i>
+      </div>
+
+      <div>
+        <h3>Abonnement</h3>
+
+        <strong>
+          {{ summary().onboardingSubscriptionRequest?.planUid }}
+        </strong>
+
+        <p>
+          {{ summary().onboardingSubscriptionRequest?.planTarifUid }}
+        </p>
+      </div>
+    </section>
+
+    <section class="summary-card">
+      <div class="icon">
+        <i class="fas fa-file-invoice"></i>
+      </div>
+
+      <div>
+        <h3>Facturation</h3>
+
+        <p>
+          {{ summary().onboardingInvoiceRequest?.commentaire || 'Aucun commentaire' }}
+        </p>
+      </div>
+    </section>
+  </div>
+
+  <div class="alert-help">
+    <i class="fas fa-info-circle"></i>
+
+    <span>
+      Après validation, votre espace sera créé automatiquement. Vous pourrez ensuite accéder à votre
+      tableau de bord.
+    </span>
+  </div>
+</div>

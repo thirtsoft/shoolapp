@@ -1,0 +1,195 @@
+<div class="step-container">
+
+
+  <div class="step-header">
+
+    <h2>
+      Créer l'administrateur principal
+    </h2>
+
+    <p>
+      Renseignez les informations de la personne qui administrera
+      votre espace.
+    </p>
+
+  </div>
+
+
+
+  <form [formGroup]="form">
+
+
+    <section class="form-section">
+
+
+      <h3>
+        Informations administrateur
+      </h3>
+
+
+      <p class="section-help">
+        Cet utilisateur sera créé comme premier compte d'accès.
+      </p>
+
+
+
+      <div class="form-grid">
+
+
+        <div class="field">
+
+          <label>
+            Prénom
+            <span class="required">*</span>
+          </label>
+
+
+          <input
+            type="text"
+            formControlName="firstName"
+            placeholder="Ex: Mamadou"
+          />
+
+
+          @if (
+            form.controls.firstName.touched &&
+            form.controls.firstName.invalid
+          ) {
+
+            <small>
+              Le prénom est obligatoire.
+            </small>
+
+          }
+
+
+        </div>
+
+
+
+
+        <div class="field">
+
+          <label>
+            Nom
+            <span class="required">*</span>
+          </label>
+
+
+          <input
+            type="text"
+            formControlName="lastName"
+            placeholder="Ex: Diallo"
+          />
+
+
+          @if (
+            form.controls.lastName.touched &&
+            form.controls.lastName.invalid
+          ) {
+
+            <small>
+              Le nom est obligatoire.
+            </small>
+
+          }
+
+        </div>
+
+
+
+        <div class="field">
+
+
+          <label>
+
+            Email professionnel
+            <span class="required">*</span>
+
+          </label>
+
+
+          <input
+            type="email"
+            formControlName="emailContact"
+            placeholder="admin@mon-ecole.sn"
+          />
+
+
+
+          @if (
+            form.controls.emailContact.touched &&
+            form.controls.emailContact.invalid
+          ) {
+
+            <small>
+              Veuillez saisir une adresse email valide.
+            </small>
+
+          }
+
+
+        </div>
+
+
+
+
+        <div class="field">
+
+
+          <label>
+
+            Mobile
+            <span class="required">*</span>
+
+          </label>
+
+
+          <input
+            type="tel"
+            formControlName="mobileContact"
+            placeholder="+221 77 xxx xx xx"
+          />
+
+
+
+          @if (
+            form.controls.mobileContact.touched &&
+            form.controls.mobileContact.invalid
+          ) {
+
+            <small>
+              Le numéro mobile est obligatoire.
+            </small>
+
+          }
+
+
+        </div>
+
+
+
+      </div>
+
+
+    </section>
+
+
+
+    <div class="alert-help">
+
+      <i class="fas fa-info-circle me-2"></i>
+
+      <span>
+        Cet administrateur recevra les informations nécessaires
+        pour accéder à votre espace après la finalisation de
+        l'inscription.
+      </span>
+
+    </div>
+
+
+  </form>
+
+
+</div>

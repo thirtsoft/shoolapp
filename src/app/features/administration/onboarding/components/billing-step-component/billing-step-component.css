@@ -1,0 +1,133 @@
+.step-container {
+
+  width: 100%;
+
+}
+
+
+.step-header {
+
+  margin-bottom: 30px;
+
+}
+
+
+.step-header h2 {
+
+  font-size: 24px;
+
+  font-weight: 600;
+
+  color: #1e293b;
+
+}
+
+
+
+.step-header p {
+
+  color: #64748b;
+
+}
+
+
+
+.form-section {
+
+  background: white;
+
+  border: 1px solid #e2e8f0;
+
+  border-radius: 16px;
+
+  padding: 28px;
+
+}
+
+
+
+.form-section h3 {
+
+  font-size: 16px;
+
+  color: #334155;
+
+  margin-bottom: 10px;
+
+}
+
+
+
+.section-help {
+
+  font-size: 14px;
+
+  color: #64748b;
+
+  margin-bottom: 20px;
+
+}
+
+
+
+textarea {
+
+  width: 100%;
+
+  min-height: 140px;
+
+  padding: 14px;
+
+  border-radius: 12px;
+
+  border: 1px solid #cbd5e1;
+
+  font-size: 14px;
+
+  resize: none;
+
+}
+
+
+
+textarea:focus {
+
+  outline: none;
+
+  border-color: #2563eb;
+
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, .15);
+
+}
+
+
+
+.alert-help {
+
+  display: flex;
+
+  gap: 12px;
+
+  align-items: center;
+
+  margin-top: 25px;
+
+  background: #eff6ff;
+
+  border-radius: 12px;
+
+  padding: 15px;
+
+  color: #334155;
+
+  font-size: 14px;
+
+}
+
+
+
+.alert-help i {
+
+  color: #2563eb;
+
+}

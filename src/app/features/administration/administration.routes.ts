@@ -9,6 +9,13 @@ export const ADMIN_ROUTES: Routes = [
     children: [
 
       {
+        path: 'onboarding',
+        loadChildren: () =>
+          import('./onboarding/onboarding.routes')
+            .then(m => m.ONBOARDING_TENANT_ROUTES)
+      },
+
+      {
         path: 'dashboard',
         loadComponent: () =>
           import('./pages/dashboard-administration-component/dashboard-administration-component')
