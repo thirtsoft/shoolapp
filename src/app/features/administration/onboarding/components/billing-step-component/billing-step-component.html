@@ -1,71 +1,37 @@
 <div class="step-container">
+  <div class="step-header">
+    <h2>
+      <i class="fas fa-file-invoice-dollar"></i>
+      Informations de facturation
+    </h2>
 
+    <p>
+      Ajoutez une information complémentaire concernant votre facturation. Cette étape est
+      facultative.
+    </p>
+  </div>
 
-<div class="step-header">
+  <form [formGroup]="form">
+    <section class="form-section">
+      <h3>
+        <i class="fas fa-comment-alt"></i>
+        Commentaire
+      </h3>
 
-<h2>
-<i class="fas fa-file-invoice-dollar"></i>
- Informations de facturation
-</h2>
+      <p class="section-help">
+        Vous pouvez préciser une demande particulière liée à votre facture.
+      </p>
 
+      <textarea
+        formControlName="commentaire"
+        placeholder="Exemple : besoin d'une facture au nom du groupe scolaire..."
+      ></textarea>
+    </section>
+  </form>
 
-<p>
-Ajoutez une information complémentaire concernant votre facturation.
-Cette étape est facultative.
-</p>
+  <div class="alert-help">
+    <i class="fas fa-info-circle"></i>
 
-</div>
-
-
-
-<section class="form-section">
-
-
-<h3>
-<i class="fas fa-comment-alt"></i>
- Commentaire
-</h3>
-
-
-<p class="section-help">
-
-Vous pouvez préciser une demande particulière liée à votre facture.
-
-</p>
-
-
-
-<textarea
-
-[(ngModel)]="commentaire"
-
-placeholder="Exemple : besoin d'une facture au nom du groupe scolaire..."
-
-></textarea>
-
-
-
-</section>
-
-
-
-
-<div class="alert-help">
-
-
-<i class="fas fa-info-circle"></i>
-
-
-<span>
-
-Votre facture sera générée automatiquement après validation
-de votre inscription.
-
-</span>
-
-
-</div>
-
-
-
+    <span> Votre facture sera générée automatiquement après validation de votre inscription. </span>
+  </div>
 </div>

@@ -17,7 +17,7 @@ export class UserStepComponent implements OnboardingStepComponent<OnboardingUser
   private readonly fb = inject(FormBuilder);
 
 
-  form = this.fb.group({
+  readonly form = this.fb.group({
 
     firstName: [
       '',

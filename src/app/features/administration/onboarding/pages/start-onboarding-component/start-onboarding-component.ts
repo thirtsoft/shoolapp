@@ -1,19 +1,25 @@
-import { Component, inject, ViewChild } from '@angular/core';
+import { Component, ViewChild, inject } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
-import { TenantStepComponent } from '../../components/tenant-step-component/tenant-step-component';
-import { OrganizationStepComponent } from '../../components/organization-step-component/organization-step-component';
-import { UserStepComponent } from '../../components/user-step-component/user-step-component';
-import { OnboardingStepperComponent } from '../../components/onboarding-stepper-component/onboarding-stepper-component';
-import { SubscriptionStepComponent } from '../../components/subscription-step-component/subscription-step-component';
-import { BillingStepComponent } from '../../components/billing-step-component/billing-step-component';
-import { ConfirmationStepComponent } from '../../components/confirmation-step-component/confirmation-step-component';
-import { OnboardingApiService } from '../../service/onboarding-api.service';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { ConfirmationDialogModalComponent } from '../../../../../core/components/confirmation-dialog-modal/confirmation-dialog-modal.component';
 import { OnboardingRequestModel } from '../../../../../core/models/onboarding/onboarding-request.model';
-import { OrganizationMemberStepComponent } from '../../components/organization-member-step-component/organization-member-step-component';
+import { OnboardingStepComponent } from '../../../../../core/models/onboarding/onboarding-step-component.interface';
 import { OnboardingStepConfig } from '../../../../../core/models/onboarding/onboarding-step-config.';
 import { OnboardingStep } from '../../../../../core/models/onboarding/onboarding-step.enum';
+import { BillingStepComponent } from '../../components/billing-step-component/billing-step-component';
+import { ConfirmationStepComponent } from '../../components/confirmation-step-component/confirmation-step-component';
+import { OnboardingStepperComponent } from '../../components/onboarding-stepper-component/onboarding-stepper-component';
+import { OrganizationMemberStepComponent } from '../../components/organization-member-step-component/organization-member-step-component';
+import { OrganizationStepComponent } from '../../components/organization-step-component/organization-step-component';
+import { SubscriptionStepComponent } from '../../components/subscription-step-component/subscription-step-component';
+import { TenantStepComponent } from '../../components/tenant-step-component/tenant-step-component';
+import { UserStepComponent } from '../../components/user-step-component/user-step-component';
+import { OnboardingApiService } from '../../service/onboarding-api.service';
+import { OnboardingStateService } from '../../service/onboarding-state.service';
 import { OnboardingProgressComponent } from '../../shared/onboarding-progress-component/onboarding-progress-component';
-import { OnboardingSateService } from '../../service/onboarding-state.service';
+import { ToastrService } from 'ngx-toastr';
+import { SuccessStepComponent } from '../../components/success-step-component/success-step-component';
+
 
 @Component({
   selector: 'app-start-onboarding-component',
@@ -30,52 +36,47 @@ import { OnboardingSateService } from '../../service/onboarding-state.service';
     SubscriptionStepComponent,
     BillingStepComponent,
     ConfirmationStepComponent,
-    OnboardingProgressComponent
+    OnboardingProgressComponent,
+    SuccessStepComponent
   ]
 })
 export class StartOnboardingComponent {
 
   readonly api = inject(OnboardingApiService);
-  readonly state = inject(OnboardingSateService);
+  readonly state = inject(OnboardingStateService);
+  private readonly modalService = inject(NgbModal);
+  private readonly toastr = inject(ToastrService)
 
   readonly OnboardingStep = OnboardingStep;
 
-  currentStep = OnboardingStep.INITIATED;
+  readonly currentStep = this.state.currentStep;
 
   @ViewChild(OnboardingStepperComponent)
   onboardingStepper!: OnboardingStepperComponent;
 
-
   @ViewChild(TenantStepComponent)
   tenantStep!: TenantStepComponent;
-
 
   @ViewChild(OrganizationStepComponent)
   organizationStep!: OrganizationStepComponent;
 
-
   @ViewChild(UserStepComponent)
   userStep!: UserStepComponent;
-
 
   @ViewChild(OrganizationMemberStepComponent)
   organizationMemberStep!: OrganizationMemberStepComponent;
 
-
   @ViewChild(SubscriptionStepComponent)
   subscriptionStep!: SubscriptionStepComponent;
 
-
   @ViewChild(BillingStepComponent)
   billingStep!: BillingStepComponent;
-
 
   @ViewChild(ConfirmationStepComponent)
   confirmationStep!: ConfirmationStepComponent;
 
 
   steps: OnboardingStepConfig[] = [
-
 
     {
       step: OnboardingStep.INITIATED,
@@ -85,7 +86,6 @@ export class StartOnboardingComponent {
       component: OnboardingStepperComponent
     },
 
-
     {
       step: OnboardingStep.TENANT,
       title: 'Espace',
@@ -93,7 +93,6 @@ export class StartOnboardingComponent {
       icon: 'building',
       component: TenantStepComponent
     },
-
 
     {
       step: OnboardingStep.ORGANIZATION,
@@ -103,7 +102,6 @@ export class StartOnboardingComponent {
       component: OrganizationStepComponent
     },
 
-
     {
       step: OnboardingStep.USER,
       title: 'Administrateur',
@@ -111,7 +109,6 @@ export class StartOnboardingComponent {
       icon: 'user',
       component: UserStepComponent
     },
-
 
     {
       step: OnboardingStep.ORGANIZATION_MEMBER,
@@ -121,7 +118,6 @@ export class StartOnboardingComponent {
       component: OrganizationMemberStepComponent
     },
 
-
     {
       step: OnboardingStep.SUBSCRIPTION,
       title: 'Abonnement',
@@ -129,7 +125,6 @@ export class StartOnboardingComponent {
       icon: 'subscription',
       component: SubscriptionStepComponent
     },
-
 
     {
       step: OnboardingStep.BILLING,
@@ -139,7 +134,6 @@ export class StartOnboardingComponent {
       component: BillingStepComponent
     },
 
-
     {
       step: OnboardingStep.CONFIRMATION,
       title: 'Confirmation',
@@ -147,21 +141,10 @@ export class StartOnboardingComponent {
       icon: 'check',
       component: ConfirmationStepComponent
     }
-
-
   ];
 
-
-
-
-
-
   get currentConfig(): OnboardingStepConfig {
-
-    return this.steps.find(
-      item => item.step === this.currentStep
-    )!;
-
+    return this.steps.find(item => item.step === this.currentStep())!;
   }
 
   next(): void {
@@ -170,294 +153,269 @@ export class StartOnboardingComponent {
       return;
     }
 
-    // Sauvegarde les données de l'étape courante
     this.saveCurrentStepValue();
 
-    // Marque l'étape comme complétée
-    this.state.completeStep(this.currentStep);
+    this.state.completeStep(this.currentStep());
 
-    console.log(
-      'Completed steps : ',
-      this.state.completedSteps()
-    );
-
-    const index = this.steps.findIndex(
-      item => item.step === this.currentStep
-    );
+    const index = this.steps.findIndex(item => item.step === this.currentStep());
 
     if (index < this.steps.length - 1) {
 
       const nextStep = this.steps[index + 1].step;
 
-      this.currentStep = nextStep;
-
       this.state.setCurrentStep(nextStep);
 
-    }
+      this.scrollToTop();
 
+    }
   }
+
   previous(): void {
-    const index = this.steps.findIndex(item => item.step === this.currentStep);
+
+    const index = this.steps.findIndex(item => item.step === this.currentStep());
 
     if (index > 0) {
-      this.currentStep = this.steps[index - 1].step;
 
-      this.state.setCurrentStep(this.currentStep);
+      this.state.setCurrentStep(this.steps[index - 1].step);
+
+      this.scrollToTop();
+
     }
   }
-
-
-
-
-
-
 
   private validateCurrentStep(): boolean {
 
+    if (this.currentStep() === OnboardingStep.CONFIRMATION) {
+      return true;
+    }
 
-
-    const component =
-      this.getCurrentComponent();
-
-
+    const component = this.getCurrentComponent();
 
     if (!component) {
-
       return true;
-
     }
-
-
 
     if (!component.isValid()) {
-
-
       component.markTouched();
-
-
       return false;
-
     }
-
-
 
     return true;
 
-
   }
 
-
-
-
-
-
-
-
   private saveCurrentStepValue(): void {
-
-
-    const component =
-      this.getCurrentComponent();
-
-
-
-    if (!component) {
-
+    /**
+     * La confirmation n'a aucune donnée à sauvegarder
+     */
+    if (this.currentStep() === OnboardingStep.CONFIRMATION) {
       return;
-
     }
 
+    const component = this.getCurrentComponent();
 
+    if (!component || component.value === undefined) {
+      return;
+    }
 
-    switch (this.currentStep) {
-
-
+    switch (this.currentStep()) {
 
       case OnboardingStep.INITIATED:
 
-
-        this.state.updateStepValue(
+        this.state.updateRequest(
           'onboardingStartRequest',
           component.value
         );
 
         break;
 
-
-
-
       case OnboardingStep.TENANT:
 
-
-        this.state.updateStepValue(
+        this.state.updateRequest(
           'onboardingTenantRequest',
           component.value
         );
 
         break;
 
-
-
-
       case OnboardingStep.ORGANIZATION:
 
-
-        this.state.updateStepValue(
+        this.state.updateRequest(
           'onboardingOrganizationRequest',
           component.value
         );
 
         break;
 
-
-
-
       case OnboardingStep.USER:
 
-
-        this.state.updateStepValue(
+        this.state.updateRequest(
           'onboardingUserRequest',
           component.value
         );
 
         break;
 
-
-
-
       case OnboardingStep.ORGANIZATION_MEMBER:
 
-
-        this.state.updateStepValue(
+        this.state.updateRequest(
           'onboardingOrganizationMemberRequest',
           component.value
         );
 
         break;
 
-
-
-
       case OnboardingStep.SUBSCRIPTION:
 
-
-        this.state.updateStepValue(
+        this.state.updateRequest(
           'onboardingSubscriptionRequest',
           component.value
         );
 
         break;
 
-
-
-
       case OnboardingStep.BILLING:
 
-
-        this.state.updateStepValue(
+        this.state.updateRequest(
           'onboardingInvoiceRequest',
           component.value
         );
-
         break;
-
-
     }
-
-
   }
 
+  private getCurrentComponent(): OnboardingStepComponent<any> | null {
 
-
-
-
-
-
-  private getCurrentComponent(): any {
-
-
-    switch (this.currentStep) {
-
+    switch (this.currentStep()) {
 
       case OnboardingStep.INITIATED:
         return this.onboardingStepper;
 
-
       case OnboardingStep.TENANT:
         return this.tenantStep;
-
 
       case OnboardingStep.ORGANIZATION:
         return this.organizationStep;
 
-
       case OnboardingStep.USER:
         return this.userStep;
-
 
       case OnboardingStep.ORGANIZATION_MEMBER:
         return this.organizationMemberStep;
 
-
       case OnboardingStep.SUBSCRIPTION:
         return this.subscriptionStep;
-
 
       case OnboardingStep.BILLING:
         return this.billingStep;
 
-
       case OnboardingStep.CONFIRMATION:
-        return this.confirmationStep;
-
+        return null;
 
       default:
         return null;
-
     }
-
 
   }
 
-
-
-
-
-
-
   submit(): void {
+    const modalRef = this.modalService.open(ConfirmationDialogModalComponent,
+      {
+        centered: true,
+        backdrop: 'static'
+      }
+    );
 
+    modalRef.componentInstance.title = 'Confirmation de création';
+
+    modalRef.componentInstance.message = `Vous êtes sur le point de créer votre espace SaaS.
+
+        Cette action va créer :
+        - votre espace
+        - votre organisation
+        - votre compte administrateur
+        - votre abonnement
+        - votre facture
+
+        Voulez-vous continuer ?`;
+
+    modalRef.componentInstance.btnOkText = 'Créer mon espace';
+
+    modalRef.componentInstance.btnCancelText = 'Annuler';
+
+    modalRef.result
+      .then(result => {
+        if (result === true) {
+
+          this.executeSubmit();
+        }
+
+      })
+      .catch(() => {
+        return;
+      });
+  }
+
+
+  private executeSubmit(): void {
 
     const request = this.state.getRequest() as OnboardingRequestModel;
 
+    this.state.setLoading(true);
 
+    console.log("sending payload", request);
 
-    console.log(
-      'ONBOARDING REQUEST',
-      request
-    );
+    this.api.start(request).subscribe({
 
+      next: response => {
 
+        this.state.setLoading(false);
 
-    /*
-    this.api.start(request)
-      .subscribe({
+        console.log('ONBOARDING SUCCESS', response);
 
-        next: response => {
+        if (response.success) {
 
-          console.log(response);
+          this.state.setResponse(response.data);
 
-        },
+          this.state.setCurrentStep(
+            OnboardingStep.COMPLETED
+          );
 
-        error: error => {
+          this.toastr.success(
+            'Votre espace a été créé avec succès.'
+          );
 
-          console.error(error);
+        } else {
+
+          this.state.setError(
+            response.message
+          );
 
         }
 
-      });
-    */
+      },
 
+      error: error => {
+
+        this.state.setLoading(false);
+
+        console.error('ONBOARDING ERROR', error);
+
+        this.state.setError(
+          'Une erreur est survenue pendant la création.'
+        );
+
+      }
+
+    });
+  }
+
+  private scrollToTop(): void {
+
+    window.scrollTo({
+      top: 0,
+      behavior: 'smooth'
+    });
 
   }
 

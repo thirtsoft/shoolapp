@@ -1,9 +1,12 @@
 import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
-import { Injectable } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
 import { Observable, throwError } from 'rxjs';
 import { catchError, tap } from 'rxjs/operators';
 import { environment } from '../../../../../environments/environment';
+import { ApiResponse } from '../../../../core/datamodel/api-response.model';
 import { DataResult } from '../../../../core/datamodel/data-model';
+import { OnboardingRequestModel } from '../../../../core/models/onboarding/onboarding-request.model';
+import { OnboardingResponseModel } from '../../../../core/models/onboarding/onboarding-response.model';
 import { ResponseMessage } from '../../../../core/response/response-message';
 
 @Injectable({
@@ -11,8 +14,7 @@ import { ResponseMessage } from '../../../../core/response/response-message';
 })
 export class OnboardingApiService {
 
-  baseUrl_1 = environment.apiBaseUrl;
-  comptabiliteUrl = this.baseUrl_1 + '/comptabilite';
+  private readonly http = inject(HttpClient);
 
   httpOptions = {
     headers: new HttpHeaders({
@@ -21,7 +23,85 @@ export class OnboardingApiService {
     })
   }
 
-  constructor(private readonly http: HttpClient) { }
+  baseUrl_1 = environment.apiBaseUrl;
+  comptabiliteUrl = this.baseUrl_1 + '/comptabilite';
+
+  private readonly onboardingUrl = this.baseUrl_1 + '/api/v1/onboarding';
+    private readonly onboardingProcessUrl = this.baseUrl_1 + '/api/v1';
+  private readonly tenantUrl = this.baseUrl_1 + '/api/platform';
+
+  start(request: OnboardingRequestModel): Observable<ApiResponse<OnboardingResponseModel>> {
+
+    return this.http.post<ApiResponse<OnboardingResponseModel>>(
+      this.onboardingUrl,
+      request
+    );
+
+  }
+
+  getOnboardingProcessTenantResourcePaged<T>(endpoint: string, page: number, size: number): Observable<DataResult<T>> {
+    const url = `${this.onboardingProcessUrl}/${endpoint}/page`;
+    const params = new HttpParams()
+      .set('page', page.toString())
+      .set('size', size.toString());
+
+    return this.http.get<DataResult<T>>(url, {
+      ...this.httpOptions,
+      params,
+    });
+  }
+
+  fetchFilterOnboardingProcessDataTable<T>(endpoint: string, page: number, size: number, filters?: any): Observable<DataResult<T>> {
+    let url = `${this.onboardingProcessUrl}/${endpoint}`;
+
+    if (filters) {
+      const encodedFilters = encodeURIComponent(JSON.stringify(filters));
+      url = `${url}/filtered/page?filtre=${encodedFilters}&page=${page}&size=${size}`;
+    } else {
+      url = `${url}?page=${page}&size=${size}`;
+    }
+
+    return this.http.get<DataResult<T>>(url, this.httpOptions).pipe(
+      tap(response => console.log('Réponse API:', response)),
+      catchError(error => {
+        console.error('Erreur API:', error);
+        return throwError(() => error);
+      })
+    );
+  }
+
+
+  getTenantResourcePaged<T>(endpoint: string, page: number, size: number): Observable<DataResult<T>> {
+    const url = `${this.tenantUrl}/${endpoint}/page`;
+    const params = new HttpParams()
+      .set('page', page.toString())
+      .set('size', size.toString());
+
+    return this.http.get<DataResult<T>>(url, {
+      ...this.httpOptions,
+      params,
+    });
+  }
+
+
+  fetchFilterTenantDataTable<T>(endpoint: string, page: number, size: number, filters?: any): Observable<DataResult<T>> {
+    let url = `${this.tenantUrl}/${endpoint}`;
+
+    if (filters) {
+      const encodedFilters = encodeURIComponent(JSON.stringify(filters));
+      url = `${url}/filtered/page?filtre=${encodedFilters}&page=${page}&size=${size}`;
+    } else {
+      url = `${url}?page=${page}&size=${size}`;
+    }
+
+    return this.http.get<DataResult<T>>(url, this.httpOptions).pipe(
+      tap(response => console.log('Réponse API:', response)),
+      catchError(error => {
+        console.error('Erreur API:', error);
+        return throwError(() => error);
+      })
+    );
+  }
 
   getResourceList<T>(endpoint: string): Observable<T[]> {
     const url = `${this.comptabiliteUrl}/${endpoint}`;
@@ -31,18 +111,6 @@ export class OnboardingApiService {
   getResourceListByElement<T>(endpoint: string, id: number): Observable<T[]> {
     const url = `${this.comptabiliteUrl}/${endpoint}/${id}`;
     return this.http.get<T[]>(url, this.httpOptions);
-  }
-
-  getResourcePaged<T>(endpoint: string, page: number, size: number): Observable<DataResult<T>> {
-    const url = `${this.comptabiliteUrl}/${endpoint}/page`;
-    const params = new HttpParams()
-      .set('page', page.toString())
-      .set('size', size.toString());
-
-    return this.http.get<DataResult<T>>(url, {
-      ...this.httpOptions,
-      params,
-    });
   }
 
   getResourceByIdPaged<T>(endpoint: string, id: number, page: number, size: number): Observable<DataResult<T>> {
@@ -76,24 +144,6 @@ export class OnboardingApiService {
     );
   }
 
-  fetchFilterDataTable<T>(endpoint: string, page: number, size: number, filters?: any): Observable<DataResult<T>> {
-    let url = `${this.comptabiliteUrl}/${endpoint}`;
-
-    if (filters) {
-      const encodedFilters = encodeURIComponent(JSON.stringify(filters));
-      url = `${url}/filtered/page?filtre=${encodedFilters}&page=${page}&size=${size}`;
-    } else {
-      url = `${url}?page=${page}&size=${size}`;
-    }
-
-    return this.http.get<DataResult<T>>(url, this.httpOptions).pipe(
-      tap(response => console.log('Réponse API:', response)),
-      catchError(error => {
-        console.error('Erreur API:', error);
-        return throwError(() => error);
-      })
-    );
-  }
 
   recupererUneResource<T>(endpoint: string, id: number): Observable<T> {
     const url = `${this.comptabiliteUrl}/${endpoint}/${id}`;

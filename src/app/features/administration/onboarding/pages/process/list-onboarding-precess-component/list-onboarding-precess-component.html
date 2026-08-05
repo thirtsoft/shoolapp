@@ -1,10 +1,9 @@
 <app-generic-table-dossier
-  title="Liste des élèves"
+  title="Liste des onboarding"
   titleFitre="Eleve"
   [tableColumns]="columns"
-  [tableData]="eleveData"
+  [tableData]="processData"
   [isLoading]="isLoading"
-  [isEditIcon]="isEdit"
   [isEyesIcon]="true"
   [isLockableIcon]="isLockable"
   [tableSizes]="tableSizes"
@@ -19,8 +18,6 @@
   [showFilters]="true"
   (resetFilters)="resetFilters()"
   (sizeChange)="changeSize($event)"
-  addButtonLink="/admin/dossier-eleve/inscrire-eleve"
-  modifierButtonLink="/admin/dossier-eleve/eleve/edit"
   detailButtonLink="/admin/dossier-eleve/eleve/details"
 >
 </app-generic-table-dossier>

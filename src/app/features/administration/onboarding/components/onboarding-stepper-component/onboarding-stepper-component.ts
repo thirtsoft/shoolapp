@@ -54,7 +54,7 @@ export class OnboardingStepperComponent implements OnboardingStepComponent<Onboa
   ];
 
 
-  form = this.fb.group({
+  readonly form = this.fb.group({
     applicationCode: ['',  Validators.required],
     onboardingMode: ['',Validators.required]
 

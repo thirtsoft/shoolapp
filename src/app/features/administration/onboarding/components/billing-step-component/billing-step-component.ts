@@ -1,58 +1,43 @@
-import { Component } from '@angular/core';
-import { FormsModule } from '@angular/forms';
+import { Component, inject } from '@angular/core';
+import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
 
-import {
-  OnboardingStepComponent
-} from '../../../../../core/models/onboarding/onboarding-step-component.interface';
-
-import {
-  OnboardingInvoiceRequest
-} from '../../../../../core/models/onboarding/onboarding-invoice-request';
-
+import { OnboardingStepComponent } from '../../../../../core/models/onboarding/onboarding-step-component.interface';
+import { OnboardingInvoiceRequest } from '../../../../../core/models/onboarding/onboarding-invoice-request';
 
 
 @Component({
-
   selector: 'app-billing-step-component',
-
   standalone: true,
-
   imports: [
-    FormsModule
+    ReactiveFormsModule
   ],
-
   templateUrl: './billing-step-component.html',
-
   styleUrl: './billing-step-component.css'
-
 })
 export class BillingStepComponent implements OnboardingStepComponent<OnboardingInvoiceRequest> {
 
+  private readonly fb = inject(FormBuilder);
 
-  commentaire = '';
-
-
+  readonly form = this.fb.group({
+    commentaire: ['']
+  });
 
   get value(): OnboardingInvoiceRequest {
-
-    return {
-
-      commentaire: this.commentaire
-
-    };
+    return this.form.getRawValue() as OnboardingInvoiceRequest;
 
   }
-
-
 
   isValid(): boolean {
 
-    return true;
+    return this.form.valid;
 
   }
 
+  markTouched(): void {
 
+    this.form.markAllAsTouched();
 
-  markTouched(): void { }
+  }
+
 
 }

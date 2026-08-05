@@ -1,8 +1,8 @@
 <app-generic-table-dossier
-  title="Liste des élèves"
+  title="Liste des tenants"
   titleFitre="Eleve"
   [tableColumns]="columns"
-  [tableData]="eleveData"
+  [tableData]="tenantData"
   [isLoading]="isLoading"
   [isEditIcon]="isEdit"
   [isEyesIcon]="true"
@@ -19,8 +19,7 @@
   [showFilters]="true"
   (resetFilters)="resetFilters()"
   (sizeChange)="changeSize($event)"
-  addButtonLink="/admin/dossier-eleve/inscrire-eleve"
-  modifierButtonLink="/admin/dossier-eleve/eleve/edit"
+  addButtonLink="/admin/onboarding/start"
   detailButtonLink="/admin/dossier-eleve/eleve/details"
 >
 </app-generic-table-dossier>

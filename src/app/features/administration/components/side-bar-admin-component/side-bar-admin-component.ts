@@ -35,6 +35,10 @@ export class SideBarAdminComponent {
   nav: NavItem[] = [
     { route: '/admin/dashboard', ico: '📊', label: 'Tableau de bord', section: '', badge: '' },
 
+    // ONBOARDING
+    { route: '/admin/onboarding/tenant', ico: '💰', label: 'Tenants', section: 'ONBOARDING', badge: '18' },
+    { route: '/admin/onboarding/process', ico: '💳', label: 'Onboarding process', section: '', badge: '' },
+
     // FINANCES
     { route: '/admin/comptabilite/facture', ico: '💰', label: 'Factures', section: 'FINANCES', badge: '18' },
     { route: '/admin/comptabilite/paiement', ico: '💳', label: 'Frais scolarité', section: '', badge: '' },
@@ -94,7 +98,7 @@ export class SideBarAdminComponent {
         { route: '/admin/referentiel/typeservices', ico: '🛎️', label: 'Types de service' },
         { route: '/admin/referentiel/tarifs', ico: '💲', label: 'Tarifs' },
         { route: '/admin/referentiel/moyenpaiements', ico: '🏦', label: 'Modes de paiement' },
-         { route: '/admin/referentiel/typedepense', ico: '💲', label: 'Type dépense' },
+        { route: '/admin/referentiel/typedepense', ico: '💲', label: 'Type dépense' },
         { route: '/admin/referentiel/menus', ico: '🍽️', label: 'Menus' },
         { route: '/admin/referentiel/category-menu', ico: '📋', label: 'Catégories menu' },
 

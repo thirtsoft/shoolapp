@@ -16,6 +16,8 @@ export enum OnboardingStep {
 
   BILLING,
 
-  CONFIRMATION
+  CONFIRMATION,
+
+  COMPLETED
 
 }

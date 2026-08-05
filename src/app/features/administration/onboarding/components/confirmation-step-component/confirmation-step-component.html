@@ -9,108 +9,280 @@
   </div>
 
   <div class="summary-grid">
-    <section class="summary-card">
-      <div class="icon">
-        <i class="fas fa-cubes"></i>
+    <section
+      class="summary-card"
+      [class.open]="isOpened('application')"
+      (click)="toggle('application')"
+    >
+      <div class="summary-header">
+        <div class="summary-left">
+          <div class="icon">
+            <i class="fas fa-cubes"></i>
+          </div>
+
+          <div>
+            <h3>Application</h3>
+            <p>Solution sélectionnée</p>
+          </div>
+        </div>
+
+        <i class="fas fa-chevron-down arrow" [class.rotate]="isOpened('application')"> </i>
       </div>
 
-      <div>
-        <h3>Application</h3>
+      @if (isOpened('application')) {
+        <div class="summary-details">
+          <div class="detail-row">
+            <span>Application</span>
+            <strong>
+              {{ request().onboardingStartRequest?.applicationCode }}
+            </strong>
+          </div>
 
-        <strong>
-          {{ summary().onboardingStartRequest?.applicationCode }}
-        </strong>
-
-        <p>Solution sélectionnée</p>
-      </div>
+          <div class="detail-row">
+            <span>Mode</span>
+            <strong>
+              {{ request().onboardingStartRequest?.onboardingMode }}
+            </strong>
+          </div>
+        </div>
+      }
     </section>
 
-    <section class="summary-card">
-      <div class="icon">
-        <i class="fas fa-building"></i>
+    <section class="summary-card" [class.open]="isOpened('tenant')" (click)="toggle('tenant')">
+      <div class="summary-header">
+        <div class="summary-left">
+          <div class="icon">
+            <i class="fas fa-building"></i>
+          </div>
+
+          <div>
+            <h3>Espace SaaS</h3>
+
+            <p>{{ request().onboardingTenantRequest?.libelle }}</p>
+          </div>
+        </div>
+
+        <i class="fas fa-chevron-down arrow" [class.rotate]="isOpened('tenant')"> </i>
       </div>
 
-      <div>
-        <h3>Espace SaaS</h3>
+      @if (isOpened('tenant')) {
+        <div class="summary-details">
+          <div class="detail-row">
+            <span>Libellé</span>
+            <strong>{{ request().onboardingTenantRequest?.libelle }}</strong>
+          </div>
 
-        <strong>
-          {{ summary().onboardingTenantRequest?.libelle }}
-        </strong>
+          <div class="detail-row">
+            <span>Code</span>
+            <strong>{{ request().onboardingTenantRequest?.code }}</strong>
+          </div>
 
-        <p>
-          {{ summary().onboardingTenantRequest?.domaine }}
-        </p>
-      </div>
+          <div class="detail-row">
+            <span>Domaine</span>
+            <strong>{{ request().onboardingTenantRequest?.domaine }}</strong>
+          </div>
+
+          <div class="detail-row">
+            <span>Email</span>
+            <strong>{{ request().onboardingTenantRequest?.currencyUuid }}</strong>
+          </div>
+
+          <div class="detail-row">
+            <span>Téléphone</span>
+            <strong>{{ request().onboardingTenantRequest?.tenantTypeUuid }}</strong>
+          </div>
+        </div>
+      }
     </section>
 
-    <section class="summary-card">
-      <div class="icon">
-        <i class="fas fa-sitemap"></i>
+    <section
+      class="summary-card"
+      [class.open]="isOpened('organization')"
+      (click)="toggle('organization')"
+    >
+      <div class="summary-header">
+        <div class="summary-left">
+          <div class="icon">
+            <i class="fas fa-sitemap"></i>
+          </div>
+
+          <div>
+            <h3>Organisation</h3>
+
+            <p>{{ request().onboardingOrganizationRequest?.libelle }}</p>
+          </div>
+        </div>
+
+        <i class="fas fa-chevron-down arrow" [class.rotate]="isOpened('organization')"> </i>
       </div>
 
-      <div>
-        <h3>Organisation</h3>
+      @if (isOpened('organization')) {
+        <div class="summary-details">
+          <div class="detail-row">
+            <span>Libellé</span>
+            {{ request().onboardingOrganizationRequest?.libelle }}
+          </div>
 
-        <strong>
-          {{ summary().onboardingOrganizationRequest?.libelle }}
-        </strong>
+          <div class="detail-row">
+            <span>Code</span>
+            {{ request().onboardingOrganizationRequest?.code }}
+          </div>
 
-        <p>
-          {{ summary().onboardingOrganizationRequest?.code }}
-        </p>
-      </div>
+          <div class="detail-row">
+            <span>Email</span>
+            <strong>
+              {{ request().onboardingOrganizationRequest?.email }}
+            </strong>
+          </div>
+
+          <div class="detail-row">
+            <span>Téléphone</span>
+            <strong>
+              {{ request().onboardingOrganizationRequest?.telephone }}
+            </strong>
+          </div>
+
+          <div class="detail-row">
+            <span>Description</span>
+            {{ request().onboardingOrganizationRequest?.description }}
+          </div>
+        </div>
+      }
     </section>
 
-    <section class="summary-card">
-      <div class="icon">
-        <i class="fas fa-user-shield"></i>
+    <section class="summary-card" [class.open]="isOpened('user')" (click)="toggle('user')">
+      <div class="summary-header">
+        <div class="summary-left">
+          <div class="icon">
+            <i class="fas fa-user-shield"></i>
+          </div>
+
+          <div>
+            <h3>Administrateur</h3>
+
+            <p>Compte de l'administrateur</p>
+          </div>
+        </div>
+
+        <i class="fas fa-chevron-down arrow" [class.rotate]="isOpened('user')"> </i>
       </div>
 
-      <div>
-        <h3>Administrateur</h3>
+      @if (isOpened('user')) {
+        <div class="summary-details">
+          <div class="detail-row">
+            <span>Prénom</span>
+            <strong>{{ request().onboardingUserRequest?.firstName }}</strong>
+          </div>
 
-        <strong>
-          {{ summary().onboardingUserRequest?.firstName }}
-          {{ summary().onboardingUserRequest?.lastName }}
-        </strong>
+          <div class="detail-row">
+            <span>Nom</span>
+            <strong>{{ request().onboardingUserRequest?.lastName }}</strong>
+          </div>
 
-        <p>
-          {{ summary().onboardingUserRequest?.emailContact }}
-        </p>
-      </div>
+          <div class="detail-row">
+            <span>Email</span>
+            <strong>{{ request().onboardingUserRequest?.emailContact }}</strong>
+          </div>
+
+          <div class="detail-row">
+            <span>Téléphone</span>
+            <strong>{{ request().onboardingUserRequest?.mobileContact }}</strong>
+          </div>
+        </div>
+      }
     </section>
 
-    <section class="summary-card">
-      <div class="icon">
-        <i class="fas fa-credit-card"></i>
+    <section
+      class="summary-card"
+      [class.open]="isOpened('subscription')"
+      (click)="toggle('subscription')"
+    >
+      <div class="summary-header">
+        <div class="summary-left">
+          <div class="icon">
+            <i class="fas fa-credit-card"></i>
+          </div>
+
+          <div>
+            <h3>Abonnement</h3>
+
+            <p> {{ viewModel().subscriptionDisplay?.planName }}</p>
+          </div>
+        </div>
+
+        <i class="fas fa-chevron-down arrow" [class.rotate]="isOpened('subscription')"> </i>
       </div>
 
-      <div>
-        <h3>Abonnement</h3>
+      @if (isOpened('subscription')) {
+        <div class="summary-details">
+          <div class="detail-row">
+            <span>Plan</span>
 
-        <strong>
-          {{ summary().onboardingSubscriptionRequest?.planUid }}
-        </strong>
+            <strong>
+             {{ viewModel().subscriptionDisplay?.planName }}
+            </strong>
+          </div>
 
-        <p>
-          {{ summary().onboardingSubscriptionRequest?.planTarifUid }}
-        </p>
+          <div class="detail-row">
+             <span>Période</span>
+
+            <strong>
+                  {{ viewModel().subscriptionDisplay?.billingPeriodLabel }}
+            </strong>
+          </div>
+
+          <div class="detail-row">
+           <span>Montant HT</span>
+
+            <strong>
+              {{ viewModel().subscriptionDisplay?.amount }}
+            </strong>
+          </div>
+        </div>
+      }
+    </section>
+    
+    <section class="summary-card" [class.open]="isOpened('billing')" (click)="toggle('billing')">
+      <div class="summary-header">
+        <div class="summary-left">
+          <div class="icon">
+            <i class="fas fa-file-invoice"></i>
+          </div>
+
+          <div>
+            <h3>Facturation</h3>
+
+            <p>Informations de paiement</p>
+          </div>
+        </div>
+
+        <i class="fas fa-chevron-down arrow" [class.rotate]="isOpened('billing')"> </i>
       </div>
+
+      @if (isOpened('billing')) {
+        <div class="summary-details">
+          <div class="detail-row">
+            <span>Renouvellement automatique</span>
+
+            <strong>
+              {{
+                request().onboardingSubscriptionRequest?.renouvellementAutomatique ? 'Oui' : 'Non'
+              }}
+            </strong>
+          </div>
+
+          <div class="detail-row">
+            <span>Commentaire</span>
+
+            <strong>
+              {{ request().onboardingInvoiceRequest?.commentaire || 'Aucun commentaire' }}
+            </strong>
+          </div>
+        </div>
+      }
     </section>
 
-    <section class="summary-card">
-      <div class="icon">
-        <i class="fas fa-file-invoice"></i>
-      </div>
-
-      <div>
-        <h3>Facturation</h3>
-
-        <p>
-          {{ summary().onboardingInvoiceRequest?.commentaire || 'Aucun commentaire' }}
-        </p>
-      </div>
-    </section>
+  
   </div>
 
   <div class="alert-help">

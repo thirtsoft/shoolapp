@@ -15,7 +15,7 @@ export class OrganizationMemberStepComponent implements OnboardingStepComponent<
 
   private readonly fb = inject(FormBuilder);
 
-  form = this.fb.group({
+  readonly form = this.fb.group({
     fonction: ['', [Validators.required, Validators.minLength(3)]]
   });
 

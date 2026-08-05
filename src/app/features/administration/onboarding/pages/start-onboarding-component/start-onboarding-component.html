@@ -19,66 +19,61 @@
 
     <div class="card">
       <div class="card-body">
-        
         <app-onboarding-progress-component
           [steps]="steps"
-          [currentStep]="currentStep"
+          [currentStep]="currentStep()"
           [completedSteps]="state.completedSteps()"
         >
         </app-onboarding-progress-component>
 
         <section class="onboarding-content">
-          @if (currentStep === OnboardingStep.INITIATED) {
+          @if (currentStep() === OnboardingStep.INITIATED) {
             <app-onboarding-stepper-component />
-
-          } @else if (currentStep === OnboardingStep.TENANT) {
+          } @else if (currentStep() === OnboardingStep.TENANT) {
             <app-tenant-step-component />
-
-          } @else if (currentStep === OnboardingStep.ORGANIZATION) {
+          } @else if (currentStep() === OnboardingStep.ORGANIZATION) {
             <app-organization-step-component />
-
-          } @else if (currentStep === OnboardingStep.USER) {
+          } @else if (currentStep() === OnboardingStep.USER) {
             <app-user-step-component />
-
-          } @else if (currentStep === OnboardingStep.ORGANIZATION_MEMBER) {
+          } @else if (currentStep() === OnboardingStep.ORGANIZATION_MEMBER) {
             <app-organization-member-step-component />
-
-          } @else if (currentStep === OnboardingStep.SUBSCRIPTION) {
+          } @else if (currentStep() === OnboardingStep.SUBSCRIPTION) {
             <app-subscription-step-component />
-
-          } @else if (currentStep === OnboardingStep.BILLING) {
+          } @else if (currentStep() === OnboardingStep.BILLING) {
             <app-billing-step-component />
-
-          } @else if (currentStep === OnboardingStep.CONFIRMATION) {
+          } @else if (currentStep() === OnboardingStep.CONFIRMATION) {
             <app-confirmation-step-component />
+          } @else if (currentStep() === OnboardingStep.COMPLETED) {
+            <app-success-step-component />
           }
         </section>
 
         <div class="onboarding-actions">
-          <button
-            type="button"
-            class="btn btn-secondary"
-            [disabled]="currentStep === OnboardingStep.INITIATED"
-            (click)="previous()"
-          >
-            <i class="fas fa-arrow-left me-2"></i>
+          @if (currentStep() !== OnboardingStep.COMPLETED) {
+            <button
+              type="button"
+              class="btn btn-secondary onboarding-btn"
+              [disabled]="currentStep() === OnboardingStep.INITIATED"
+              (click)="previous()"
+            >
+              <i class="fas fa-arrow-left me-2"></i>
 
-            Retour
-          </button>
-
-          @if (currentStep !== OnboardingStep.CONFIRMATION) {
-            <button type="button" class="btn btn-primary" (click)="next()">
-              Continuer
-
-              <i class="fas fa-arrow-right ms-2"></i>
+              Retour
             </button>
 
-          } @else {
-            <button type="button" class="btn btn-primary" (click)="submit()">
-              <i class="fas fa-check me-2"></i>
+            @if (currentStep() !== OnboardingStep.CONFIRMATION) {
+              <button type="button" class="btn btn-primary onboarding-btn" (click)="next()">
+                Continuer
 
-              Terminer
-            </button>
+                <i class="fas fa-arrow-right ms-2"></i>
+              </button>
+            } @else {
+              <button type="button" class="btn btn-primary onboarding-btn" (click)="submit()">
+                <i class="fas fa-check me-2"></i>
+
+                Terminer
+              </button>
+            }
           }
         </div>
       </div>

@@ -1,5 +1,7 @@
-import { Component, computed, inject } from '@angular/core';
-import { OnboardingSateService } from '../../service/onboarding-state.service';
+import { Component, inject, signal } from '@angular/core';
+
+import { OnboardingStateService } from '../../service/onboarding-state.service';
+
 
 @Component({
   selector: 'app-confirmation-step-component',
@@ -10,14 +12,56 @@ import { OnboardingSateService } from '../../service/onboarding-state.service';
 })
 export class ConfirmationStepComponent {
 
-  private readonly state = inject(OnboardingSateService);
 
-  readonly summary = computed(() => this.state.getRequest());
+  private readonly state =
+    inject(OnboardingStateService);
 
-  isValid(): boolean {
-    return true;
+
+
+  /**
+   * Données métier prêtes pour le backend
+   */
+  readonly request =
+    this.state.request;
+
+
+
+  /**
+   * Données d'affichage uniquement UI
+   */
+  readonly viewModel =
+    this.state.viewModel;
+
+
+
+  /**
+   * Gestion ouverture cartes résumé
+   */
+  readonly openedCard =    signal<string | null>(null);
+
+
+
+  toggle(card: string): void {
+
+    if (this.openedCard() === card) {
+
+      this.openedCard.set(null);
+
+      return;
+
+    }
+
+
+    this.openedCard.set(card);
+
   }
 
-  markTouched(): void { }
+
+
+  isOpened(card: string): boolean {
+
+    return this.openedCard() === card;
+
+  }
 
 }

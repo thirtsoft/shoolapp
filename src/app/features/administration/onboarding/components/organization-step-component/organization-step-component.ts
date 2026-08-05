@@ -22,24 +22,15 @@ export class OrganizationStepComponent implements OnboardingStepComponent<Onboar
   private readonly referential = inject(OnboardingReferentialService);
   private readonly destroyRef = inject(DestroyRef);
 
-
   readonly organizationTypes = signal<OrganizationTypeResponse[]>([]);
-
   readonly countries = signal<CountryResponse[]>([]);
-
   readonly regions = signal<RegionResponse[]>([]);
-
   readonly departments = signal<DepartmentResponse[]>([]);
-
-
-
   readonly loading = signal<boolean>(true);
 
   readonly error = signal<string | null>(null);
 
-
-
-  form = this.fb.group({
+  readonly form = this.fb.group({
     organizationTypeUuid: ['', Validators.required],
     libelle: ['', [Validators.required, Validators.minLength(3)]],
     code: ['', [Validators.required, Validators.minLength(3)]],
@@ -82,7 +73,9 @@ export class OrganizationStepComponent implements OnboardingStepComponent<Onboar
 
     this.referential.getTypeOrganizations()
 
-      .pipe(takeUntilDestroyed())
+      .pipe(
+        takeUntilDestroyed(this.destroyRef)
+      )
 
       .subscribe({
 
@@ -102,7 +95,9 @@ export class OrganizationStepComponent implements OnboardingStepComponent<Onboar
 
     this.referential.getCountries()
 
-      .pipe(takeUntilDestroyed())
+      .pipe(
+        takeUntilDestroyed(this.destroyRef)
+      )
 
       .subscribe({
 

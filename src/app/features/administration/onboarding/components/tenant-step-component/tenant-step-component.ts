@@ -1,4 +1,4 @@
-import { Component, inject, OnInit, signal } from '@angular/core';
+import { Component, DestroyRef, inject, OnInit, signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { OnboardingReferentialService } from '../../service/onboarding-referential.service';
 import { CountryResponse } from '../../../../../core/models/onboarding/country-response';
@@ -21,6 +21,7 @@ export class TenantStepComponent implements OnboardingStepComponent<OnboardingTe
 
   private readonly fb = inject(FormBuilder);
   private readonly referential = inject(OnboardingReferentialService);
+  private readonly destroyRef = inject(DestroyRef);
 
   readonly countries = signal<CountryResponse[]>([]);
   readonly currencies = signal<CurrencyResponse[]>([]);
@@ -31,7 +32,7 @@ export class TenantStepComponent implements OnboardingStepComponent<OnboardingTe
 
   readonly error = signal<string | null>(null);
 
-  form = this.fb.group({
+  readonly form = this.fb.group({
     libelle: ['', [Validators.required, Validators.minLength(3)]],
     code: ['', [Validators.required, Validators.minLength(3)]],
     countryUuid: ['', Validators.required],
@@ -65,7 +66,9 @@ export class TenantStepComponent implements OnboardingStepComponent<OnboardingTe
     this.loading.set(true);
 
     this.referential.getCountries()
-      .pipe(takeUntilDestroyed())
+      .pipe(
+        takeUntilDestroyed(this.destroyRef)
+      )
       .subscribe({
 
         next: response => {
@@ -83,7 +86,9 @@ export class TenantStepComponent implements OnboardingStepComponent<OnboardingTe
       });
 
     this.referential.getCurrencies()
-      .pipe(takeUntilDestroyed())
+      .pipe(
+        takeUntilDestroyed(this.destroyRef)
+      )
       .subscribe({
 
         next: response => {
@@ -101,7 +106,9 @@ export class TenantStepComponent implements OnboardingStepComponent<OnboardingTe
       });
 
     this.referential.getLanguages()
-      .pipe(takeUntilDestroyed())
+      .pipe(
+        takeUntilDestroyed(this.destroyRef)
+      )
       .subscribe({
 
         next: response => {
@@ -119,7 +126,9 @@ export class TenantStepComponent implements OnboardingStepComponent<OnboardingTe
       });
 
     this.referential.getTimezones()
-      .pipe(takeUntilDestroyed())
+      .pipe(
+        takeUntilDestroyed(this.destroyRef)
+      )
       .subscribe({
 
         next: response => {
@@ -136,7 +145,9 @@ export class TenantStepComponent implements OnboardingStepComponent<OnboardingTe
       });
 
     this.referential.getTenantTypes()
-      .pipe(takeUntilDestroyed())
+      .pipe(
+        takeUntilDestroyed(this.destroyRef)
+      )
       .subscribe({
 
         next: response => {
