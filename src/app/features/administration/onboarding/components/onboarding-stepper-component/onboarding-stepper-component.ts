@@ -1,8 +1,9 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { OnboardingStepComponent } from '../../../../../core/models/onboarding/onboarding-step-component.interface';
 import { OnboardingStartRequest } from '../../../../../core/models/onboarding/onboarding-start-request';
 import { OnboardingMode } from '../../../../../core/models/onboarding/onboarding-mode.enum';
+import { OnboardingStateService } from '../../service/onboarding-state.service';
 
 @Component({
   selector: 'app-onboarding-stepper-component',
@@ -11,11 +12,11 @@ import { OnboardingMode } from '../../../../../core/models/onboarding/onboarding
   templateUrl: './onboarding-stepper-component.html',
   styleUrl: './onboarding-stepper-component.css',
 })
-export class OnboardingStepperComponent implements OnboardingStepComponent<OnboardingStartRequest> {
+export class OnboardingStepperComponent implements OnboardingStepComponent<OnboardingStartRequest>, OnInit {
 
   private readonly fb = inject(FormBuilder);
+  private readonly state = inject(OnboardingStateService);
 
-  
   applications = [
 
     {
@@ -31,37 +32,41 @@ export class OnboardingStepperComponent implements OnboardingStepComponent<Onboa
       description:
         'Solution de gestion pour les commerces et points de vente.'
     }
-
   ];
 
   modes = [
-
     {
       code: OnboardingMode.TRIAL,
       label: 'Essai gratuit',
       description:
         'Découvrez la plateforme pendant une période limitée.'
     },
-
-
     {
       code: OnboardingMode.STANDARD,
       label: 'Abonnement standard',
       description:
         'Démarrez directement avec une formule active.'
     }
-
   ];
 
-
   readonly form = this.fb.group({
-    applicationCode: ['',  Validators.required],
-    onboardingMode: ['',Validators.required]
+    applicationCode: ['', Validators.required],
+    onboardingMode: ['', Validators.required]
 
   });
 
+  ngOnInit(): void {
+    const value = this.state.request().onboardingStartRequest;
+
+    if (!value) {
+      return;
+    }
+    this.form.patchValue(value);
+  }
+
+
   get value(): OnboardingStartRequest {
-    
+
     return this.form.getRawValue() as OnboardingStartRequest;
 
   }

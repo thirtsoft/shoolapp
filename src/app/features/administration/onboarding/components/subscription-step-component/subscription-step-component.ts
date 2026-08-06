@@ -2,12 +2,9 @@ import { DecimalPipe } from '@angular/common';
 import { Component, DestroyRef, inject, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
-
 import { OnboardingStepComponent } from '../../../../../core/models/onboarding/onboarding-step-component.interface';
 import { OnboardingSubscriptionRequest } from '../../../../../core/models/onboarding/onboarding-subscription-request';
-
 import { SubscriptionCatalogResponse } from '../../../../../core/models/onboarding/subscription-catalog-response';
-
 import { OnboardingPlanResponse } from '../../../../../core/models/onboarding/onboarding-plan-response';
 import { OnboardingReferentialService } from '../../service/onboarding-referential.service';
 import { OnboardingStateService } from '../../service/onboarding-state.service';
@@ -44,7 +41,18 @@ export class SubscriptionStepComponent implements OnboardingStepComponent<Onboar
   });
 
   constructor() {
+    this.restoreForm();
     this.loadCatalog();
+  }
+
+  private restoreForm(): void {
+    const request =
+      this.state.request().onboardingSubscriptionRequest;
+    if (!request) {
+      return;
+    }
+    this.form.patchValue(request);
+
   }
 
   private loadCatalog() {

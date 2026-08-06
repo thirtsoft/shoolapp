@@ -9,6 +9,7 @@ import { TenantTypeResponse } from '../../../../../core/models/onboarding/type-t
 import { OnboardingTenantRequest } from '../../../../../core/models/onboarding/onboarding-tenant-request';
 import { OnboardingStepComponent } from '../../../../../core/models/onboarding/onboarding-step-component.interface';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { OnboardingStateService } from '../../service/onboarding-state.service';
 
 @Component({
   selector: 'app-tenant-step-component',
@@ -17,10 +18,11 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
   templateUrl: './tenant-step-component.html',
   styleUrl: './tenant-step-component.css',
 })
-export class TenantStepComponent implements OnboardingStepComponent<OnboardingTenantRequest> {
+export class TenantStepComponent implements OnboardingStepComponent<OnboardingTenantRequest>, OnInit {
 
   private readonly fb = inject(FormBuilder);
   private readonly referential = inject(OnboardingReferentialService);
+  private readonly state = inject(OnboardingStateService);
   private readonly destroyRef = inject(DestroyRef);
 
   readonly countries = signal<CountryResponse[]>([]);
@@ -47,10 +49,25 @@ export class TenantStepComponent implements OnboardingStepComponent<OnboardingTe
     this.loadReferentials();
   }
 
+  ngOnInit(): void {
+    this.restoreForm();
+  }
+
+  private restoreForm(): void {
+
+    const value = this.state.request().onboardingTenantRequest;
+
+    if (!value) {
+      return;
+    }
+
+    this.form.patchValue(value);
+
+  }
+
+
   get value(): OnboardingTenantRequest {
-
     return this.form.getRawValue() as OnboardingTenantRequest;
-
   }
 
   isValid(): boolean {
@@ -66,38 +83,25 @@ export class TenantStepComponent implements OnboardingStepComponent<OnboardingTe
     this.loading.set(true);
 
     this.referential.getCountries()
-      .pipe(
-        takeUntilDestroyed(this.destroyRef)
-      )
+      .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
 
         next: response => {
 
           if (response.success) {
-
-            this.countries.set(
-              response.data
-            );
-
+            this.countries.set(response.data);
           }
-
         }
-
       });
 
     this.referential.getCurrencies()
-      .pipe(
-        takeUntilDestroyed(this.destroyRef)
-      )
+      .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
 
         next: response => {
 
           if (response.success) {
-
-            this.currencies.set(
-              response.data
-            );
+            this.currencies.set(response.data);
 
           }
 
@@ -106,57 +110,41 @@ export class TenantStepComponent implements OnboardingStepComponent<OnboardingTe
       });
 
     this.referential.getLanguages()
-      .pipe(
-        takeUntilDestroyed(this.destroyRef)
-      )
+      .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
 
         next: response => {
 
           if (response.success) {
 
-            this.languages.set(
-              response.data
-            );
+            this.languages.set(response.data);
 
           }
-
         }
-
       });
 
     this.referential.getTimezones()
-      .pipe(
-        takeUntilDestroyed(this.destroyRef)
-      )
+      .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
 
         next: response => {
 
           if (response.success) {
-            this.timezones.set(
-              response.data
-            );
+            this.timezones.set(response.data);
 
           }
-
         }
-
       });
 
     this.referential.getTenantTypes()
-      .pipe(
-        takeUntilDestroyed(this.destroyRef)
-      )
+      .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
 
         next: response => {
 
           if (response.success) {
 
-            this.tenantTypes.set(
-              response.data
-            );
+            this.tenantTypes.set(response.data);
 
           }
           this.loading.set(false);
@@ -168,9 +156,7 @@ export class TenantStepComponent implements OnboardingStepComponent<OnboardingTe
             'Impossible de charger les informations nécessaires.'
           );
           this.loading.set(false);
-
         }
-
       });
   }
 
