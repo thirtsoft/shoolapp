@@ -16,6 +16,13 @@ export class InterceptorService implements HttpInterceptor {
 
   intercept(request: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
     const token = this.localStorage.getItem('token');
+
+    console.log('================ HTTP INTERCEPTOR ================');
+    console.log('URL:', request.url);
+    console.log('TOKEN:', token);
+    console.log('TOKEN LENGTH:', token?.length);
+    console.log('===================================================');
+
     if (token && !request.url.includes('/myschool/api/auth/signin')) {
       request = request.clone({
         headers: request.headers.set('Authorization', 'Bearer ' + token)
