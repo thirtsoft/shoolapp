@@ -46,6 +46,8 @@ export interface CoursEdit {
 
     dateDebut?: Date;
 
+    jourSemaine?: string;
+
     heureDebut?: string;
 
     heureFin?: string;
