@@ -20,8 +20,8 @@ export class UserStepComponent implements OnboardingStepComponent<OnboardingUser
   readonly form = this.fb.group({
     firstName: ['', [Validators.required, Validators.minLength(2)]],
     lastName: ['', [Validators.required, Validators.minLength(2)]],
-    emailContact: ['', [Validators.required, Validators.email]],
-    mobileContact: ['', [Validators.required]]
+    email: ['', [Validators.required, Validators.email]],
+    mobile: ['', [Validators.required]]
   });
 
   constructor() {

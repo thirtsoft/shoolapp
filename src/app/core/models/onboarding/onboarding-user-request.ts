@@ -4,8 +4,8 @@ export interface OnboardingUserRequest {
 
   lastName: string;
 
-  emailContact: string;
+  email: string;
 
-  mobileContact: string;
+  mobile: string;
 
 }
