@@ -32,8 +32,8 @@
                         <i class="fas fa-book-open"></i>
                       </div>
                       <div class="info-content">
-                        <label>Année scolaire</label>
-                        <h5>{{ emploie?.libelleAnneeScolaire || '-' }}</h5>
+                        <label>Classe</label>
+                        <h5>{{ emploie?.libelleClasse || '-' }}</h5>
                       </div>
                     </div>
                   </div>
@@ -43,8 +43,8 @@
                         <i class="fas fa-calendar-week"></i>
                       </div>
                       <div class="info-content">
-                        <label>Date création</label>
-                        <h5>{{ emploie?.createdDate || '-' }}</h5>
+                        <label>Année scolaire</label>
+                        <h5>{{ emploie?.libelleAnneeScolaire || '-' }}</h5>
                       </div>
                     </div>
                   </div>
@@ -148,7 +148,7 @@
 
 <div id="print-shadow-element" class="print-matrix-target">
   <div class="timetable-outer-header">
-    <div class="title-badge-scolaire">{{ emploie?.titre || '6ème' }}</div>
+    <div class="title-badge-scolaire">Emploi : {{ emploie?.libelleClasse || '6ème' }}</div>
     <div class="subtitle-scolaire">
       Année scolaire :
       {{ emploie?.libelleAnneeScolaire || 'Première semaine' }}
@@ -178,7 +178,7 @@
                 @if (rowSpans[j.toLowerCase()][r].course; as cours) {
                   <div class="course-box-content">
                     <div class="course-subject">
-                      <strong>{{ cours.matiere }}</strong> - {{cours.classe}}
+                      <strong>{{ cours.matiere }}</strong> - {{ cours.classe }}
                     </div>
                     <div class="course-title-sub">{{ cours.libelle }}</div>
                     <div class="course-details">
