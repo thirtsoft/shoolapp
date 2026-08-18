@@ -7,6 +7,14 @@ export const routes: Routes = [
     redirectTo: 'auth',
     pathMatch: 'full',
   },
+
+  {
+    path: 'setup',
+    loadChildren: () =>
+      import('./features/setup/setup.routes')
+        .then(m => m.SETUP_ROUTES)
+  },
+
   {
     path: 'admin',
     loadChildren: () =>

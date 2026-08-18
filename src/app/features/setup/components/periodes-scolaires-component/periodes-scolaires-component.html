@@ -1,0 +1,70 @@
+<div class="periodicite-container">
+  <div class="periodicite-intro">
+    <h3>Comment souhaitez-vous organiser votre année scolaire ?</h3>
+
+    <p>
+      Votre établissement fonctionnera avec deux semestres. Les périodes seront préparées
+      automatiquement.
+    </p>
+  </div>
+
+  <button
+    type="button"
+    class="periodicite-card"
+    [class.selected]="isSelected"
+    (click)="selectionnerSemestres()"
+  >
+    <!-- Icône -->
+
+    <div class="periodicite-icon">
+      @if (isSelected) {
+        ✓
+      } @else {
+        📅
+      }
+    </div>
+
+    <div class="periodicite-content">
+      <div class="periodicite-title-row">
+        <h4>Semestres</h4>
+
+        @if (isSelected) {
+          <span class="success-badge"> ✓ Sélectionné </span>
+        }
+      </div>
+
+      <p>Votre année scolaire sera organisée en deux semestres.</p>
+
+      <div class="semestres-list">
+        @for (semestre of semestres; track semestre.numero) {
+          <div class="semestre-item">
+            <span class="semestre-check"> ✓ </span>
+
+            <span>
+              {{ semestre.label }}
+            </span>
+          </div>
+        }
+      </div>
+    </div>
+
+    <div class="selection-indicator">
+      @if (isSelected) {
+        ✓
+      }
+    </div>
+  </button>
+
+  <div class="periodicite-info">
+    <div class="info-icon">ℹ</div>
+
+    <div class="info-content">
+      <strong> Configuration automatique </strong>
+
+      <span>
+        Les sessions des deux semestres seront créées automatiquement lors de l'initialisation de
+        l'année scolaire.
+      </span>
+    </div>
+  </div>
+</div>

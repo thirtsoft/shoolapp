@@ -1,0 +1,450 @@
+/* =========================================================
+   CONTAINER
+   ========================================================= */
+
+.matieres-container {
+  width: 100%;
+}
+
+
+/* =========================================================
+   INTRODUCTION
+   ========================================================= */
+
+.matieres-intro {
+  margin-bottom: 28px;
+}
+
+.matieres-intro h3 {
+  margin: 0 0 8px;
+
+  color: #111827;
+
+  font-size: 20px;
+  font-weight: 700;
+}
+
+.matieres-intro p {
+  max-width: 760px;
+
+  margin: 0;
+
+  color: #6b7280;
+
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+
+/* =========================================================
+   LISTE DES NIVEAUX
+   ========================================================= */
+
+.niveaux-list {
+  display: flex;
+  flex-direction: column;
+
+  gap: 16px;
+}
+
+
+/* =========================================================
+   CARTE NIVEAU
+   ========================================================= */
+
+.niveau-card {
+  padding: 20px;
+
+  border: 1px solid #e5e7eb;
+  border-radius: 14px;
+
+  background: #ffffff;
+
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.niveau-card:hover {
+  border-color: #d1d5db;
+
+  box-shadow:
+    0 4px 12px rgba(0, 0, 0, 0.04);
+}
+
+
+/* =========================================================
+   HEADER NIVEAU
+   ========================================================= */
+
+.niveau-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  gap: 16px;
+
+  margin-bottom: 16px;
+}
+
+.niveau-title-zone {
+  display: flex;
+  align-items: center;
+
+  gap: 12px;
+
+  min-width: 0;
+}
+
+.niveau-icon {
+  width: 42px;
+  height: 42px;
+
+  flex: 0 0 42px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 11px;
+
+  background: #eff6ff;
+
+  font-size: 19px;
+}
+
+
+/* =========================================================
+   TITRE
+   ========================================================= */
+
+.niveau-title {
+  min-width: 0;
+
+  display: flex;
+  flex-direction: column;
+}
+
+.niveau-title-row {
+  display: flex;
+  align-items: center;
+
+  gap: 7px;
+}
+
+.niveau-title h4 {
+  margin: 0;
+
+  color: #111827;
+
+  font-size: 16px;
+  font-weight: 700;
+
+  white-space: nowrap;
+}
+
+.cycle-label {
+  margin-top: 3px;
+
+  color: #9ca3af;
+
+  font-size: 12px;
+}
+
+
+/* =========================================================
+   SUCCÈS
+   ========================================================= */
+
+.success-badge {
+  width: 20px;
+  height: 20px;
+
+  flex: 0 0 20px;
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 50%;
+
+  background: #16a34a;
+
+  color: #ffffff;
+
+  font-size: 11px;
+  font-weight: 800;
+}
+
+
+/* =========================================================
+   COMPTEUR MATIÈRES
+   ========================================================= */
+
+.matiere-count {
+  flex: 0 0 auto;
+
+  padding: 6px 10px;
+
+  border-radius: 20px;
+
+  background: #f0fdf4;
+
+  color: #15803d;
+
+  font-size: 11px;
+  font-weight: 700;
+}
+
+
+/* =========================================================
+   GRILLE MATIÈRES
+   ========================================================= */
+
+.matieres-grid {
+  display: grid;
+
+  grid-template-columns:
+    repeat(2, minmax(0, 1fr));
+
+  gap: 10px;
+}
+
+
+/* =========================================================
+   MATIÈRE
+   ========================================================= */
+
+.matiere-option {
+  min-height: 52px;
+
+  display: flex;
+  align-items: center;
+
+  gap: 10px;
+
+  padding: 10px 13px;
+
+  border: 1px solid #bfdbfe;
+  border-radius: 9px;
+
+  background: #eff6ff;
+
+  font-family: inherit;
+
+  text-align: left;
+
+  cursor: pointer;
+
+  transition:
+    background 0.2s ease,
+    border-color 0.2s ease,
+    transform 0.15s ease;
+}
+
+.matiere-option:hover {
+  background: #dbeafe;
+
+  border-color: #93c5fd;
+}
+
+.matiere-option:active {
+  transform: scale(0.98);
+}
+
+
+/* =========================================================
+   CHECKBOX
+   ========================================================= */
+
+.matiere-checkbox {
+  width: 20px;
+  height: 20px;
+
+  flex: 0 0 20px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border: 1.5px solid #2563eb;
+  border-radius: 5px;
+
+  background: #2563eb;
+
+  color: #ffffff;
+
+  font-size: 12px;
+  font-weight: 800;
+}
+
+
+/* =========================================================
+   NOM
+   ========================================================= */
+
+.matiere-name {
+  min-width: 0;
+
+  overflow: hidden;
+
+  text-overflow: ellipsis;
+
+  white-space: nowrap;
+
+  color: #1d4ed8;
+
+  font-size: 13px;
+  font-weight: 600;
+}
+
+
+/* =========================================================
+   RÉSUMÉ
+   ========================================================= */
+
+.matieres-summary {
+  display: flex;
+  align-items: center;
+
+  gap: 12px;
+
+  margin-top: 20px;
+  padding: 14px 16px;
+
+  border: 1px solid #bbf7d0;
+  border-radius: 10px;
+
+  background: #f0fdf4;
+}
+
+.summary-icon {
+  width: 32px;
+  height: 32px;
+
+  flex: 0 0 32px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 50%;
+
+  background: #dcfce7;
+
+  color: #16a34a;
+
+  font-size: 14px;
+  font-weight: 800;
+}
+
+.summary-content {
+  display: flex;
+  flex-direction: column;
+
+  gap: 3px;
+}
+
+.summary-content strong {
+  color: #166534;
+
+  font-size: 13px;
+}
+
+.summary-content span {
+  color: #6b7280;
+
+  font-size: 12px;
+}
+
+
+/* =========================================================
+   INFORMATION
+   ========================================================= */
+
+.matieres-info {
+  display: flex;
+  align-items: flex-start;
+
+  gap: 10px;
+
+  margin-top: 14px;
+  padding: 14px 16px;
+
+  border: 1px solid #e5e7eb;
+  border-radius: 10px;
+
+  background: #f9fafb;
+}
+
+.info-icon {
+  width: 28px;
+  height: 28px;
+
+  flex: 0 0 28px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 50%;
+
+  background: #e5e7eb;
+
+  color: #6b7280;
+
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.info-content {
+  display: flex;
+  flex-direction: column;
+
+  gap: 3px;
+}
+
+.info-content strong {
+  color: #374151;
+
+  font-size: 12px;
+}
+
+.info-content span {
+  color: #6b7280;
+
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+
+/* =========================================================
+   RESPONSIVE
+   ========================================================= */
+
+@media (max-width: 650px) {
+
+  .niveau-header {
+    align-items: flex-start;
+
+    flex-direction: column;
+  }
+
+  .matiere-count {
+    align-self: flex-start;
+  }
+
+}
+
+
+@media (max-width: 500px) {
+
+  .matieres-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .niveau-card {
+    padding: 16px;
+  }
+
+}

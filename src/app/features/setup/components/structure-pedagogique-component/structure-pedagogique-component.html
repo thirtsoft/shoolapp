@@ -1,0 +1,198 @@
+<div class="structure-container">
+
+  <!-- Introduction -->
+
+  <div class="structure-intro">
+
+    <h3>
+      Quels niveaux sont enseignés dans votre établissement ?
+    </h3>
+
+    <p>
+      Sélectionnez les cycles et les niveaux proposés par votre établissement.
+      MySchool préparera automatiquement les classes et les matières correspondantes.
+    </p>
+
+  </div>
+
+
+  <!-- Cycles -->
+
+  <div class="cycles-list">
+
+    @for (cycle of cycles(); track cycle.code) {
+
+      <section
+        class="cycle-card"
+        [class.cycle-selected]="isCycleSelected(cycle)"
+      >
+
+        <!-- En-tête du cycle -->
+
+        <div class="cycle-header">
+
+          <div class="cycle-title-zone">
+
+            <div
+              class="cycle-icon"
+              [class.selected]="isCycleSelected(cycle)"
+            >
+              {{ cycle.icon }}
+            </div>
+
+            <div class="cycle-title">
+
+              <div class="cycle-title-row">
+
+                <h4>
+                  {{ cycle.label }}
+                </h4>
+
+                <!-- Succès : cycle choisi -->
+
+                @if (isCycleSelected(cycle)) {
+
+                  <span
+                    class="cycle-success"
+                    title="Cycle sélectionné"
+                  >
+                    ✓
+                  </span>
+
+                }
+
+              </div>
+
+              <span>
+                {{ cycle.description }}
+              </span>
+
+            </div>
+
+          </div>
+
+
+          <!-- Tout sélectionner -->
+
+          <button
+            type="button"
+            class="select-all-button"
+            [class.selected]="isCycleFullySelected(cycle)"
+            (click)="toggleCycle(cycle.code)"
+          >
+
+            <span class="select-all-checkbox">
+
+              @if (isCycleFullySelected(cycle)) {
+                ✓
+              } @else if (isCyclePartiallySelected(cycle)) {
+                −
+              }
+
+            </span>
+
+            <span>
+              {{
+                isCycleFullySelected(cycle)
+                  ? 'Tout désélectionner'
+                  : 'Tout sélectionner'
+              }}
+            </span>
+
+          </button>
+
+        </div>
+
+
+        <!-- Niveaux -->
+
+        <div class="niveaux-grid">
+
+          @for (niveau of cycle.niveaux; track niveau.code) {
+
+            <button
+              type="button"
+              class="niveau-option"
+              [class.selected]="niveau.selected"
+              (click)="toggleNiveau(cycle.code, niveau.code)"
+            >
+
+              <span
+                class="niveau-checkbox"
+                [class.checked]="niveau.selected"
+              >
+
+                @if (niveau.selected) {
+                  ✓
+                }
+
+              </span>
+
+              <span class="niveau-label">
+                {{ niveau.label }}
+              </span>
+
+            </button>
+
+          }
+
+        </div>
+
+      </section>
+
+    }
+
+  </div>
+
+
+  <!-- Résumé -->
+
+  <div
+    class="selection-summary"
+    [class.has-selection]="hasSelection"
+  >
+
+    <div class="summary-icon">
+
+      @if (hasSelection) {
+        ✓
+      } @else {
+        ℹ
+      }
+
+    </div>
+
+    <div class="summary-content">
+
+      @if (hasSelection) {
+
+        <strong>
+          {{ selectedNiveauxCount }}
+          {{
+            selectedNiveauxCount === 1
+              ? 'niveau sélectionné'
+              : 'niveaux sélectionnés'
+          }}
+        </strong>
+
+        <span>
+          Les classes et matières correspondantes seront préparées automatiquement.
+        </span>
+
+      } @else {
+
+        <strong>
+          Sélectionnez au moins un niveau
+        </strong>
+
+        <span>
+          Choisissez les niveaux proposés par votre établissement pour continuer.
+        </span>
+
+      }
+
+    </div>
+
+  </div>
+
+</div>

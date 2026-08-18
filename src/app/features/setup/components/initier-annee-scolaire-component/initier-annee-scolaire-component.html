@@ -1,0 +1,92 @@
+<div class="setup-section">
+  <div class="info-card">
+    <div class="card-title">
+      <span>🗓️</span>
+      <span>Calendrier scolaire</span>
+    </div>
+
+    <div class="form-grid">
+      <div class="form-group form-group-full">
+        <label for="anneeScolaire"> Année scolaire </label>
+
+        <div class="input-wrap">
+          <span class="input-ico"> 📅 </span>
+
+          <select
+            id="anneeScolaire"
+            [(ngModel)]="anneeScolaire.libelle"
+            (ngModelChange)="onAnneeChange()"
+          >
+            @for (annee of anneesDisponibles; track annee) {
+              <option [value]="annee">
+                {{ annee }}
+              </option>
+            }
+          </select>
+        </div>
+
+        <small class="field-help"> Exemple : 2026-2027 </small>
+      </div>
+
+      <!-- Date début -->
+      <div class="form-group">
+        <label for="dateDebut"> Date de début </label>
+
+        <div class="input-wrap">
+          <span class="input-ico"> 🟢 </span>
+
+          <input id="dateDebut" type="date" [(ngModel)]="anneeScolaire.dateDebut" />
+        </div>
+      </div>
+
+      <!-- Date fin -->
+      <div class="form-group">
+        <label for="dateFin"> Date de fin </label>
+
+        <div class="input-wrap">
+          <span class="input-ico"> 🔴 </span>
+
+          <input id="dateFin" type="date" [(ngModel)]="anneeScolaire.dateFin" />
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="summary-card">
+    <div class="summary-icon">📚</div>
+
+    <div class="summary-content">
+      <span class="summary-label"> ANNÉE SCOLAIRE </span>
+
+      <strong>
+        {{ anneeScolaire.libelle }}
+      </strong>
+
+      <span class="summary-dates">
+        Du
+        {{ anneeScolaire.dateDebut | date: 'dd/MM/yyyy' }}
+        au
+        {{ anneeScolaire.dateFin | date: 'dd/MM/yyyy' }}
+      </span>
+    </div>
+
+    <div class="status-badge">
+      <span class="status-dot"></span>
+
+      {{ anneeScolaire.statut }}
+    </div>
+  </div>
+
+  <div class="info-message">
+    <span class="info-message-icon"> 💡 </span>
+
+    <div>
+      <strong> Vous pourrez compléter plus tard </strong>
+
+      <p>
+        Les trimestres, semestres, périodes d'évaluation et le calendrier détaillé pourront être
+        configurés ultérieurement depuis les paramètres de l'établissement.
+      </p>
+    </div>
+  </div>
+</div>

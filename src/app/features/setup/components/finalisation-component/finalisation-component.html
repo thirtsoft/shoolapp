@@ -1,0 +1,92 @@
+<div class="finalisation-container">
+  <div class="finalisation-intro">
+    <div class="success-icon">✓</div>
+
+    <h3>Votre établissement est prêt !</h3>
+
+    <p>Vous avez configuré les éléments essentiels pour commencer votre année scolaire.</p>
+  </div>
+
+  <div class="summary-card">
+    <div class="summary-row">
+      <div class="summary-icon">🏫</div>
+
+      <div class="summary-content">
+        <span class="summary-label"> Établissement </span>
+
+        <strong>
+          {{ etablissement }}
+        </strong>
+      </div>
+    </div>
+
+    <div class="summary-row">
+      <div class="summary-icon">📅</div>
+
+      <div class="summary-content">
+        <span class="summary-label"> Année scolaire </span>
+
+        <strong>
+          {{ anneeScolaire }}
+        </strong>
+      </div>
+    </div>
+
+    <div class="summary-row">
+      <div class="summary-icon">📚</div>
+
+      <div class="summary-content">
+        <span class="summary-label"> Structure pédagogique </span>
+
+        <strong> {{ nombreCycles }} cycles · {{ nombreNiveaux }} niveaux </strong>
+      </div>
+    </div>
+
+    <div class="summary-row">
+      <div class="summary-icon">🏷️</div>
+
+      <div class="summary-content">
+        <span class="summary-label"> Classes </span>
+
+        <strong> {{ nombreClasses }} classes préparées </strong>
+      </div>
+    </div>
+
+    <div class="summary-row">
+      <div class="summary-icon">📖</div>
+
+      <div class="summary-content">
+        <span class="summary-label"> Matières </span>
+
+        <strong> {{ nombreMatieres }} matières initialisées </strong>
+      </div>
+    </div>
+
+    <!-- PÉRIODES -->
+
+    <div class="summary-row">
+      <div class="summary-icon">🗓️</div>
+
+      <div class="summary-content">
+        <span class="summary-label"> Périodes scolaires </span>
+
+        <strong>
+          {{ periodes }}
+        </strong>
+      </div>
+    </div>
+  </div>
+
+  <div class="ready-message">
+    <div class="ready-icon">✓</div>
+
+    <div>
+      <strong> Configuration initiale terminée </strong>
+
+      <p>
+        Vous pourrez modifier ou compléter ces informations à tout moment depuis votre
+        établissement.
+      </p>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,290 @@
+:host {
+  --blue-deep: #1e3a5f;
+  --blue-ocean: #2c5282;
+  --blue-light: #4299e1;
+  --blue-sky: #63b3ed;
+  --blue-pale: #ebf4ff;
+  --blue-ghost: #f7faff;
+
+  --accent-gold: #ecc94b;
+  --accent-coral: #ed8936;
+
+  --gris-fonce: #2d3748;
+  --gris-moyen: #718096;
+  --gris-doux: #f7fafc;
+  --noir: #1a202c;
+
+  --font-display: 'Playfair Display', serif;
+  --font-body: 'DM Sans', sans-serif;
+
+  display: block;
+  width: 100%;
+}
+
+.setup-section {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.section-header {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-bottom: 4px;
+}
+
+.section-icon {
+  width: 48px;
+  height: 48px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 13px;
+
+  background: var(--blue-pale);
+  border: 1px solid rgba(66, 153, 225, .18);
+
+  font-size: 23px;
+  flex-shrink: 0;
+}
+
+.section-header h2 {
+  margin: 0 0 4px;
+
+  font-family: var(--font-display);
+  font-size: 23px;
+  font-weight: 700;
+
+  color: var(--noir);
+}
+
+.section-header p {
+  margin: 0;
+
+  font-family: var(--font-body);
+  font-size: 12px;
+  line-height: 1.5;
+
+  color: var(--gris-moyen);
+}
+
+.info-card {
+  background: white;
+
+  border: 1px solid #e6edf5;
+  border-radius: 14px;
+
+  padding: 20px;
+
+  box-shadow: 0 4px 16px rgba(30, 58, 95, .05);
+}
+
+.card-title {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  margin-bottom: 18px;
+  padding-bottom: 12px;
+
+  border-bottom: 1px solid var(--blue-pale);
+
+  font-family: var(--font-body);
+  font-size: 12px;
+  font-weight: 700;
+
+  color: var(--blue-deep);
+
+  text-transform: uppercase;
+  letter-spacing: .8px;
+}
+
+.card-title span:first-child {
+  font-size: 17px;
+}
+
+.form-grid {
+  display: grid;
+
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+
+  gap: 15px;
+}
+
+.form-group-full {
+  grid-column: 1 / -1;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+
+  gap: 6px;
+}
+
+.form-group label {
+  font-family: var(--font-body);
+
+  font-size: 10px;
+  font-weight: 700;
+
+  color: var(--gris-fonce);
+
+  text-transform: uppercase;
+  letter-spacing: .7px;
+}
+
+.form-group label span {
+  font-weight: 400;
+  color: var(--gris-moyen);
+
+  text-transform: none;
+  letter-spacing: 0;
+}
+
+
+.input-wrap {
+  position: relative;
+
+  display: flex;
+  align-items: center;
+}
+
+.input-ico {
+  position: absolute;
+  left: 12px;
+
+  font-size: 14px;
+
+  pointer-events: none;
+  z-index: 1;
+}
+
+
+.input-wrap input {
+  width: 100%;
+
+  padding: 11px 13px 11px 38px;
+
+  border: 1.5px solid var(--blue-pale);
+  border-radius: 10px;
+
+  outline: none;
+
+  background: var(--gris-doux);
+
+  font-family: var(--font-body);
+  font-size: 13px;
+
+  color: var(--gris-fonce);
+
+  transition: all .2s;
+}
+
+.input-wrap input:hover {
+  border-color: var(--blue-sky);
+}
+
+.input-wrap input:focus {
+  background: white;
+
+  border-color: var(--blue-light);
+
+  box-shadow:
+    0 0 0 3px rgba(66, 153, 225, .10);
+}
+
+.input-wrap input::placeholder {
+  color: #a0aec0;
+}
+
+.input-wrap input[readonly] {
+  background: #f1f5f9;
+  color: var(--gris-moyen);
+  cursor: not-allowed;
+}
+
+.info-message {
+  display: flex;
+  align-items: flex-start;
+
+  gap: 11px;
+
+  padding: 13px 15px;
+
+  border-radius: 11px;
+
+  background: var(--blue-pale);
+  border: 1px solid rgba(66, 153, 225, .15);
+
+  color: var(--blue-deep);
+}
+
+.info-message-icon {
+  font-size: 17px;
+  flex-shrink: 0;
+}
+
+.info-message strong {
+  display: block;
+
+  margin-bottom: 3px;
+
+  font-size: 11px;
+  font-weight: 700;
+
+  text-transform: uppercase;
+  letter-spacing: .6px;
+}
+
+.info-message p {
+  margin: 0;
+
+  font-size: 11px;
+  line-height: 1.6;
+
+  color: var(--gris-moyen);
+}
+
+@media (max-width: 700px) {
+
+  .form-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .form-group-full {
+    grid-column: auto;
+  }
+
+  .info-card {
+    padding: 16px;
+  }
+
+  .section-header h2 {
+    font-size: 20px;
+  }
+}
+
+
+@media (max-width: 420px) {
+
+  .section-header {
+    align-items: flex-start;
+  }
+
+  .section-icon {
+    width: 42px;
+    height: 42px;
+    font-size: 20px;
+  }
+
+  .section-header h2 {
+    font-size: 18px;
+  }
+
+  .section-header p {
+    font-size: 11px;
+  }
+}

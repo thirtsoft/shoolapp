@@ -1,0 +1,91 @@
+<div class="matieres-container">
+  <div class="matieres-intro">
+    <h3>Quelles matières souhaitez-vous enseigner ?</h3>
+
+    <p>
+      Nous avons préparé les matières principales pour chaque niveau sélectionné. Vous pourrez en
+      ajouter d'autres plus tard.
+    </p>
+  </div>
+
+  <div class="niveaux-list">
+    @for (niveau of niveaux(); track niveau.niveauCode) {
+      <section class="niveau-card">
+        <div class="niveau-header">
+          <div class="niveau-title-zone">
+            <div class="niveau-icon">📚</div>
+
+            <div class="niveau-title">
+              <div class="niveau-title-row">
+                <h4>
+                  {{ niveau.niveauLabel }}
+                </h4>
+
+                <span class="success-badge"> ✓ </span>
+              </div>
+
+              <span class="cycle-label">
+                {{ niveau.cycleLabel }}
+              </span>
+            </div>
+          </div>
+
+          <span class="matiere-count">
+            {{ niveau.matieres.length }}
+
+            {{ niveau.matieres.length === 1 ? 'matière' : 'matières' }}
+          </span>
+        </div>
+
+        <div class="matieres-grid">
+          @for (matiere of niveau.matieres; track matiere.code) {
+            <button
+              type="button"
+              class="matiere-option"
+              [class.selected]="isSelected(niveau.niveauCode, matiere.code)"
+              (click)="selectionnerMatiere(niveau.niveauCode, matiere.code)"
+            >
+              <span class="matiere-checkbox">
+                @if (isSelected(niveau.niveauCode, matiere.code)) {
+                  ✓
+                }
+              </span>
+
+              <span class="matiere-name">
+                {{ matiere.nom }}
+              </span>
+            </button>
+          }
+        </div>
+      </section>
+    }
+  </div>
+
+  <div class="matieres-summary">
+    <div class="summary-icon">✓</div>
+
+    <div class="summary-content">
+      <strong>
+        {{ totalMatieres }}
+        {{ totalMatieres === 1 ? 'matière initialisée' : 'matières initialisées' }}
+      </strong>
+
+      <span>
+        Les matières proposées seront disponibles dès le démarrage de votre établissement.
+      </span>
+    </div>
+  </div>
+
+  <div class="matieres-info">
+    <div class="info-icon">ℹ</div>
+
+    <div class="info-content">
+      <strong> Vous pourrez compléter votre catalogue </strong>
+
+      <span>
+        Ces matières sont uniquement celles nécessaires pour démarrer. Vous pourrez ajouter d'autres
+        matières et les personnaliser plus tard.
+      </span>
+    </div>
+  </div>
+</div>

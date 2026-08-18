@@ -1,0 +1,155 @@
+<div class="setup-section">
+  <!-- En-tête -->
+  <div class="section-header">
+    <div class="section-icon">🏫</div>
+
+    <div>
+      <h2>Informations de l'établissement</h2>
+      <p>Vérifiez les informations de votre établissement avant de continuer.</p>
+    </div>
+  </div>
+
+  <!-- Informations principales -->
+  <div class="info-card">
+    <div class="card-title">
+      <span>🏛️</span>
+      <span>Identité de l'établissement</span>
+    </div>
+
+    <div class="form-grid">
+      <div class="form-group form-group-full">
+        <label>Nom de l'établissement</label>
+
+        <div class="input-wrap">
+          <span class="input-ico">🏫</span>
+
+          <input type="text" [value]="ecole.nom" placeholder="Nom de l'établissement" />
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label>Sigle</label>
+
+        <div class="input-wrap">
+          <span class="input-ico">🔤</span>
+
+          <input type="text" [value]="ecole.sigle" placeholder="Ex : EPP" />
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label>Type d'établissement</label>
+
+        <div class="input-wrap">
+          <span class="input-ico">🏛️</span>
+
+          <input type="text" [value]="ecole.type" readonly />
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label>Année de création</label>
+
+        <div class="input-wrap">
+          <span class="input-ico">📅</span>
+
+          <input type="number" [value]="ecole.anneeCreation" />
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label>Statut</label>
+
+        <div class="input-wrap">
+          <span class="input-ico">✓</span>
+
+          <input type="text" [value]="ecole.statut" readonly />
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Coordonnées -->
+  <div class="info-card">
+    <div class="card-title">
+      <span>📍</span>
+      <span>Coordonnées</span>
+    </div>
+
+    <div class="form-grid">
+      <div class="form-group form-group-full">
+        <label>Adresse</label>
+
+        <div class="input-wrap">
+          <span class="input-ico">📍</span>
+
+          <input type="text" [value]="ecole.adresse" placeholder="Adresse de l'établissement" />
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label>Téléphone</label>
+
+        <div class="input-wrap">
+          <span class="input-ico">📞</span>
+
+          <input type="tel" [value]="ecole.telephone" placeholder="+221 ..." />
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label>Adresse e-mail</label>
+
+        <div class="input-wrap">
+          <span class="input-ico">✉️</span>
+
+          <input type="email" [value]="ecole.email" placeholder="contact@ecole.sn" />
+        </div>
+      </div>
+
+      <div class="form-group form-group-full">
+        <label>Site web <span>(facultatif)</span></label>
+
+        <div class="input-wrap">
+          <span class="input-ico">🌐</span>
+
+          <input type="url" [value]="ecole.siteWeb" placeholder="https://www.mon-ecole.sn" />
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Responsable -->
+  <div class="info-card">
+    <div class="card-title">
+      <span>👤</span>
+      <span>Responsable de l'établissement</span>
+    </div>
+
+    <div class="form-grid">
+      <div class="form-group form-group-full">
+        <label>Directeur / Responsable</label>
+
+        <div class="input-wrap">
+          <span class="input-ico">👤</span>
+
+          <input type="text" [value]="ecole.directeur" placeholder="Nom du directeur" />
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Information -->
+  <div class="info-message">
+    <span class="info-message-icon">💡</span>
+
+    <div>
+      <strong>À savoir</strong>
+
+      <p>
+        Ces informations seront utilisées sur les documents officiels, les bulletins, les factures
+        et les communications de votre établissement.
+      </p>
+    </div>
+  </div>
+</div>
