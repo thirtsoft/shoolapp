@@ -1,205 +1,101 @@
 <div class="classes-container">
-
-  <!-- =====================================================
-       INTRODUCTION
-       ====================================================== -->
-
   <div class="classes-intro">
-
-    <h3>
-      Comment souhaitez-vous organiser vos classes ?
-    </h3>
+    <h3>Comment souhaitez-vous organiser vos classes ?</h3>
 
     <p>
-      Nous avons préparé automatiquement deux classes pour chaque niveau
-      sélectionné. Vous pourrez les modifier ou compléter plus tard.
+      Nous avons préparé automatiquement deux classes pour chaque niveau sélectionné. Vous pourrez
+      les modifier ou compléter plus tard.
     </p>
-
   </div>
 
-
-  <!-- =====================================================
-       LISTE DES NIVEAUX
-       ====================================================== -->
-
   <div class="niveaux-list">
-
-    @for (niveau of niveaux(); track niveau.code) {
-
-      <section
-        class="niveau-card"
-        [class.niveau-selected]="isNiveauSelected(niveau)"
-      >
-
-        <!-- =================================================
-             EN-TÊTE DU NIVEAU
-             ================================================== -->
-
+    @for (niveau of niveaux(); track niveau.libelle) {
+      <section class="niveau-card" [class.niveau-selected]="isNiveauSelected(niveau)">
         <div class="niveau-header">
-
           <div class="niveau-title-zone">
-
-            <div
-              class="niveau-icon"
-              [class.selected]="isNiveauSelected(niveau)"
-            >
-              🎓
-            </div>
+            <div class="niveau-icon" [class.selected]="isNiveauSelected(niveau)">🎓</div>
 
             <div class="niveau-title">
-
               <div class="niveau-title-row">
-
                 <h4>
-                  {{ niveau.label }}
+                  {{ niveau.libelle }}
                 </h4>
 
                 @if (isNiveauSelected(niveau)) {
-
-                  <span
-                    class="niveau-success"
-                    title="Niveau configuré"
-                  >
-                    ✓
-                  </span>
-
+                  <span class="niveau-success" title="Niveau configuré"> ✓ </span>
                 }
-
               </div>
 
               <span>
                 {{ niveau.cycleLabel }}
               </span>
-
             </div>
-
           </div>
-
-
-          <!-- Tout sélectionner -->
 
           <button
             type="button"
             class="select-all-button"
             [class.selected]="isNiveauFullySelected(niveau)"
-            (click)="toggleNiveau(niveau.code)"
+            (click)="toggleNiveau(niveau.libelle)"
           >
-
             <span class="select-all-checkbox">
-
               @if (isNiveauFullySelected(niveau)) {
                 ✓
               }
-
             </span>
 
             <span>
-              {{
-                isNiveauFullySelected(niveau)
-                  ? 'Tout désélectionner'
-                  : 'Tout sélectionner'
-              }}
+              {{ isNiveauFullySelected(niveau) ? 'Tout désélectionner' : 'Tout sélectionner' }}
             </span>
-
           </button>
-
         </div>
 
-
-        <!-- =================================================
-             CLASSES
-             ================================================== -->
-
         <div class="classes-grid">
-
-          @for (classe of niveau.classes; track classe.code) {
-
+          @for (classe of niveau.classes; track classe.libelle) {
             <button
               type="button"
               class="classe-option"
               [class.selected]="classe.selected"
-              (click)="toggleClasse(niveau.code, classe.code)"
+              (click)="toggleClasse(niveau.libelle, classe.libelle)"
             >
-
-              <span
-                class="classe-checkbox"
-                [class.checked]="classe.selected"
-              >
-
+              <span class="classe-checkbox" [class.checked]="classe.selected">
                 @if (classe.selected) {
                   ✓
                 }
-
               </span>
 
               <span class="classe-label">
-                {{ classe.nom }}
+                {{ classe.libelle }}
               </span>
-
             </button>
-
           }
-
         </div>
-
       </section>
-
     }
-
   </div>
 
-
-  <!-- =====================================================
-       RÉSUMÉ
-       ====================================================== -->
-
-  <div
-    class="classes-summary"
-    [class.has-classes]="selectedClassesCount > 0"
-  >
-
+  <div class="classes-summary" [class.has-classes]="selectedClassesCount > 0">
     <div class="summary-icon">
-
       @if (selectedClassesCount > 0) {
         ✓
       } @else {
         ℹ
       }
-
     </div>
-
 
     <div class="summary-content">
-
       @if (selectedClassesCount > 0) {
-
         <strong>
           {{ selectedClassesCount }}
-          {{
-            selectedClassesCount === 1
-              ? 'classe prête'
-              : 'classes prêtes'
-          }}
+          {{ selectedClassesCount === 1 ? 'classe prête' : 'classes prêtes' }}
         </strong>
 
-        <span>
-          Ces classes pourront immédiatement accueillir les inscriptions des élèves.
-        </span>
-
+        <span> Ces classes pourront immédiatement accueillir les inscriptions des élèves. </span>
       } @else {
+        <strong> Aucune classe sélectionnée </strong>
 
-        <strong>
-          Aucune classe sélectionnée
-        </strong>
-
-        <span>
-          Sélectionnez au moins une classe pour continuer.
-        </span>
-
+        <span> Sélectionnez au moins une classe pour continuer. </span>
       }
-
     </div>
-
   </div>
-
 </div>

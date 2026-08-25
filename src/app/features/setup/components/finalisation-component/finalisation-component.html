@@ -8,31 +8,121 @@
   </div>
 
   <div class="summary-card">
-    <div class="summary-row">
+    <div class="summary-row clickable" (click)="toggleBloc('etablissement')">
       <div class="summary-icon">🏫</div>
 
       <div class="summary-content">
         <span class="summary-label"> Établissement </span>
 
         <strong>
-          {{ etablissement }}
+          {{ setupDetails.etablissement.libelle }}
         </strong>
+      </div>
+
+      <div class="expand-icon">
+        {{ isBlocOuvert('etablissement') ? '⌃' : '⌄' }}
       </div>
     </div>
 
-    <div class="summary-row">
+    @if (isBlocOuvert('etablissement')) {
+      <div class="details-panel">
+        <div class="details-grid">
+          <div class="detail-item">
+            <span>Code</span>
+            <strong>{{ setupDetails.etablissement.code }}</strong>
+          </div>
+
+          <div class="detail-item">
+            <span>Libellé</span>
+            <strong>{{ setupDetails.etablissement.libelle }}</strong>
+          </div>
+
+          <div class="detail-item">
+            <span>Sigle</span>
+            <strong>{{ setupDetails.etablissement.sigle }}</strong>
+          </div>
+
+          <div class="detail-item">
+            <span>Adresse</span>
+            <strong>{{ setupDetails.etablissement.adresse }}</strong>
+          </div>
+
+          <div class="detail-item">
+            <span>Boîte postale</span>
+            <strong>{{ setupDetails.etablissement.boitePostale }}</strong>
+          </div>
+
+          <div class="detail-item">
+            <span>Téléphone</span>
+            <strong>{{ setupDetails.etablissement.telephone }}</strong>
+          </div>
+
+          <div class="detail-item">
+            <span>Mobile</span>
+            <strong>{{ setupDetails.etablissement.mobile }}</strong>
+          </div>
+
+          <div class="detail-item">
+            <span>Email</span>
+            <strong>{{ setupDetails.etablissement.email }}</strong>
+          </div>
+
+          <div class="detail-item">
+            <span>Site web</span>
+            <strong>{{ setupDetails.etablissement.siteWeb }}</strong>
+          </div>
+
+          <div class="detail-item">
+            <span>Type d'établissement</span>
+            <strong>{{ setupDetails.etablissement.schoolType }}</strong>
+          </div>
+
+          <div class="detail-item detail-full">
+            <span>Description</span>
+            <strong>{{ setupDetails.etablissement.description }}</strong>
+          </div>
+        </div>
+      </div>
+    }
+
+    <div class="summary-row clickable" (click)="toggleBloc('anneeScolaire')">
       <div class="summary-icon">📅</div>
 
       <div class="summary-content">
         <span class="summary-label"> Année scolaire </span>
 
         <strong>
-          {{ anneeScolaire }}
+          {{ setupDetails.anneeScolaire.libelle }}
         </strong>
+      </div>
+
+      <div class="expand-icon">
+        {{ isBlocOuvert('anneeScolaire') ? '⌃' : '⌄' }}
       </div>
     </div>
 
-    <div class="summary-row">
+    @if (isBlocOuvert('anneeScolaire')) {
+      <div class="details-panel">
+        <div class="details-grid">
+          <div class="detail-item">
+            <span>Libellé</span>
+            <strong>{{ setupDetails.anneeScolaire.libelle }}</strong>
+          </div>
+
+          <div class="detail-item">
+            <span>Date de début</span>
+            <strong>{{ setupDetails.anneeScolaire.dateDebut }}</strong>
+          </div>
+
+          <div class="detail-item">
+            <span>Date de fin</span>
+            <strong>{{ setupDetails.anneeScolaire.dateFin }}</strong>
+          </div>
+        </div>
+      </div>
+    }
+
+    <div class="summary-row clickable" (click)="toggleBloc('structure')">
       <div class="summary-icon">📚</div>
 
       <div class="summary-content">
@@ -40,9 +130,33 @@
 
         <strong> {{ nombreCycles }} cycles · {{ nombreNiveaux }} niveaux </strong>
       </div>
+
+      <div class="expand-icon">
+        {{ isBlocOuvert('structure') ? '⌃' : '⌄' }}
+      </div>
     </div>
 
-    <div class="summary-row">
+    @if (isBlocOuvert('structure')) {
+      <div class="details-panel">
+        @for (cycle of setupDetails.structurePedagogique.cycles; track cycle.code) {
+          <div class="structure-cycle">
+            <strong>
+              {{ cycle.libelle }}
+            </strong>
+
+            <div class="niveaux-list">
+              @for (niveau of cycle.niveaux; track niveau.niveauId) {
+                <span class="niveau-badge">
+                  {{ niveau.libelle }}
+                </span>
+              }
+            </div>
+          </div>
+        }
+      </div>
+    }
+
+    <div class="summary-row clickable" (click)="toggleBloc('classes')">
       <div class="summary-icon">🏷️</div>
 
       <div class="summary-content">
@@ -50,9 +164,23 @@
 
         <strong> {{ nombreClasses }} classes préparées </strong>
       </div>
+
+      <div class="expand-icon">
+        {{ isBlocOuvert('classes') ? '⌃' : '⌄' }}
+      </div>
     </div>
 
-    <div class="summary-row">
+    @if (isBlocOuvert('classes')) {
+      <div class="details-panel">
+        @for (classe of setupDetails.classes.classes; track classe.id) {
+          <div class="detail-list-item">
+            <strong>{{ classe.libelle }}</strong>
+          </div>
+        }
+      </div>
+    }
+
+    <div class="summary-row clickable" (click)="toggleBloc('matieres')">
       <div class="summary-icon">📖</div>
 
       <div class="summary-content">
@@ -60,11 +188,25 @@
 
         <strong> {{ nombreMatieres }} matières initialisées </strong>
       </div>
+
+      <div class="expand-icon">
+        {{ isBlocOuvert('matieres') ? '⌃' : '⌄' }}
+      </div>
     </div>
 
-    <!-- PÉRIODES -->
+    @if (isBlocOuvert('matieres')) {
+      <div class="details-panel">
+        @for (matiere of setupDetails.matieres.matieres; track matiere.code) {
+          <div class="detail-list-item">
+            <strong>
+              {{ matiere.libelle }}
+            </strong>
+          </div>
+        }
+      </div>
+    }
 
-    <div class="summary-row">
+    <div class="summary-row clickable" (click)="toggleBloc('semestres')">
       <div class="summary-icon">🗓️</div>
 
       <div class="summary-content">
@@ -74,7 +216,25 @@
           {{ periodes }}
         </strong>
       </div>
+
+      <div class="expand-icon">
+        {{ isBlocOuvert('semestres') ? '⌃' : '⌄' }}
+      </div>
     </div>
+
+    @if (isBlocOuvert('semestres')) {
+      <div class="details-panel">
+        @for (semestre of setupDetails.semestres; track semestre.id) {
+          <div class="detail-list-item">
+            <strong>
+              {{ semestre.libelle }}
+            </strong>
+
+            <span> Semestre {{ semestre.code }} </span>
+          </div>
+        }
+      </div>
+    }
   </div>
 
   <div class="ready-message">

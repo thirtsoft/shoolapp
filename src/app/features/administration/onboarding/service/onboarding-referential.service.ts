@@ -3,18 +3,19 @@ import { Injectable } from '@angular/core';
 import { Observable, throwError } from 'rxjs';
 import { catchError, tap } from 'rxjs/operators';
 import { environment } from '../../../../../environments/environment';
+import { ApiResponse } from '../../../../core/datamodel/api-response.model';
 import { DataResult } from '../../../../core/datamodel/data-model';
 import { CountryResponse } from '../../../../core/models/onboarding/country-response';
 import { CurrencyResponse } from '../../../../core/models/onboarding/currency-response';
-import { LanguageResponse } from '../../../../core/models/onboarding/language-response';
-import { ResponseMessage } from '../../../../core/response/response-message';
-import { TimeZoneResponse } from '../../../../core/models/onboarding/time-zone-response';
-import { TenantTypeResponse } from '../../../../core/models/onboarding/type-tenant-response';
-import { ApiResponse } from '../../../../core/datamodel/api-response.model';
-import { OrganizationTypeResponse } from '../../../../core/models/onboarding/type-organization-response';
 import { DepartmentResponse } from '../../../../core/models/onboarding/department-response';
+import { LanguageResponse } from '../../../../core/models/onboarding/language-response';
+import { OrganizationResponse } from '../../../../core/models/onboarding/organization/organization-response';
 import { RegionResponse } from '../../../../core/models/onboarding/region-response';
 import { SubscriptionCatalogResponse } from '../../../../core/models/onboarding/subscription-catalog-response';
+import { TimeZoneResponse } from '../../../../core/models/onboarding/time-zone-response';
+import { OrganizationTypeResponse } from '../../../../core/models/onboarding/type-organization-response';
+import { TenantTypeResponse } from '../../../../core/models/onboarding/type-tenant-response';
+import { ResponseMessage } from '../../../../core/response/response-message';
 
 @Injectable({
   providedIn: 'root'
@@ -26,6 +27,7 @@ export class OnboardingReferentialService {
   referentielUrl = this.baseUrl_1 + '/api/referentielgeneral';
   tenantUrl = this.baseUrl_1 + '/api/v1/tenant-types';
   typeOrganizationUrl = this.baseUrl_1 + '/api/v1/organization-types';
+  organizationUrl = this.baseUrl_1 + '/platform/organizations';
   catalogSubscriptionUrl = this.baseUrl_1 + '/subscription';
 
 
@@ -47,7 +49,6 @@ export class OnboardingReferentialService {
   }
 
   getCurrencies(): Observable<ApiResponse<CurrencyResponse[]>> {
-
     return this.http.get<ApiResponse<CurrencyResponse[]>>(
       `${this.referentielUrl}/currencies/list`
     );
@@ -55,7 +56,6 @@ export class OnboardingReferentialService {
   }
 
   getLanguages(): Observable<ApiResponse<LanguageResponse[]>> {
-
     return this.http.get<ApiResponse<LanguageResponse[]>>(
       `${this.referentielUrl}/languages/list`
     );
@@ -63,14 +63,12 @@ export class OnboardingReferentialService {
   }
 
   getTimezones(): Observable<ApiResponse<TimeZoneResponse[]>> {
-
     return this.http.get<ApiResponse<TimeZoneResponse[]>>(
       `${this.referentielUrl}/timezones/list`
     );
   }
 
   getRegions(countryUuid: string): Observable<ApiResponse<RegionResponse[]>> {
-
     return this.http.get<ApiResponse<RegionResponse[]>>(
       `${this.referentielUrl}/regions/country/${countryUuid}`
     );
@@ -78,14 +76,12 @@ export class OnboardingReferentialService {
   }
 
   getDepartments(regionUuid: string): Observable<ApiResponse<DepartmentResponse[]>> {
-
     return this.http.get<ApiResponse<DepartmentResponse[]>>(
       `${this.referentielUrl}/departments/region/${regionUuid}`
     );
   }
 
   getTenantTypes(): Observable<ApiResponse<TenantTypeResponse[]>> {
-
     return this.http.get<ApiResponse<TenantTypeResponse[]>>(
       `${this.tenantUrl}/list`
     );
@@ -93,7 +89,6 @@ export class OnboardingReferentialService {
   }
 
   getTypeOrganizations(): Observable<ApiResponse<OrganizationTypeResponse[]>> {
-
     return this.http.get<ApiResponse<OrganizationTypeResponse[]>>(
       `${this.typeOrganizationUrl}/list`
     );
@@ -101,9 +96,15 @@ export class OnboardingReferentialService {
   }
 
   getSubscriptionCatalog(): Observable<ApiResponse<SubscriptionCatalogResponse>> {
-
     return this.http.get<ApiResponse<SubscriptionCatalogResponse>>(
       `${this.catalogSubscriptionUrl}/catalog`
+    );
+
+  }
+
+  getOrganizationByUUID(organizationUuid: string): Observable<OrganizationResponse> {
+    return this.http.get<OrganizationResponse>(
+      `${this.organizationUrl}/${organizationUuid}`, this.httpOptions
     );
 
   }

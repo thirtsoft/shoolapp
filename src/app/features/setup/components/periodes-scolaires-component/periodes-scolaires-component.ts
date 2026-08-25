@@ -1,4 +1,6 @@
-import { Component, signal } from '@angular/core';
+import { Component, signal, } from '@angular/core';
+import { SetupSemestreRequest } from '../../../../core/models/setup/request/setup-semestre-request.model';
+import { SetupPeriodeScolaireRequest } from '../../../../core/models/setup/request/setup-periode-scolaire-request.model';
 
 @Component({
   selector: 'app-periodes-scolaires-component',
@@ -9,25 +11,53 @@ import { Component, signal } from '@angular/core';
 })
 export class PeriodesScolairesComponent {
 
-  readonly periodicite = signal<'SEMESTRIELLE'>('SEMESTRIELLE');
+  readonly periodicite = signal<string>('SEMESTRIELLE');
+
+  readonly semestres = signal<SetupSemestreRequest[]>([
+    {
+      code: 'S1',
+      libelle: 'Semestre 1',
+    },
+    {
+      code: 'S2',
+      libelle: 'Semestre 2',
+    },
+  ]);
 
   selectionnerSemestres(): void {
     this.periodicite.set('SEMESTRIELLE');
+    this.semestres.set([
+      {
+        code: 'S1',
+        libelle: 'Semestre 1',
+      },
+      {
+        code: 'S2',
+        libelle: 'Semestre 2',
+      },
+    ]);
   }
 
   get isSelected(): boolean {
     return this.periodicite() === 'SEMESTRIELLE';
   }
 
-  readonly semestres = [
-    {
-      numero: 1,
-      label: 'Semestre 1',
-    },
-    {
-      numero: 2,
-      label: 'Semestre 2',
-    },
-  ];
+  get hasSelection(): boolean {
+    return (
+      this.isSelected &&
+      this.semestres().length > 0
+    );
+  }
 
+  getPeriodiciteRequest(): SetupPeriodeScolaireRequest {
+    return {
+      periodicite: this.periodicite(),
+      semestres: this.semestres().map(
+        semestre => ({
+          code: semestre.code,
+          libelle: semestre.libelle,
+        })
+      ),
+    };
+  }
 }

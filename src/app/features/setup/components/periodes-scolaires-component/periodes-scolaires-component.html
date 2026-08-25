@@ -14,8 +14,6 @@
     [class.selected]="isSelected"
     (click)="selectionnerSemestres()"
   >
-    <!-- Icône -->
-
     <div class="periodicite-icon">
       @if (isSelected) {
         ✓
@@ -36,12 +34,12 @@
       <p>Votre année scolaire sera organisée en deux semestres.</p>
 
       <div class="semestres-list">
-        @for (semestre of semestres; track semestre.numero) {
+        @for (semestre of semestres(); track semestre.code) {
           <div class="semestre-item">
             <span class="semestre-check"> ✓ </span>
 
             <span>
-              {{ semestre.label }}
+              {{ semestre.libelle }}
             </span>
           </div>
         }

@@ -1,8 +1,8 @@
-import { Component, signal } from '@angular/core';
+import { Component, output, signal } from '@angular/core';
+import { SetupStructurePedagogiqueRequest } from '../../../../core/models/setup/request/setup-structure-pedagogique-request.model';
 
 interface Niveau {
-  code: string;
-  label: string;
+  libelle: string;
   selected: boolean;
 }
 
@@ -23,6 +23,8 @@ interface Cycle {
 })
 export class StructurePedagogiqueComponent {
 
+  readonly structurePedagogiqueChange = output<SetupStructurePedagogiqueRequest>();
+
   readonly cycles = signal<Cycle[]>([
     {
       code: 'MATERNELLE',
@@ -31,18 +33,15 @@ export class StructurePedagogiqueComponent {
       icon: '🧸',
       niveaux: [
         {
-          code: 'PS',
-          label: 'Petite Section',
+          libelle: 'Petite Section',
           selected: false,
         },
         {
-          code: 'MS',
-          label: 'Moyenne Section',
+          libelle: 'Moyenne Section',
           selected: false,
         },
         {
-          code: 'GS',
-          label: 'Grande Section',
+          libelle: 'Grande Section',
           selected: false,
         },
       ],
@@ -55,33 +54,27 @@ export class StructurePedagogiqueComponent {
       icon: '📖',
       niveaux: [
         {
-          code: 'CI',
-          label: 'CI',
+          libelle: 'CI',
           selected: false,
         },
         {
-          code: 'CP',
-          label: 'CP',
+          libelle: 'CP',
           selected: false,
         },
         {
-          code: 'CE1',
-          label: 'CE1',
+          libelle: 'CE1',
           selected: false,
         },
         {
-          code: 'CE2',
-          label: 'CE2',
+          libelle: 'CE2',
           selected: false,
         },
         {
-          code: 'CM1',
-          label: 'CM1',
+          libelle: 'CM1',
           selected: false,
         },
         {
-          code: 'CM2',
-          label: 'CM2',
+          libelle: 'CM2',
           selected: false,
         },
       ],
@@ -94,23 +87,19 @@ export class StructurePedagogiqueComponent {
       icon: '🎒',
       niveaux: [
         {
-          code: '6EME',
-          label: '6ème',
+          libelle: '6ème',
           selected: false,
         },
         {
-          code: '5EME',
-          label: '5ème',
+          libelle: '5ème',
           selected: false,
         },
         {
-          code: '4EME',
-          label: '4ème',
+          libelle: '4ème',
           selected: false,
         },
         {
-          code: '3EME',
-          label: '3ème',
+          libelle: '3ème',
           selected: false,
         },
       ],
@@ -123,31 +112,22 @@ export class StructurePedagogiqueComponent {
       icon: '🎓',
       niveaux: [
         {
-          code: 'SECONDE',
-          label: 'Seconde',
+          libelle: 'Seconde',
           selected: false,
         },
         {
-          code: 'PREMIERE',
-          label: 'Première',
+          libelle: 'Première',
           selected: false,
         },
         {
-          code: 'TERMINALE',
-          label: 'Terminale',
+          libelle: 'Terminale',
           selected: false,
         },
       ],
     },
   ]);
 
-  /**
-   * Sélectionne ou désélectionne un niveau.
-   */
-  toggleNiveau(
-    cycleCode: string,
-    niveauCode: string
-  ): void {
+  toggleNiveau(cycleCode: string, niveauLibelle: string): void {
 
     this.cycles.update(cycles =>
       cycles.map(cycle => {
@@ -159,7 +139,7 @@ export class StructurePedagogiqueComponent {
         return {
           ...cycle,
           niveaux: cycle.niveaux.map(niveau =>
-            niveau.code === niveauCode
+            niveau.libelle === niveauLibelle
               ? {
                 ...niveau,
                 selected: !niveau.selected,
@@ -171,10 +151,6 @@ export class StructurePedagogiqueComponent {
     );
   }
 
-  /**
-   * Sélectionne tous les niveaux d'un cycle
-   * ou les désélectionne s'ils sont déjà tous sélectionnés.
-   */
   toggleCycle(cycleCode: string): void {
 
     this.cycles.update(cycles =>
@@ -199,19 +175,10 @@ export class StructurePedagogiqueComponent {
     );
   }
 
-  /**
-   * Au moins un niveau du cycle est sélectionné.
-   *
-   * C'est cet état qui détermine si le cycle est considéré
-   * comme choisi.
-   */
   isCycleSelected(cycle: Cycle): boolean {
     return cycle.niveaux.some(niveau => niveau.selected);
   }
 
-  /**
-   * Tous les niveaux du cycle sont sélectionnés.
-   */
   isCycleFullySelected(cycle: Cycle): boolean {
     return (
       cycle.niveaux.length > 0 &&
@@ -219,12 +186,9 @@ export class StructurePedagogiqueComponent {
     );
   }
 
-  /**
-   * Le cycle est partiellement sélectionné.
-   */
   isCyclePartiallySelected(cycle: Cycle): boolean {
-    const selectedCount =
-      cycle.niveaux.filter(niveau => niveau.selected).length;
+
+    const selectedCount = cycle.niveaux.filter(niveau => niveau.selected).length;
 
     return (
       selectedCount > 0 &&
@@ -232,9 +196,7 @@ export class StructurePedagogiqueComponent {
     );
   }
 
-  /**
-   * Nombre de niveaux sélectionnés.
-   */
+
   get selectedNiveauxCount(): number {
 
     return this.cycles().reduce(
@@ -249,17 +211,46 @@ export class StructurePedagogiqueComponent {
     return this.selectedNiveauxCount > 0;
   }
 
-  getSelectedNiveaux(): { cycleCode: string; niveauCode: string; }[] {
-
+  getSelectedNiveaux(): { cycleCode: string; niveauLibelle: string; }[] {
     return this.cycles().flatMap(cycle =>
       cycle.niveaux
         .filter(niveau => niveau.selected)
         .map(niveau => ({
           cycleCode: cycle.code,
-          niveauCode: niveau.code,
+          niveauLibelle: niveau.libelle,
         }))
     );
   }
 
+  getStructurePedagogiqueRequest(): SetupStructurePedagogiqueRequest {
+    return {
+      cycles: this.cycles()
+        .filter(cycle =>
+          cycle.niveaux.some(niveau => niveau.selected)
+        )
+        .map(cycle => ({
+          code: cycle.code,
+          libelle: cycle.label,
+
+          niveaux: cycle.niveaux
+            .filter(niveau => niveau.selected)
+            .map(niveau => ({
+              libelle: niveau.libelle
+            }))
+        }))
+    };
+  }
+
+  valider(): void {
+    if (!this.hasSelection) {
+      return;
+    }
+
+    const structure = this.getStructurePedagogiqueRequest();
+
+    console.log('[STRUCTURE PÉDAGOGIQUE] Données à envoyer :', structure);
+
+    this.structurePedagogiqueChange.emit(structure);
+  }
 
 }

@@ -11,6 +11,8 @@ import { LocalStorageService } from '../services/local-storage.service';
 })
 export class InterceptorService implements HttpInterceptor {
 
+
+  /*    V1
   private readonly localStorage = inject(LocalStorageService);
   private readonly router = inject(Router);
 
@@ -37,15 +39,67 @@ export class InterceptorService implements HttpInterceptor {
           }
         }
         return throwError(() => err?.error);
-
-        /*
-        if (isString(err)) {
-          return throwError(() => new Error(err));
-        } else {
-          return throwError(() => err?.error);
-        } */
-
       })
     )
+
+  } */
+
+  private readonly localStorage = inject(LocalStorageService);
+  private readonly router = inject(Router);
+
+  intercept(request: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
+
+    const v2Token = this.localStorage.getItem('v2_access_token');
+    const v1Token = this.localStorage.getItem('token');
+
+    const isV2Session = !!v2Token;
+    const token = v2Token ?? v1Token;
+
+
+    console.log('================ HTTP INTERCEPTOR ================');
+    console.log('URL:', request.url);
+    console.log('V1 TOKEN:', v1Token);
+    console.log('V2 TOKEN:', v2Token);
+    console.log('SESSION:', isV2Session ? 'V2' : 'V1');
+    console.log('TOKEN USED:', token);
+    console.log('===================================================');
+
+    if (token) {
+      request = request.clone({
+        setHeaders: {
+          Authorization: `Bearer ${token}`
+        }
+      });
+    }
+
+    return next.handle(request).pipe(
+      catchError((err) => {
+
+        if (err instanceof HttpErrorResponse) {
+
+          if (err.status === 401) {
+
+            if (isV2Session) {
+              this.localStorage.removeItem('v2_access_token');
+              this.localStorage.removeItem('v2_tenant_uuid');
+              this.localStorage.removeItem('v2_organization_uuid');
+              this.localStorage.removeItem('v2_user');
+              this.localStorage.removeItem('v2_organizations');
+
+              this.router.navigate(['/']);
+            } else {
+              this.localStorage.clear();
+              this.router.navigate(['/']);
+            }
+          }
+
+          return throwError(() => err);
+        }
+
+        return throwError(() => err);
+      })
+    );
   }
+
+
 }

@@ -1,4 +1,6 @@
-import { Component } from '@angular/core';
+import { Component, Input } from '@angular/core';
+import { SetupProcessResponse } from '../../../../core/models/setup/response/setup-process-response.model';
+
 
 @Component({
   selector: 'app-finalisation-component',
@@ -9,19 +11,43 @@ import { Component } from '@angular/core';
 })
 export class FinalisationComponent {
 
-  readonly etablissement = 'Mon établissement';
+  @Input({ required: true })
+  setupDetails!: SetupProcessResponse;
 
-  readonly anneeScolaire = '2026 - 2027';
+  blocOuvert: string | null = null;
 
-  readonly nombreCycles = 2;
+  toggleBloc(bloc: string): void {
+    this.blocOuvert = this.blocOuvert === bloc ? null : bloc;
+  }
 
-  readonly nombreNiveaux = 8;
+  isBlocOuvert(bloc: string): boolean {
+    return this.blocOuvert === bloc;
+  }
 
-  readonly nombreClasses = 16;
+  get nombreCycles(): number {
+    return this.setupDetails?.structurePedagogique?.cycles?.length ?? 0;
+  }
 
-  readonly nombreMatieres = 14;
+  get nombreNiveaux(): number {
+    return this.setupDetails?.structurePedagogique?.cycles
+      ?.reduce(
+        (total, cycle) =>
+          total + (cycle.niveaux?.length ?? 0),
+        0
+      ) ?? 0;
+  }
 
-  readonly periodes = 'Semestre 1 · Semestre 2';
+  get nombreClasses(): number {
+    return this.setupDetails?.classes?.classes?.length ?? 0;
+  }
 
+  get nombreMatieres(): number {
+    return this.setupDetails?.matieres?.matieres?.length ?? 0;
+  }
 
+  get periodes(): string {
+    return this.setupDetails?.semestres
+      ?.map(semestre => semestre.libelle)
+      .join(' · ') ?? '';
+  }
 }

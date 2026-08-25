@@ -9,7 +9,7 @@
   </div>
 
   <div class="niveaux-list">
-    @for (niveau of niveaux(); track niveau.niveauCode) {
+    @for (niveau of niveaux(); track niveau.niveauLibelle) {
       <section class="niveau-card">
         <div class="niveau-header">
           <div class="niveau-title-zone">
@@ -18,7 +18,7 @@
             <div class="niveau-title">
               <div class="niveau-title-row">
                 <h4>
-                  {{ niveau.niveauLabel }}
+                  {{ niveau.niveauLibelle }}
                 </h4>
 
                 <span class="success-badge"> ✓ </span>
@@ -42,17 +42,17 @@
             <button
               type="button"
               class="matiere-option"
-              [class.selected]="isSelected(niveau.niveauCode, matiere.code)"
-              (click)="selectionnerMatiere(niveau.niveauCode, matiere.code)"
+              [class.selected]="isSelected(niveau.niveauLibelle, matiere.code)"
+              (click)="selectionnerMatiere(niveau.niveauLibelle, matiere.code)"
             >
               <span class="matiere-checkbox">
-                @if (isSelected(niveau.niveauCode, matiere.code)) {
+                @if (isSelected(niveau.niveauLibelle, matiere.code)) {
                   ✓
                 }
               </span>
 
               <span class="matiere-name">
-                {{ matiere.nom }}
+                {{ matiere.libelle }}
               </span>
             </button>
           }

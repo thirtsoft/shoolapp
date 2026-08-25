@@ -107,21 +107,35 @@
       <div class="card-body">
         @switch (currentStep()) {
           @case (1) {
-            <app-information-ecole-component />
+            <app-information-ecole-component [organizationUuid]="organizationUuid" />
           }
 
           @case (2) {
-            <app-initier-annee-scolaire-component />
+            <app-initier-annee-scolaire-component
+              [tenantUuid]="tenantUuid"
+              [organizationUuid]="organizationUuid"
+            />
           }
 
           @case (3) {
             <app-structure-pedagogique-component />
           }
 
-          @case (4) {
-            <app-classes-a-ajouter-component />
-          }
+         @case (4) {
+  @if (structurePedagogique(); as structure) {
 
+    <app-classes-a-ajouter-component
+      [structurePedagogique]="structure"
+    />
+
+  } @else {
+
+    <div class="setup-loading">
+      Structure pédagogique non disponible.
+    </div>
+
+  }
+}
           @case (5) {
             <app-periodes-scolaires-component />
           }
@@ -131,7 +145,11 @@
           }
 
           @case (7) {
-            <app-finalisation-component />
+            @if (setupDetails) {
+              <app-finalisation-component [setupDetails]="setupDetails" />
+            } @else {
+              <div class="loading-details">Chargement de la configuration...</div>
+            }
           }
         }
       </div>
@@ -175,6 +193,7 @@
             }
           </button>
         } @else {
+          
           <button type="button" class="btn-primary" (click)="terminer()">
             <span> Accéder à mon établissement </span>
 
