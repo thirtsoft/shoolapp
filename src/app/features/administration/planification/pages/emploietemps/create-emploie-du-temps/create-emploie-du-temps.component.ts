@@ -6,6 +6,7 @@ import { ToastrService } from 'ngx-toastr';
 import { EnseigantList } from '../../../../../../core/models/enseignant/enseignant-list';
 import { EmploiDuTemps } from '../../../../../../core/models/planification/emploi-du-temp';
 import { ListeEnseignement } from '../../../../../../core/models/planification/liste-enseignement';
+import { AnneeScolaire } from '../../../../../../core/models/referentiels/annee-scolaire';
 import { ListeClasse } from '../../../../../../core/models/referentiels/classe';
 import { Matiere } from '../../../../../../core/models/referentiels/matiere';
 import { Salle } from '../../../../../../core/models/referentiels/salle';
@@ -14,7 +15,6 @@ import { Utilisateur } from '../../../../../../core/models/utilisateur/utilisate
 import { ReferentielResourceService } from '../../../../referentiel/service/referentiel-resource.service';
 import { UtilisateurService } from '../../../../utilisateur/service/utilisateur.service';
 import { PlanificationResourceService } from '../../../services/planification-resource.service';
-import { AnneeScolaire } from '../../../../../../core/models/referentiels/annee-scolaire';
 
 @Component({
   selector: 'app-create-emploie-du-temps',
@@ -29,6 +29,7 @@ export class CreateEmploieDuTempsComponent implements OnInit {
   emploiFormGroup!: FormGroup;
   addEditEmploie: EmploiDuTemps = {};
   typeSalles?: string[] = ["Ordinaire", "Spécialisée", "Extérieure"];
+  lesJoursSemaines?: string[] = ["LUNDI", "MARDI", "MERCREDI", "JEUDI", "VENDREDI", "SAMEDI"];
   classList: ListeClasse[] = [];
   sessionSemestreList: SessionSemestre[] = [];
   salleList: Salle[] = [];
@@ -108,6 +109,22 @@ export class CreateEmploieDuTempsComponent implements OnInit {
     }
   }
 
+
+  onClasseSelectedEmploi() {
+    const classe = this.emploiFormGroup.get('classe')?.value;
+    if (classe) {
+      this.getEnseignementByClasse(classe);
+    }
+  }
+
+  private getEnseignementByClasse(classId: number) {
+    this.planificationService.getAllEnseignementByclasse(classId).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
+      next: data => {
+        this.enseignementList = data;
+      }
+    });
+  }
+
   private getEnseignementByClass(classId: number, index: number) {
     this.planificationService
       .getAllEnseignementByclasse(classId)
@@ -126,21 +143,16 @@ export class CreateEmploieDuTempsComponent implements OnInit {
     this.planificationService.getEmploiDuTemps(batId).subscribe({
       next: (data) => {
         this.addEditEmploie = data;
-
-        // 1. Initialisation du groupe principal du formulaire
         this.emploiFormGroup = this._formBuilder.group({
           id: [this.addEditEmploie?.id ?? ''],
-          classe: [this.addEditEmploie?.classe ?? ''],
-          sessionSemestre: [this.addEditEmploie?.sessionSemestre ?? ''],
           anneeScolaire: [this.addEditEmploie?.anneeScolaire ?? '', Validators.required],
+          classe: [this.addEditEmploie.classe, Validators.required],
           titre: [this.addEditEmploie?.titre ?? '', Validators.required],
-          semaine: [this.addEditEmploie?.semaine ?? ''],
           coursEditDTOList: this._formBuilder.array([])
         });
 
         const coursArray = this.emploiFormGroup.get('coursEditDTOList') as FormArray;
 
-        // 2. Boucle pour ajouter les éléments au FormArray
         if (this.addEditEmploie.coursEditDTOList) {
           for (let i = 0; i < this.addEditEmploie.coursEditDTOList.length; i++) {
             const coursData = this.addEditEmploie.coursEditDTOList[i];
@@ -148,10 +160,10 @@ export class CreateEmploieDuTempsComponent implements OnInit {
               this._formBuilder.group({
                 id: [coursData.id],
                 libelle: [coursData.libelle, Validators.required],
-                classe: [coursData.classe, Validators.required],
+                jourSemaine: [coursData.jourSemaine, Validators.required],
                 enseignement: [coursData.enseignement, Validators.required],
                 salle: [coursData.salle, Validators.required],
-                dateCours: [coursData.dateCours, Validators.required],
+                //   dateCours: [coursData.dateCours, Validators.required],
                 heureDebut: [coursData.heureDebut, Validators.required],
                 heureFin: [coursData.heureFin],
               })
@@ -173,10 +185,8 @@ export class CreateEmploieDuTempsComponent implements OnInit {
   initializeForm(emploie: EmploiDuTemps | null) {
     this.emploiFormGroup = this._formBuilder.group({
       id: [emploie?.id ?? ''],
-      /*       classe: [emploie?.classe ?? ''],
-            sessionSemestre: [emploie?.sessionSemestre ?? ''],
-            semaine: [emploie?.semaine ?? ''], */
       anneeScolaire: [emploie?.anneeScolaire ?? '', Validators.required],
+      classe: [emploie?.classe, Validators.required],
       titre: [emploie?.titre ?? '', Validators.required],
       coursEditDTOList: this._formBuilder.array([
         this.newCourseItem()
@@ -191,13 +201,12 @@ export class CreateEmploieDuTempsComponent implements OnInit {
   newCourseItem(): FormGroup {
     return this._formBuilder.group({
       libelle: ['', Validators.required],
-      classe: ['', Validators.required],
+      jourSemaine: ['', Validators.required],
       enseignement: ['', Validators.required],
       salle: ['', Validators.required],
-      dateCours: ['', Validators.required],
+      //  dateCours: ['', Validators.required],
       heureDebut: ['', Validators.required],
       heureFin: [''],
-      ecole: this.ecoleId
     })
   }
 
@@ -210,15 +219,12 @@ export class CreateEmploieDuTempsComponent implements OnInit {
     delete this.enseignementsParCours[classItemIndex];
   }
 
-
-
   ajouterEmploieDuTemps() {
     const payload: EmploiDuTemps = {
       id: this.emploiFormGroup.get("id")!.value,
-      classe: this.emploiFormGroup.get("classe")!.value,
-      sessionSemestre: this.emploiFormGroup.get("sessionSemestre")!.value,
-      semaine: this.emploiFormGroup.get("semaine")!.value,
+      titre: this.emploiFormGroup.get("titre")!.value,
       anneeScolaire: this.emploiFormGroup.get("anneeScolaire")!.value,
+      classe: this.emploiFormGroup.get("classe")!.value,
       coursEditDTOList: this.emploiFormGroup.get("coursEditDTOList")!.value,
     }
     payload.ecole = this.ecoleId;

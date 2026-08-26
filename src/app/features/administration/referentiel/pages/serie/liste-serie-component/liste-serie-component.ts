@@ -1,26 +1,24 @@
 import { Component, inject, OnInit } from '@angular/core';
-import { IFilterConfig } from '../../../../../../core/filtered-config/FiltreConfiguration';
 import { GenericTableReferentielComponent } from '../../../../../../core/generic/generic-table-referentiel/generic-table-referentiel.component';
+import { IFilterConfig } from '../../../../../../core/filtered-config/FiltreConfiguration';
 import { ReferentielResourceService } from '../../../service/referentiel-resource.service';
 
 @Component({
-  selector: 'app-list-niveau',
+  selector: 'app-liste-serie-component',
   standalone: true,
   imports: [GenericTableReferentielComponent],
-  templateUrl: './list-niveau.component.html',
-  styleUrls: ['./list-niveau.component.css']
+  templateUrl: './liste-serie-component.html',
+  styleUrl: './liste-serie-component.css',
 })
-export class ListNiveauComponent implements OnInit {
-
+export class ListeSerieComponent implements OnInit {
   errorMessage?: string;
-  isEdit: boolean = true;
   isLoading: boolean = false;
-  filteredDataNiveau: any;
   isLockable: boolean = true;
   isTable: boolean = true;
-  deleteEndpoint = "Niveau";
+  deleteEndpoint = "serie";
   columns: any = [];
-  niveauData: any = [];
+  serieData: any = [];
+  isEdit: boolean = true;
 
   currentPage = 0;
   pageSize = 10;
@@ -33,13 +31,14 @@ export class ListNiveauComponent implements OnInit {
   private readonly refentielResource = inject(ReferentielResourceService);
 
   ngOnInit(): void {
-    this.chargerLesNiveau();
+    this.chargerLesSeries()
   }
 
-  async chargerLesNiveau() {
+  async chargerLesSeries() {
     try {
       await Promise.all([
       ]);
+
       this.initialisationDesFiltres();
       this.chargerLesDonnees(false);
     } catch (error) {
@@ -51,10 +50,10 @@ export class ListNiveauComponent implements OnInit {
     this.tableFilters = [
       {
         key: 'libelle',
-        label: 'Libellé',
+        label: 'Libelle',
         type: 'text',
-        placeholder: 'Rechercher un niveau...'
-      }
+        placeholder: 'Rechercher une serie'
+      },
     ];
   }
 
@@ -76,27 +75,25 @@ export class ListNiveauComponent implements OnInit {
       const filtreParam = this.construireParametreDeFiltre();
 
       apiCall = this.refentielResource.fetchFilterDataTable(
-        'niveau',
+        'serie',
         this.currentPage,
         this.pageSize,
         filtreParam)
 
     } else {
-      apiCall = this.refentielResource.getResourcePaged('niveau', this.currentPage, this.pageSize);
+      apiCall = this.refentielResource.getResourcePaged('serie', this.currentPage, this.pageSize);
     }
     apiCall.subscribe({
       next: (response) => {
-        this.niveauData = response.data?.content || [];
+        this.serieData = response.data?.content || [];
         this.totalElements = response.data?.totalElements || 0;
         this.columns = [
-          { key: 'cycle', header: 'Cycle' },
-          { key: 'libelle', header: 'Niveau' },
-        ]
-
-        this.niveauData = this.niveauData.map((item: any) => ({
+          { key: 'code', header: 'Code' },
+          { key: 'libelle', header: 'Libellé' },
+        ];
+        this.serieData = this.serieData.map((item: any) => ({
           ...item,
-
-        }),);
+        }));
 
         this.isLoading = false;
       },
@@ -114,7 +111,6 @@ export class ListNiveauComponent implements OnInit {
       filtreObj.libelle = this.activeFilters.libelle;
     }
     return Object.keys(filtreObj).length > 0 ? filtreObj : null;
-
   }
 
   get totalPages(): number {
