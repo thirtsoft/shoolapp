@@ -7,6 +7,14 @@ export const routes: Routes = [
     redirectTo: 'auth',
     pathMatch: 'full',
   },
+
+  {
+    path: 'setup',
+    loadChildren: () =>
+      import('./features/setup/setup.routes')
+        .then(m => m.SETUP_ROUTES)
+  },
+
   {
     path: 'admin',
     loadChildren: () =>
@@ -33,6 +41,13 @@ export const routes: Routes = [
     loadChildren: () =>
       import('./features/parent/parent.routes')
         .then(m => m.PARENT_ROUTES)
+  },
+
+   {
+    path: 'saas-management',
+    loadChildren: () =>
+      import('./features/saas-management/saas-management.routes')
+        .then(m => m.SAAS_ADMIN_ROUTES)
   },
 
   {

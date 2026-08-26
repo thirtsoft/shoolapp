@@ -1,0 +1,99 @@
+<div class="success-container">
+  <div class="success-header">
+    <div class="success-icon">
+      <i class="fas fa-check-circle"></i>
+    </div>
+
+    <h2>Votre espace a été créé avec succès !</h2>
+
+    <p>Votre environnement SaaS est maintenant opérationnel.</p>
+  </div>
+
+  @if (response()) {
+    <div class="success-summary">
+      <div class="summary-card">
+        <div class="card-header">
+          <i class="fas fa-building"></i>
+          <h3>Espace créé</h3>
+        </div>
+
+        <div class="detail-row">
+          <span>Nom</span>
+          <strong>
+            {{ response()?.tenantName }}
+          </strong>
+        </div>
+
+        <div class="detail-row">
+          <span>Code</span>
+          <strong>
+            {{ response()?.tenantCode }}
+          </strong>
+        </div>
+
+        <div class="detail-row">
+          <span>Identifiant</span>
+          <strong class="uuid">
+            {{ response()?.tenantUuid }}
+          </strong>
+        </div>
+      </div>
+
+      <div class="summary-card">
+        <div class="card-header">
+          <i class="fas fa-credit-card"></i>
+          <h3>Abonnement</h3>
+        </div>
+
+        <div class="detail-row">
+          <span>Numéro</span>
+          <strong>
+            {{ response()?.subscriptionNumero }}
+          </strong>
+        </div>
+
+        <div class="detail-row">
+          <span>Identifiant</span>
+          <strong class="uuid">
+            {{ response()?.subscriptionUuid }}
+          </strong>
+        </div>
+      </div>
+
+      <div class="summary-card">
+        <div class="card-header">
+          <i class="fas fa-file-invoice"></i>
+          <h3>Facturation</h3>
+        </div>
+
+        <div class="detail-row">
+          <span>Numéro facture</span>
+          <strong>
+            {{ response()?.invoiceNumero }}
+          </strong>
+        </div>
+
+        <div class="detail-row">
+          <span>Identifiant</span>
+          <strong class="uuid">
+            {{ response()?.invoiceUuid }}
+          </strong>
+        </div>
+      </div>
+    </div>
+
+    <div class="success-message">
+      <i class="fas fa-info-circle"></i>
+
+      <span> Vous pouvez maintenant accéder à votre espace et commencer la configuration. </span>
+    </div>
+
+    <div class="success-actions">
+      <button type="button" class="btn btn-primary" routerLink="/admin/onboarding/tenants">
+        <i class="fas fa-building me-2"></i>
+
+        Voir les espaces créés
+      </button>
+    </div>
+  }
+</div>

@@ -1,0 +1,6 @@
+export enum WorkspaceType {
+  PLATFORM = 'PLATFORM',
+  MINISTRY = 'MINISTRY',
+  ACADEMY = 'ACADEMY',
+  GROUP_SCHOOL = 'GROUP_SCHOOL',
+}

@@ -1,0 +1,214 @@
+<div class="setup-page">
+  <header class="setup-header">
+    <div class="brand">
+      <div class="brand-icon">🎓</div>
+
+      <div class="brand-text">
+        <span class="brand-name">EduSchool</span>
+        <span class="brand-subtitle"> Configuration de votre établissement </span>
+      </div>
+    </div>
+
+    <div class="header-right">
+      <div class="secure-badge">
+        <span>🔐</span>
+        <span>Configuration sécurisée</span>
+      </div>
+
+      <div class="help-button" title="Besoin d'aide">?</div>
+    </div>
+  </header>
+
+  <main class="setup-content">
+    <div class="setup-intro">
+      <div class="intro-eyebrow">
+        <span class="intro-line"></span>
+        <span>PREMIÈRE CONFIGURATION</span>
+      </div>
+
+      <h1>
+        Préparons votre
+        <em>établissement</em>
+      </h1>
+
+      <p>
+        Quelques informations suffisent pour commencer. Vous pourrez compléter et modifier vos
+        paramètres à tout moment.
+      </p>
+    </div>
+
+    <!-- STEPPER -->
+
+    <div class="stepper">
+      <div class="stepper-line">
+        <div class="stepper-line-progress" [style.width.%]="progress"></div>
+      </div>
+
+      @for (step of steps; track step.number) {
+        <div
+          class="step"
+          [class.active]="currentStep() === step.number"
+          [class.completed]="currentStep() > step.number"
+          [class.clickable]="step.number < currentStep()"
+          (click)="allerA(step.number)"
+        >
+          <div class="step-circle">
+            @if (currentStep() > step.number) {
+              ✓
+            } @else {
+              {{ step.icon }}
+            }
+          </div>
+
+          <div class="step-info">
+            <span class="step-number"> ÉTAPE {{ step.number }} </span>
+
+            <span class="step-label">
+              {{ step.label }}
+            </span>
+
+            <span class="step-description">
+              {{ step.description }}
+            </span>
+          </div>
+        </div>
+      }
+    </div>
+
+    <!-- CARD -->
+
+    <section class="setup-card">
+      <div class="card-header">
+        <div class="card-title-zone">
+          <div class="card-icon">
+            {{ currentStepData.icon }}
+          </div>
+
+          <div>
+            <div class="card-eyebrow">
+              ÉTAPE {{ currentStepData.number }} SUR {{ steps.length }}
+            </div>
+
+            <h2>
+              {{ currentStepData.label }}
+            </h2>
+
+            <p>
+              {{ currentStepData.description }}
+            </p>
+          </div>
+        </div>
+
+        <div class="step-counter">{{ currentStep() }} / {{ steps.length }}</div>
+      </div>
+
+      <!-- CONTENU DE L'ÉTAPE -->
+
+      <div class="card-body">
+        @switch (currentStep()) {
+          @case (1) {
+            <app-information-ecole-component [organizationUuid]="organizationUuid" />
+          }
+
+          @case (2) {
+            <app-initier-annee-scolaire-component
+              [tenantUuid]="tenantUuid"
+              [organizationUuid]="organizationUuid"
+            />
+          }
+
+          @case (3) {
+            <app-structure-pedagogique-component />
+          }
+
+         @case (4) {
+  @if (structurePedagogique(); as structure) {
+
+    <app-classes-a-ajouter-component
+      [structurePedagogique]="structure"
+    />
+
+  } @else {
+
+    <div class="setup-loading">
+      Structure pédagogique non disponible.
+    </div>
+
+  }
+}
+          @case (5) {
+            <app-periodes-scolaires-component />
+          }
+
+          @case (6) {
+            <app-matieres-preparees-component />
+          }
+
+          @case (7) {
+            @if (setupDetails) {
+              <app-finalisation-component [setupDetails]="setupDetails" />
+            } @else {
+              <div class="loading-details">Chargement de la configuration...</div>
+            }
+          }
+        }
+      </div>
+
+      <div class="card-footer">
+        <button
+          type="button"
+          class="btn-secondary"
+          [disabled]="currentStep() === 1 || saving()"
+          (click)="retour()"
+        >
+          ← Retour
+        </button>
+
+        <div class="footer-hint">
+          @if (currentStep() < steps.length) {
+            <span>💡</span>
+
+            <span> Vous pourrez modifier ces informations plus tard. </span>
+          } @else {
+            <span>✓</span>
+
+            <span> Configuration terminée </span>
+          }
+        </div>
+
+        @if (currentStep() < steps.length) {
+          <button
+            type="button"
+            class="btn-primary"
+            [class.loading]="saving()"
+            [disabled]="saving()"
+            (click)="continuer()"
+          >
+            @if (saving()) {
+              <span class="spinner"></span>
+              <span>Enregistrement...</span>
+            } @else {
+              <span>Continuer</span>
+              <span class="arrow">→</span>
+            }
+          </button>
+        } @else {
+          
+          <button type="button" class="btn-primary" (click)="terminer()">
+            <span> Accéder à mon établissement </span>
+
+            <span class="arrow"> → </span>
+          </button>
+        }
+      </div>
+    </section>
+
+    <div class="setup-footer">
+      <span> Configuration rapide · Environ 3 minutes </span>
+
+      <span class="footer-separator"> • </span>
+
+      <span> EduSchool Sénégal </span>
+    </div>
+  </main>
+</div>

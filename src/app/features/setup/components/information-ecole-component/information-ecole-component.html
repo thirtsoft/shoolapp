@@ -1,0 +1,280 @@
+<div class="setup-section">
+  @if (loading) {
+    <div class="info-message">
+      <span class="info-message-icon">⏳</span>
+
+      <div>
+        <strong>Chargement des informations...</strong>
+
+        <p>Les informations de votre établissement sont en cours de récupération.</p>
+      </div>
+    </div>
+  }
+
+  <form [formGroup]="form">
+    <div class="info-card">
+      <div class="card-title">
+        <span>🏛️</span>
+
+        <span> Identité de l'établissement </span>
+      </div>
+
+      <div class="form-grid">
+        <div class="form-group">
+          <label for="libelle"> Nom de l'établissement </label>
+
+          <div class="input-wrap">
+            <span class="input-ico"> 🏫 </span>
+
+            <input
+              id="libelle"
+              type="text"
+              formControlName="libelle"
+              placeholder="Nom de l'établissement"
+            />
+          </div>
+
+          @if (libelle?.invalid && libelle?.touched) {
+            <small class="field-error"> Le nom de l'établissement est obligatoire. </small>
+          }
+        </div>
+
+        <div class="form-group">
+          <label for="code"> Code de l'établissement </label>
+
+          <div class="input-wrap">
+            <span class="input-ico"> 🏷️ </span>
+
+            <input
+              id="code"
+              type="text"
+              formControlName="code"
+              placeholder="Code de l'établissement"
+            />
+          </div>
+
+          @if (code?.invalid && code?.touched) {
+            <small class="field-error"> Le code de l'établissement est obligatoire. </small>
+          }
+        </div>
+      </div>
+
+      <div class="form-grid form-grid-three">
+        <div class="form-group">
+          <label for="sigle"> Sigle </label>
+
+          <div class="input-wrap">
+            <span class="input-ico"> 🔤 </span>
+
+            <input id="sigle" type="text" formControlName="sigle" placeholder="Ex : EPP" />
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="schoolType"> Type d'établissement </label>
+
+          <div class="input-wrap select-wrap">
+            <span class="input-ico"> 🏛️ </span>
+
+            <select id="schoolType" formControlName="schoolType">
+              <option value="">Sélectionner un type</option>
+
+              <option value="PRIVE">Privé</option>
+
+              <option value="PUBLIC">Public</option>
+            </select>
+          </div>
+
+          @if (schoolType?.invalid && schoolType?.touched) {
+            <small class="field-error"> Le type d'établissement est obligatoire. </small>
+          }
+        </div>
+
+        <div class="form-group">
+          <label for="anneeCreation"> Année de création </label>
+
+          <div class="input-wrap">
+            <span class="input-ico"> 📅 </span>
+
+            <input
+              id="anneeCreation"
+              type="number"
+              formControlName="anneeCreation"
+              min="1800"
+              [max]="currentYear"
+            />
+          </div>
+
+          @if (anneeCreation?.invalid && anneeCreation?.touched) {
+            <small class="field-error"> Veuillez saisir une année valide. </small>
+          }
+        </div>
+      </div>
+    </div>
+
+    <div class="info-card">
+      <div class="card-title">
+        <span>📍</span>
+
+        <span> Coordonnées </span>
+      </div>
+
+      <div class="form-grid">
+        <div class="form-group">
+          <label for="adresse"> Adresse </label>
+
+          <div class="input-wrap">
+            <span class="input-ico"> 📍 </span>
+
+            <input
+              id="adresse"
+              type="text"
+              formControlName="adresse"
+              placeholder="Adresse de l'établissement"
+            />
+          </div>
+
+          @if (adresse?.invalid && adresse?.touched) {
+            <small class="field-error"> L'adresse est obligatoire. </small>
+          }
+        </div>
+
+        <div class="form-group">
+          <label for="boitePostale"> Boîte postale </label>
+
+          <div class="input-wrap">
+            <span class="input-ico"> 📮 </span>
+
+            <input
+              id="boitePostale"
+              type="text"
+              formControlName="boitePostale"
+              placeholder="BP 12345"
+            />
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="telephone"> Téléphone </label>
+
+          <div class="input-wrap">
+            <span class="input-ico"> ☎️ </span>
+
+            <input id="telephone" type="tel" formControlName="telephone" placeholder="+221 ..." />
+          </div>
+
+          @if (telephone?.invalid && telephone?.touched) {
+            <small class="field-error"> Le téléphone est obligatoire. </small>
+          }
+        </div>
+
+        <div class="form-group">
+          <label for="mobile"> Mobile </label>
+
+          <div class="input-wrap">
+            <span class="input-ico"> 📱 </span>
+
+            <input id="mobile" type="tel" formControlName="mobile" placeholder="+221 ..." />
+          </div>
+
+          @if (mobile?.invalid && mobile?.touched) {
+            <small class="field-error"> Le mobile est obligatoire. </small>
+          }
+        </div>
+
+        <div class="form-group">
+          <label for="email"> Adresse e-mail </label>
+
+          <div class="input-wrap">
+            <span class="input-ico"> ✉️ </span>
+
+            <input id="email" type="email" formControlName="email" placeholder="contact@ecole.sn" />
+          </div>
+
+          @if (email?.invalid && email?.touched) {
+            <small class="field-error"> Veuillez saisir une adresse e-mail valide. </small>
+          }
+        </div>
+
+        <div class="form-group">
+          <label for="siteWeb">
+            Site web
+
+            <span> (facultatif) </span>
+          </label>
+
+          <div class="input-wrap">
+            <span class="input-ico"> 🌐 </span>
+
+            <input
+              id="siteWeb"
+              type="url"
+              formControlName="siteWeb"
+              placeholder="https://www.mon-ecole.sn"
+            />
+          </div>
+        </div>
+
+        <div class="form-group form-group-full">
+          <label for="description">
+            Description
+            <span>(facultatif)</span>
+          </label>
+
+          <div class="input-wrap">
+            <span class="input-ico textarea-icon"> 📝 </span>
+
+            <textarea
+              id="description"
+              formControlName="description"
+              placeholder="Description de l'établissement"
+              rows="3"
+            ></textarea>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="info-card">
+      <div class="card-title">
+        <span>👤</span>
+
+        <span> Responsable de l'établissement </span>
+      </div>
+
+      <div class="form-grid">
+        <div class="form-group form-group-full">
+          <label for="directeur"> Directeur / Responsable </label>
+
+          <div class="input-wrap">
+            <span class="input-ico"> 👤 </span>
+
+            <input
+              id="directeur"
+              type="text"
+              formControlName="directeur"
+              placeholder="Nom du directeur"
+            />
+          </div>
+
+          @if (directeur?.invalid && directeur?.touched) {
+            <small class="field-error"> Le responsable est obligatoire. </small>
+          }
+        </div>
+      </div>
+    </div>
+
+    <div class="info-message">
+      <span class="info-message-icon"> 💡 </span>
+
+      <div>
+        <strong> À savoir </strong>
+
+        <p>
+          Ces informations seront utilisées sur les documents officiels, les bulletins, les factures
+          et les communications de votre établissement.
+        </p>
+      </div>
+    </div>
+  </form>
+</div>

@@ -1,0 +1,11 @@
+<footer class="onboarding-footer">
+  @if (!firstStep) {
+    <button type="button" (click)="previous.emit()">Retour</button>
+  }
+
+  @if (!lastStep) {
+    <button type="button" (click)="next.emit()">Continuer</button>
+  } @else {
+    <button type="button" (click)="submit.emit()">Terminer</button>
+  }
+</footer>

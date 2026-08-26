@@ -1,0 +1,23 @@
+<app-generic-table-dossier
+  title="Liste des onboarding"
+  titleFitre="Eleve"
+  [tableColumns]="columns"
+  [tableData]="processData"
+  [isLoading]="isLoading"
+  [isEyesIcon]="true"
+  [isLockableIcon]="isLockable"
+  [tableSizes]="tableSizes"
+  [totalElements]="totalElements"
+  [currentPage]="currentPage"
+  [pageSize]="pageSize"
+  (pageChange)="changePage($event)"
+  [deleteEndPoint]="deleteEndpoint"
+  [showSearch]="false"
+  [filtered]="tableFilters"
+  (filterChange)="onFilterChange($event.filter, $event.value)"
+  [showFilters]="true"
+  (resetFilters)="resetFilters()"
+  (sizeChange)="changeSize($event)"
+  detailButtonLink="/admin/dossier-eleve/eleve/details"
+>
+</app-generic-table-dossier>

@@ -8,6 +8,13 @@ export const ADMIN_ROUTES: Routes = [
     component: MainLayoutAdminComponent,
     children: [
 
+    /*   {
+        path: 'onboarding',
+        loadChildren: () =>
+          import('../onboarding/onboarding.routes')
+            .then(m => m.ONBOARDING_TENANT_ROUTES)
+      }, */
+
       {
         path: 'dashboard',
         loadComponent: () =>

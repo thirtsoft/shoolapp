@@ -1,0 +1,25 @@
+<div class="step-indicator">
+  @for (item of steps; track item.step; let i = $index) {
+    <div
+      class="step"
+      [class.active]="isActive(item.step)"
+      [class.completed]="isCompleted(item.step)"
+    >
+      <div class="step-number">
+        @if (isCompleted(item.step)) {
+          <i class="fas fa-check"></i>
+        } @else {
+          {{ i + 1 }}
+        }
+      </div>
+
+      <span class="step-label">
+        {{ item.title }}
+      </span>
+    </div>
+
+    @if (i < steps.length - 1) {
+      <div class="step-line" [class.completed-line]="isCompleted(steps[i + 1].step)"></div>
+    }
+  }
+</div>

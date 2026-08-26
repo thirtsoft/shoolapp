@@ -1,0 +1,23 @@
+export enum OnboardingStep {
+
+  INITIATED,
+
+  TENANT,
+
+  ORGANIZATION,
+
+  USER,
+
+  ORGANIZATION_MEMBER,
+
+  SECURITY,
+
+  SUBSCRIPTION,
+
+  BILLING,
+
+  CONFIRMATION,
+
+  COMPLETED
+
+}

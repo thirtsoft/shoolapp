@@ -12,9 +12,6 @@
   [currentPage]="currentPage"
   [pageSize]="pageSize"
   (pageChange)="changePage($event)"
-  addButtonLink="/admin/dossier-eleve/inscrire-eleve"
-  modifierButtonLink="/admin/dossier-eleve/eleve/edit"
-    detailButtonLink="/admin/dossier-eleve/eleve/details"
   [deleteEndPoint]="deleteEndpoint"
   [showSearch]="false"
   [filtered]="tableFilters"
@@ -22,6 +19,8 @@
   [showFilters]="true"
   (resetFilters)="resetFilters()"
   (sizeChange)="changeSize($event)"
+  addButtonLink="/admin/dossier-eleve/inscrire-eleve"
+  modifierButtonLink="/admin/dossier-eleve/eleve/edit"
   detailButtonLink="/admin/dossier-eleve/eleve/details"
 >
 </app-generic-table-dossier>
