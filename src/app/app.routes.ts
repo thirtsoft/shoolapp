@@ -43,6 +43,13 @@ export const routes: Routes = [
         .then(m => m.PARENT_ROUTES)
   },
 
+   {
+    path: 'saas-management',
+    loadChildren: () =>
+      import('./features/saas-management/saas-management.routes')
+        .then(m => m.SAAS_ADMIN_ROUTES)
+  },
+
   {
     path: 'auth',
     loadChildren: () =>

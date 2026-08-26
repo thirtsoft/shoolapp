@@ -1,8 +1,9 @@
-import { CommonModule } from '@angular/common';
 import { Component, inject, input, output, signal } from '@angular/core';
 import { Router } from '@angular/router';
 import { LocalStorageService } from '../../../../core/services/local-storage.service';
+import { NavItemChildren } from '../../../../core/components/sidebar-navbar-models/nav-item-children.model';
 
+/*
 interface NavItem {
   route?: string;
   ico: string;
@@ -10,12 +11,12 @@ interface NavItem {
   badge?: string;
   section?: string;
   children?: NavItem[];
-}
+}*/
 
 @Component({
   selector: 'app-side-bar-admin-component',
   standalone: true,
-  imports: [CommonModule],
+  imports: [],
   templateUrl: './side-bar-admin-component.html',
   styleUrl: './side-bar-admin-component.css',
 })
@@ -32,13 +33,13 @@ export class SideBarAdminComponent {
 
   expandedMenus = signal<Set<string>>(new Set());
 
-  nav: NavItem[] = [
+  nav: NavItemChildren[] = [
     { route: '/admin/dashboard', ico: '📊', label: 'Tableau de bord', section: '', badge: '' },
 
     // ONBOARDING
-    { route: '/admin/onboarding/tenant', ico: '💰', label: 'Tenants', section: 'ONBOARDING', badge: '18' },
+/*     { route: '/admin/onboarding/tenant', ico: '💰', label: 'Tenants', section: 'ONBOARDING', badge: '18' },
     { route: '/admin/onboarding/process', ico: '💳', label: 'Onboarding process', section: '', badge: '' },
-
+ */
     // FINANCES
     { route: '/admin/comptabilite/facture', ico: '💰', label: 'Factures', section: 'FINANCES', badge: '18' },
     { route: '/admin/comptabilite/paiement', ico: '💳', label: 'Frais scolarité', section: '', badge: '' },
@@ -114,7 +115,7 @@ export class SideBarAdminComponent {
     },
   ];
 
-  hasChildren(item: NavItem): boolean {
+  hasChildren(item: NavItemChildren): boolean {
     return !!item.children && item.children.length > 0;
   }
 
@@ -140,7 +141,7 @@ export class SideBarAdminComponent {
     return this.router.url.includes(segment);
   }
 
-  isParentActive(item: NavItem): boolean {
+  isParentActive(item: NavItemChildren): boolean {
     if (item.route && this.isActive(item.route)) return true;
     if (item.children) {
       return item.children.some(child => child.route && this.isActive(child.route));

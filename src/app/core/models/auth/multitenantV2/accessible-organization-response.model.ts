@@ -1,3 +1,5 @@
+import { OrganizationSpace } from "./organization-space.model";
+
 export interface AccessibleOrganizationResponse {
 
   uuid: string;
@@ -5,6 +7,8 @@ export interface AccessibleOrganizationResponse {
   code: string;
 
   name: string;
+
+  space: OrganizationSpace;
 
   principal: boolean;
 

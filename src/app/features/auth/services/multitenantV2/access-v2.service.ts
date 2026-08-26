@@ -1,7 +1,6 @@
 import { inject, Injectable } from '@angular/core';
-import { SessionV2Service } from './session-v2.service';
-import { Router } from '@angular/router';
 import { SetupStatus } from '../../../../core/models/setup/response/setup-status.model';
+import { SessionV2Service } from './session-v2.service';
 
 @Injectable({
   providedIn: 'root'
@@ -9,53 +8,6 @@ import { SetupStatus } from '../../../../core/models/setup/response/setup-status
 export class AccessV2Service {
 
   private readonly session = inject(SessionV2Service);
-  private readonly router = inject(Router);
-
-  determineInitialRouteV1(setupStatus: SetupStatus | null): string {
-
-    const organization = this.session.getCurrentOrganization();
-    if (!organization) {
-      return '/login';
-    }
-
-    const roles = organization.roles ?? [];
-
-    // ADMIN_SCHOOL est le seul habilité au setup
-    if (roles.includes('ADMIN_SCHOOL')) {
-
-      if (setupStatus === SetupStatus.IN_PROGRESS) {
-        return '/setup';
-      }
-
-      if (setupStatus === SetupStatus.COMPLETED) {
-        return '/school';
-      }
-      if (setupStatus === SetupStatus.FAILED || setupStatus === SetupStatus.CANCELLED) {
-        return '/setup';
-      }
-    }
-
-    // autres espaces
-
-    if (roles.includes('ADMIN_GROUP_SCHOOL')) {
-      return '/group-school';
-    }
-
-    if (roles.includes('ADMIN_MINISTER')) {
-      return '/minister';
-    }
-
-    if (roles.includes('ADMIN_ACADEMY')) {
-      return '/academy';
-    }
-
-    if (roles.includes('PLATFORM_ADMIN')) {
-      return '/platform';
-    }
-
-    return '/unauthorized';
-
-  }
 
   determineInitialRoute(setupStatus?: SetupStatus): string {
 
@@ -65,37 +17,43 @@ export class AccessV2Service {
       return '/login';
     }
 
-    const roles = organization.roles ?? [];
+    switch (organization.space) {
 
-    // ADMIN_SCHOOL est le seul habilité à faire le setup
-    if (roles.includes('ADMIN_SCHOOL')) {
+      case 'PLATFORM':
+        return '/saas-management';
 
-      if (setupStatus === SetupStatus.COMPLETED) {
+      case 'MINISTRY':
+        return '/minister';
+
+      case 'ACADEMY':
+        return '/academy';
+
+      case 'GROUP_SCHOOL':
+        return '/group-school';
+
+      case 'SCHOOL':
+
+        if (this.hasRole('ADMIN_SCHOOL')) {
+
+          if (setupStatus === SetupStatus.COMPLETED) {
+            return '/admin';
+          }
+
+          return '/setup';
+        }
         return '/admin';
-      }
 
-      // Aucun setup, IN_PROGRESS, FAILED ou CANCELLED
-      // → l'ADMIN_SCHOOL doit rester dans le Setup
-      return '/setup';
+
+      default:
+        return '/unauthorized';
     }
-
-    if (roles.includes('ADMIN_GROUP_SCHOOL')) {
-      return '/group-school';
-    }
-
-    if (roles.includes('ADMIN_MINISTER')) {
-      return '/minister';
-    }
-
-    if (roles.includes('ADMIN_ACADEMY')) {
-      return '/academy';
-    }
-
-    if (roles.includes('PLATFORM_ADMIN')) {
-      return '/platform';
-    }
-
-    return '/unauthorized';
   }
 
+
+  private hasRole(role: string): boolean {
+
+    const organization = this.session.getCurrentOrganization();
+
+    return organization?.roles?.includes(role) ?? false;
+  }
 }

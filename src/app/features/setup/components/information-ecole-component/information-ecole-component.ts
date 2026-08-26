@@ -6,7 +6,7 @@ import {
   Validators
 } from '@angular/forms';
 import { OrganizationResponse } from '../../../../core/models/onboarding/organization/organization-response';
-import { OnboardingReferentialService } from '../../../administration/onboarding/service/onboarding-referential.service';
+import { OnboardingReferentialService } from '../../../onboarding/service/onboarding-referential.service';
 
 @Component({
   selector: 'app-information-ecole-component',

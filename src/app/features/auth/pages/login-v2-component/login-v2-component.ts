@@ -1,9 +1,6 @@
-import { Component, inject, Input, OnInit } from '@angular/core';
+import { Component, inject, Input } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
-import { LocalStorageService } from '../../../../core/services/local-storage.service';
-import { AuthenticationService } from '../../services/authentication.service';
-import { UtilsService } from '../../services/utils.service';
 import { AuthenticationV2Service } from '../../services/multitenantV2/authentication-v2.service';
 import { SessionV2Service } from '../../services/multitenantV2/session-v2.service';
 import { SetupApiService } from '../../../setup/services/setup-api-service';
@@ -20,8 +17,6 @@ export class LoginV2Component {
 
   errorEmail = 'L\'adresse e-mail est obligatoire';
   errorPassword = 'Le mot de passe est obligatoire';
-
-  //  signInForm: FormGroup;
 
   hidePassword: boolean = true;
 
@@ -155,9 +150,6 @@ export class LoginV2Component {
           return;
         }
 
-        /*
-         * Les autres rôles n'ont pas besoin de consulter le Setup.
-         */
         const route = this.accessV2Service.determineInitialRoute();
 
         this.navigateAfterLogin(route);
