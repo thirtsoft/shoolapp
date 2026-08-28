@@ -2,14 +2,13 @@ import { Component, inject, OnInit } from '@angular/core';
 import { FormArray, FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
-import { ListeClasse } from '../../../../../../core/models/referentiels/classe';
 import { MatiereAvecCoefficient } from '../../../../../../core/models/referentiels/matiere';
+import { Niveau } from '../../../../../../core/models/referentiels/niveau';
+import { Serie } from '../../../../../../core/models/referentiels/serie';
 import { Utilisateur } from '../../../../../../core/models/utilisateur/utilisateur';
 import { UtilisateurService } from '../../../../utilisateur/service/utilisateur.service';
 import { ReferentielResourceService } from '../../../service/referentiel-resource.service';
 import { ReferentielService } from '../../../service/referentiel.service';
-import { Niveau } from '../../../../../../core/models/referentiels/niveau';
-import { Serie } from '../../../../../../core/models/referentiels/serie';
 
 @Component({
   selector: 'app-create-matiere-avec-coefficient',
@@ -77,7 +76,7 @@ export class CreateMatiereAvecCoefficientComponent implements OnInit {
   }
 
   getSelectedNiveauName(): string {
-    const niveauId = this.matiereAvecCoeficientFormGroup.get('coefficientMatiereClasseAddEditDTOList')?.get('niveau')?.value;
+    const niveauId = this.matiereAvecCoeficientFormGroup.get('coefficientMatiereAddEditDTOList')?.get('niveau')?.value;
     const niveau = this.niveauList.find(n => Number(n.id) === Number(niveauId));
     return niveau?.libelle || '';
   }
@@ -91,7 +90,7 @@ export class CreateMatiereAvecCoefficientComponent implements OnInit {
   }
 
   getSelectedSerieName(): string {
-    const serieId = this.matiereAvecCoeficientFormGroup.get('coefficientMatiereClasseAddEditDTOList')?.get('serie')?.value;
+    const serieId = this.matiereAvecCoeficientFormGroup.get('coefficientMatiereAddEditDTOList')?.get('serie')?.value;
     const serie = this.serieList.find(n => Number(n.id) === Number(serieId));
     return serie?.libelle || '';
   }
@@ -99,75 +98,106 @@ export class CreateMatiereAvecCoefficientComponent implements OnInit {
   getMatiereAvecCoefficient(batId: number) {
     this.referentielService.getMatiereAvecCoefficient(batId).subscribe({
       next: (data) => {
+        console.log('Données reçues du backend:', data);
         this.matiereAvecCoeeficient = data;
+
+        // Créer le formulaire avec les données de base
         this.matiereAvecCoeficientFormGroup = this._formBuilder.group({
-          id: [this.matiereAvecCoeeficient?.id ? this.matiereAvecCoeeficient.id : ''],
-          code: [this.matiereAvecCoeeficient?.code ? this.matiereAvecCoeeficient.code : '', Validators.required],
-          libelle: [this.matiereAvecCoeeficient?.libelle ? this.matiereAvecCoeeficient.libelle : '', Validators.required],
-          coefficientMatiereClasseAddEditDTOList: this._formBuilder.array([])
+          id: [data?.id ?? null],
+          code: [data?.code ?? '', Validators.required],
+          libelle: [data?.libelle ?? '', Validators.required],
+          coefficientMatiereAddEditDTOList: this._formBuilder.array([])
         });
-        for (let i = 0; i < this.matiereAvecCoeeficient.coefficientMatiereClasseAddEditDTOList!.length; i++) {
-          (this.matiereAvecCoeficientFormGroup.get('coefficientMatiereClasseAddEditDTOList') as FormArray).push(
-            this._formBuilder.group({
-              id: [this.matiereAvecCoeeficient.coefficientMatiereClasseAddEditDTOList![i].id],
-              niveau: [this.matiereAvecCoeeficient.coefficientMatiereClasseAddEditDTOList![i].niveau, Validators.required],
-              serie: [this.matiereAvecCoeeficient.coefficientMatiereClasseAddEditDTOList![i].serie, Validators.required],
-              coefficient: [this.matiereAvecCoeeficient.coefficientMatiereClasseAddEditDTOList![i].coefficient, Validators.required],
-            })
-          )
+
+        // Récupérer le FormArray
+        const formArray = this.matiereAvecCoeficientFormGroup.get('coefficientMatiereAddEditDTOList') as FormArray;
+
+        // Vider le FormArray d'abord (au cas où)
+        while (formArray.length !== 0) {
+          formArray.removeAt(0);
         }
+
+        // Ajouter les coefficients depuis les données reçues
+        if (data.coefficientMatiereAddEditDTOList && data.coefficientMatiereAddEditDTOList.length > 0) {
+          console.log('Nombre de coefficients à ajouter:', data.coefficientMatiereAddEditDTOList.length);
+
+          data.coefficientMatiereAddEditDTOList.forEach((coeff, index) => {
+            console.log(`Ajout coefficient ${index}:`, coeff);
+
+            formArray.push(
+              this._formBuilder.group({
+                id: [coeff.id ?? null],
+                niveau: [coeff.niveau ? Number(coeff.niveau) : null, Validators.required],
+                serie: [coeff.serie ? Number(coeff.serie) : null],
+                coefficient: [coeff.coefficient ? Number(coeff.coefficient) : '', Validators.required],
+              })
+            );
+          });
+        } else {
+          // Si pas de coefficients, ajouter au moins un formulaire vide
+          formArray.push(this.newCoefficientMatiereClasseItem());
+        }
+
+        console.log('Formulaire après remplissage:', this.matiereAvecCoeficientFormGroup.value);
       },
       error: (data) => {
         console.log('error', 'Erreur lors de la récupération : ' + data.error);
         this.toastService.error('error', 'Erreur lors de la récupération : ' + data.error);
       }
-    }
-    );
+    });
   }
 
 
   initializeForm(matiere: MatiereAvecCoefficient | null) {
     this.matiereAvecCoeficientFormGroup = this._formBuilder.group({
-      id: [matiere?.id ? matiere.id : ''],
+      id: [matiere?.id ?? null],
       code: [matiere?.code ? matiere.code : '', Validators.required],
       libelle: [matiere?.libelle ? matiere.libelle : '', Validators.required],
-      coefficientMatiereClasseAddEditDTOList: this._formBuilder.array([
+      coefficientMatiereAddEditDTOList: this._formBuilder.array([
         this.newCoefficientMatiereClasseItem()
       ])
     });
   }
 
-  coefficientMatiereClasseAddEditDTOList(): FormArray {
-    return this.matiereAvecCoeficientFormGroup.get('coefficientMatiereClasseAddEditDTOList') as FormArray;
+  coefficientMatiereAddEditDTOList(): FormArray {
+    return this.matiereAvecCoeficientFormGroup.get('coefficientMatiereAddEditDTOList') as FormArray;
   }
 
   newCoefficientMatiereClasseItem(): FormGroup {
     return this._formBuilder.group({
-      id: [''],
-      niveau: ['', Validators.required],
-      serie: ['', Validators.required],
+      id: [null],
+      niveau: [null, Validators.required],
+      serie: [null],
       coefficient: ['', Validators.required],
     })
   }
 
   onAddCoefficientItem() {
     console.log("New traitement", this.newCoefficientMatiereClasseItem().value);
-    this.coefficientMatiereClasseAddEditDTOList().push(this.newCoefficientMatiereClasseItem());
+    this.coefficientMatiereAddEditDTOList().push(this.newCoefficientMatiereClasseItem());
   }
 
   removeCoefficientItem(classItemIndex: number) {
-    this.coefficientMatiereClasseAddEditDTOList().removeAt(classItemIndex);
+    this.coefficientMatiereAddEditDTOList().removeAt(classItemIndex);
   }
 
   ajouterUneMAtiereAvecCoefficient() {
     if (!this.matiereAvecCoefficientId && this.matiereAvecCoefficientId == undefined) {
+      const formValue = this.matiereAvecCoeficientFormGroup.getRawValue();
+
       const payload: MatiereAvecCoefficient = {
-        id: this.matiereAvecCoeficientFormGroup.get("id")!.value,
-        code: this.matiereAvecCoeficientFormGroup.get("code")!.value,
-        libelle: this.matiereAvecCoeficientFormGroup.get("libelle")!.value,
-        coefficientMatiereClasseAddEditDTOList: this.matiereAvecCoeficientFormGroup.get("coefficientMatiereClasseAddEditDTOList")!.value,
-      }
+        id: formValue.id ?? null,
+        code: formValue.code,
+        libelle: formValue.libelle,
+        coefficientMatiereAddEditDTOList: formValue.coefficientMatiereAddEditDTOList.map((item: any) => ({
+          id: item.id ? Number(item.id) : null,
+          niveau: item.niveau ? Number(item.niveau) : null,  // Conversion string → number
+          serie: item.serie ? Number(item.serie) : null,      // Conversion string → number
+          coefficient: Number(item.coefficient)               // Conversion string → number
+        }))
+      };
       payload.ecole = this.ecoleId;
+      console.log('payload envoyé', payload);
       this.referentielService.createMatiereAvecCoefficient(payload).subscribe({
         next: (data) => {
           if (data.statut === 'OK') {

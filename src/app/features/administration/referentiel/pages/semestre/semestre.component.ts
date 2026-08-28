@@ -14,13 +14,8 @@ import { ReferentielResourceService } from '../../service/referentiel-resource.s
 })
 export class SemestreComponent implements OnInit {
   errorMessage?: string;
-  semestres: Semestre[] = [];
-  semestreId?: number;
-  semestreFormGroup!: FormGroup;
-
   isEdit: boolean = true;
   isLoading: boolean = false;
-  filteredDataSemestre: any;
   isLockable: boolean = true;
   isTable: boolean = true;
   deleteEndpoint = "semestre";

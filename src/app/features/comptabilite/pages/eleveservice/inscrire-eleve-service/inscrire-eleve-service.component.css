@@ -599,3 +599,64 @@
     gap: 0.5rem;
   }
 }
+
+/***/
+
+.step-indicator {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  margin-bottom: 1.5rem;
+  padding: 0 50px;
+}
+
+.step-indicator .btn-outline-secondary {
+  position: absolute;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 1;
+}
+
+.btn-outline-secondary {
+  color: white;
+  background: linear-gradient(135deg, #2c5282, #1e3a5f);
+  font-size: 12px;
+}
+
+.step {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.step-number {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background: #e9ecef;
+  color: #6c757d;
+  font-weight: 600;
+  transition: all 0.3s ease;
+}
+
+.step.active .step-number {
+  color: #fff;
+  box-shadow: 0 0 0 4px rgba(0, 123, 255, 0.2);
+}
+
+.step-label {
+  color: #6c757d;
+}
+
+.step.active .step-label {
+  color: #212529;
+}
+
+.step-line {
+  background: #dee2e6;
+  margin: 0 10px;
+  transition: background 0.3s ease;
+}

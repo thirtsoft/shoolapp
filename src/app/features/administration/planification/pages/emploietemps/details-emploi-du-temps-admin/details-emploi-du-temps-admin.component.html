@@ -21,8 +21,8 @@
                         <i class="fas fa-chalkboard-user"></i>
                       </div>
                       <div class="info-content">
-                        <label>Classe</label>
-                        <h5>{{ emploie?.libelleClasse || '-' }}</h5>
+                        <label>Titre</label>
+                        <h5>{{ emploie?.titre || '-' }}</h5>
                       </div>
                     </div>
                   </div>
@@ -32,8 +32,8 @@
                         <i class="fas fa-book-open"></i>
                       </div>
                       <div class="info-content">
-                        <label>Semestre</label>
-                        <h5>{{ emploie?.libelleSemestre || '-' }}</h5>
+                        <label>Classe</label>
+                        <h5>{{ emploie?.libelleClasse || '-' }}</h5>
                       </div>
                     </div>
                   </div>
@@ -43,8 +43,8 @@
                         <i class="fas fa-calendar-week"></i>
                       </div>
                       <div class="info-content">
-                        <label>Semaine</label>
-                        <h5>{{ emploie?.libelleSemaine || '-' }}</h5>
+                        <label>Année scolaire</label>
+                        <h5>{{ emploie?.libelleAnneeScolaire || '-' }}</h5>
                       </div>
                     </div>
                   </div>
@@ -133,7 +133,10 @@
 
               <div class="alert-help mt-4" role="alert">
                 <i class="fas fa-info-circle me-2"></i>
-                <span>L'emploi du temps est généré automatiquement selon la planification des cours.</span>
+                <span
+                  >L'emploi du temps est généré automatiquement selon la planification des
+                  cours.</span
+                >
               </div>
             </div>
           </div>
@@ -145,9 +148,10 @@
 
 <div id="print-shadow-element" class="print-matrix-target">
   <div class="timetable-outer-header">
-    <div class="title-badge-scolaire">Emploi du temps {{ emploie?.libelleClasse || '6ème' }}</div>
+    <div class="title-badge-scolaire">Emploi : {{ emploie?.libelleClasse || '6ème' }}</div>
     <div class="subtitle-scolaire">
-      {{ emploie?.libelleSemestre || 'Semestre 2' }} - {{ emploie?.libelleSemaine || 'Première semaine' }}
+      Année scolaire :
+      {{ emploie?.libelleAnneeScolaire || 'Première semaine' }}
     </div>
   </div>
 
@@ -156,9 +160,7 @@
       <tr>
         <th class="time-header-cell">Horaire</th>
         @for (jour of joursSemaine; track jour) {
-          <th>
-            {{ jour }}<br /><span class="sub-class">{{ emploie?.libelleClasse || '6ème' }}</span>
-          </th>
+          <th>{{ jour }}<br /><span class="sub-class"></span></th>
         }
       </tr>
     </thead>
@@ -168,14 +170,15 @@
           <td class="time-cell">{{ row.horaire }}</td>
 
           @for (j of joursSemaine; track j) {
-            @if (rowSpans && rowSpans[j.toLowerCase()] && (rowSpans[j.toLowerCase()][r]?.span)! > 0) {
-              <td [attr.rowspan]="rowSpans[j.toLowerCase()][r].span"
-                  [ngClass]="getCellClass(rowSpans[j.toLowerCase()][r].course?.matiere)">
-                
+            @if (rowSpans && rowSpans[j.toLowerCase()] && rowSpans[j.toLowerCase()][r]?.span! > 0) {
+              <td
+                [attr.rowspan]="rowSpans[j.toLowerCase()][r].span"
+                [ngClass]="getCellClass(rowSpans[j.toLowerCase()][r].course?.matiere)"
+              >
                 @if (rowSpans[j.toLowerCase()][r].course; as cours) {
                   <div class="course-box-content">
                     <div class="course-subject">
-                      <strong>{{ cours.matiere }}</strong>
+                      <strong>{{ cours.matiere }}</strong> - {{ cours.classe }}
                     </div>
                     <div class="course-title-sub">{{ cours.libelle }}</div>
                     <div class="course-details">
@@ -199,10 +202,12 @@
       @for (item of repartitionHoraire; track item.matiere) {
         <div class="ribbon-item">
           <span class="color-dot" [style.background-color]="item.color"></span>
-          <span class="label-text"><strong>{{ item.matiere }}</strong> : {{ item.volume }}</span>
+          <span class="label-text"
+            ><strong>{{ item.matiere }}</strong> : {{ item.volume }}</span
+          >
         </div>
       }
-      
+
       @if (repartitionHoraire.length === 0) {
         <div class="ribbon-item">
           <span class="label-text text-muted">Aucune donnée de volume horaire disponible</span>

@@ -98,8 +98,8 @@
 
           <div class="divider"></div>
 
-          <div formArrayName="coefficientMatiereClasseAddEditDTOList">
-            @for (coeffItem of coefficientMatiereClasseAddEditDTOList().controls; track $index) {
+          <div formArrayName="coefficientMatiereAddEditDTOList">
+            @for (coeffItem of coefficientMatiereAddEditDTOList().controls; track $index) {
               <div class="coefficient-card" [formGroupName]="$index">
                 <div class="card-header-custom">
                   <h4 class="card-title-custom">
@@ -171,7 +171,7 @@
 
           @if (
             matiereAvecCoeficientFormGroup.get('libelle')?.value &&
-            coefficientMatiereClasseAddEditDTOList().length > 0
+            coefficientMatiereAddEditDTOList().length > 0
           ) {
             <div class="recap-card">
               <div class="d-flex align-items-center gap-3">
@@ -187,7 +187,7 @@
                       {{ matiereAvecCoeficientFormGroup.get('libelle')?.value }}</strong
                     >
                     avec
-                    <strong>{{ coefficientMatiereClasseAddEditDTOList().length }}</strong>
+                    <strong>{{ coefficientMatiereAddEditDTOList().length }}</strong>
                     coefficient(s) de classe
                   </span>
                 </div>

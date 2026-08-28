@@ -24,4 +24,6 @@ export interface MatiereAvecCoefficient {
 
     coefficientMatiereClasseAddEditDTOList?: CoefficientMatiereClasse[];
 
+    coefficientMatiereAddEditDTOList?: CoefficientMatiereClasse[];
+
 }

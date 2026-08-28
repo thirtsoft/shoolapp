@@ -52,7 +52,17 @@ export class DetailsEmploiDuTempsAdminComponent implements OnInit {
     this.planificationService.recupererUneResource('planification/emploidutemps/details', emploieId).subscribe({
       next: (data) => {
         this.emploie = data;
+
+        console.log('details emploi', this.emploie);
         this.coursesList = this.emploie.listeCoursDTOS || [];
+
+        // ✅ Vérification des données
+        console.log('Cours reçus :', this.coursesList.map((c:any) => ({
+          jour: c.jourSemaine,
+          heureDebut: c.heureDebut,
+          heureFin: c.heureFin,
+          matiere: c.matiere
+        })));
 
         this.construireMatriceDynamique();
         this.calculerRepartitionHoraire();
@@ -60,7 +70,7 @@ export class DetailsEmploiDuTempsAdminComponent implements OnInit {
     });
   }
 
-  construireMatriceDynamique() {
+  construireMatriceDynamiqueV1() {
     this.gridData = [];
 
     this.joursSemaine.forEach(j => {
@@ -123,6 +133,86 @@ export class DetailsEmploiDuTempsAdminComponent implements OnInit {
         i += span;
       }
     });
+  }
+
+  construireMatriceDynamique() {
+    this.gridData = [];
+    this.joursSemaine.forEach(j => {
+      this.rowSpans[j.toLowerCase()] = [];
+    });
+
+    // 1. Construire la grille vide
+    this.heuresRepere.forEach((creneau) => {
+      const [startH, endH] = creneau.split(' - ');
+      let ligne: any = { horaire: creneau, start: startH, end: endH };
+      this.joursSemaine.forEach(j => {
+        ligne[j.toLowerCase()] = null;
+      });
+      this.gridData.push(ligne);
+    });
+
+    // 2. Placer les cours dans la grille
+    this.coursesList.forEach((cours: any) => {
+      // ✅ Utiliser jourSemaine au lieu de dateDebut
+      if (!cours.jourSemaine || !cours.heureDebut) return;
+
+      const jourKey = cours.jourSemaine.toLowerCase(); // "lundi", "mercredi"
+
+      // Vérifier si le jour est dans la liste
+      if (!this.joursSemaine.map(j => j.toLowerCase()).includes(jourKey)) return;
+
+      // Parcourir les créneaux pour trouver où placer le cours
+      this.gridData.forEach((row, index) => {
+        // Vérifier si le cours est dans ce créneau
+        if (row.start >= cours.heureDebut && row.end <= cours.heureFin) {
+          this.gridData[index][jourKey] = cours;
+        }
+      });
+    });
+
+    // 3. Calculer les rowspans (fusionner les cellules)
+    this.joursSemaine.forEach(j => {
+      const jourKey = j.toLowerCase();
+      let i = 0;
+
+      while (i < this.gridData.length) {
+        let span = 1;
+        let currentCourse = this.gridData[i][jourKey];
+
+        if (currentCourse) {
+          // Compter combien de créneaux consécutifs sont occupés par le même cours
+          while (
+            i + span < this.gridData.length &&
+            this.gridData[i + span][jourKey] &&
+            this.gridData[i + span][jourKey].id === currentCourse.id
+          ) {
+            span++;
+          }
+        }
+
+        this.rowSpans[jourKey].push({ span: span, course: currentCourse });
+
+        for (let s = 1; s < span; s++) {
+          this.rowSpans[jourKey].push({ span: 0, course: null });
+        }
+        i += span;
+      }
+    });
+  }
+
+  private normalizeJour(jour: string): string {
+    const map: { [key: string]: string } = {
+      'lun': 'LUNDI',
+      'mar': 'MARDI',
+      'mer': 'MERCREDI',
+      'jeu': 'JEUDI',
+      'ven': 'VENDREDI',
+      'sam': 'SAMEDI',
+      'dim': 'DIMANCHE'
+    };
+
+    const upper = jour.toUpperCase();
+    return map[upper] || upper;
   }
 
   calculerRepartitionHoraire() {
@@ -189,7 +279,7 @@ export class DetailsEmploiDuTempsAdminComponent implements OnInit {
         const imgHeight = (canvas.height * imgWidth) / canvas.width;
 
         pdf.addImage(imgData, 'PNG', 7, 7, imgWidth, imgHeight);
-        pdf.save(`Emploi_du_temps_${this.emploie?.libelleClasse || '6eme'}.pdf`);
+        pdf.save(`Emploi_du_temps_${this.emploie?.titre || '6eme'}.pdf`);
       }).catch(() => {
         element.style.position = 'absolute';
         element.style.left = '-9999px';

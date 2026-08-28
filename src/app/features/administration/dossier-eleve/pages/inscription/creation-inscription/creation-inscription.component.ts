@@ -77,20 +77,28 @@ export class CreationInscriptionComponent implements OnInit {
     this.eleveId = this.localStorage.getItem('eleveId');
     this.eleve = this.localStorage.getItem('eleve');
     this.inscriptionId = this.route.snapshot.params['id'];
+
+    this.initializeInscriptionForm(null);
+
+    //  this.trackFormFieldsForFrais();
+    //  this.trackMoyenPaiementChanges();
+
+    this.setupFormObservers();
+
     this.getConnectedUserInfos();
     this.getClasses();
     this.getAnneeScolaires();
     this.getMoyenPaiementList();
     this.getEleves();
-    this.initializeInscriptionForm(null);
+
     if (this.inscriptionId != null && this.inscriptionId != undefined) {
       this.getInscription(this.inscriptionId);
       this.title = 'Modifier une inscription';
       this.isEdit = true;
     }
     this.setupSearch();
-    this.trackFormFieldsForFrais();
-    this.trackMoyenPaiementChanges();
+    //  this.trackFormFieldsForFrais();
+    //  this.trackMoyenPaiementChanges();
   }
 
   setupSearch() {
@@ -175,10 +183,11 @@ export class CreationInscriptionComponent implements OnInit {
     });
   }
 
-  getInscription(inscriptionId: number) {
+  getInscription11(inscriptionId: number) {
     this.dossierEleveService.getInscription(inscriptionId).subscribe({
       next: (data) => {
         this.inscription = data;
+        console.log('edit inscription', this.inscription);
         this.initializeInscriptionForm(this.inscription);
 
         if (this.inscription?.eleveDTO) {
@@ -189,6 +198,48 @@ export class CreationInscriptionComponent implements OnInit {
           if (eleve.matricule) {
             this.searchTerm += ` (${eleve.matricule})`;
           }
+        }
+      }
+    });
+  }
+
+  setupFormObservers() {
+    if (!this.inscriptionFormGroup) {
+      console.warn('Formulaire non initialisé, impossible de configurer les observateurs');
+      return;
+    }
+
+    // Nettoyer les anciens observateurs si nécessaire
+    this.trackFormFieldsForFrais();
+    this.trackMoyenPaiementChanges();
+  }
+
+  getInscription(inscriptionId: number) {
+    this.dossierEleveService.getInscription(inscriptionId).subscribe({
+      next: (data) => {
+        this.inscription = data;
+        this.initializeInscriptionForm(this.inscription);
+
+        // RÉATTACHER LES OBSERVATEURS après la réinitialisation du formulaire
+        this.setupFormObservers();
+
+        if (this.inscription?.eleveDTO) {
+          const eleve = this.inscription.eleveDTO;
+          this.selectedEleveInfo = eleve;
+          this.searchTerm = `${eleve.prenom} ${eleve.nom}`;
+
+          if (eleve.matricule) {
+            this.searchTerm += ` (${eleve.matricule})`;
+          }
+        }
+
+        // Déclencher manuellement le chargement des frais pour le mode édition
+        const classeId = this.inscriptionFormGroup.get('classeId')?.value;
+        const anneeScolaireId = this.inscriptionFormGroup.get('anneeScolaireId')?.value;
+
+        if (classeId && anneeScolaireId) {
+          console.log('Mode édition - Chargement initial des frais:', { classeId, anneeScolaireId });
+          this.chargerFrais(Number(classeId), Number(anneeScolaireId));
         }
       }
     });
@@ -257,6 +308,7 @@ export class CreationInscriptionComponent implements OnInit {
     );
   }
 
+  /*
   trackFormFieldsForFrais() {
     this.inscriptionFormGroup.get('classeId')?.valueChanges.pipe(
       distinctUntilChanged()
@@ -275,9 +327,40 @@ export class CreationInscriptionComponent implements OnInit {
         this.chargerFrais(Number(classeId), Number(anneeScolaireId));
       }
     });
+  }*/
+
+  trackFormFieldsForFrais() {
+    if (!this.inscriptionFormGroup) {
+      console.warn('trackFormFieldsForFrais: Formulaire non initialisé');
+      return;
+    }
+
+    console.log('Mise en place des observateurs pour le suivi des frais');
+
+    this.inscriptionFormGroup.get('classeId')?.valueChanges.pipe(
+      distinctUntilChanged(),
+      debounceTime(300)
+    ).subscribe(classeId => {
+      const anneeScolaireId = this.inscriptionFormGroup.get('anneeScolaireId')?.value;
+      console.log('Changement de classe détecté:', { classeId, anneeScolaireId });
+      if (classeId && anneeScolaireId) {
+        this.chargerFrais(Number(classeId), Number(anneeScolaireId));
+      }
+    });
+
+    this.inscriptionFormGroup.get('anneeScolaireId')?.valueChanges.pipe(
+      distinctUntilChanged(),
+      debounceTime(300)
+    ).subscribe(anneeScolaireId => {
+      const classeId = this.inscriptionFormGroup.get('classeId')?.value;
+      console.log('Changement d\'année scolaire détecté:', { classeId, anneeScolaireId });
+      if (classeId && anneeScolaireId) {
+        this.chargerFrais(Number(classeId), Number(anneeScolaireId));
+      }
+    });
   }
 
-  chargerFrais(classeId: number, anneeScolaireId: number): void {
+  chargerFrais111(classeId: number, anneeScolaireId: number): void {
     if (!classeId || !anneeScolaireId) {
       this.erreur.set('Veuillez sélectionner une classe et une année scolaire valides.');
       return;
@@ -289,6 +372,47 @@ export class CreationInscriptionComponent implements OnInit {
 
     this.referentielService.obtenirFraisInscription(classeId, anneeScolaireId).subscribe({
       next: (data) => {
+        this.fraisResultat.set(data);
+        this.chargement.set(false);
+
+        if (data && data.montant !== undefined) {
+          this.inscriptionFormGroup.patchValue({
+            montantInscription: data.montant,
+            montantRecu: data.montant
+          }, { emitEvent: false });
+
+          this.inscriptionFormGroup.updateValueAndValidity({ emitEvent: false });
+        }
+      },
+      error: (err) => {
+        console.error('Erreur lors du calcul des frais:', err);
+        this.erreur.set('Impossible de récupérer les frais d\'inscription.');
+        this.chargement.set(false);
+        this.inscriptionFormGroup.patchValue({
+          montantInscription: '',
+          montantRecu: ''
+        }, { emitEvent: false });
+      }
+    });
+  }
+
+  chargerFrais(classeId: number, anneeScolaireId: number): void {
+    console.log('Appel à chargerFrais:', { classeId, anneeScolaireId });
+
+    if (!classeId || !anneeScolaireId) {
+      this.erreur.set('Veuillez sélectionner une classe et une année scolaire valides.');
+      return;
+    }
+    if (this.chargement()) return;
+
+    this.chargement.set(true);
+    this.erreur.set(null);
+
+    console.log('Appel API:', `/myschool/api/referentiel/calculer-frais?classeId=${classeId}&anneeScolaireId=${anneeScolaireId}`);
+
+    this.referentielService.obtenirFraisInscription(classeId, anneeScolaireId).subscribe({
+      next: (data) => {
+        console.log('Frais récupérés avec succès:', data);
         this.fraisResultat.set(data);
         this.chargement.set(false);
 

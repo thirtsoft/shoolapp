@@ -248,7 +248,7 @@ export class InscrireEleveServiceComponent implements OnInit, AfterViewInit {
         next: (data) => {
           if (data.statut === 'OK') {
             this.toastService.success('Succès', 'L\'inscription a été enregistrée avec succès !');
-            this.router.navigate(['admin/comptabilite/services']);
+            this.goBack();
           } else if (data.statut === 'FAILED') {
             this.toastService.error('Erreur', 'Erreur lors de la création : ' + data.message);
           }
@@ -262,7 +262,7 @@ export class InscrireEleveServiceComponent implements OnInit, AfterViewInit {
         next: (data) => {
           if (data.statut === 'OK') {
             this.toastService.success('Succès', 'L\'inscription a été modifiée avec succès !');
-            this.router.navigate(['admin/comptabilite/services']);
+            this.goBack();
           } else if (data.statut === 'FAILED') {
             this.toastService.error('Erreur', 'Erreur lors de la modification : ' + data.message);
           }
@@ -275,7 +275,7 @@ export class InscrireEleveServiceComponent implements OnInit, AfterViewInit {
   }
 
   goBack() {
-    this.router.navigate(['admin/comptabilite/service']);
+    this.router.navigate(['admin/comptabilite/services']);
   }
 
 }

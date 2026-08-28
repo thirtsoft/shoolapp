@@ -276,12 +276,12 @@ export class ReferentielService {
   /*************     CategroyMenu      ***********/
 
   getAllCategoryMenus(): Observable<CategoryMenu[]> {
-    return this.http.get<CategoryMenu[]>(`${this.referentiel}/categoryMenu`);
+    return this.http.get<CategoryMenu[]>(`${this.referentiel}/categorymenu`);
   }
 
 
   getCategoryMenuPaged(page: number = 0, size: number = 100): Observable<DataResult<CategoryMenu>> {
-    const url = `${this.referentiel}/categoryMenu/page`;
+    const url = `${this.referentiel}/categorymenu/page`;
 
     const params = new HttpParams()
       .set('page', page.toString())

@@ -23,6 +23,10 @@
     <div class="card">
       <div class="card-body p-4 p-md-5">
         <div class="step-indicator mb-4">
+          <button type="button" class="btn btn-outline-secondary" style="" (click)="goBack()">
+            <i class="fas fa-arrow-left"></i>
+            Retour
+          </button>
           <div class="step" [class.active]="!isFormStep2Valid()">
             <span class="step-number">1</span>
             <span class="step-label">Informations</span>
@@ -254,7 +258,6 @@
             </button>
           </div>
 
-          <!-- Message d'aide -->
           <div class="alert-help mt-4" role="alert">
             <i class="fas fa-info-circle me-2"></i>
             <span>L'inscription permettra à l'élève d'accéder aux services sélectionnés.</span>
