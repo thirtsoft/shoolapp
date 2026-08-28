@@ -5,6 +5,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
 import { Constants } from '../../../../../../core/constants/constants';
 import { Enseignant } from '../../../../../../core/models/enseignant/enseignant';
+import { EnseignantCreateRequest } from '../../../../../../core/models/enseignant/enseignant-request.model';
 import { Enseignement } from '../../../../../../core/models/planification/enseignement';
 import { AnneeScolaire } from '../../../../../../core/models/referentiels/annee-scolaire';
 import { ListeClasse } from '../../../../../../core/models/referentiels/classe';
@@ -29,7 +30,6 @@ export class CreateEnseignantComponent implements OnInit {
   enseignantId?: number;
   civilites?: string[] = ["M.", "Me"];
   listEducations: NiveauEducation[] = [];
-  userId?: any;
   classeList: ListeClasse[] = [];
   anneeScolaireList: AnneeScolaire[] = [];
   enseignementId?: number;
@@ -74,32 +74,26 @@ export class CreateEnseignantComponent implements OnInit {
   }
 
 
-  initializeForm(enseignant: Enseignant | null) {
+  initializeForm(enseignant: EnseignantCreateRequest | null) {
     this.enseignantFormGroup = this._formBuilder.group({
       id: [enseignant?.id ? enseignant.id : ''],
-      civilite: [enseignant?.civilite ? enseignant.civilite : ''],
-      nom: [enseignant?.nom ? enseignant.nom : '', Validators.required],
-      prenom: [enseignant?.prenom ? enseignant.prenom : '', Validators.required],
+      firstName: [enseignant?.firstName ? enseignant.firstName : '', Validators.required],
+      lastName: [enseignant?.lastName ? enseignant.lastName : '', Validators.required],
       address: [enseignant?.address ? enseignant.address : ''],
-      email: [enseignant?.email ? enseignant.email : '', Validators.required],
-      telephone: [enseignant?.telephone ? enseignant.telephone : '', Validators.required],
-      username: [enseignant?.username ? enseignant.username : '', Validators.required],
-      profession: [enseignant?.profession ? enseignant.profession : ''],
+      email: [enseignant?.email ? enseignant.email : ''],
+      mobile: [enseignant?.mobile ? enseignant.mobile : '', Validators.required],
       situationMatrimoniale: [enseignant?.situationMatrimoniale ? enseignant.situationMatrimoniale : ''],
       cni: [enseignant?.cni ? enseignant.cni : '', Validators.required],
       niveauEducation: [enseignant?.niveauEducation ? enseignant.niveauEducation : '', Validators.required],
-      //    dateDebut: [moment(enseignant?.dateDebut).format('YYYY-MM-DD')],
-      dateDebut: [enseignant?.dateDebut],
+      dateDebut: [enseignant?.dateDebut, Validators.required],
       dateFin: [enseignant?.dateFin ? enseignant.dateFin : ''],
     });
   }
-
 
   getEnseignantById(enseignantId: number) {
     this.enseignanService.getEnseigant(enseignantId).subscribe({
       next: (data) => {
         this.enseignant = data;
-        this.userId = this.enseignant.userId;
         this.initializeForm(this.enseignant);
 
         if (this.enseignant?.piecesJointesDTO?.content) {
@@ -140,26 +134,24 @@ export class CreateEnseignantComponent implements OnInit {
 
   ajoutereditEnseignant() {
     const formData: FormData = new FormData();
-    const payload: Enseignant = {
+    const payload: EnseignantCreateRequest = {
       id: this.enseignantFormGroup.get("id")!.value,
-      civilite: this.enseignantFormGroup.get("civilite")!.value,
-      nom: this.enseignantFormGroup.get("nom")!.value,
-      prenom: this.enseignantFormGroup.get("prenom")!.value,
+      firstName: this.enseignantFormGroup.get("firstName")!.value,
+      lastName: this.enseignantFormGroup.get("lastName")!.value,
       address: this.enseignantFormGroup.get("address")!.value,
       email: this.enseignantFormGroup.get("email")!.value,
-      telephone: this.enseignantFormGroup.get("telephone")!.value,
-      username: this.enseignantFormGroup.get("username")!.value,
-      profession: this.enseignantFormGroup.get("profession")!.value,
+      mobile: this.enseignantFormGroup.get("mobile")!.value,
       situationMatrimoniale: this.enseignantFormGroup.get("situationMatrimoniale")!.value,
       cni: this.enseignantFormGroup.get("cni")!.value,
       niveauEducation: this.enseignantFormGroup.get("niveauEducation")!.value,
       dateDebut: this.enseignantFormGroup.get("dateDebut")!.value,
       dateFin: this.enseignantFormGroup.get("dateFin")!.value,
     }
-    payload.userId = this.userId;
     if (this.enseignantId === null || this.enseignantId === undefined) {
       formData.append('file', this.currentFile!);
       formData.append('piecejointeenseignant', JSON.stringify(payload));
+      console.log('payload sended {} ', payload);
+      console.log('payload sended strigify {} ', JSON.stringify(payload));
       this.enseignanService.enregistrerUnEnseignantWithFiles(formData).subscribe({
         next: (data) => {
           if (data) {
