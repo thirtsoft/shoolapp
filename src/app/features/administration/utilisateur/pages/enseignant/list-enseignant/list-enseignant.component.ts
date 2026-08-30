@@ -128,12 +128,13 @@ export class ListEnseignantComponent implements OnInit {
         this.totalElements = response.data?.totalElements || 0;
 
         this.columns = [
+          { key: 'matricule', header: 'Matricule' },
           { key: 'nomComplet', header: 'Nom complet' },
           { key: 'niveauEducation', header: 'Education' },
-          { key: 'address', header: 'Addresse' },
-          { key: 'telephone', header: 'Téléphone' },
+          { key: 'mobile', header: 'Mobile' },
           { key: 'email', header: 'Email' },
-          { key: 'username', header: 'Nom utilisateur' },
+          { key: 'address', header: 'Addresse' },
+
 
         ];
         this.enseignantData = this.enseignantData?.map((item: any) => ({
