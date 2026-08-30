@@ -1,0 +1,58 @@
+services:
+  # Instance Dauphin
+  angular-dauphin:
+    build:
+      #  context: .
+      context: /home/ubuntu/apps/frontend/eduschool/eduschooldauphin
+      dockerfile: Dockerfile
+      args:
+        BASE_HREF: /dauphin/
+    container_name: eduschool_angular_dauphin
+    restart: unless-stopped
+    ports:
+      - '4201:80'
+    networks:
+      - shared-network
+    healthcheck:
+      test: ['CMD', 'wget', '--quiet', '--tries=1', '--spider', 'http://localhost/']
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
+    deploy:
+      resources:
+        limits:
+          memory: 128M
+        reservations:
+          memory: 64M
+
+  # Instance Collège
+  angular-college:
+    build:
+      #  context: .
+      context: /home/ubuntu/apps/frontend/eduschool/eduschooldauphin
+      dockerfile: Dockerfile
+      args:
+        BASE_HREF: /college/
+    container_name: eduschool_angular_college
+    restart: unless-stopped
+    ports:
+      - '4203:80'
+    networks:
+      - shared-network
+    healthcheck:
+      test: ['CMD', 'wget', '--quiet', '--tries=1', '--spider', 'http://localhost/']
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
+    deploy:
+      resources:
+        limits:
+          memory: 128M
+        reservations:
+          memory: 64M
+
+networks:
+  shared-network:
+    external: true

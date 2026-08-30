@@ -1,36 +1,40 @@
+# ============================================================
+# BUILD STAGE
+# ============================================================
 FROM node:22-alpine AS build
 
 WORKDIR /app
 
-# Argument pour le base href (ex: /dauphin/, /college/)
-ARG BASE_HREF=/
-ENV BASE_HREF=$BASE_HREF
-
+# Installer les dépendances de manière reproductible
 COPY package*.json ./
-RUN npm install --legacy-peer-deps
+RUN npm ci --legacy-peer-deps
 
+# Copier le code source
 COPY . .
 
-# Build avec le base href personnalisé
-RUN npx ng build --configuration=production --base-href=$BASE_HREF
+# Build Angular production
+RUN npx ng build --configuration=production
 
+
+# ============================================================
+# RUNTIME STAGE
+# ============================================================
 FROM nginx:alpine
 
-RUN apk add --no-cache wget curl
+# wget utilisé par le healthcheck Docker Compose
+RUN apk add --no-cache wget
 
+# Configuration Nginx
 COPY nginx.conf /etc/nginx/conf.d/default.conf
 
-# CORRECTION N°1 : Nettoyage absolu du dossier d'accueil Nginx pour éviter les résidus d'anciens builds
+# Nettoyer le contenu Nginx par défaut
 RUN rm -rf /usr/share/nginx/html/*
 
-# CORRECTION N°2 : On s'assure de copier le contenu du dossier browser. 
-# Si Angular génère un sous-dossier à cause du base-href, assure-toi que ce chemin correspond bien à ta structure dist.
+# Copier le build Angular
 COPY --from=build /app/dist/shoolapp/browser /usr/share/nginx/html
 
+# Port HTTP Nginx
 EXPOSE 80
 
-# Le healthcheck mis à jour (très bonne initiative pour index.html !)
-HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
-  CMD wget --quiet --tries=1 --spider http://localhost/index.html || exit 1
-
+# Démarrage Nginx
 CMD ["nginx", "-g", "daemon off;"]
