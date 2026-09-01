@@ -212,136 +212,405 @@
 
             @if (currentStep === 2) {
               <form [formGroup]="parentFormGroup">
-                <div class="form-group">
-                  <label class="form-label">
-                    Type de parent <span class="text-danger">*</span>
-                    <i class="fas fa-users ms-1 text-muted"></i>
-                  </label>
-                  <div class="radio-group">
-                    <label class="radio-label">
-                      <input
-                        type="radio"
-                        formControlName="nouveauParent"
-                        [value]="true"
-                        (change)="onNouveauParentChange(true)"
-                      />
-                      <span>Nouveau parent</span>
-                    </label>
-                    <label class="radio-label">
-                      <input
-                        type="radio"
-                        formControlName="nouveauParent"
-                        [value]="false"
-                        (change)="onNouveauParentChange(false)"
-                      />
-                      <span>Parent existant</span>
-                    </label>
+                <div class="form-actions-header">
+                  <div>
+                    <h4 class="section-title mb-1">
+                      <i class="fas fa-users me-2"></i>
+                      Parents / Responsables
+                    </h4>
+
+                    <small class="text-muted"> Vous pouvez associer jusqu'à 2 parents. </small>
                   </div>
+
+                  <button
+                    type="button"
+                    class="btn-add"
+                    (click)="onAddParentItem()"
+                    [disabled]="parents().length >= 2"
+                  >
+                    <i class="fas fa-plus-circle"></i>
+                    Ajouter un parent
+                  </button>
                 </div>
 
-                @if (newParent) {
-                  <div class="form-actions-header">
-                    <button type="button" class="btn-add" (click)="onAddParentItem()">
-                      <i class="fas fa-plus-circle"></i> Ajouter un parent
-                    </button>
-                  </div>
+                <div formArrayName="parents">
+                  @for (control of parents().controls; track $index) {
+                    @let searchState = parentSearchState[$index];
+                    <div class="parent-card" [formGroupName]="$index">
+                      <!-- HEADER -->
+                      <div class="parent-card-header">
+                        <h4>Parent {{ $index + 1 }}</h4>
 
-                  <div formArrayName="utilisateurDTOS">
-                    @for (control of utilisateurDTOS().controls; track $index) {
-                      <div class="parent-card" [formGroupName]="$index">
-                        <div class="parent-card-header">
-                          <h4>Parent {{ $index + 1 }}</h4>
-                          @if ($index > 0 || utilisateurDTOS().length > 1) {
-                            <button
-                              type="button"
-                              class="btn-remove"
-                              (click)="removeParentItem($index)"
-                            >
-                              <i class="fas fa-trash-alt"></i>
-                            </button>
+                        @if (parents().length > 1) {
+                          <button
+                            type="button"
+                            class="btn-remove"
+                            (click)="removeParentItem($index)"
+                          >
+                            <i class="fas fa-trash-alt"></i>
+                          </button>
+                        }
+                      </div>
+
+                      <div class="form-group mb-4">
+                        <label class="form-label">
+                          Le parent existe-t-il déjà ?
+                          <span class="text-danger">*</span>
+                        </label>
+
+                        <div class="radio-group">
+                          <label class="radio-label">
+                            <input
+                              type="radio"
+                              [name]="'parentExist-' + $index"
+                              [checked]="!control.get('parentExist')?.value"
+                              (change)="onParentExistChange($index, false)"
+                            />
+
+                            <span>Nouveau parent</span>
+                          </label>
+
+                          <label class="radio-label">
+                            <input
+                              type="radio"
+                              [name]="'parentExist-' + $index"
+                              [checked]="control.get('parentExist')?.value"
+                              (change)="onParentExistChange($index, true)"
+                            />
+
+                            <span>Parent existant</span>
+                          </label>
+                        </div>
+                      </div>
+
+                      @if (control.get('parentExist')?.value) {
+                        <div class="alert alert-info">
+                          <i class="fas fa-info-circle me-2"></i>
+
+                          Recherchez un parent existant avec son téléphone ou son email.
+                        </div>
+
+                        <div class="form-group mb-4 position-relative">
+                          <label class="form-label">
+                            Téléphone ou email du parent
+                            <span class="text-danger">*</span>
+                          </label>
+
+                          <input
+                            type="text"
+                            class="form-control"
+                            formControlName="rechercheParent"
+                            placeholder="Téléphone ou email"
+                            autocomplete="off"
+                            (input)="onParentSearch($index)"
+                          />
+
+                          <small class="form-text text-muted">
+                            Saisissez au moins 3 caractères pour rechercher un parent.
+                          </small>
+
+                          @if (searchState?.loading) {
+                            <div class="mt-2 text-muted">
+                              <i class="fas fa-spinner fa-spin me-1"></i>
+                              Recherche en cours...
+                            </div>
+                          }
+
+                          @if (!searchState?.loading && (searchState?.results?.length ?? 0) > 0) {
+                            <div class="parent-search-results">
+                              @for (result of searchState?.results ?? []; track result.parentUuid) {
+                                <button
+                                  type="button"
+                                  class="parent-search-result"
+                                  (click)="selectParent($index, result)"
+                                >
+                                  <div class="parent-search-result-main">
+                                    <strong> {{ result.prenom }} {{ result.nom }} </strong>
+
+                                    <span class="text-muted">
+                                      {{ result.civilite }}
+                                    </span>
+                                  </div>
+
+                                  <div class="parent-search-result-contact">
+                                    @if (result.telephone) {
+                                      <span>
+                                        <i class="fas fa-phone me-1"></i>
+                                        {{ result.telephone }}
+                                      </span>
+                                    }
+
+                                    @if (result.email) {
+                                      <span>
+                                        <i class="fas fa-envelope me-1"></i>
+                                        {{ result.email }}
+                                      </span>
+                                    }
+                                  </div>
+                                </button>
+                              }
+                            </div>
+                          }
+
+                          @if (
+                            !searchState?.loading &&
+                            control.get('rechercheParent')?.value?.length >= 3 &&
+                            (searchState?.results?.length ?? 0) === 0 &&
+                            !searchState?.selected
+                          ) {
+                            <div class="mt-2 text-muted">
+                              <i class="fas fa-info-circle me-1"></i>
+                              Aucun parent trouvé.
+                            </div>
                           }
                         </div>
+
+                        @if (searchState?.selected) {
+                          <div class="selected-parent-card">
+                            <div class="selected-parent-header">
+                              <div class="selected-parent-identity">
+                                <div class="selected-parent-avatar">
+                                  <i class="fas fa-user"></i>
+                                </div>
+
+                                <div class="selected-parent-name">
+                                  <strong>
+                                    {{ searchState.selected?.prenom }}
+                                    {{ searchState.selected?.nom }}
+                                  </strong>
+
+                                  <span>
+                                    <i class="fas fa-check-circle me-1"></i>
+                                    Parent existant sélectionné
+                                  </span>
+                                </div>
+                              </div>
+                            </div>
+
+                            <div class="selected-parent-content">
+                              <div class="form-grid">
+                                <div class="form-group">
+                                  <label class="form-label">
+                                    <i class="fas fa-phone me-1"></i>
+                                    Téléphone
+                                  </label>
+
+                                  <input
+                                    type="tel"
+                                    class="form-control"
+                                    formControlName="telephone"
+                                    readonly
+                                  />
+                                </div>
+
+                                <div class="form-group">
+                                  <label class="form-label">
+                                    <i class="fas fa-envelope me-1"></i>
+                                    Email
+                                  </label>
+
+                                  <input
+                                    type="email"
+                                    class="form-control"
+                                    formControlName="email"
+                                    readonly
+                                  />
+                                </div>
+
+                                <div class="form-group">
+                                  <label class="form-label">
+                                    <i class="fas fa-user me-1"></i>
+                                    Prénom
+                                  </label>
+
+                                  <input
+                                    type="text"
+                                    class="form-control"
+                                    formControlName="prenom"
+                                    readonly
+                                  />
+                                </div>
+
+                                <div class="form-group">
+                                  <label class="form-label">
+                                    <i class="fas fa-id-card me-1"></i>
+                                    Nom
+                                  </label>
+
+                                  <input
+                                    type="text"
+                                    class="form-control"
+                                    formControlName="nom"
+                                    readonly
+                                  />
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        }
+
+                        <!-- RELATION ÉLÈVE → PARENT -->
+                        <div class="form-group mt-4">
+                          <label class="form-label">
+                            Type de relation
+                            <span class="text-danger">*</span>
+
+                            <i class="fas fa-user-tag ms-1 text-muted"></i>
+                          </label>
+
+                          <select class="form-select" formControlName="typeRelation">
+                            <option value="" disabled>— Sélectionnez la relation —</option>
+
+                            @for (relation of typeRelationsParent; track relation.value) {
+                              <option [value]="relation.value">
+                                {{ relation.label }}
+                              </option>
+                            }
+                          </select>
+
+                          @if (
+                            control.get('typeRelation')?.invalid &&
+                            control.get('typeRelation')?.touched
+                          ) {
+                            <small class="form-text text-danger">
+                              Le type de relation est obligatoire.
+                            </small>
+                          }
+                        </div>
+                      }
+
+                      <!-- NOUVEAU PARENT -->
+                      @else {
                         <div class="form-grid">
                           <div class="form-group">
-                            <label class="form-label"
-                              >Civilité <span class="text-danger">*</span></label
-                            >
-                            <select class="form-select" formControlName="civility">
-                              <option value="" disabled selected>— Sélectionnez —</option>
+                            <label class="form-label">
+                              Civilité
+                              <span class="text-danger">*</span>
+                            </label>
+
+                            <select class="form-select" formControlName="civilite">
+                              <option value="" disabled>— Sélectionnez —</option>
+
                               @for (item of civilites; track item) {
-                                <option [value]="item">{{ item }}</option>
+                                <option [value]="item">
+                                  {{ item }}
+                                </option>
                               }
                             </select>
                           </div>
-                          <div class="form-group">
-                            <label class="form-label"
-                              >Prénom <span class="text-danger">*</span></label
-                            >
-                            <input type="text" class="form-control" formControlName="prenom" />
-                          </div>
-                          <div class="form-group">
-                            <label class="form-label">Nom <span class="text-danger">*</span></label>
-                            <input type="text" class="form-control" formControlName="nom" />
-                          </div>
-                          <div class="form-group">
-                            <label class="form-label"
-                              >Adresse <span class="text-danger">*</span></label
-                            >
-                            <input type="text" class="form-control" formControlName="address" />
-                          </div>
-                          <div class="form-group">
-                            <label class="form-label">Profession</label>
-                            <input type="text" class="form-control" formControlName="profession" />
-                          </div>
-                          <div class="form-group">
-                            <label class="form-label"
-                              >Téléphone <span class="text-danger">*</span></label
-                            >
-                            <input type="tel" class="form-control" formControlName="telephone" />
-                          </div>
-                          <div class="form-group">
-                            <label class="form-label">Email</label>
-                            <input type="email" class="form-control" formControlName="email" />
-                          </div>
-                          <div class="form-group">
-                            <label class="form-label"
-                              >Nom utilisateur <span class="text-danger">*</span></label
-                            >
-                            <input type="text" class="form-control" formControlName="username" />
-                          </div>
-                        </div>
-                      </div>
-                    }
-                  </div>
-                } @else {
-                  <div class="form-actions-header">
-                    <button type="button" class="btn-add" (click)="onAddParentIdentifiantItem()">
-                      <i class="fas fa-plus-circle"></i> Ajouter identifiant parent
-                    </button>
-                  </div>
 
-                  <div formArrayName="utilisateurDTOs">
-                    @for (control of utilisateurDTOs().controls; track $index) {
-                      <div class="parent-card" [formGroupName]="$index">
-                        <div class="parent-card-header">
-                          <h4>Parent {{ $index + 1 }}</h4>
-                        </div>
-                        <div class="form-grid">
                           <div class="form-group">
-                            <label class="form-label"
-                              >Téléphone <span class="text-danger">*</span></label
-                            >
-                            <input type="tel" class="form-control" formControlName="telephone" />
+                            <label class="form-label">
+                              Prénom
+                              <span class="text-danger">*</span>
+                            </label>
+
+                            <input
+                              type="text"
+                              class="form-control"
+                              formControlName="prenom"
+                              placeholder="Prénom"
+                            />
                           </div>
+
                           <div class="form-group">
-                            <label class="form-label">Email</label>
-                            <input type="email" class="form-control" formControlName="email" />
+                            <label class="form-label">
+                              Nom
+                              <span class="text-danger">*</span>
+                            </label>
+
+                            <input
+                              type="text"
+                              class="form-control"
+                              formControlName="nom"
+                              placeholder="Nom"
+                            />
+                          </div>
+
+                          <div class="form-group">
+                            <label class="form-label">
+                              Téléphone
+                              <span class="text-danger">*</span>
+                            </label>
+
+                            <input
+                              type="tel"
+                              class="form-control"
+                              formControlName="telephone"
+                              placeholder="77 000 00 00"
+                            />
+
+                            <small class="form-text text-muted">
+                              Ce numéro sera utilisé comme identifiant de connexion du parent.
+                            </small>
+                          </div>
+
+                          <div class="form-group">
+                            <label class="form-label"> Email </label>
+
+                            <input
+                              type="email"
+                              class="form-control"
+                              formControlName="email"
+                              placeholder="parent@email.com"
+                            />
+                          </div>
+
+                          <div class="form-group">
+                            <label class="form-label"> Adresse </label>
+
+                            <input
+                              type="text"
+                              class="form-control"
+                              formControlName="address"
+                              placeholder="Adresse complète"
+                            />
+                          </div>
+
+                          <!-- TYPE DE RELATION -->
+                          <div class="form-group">
+                            <label class="form-label">
+                              Type de relation
+                              <span class="text-danger">*</span>
+
+                              <i class="fas fa-user-tag ms-1 text-muted"></i>
+                            </label>
+
+                            <select class="form-select" formControlName="typeRelation">
+                              <option value="" disabled>— Sélectionnez la relation —</option>
+
+                              @for (relation of typeRelationsParent; track relation.value) {
+                                <option [value]="relation.value">
+                                  {{ relation.label }}
+                                </option>
+                              }
+                            </select>
+
+                            @if (
+                              control.get('typeRelation')?.invalid &&
+                              control.get('typeRelation')?.touched
+                            ) {
+                              <small class="form-text text-danger">
+                                Le type de relation est obligatoire.
+                              </small>
+                            }
+                          </div>
+
+                          <div class="form-group">
+                            <label class="form-label"> Profession </label>
+
+                            <input
+                              type="text"
+                              class="form-control"
+                              formControlName="profession"
+                              placeholder="Profession"
+                            />
                           </div>
                         </div>
-                      </div>
-                    }
-                  </div>
-                }
+                      }
+                    </div>
+                  }
+                </div>
               </form>
             }
 

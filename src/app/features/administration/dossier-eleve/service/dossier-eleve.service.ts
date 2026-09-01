@@ -13,6 +13,7 @@ import { Inscription } from '../../../../core/models/dossiereleve/request/inscri
 import { ListeInscription } from '../../../../core/models/dossiereleve/request/liste-inscription';
 import { PaiementAdd } from '../../../../core/models/dossiereleve/request/paiement-add';
 import { ResponseEleve, ResponseMessage } from '../../../../core/models/message/response/response-message';
+import { ParentSearchToCreateEleve } from '../../../../core/models/dossiereleve/eleve/parent-search-to-create-eleve.model';
 
 @Injectable({
   providedIn: 'root'
@@ -176,4 +177,25 @@ export class DossierEleveService {
     return this.http.delete<ResponseMessage>(`${this.baseUrl}/paiement/delete/${id}`);
   }
 
+
+  rechercherParents(query: string): Observable<ParentSearchToCreateEleve[]> {
+  if (!query || query.trim().length < 3) {
+    return of([]);
+  }
+
+  return this.http.get<ParentSearchToCreateEleve[]>(
+    `${this.baseUrl}/parent/search`,
+    {
+      ...this.httpOptions,
+      params: {
+        query: query.trim()
+      }
+    }
+  ).pipe(
+    catchError(error => {
+      console.error('Erreur lors de la recherche des parents :', error);
+      return of([]);
+    })
+  );
+}
 }
