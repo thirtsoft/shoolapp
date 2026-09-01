@@ -3,7 +3,9 @@ import { Component, inject, OnInit, signal } from '@angular/core';
 import { AbstractControl, FormArray, FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
-import { distinctUntilChanged, Subject } from 'rxjs';
+import { catchError, debounceTime, distinctUntilChanged, map, of, Subject, switchMap } from 'rxjs';
+import { ParentSearchToCreateEleve } from '../../../../../../core/models/dossiereleve/eleve/parent-search-to-create-eleve.model';
+import { TypeRelationParent } from '../../../../../../core/models/dossiereleve/eleve/type-relation-parent.model';
 import { EleveRequest } from '../../../../../../core/models/dossiereleve/request/eleve-request';
 import { Inscription } from '../../../../../../core/models/dossiereleve/request/inscription';
 import { InscriptionRequest } from '../../../../../../core/models/dossiereleve/request/inscription-request';
@@ -16,6 +18,12 @@ import { LocalStorageService } from '../../../../../../core/services/local-stora
 import { ReferentielResourceService } from '../../../../referentiel/service/referentiel-resource.service';
 import { ReferentielService } from '../../../../referentiel/service/referentiel.service';
 import { DossierEleveService } from '../../../service/dossier-eleve.service';
+
+interface ParentSearchState {
+  loading: boolean;
+  results: ParentSearchToCreateEleve[];
+  selected: ParentSearchToCreateEleve | null;
+}
 
 
 @Component({
@@ -70,7 +78,16 @@ export class InscrireEleveComponent implements OnInit {
   chargement = signal<boolean>(false);
   erreur = signal<string | null>(null);
 
-  private readonly searchSubject = new Subject<string>();
+
+  private readonly searchSubject = new Subject<{ index: number; query: string }>();
+
+  parentSearchResults: ParentSearchToCreateEleve[][] = [[]];
+
+  parentSearchLoading: boolean[] = [false];
+
+  selectedParents: (ParentSearchToCreateEleve | null)[] = [null];
+
+  //  parentSearchState: ParentSearchState[] = [];
 
   private readonly router = inject(Router);
   private readonly dossierEleveService = inject(DossierEleveService);
@@ -81,15 +98,30 @@ export class InscrireEleveComponent implements OnInit {
   private readonly toastService = inject(ToastrService);
   private readonly location = inject(Location);
 
+  typeRelationsParent = [
+    { value: TypeRelationParent.PARENT, label: 'Parent' },
+    { value: TypeRelationParent.TUTEUR, label: 'Tuteur' },
+    { value: TypeRelationParent.RESPONSABLE_LEGAL, label: 'Responsable légal' },
+    { value: TypeRelationParent.GRAND_PARENT, label: 'Grand-parent' },
+    { value: TypeRelationParent.FRERE_SOEUR, label: 'Frère / Sœur' },
+    { value: TypeRelationParent.AUTRE, label: 'Autre' }
+  ];
+
   parentFormGroup = this._formBuilder.group({
-    nouveauParent: [true],
-    utilisateurDTOS: this._formBuilder.array([this.newParentItem()]),
-    utilisateurDTOs: this._formBuilder.array([this.ParentItemIdentifiant()])
+    parents: this._formBuilder.array([
+      this.createParentItem(false)
+    ])
   });
+
+  parentSearchState: ParentSearchState[] = [
+    this.createParentSearchState()
+  ];
 
   currentFile?: File;
   message = '';
   preview = '';
+
+
 
   ngOnInit(): void {
     this.userId = this.localStorage.getItem('id');
@@ -99,11 +131,74 @@ export class InscrireEleveComponent implements OnInit {
     this.getClasses();
     this.getAnneeScolaires();
     this.getMoyenPaiementList();
-    this.parentFormGroup.get('nouveauParent')?.valueChanges.subscribe((value: any) => {
-      this.newParent = value;
-    });
     this.trackFormFieldsForFrais();
     this.trackMoyenPaiementChanges();
+    this.initParentSearch();
+  }
+
+
+  private initParentSearch(): void {
+    this.searchSubject.pipe(
+      debounceTime(300),
+
+      distinctUntilChanged(
+        (previous, current) =>
+          previous.index === current.index &&
+          previous.query === current.query
+      ),
+
+      switchMap(({ index, query }) => {
+
+        const state = this.parentSearchState[index];
+
+        if (!state) {
+          return of({
+            index,
+            results: []
+          });
+        }
+
+        state.loading = true;
+
+        if (!query || query.trim().length < 3) {
+          return of({
+            index,
+            results: [] as ParentSearchToCreateEleve[]
+          });
+        }
+
+        return this.dossierEleveService
+          .rechercherParents(query.trim())
+          .pipe(
+            map((results: ParentSearchToCreateEleve[]) => ({
+              index,
+              results
+            })),
+
+            catchError(error => {
+              console.error(
+                'Erreur lors de la recherche du parent:',
+                error
+              );
+
+              return of({
+                index,
+                results: [] as ParentSearchToCreateEleve[]
+              });
+            })
+          );
+      })
+    ).subscribe(({ index, results }) => {
+
+      const state = this.parentSearchState[index];
+
+      if (!state) {
+        return;
+      }
+
+      state.results = results;
+      state.loading = false;
+    });
   }
 
   getMoyenPaiementList() {
@@ -233,8 +328,68 @@ export class InscrireEleveComponent implements OnInit {
 
   }
 
-  utilisateurDTOS(): FormArray {
-    return this.parentFormGroup.get('utilisateurDTOS') as FormArray;
+  parents(): FormArray {
+    return this.parentFormGroup.get('parents') as FormArray;
+  }
+
+  createParentItem(parentExist = false): FormGroup {
+    return this._formBuilder.group({
+      parentExist: [parentExist],
+      parentUuid: ['', parentExist ? Validators.required : []],
+      rechercheParent: ['', parentExist ? Validators.required : []],
+      telephone: [''],
+      email: [''],
+      nom: ['', parentExist ? [] : Validators.required],
+      prenom: ['', parentExist ? [] : Validators.required],
+      civilite: ['', parentExist ? [] : Validators.required],
+      address: [''],
+      profession: [''],
+      typeRelation: ['', Validators.required]
+    });
+  }
+
+  onParentSearch(index: number): void {
+    const parent = this.parents().at(index) as FormGroup;
+
+    const query = parent.get('rechercheParent')?.value?.trim() ?? '';
+
+    this.searchSubject.next({
+      index,
+      query
+    });
+  }
+
+  selectParent(
+    index: number,
+    parentResult: ParentSearchToCreateEleve
+  ): void {
+
+    const parent = this.parents().at(index) as FormGroup;
+    const state = this.parentSearchState[index];
+
+    if (!state) {
+      return;
+    }
+
+    parent.patchValue({
+      parentUuid: parentResult.parentUuid,
+      telephone: parentResult.telephone,
+      email: parentResult.email,
+      nom: parentResult.nom,
+      prenom: parentResult.prenom,
+      civilite: parentResult.civilite,
+      address: parentResult.address ?? '',
+      profession: parentResult.profession ?? '',
+      rechercheParent:
+        parentResult.telephone || parentResult.email
+    });
+
+    state.selected = parentResult;
+    state.results = [];
+    state.loading = false;
+
+    parent.get('parentUuid')?.markAsTouched();
+    parent.get('parentUuid')?.updateValueAndValidity();
   }
 
   newParentItem(): FormGroup {
@@ -251,20 +406,85 @@ export class InscrireEleveComponent implements OnInit {
     })
   }
 
-  onAddParentItem() {
-    this.checkNombreParent();
-    this.utilisateurDTOS().push(this.newParentItem());
-    console.log('Nombre de parents:', this.utilisateurDTOS().length);
+  private createParentSearchState(): ParentSearchState {
+    return {
+      loading: false,
+      results: [],
+      selected: null
+    };
   }
 
-  removeParentItem(parentItemIndex: number) {
-    this.utilisateurDTOS().removeAt(parentItemIndex);
+  onAddParentItem(): void {
+    if (this.parents().length >= 2) {
+      this.toastService.warning(
+        'Attention',
+        'Vous ne pouvez ajouter que 2 parents maximum'
+      );
+      return;
+    }
+
+    this.parents().push(this.createParentItem(false));
+    this.parentSearchState.push(this.createParentSearchState());
   }
 
-  utilisateurDTOs(): FormArray {
-    return this.parentFormGroup.get('utilisateurDTOs') as FormArray;
+  removeParentItem(index: number): void {
+    if (this.parents().length <= 1) {
+      return;
+    }
+
+    this.parents().removeAt(index);
+    this.parentSearchState.splice(index, 1);
   }
 
+  onParentExistChange(
+    index: number,
+    parentExist: boolean
+  ): void {
+
+    const parent = this.parents().at(index) as FormGroup;
+    const state = this.parentSearchState[index];
+
+    if (!state) {
+      return;
+    }
+
+    parent.patchValue({
+      parentExist,
+      parentUuid: '',
+      rechercheParent: '',
+      telephone: '',
+      email: '',
+      nom: '',
+      prenom: '',
+      civilite: '',
+      address: '',
+      profession: ''
+    });
+
+    state.results = [];
+    state.loading = false;
+    state.selected = null;
+
+    const parentUuidControl = parent.get('parentUuid');
+    const rechercheParentControl =
+      parent.get('rechercheParent');
+
+    if (parentExist) {
+      parentUuidControl?.setValidators([
+        Validators.required
+      ]);
+
+      rechercheParentControl?.setValidators([
+        Validators.required
+      ]);
+    } else {
+      parentUuidControl?.clearValidators();
+      rechercheParentControl?.clearValidators();
+    }
+
+    parentUuidControl?.updateValueAndValidity();
+    rechercheParentControl?.updateValueAndValidity();
+  }
 
   ParentItemIdentifiant(): FormGroup {
     return this._formBuilder.group({
@@ -273,61 +493,18 @@ export class InscrireEleveComponent implements OnInit {
     })
   }
 
-  onAddParentIdentifiantItem() {
-    this.checkNombreParent();
-    this.utilisateurDTOs().push(this.ParentItemIdentifiant());
+  get isFormValid(): boolean {
+    return this.parents().length > 0 && this.parents().length <= 2 &&
+      this.parents().controls.every(control => control.valid);
   }
 
-
-  checkNombreParent() {
-    if (this.utilisateurDTOs().length >= 2) {
-      this.toastService.warning('Attention', 'Vous ne pouvez ajouter que 2 parents maximum');
+  ajouterParent(): void {
+    if (!this.isFormValid) {
+      this.parentFormGroup.markAllAsTouched();
       return;
     }
-  }
-
-  onNouveauParentChange(value: boolean) {
-    this.newParent = value;
-    if (value) {
-      this.utilisateurDTOs().clear();
-      if (this.utilisateurDTOS().length === 0) {
-        this.onAddParentItem();
-      }
-    } else {
-      this.utilisateurDTOS().clear();
-      if (this.utilisateurDTOs().length === 0) {
-        this.onAddParentIdentifiantItem();
-      }
-    }
-  }
-
-  get isFormValid(): boolean {
-    if (this.parentFormGroup.get('nouveauParent')?.value === null) {
-      return false;
-    }
-
-    if (this.parentFormGroup.get('nouveauParent')?.value) {
-      return this.utilisateurDTOS().length > 0 &&
-        this.utilisateurDTOS().controls.every(item => item.valid);
-    } else {
-      return this.utilisateurDTOs().length > 0 &&
-        this.utilisateurDTOs().controls.every(item => item.valid);
-    }
-  }
-
-  ajouterParent() {
-    const payload = this.parentFormGroup.value;
-    this.telephonesList = [];
-    if (payload) {
-      this.currentStep++;
-      this.updateProgressBar();
-    }
-
-    if (payload?.utilisateurDTOs) {
-      this.telephonesList = payload.utilisateurDTOs
-        .map((item: any) => item.telephone)
-        .filter((telephone: string) => telephone !== undefined);
-    }
+    this.currentStep++;
+    this.updateProgressBar();
   }
 
   initializeMedecinTraitantForm(medecin: MedecinTraitant | null) {
@@ -371,30 +548,27 @@ export class InscrireEleveComponent implements OnInit {
   saveEleveWithFiles() {
     const formData: FormData = new FormData();
 
-    if (this.utilisateurDTOS().length > 0) {
-      this.newParent = false;
-      this.utilisateurDTOResult = this.parentFormGroup.getRawValue().utilisateurDTOS;
-    } else {
-      this.newParent = true;
-      this.utilisateurDTOResult = this.parentFormGroup.getRawValue().utilisateurDTOs;
-    }
-    let request: Eleve = {
-      id: this.eleveFormGroup.getRawValue().id,
-      nom: this.eleveFormGroup.getRawValue().nom,
-      prenom: this.eleveFormGroup.getRawValue().prenom,
-      sexe: this.eleveFormGroup.getRawValue().sexe,
-      lieuNaissance: this.eleveFormGroup.getRawValue().lieuNaissance,
-      dateNaissance: this.eleveFormGroup.getRawValue().dateNaissance,
-      nationalite: this.eleveFormGroup.getRawValue().nationalite,
-      address: this.eleveFormGroup.getRawValue().address,
-      allergies: this.allergies,
-      utilisateurDTOS: this.utilisateurDTOResult,
-      medecinTraitantDTO: this.medecinTraitantFormGroup.getRawValue()
-    }
-    request.parentExist = this.newParent;
-    request.telephones = this.telephonesList;
+    const eleveForm = this.eleveFormGroup.getRawValue();
+    const medecinForm = this.medecinTraitantFormGroup.getRawValue();
+
+    const request: any = {
+      nom: eleveForm.nom,
+      prenom: eleveForm.prenom,
+      sexe: eleveForm.sexe,
+      lieuNaissance: eleveForm.lieuNaissance,
+      address: eleveForm.address,
+      dateNaissance: eleveForm.dateNaissance,
+      nationalite: eleveForm.nationalite,
+      allergies: this.allergies ?? [],
+
+      medecinTraitantDTO: medecinForm,
+
+      parents: this.parents().getRawValue()
+    };
+
     formData.append('file', this.currentFile!);
     formData.append('piecejointeeleve', JSON.stringify(request));
+
     this.dossierEleveService.enregistrerEleveWithFiles(formData).subscribe({
       next: (response) => {
         if (response.statut === 'OK') {
@@ -421,15 +595,6 @@ export class InscrireEleveComponent implements OnInit {
 
 
   initializeInscriptionForm(inscription: InscriptionRequest | null) {
-    /*
-    this.inscriptionFormGroup = this._formBuilder.group({
-      id: [inscription?.id ? inscription.id : ''],
-      eleveId: [inscription?.eleveDTO?.id ? inscription?.eleveDTO?.id : '', Validators.required],
-      anneeScolaireId: [inscription?.anneeScolaireDTO?.id ? inscription?.anneeScolaireDTO?.id : '', Validators.required],
-      classeId: [inscription?.classeDTO?.id ? inscription?.classeDTO?.id : '', Validators.required],
-      montantInscription: [inscription?.montantInscription ? inscription.montantInscription : '', Validators.required],
-    });*/
-
     this.inscriptionFormGroup = this._formBuilder.group({
       id: [inscription?.id ?? ''],
       eleveId: [inscription?.eleveId ?? '', Validators.required],
@@ -591,14 +756,6 @@ export class InscrireEleveComponent implements OnInit {
   }
 
   ajouterInscription() {
-    /*
-    const payload: Inscription = {
-      id: this.inscriptionFormGroup.get("id")!.value,
-      anneeScolaireId: this.inscriptionFormGroup.get("anneeScolaireId")!.value,
-      classeId: this.inscriptionFormGroup.get("classeId")!.value,
-      montantInscription: this.inscriptionFormGroup.get("montantInscription")!.value,
-      eleveId: this.eleveId
-    }*/
     const payload = this.inscriptionFormGroup.value;
     payload.ecole = this.ecoleId;
     this.dossierEleveService.saveInscription(payload).subscribe({
