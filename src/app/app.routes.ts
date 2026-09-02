@@ -2,11 +2,25 @@ import { Routes } from '@angular/router';
 
 export const routes: Routes = [
 
-  {
+/*   {
     path: '',
     redirectTo: 'auth',
     pathMatch: 'full',
+  }, */
+
+   {
+    path: '',
+    redirectTo: 'home',
+    pathMatch: 'full',
   },
+
+  {
+    path: 'home',
+    loadChildren: () =>
+      import('./features/website/website.routes')
+        .then(m => m.WEBSITE_ROUTES)
+  },
+
 
   {
     path: 'setup',
@@ -43,7 +57,7 @@ export const routes: Routes = [
         .then(m => m.PARENT_ROUTES)
   },
 
-   {
+  {
     path: 'saas-management',
     loadChildren: () =>
       import('./features/saas-management/saas-management.routes')
