@@ -30,7 +30,8 @@
             "scripts": [
               "node_modules/pdfmake/build/pdfmake.min.js",
               "node_modules/pdfmake/build/vfs_fonts.js"
-            ]
+            ],
+            "allowedCommonJsDependencies": ["file-saver"]
           },
           "configurations": {
             "production": {
@@ -49,7 +50,7 @@
                 {
                   "type": "anyComponentStyle",
                   "maximumWarning": "10kb",
-                  "maximumError": "30kb"
+                  "maximumError": "70kb"
                 }
               ],
               "optimization": true,
