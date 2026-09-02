@@ -1,0 +1,1038 @@
+<div class="home-page">
+  <header class="site-header" [class.scrolled]="isScrolled">
+    <div class="container navbar">
+      <!-- Logo -->
+      <a class="brand" href="#accueil">
+        <div class="brand-icon">
+          <i class="fas fa-graduation-cap"></i>
+        </div>
+
+        <div class="brand-text">
+          <span class="brand-name">EduSchool</span>
+          <span class="brand-subtitle">Système de gestion scolaire</span>
+        </div>
+      </a>
+
+      <!-- =====================================================
+           NAVIGATION DESKTOP
+           ===================================================== -->
+      <nav class="desktop-nav">
+        <a href="" class="nav-link active" (click)="scrollToSection('accueil', $event)">Accueil</a>
+        <a href="" class="nav-link" (click)="scrollToSection('fonctionnalites', $event)"
+          >Fonctionnalités</a
+        >
+        <a href="" class="nav-link" (click)="scrollToSection('tarifs', $event)">Tarifs</a>
+        <a href="" class="nav-link" (click)="scrollToSection('temoignages', $event)">Témoignages</a>
+
+        <a href="" class="nav-link" (click)="scrollToSection('ressources', $event)">
+          Ressources
+          <i class="fas fa-chevron-down"></i>
+        </a>
+      </nav>
+
+      <!-- =====================================================
+           ACTIONS DESKTOP
+           ===================================================== -->
+      <div class="navbar-actions">
+        <button type="button" class="btn-login" (click)="goToLogin()">Se connecter</button>
+
+        <button type="button" class="btn-primary btn-small" (click)="startTrial()">
+          Essai gratuit
+          <i class="fas fa-arrow-right"></i>
+        </button>
+      </div>
+
+      <!-- =====================================================
+           BOUTON MENU MOBILE
+           ===================================================== -->
+      <button
+        type="button"
+        class="mobile-menu-btn"
+        aria-label="Ouvrir le menu"
+        [attr.aria-expanded]="mobileMenuOpen"
+        (click)="toggleMobileMenu()"
+      >
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+    </div>
+
+    <!-- =======================================================
+         MENU MOBILE
+         ======================================================= -->
+    @if (mobileMenuOpen) {
+      <div class="mobile-menu-overlay" (click)="closeMobileMenu()">
+        <nav
+          class="mobile-menu"
+          role="dialog"
+          aria-modal="true"
+          aria-label="Menu principal"
+          (click)="$event.stopPropagation()"
+        >
+          <!-- Header du menu -->
+          <div class="mobile-menu-header">
+            <a class="brand" href="#accueil" (click)="closeMobileMenu()">
+              <div class="brand-icon">
+                <i class="fas fa-graduation-cap"></i>
+              </div>
+
+              <div class="brand-text">
+                <span class="brand-name">EduSchool</span>
+                <span class="brand-subtitle"> Système de gestion scolaire </span>
+              </div>
+            </a>
+
+            <button
+              type="button"
+              class="mobile-menu-close"
+              aria-label="Fermer le menu"
+              (click)="closeMobileMenu()"
+            >
+              <i class="fas fa-times"></i>
+            </button>
+          </div>
+
+          <!-- Contenu -->
+          <div class="mobile-menu-content">
+            <!-- Navigation -->
+            <div class="mobile-nav-links">
+              <a
+                href=""
+                class="mobile-nav-link active"
+                (click)="scrollToSection('accueil', $event)"
+              >
+                <i class="fas fa-home"></i>
+                <span>Accueil</span>
+              </a>
+
+              <a
+                href=""
+                class="mobile-nav-link"
+                (click)="scrollToSection('fonctionnalites', $event)"
+              >
+                <i class="fas fa-th-large"></i>
+                <span>Fonctionnalités</span>
+              </a>
+
+              <a href="" class="mobile-nav-link" (click)="scrollToSection('tarifs', $event)">
+                <i class="fas fa-tags"></i>
+                <span>Tarifs</span>
+              </a>
+
+              <a href="" class="mobile-nav-link" (click)="scrollToSection('temoignages', $event)">
+                <i class="fas fa-star"></i>
+                <span>Témoignages</span>
+              </a>
+
+              <a href="" class="mobile-nav-link" (click)="scrollToSection('ressources', $event)">
+                <i class="fas fa-book-open"></i>
+                <span>Ressources</span>
+              </a>
+            </div>
+
+            <!-- Actions -->
+            <div class="mobile-menu-actions">
+              <button type="button" class="btn-login mobile-login" (click)="goToLogin()">
+                <i class="fas fa-sign-in-alt"></i>
+                Se connecter
+              </button>
+
+              <button type="button" class="btn-primary" (click)="startTrial()">
+                Commencer gratuitement
+                <i class="fas fa-arrow-right"></i>
+              </button>
+            </div>
+          </div>
+        </nav>
+      </div>
+    }
+  </header>
+
+  <!-- =========================================================
+       HERO
+       ========================================================= -->
+  <main>
+    <section id="accueil" class="hero-section">
+      <div class="hero-background">
+        <div class="hero-circle hero-circle-1"></div>
+        <div class="hero-circle hero-circle-2"></div>
+        <div class="hero-grid"></div>
+        <div class="hero-glow"></div>
+      </div>
+
+      <div class="container hero-container">
+        <!-- Contenu -->
+        <div class="hero-content">
+          <div class="hero-badge">
+            <span class="badge-icon">
+              <i class="fas fa-sparkles"></i>
+            </span>
+
+            <span> La solution tout-en-un pour les établissements </span>
+          </div>
+
+          <h1 class="hero-title">
+            Gérez votre école,
+            <span>boostez la réussite</span>
+            de vos élèves.
+          </h1>
+
+          <p class="hero-description">
+            EduSchool centralise toutes vos activités scolaires dans une plateforme simple, moderne
+            et pensée pour les établissements d'aujourd'hui.
+          </p>
+
+          <div class="hero-actions">
+            <button type="button" class="btn-primary btn-hero" (click)="startTrial()">
+              <span>Essayer gratuitement</span>
+              <i class="fas fa-arrow-right"></i>
+            </button>
+
+            <button type="button" class="btn-demo" (click)="requestDemo()">
+              <span class="demo-icon">
+                <i class="fas fa-play"></i>
+              </span>
+
+              <span>Voir la démonstration</span>
+            </button>
+          </div>
+
+          <div class="hero-reassurance">
+            <div class="reassurance-item">
+              <i class="fas fa-shield-alt"></i>
+              <span>Accès sécurisé</span>
+            </div>
+
+            <div class="reassurance-item">
+              <i class="fas fa-credit-card"></i>
+              <span>Sans carte bancaire</span>
+            </div>
+
+            <div class="reassurance-item">
+              <i class="fas fa-clock"></i>
+              <span>Installation rapide</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Dashboard -->
+        <div class="hero-visual">
+          <div class="dashboard-wrapper">
+            <div class="dashboard-card">
+              <div class="dashboard-header">
+                <div class="dashboard-brand">
+                  <div class="dashboard-logo">
+                    <i class="fas fa-graduation-cap"></i>
+                  </div>
+
+                  <span>EduSchool</span>
+                </div>
+
+                <div class="dashboard-header-actions">
+                  <span class="dashboard-notification">
+                    <i class="far fa-bell"></i>
+                    <span></span>
+                  </span>
+
+                  <div class="dashboard-avatar">AD</div>
+                </div>
+              </div>
+
+              <div class="dashboard-body">
+                <aside class="dashboard-sidebar">
+                  <div class="sidebar-item active">
+                    <i class="fas fa-th-large"></i>
+                    <span>Tableau de bord</span>
+                  </div>
+
+                  <div class="sidebar-item">
+                    <i class="fas fa-user-graduate"></i>
+                    <span>Élèves</span>
+                  </div>
+
+                  <div class="sidebar-item">
+                    <i class="fas fa-chalkboard-teacher"></i>
+                    <span>Enseignants</span>
+                  </div>
+
+                  <div class="sidebar-item">
+                    <i class="fas fa-school"></i>
+                    <span>Classes</span>
+                  </div>
+
+                  <div class="sidebar-item">
+                    <i class="fas fa-book"></i>
+                    <span>Notes & Bulletins</span>
+                  </div>
+
+                  <div class="sidebar-item">
+                    <i class="fas fa-calendar-alt"></i>
+                    <span>Emploi du temps</span>
+                  </div>
+
+                  <div class="sidebar-item">
+                    <i class="fas fa-wallet"></i>
+                    <span>Paiements</span>
+                  </div>
+                </aside>
+
+                <div class="dashboard-main">
+                  <div class="dashboard-title-row">
+                    <div>
+                      <span class="dashboard-greeting"> Bonjour, Administrateur 👋 </span>
+
+                      <h3>Tableau de bord</h3>
+                    </div>
+
+                    <span class="dashboard-date"> 01 Sept. 2026 </span>
+                  </div>
+
+                  <div class="dashboard-stats">
+                    <div class="dashboard-stat">
+                      <div class="stat-icon blue">
+                        <i class="fas fa-user-graduate"></i>
+                      </div>
+
+                      <div>
+                        <span>Élèves</span>
+                        <strong>1 284</strong>
+                        <small>↑ 12% ce mois</small>
+                      </div>
+                    </div>
+
+                    <div class="dashboard-stat">
+                      <div class="stat-icon purple">
+                        <i class="fas fa-chalkboard-teacher"></i>
+                      </div>
+
+                      <div>
+                        <span>Enseignants</span>
+                        <strong>86</strong>
+                        <small>↑ 5% ce mois</small>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="dashboard-chart">
+                    <div class="chart-header">
+                      <div>
+                        <span>Taux de réussite</span>
+                        <strong>82%</strong>
+                      </div>
+
+                      <span class="chart-growth"> +8,4% </span>
+                    </div>
+
+                    <div class="chart">
+                      <div class="chart-line"></div>
+
+                      <div class="chart-point point-1"></div>
+                      <div class="chart-point point-2"></div>
+                      <div class="chart-point point-3"></div>
+                      <div class="chart-point point-4"></div>
+                      <div class="chart-point point-5"></div>
+                      <div class="chart-point point-6"></div>
+
+                      <div class="chart-grid-line line-1"></div>
+                      <div class="chart-grid-line line-2"></div>
+                      <div class="chart-grid-line line-3"></div>
+                    </div>
+
+                    <div class="chart-labels">
+                      <span>Jan</span>
+                      <span>Fév</span>
+                      <span>Mar</span>
+                      <span>Avr</span>
+                      <span>Mai</span>
+                      <span>Juin</span>
+                    </div>
+                  </div>
+
+                  <div class="dashboard-activities">
+                    <div class="activity-title">Activités récentes</div>
+
+                    <div class="activity-item">
+                      <div class="activity-icon green">
+                        <i class="fas fa-check"></i>
+                      </div>
+
+                      <div>
+                        <strong>Paiement reçu</strong>
+                        <span>Mamadou Diop</span>
+                      </div>
+
+                      <small>Aujourd'hui</small>
+                    </div>
+
+                    <div class="activity-item">
+                      <div class="activity-icon orange">
+                        <i class="fas fa-file-alt"></i>
+                      </div>
+
+                      <div>
+                        <strong>Bulletins générés</strong>
+                        <span>Classe de 3ème A</span>
+                      </div>
+
+                      <small>Il y a 1h</small>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="floating-payment">
+              <div class="payment-check">
+                <i class="fas fa-check"></i>
+              </div>
+
+              <div>
+                <span>Paiement reçu</span>
+                <strong>25 000 FCFA</strong>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- =========================================================
+         TRUST
+         ========================================================= -->
+    <section class="trust-section">
+      <div class="container">
+        <p class="trust-title">Une plateforme pensée pour les établissements africains</p>
+
+        <div class="trust-items">
+          @for (school of schools; track school.name) {
+            <div class="school-logo">
+              <div class="school-logo-icon">
+                <strong>
+                  <i class="fas fa-university"></i>
+                </strong>
+              </div>
+
+              <strong>
+                <span>{{ school.name }}</span>
+              </strong>
+            </div>
+          }
+        </div>
+      </div>
+    </section>
+
+    <!-- =========================================================
+         FEATURES
+         ========================================================= -->
+    <section id="fonctionnalites" class="features-section section">
+      <div class="container">
+        <div class="section-heading">
+          <span class="section-eyebrow"> Tout ce qu'il vous faut </span>
+
+          <h2>
+            Une gestion scolaire
+            <em>plus simple.</em>
+          </h2>
+
+          <p>
+            Des outils puissants pour automatiser les tâches quotidiennes, gagner du temps et mieux
+            accompagner vos élèves.
+          </p>
+        </div>
+
+        <div class="features-grid">
+          @for (feature of features; track feature.title) {
+            <article class="feature-card">
+              <div class="feature-icon" [class]="feature.color">
+                <i [class]="feature.icon"></i>
+              </div>
+
+              <div class="feature-content">
+                <h3>{{ feature.title }}</h3>
+
+                <p>{{ feature.description }}</p>
+
+                <a href="#contact">
+                  Découvrir
+                  <i class="fas fa-arrow-right"></i>
+                </a>
+              </div>
+            </article>
+          }
+        </div>
+      </div>
+    </section>
+
+    <!-- ==================== TARIFS ==================== -->
+    <section id="tarifs" class="pricing-section">
+      <div class="container">
+        <div class="section-header pricing-header">
+          <span class="section-badge">
+            <i class="fas fa-tags"></i>
+            Tarifs
+          </span>
+
+          <h2 class="section-title">Une offre adaptée à votre établissement</h2>
+
+          <p class="section-description">
+            Commencez gratuitement pendant 15 jours, puis choisissez la formule qui correspond le
+            mieux aux besoins de votre école.
+          </p>
+        </div>
+
+        <div class="pricing-grid">
+          <!-- ESSAI -->
+          <div class="pricing-card pricing-trial">
+            <div class="pricing-card-header">
+              <div class="pricing-icon">
+                <i class="fas fa-rocket"></i>
+              </div>
+
+              <h3>Essai</h3>
+
+              <p class="pricing-description">Découvrez EduSchool gratuitement.</p>
+            </div>
+
+            <div class="pricing-price">
+              <span class="price-value">15</span>
+              <span class="price-period">jours gratuits</span>
+            </div>
+
+            <ul class="pricing-features">
+              <li>
+                <i class="fas fa-check"></i>
+                Accès à la plateforme
+              </li>
+              <li>
+                <i class="fas fa-check"></i>
+                Découverte des fonctionnalités
+              </li>
+              <li>
+                <i class="fas fa-check"></i>
+                Sans engagement
+              </li>
+              <li>
+                <i class="fas fa-check"></i>
+                Aucune carte bancaire requise
+              </li>
+            </ul>
+
+            <button
+              type="button"
+              class="pricing-button pricing-button-outline"
+              (click)="startTrial()"
+            >
+              Commencer l'essai
+              <i class="fas fa-arrow-right"></i>
+            </button>
+          </div>
+
+          <!-- ESSENTIEL -->
+          <div class="pricing-card">
+            <div class="pricing-card-header">
+              <div class="pricing-icon">
+                <i class="fas fa-school"></i>
+              </div>
+
+              <h3>Essentiel</h3>
+
+              <p class="pricing-description">
+                Les fonctionnalités essentielles pour gérer votre école.
+              </p>
+            </div>
+
+            <div class="pricing-price">
+              <span class="price-value">25 000</span>
+              <span class="price-currency">FCFA</span>
+              <span class="price-period">/ mois</span>
+            </div>
+
+            <ul class="pricing-features">
+              <li>
+                <i class="fas fa-check"></i>
+                Gestion des élèves
+              </li>
+              <li>
+                <i class="fas fa-check"></i>
+                Gestion des classes
+              </li>
+              <li>
+                <i class="fas fa-check"></i>
+                Notes & bulletins
+              </li>
+              <li>
+                <i class="fas fa-check"></i>
+                Absences & retards
+              </li>
+              <li>
+                <i class="fas fa-check"></i>
+                Gestion administrative
+              </li>
+            </ul>
+
+            <button
+              type="button"
+              class="pricing-button pricing-button-outline"
+              (click)="startTrial()"
+            >
+              Commencer gratuitement
+              <i class="fas fa-arrow-right"></i>
+            </button>
+          </div>
+
+          <!-- STANDARD -->
+          <div class="pricing-card pricing-card-featured">
+            <div class="pricing-recommended">
+              <i class="fas fa-star"></i>
+              Recommandé
+            </div>
+
+            <div class="pricing-card-header">
+              <div class="pricing-icon">
+                <i class="fas fa-chart-line"></i>
+              </div>
+
+              <h3>Standard</h3>
+
+              <p class="pricing-description">
+                Une gestion complète pour accompagner votre établissement.
+              </p>
+            </div>
+
+            <div class="pricing-price">
+              <span class="price-value">50 000</span>
+              <span class="price-currency">FCFA</span>
+              <span class="price-period">/ mois</span>
+            </div>
+
+            <ul class="pricing-features">
+              <li>
+                <i class="fas fa-check"></i>
+                Toutes les fonctionnalités Essentiel
+              </li>
+              <li>
+                <i class="fas fa-check"></i>
+                Emploi du temps
+              </li>
+              <li>
+                <i class="fas fa-check"></i>
+                Paiements & facturation
+              </li>
+              <li>
+                <i class="fas fa-check"></i>
+                Communication avec les parents
+              </li>
+              <li>
+                <i class="fas fa-check"></i>
+                Suivi et tableaux de bord
+              </li>
+            </ul>
+
+            <button
+              type="button"
+              class="pricing-button pricing-button-primary"
+              (click)="startTrial()"
+            >
+              Commencer gratuitement
+              <i class="fas fa-arrow-right"></i>
+            </button>
+          </div>
+
+          <!-- PREMIUM -->
+          <div class="pricing-card">
+            <div class="pricing-card-header">
+              <div class="pricing-icon">
+                <i class="fas fa-crown"></i>
+              </div>
+
+              <h3>Premium</h3>
+
+              <p class="pricing-description">
+                La solution complète pour les établissements exigeants.
+              </p>
+            </div>
+
+            <div class="pricing-price">
+              <span class="price-value">100 000</span>
+              <span class="price-currency">FCFA</span>
+              <span class="price-period">/ mois</span>
+            </div>
+
+            <ul class="pricing-features">
+              <li>
+                <i class="fas fa-check"></i>
+                Toutes les fonctionnalités Standard
+              </li>
+              <li>
+                <i class="fas fa-check"></i>
+                Fonctionnalités avancées
+              </li>
+              <li>
+                <i class="fas fa-check"></i>
+                Rapports & analyses avancés
+              </li>
+              <li>
+                <i class="fas fa-check"></i>
+                Support prioritaire
+              </li>
+              <li>
+                <i class="fas fa-check"></i>
+                Accompagnement personnalisé
+              </li>
+            </ul>
+
+            <button
+              type="button"
+              class="pricing-button pricing-button-outline"
+              (click)="startTrial()"
+            >
+              Commencer gratuitement
+              <i class="fas fa-arrow-right"></i>
+            </button>
+          </div>
+        </div>
+
+        <div class="pricing-note">
+          <i class="fas fa-shield-alt"></i>
+          <span> Tous les abonnements peuvent commencer par un essai gratuit de 15 jours. </span>
+        </div>
+      </div>
+    </section>
+
+    <!-- =========================================================
+         STATS
+         ========================================================= -->
+    <section class="stats-section">
+      <div class="container">
+        <div class="stats-card">
+          <div class="stats-decoration stats-decoration-left"></div>
+          <div class="stats-decoration stats-decoration-right"></div>
+
+          @for (stat of statistics; track stat.label) {
+            <div class="big-stat">
+              <div class="big-stat-icon">
+                <i [class]="stat.icon"></i>
+              </div>
+
+              <strong>{{ stat.value }}</strong>
+
+              <span>{{ stat.label }}</span>
+            </div>
+          }
+        </div>
+      </div>
+    </section>
+
+    <!-- =========================================================
+         WHY EDUSCHOOL
+         ========================================================= -->
+    <section class="why-section section">
+      <div class="container why-container">
+        <div class="why-visual">
+          <div class="why-main-card">
+            <div class="why-card-header">
+              <span>Performance scolaire</span>
+              <span class="success-pill">+8,4%</span>
+            </div>
+
+            <div class="performance-value">82%</div>
+
+            <div class="performance-label">Taux de réussite</div>
+
+            <div class="performance-bars">
+              <span style="height: 38%"></span>
+              <span style="height: 52%"></span>
+              <span style="height: 46%"></span>
+              <span style="height: 65%"></span>
+              <span style="height: 72%"></span>
+              <span style="height: 82%"></span>
+            </div>
+          </div>
+
+          <div class="why-floating-card students-card">
+            <div class="why-floating-icon">
+              <i class="fas fa-user-graduate"></i>
+            </div>
+
+            <div>
+              <strong>1 284</strong>
+              <span>Élèves suivis</span>
+            </div>
+          </div>
+
+          <div class="why-floating-card security-card">
+            <div class="why-floating-icon">
+              <i class="fas fa-shield-alt"></i>
+            </div>
+
+            <div>
+              <strong>Sécurisé</strong>
+              <span>Vos données protégées</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="why-content">
+          <span class="section-eyebrow"> Pourquoi EduSchool ? </span>
+
+          <h2>
+            Plus qu'un logiciel,
+            <em>un véritable copilote.</em>
+          </h2>
+
+          <p class="why-intro">
+            EduSchool vous aide à reprendre le contrôle de votre établissement en centralisant
+            toutes vos informations dans un seul espace.
+          </p>
+
+          <div class="why-list">
+            <div class="why-item">
+              <div class="why-check">
+                <i class="fas fa-check"></i>
+              </div>
+
+              <div>
+                <h3>Gagnez du temps</h3>
+
+                <p>
+                  Automatisez les tâches répétitives et concentrez-vous sur l'essentiel : vos
+                  élèves.
+                </p>
+              </div>
+            </div>
+
+            <div class="why-item">
+              <div class="why-check">
+                <i class="fas fa-check"></i>
+              </div>
+
+              <div>
+                <h3>Prenez de meilleures décisions</h3>
+
+                <p>
+                  Disposez d'une vision claire de votre établissement grâce à des données
+                  accessibles en temps réel.
+                </p>
+              </div>
+            </div>
+
+            <div class="why-item">
+              <div class="why-check">
+                <i class="fas fa-check"></i>
+              </div>
+
+              <div>
+                <h3>Améliorez la communication</h3>
+
+                <p>
+                  Gardez les parents, enseignants et administration connectés autour de la vie
+                  scolaire.
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <button type="button" class="text-button" (click)="startTrial()">
+            Découvrir EduSchool
+            <i class="fas fa-arrow-right"></i>
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- =========================================================
+         TESTIMONIALS
+         ========================================================= -->
+    <section id="temoignages" class="testimonials-section section">
+      <div class="container">
+        <div class="section-heading">
+          <span class="section-eyebrow"> Ils nous font confiance </span>
+
+          <h2>
+            Ce que pensent
+            <em>nos utilisateurs.</em>
+          </h2>
+        </div>
+
+        <div class="testimonials-grid">
+          @for (testimonial of testimonials; track testimonial.name) {
+            <article class="testimonial-card">
+              <div class="testimonial-top">
+                <div class="stars">
+                  <i class="fas fa-star"></i>
+                  <i class="fas fa-star"></i>
+                  <i class="fas fa-star"></i>
+                  <i class="fas fa-star"></i>
+                  <i class="fas fa-star"></i>
+                </div>
+
+                <i class="fas fa-quote-right quote-icon"></i>
+              </div>
+
+              <p class="testimonial-text">"{{ testimonial.text }}"</p>
+
+              <div class="testimonial-author">
+                <div class="author-avatar">
+                  {{ testimonial.initials }}
+                </div>
+
+                <div>
+                  <strong>{{ testimonial.name }}</strong>
+                  <span>{{ testimonial.role }}</span>
+                </div>
+              </div>
+            </article>
+          }
+        </div>
+      </div>
+    </section>
+
+    <!-- =========================================================
+         CTA
+         ========================================================= -->
+    <section class="cta-section">
+      <div class="container">
+        <div class="cta-card">
+          <div class="cta-pattern"></div>
+
+          <div class="cta-content">
+            <span class="cta-eyebrow"> Passez à l'étape supérieure </span>
+
+            <h2>
+              Prêt à digitaliser
+              <em>votre établissement ?</em>
+            </h2>
+
+            <p>
+              Rejoignez les établissements qui simplifient leur gestion et consacrent plus de temps
+              à la réussite de leurs élèves.
+            </p>
+
+            <div class="cta-actions">
+              <button type="button" class="btn-white" (click)="startTrial()">
+                Commencer gratuitement
+                <i class="fas fa-arrow-right"></i>
+              </button>
+
+              <button type="button" class="cta-link" (click)="requestDemo()">
+                Planifier une démonstration
+              </button>
+            </div>
+          </div>
+
+          <div class="cta-illustration">
+            <div class="book book-1"></div>
+            <div class="book book-2"></div>
+
+            <div class="graduation-cap">
+              <i class="fas fa-graduation-cap"></i>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- =========================================================
+       FOOTER
+       ========================================================= -->
+  <footer id="ressources" class="site-footer">
+    <div class="container">
+      <div class="footer-main">
+        <div class="footer-brand">
+          <a class="brand" href="#accueil">
+            <div class="brand-icon">
+              <i class="fas fa-graduation-cap"></i>
+            </div>
+
+            <div class="brand-text">
+              <span class="brand-name"> EduSchool </span>
+
+              <span class="brand-subtitle"> Système de gestion scolaire </span>
+            </div>
+          </a>
+
+          <p>
+            La plateforme simple et moderne pour gérer votre établissement et accompagner la
+            réussite de chaque élève.
+          </p>
+
+          <div class="social-links">
+            <a href="#" aria-label="Facebook">
+              <i class="fab fa-facebook-f"></i>
+            </a>
+
+            <a href="#" aria-label="LinkedIn">
+              <i class="fab fa-linkedin-in"></i>
+            </a>
+
+            <a href="#" aria-label="Instagram">
+              <i class="fab fa-instagram"></i>
+            </a>
+
+            <a href="#" aria-label="YouTube">
+              <i class="fab fa-youtube"></i>
+            </a>
+          </div>
+        </div>
+
+        <div class="footer-column">
+          <h3>Produit</h3>
+
+          <a href="#fonctionnalites">Fonctionnalités</a>
+          <a href="#tarifs">Tarifs</a>
+          <a href="#">Nouveautés</a>
+          <a href="#">Sécurité</a>
+        </div>
+
+        <div class="footer-column">
+          <h3>Ressources</h3>
+
+          <a href="#">Blog</a>
+          <a href="#">Guides</a>
+          <a href="#">FAQ</a>
+          <a href="#">Centre d'aide</a>
+        </div>
+
+        <div class="footer-column">
+          <h3>Entreprise</h3>
+
+          <a href="#">À propos</a>
+          <a href="#">Contact</a>
+          <a href="#">Partenaires</a>
+          <a href="#">Carrières</a>
+        </div>
+
+        <div class="footer-column footer-contact">
+          <h3>Nous contacter</h3>
+
+          <a href="mailto:contact@eduschool.sn">
+            <i class="far fa-envelope"></i>
+            contact@eduschool.sn
+          </a>
+
+          <a href="tel:+221771234567">
+            <i class="fas fa-phone"></i>
+            +221 77 123 45 67
+          </a>
+
+          <span>
+            <i class="fas fa-map-marker-alt"></i>
+            Dakar, Sénégal
+          </span>
+        </div>
+      </div>
+
+      <div class="footer-bottom">
+        <span> © 2026 EduSchool. Tous droits réservés. </span>
+
+        <div>
+          <a href="#">Mentions légales</a>
+          <a href="#">Politique de confidentialité</a>
+        </div>
+      </div>
+    </div>
+  </footer>
+</div>
+```
