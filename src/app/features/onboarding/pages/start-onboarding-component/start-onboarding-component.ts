@@ -205,9 +205,7 @@ export class StartOnboardingComponent {
   }
 
   private saveCurrentStepValue(): void {
-    /**
-     * La confirmation n'a aucune donnée à sauvegarder
-     */
+
     if (this.currentStep() === OnboardingStep.CONFIRMATION) {
       return;
     }
@@ -371,25 +369,17 @@ export class StartOnboardingComponent {
 
         this.state.setLoading(false);
 
-        console.log('ONBOARDING SUCCESS', response);
-
-        if (response.success) {
+        if (response.success && response.data) {
 
           this.state.setResponse(response.data);
 
-          this.state.setCurrentStep(
-            OnboardingStep.COMPLETED
-          );
+          this.state.setCurrentStep(OnboardingStep.COMPLETED);
 
-          this.toastr.success(
-            'Votre espace a été créé avec succès.'
-          );
+          this.toastr.success('Votre espace a été créé avec succès.');
 
         } else {
 
-          this.state.setError(
-            response.message
-          );
+          this.state.setError(response.message || 'La création de votre espace a échoué.');
 
         }
 

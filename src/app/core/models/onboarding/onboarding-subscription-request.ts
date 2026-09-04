@@ -1,10 +1,10 @@
 export interface OnboardingSubscriptionRequest {
 
-  planUid: string;
+  planUuid: string;
 
-  planTarifUid: string;
+  planTarifUuid: string;
 
-  planTarifDetailUid: string;
+  planTarifDetailUuid: string;
 
   renouvellementAutomatique: boolean;
 

@@ -1,20 +1,20 @@
+import { OnboardingStatus } from "./onboarding-status.enum";
+import { OnboardingStep } from "./onboarding-step.enum";
+import { OnboardingSuccessDataResponseModel } from "./onboarding-success-data-response.model";
+
 export interface OnboardingResponseModel {
 
   processUuid: string;
 
   workflowCode: string;
 
-  status: string;
+  status: OnboardingStatus;
 
-  currentStep: string;
+  currentStep: OnboardingStep;
 
   applicationCode: string;
 
   tenantUuid: string;
-
-  tenantCode: string;
-
-  tenantName: string;
 
   organizationUuid: string;
 
@@ -24,18 +24,15 @@ export interface OnboardingResponseModel {
 
   subscriptionUuid: string;
 
-  subscriptionNumero: string;
-
   invoiceUuid: string;
 
-  invoiceNumero: string;
+  startedAt: string;
 
-  startedAt: Date;
+  lastActivityAt: string;
 
-  lastActivityAt: Date;
+  completedAt: string | null;
 
-  completedAt: Date;
+  errorMessage: string | null;
 
-  errorMessage: string;
-
+  successData: OnboardingSuccessDataResponseModel;
 }

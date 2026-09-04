@@ -1,99 +1,434 @@
-<div class="success-container">
-  <div class="success-header">
-    <div class="success-icon">
-      <i class="fas fa-check-circle"></i>
-    </div>
+@if (response(); as data) {
+  @if (data.successData; as success) {
+    <div class="success-container">
+      <!-- ============================= -->
+      <!-- HEADER -->
+      <!-- ============================= -->
 
-    <h2>Votre espace a été créé avec succès !</h2>
-
-    <p>Votre environnement SaaS est maintenant opérationnel.</p>
-  </div>
-
-  @if (response()) {
-    <div class="success-summary">
-      <div class="summary-card">
-        <div class="card-header">
-          <i class="fas fa-building"></i>
-          <h3>Espace créé</h3>
+      <div class="success-header">
+        <div class="success-icon">
+          <i class="fas fa-check-circle"></i>
         </div>
 
-        <div class="detail-row">
-          <span>Nom</span>
-          <strong>
-            {{ response()?.tenantName }}
-          </strong>
+        <h2>Votre espace a été créé avec succès !</h2>
+
+        <p>Votre environnement SaaS est maintenant opérationnel.</p>
+      </div>
+
+      <!-- =====================================================
+           LIGNE 1
+           Informations de connexion + User & Role
+           ===================================================== -->
+
+      <div class="cards-row">
+        <!-- =========================
+             IDENTIFIANTS DE CONNEXION
+             ========================= -->
+
+        <section class="credentials-card">
+          <div class="credentials-header">
+            <div class="credentials-title">
+              <div class="section-icon">
+                <i class="fas fa-key"></i>
+              </div>
+
+              <div>
+                <h3>Identifiants de connexion du client</h3>
+                <span>À conserver et transmettre au client</span>
+              </div>
+            </div>
+
+            <span class="important-badge">
+              <i class="fas fa-exclamation-triangle me-1"></i>
+              IMPORTANT
+            </span>
+          </div>
+
+          <div class="credentials-warning">
+            <i class="fas fa-info-circle"></i>
+
+            <div>
+              <strong> Ces informations sont indispensables au client. </strong>
+
+              <p>
+                Copiez-les maintenant et transmettez-les au client. Le mot de passe temporaire ne
+                sera pas conservé.
+              </p>
+            </div>
+          </div>
+
+          <!-- Bloc prêt à copier -->
+
+          <div class="credentials-content">
+            <div class="school-name">
+              {{ success.tenantName }}
+            </div>
+
+            <!-- Identifiant -->
+
+            <div class="credential-row">
+              <div class="credential-info">
+                <span class="credential-label"> Identifiant </span>
+
+                <strong>
+                  {{ success.loginIdentifier }}
+                </strong>
+              </div>
+
+              <button
+                type="button"
+                class="copy-button"
+                (click)="copyValue(success.loginIdentifier)"
+                title="Copier l'identifiant"
+              >
+                <i class="fas fa-copy"></i>
+              </button>
+            </div>
+
+            <!-- Mot de passe -->
+
+            <div class="credential-row">
+              <div class="credential-info">
+                <span class="credential-label"> Mot de passe temporaire </span>
+
+                <strong class="password-value">
+                  {{ success.temporalPassword }}
+                </strong>
+              </div>
+
+              <button
+                type="button"
+                class="copy-button"
+                (click)="copyValue(success.temporalPassword)"
+                title="Copier le mot de passe"
+              >
+                <i class="fas fa-copy"></i>
+              </button>
+            </div>
+          </div>
+
+          <!-- Copie de tout le bloc -->
+
+          <button type="button" class="copy-all-button" (click)="copyCredentials()">
+            <i class="fas fa-copy me-2"></i>
+            Copier les identifiants
+          </button>
+        </section>
+
+        <!-- =========================
+             USER + ROLE
+             ========================= -->
+
+        <section class="info-section">
+          <div class="section-heading">
+            <div class="section-icon">
+              <i class="fas fa-user-shield"></i>
+            </div>
+
+            <div>
+              <h3>User et Role</h3>
+              <span>Compte et droits d'accès</span>
+            </div>
+          </div>
+
+          <!-- Administrateur -->
+
+          <div class="sub-section">
+            <div class="sub-section-title">
+              <i class="fas fa-user"></i>
+              <span>Administrateur</span>
+            </div>
+
+            <div class="info-grid">
+              <div class="info-item">
+                <span class="info-label"> Prénom </span>
+
+                <strong>
+                  {{ success.adminFirstName }}
+                </strong>
+              </div>
+
+              <div class="info-item">
+                <span class="info-label"> Nom </span>
+
+                <strong>
+                  {{ success.adminLastName }}
+                </strong>
+              </div>
+
+              <div class="info-item info-item-full">
+                <span class="info-label"> Fonction </span>
+
+                <strong>
+                  {{ success.fonctionMember }}
+                </strong>
+              </div>
+            </div>
+          </div>
+
+          <!-- Rôle -->
+
+          <div class="sub-section role-section">
+            <div class="sub-section-title">
+              <i class="fas fa-user-cog"></i>
+              <span>Rôle attribué</span>
+            </div>
+
+            <div class="role-content">
+              <div class="role-main">
+                <span class="role-label"> Rôle </span>
+
+                <strong>
+                  {{ success.roleLibelle }}
+                </strong>
+
+                @if (success.roleCode) {
+                  <small>
+                    {{ success.roleCode }}
+                  </small>
+                }
+              </div>
+
+              @if (success.roleDescription) {
+                <div class="role-description">
+                  {{ success.roleDescription }}
+                </div>
+              }
+            </div>
+          </div>
+        </section>
+      </div>
+
+      <!-- =====================================================
+           LIGNE 2
+           Espace client + Organisation
+           ===================================================== -->
+
+      <div class="cards-row">
+        <!-- =========================
+             ESPACE CLIENT
+             ========================= -->
+
+        <section class="info-section">
+          <div class="section-heading">
+            <div class="section-icon">
+              <i class="fas fa-building"></i>
+            </div>
+
+            <div>
+              <h3>Espace client</h3>
+              <span>Informations de l'espace créé</span>
+            </div>
+          </div>
+
+          <div class="info-grid">
+            <div class="info-item">
+              <span class="info-label"> Nom </span>
+
+              <strong>
+                {{ success.tenantName }}
+              </strong>
+            </div>
+
+            <div class="info-item">
+              <span class="info-label"> Code client </span>
+
+              <strong>
+                {{ success.tenantCode }}
+              </strong>
+            </div>
+
+            <div class="info-item">
+              <span class="info-label"> Téléphone </span>
+
+              <strong>
+                {{ success.tenantMobileContact }}
+              </strong>
+            </div>
+
+            <div class="info-item">
+              <span class="info-label"> Email </span>
+
+              <strong>
+                {{ success.tenantEmailContact }}
+              </strong>
+            </div>
+          </div>
+        </section>
+
+        <!-- =========================
+             ORGANISATION
+             ========================= -->
+
+        <section class="info-section">
+          <div class="section-heading">
+            <div class="section-icon">
+              <i class="fas fa-school"></i>
+            </div>
+
+            <div>
+              <h3>Organisation</h3>
+              <span>Informations de l'organisation</span>
+            </div>
+          </div>
+
+          <div class="info-grid">
+            <div class="info-item info-item-full">
+              <span class="info-label"> Nom </span>
+
+              <strong>
+                {{ success.organizationName }}
+              </strong>
+            </div>
+
+            <div class="info-item">
+              <span class="info-label"> Téléphone </span>
+
+              <strong>
+                {{ success.organizationMobile }}
+              </strong>
+            </div>
+
+            <div class="info-item">
+              <span class="info-label"> Email </span>
+
+              <strong>
+                {{ success.organizationEmail }}
+              </strong>
+            </div>
+          </div>
+        </section>
+      </div>
+
+      <!-- =====================================================
+           LIGNE 3
+           Abonnement + Facturation
+           ===================================================== -->
+
+      <div class="cards-row">
+        <!-- =========================
+             ABONNEMENT
+             ========================= -->
+
+        <section class="info-section">
+          <div class="section-heading">
+            <div class="section-icon">
+              <i class="fas fa-credit-card"></i>
+            </div>
+
+            <div>
+              <h3>Abonnement</h3>
+              <span>Informations de l'abonnement</span>
+            </div>
+          </div>
+
+          <div class="info-grid">
+            <div class="info-item">
+              <span class="info-label"> Numéro </span>
+
+              <strong>
+                {{ success.subscriptionNumero }}
+              </strong>
+            </div>
+
+            <div class="info-item">
+              <span class="info-label"> Plan </span>
+
+              <strong>
+                {{ success.planLibelle }}
+              </strong>
+            </div>
+
+            <div class="info-item">
+              <span class="info-label"> Status </span>
+
+              <strong>
+                {{ success.subscriptionStatus }}
+              </strong>
+            </div>
+
+            <div class="info-item">
+              <span class="info-label"> Durée de validitée </span>
+
+              du
+              <strong>
+                {{ success.subscriptionDateDebut }}
+              </strong>
+
+              au
+
+              <strong>
+                {{ success.subscriptionDateFin }}
+              </strong>
+            </div>
+          </div>
+        </section>
+
+        <!-- =========================
+             FACTURATION
+             ========================= -->
+
+        <section class="info-section">
+          <div class="section-heading">
+            <div class="section-icon">
+              <i class="fas fa-file-invoice"></i>
+            </div>
+
+            <div>
+              <h3>Facturation</h3>
+              <span>Facture générée</span>
+            </div>
+          </div>
+
+          <div class="info-grid">
+            <div class="info-item info-item-full">
+              <span class="info-label"> Numéro de facture </span>
+
+              <strong>
+                {{ success.invoiceNumero }}
+              </strong>
+            </div>
+
+            <div class="info-item info-item-full">
+              <span class="info-label"> Commentaire </span>
+
+              <strong>
+                {{ success.invoiceCommentaire || 'Aucun commentaire' }}
+              </strong>
+            </div>
+          </div>
+        </section>
+      </div>
+
+      <!-- =====================================================
+           MESSAGE FINAL
+           ===================================================== -->
+
+      <div class="completion-message">
+        <div class="completion-icon">
+          <i class="fas fa-check-circle"></i>
         </div>
 
-        <div class="detail-row">
-          <span>Code</span>
-          <strong>
-            {{ response()?.tenantCode }}
-          </strong>
-        </div>
+        <div>
+          <strong> Onboarding terminé </strong>
 
-        <div class="detail-row">
-          <span>Identifiant</span>
-          <strong class="uuid">
-            {{ response()?.tenantUuid }}
-          </strong>
+          <p>
+            L'espace client, l'organisation, le compte administrateur, l'abonnement et la facture
+            ont été créés avec succès.
+          </p>
         </div>
       </div>
 
-      <div class="summary-card">
-        <div class="card-header">
-          <i class="fas fa-credit-card"></i>
-          <h3>Abonnement</h3>
-        </div>
+      <!-- =====================================================
+           ACTION FINALE
+           ===================================================== -->
 
-        <div class="detail-row">
-          <span>Numéro</span>
-          <strong>
-            {{ response()?.subscriptionNumero }}
-          </strong>
-        </div>
-
-        <div class="detail-row">
-          <span>Identifiant</span>
-          <strong class="uuid">
-            {{ response()?.subscriptionUuid }}
-          </strong>
-        </div>
+      <div class="success-actions">
+        <button type="button" class="finish-button">
+          <i class="fas fa-check me-2"></i>
+          Terminer
+        </button>
       </div>
-
-      <div class="summary-card">
-        <div class="card-header">
-          <i class="fas fa-file-invoice"></i>
-          <h3>Facturation</h3>
-        </div>
-
-        <div class="detail-row">
-          <span>Numéro facture</span>
-          <strong>
-            {{ response()?.invoiceNumero }}
-          </strong>
-        </div>
-
-        <div class="detail-row">
-          <span>Identifiant</span>
-          <strong class="uuid">
-            {{ response()?.invoiceUuid }}
-          </strong>
-        </div>
-      </div>
-    </div>
-
-    <div class="success-message">
-      <i class="fas fa-info-circle"></i>
-
-      <span> Vous pouvez maintenant accéder à votre espace et commencer la configuration. </span>
-    </div>
-
-    <div class="success-actions">
-      <button type="button" class="btn btn-primary" routerLink="/admin/onboarding/tenants">
-        <i class="fas fa-building me-2"></i>
-
-        Voir les espaces créés
-      </button>
     </div>
   }
-</div>
+}

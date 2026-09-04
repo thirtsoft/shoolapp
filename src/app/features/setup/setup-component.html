@@ -121,21 +121,13 @@
             <app-structure-pedagogique-component />
           }
 
-         @case (4) {
-  @if (structurePedagogique(); as structure) {
-
-    <app-classes-a-ajouter-component
-      [structurePedagogique]="structure"
-    />
-
-  } @else {
-
-    <div class="setup-loading">
-      Structure pédagogique non disponible.
-    </div>
-
-  }
-}
+          @case (4) {
+            @if (structurePedagogique(); as structure) {
+              <app-classes-a-ajouter-component [structurePedagogique]="structure" />
+            } @else {
+              <div class="setup-loading">Structure pédagogique non disponible.</div>
+            }
+          }
           @case (5) {
             <app-periodes-scolaires-component />
           }
@@ -193,7 +185,6 @@
             }
           </button>
         } @else {
-          
           <button type="button" class="btn-primary" (click)="terminer()">
             <span> Accéder à mon établissement </span>
 
