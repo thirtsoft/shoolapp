@@ -200,7 +200,7 @@ export class SetupComponent implements OnInit {
         break;
 
       case 7:
-        this.afficherDetails();
+        this.finaliserSetup();
         break;
     }
 
@@ -323,7 +323,7 @@ export class SetupComponent implements OnInit {
       this.setupUuid,
       payload
     )
-      .subscribe({ 
+      .subscribe({
 
         next: (response) => {
 
@@ -671,6 +671,11 @@ export class SetupComponent implements OnInit {
           this.completed.set(true);
 
           this.currentStep.set(7);
+
+          if (response.setupUuid) {
+            this.afficherDetails(response.setupUuid);
+          }
+
         },
 
         error: (error) => {
@@ -682,9 +687,9 @@ export class SetupComponent implements OnInit {
       });
   }
 
-  private afficherDetails(): void {
+  private afficherDetails(setupUuid: string): void {
 
-    if (!this.setupUuid) {
+    if (!setupUuid) {
       console.error('[SETUP][DÉTAILS] setupUuid introuvable');
       return;
     }
@@ -693,7 +698,7 @@ export class SetupComponent implements OnInit {
 
     console.log('[SETUP][DÉTAILS] GET /api/setup/' + this.setupUuid + '/details');
 
-    this.setupApiService.afficherSetupProcess(this.setupUuid)
+    this.setupApiService.afficherSetupProcess(setupUuid)
       .subscribe({
 
         next: (response: SetupProcessResponse) => {

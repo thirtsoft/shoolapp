@@ -33,9 +33,9 @@ export class SubscriptionStepComponent implements OnboardingStepComponent<Onboar
   private readonly state = inject(OnboardingStateService);
 
   readonly form = this.fb.group({
-    planUid: ['', Validators.required],
-    planTarifUid: ['', Validators.required],
-    planTarifDetailUid: ['', Validators.required],
+    planUuid: ['', Validators.required],
+    planTarifUuid: [''],
+    planTarifDetailUuid: [''],
     renouvellementAutomatique: [true],
     commentaire: ['']
   });
@@ -52,91 +52,84 @@ export class SubscriptionStepComponent implements OnboardingStepComponent<Onboar
       return;
     }
     this.form.patchValue(request);
-
   }
 
   private loadCatalog() {
-
     this.referential.getSubscriptionCatalog()
       .pipe(
         takeUntilDestroyed(this.destroyRef)
       )
       .subscribe({
-
         next: response => {
-
           if (response.success) {
-
-            this.catalog.set(
-              response.data
-            );
-
+            this.catalog.set(response.data);
           }
-
           this.loading.set(false);
-
         },
-
-
         error: () => {
-
-          this.error.set(
-            "Impossible de charger les offres d'abonnement."
-          );
+          this.error.set("Impossible de charger les offres d'abonnement.");
           this.loading.set(false);
         }
       });
-
   }
 
   get value() {
-
-    return this.form
-      .getRawValue() as OnboardingSubscriptionRequest;
-
+    return this.form.getRawValue() as OnboardingSubscriptionRequest;
   }
 
-  isValid() {
+  isValid(): boolean {
+    const plan = this.getSelectedPlan();
 
-    return this.form.valid;
+    if (!plan) {
+      return false;
+    }
 
+    if (plan.type === 'TRIAL') {
+      return this.form.get('planUuid')?.valid ?? false;
+    }
+
+    const planTarifUuid = this.form.value.planTarifUuid;
+    const planTarifDetailUuid = this.form.value.planTarifDetailUuid;
+
+    return (
+      this.form.get('planUuid')?.valid === true &&
+      !!planTarifUuid &&
+      !!planTarifDetailUuid
+    );
   }
 
   markTouched() {
-
     this.form.markAllAsTouched();
-
   }
 
-
-
-  selectPlan(plan: any) {
-    let tarifUid = '';
-    let detailUid = '';
+  selectPlan(plan: OnboardingPlanResponse): void {
+    let tarifUuid = '';
+    let detailUuid = '';
 
     if (plan.tarifs?.length === 1) {
       const tarif = plan.tarifs[0];
-      tarifUid = tarif.uuid;
+
+      tarifUuid = tarif.uuid;
 
       if (tarif.details?.length === 1) {
-        detailUid = tarif.details[0].uuid;
+        detailUuid = tarif.details[0].uuid;
       }
     }
-    this.form.patchValue({
-      planUid: plan.uuid,
-      planTarifUid: tarifUid,
-      planTarifDetailUid: detailUid
 
+    this.form.patchValue({
+      planUuid: plan.uuid,
+      planTarifUuid: tarifUuid,
+      planTarifDetailUuid: detailUuid,
+      renouvellementAutomatique: plan.type === 'TRIAL' ? false : true
     });
 
     this.updateSubscriptionDisplay(plan);
   }
 
   selectTarif(tarif: OnboardingPlanTarifResponse): void {
-
     this.form.patchValue({
-      planTarifUid: tarif.uuid,
-      planTarifDetailUid: ''
+      planTarifUuid: tarif.uuid,
+      planTarifDetailUuid: ''
     });
 
     const plan = this.getSelectedPlan();
@@ -147,23 +140,21 @@ export class SubscriptionStepComponent implements OnboardingStepComponent<Onboar
   }
 
   private getSelectedPlan(): OnboardingPlanResponse | undefined {
-    const planUid = this.form.value.planUid;
+    const planUuid = this.form.value.planUuid;
 
-    if (!planUid) {
+    if (!planUuid) {
       return undefined;
     }
 
-    return this.catalog()?.applications
-      .flatMap(application => application.plans
-      )
-      .find(plan => plan.uuid === planUid
-      );
-
+    return this.catalog()
+      ?.applications
+      .flatMap(application => application.plans)
+      .find(plan => plan.uuid === planUuid);
   }
 
   selectDetail(detail: OnboardingPlanTarifDetailResponse): void {
     this.form.patchValue({
-      planTarifDetailUid: detail.uuid
+      planTarifDetailUuid: detail.uuid
     });
 
     const plan = this.getSelectedPlan();
@@ -175,10 +166,12 @@ export class SubscriptionStepComponent implements OnboardingStepComponent<Onboar
 
   private updateSubscriptionDisplay(plan: OnboardingPlanResponse): void {
 
-    const tarif = plan.tarifs.find(item => item.uuid === this.form.value.planTarifUid
+    const tarif = plan.tarifs.find(
+      item => item.uuid === this.form.value.planTarifUuid
     );
 
-    const detail = tarif?.details.find(item => item.uuid === this.form.value.planTarifDetailUid
+    const detail = tarif?.details.find(
+      item => item.uuid === this.form.value.planTarifDetailUuid
     );
 
     this.state.updateViewModel({
@@ -186,22 +179,20 @@ export class SubscriptionStepComponent implements OnboardingStepComponent<Onboar
         planName: plan.libelle,
         currencyLabel: tarif?.currencyLibelle,
         billingPeriodLabel: detail?.billingPeriod,
-        amount: detail?.montantHt
+        amount: detail?.montantTtc
       }
     });
-
   }
 
   isPlanSelected(uuid: string) {
-    return this.form.value.planUid === uuid;
+    return this.form.value.planUuid === uuid;
   }
 
   isTarifSelected(uuid: string) {
-    return this.form.value.planTarifUid === uuid;
+    return this.form.value.planTarifUuid === uuid;
   }
 
   isDetailSelected(uuid: string) {
-    return this.form.value.planTarifDetailUid === uuid;
+    return this.form.value.planTarifDetailUuid === uuid;
   }
-
 }

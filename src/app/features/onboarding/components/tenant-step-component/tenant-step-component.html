@@ -6,68 +6,126 @@
     </h2>
 
     <p>
-      Renseignez les informations principales de votre organisation. Elles permettront de configurer
-      votre environnement sur la plateforme.
+      Renseignez les informations principales de votre identification. Elles permettront de
+      configurer votre espace client sur la plateforme.
     </p>
   </div>
 
   @if (error()) {
     <div class="alert-error">
-      <i class="fas fa-exclamation-triangle me-2"></i>
-
       {{ error() }}
     </div>
   }
 
   @if (!loading()) {
     <form [formGroup]="form">
-      <section class="form-section">
-        <div class="row g-3">
-          <div class="col-md-6 field">
-            <label>
-              <i class="fas fa-building me-1 text-muted"></i>
+      <section class="form-section mb-4">
+        <h3>Informations générales</h3>
 
-              Nom de l'organisation
-              <span>*</span>
+        <p class="section-help">
+          Renseignez les informations principales pour votre identification.
+        </p>
+
+        <div class="row g-3">
+          <div class="col-md-6">
+            <label class="form-label">
+              Type de client
+              <span class="text-danger">*</span>
+
+              <i class="fas fa-building ms-1 text-muted"></i>
+            </label>
+
+            <select class="form-select" formControlName="tenantTypeUuid">
+              <option value="">Sélectionnez un type</option>
+
+              @for (type of tenantTypes(); track type.uuid) {
+                <option [value]="type.uuid">
+                  {{ type.libelle }}
+                </option>
+              }
+            </select>
+
+            @if (form.controls.tenantTypeUuid.touched && form.controls.tenantTypeUuid.invalid) {
+              <small class="form-text text-danger"> Le type de client est obligatoire. </small>
+            }
+          </div>
+
+          <div class="col-md-6">
+            <label class="form-label">
+              Nom complet / Dénomination
+              <span class="text-danger">*</span>
+
+              <i class="fas fa-building me-1 text-muted"></i>
             </label>
 
             <input
               type="text"
+              class="form-control"
               formControlName="libelle"
               placeholder="Ex : Groupe scolaire Horizon"
             />
 
             @if (form.controls.libelle.touched && form.controls.libelle.invalid) {
-              <small> Le nom de l'organisation est obligatoire. </small>
+              <small class="form-text text-danger"> La dénommination est obligatoire. </small>
             }
           </div>
 
-          <div class="col-md-6 field">
-            <label>
-              <i class="fas fa-code me-1 text-muted"></i>
+          <div class="col-md-6">
+            <label class="form-label">
+              Code (CNI/Passeport)
+              <span class="text-danger">*</span>
 
-              Code espace
-              <span>*</span>
+              <i class="fas fa-barcode ms-1 text-muted"></i>
             </label>
 
-            <input type="text" formControlName="code" placeholder="Ex : HORIZON001" />
+            <input
+              type="text"
+              class="form-control"
+              formControlName="code"
+              placeholder="Ex : GS-HORIZON"
+            />
 
             @if (form.controls.code.touched && form.controls.code.invalid) {
-              <small> Le code espace est obligatoire. </small>
+              <small class="form-text text-danger"> Le code identification est obligatoire. </small>
+            }
+          </div>
+
+          <div class="col-md-6">
+            <label class="form-label">
+              Domaine
+              <span class="text-danger">*</span>
+
+              <i class="fas fa-link me-1 text-muted"></i>
+            </label>
+
+            <input
+              type="text"
+              class="form-control"
+              formControlName="domaine"
+              placeholder="mon-espace.myschool.sn"
+            />
+
+            @if (form.controls.domaine.touched && form.controls.domaine.invalid) {
+              <small class="form-text text-danger"> Le domaine est obligatoire. </small>
             }
           </div>
         </div>
+      </section>
+
+      <section class="form-section mb-4">
+        <h3>Localisation & Devise</h3>
+
+        <p class="section-help">Indiquez la localisation pour la facturation.</p>
 
         <div class="row g-3">
-          <div class="col-md-6 field">
-            <label>
-              <i class="fas fa-flag me-1 text-muted"></i>
+          <div class="col-md-6">
+            <label class="form-label">
+              Pays de résidence
+              <span class="text-danger">*</span>
 
-              Pays
-              <span>*</span>
+              <i class="fas fa-globe-africa ms-1 text-muted"></i>
             </label>
-
-            <select formControlName="countryUuid">
+            <select class="form-select" formControlName="countryUuid">
               <option value="">Sélectionnez un pays</option>
 
               @for (country of countries(); track country.uuid) {
@@ -76,17 +134,20 @@
                 </option>
               }
             </select>
+            @if (form.controls.countryUuid.touched && form.controls.countryUuid.invalid) {
+              <small class="form-text text-danger"> Le pays est obligatoire. </small>
+            }
           </div>
 
-          <div class="col-md-6 field">
-            <label>
-              <i class="fas fa-coins me-1 text-muted"></i>
-
+          <div class="col-md-6">
+            <label class="form-label">
               Devise
-              <span>*</span>
+              <span class="text-danger">*</span>
+
+              <i class="fas fa-coins me-1 text-muted"></i>
             </label>
 
-            <select formControlName="currencyUuid">
+            <select class="form-select" formControlName="currencyUuid">
               <option value="">Sélectionnez une devise</option>
 
               @for (currency of currencies(); track currency.uuid) {
@@ -96,17 +157,19 @@
                 </option>
               }
             </select>
+            @if (form.controls.currencyUuid.touched && form.controls.currencyUuid.invalid) {
+              <small class="form-text text-danger"> Le devise est obligatoire. </small>
+            }
           </div>
 
-          <div class="col-md-6 field">
-            <label>
+          <div class="col-md-6">
+            <label class="form-label">
+              Langue de communication
+              <span class="text-danger">*</span>
               <i class="fas fa-language me-1 text-muted"></i>
-
-              Langue principale
-              <span>*</span>
             </label>
 
-            <select formControlName="languageUuid">
+            <select class="form-select" formControlName="languageUuid">
               <option value="">Sélectionnez une langue</option>
 
               @for (language of languages(); track language.uuid) {
@@ -117,15 +180,14 @@
             </select>
           </div>
 
-          <div class="col-md-6 field">
-            <label>
-              <i class="fas fa-clock me-1 text-muted"></i>
-
+          <div class="col-md-6">
+            <label class="form-label">
               Fuseau horaire
-              <span>*</span>
+
+              <i class="fas fa-clock me-1 text-muted"></i>
             </label>
 
-            <select formControlName="timezoneUuid">
+            <select class="form-select" formControlName="timezoneUuid">
               <option value="">Sélectionnez un fuseau</option>
 
               @for (zone of timezones(); track zone.uuid) {
@@ -134,36 +196,42 @@
                 </option>
               }
             </select>
+            @if (form.controls.timezoneUuid.touched && form.controls.timezoneUuid.invalid) {
+              <small class="form-text text-danger"> Le fuseau horaire est obligatoire. </small>
+            }
           </div>
+        </div>
+      </section>
 
-          <div class="col-md-6 field">
-            <label>
-              <i class="fas fa-sitemap me-1 text-muted"></i>
+      <!-- CONTACT -->
+      <section class="form-section mb-4">
+        <h3>Coordonnées</h3>
 
-              Type d'organisation
-              <span>*</span>
+        <p class="section-help">Ces informations permettront de vous contacter.</p>
+
+        <div class="row g-3">
+          <div class="col-md-6">
+            <label class="form-label">
+              Mobile
+              <span class="text-danger">*</span>
+
+              <i class="fas fa-mobile-screen ms-1 text-muted"></i>
             </label>
 
-            <select formControlName="tenantTypeUuid">
-              <option value="">Sélectionnez un type</option>
-
-              @for (type of tenantTypes(); track type.uuid) {
-                <option [value]="type.uuid">
-                  {{ type.libelle }}
-                </option>
-              }
-            </select>
+            <input type="text" class="form-control" formControlName="mobile" />
+            @if (form.controls.mobile.touched && form.controls.mobile.invalid) {
+              <small class="form-text text-danger"> Le mobile est obligatoire. </small>
+            }
           </div>
 
-          <div class="col-md-6 field">
-            <label>
-              <i class="fas fa-link me-1 text-muted"></i>
+          <div class="col-md-6">
+            <label class="form-label">
+              Email
 
-              Domaine
-              <span>*</span>
+              <i class="fas fa-envelope ms-1 text-muted"></i>
             </label>
 
-            <input type="text" formControlName="domaine" placeholder="mon-espace.myschool.sn" />
+            <input type="email" class="form-control" formControlName="email" />
           </div>
         </div>
       </section>
@@ -172,8 +240,8 @@
         <i class="fas fa-info-circle me-2"></i>
 
         <span>
-          Les champs marqués d'un astérisque (*) sont obligatoires. Ces informations permettent de
-          créer et configurer votre espace SaaS.
+          Cette organisation représente l'entité principale qui utilisera la plateforme. Vous
+          pourrez modifier ces informations ultérieurement depuis les paramètres de votre espace.
         </span>
       </div>
     </form>

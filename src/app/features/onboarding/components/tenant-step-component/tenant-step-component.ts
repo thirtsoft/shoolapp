@@ -42,7 +42,9 @@ export class TenantStepComponent implements OnboardingStepComponent<OnboardingTe
     languageUuid: ['', Validators.required],
     timezoneUuid: ['', Validators.required],
     tenantTypeUuid: ['', Validators.required],
-    domaine: ['', [Validators.required]]
+    domaine: ['', [Validators.required]],
+    mobile: ['', [Validators.required]],
+    email: ['']
   });
 
   constructor() {

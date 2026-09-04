@@ -1,15 +1,15 @@
 
 import { Routes } from '@angular/router';
-import { WebsiteComponent } from './website-component';
-import { HomeComponent } from './home-component/home-component';
 import { DemoComponent } from './demo-component/demo-component';
+import { HomeComponent } from './home-component/home-component';
+import { WebsiteComponent } from './website-component';
 
 export const WEBSITE_ROUTES: Routes = [
 
   {
     path: '',
     component: WebsiteComponent,
-    title: 'Accueil visiteur',
+    title: 'Accueil Eduschool',
     children: [
 
       {

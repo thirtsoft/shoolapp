@@ -13,16 +13,8 @@ export interface OnboardingViewModel {
 
   error: string | null;
 
-  /**
- * Résultat après création complète de l'onboarding
- * Utilisé uniquement pour l'affichage succès
- */
   response?: OnboardingResponseModel;
 
-  /**
-   * Informations affichées uniquement côté UI
-   * Ne partent jamais au backend
-   */
   subscriptionDisplay?: {
 
     planName?: string;
@@ -43,14 +35,9 @@ export interface OnboardingViewModel {
 export class OnboardingStateService {
 
 
-  /**
-   * Payload métier envoyé au backend
-   */
   private readonly requestState = signal<Partial<OnboardingRequestModel>>({});
 
-  /**
-   * Etat interne uniquement utilisé par l'interface
-   */
+
   private readonly viewModelState = signal<OnboardingViewModel>({
 
     currentStep: OnboardingStep.INITIATED,
@@ -63,71 +50,34 @@ export class OnboardingStateService {
 
   });
 
-  /**
-   * Données backend
-   */
   readonly request = this.requestState.asReadonly();
 
-  /**
-   * Etat UI complet
-   */
   readonly viewModel = this.viewModelState.asReadonly();
 
-
-  /**
-   * Etape courante
-   */
   readonly currentStep = computed(
     () => this.viewModelState().currentStep
   );
 
-
-
-  /**
-   * Etapes complétées
-   */
   readonly completedSteps = computed(
     () => this.viewModelState().completedSteps
   );
 
-
-
-  /**
-   * Etat chargement
-   */
   readonly loading = computed(
     () => this.viewModelState().loading
   );
 
-
-  /**
-   * Message erreur
-   */
   readonly error = computed(
     () => this.viewModelState().error
   );
 
-
-
-  /**
-   * Résumé abonnement affiché dans l'UI
-   */
   readonly subscriptionDisplay = computed(
     () => this.viewModelState().subscriptionDisplay
   );
 
-
-  /**
- * Réponse backend après succès onboarding
- */
   readonly response = computed(
     () => this.viewModelState().response
   );
 
-
-  /**
-   * Mise à jour d'une donnée métier backend
-   */
   updateRequest<K extends keyof OnboardingRequestModel>(
     key: K,
     value: OnboardingRequestModel[K]
@@ -143,11 +93,6 @@ export class OnboardingStateService {
 
   }
 
-
-
-  /**
-   * Alias conservé pour compatibilité
-   */
   updateStepValue<K extends keyof OnboardingRequestModel>(
     key: K,
     value: OnboardingRequestModel[K]
@@ -157,9 +102,6 @@ export class OnboardingStateService {
 
   }
 
-  /**
-   * Mise à jour des informations UI
-   */
   updateViewModel(value: Partial<OnboardingViewModel>): void {
 
     this.viewModelState.update(current => ({
@@ -171,9 +113,7 @@ export class OnboardingStateService {
     }));
   }
 
-  /**
- * Stocke la réponse finale backend
- */
+
   setResponse(response: OnboardingResponseModel): void {
 
     this.updateViewModel({
@@ -184,9 +124,6 @@ export class OnboardingStateService {
 
   }
 
-  /**
-   * Changement étape courante
-   */
   setCurrentStep(step: OnboardingStep): void {
 
     this.updateViewModel({
@@ -196,9 +133,6 @@ export class OnboardingStateService {
     });
   }
 
-  /**
-   * Activation / désactivation loading
-   */
   setLoading(value: boolean): void {
 
     this.updateViewModel({
@@ -209,11 +143,6 @@ export class OnboardingStateService {
 
   }
 
-
-
-  /**
-   * Gestion erreur UI
-   */
   setError(message: string | null): void {
 
     this.updateViewModel({
@@ -224,11 +153,6 @@ export class OnboardingStateService {
 
   }
 
-
-
-  /**
-   * Marquer une étape comme terminée
-   */
   completeStep(step: OnboardingStep): void {
 
     this.viewModelState.update(current => {
@@ -259,16 +183,10 @@ export class OnboardingStateService {
 
   }
 
-  /**
-   * Récupération du payload final backend
-   */
   getRequest(): Partial<OnboardingRequestModel> {
     return this.requestState();
   }
-
-  /**
-   * Réinitialisation complète onboarding
-   */
+  
   reset(): void {
 
     this.requestState.set({});
