@@ -163,7 +163,7 @@ export class SideBarAdminComponent {
 
   deconnecter(): void {
     this.localStorage.clear();
-    this.router.navigate(['/']);
+    this.router.navigate(['/auth/login/v2']);
 
   }
 }
