@@ -1,8 +1,9 @@
-import { Component, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormBuilder, FormGroup, ReactiveFormsModule, Validators, AbstractControl, ValidationErrors } from '@angular/forms';
+import { Component, inject, signal } from '@angular/core';
+import { AbstractControl, FormBuilder, FormGroup, ReactiveFormsModule, ValidationErrors, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { AuthenticationV2Service } from '../../../../auth/services/multitenantV2/authentication-v2.service';
+import { ToastrService } from 'ngx-toastr';
 
 @Component({
   selector: 'app-changer-password-utilisateur-component',
@@ -16,6 +17,7 @@ export class ChangerPasswordUtilisateurComponent {
   private readonly formBuilder = inject(FormBuilder);
   private readonly authService = inject(AuthenticationV2Service);
   private readonly router = inject(Router);
+  private readonly toastService = inject(ToastrService);
 
   loading = signal(false);
   success = signal(false);
@@ -84,7 +86,7 @@ export class ChangerPasswordUtilisateurComponent {
     this.error.set('');
     this.loading.set(true);
     this.success.set(false);
-    const userData = localStorage.getItem('user');
+    const userData = localStorage.getItem('v2_user');
     if (!userData) {
       this.error.set('Utilisateur non connecté');
       this.loading.set(false);
@@ -106,9 +108,13 @@ export class ChangerPasswordUtilisateurComponent {
       confirmPassword: this.confirmPassword!.value
     };
 
+    console.log('✅ send userUuid', userUuid);
+    console.log('✅ send request', request);
+
     this.authService.changePassword(userUuid, request).subscribe({
       next: () => {
         console.log('✅ Mot de passe changé avec succès');
+        this.toastService.success('success', 'Votre Mot de passe a été modifié succès avec succès.');
         this.loading.set(false);
         this.success.set(true);
         this.changePasswordForm.reset();
@@ -138,7 +144,7 @@ export class ChangerPasswordUtilisateurComponent {
   }
 
   toggleVisibility(field: 'current' | 'new' | 'confirm'): void {
-    switch(field) {
+    switch (field) {
       case 'current':
         this.showCurrentPassword.update(v => !v);
         break;

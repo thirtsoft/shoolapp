@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-success-password-handler-component',
@@ -11,6 +11,8 @@ import { ActivatedRoute, Router } from '@angular/router';
 export class SuccessPasswordHandlerComponent implements OnInit {
 
   temporaryPassword: string = '';
+  emailSent: boolean = false;
+
   showPassword: boolean = false;
   copied: boolean = false;
 
@@ -20,18 +22,26 @@ export class SuccessPasswordHandlerComponent implements OnInit {
     { ico: '🔄', txt: 'Modification recommandée' }
   ];
 
-  constructor(
-    private route: ActivatedRoute,
-    private router: Router
-  ) { }
+  constructor(private router: Router) { }
 
   ngOnInit(): void {
-    this.route.params.subscribe(params => {
-      this.temporaryPassword = params['temporalPassword'];
-      if (!this.temporaryPassword) {
-        this.router.navigate(['/']);
-      }
-    });
+    const navigation = this.router.getCurrentNavigation();
+    const state = navigation?.extras?.state;
+    if (state) {
+      this.temporaryPassword = state['temporaryPassword'] ?? '';
+      this.emailSent = state['emailSent'] ?? false;
+    }
+    if (!this.temporaryPassword) {
+      const historyState = window.history.state;
+
+      this.temporaryPassword = historyState?.temporaryPassword ?? '';
+
+      this.emailSent = historyState?.emailSent ?? false;
+    }
+
+    if (!this.temporaryPassword) {
+      this.router.navigate(['/auth/mot-de-passe-oublie']);
+    }
   }
 
   togglePasswordVisibility(): void {
@@ -39,23 +49,29 @@ export class SuccessPasswordHandlerComponent implements OnInit {
   }
 
   copyToClipboard(): void {
-    navigator.clipboard.writeText(this.temporaryPassword).then(() => {
-      this.copied = true;
-      setTimeout(() => {
-        this.copied = false;
-      }, 3000);
-    }).catch(err => {
-      console.error('Erreur lors de la copie: ', err);
-    });
+    if (!this.temporaryPassword) {
+      return;
+    }
+
+    navigator.clipboard.writeText(this.temporaryPassword).then(
+      () => {
+        this.copied = true;
+        setTimeout(() => { this.copied = false; }, 3000);
+
+      })
+      .catch((error) => {
+        console.error(
+          'Erreur lors de la copie : ',
+          error
+        );
+      });
   }
 
   goToLogin(): void {
-    this.router.navigate(['/login']);
+    this.router.navigate(['/auth/login/v2']);
   }
 
   regeneratePassword(): void {
     this.router.navigate(['/auth/mot-de-passe-oublie']);
   }
-
-
 }

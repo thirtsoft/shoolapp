@@ -1,9 +1,11 @@
-
-
 export interface ForgotPasswordResponse {
-
-    temporaryPassword?: string;
-
-    emailSent?: string;
-
+    success: boolean;
+    code: string;
+    message: string;
+    data: {
+        temporaryPassword: string;
+        emailSent: boolean;
+    };
+    errors: any[];
+    timestamp: string;
 }
