@@ -2,25 +2,12 @@ import { Routes } from '@angular/router';
 
 export const routes: Routes = [
 
-/*   {
-    path: '',
-    redirectTo: 'auth',
-    pathMatch: 'full',
-  }, */
-
-   {
-    path: '',
-    redirectTo: 'home',
-    pathMatch: 'full',
-  },
-
   {
-    path: 'home',
+    path: '',
     loadChildren: () =>
       import('./features/website/website.routes')
         .then(m => m.WEBSITE_ROUTES)
   },
-
 
   {
     path: 'setup',

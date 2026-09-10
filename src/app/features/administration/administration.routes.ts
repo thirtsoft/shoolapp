@@ -67,6 +67,13 @@ export const ADMIN_ROUTES: Routes = [
             .then(m => m.PROFILES_ROUTES)
       },
 
+      {
+        path: 'organization',
+        loadChildren: () =>
+          import('./configorganization/configorganization.routes')
+            .then(m => m.CONFIG_ORGANIZATION_ROUTES)
+      },
+
       // ── Redirection par défaut ────────────────────────
       {
         path: '',

@@ -1,8 +1,8 @@
 import { Component, HostListener, inject, OnInit, signal } from '@angular/core';
 import { Router, RouterOutlet } from '@angular/router';
 import { NavItem } from '../../../../core/components/sidebar-navbar-models/nav-item.model';
-import { SideBarAdminComponent } from '../side-bar-admin-component/side-bar-admin-component';
 import { LocalStorageService } from '../../../../core/services/local-storage.service';
+import { SideBarAdminComponent } from '../side-bar-admin-component/side-bar-admin-component';
 
 @Component({
   selector: 'app-main-layout-admin-component',
@@ -54,6 +54,12 @@ export class MainLayoutAdminComponent implements OnInit {
       description: 'Voir mes informations'
     },
     {
+      icon: '📖',
+      label: 'Mon organization',
+      action: 'organization',
+      description: 'Voir mon établissement'
+    },
+    {
       icon: '🔑',
       label: 'Modifier mot de passe',
       action: 'change-password',
@@ -87,7 +93,7 @@ export class MainLayoutAdminComponent implements OnInit {
         this.userLastName = '';
         this.userInitial = 'U';
         this.userFullName = 'Utilisateur';
-        this.userMobile ='+221776532145';
+        this.userMobile = '+221776532145';
       }
     } catch (error) {
       console.error('Erreur lors du chargement des données utilisateur:', error);
@@ -95,7 +101,7 @@ export class MainLayoutAdminComponent implements OnInit {
       this.userLastName = '';
       this.userInitial = 'U';
       this.userFullName = 'Utilisateur';
-       this.userMobile ='+221776532145';
+      this.userMobile = '+221776532145';
     }
   }
 
@@ -119,12 +125,16 @@ export class MainLayoutAdminComponent implements OnInit {
       case 'profile':
         this.goToProfile();
         break;
+      case 'organization':
+        this.gotToOrganizationInfos();
+        break;
       case 'change-password':
         this.goToChangePassword();
         break;
       case 'logout':
         this.logout();
         break;
+
       default:
         break;
     }
@@ -132,6 +142,10 @@ export class MainLayoutAdminComponent implements OnInit {
 
   goToProfile(): void {
     this.router.navigate(['/admin/utilisateur/profil']);
+  }
+
+  gotToOrganizationInfos(): void {
+    this.router.navigate(['/admin/organization/information']);
   }
 
   goToChangePassword(): void {
