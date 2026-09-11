@@ -740,3 +740,167 @@ textarea.form-control {
   outline: 2px solid var(--blue-light);
   outline-offset: 2px;
 }
+
+/* ══════════════════════════════════════════════
+   FORM SECTION TITLE (Séparateur de sections)
+   ══════════════════════════════════════════════ */
+.form-section-title {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: var(--blue-ocean);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  padding: 0.5rem 0;
+  margin-bottom: 1rem;
+  border-bottom: 1px dashed var(--border-color);
+}
+
+.form-section-title i {
+  color: var(--blue-light);
+  font-size: 0.875rem;
+}
+
+.form-section-title.mt-3 {
+  margin-top: 1.5rem;
+}
+
+/* ══════════════════════════════════════════════
+   SELECT DISABLED STATE
+   ══════════════════════════════════════════════ */
+.form-select:disabled {
+  background-color: var(--blue-ghost);
+  color: var(--gris-moyen);
+  cursor: not-allowed;
+  opacity: 0.7;
+}
+
+.form-select:disabled option {
+  color: var(--gris-moyen);
+}
+
+/* ══════════════════════════════════════════════
+   SELECT ACTIVE STATE (quand activé)
+   ══════════════════════════════════════════════ */
+.form-select:not(:disabled):hover {
+  border-color: var(--blue-sky);
+}
+
+.form-select:not(:disabled):focus {
+  border-color: var(--blue-light);
+  box-shadow: 0 0 0 3px rgba(66, 153, 225, 0.15);
+}
+
+/* ══════════════════════════════════════════════
+   SYSTÈME DE GRILLE (Row + Col)
+   ══════════════════════════════════════════════ */
+.row {
+  display: flex;
+  flex-wrap: wrap;
+  margin-right: -0.5rem;
+  margin-left: -0.5rem;
+}
+
+.form-row {
+  margin-bottom: 0.5rem;
+}
+
+.col-lg-4,
+.col-sm-12 {
+  padding-right: 0.5rem;
+  padding-left: 0.5rem;
+}
+
+.col-lg-4 {
+  flex: 0 0 auto;
+  width: 33.333333%;
+}
+
+.col-sm-12 {
+  flex: 0 0 auto;
+  width: 100%;
+}
+
+/* Responsive : Passe en 1 colonne sur mobile */
+@media (max-width: 992px) {
+  .col-lg-4 {
+    width: 100%;
+    margin-bottom: 0.5rem;
+  }
+}
+
+/* ══════════════════════════════════════════════
+   GRILLE GÉOGRAPHIQUE (Pays / Région / Département)
+   3 colonnes sur desktop, 1 colonne sur mobile
+   ══════════════════════════════════════════════ */
+.geo-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1rem;
+  margin-bottom: 0.5rem;
+}
+
+/* Chaque form-group dans la grille n'a pas besoin de margin-bottom supplémentaire */
+.geo-grid .form-group {
+  margin-bottom: 0;
+}
+
+/* ══════════════════════════════════════════════
+   RESPONSIVE
+   ══════════════════════════════════════════════ */
+
+/* Tablette : 2 colonnes puis 1 */
+@media (max-width: 992px) {
+  .geo-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+/* Mobile : 1 colonne */
+@media (max-width: 576px) {
+  .geo-grid {
+    grid-template-columns: 1fr;
+    gap: 0.75rem;
+  }
+}
+
+/* ══════════════════════════════════════════════
+   GRILLES RÉUTILISABLES
+   ══════════════════════════════════════════════ */
+
+/* Grille 3 colonnes : Pays / Région / Département */
+.geo-grid {
+  display: grid;
+  gap: 1rem;
+  margin-bottom: 1.25rem;
+}
+
+.geo-grid-3 {
+  grid-template-columns: repeat(3, 1fr);
+}
+
+.geo-grid-2 {
+  grid-template-columns: repeat(2, 1fr);
+}
+
+/* Les form-group dans la grille ne doivent pas ajouter de marge supplémentaire */
+.geo-grid .form-group {
+  margin-bottom: 0;
+}
+
+@media (max-width: 992px) {
+  .geo-grid-3 {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+@media (max-width: 576px) {
+
+  .geo-grid-3,
+  .geo-grid-2 {
+    grid-template-columns: 1fr;
+    gap: 0.75rem;
+  }
+}

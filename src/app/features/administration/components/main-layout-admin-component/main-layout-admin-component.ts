@@ -54,10 +54,16 @@ export class MainLayoutAdminComponent implements OnInit {
       description: 'Voir mes informations'
     },
     {
-      icon: '📖',
-      label: 'Mon organization',
+      icon: '🏫',
+      label: 'Mon organisation',
       action: 'organization',
-      description: 'Voir mon établissement'
+      description: 'Informations de l\'établissement'
+    },
+    {
+      icon: '📧',
+      label: 'Paramétrage email',
+      action: 'notificationconfiguration',
+      description: 'Configurer l\'envoi des emails'
     },
     {
       icon: '🔑',
@@ -126,7 +132,10 @@ export class MainLayoutAdminComponent implements OnInit {
         this.goToProfile();
         break;
       case 'organization':
-        this.gotToOrganizationInfos();
+        this.goToOrganizationInfos();
+        break;
+      case 'notificationconfiguration':
+        this.goToNotificationConfiguration();
         break;
       case 'change-password':
         this.goToChangePassword();
@@ -144,8 +153,12 @@ export class MainLayoutAdminComponent implements OnInit {
     this.router.navigate(['/admin/utilisateur/profil']);
   }
 
-  gotToOrganizationInfos(): void {
+  goToOrganizationInfos(): void {
     this.router.navigate(['/admin/organization/information']);
+  }
+
+  goToNotificationConfiguration(): void {
+    this.router.navigate(['/admin/organization/notification-configuration']);
   }
 
   goToChangePassword(): void {

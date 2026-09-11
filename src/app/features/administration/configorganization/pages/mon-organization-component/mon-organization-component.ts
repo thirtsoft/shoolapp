@@ -3,8 +3,11 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
+import { CountryResponse } from '../../../../../core/models/onboarding/country-response';
+import { DepartmentResponse } from '../../../../../core/models/onboarding/department-response';
 import { OrganizationResponse } from '../../../../../core/models/onboarding/organization/organization-response';
-import { OrganizationRequest } from '../../../../../core/models/organization/organization-request.model';
+import { RegionResponse } from '../../../../../core/models/onboarding/region-response';
+import { OnboardingReferentialService } from '../../../../onboarding/service/onboarding-referential.service';
 import { ConfigOrganizationService } from '../../services/configorganization.service';
 
 @Component({
@@ -21,13 +24,14 @@ export class MonOrganizationComponent implements OnInit {
   private readonly toastService = inject(ToastrService);
   private readonly router = inject(Router);
   private readonly destroyRef = inject(DestroyRef);
+  private readonly referential = inject(OnboardingReferentialService);
 
   loading = signal(false);
   isEditing = signal(false);
   editingSection = signal<'identification' | 'location' | 'logo' | null>(null);
   organizationData!: OrganizationResponse;
   error = signal('');
-  
+
   selectedLogoFile: File | null = null;
   logoPreview: string | null = null;
   uploadingLogo = signal(false);
@@ -41,13 +45,35 @@ export class MonOrganizationComponent implements OnInit {
     { value: 'SEMI_PRIVE', label: 'Semi-privé' }
   ];
 
+  readonly countries = signal<CountryResponse[]>([]);
+  readonly regions = signal<RegionResponse[]>([]);
+  readonly departments = signal<DepartmentResponse[]>([]);
+
   ngOnInit(): void {
     this.initializeForms();
+    this.loadInitCountryData();
     this.loadOrganizationInfos();
+  }
+
+  private loadInitCountryData(): void {
+    this.referential.getCountries()
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: response => {
+          if (response.success) {
+            this.countries.set(response.data);
+          }
+        },
+        error: () => {
+          this.error.set('Impossible de charger les pays.');
+        }
+      });
   }
 
   private initializeForms(): void {
     this.identificationForm = this.formBuilder.group({
+      tenantUuid: ['', [Validators.required]],
+      organizationTypeUuid: ['', [Validators.required]],
       code: ['', [Validators.required]],
       libelle: ['', [Validators.required]],
       sigle: ['', [Validators.required]],
@@ -55,15 +81,16 @@ export class MonOrganizationComponent implements OnInit {
       anneeCreation: [''],
       description: ['']
     });
-
     this.locationForm = this.formBuilder.group({
+      countryUuid: ['', [Validators.required]],
+      regionUuid: [''],
+      departmentUuid: [''],
       email: ['', [Validators.required, Validators.email]],
       mobile: ['', [Validators.required]],
       telephone: [''],
       adresse: [''],
       boitePostale: [''],
-      siteWeb: [''],
-      regionCode: ['']
+      siteWeb: ['']
     });
   }
 
@@ -75,7 +102,7 @@ export class MonOrganizationComponent implements OnInit {
       this.toastService.warning('Attention', 'Organisation non trouvée');
       return;
     }
-    
+
     this.loading.set(true);
     this.organizationConfigService.getOrganizationInfos(organizationUuid)
       .pipe(takeUntilDestroyed(this.destroyRef))
@@ -101,7 +128,8 @@ export class MonOrganizationComponent implements OnInit {
       sigle: org.sigle || '',
       schoolType: org.schoolType || '',
       anneeCreation: org.anneeCreation || '',
-      description: org.description || ''
+      description: org.description || '',
+      tenantUuid: org.tenantUuid || ''
     });
 
     this.locationForm.patchValue({
@@ -111,27 +139,100 @@ export class MonOrganizationComponent implements OnInit {
       adresse: org.adresse || '',
       boitePostale: org.boitePostale || '',
       siteWeb: org.siteWeb || '',
-      regionCode: org.regionCode || ''
+      countryUuid: org.countryUuid || '',
+      regionUuid: org.regionUuid || '',
+      departmentUuid: org.departmentUuid || ''
     });
+
+    // Si un pays est défini, charger les régions
+    if (org.countryUuid) {
+      this.loadRegions(org.countryUuid, org.regionUuid || undefined, org.departmentUuid || undefined);
+    }
+  }
+
+  onCountryChange(): void {
+    const countryUuid = this.locationForm.get('countryUuid')?.value;
+    this.locationForm.patchValue({
+      regionUuid: '',
+      departmentUuid: ''
+    });
+    this.regions.set([]);
+    this.departments.set([]);
+
+    if (!countryUuid) {
+      return;
+    }
+    this.loadRegions(countryUuid);
+  }
+
+  onRegionChange(): void {
+    const regionUuid = this.locationForm.get('regionUuid')?.value;
+    this.locationForm.patchValue({
+      departmentUuid: ''
+    });
+    this.departments.set([]);
+    if (!regionUuid) {
+      return;
+    }
+    this.loadDepartments(regionUuid);
+  }
+
+  private loadRegions(countryUuid: string, regionUuid?: string, departmentUuid?: string): void {
+    this.referential.getRegions(countryUuid)
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: response => {
+          if (!response.success) {
+            return;
+          }
+          this.regions.set(response.data);
+          if (regionUuid) {
+            this.locationForm.patchValue({ regionUuid });
+            this.loadDepartments(regionUuid, departmentUuid);
+          }
+        },
+        error: (error) => {
+          console.error('Erreur chargement régions:', error);
+        }
+      });
+  }
+
+  private loadDepartments(regionUuid: string, departmentUuid?: string): void {
+    this.referential.getDepartments(regionUuid)
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: response => {
+          if (!response.success) {
+            return;
+          }
+          this.departments.set(response.data);
+          if (departmentUuid) {
+            this.locationForm.patchValue({ departmentUuid });
+          }
+        },
+        error: (error) => {
+          console.error('Erreur chargement départements:', error);
+        }
+      });
   }
 
   onLogoSelected(event: Event): void {
     const input = event.target as HTMLInputElement;
     if (input.files && input.files[0]) {
       const file = input.files[0];
-    
+
       if (file.size > 2 * 1024 * 1024) {
         this.toastService.warning('Attention', 'Le fichier ne doit pas dépasser 2 Mo');
         return;
       }
-      
+
       if (!file.type.match(/image\/(jpeg|png|jpg|svg\+xml)/)) {
         this.toastService.warning('Attention', 'Format non supporté. Utilisez JPG, PNG ou SVG');
         return;
       }
-      
+
       this.selectedLogoFile = file;
-      
+
       const reader = new FileReader();
       reader.onload = (e) => {
         this.logoPreview = e.target?.result as string;
@@ -148,22 +249,22 @@ export class MonOrganizationComponent implements OnInit {
   onLogoDrop(event: DragEvent): void {
     event.preventDefault();
     event.stopPropagation();
-    
+
     if (event.dataTransfer?.files && event.dataTransfer.files[0]) {
       const file = event.dataTransfer.files[0];
-      
+
       if (file.size > 2 * 1024 * 1024) {
         this.toastService.warning('Attention', 'Le fichier ne doit pas dépasser 2 Mo');
         return;
       }
-      
+
       if (!file.type.match(/image\/(jpeg|png|jpg|svg\+xml)/)) {
         this.toastService.warning('Attention', 'Format non supporté');
         return;
       }
-      
+
       this.selectedLogoFile = file;
-      
+
       const reader = new FileReader();
       reader.onload = (e) => {
         this.logoPreview = e.target?.result as string;
@@ -188,6 +289,7 @@ export class MonOrganizationComponent implements OnInit {
     const formData = new FormData();
     formData.append('logo', this.selectedLogoFile);
 
+    // TODO: Décommenter quand le service sera prêt
     /*
     this.organizationConfigService.uploadLogo(organizationUuid, formData)
       .pipe(takeUntilDestroyed(this.destroyRef))
@@ -205,7 +307,14 @@ export class MonOrganizationComponent implements OnInit {
           this.uploadingLogo.set(false);
         }
       });
-      */
+    */
+
+    setTimeout(() => {
+      this.toastService.success('Succès', 'Logo mis à jour avec succès');
+      this.selectedLogoFile = null;
+      this.logoPreview = null;
+      this.uploadingLogo.set(false);
+    }, 1500);
   }
 
   deleteLogo(): void {
@@ -215,8 +324,9 @@ export class MonOrganizationComponent implements OnInit {
 
     const organizationUuid = localStorage.getItem('v2_organization_uuid');
     if (!organizationUuid) return;
-    /*
 
+    // TODO: Décommenter quand le service sera prêt
+    /*
     this.uploadingLogo.set(true);
     this.organizationConfigService.deleteLogo(organizationUuid)
       .pipe(takeUntilDestroyed(this.destroyRef))
@@ -232,16 +342,16 @@ export class MonOrganizationComponent implements OnInit {
           this.uploadingLogo.set(false);
         }
       });
-
-      */
+    */
   }
 
   cancelLogoEdit(): void {
     this.selectedLogoFile = null;
     this.logoPreview = null;
     this.editingSection.set(null);
+    this.isEditing.set(false);
   }
-  
+
   enableEditing(section: 'identification' | 'location' | 'logo'): void {
     this.editingSection.set(section);
     this.isEditing.set(true);
@@ -252,7 +362,7 @@ export class MonOrganizationComponent implements OnInit {
     this.isEditing.set(false);
     this.populateForms(this.organizationData);
   }
-  
+
   saveIdentification(): void {
     if (this.identificationForm.invalid) {
       this.identificationForm.markAllAsTouched();
@@ -267,7 +377,7 @@ export class MonOrganizationComponent implements OnInit {
     }
 
     this.loading.set(true);
-    const payload: OrganizationRequest = {
+    const payload: any = {
       code: this.identificationForm.get('code')?.value,
       libelle: this.identificationForm.get('libelle')?.value,
       sigle: this.identificationForm.get('sigle')?.value,
@@ -294,7 +404,7 @@ export class MonOrganizationComponent implements OnInit {
         }
       });
   }
-  
+
   saveLocation(): void {
     if (this.locationForm.invalid) {
       this.locationForm.markAllAsTouched();
@@ -309,14 +419,16 @@ export class MonOrganizationComponent implements OnInit {
     }
 
     this.loading.set(true);
-    const payload: OrganizationRequest = {
+    const payload: any = {
       email: this.locationForm.get('email')?.value,
       mobile: this.locationForm.get('mobile')?.value,
       telephone: this.locationForm.get('telephone')?.value,
       adresse: this.locationForm.get('adresse')?.value,
       boitePostale: this.locationForm.get('boitePostale')?.value,
       siteWeb: this.locationForm.get('siteWeb')?.value,
-      regionCode: this.locationForm.get('regionCode')?.value
+      countryUuid: this.locationForm.get('countryUuid')?.value,
+      regionUuid: this.locationForm.get('regionUuid')?.value,
+      departmentUuid: this.locationForm.get('departmentUuid')?.value
     };
 
     this.organizationConfigService.updateOranizationInfo(organizationUuid, payload)
@@ -337,7 +449,7 @@ export class MonOrganizationComponent implements OnInit {
         }
       });
   }
-  
+
   private updateLocalStorage(data: any): void {
     try {
       const currentOrg = localStorage.getItem('v2_organization');
@@ -378,5 +490,20 @@ export class MonOrganizationComponent implements OnInit {
       SUSPENDED: { label: 'Suspendue', class: 'danger' }
     };
     return map[status] || { label: status, class: 'info' };
+  }
+
+  getCountryLabel(uuid: string): string {
+    const country = this.countries().find(c => c.uuid === uuid);
+    return country ? country.libelle : '—';
+  }
+
+  getRegionLabel(uuid: string): string {
+    const region = this.regions().find(r => r.uuid === uuid);
+    return region ? region.libelle : '—';
+  }
+
+  getDepartmentLabel(uuid: string): string {
+    const department = this.departments().find(d => d.uuid === uuid);
+    return department ? department.libelle : '—';
   }
 }

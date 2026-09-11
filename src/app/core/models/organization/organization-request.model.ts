@@ -1,3 +1,5 @@
+import { SchoolType } from "./school-type";
+
 export interface OrganizationRequest {
   uuid?: string;
   tenantUuid?: string;
@@ -7,6 +9,7 @@ export interface OrganizationRequest {
   libelle?: string;
   sigle?: string;
   adresse?: string;
+  countryUuid?: string;
   regionUuid?: string;
   departmentUuid?: string;
   boitePostale?: string;
@@ -16,11 +19,10 @@ export interface OrganizationRequest {
   siteWeb?: string;
   description?: string;
   logoFileUid?: string;
-  schoolType?: string;
+  schoolType?: SchoolType;
   regionCode?: string;
   departmentCode?: string;
   creationDate?: Date;
   anneeCreation?: number;
-  status?: string;
 
 }

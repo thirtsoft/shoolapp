@@ -2,8 +2,11 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { environment } from '../../../../../environments/environment';
+import { ApiResponse } from '../../../../core/datamodel/api-response.model';
+import { NotificationConfigurationResponse } from '../../../../core/models/notification/notification-configuration-response';
 import { OrganizationResponse } from '../../../../core/models/onboarding/organization/organization-response';
 import { OrganizationRequest } from '../../../../core/models/organization/organization-request.model';
+import { NotificationConfigurationUpdateRequest } from '../../../../core/models/notification/notification-configuration-update-request';
 
 @Injectable({
   providedIn: 'root'
@@ -13,6 +16,7 @@ export class ConfigOrganizationService {
   baseUrl_1 = environment.apiBaseUrl;
   organizationUrl = this.baseUrl_1 + '/platform/organizations';
   securityUrl = this.baseUrl_1 + '/api/security';
+  notificationConfigurationUrl = this.baseUrl_1 + '/api/v1/notifications';
 
 
   httpOptions = {
@@ -29,7 +33,19 @@ export class ConfigOrganizationService {
   }
 
   updateOranizationInfo(organizationUuid: string, value: OrganizationRequest): Observable<OrganizationResponse> {
-    return this.http.put<OrganizationResponse>(`${this.organizationUrl}/${organizationUuid}`, value);
+    return this.http.patch<OrganizationResponse>(`${this.organizationUrl}/${organizationUuid}`, value);
+  }
+
+  getNotificationConfiguration(configUuid: string): Observable<ApiResponse<NotificationConfigurationResponse>> {
+    return this.http.get<ApiResponse<NotificationConfigurationResponse>>(this.notificationConfigurationUrl + `/configurations/${configUuid}`, this.httpOptions);
+  }
+
+  getNotificationConfigurationByTenantUuid(tenantUuid: string): Observable<ApiResponse<NotificationConfigurationResponse>> {
+    return this.http.get<ApiResponse<NotificationConfigurationResponse>>(this.notificationConfigurationUrl + `/configurations/tenant/${tenantUuid}`, this.httpOptions);
+  }
+
+  saveOrUpdateNotificationConfiguration(tenantUuid: string, value: NotificationConfigurationUpdateRequest): Observable<ApiResponse<NotificationConfigurationResponse>> {
+    return this.http.post<ApiResponse<NotificationConfigurationResponse>>(`${this.notificationConfigurationUrl}/configurations/${tenantUuid}`, value);
   }
 
   /*

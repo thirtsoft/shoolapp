@@ -270,6 +270,7 @@
           </div>
         </div>
 
+        <!-- CARD 2 : LOCALISATION & CONTACT -->
         <div class="card profile-card">
           <div class="card-body">
             <div class="card-section-header">
@@ -285,6 +286,146 @@
             </div>
 
             <form [formGroup]="locationForm">
+              <!-- ══ SECTION LOCALISATION GÉOGRAPHIQUE ══ -->
+              <div class="form-section-title">
+                <i class="fas fa-globe-africa me-2"></i>Localisation géographique
+              </div>
+
+              <!-- ══ SECTION LOCALISATION GÉOGRAPHIQUE ══ -->
+
+              <!-- Grille 3 colonnes pour Pays / Région / Département -->
+              <div class="geo-grid">
+                <!-- Pays -->
+                <div class="form-group">
+                  <label class="form-label">
+                    Pays <span class="text-danger">*</span>
+                    <i class="fas fa-flag ms-1 text-muted"></i>
+                  </label>
+                  <select
+                    class="form-select"
+                    formControlName="countryUuid"
+                    [disabled]="!isEditing() || editingSection() !== 'location'"
+                    (change)="onCountryChange()"
+                    [class.is-invalid]="
+                      locationForm.get('countryUuid')?.invalid &&
+                      locationForm.get('countryUuid')?.touched
+                    "
+                  >
+                    <option value="" disabled>— Sélectionnez un pays —</option>
+                    @for (country of countries(); track country.uuid) {
+                      <option [value]="country.uuid">{{ country.libelle }}</option>
+                    }
+                  </select>
+                  @if (
+                    locationForm.get('countryUuid')?.invalid &&
+                    locationForm.get('countryUuid')?.touched
+                  ) {
+                    <div class="invalid-feedback">Le pays est requis</div>
+                  }
+                </div>
+
+                <!-- Région -->
+                <div class="form-group">
+                  <label class="form-label">
+                    Région
+                    <i class="fas fa-map ms-1 text-muted"></i>
+                  </label>
+                  <select
+                    class="form-select"
+                    formControlName="regionUuid"
+                    [disabled]="
+                      !isEditing() ||
+                      editingSection() !== 'location' ||
+                      !locationForm.get('countryUuid')?.value ||
+                      regions().length === 0
+                    "
+                    (change)="onRegionChange()"
+                  >
+                    <option value="">
+                      @if (!locationForm.get('countryUuid')?.value) {
+                        — Sélectionnez un pays —
+                      } @else if (regions().length === 0) {
+                        — Aucune région —
+                      } @else {
+                        — Sélectionnez une région —
+                      }
+                    </option>
+                    @for (region of regions(); track region.uuid) {
+                      <option [value]="region.uuid">{{ region.libelle }}</option>
+                    }
+                  </select>
+                </div>
+
+                <!-- Département -->
+                <div class="form-group">
+                  <label class="form-label">
+                    Département
+                    <i class="fas fa-map-pin ms-1 text-muted"></i>
+                  </label>
+                  <select
+                    class="form-select"
+                    formControlName="departmentUuid"
+                    [disabled]="
+                      !isEditing() ||
+                      editingSection() !== 'location' ||
+                      !locationForm.get('regionUuid')?.value ||
+                      departments().length === 0
+                    "
+                  >
+                    <option value="">
+                      @if (!locationForm.get('regionUuid')?.value) {
+                        — Sélectionnez une région —
+                      } @else if (departments().length === 0) {
+                        — Aucun département —
+                      } @else {
+                        — Sélectionnez un département —
+                      }
+                    </option>
+                    @for (department of departments(); track department.uuid) {
+                      <option [value]="department.uuid">{{ department.libelle }}</option>
+                    }
+                  </select>
+                </div>
+              </div>
+
+              <!-- Adresse -->*
+              <div class="geo-grid geo-grid-2">
+                <div class="form-group">
+                  <label class="form-label">
+                    Adresse
+                    <i class="fas fa-map-marker-alt ms-1 text-muted"></i>
+                  </label>
+                  <input
+                    type="text"
+                    class="form-control"
+                    formControlName="adresse"
+                    [readonly]="!isEditing() || editingSection() !== 'location'"
+                    placeholder="Dakar, Sénégal"
+                  />
+                </div>
+
+                <!-- Boîte postale -->
+                <div class="form-group">
+                  <label class="form-label">
+                    Boîte postale
+                    <i class="fas fa-mailbox ms-1 text-muted"></i>
+                  </label>
+                  <input
+                    type="text"
+                    class="form-control"
+                    formControlName="boitePostale"
+                    [readonly]="!isEditing() || editingSection() !== 'location'"
+                    placeholder="1234 Dakar"
+                  />
+                </div>
+              </div>
+
+              <!-- ══ SECTION CONTACT ══ -->
+              <div class="form-section-title mt-3">
+                <i class="fas fa-address-book me-2"></i>Coordonnées
+              </div>
+
+              <!-- Email -->
               <div class="form-group">
                 <label class="form-label">
                   Email <span class="text-danger">*</span>
@@ -297,64 +438,43 @@
                   [readonly]="!isEditing() || editingSection() !== 'location'"
                   placeholder="contact@etablissement.sn"
                 />
+                @if (locationForm.get('email')?.invalid && locationForm.get('email')?.touched) {
+                  <div class="invalid-feedback">Email invalide</div>
+                }
               </div>
 
-              <div class="form-group">
-                <label class="form-label">
-                  Mobile <span class="text-danger">*</span>
-                  <i class="fas fa-mobile-alt ms-1 text-muted"></i>
-                </label>
-                <input
-                  type="text"
-                  class="form-control"
-                  formControlName="mobile"
-                  [readonly]="!isEditing() || editingSection() !== 'location'"
-                  placeholder="+221 77 200 20 02"
-                />
-              </div>
+              <!-- Mobile -->
+              <div class="geo-grid geo-grid-2">
+                <div class="form-group">
+                  <label class="form-label">
+                    Mobile <span class="text-danger">*</span>
+                    <i class="fas fa-mobile-alt ms-1 text-muted"></i>
+                  </label>
+                  <input
+                    type="text"
+                    class="form-control"
+                    formControlName="mobile"
+                    [readonly]="!isEditing() || editingSection() !== 'location'"
+                    placeholder="+221 77 200 20 02"
+                  />
+                </div>
 
-              <div class="form-group">
-                <label class="form-label">
-                  Téléphone fixe
-                  <i class="fas fa-phone ms-1 text-muted"></i>
-                </label>
-                <input
-                  type="text"
-                  class="form-control"
-                  formControlName="telephone"
-                  [readonly]="!isEditing() || editingSection() !== 'location'"
-                  placeholder="+221 33 800 00 00"
-                />
+                <!-- Téléphone fixe -->
+                <div class="form-group">
+                  <label class="form-label">
+                    Téléphone fixe
+                    <i class="fas fa-phone ms-1 text-muted"></i>
+                  </label>
+                  <input
+                    type="text"
+                    class="form-control"
+                    formControlName="telephone"
+                    [readonly]="!isEditing() || editingSection() !== 'location'"
+                    placeholder="+221 33 800 00 00"
+                  />
+                </div>
               </div>
-
-              <div class="form-group">
-                <label class="form-label">
-                  Adresse
-                  <i class="fas fa-map-marker-alt ms-1 text-muted"></i>
-                </label>
-                <input
-                  type="text"
-                  class="form-control"
-                  formControlName="adresse"
-                  [readonly]="!isEditing() || editingSection() !== 'location'"
-                  placeholder="Dakar, Sénégal"
-                />
-              </div>
-
-              <div class="form-group">
-                <label class="form-label">
-                  Boîte postale
-                  <i class="fas fa-mailbox ms-1 text-muted"></i>
-                </label>
-                <input
-                  type="text"
-                  class="form-control"
-                  formControlName="boitePostale"
-                  [readonly]="!isEditing() || editingSection() !== 'location'"
-                  placeholder="1234 Dakar"
-                />
-              </div>
-
+              <!-- Site web -->
               <div class="form-group">
                 <label class="form-label">
                   Site web

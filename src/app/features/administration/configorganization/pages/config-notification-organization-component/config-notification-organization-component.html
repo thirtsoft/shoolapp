@@ -1,1 +1,236 @@
-<p>config-notification-organization-component works!</p>
+<!-- notification-configuration-component.html -->
+<div class="page-wrapper">
+  <div class="content container-fluid">
+
+    <!-- En-tête -->
+    <div class="page-header">
+      <div class="row align-items-center">
+        <div class="col-sm-12">
+          <h3 class="page-title">📧 Configuration des notifications</h3>
+          <p class="text-muted mt-1 mb-0">
+            <i class="fas fa-envelope me-1"></i> Configurez les informations d'envoi de vos emails
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Badge provider -->
+    <div class="row mb-3">
+      <div class="col-sm-12">
+        <div class="badge-container">
+          <span class="badge badge-primary">
+            <i class="fas fa-server me-1"></i>
+            {{ configurationData()?.providerLibelle || 'SMTP' }}
+          </span>
+          @if (configurationData()?.providerCode) {
+            <span class="badge badge-info">
+              <i class="fas fa-tag me-1"></i>{{ configurationData()?.providerCode }}
+            </span>
+          }
+          @if (configurationData()?.active) {
+            <span class="badge badge-success">
+              <i class="fas fa-circle me-1"></i> Active
+            </span>
+          } @else if (configurationData()) {
+            <span class="badge badge-warning">
+              <i class="fas fa-circle me-1"></i> Inactive
+            </span>
+          }
+        </div>
+      </div>
+    </div>
+
+    @if (loading()) {
+      <div class="text-center py-5">
+        <div class="spinner-border text-primary" role="status">
+          <span class="visually-hidden">Chargement...</span>
+        </div>
+        <p class="mt-2 text-muted">Chargement de la configuration...</p>
+      </div>
+    } @else {
+      <div class="card profile-card">
+        <div class="card-body">
+
+          <!-- Info provider par défaut -->
+          <div class="alert-help mb-4" role="alert">
+            <i class="fas fa-info-circle me-2"></i>
+            <span>
+              L'envoi des emails passera par le provider
+              <strong>{{ configurationData()?.providerLibelle || 'SMTP' }}</strong>.
+              Renseignez uniquement les informations d'expédition ci-dessous.
+            </span>
+          </div>
+
+          <form [formGroup]="configurationForm" (ngSubmit)="onSubmit()">
+
+            <div class="form-section-title">
+              <i class="fas fa-paper-plane me-2"></i>Informations d'expédition
+            </div>
+
+            <!-- Nom + Email -->
+            <div class="geo-grid geo-grid-2">
+              <div class="form-group">
+                <label class="form-label">
+                  Nom de l'expéditeur <span class="text-danger">*</span>
+                  <i class="fas fa-user ms-1 text-muted"></i>
+                </label>
+                <input
+                  type="text"
+                  class="form-control"
+                  formControlName="senderName"
+                  [class.is-invalid]="
+                    configurationForm.get('senderName')?.invalid &&
+                    configurationForm.get('senderName')?.touched
+                  "
+                  placeholder="École Les Palmiers"
+                />
+                @if (
+                  configurationForm.get('senderName')?.invalid &&
+                  configurationForm.get('senderName')?.touched
+                ) {
+                  <div class="invalid-feedback">Le nom de l'expéditeur est requis</div>
+                }
+              </div>
+
+              <div class="form-group">
+                <label class="form-label">
+                  Email de l'expéditeur <span class="text-danger">*</span>
+                  <i class="fas fa-envelope ms-1 text-muted"></i>
+                </label>
+                <input
+                  type="email"
+                  class="form-control"
+                  formControlName="senderEmail"
+                  [class.is-invalid]="
+                    configurationForm.get('senderEmail')?.invalid &&
+                    configurationForm.get('senderEmail')?.touched
+                  "
+                  placeholder="contact@ecole.sn"
+                />
+                @if (
+                  configurationForm.get('senderEmail')?.invalid &&
+                  configurationForm.get('senderEmail')?.touched
+                ) {
+                  <div class="invalid-feedback">
+                    @if (configurationForm.get('senderEmail')?.hasError('required')) {
+                      L'email est requis
+                    } @else if (configurationForm.get('senderEmail')?.hasError('email')) {
+                      Email invalide
+                    }
+                  </div>
+                }
+              </div>
+            </div>
+
+            <!-- Téléphone + Reply-to -->
+            <div class="geo-grid geo-grid-2">
+              <div class="form-group">
+                <label class="form-label">
+                  Téléphone expéditeur
+                  <i class="fas fa-phone ms-1 text-muted"></i>
+                </label>
+                <input
+                  type="text"
+                  class="form-control"
+                  formControlName="senderPhone"
+                  placeholder="+221 77 200 20 02"
+                />
+              </div>
+
+              <div class="form-group">
+                <label class="form-label">
+                  Reply-to
+                  <i class="fas fa-reply ms-1 text-muted"></i>
+                </label>
+                <input
+                  type="email"
+                  class="form-control"
+                  formControlName="replyTo"
+                  [class.is-invalid]="
+                    configurationForm.get('replyTo')?.invalid &&
+                    configurationForm.get('replyTo')?.touched
+                  "
+                  placeholder="noreply@ecole.sn"
+                />
+                @if (
+                  configurationForm.get('replyTo')?.invalid &&
+                  configurationForm.get('replyTo')?.touched
+                ) {
+                  <div class="invalid-feedback">Reply-to invalide</div>
+                }
+              </div>
+            </div>
+
+            <!-- Informations en lecture seule -->
+            @if (configurationData()) {
+              <div class="form-section-title mt-3">
+                <i class="fas fa-info-circle me-2"></i>Détails de la configuration
+              </div>
+
+              <div class="security-info">
+                <div class="info-row">
+                  <span class="info-label">Code application</span>
+                  <span class="info-value">
+                    {{ configurationData()?.applicationMetierCode || '—' }}
+                  </span>
+                </div>
+                <div class="info-row">
+                  <span class="info-label">Provider</span>
+                  <span class="info-value">
+                    {{ configurationData()?.providerLibelle || '—' }}
+                    @if (configurationData()?.providerCode) {
+                      <span class="badge badge-info ms-2">
+                        {{ configurationData()?.providerCode }}
+                      </span>
+                    }
+                  </span>
+                </div>
+                <div class="info-row">
+                  <span class="info-label">Configuration par défaut</span>
+                  <span class="info-value">
+                    {{ configurationData()?.defaultConfiguration ? 'Oui' : 'Non' }}
+                  </span>
+                </div>
+              </div>
+            }
+
+            <!-- Actions -->
+            <div class="form-actions">
+              <button
+                type="button"
+                class="btn btn-secondary"
+                (click)="reset()"
+                [disabled]="saving()"
+              >
+                <i class="fas fa-undo me-2"></i>Réinitialiser
+              </button>
+
+              <button
+                type="submit"
+                class="btn btn-primary"
+                [disabled]="configurationForm.invalid || saving()"
+              >
+                @if (saving()) {
+                  <span class="spinner-border spinner-border-sm me-2"></span>
+                  Enregistrement...
+                } @else {
+                  <i class="fas fa-save me-2"></i>
+                  {{ configurationData() ? 'Mettre à jour' : 'Enregistrer' }}
+                }
+              </button>
+            </div>
+          </form>
+
+          <div class="alert-help mt-4" role="alert">
+            <i class="fas fa-shield-alt me-2"></i>
+            <span>
+              Ces informations seront utilisées comme expéditeur pour tous les emails envoyés
+              par votre établissement.
+            </span>
+          </div>
+
+        </div>
+      </div>
+    }
+  </div>
+</div>
