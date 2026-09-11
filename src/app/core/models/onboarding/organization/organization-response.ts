@@ -3,6 +3,9 @@ export interface OrganizationResponse {
   id: number;
   uuid: string;
   tenantUuid: string;
+  countryUuid?: string;
+  regionUuid?: string;
+  departmentUuid?: string;
   code: string;
   libelle: string;
   sigle: string;

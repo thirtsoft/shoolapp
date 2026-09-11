@@ -9,7 +9,7 @@ export const WEBSITE_ROUTES: Routes = [
   {
     path: '',
     component: WebsiteComponent,
-    title: 'Accueil Eduschool',
+    title: 'Accueil Scoolli',
     children: [
 
       {

@@ -1,38 +1,31 @@
 <div class="home-page">
   <header class="site-header" [class.scrolled]="isScrolled">
     <div class="container navbar">
-      <!-- Logo -->
-      <a class="brand" href="#accueil">
-        <div class="brand-icon">
-          <i class="fas fa-graduation-cap"></i>
-        </div>
+      <a class="brand" routerLink="/">
+        <img
+          src="scoolli-logo.png"
+          alt="Scoolli"
+          class="brand-logo"
+          style="width: 130px; height: auto"
+        />
 
-        <div class="brand-text">
-          <span class="brand-name">EduSchool</span>
-          <span class="brand-subtitle">Système de gestion scolaire</span>
-        </div>
+        <div class="brand-text"></div>
       </a>
 
-      <!-- =====================================================
-           NAVIGATION DESKTOP
-           ===================================================== -->
       <nav class="desktop-nav">
         <a href="" class="nav-link active" (click)="scrollToSection('accueil', $event)">Accueil</a>
         <a href="" class="nav-link" (click)="scrollToSection('fonctionnalites', $event)"
           >Fonctionnalités</a
         >
-        <a href="" class="nav-link" (click)="scrollToSection('tarifs', $event)">Tarifs</a>
+        <!--      <a href="" class="nav-link" (click)="scrollToSection('tarifs', $event)">Tarifs</a> -->
         <a href="" class="nav-link" (click)="scrollToSection('temoignages', $event)">Témoignages</a>
 
-        <a href="" class="nav-link" (click)="scrollToSection('ressources', $event)">
+        <!--      <a href="" class="nav-link" (click)="scrollToSection('ressources', $event)">
           Ressources
           <i class="fas fa-chevron-down"></i>
-        </a>
+        </a> -->
       </nav>
 
-      <!-- =====================================================
-           ACTIONS DESKTOP
-           ===================================================== -->
       <div class="navbar-actions">
         <button type="button" class="btn-login" (click)="goToLogin()">Se connecter</button>
 
@@ -42,9 +35,6 @@
         </button>
       </div>
 
-      <!-- =====================================================
-           BOUTON MENU MOBILE
-           ===================================================== -->
       <button
         type="button"
         class="mobile-menu-btn"
@@ -58,9 +48,6 @@
       </button>
     </div>
 
-    <!-- =======================================================
-         MENU MOBILE
-         ======================================================= -->
     @if (mobileMenuOpen) {
       <div class="mobile-menu-overlay" (click)="closeMobileMenu()">
         <nav
@@ -70,17 +57,17 @@
           aria-label="Menu principal"
           (click)="$event.stopPropagation()"
         >
-          <!-- Header du menu -->
           <div class="mobile-menu-header">
             <a class="brand" href="#accueil" (click)="closeMobileMenu()">
-              <div class="brand-icon">
-                <i class="fas fa-graduation-cap"></i>
-              </div>
+              <img
+                src="scoolli-logo.png"
+                alt="Scoolli"
+                class="brand-logo"
+                s
+                style="width: 130px; height: auto"
+              />
 
-              <div class="brand-text">
-                <span class="brand-name">EduSchool</span>
-                <span class="brand-subtitle"> Système de gestion scolaire </span>
-              </div>
+              <div class="brand-text"></div>
             </a>
 
             <button
@@ -93,9 +80,7 @@
             </button>
           </div>
 
-          <!-- Contenu -->
           <div class="mobile-menu-content">
-            <!-- Navigation -->
             <div class="mobile-nav-links">
               <a
                 href=""
@@ -115,23 +100,22 @@
                 <span>Fonctionnalités</span>
               </a>
 
-              <a href="" class="mobile-nav-link" (click)="scrollToSection('tarifs', $event)">
+              <!--         <a href="" class="mobile-nav-link" (click)="scrollToSection('tarifs', $event)">
                 <i class="fas fa-tags"></i>
                 <span>Tarifs</span>
-              </a>
+              </a> -->
 
               <a href="" class="mobile-nav-link" (click)="scrollToSection('temoignages', $event)">
                 <i class="fas fa-star"></i>
                 <span>Témoignages</span>
               </a>
 
-              <a href="" class="mobile-nav-link" (click)="scrollToSection('ressources', $event)">
+              <!--   <a href="" class="mobile-nav-link" (click)="scrollToSection('ressources', $event)">
                 <i class="fas fa-book-open"></i>
                 <span>Ressources</span>
-              </a>
+              </a> -->
             </div>
 
-            <!-- Actions -->
             <div class="mobile-menu-actions">
               <button type="button" class="btn-login mobile-login" (click)="goToLogin()">
                 <i class="fas fa-sign-in-alt"></i>
@@ -149,9 +133,6 @@
     }
   </header>
 
-  <!-- =========================================================
-       HERO
-       ========================================================= -->
   <main>
     <section id="accueil" class="hero-section">
       <div class="hero-background">
@@ -162,7 +143,6 @@
       </div>
 
       <div class="container hero-container">
-        <!-- Contenu -->
         <div class="hero-content">
           <div class="hero-badge">
             <span class="badge-icon">
@@ -179,8 +159,8 @@
           </h1>
 
           <p class="hero-description">
-            EduSchool centralise toutes vos activités scolaires dans une plateforme simple, moderne
-            et pensée pour les établissements d'aujourd'hui.
+            Scoolli centralise toutes vos activités scolaires dans une plateforme simple, moderne et
+            pensée pour les établissements d'aujourd'hui.
           </p>
 
           <div class="hero-actions">
@@ -216,7 +196,6 @@
           </div>
         </div>
 
-        <!-- Dashboard -->
         <div class="hero-visual">
           <div class="dashboard-wrapper">
             <div class="dashboard-card">
@@ -226,7 +205,7 @@
                     <i class="fas fa-graduation-cap"></i>
                   </div>
 
-                  <span>EduSchool</span>
+                  <span>Scoolli</span>
                 </div>
 
                 <div class="dashboard-header-actions">
@@ -397,9 +376,6 @@
       </div>
     </section>
 
-    <!-- =========================================================
-         TRUST
-         ========================================================= -->
     <section class="trust-section">
       <div class="container">
         <p class="trust-title">Une plateforme pensée pour les établissements africains</p>
@@ -422,9 +398,6 @@
       </div>
     </section>
 
-    <!-- =========================================================
-         FEATURES
-         ========================================================= -->
     <section id="fonctionnalites" class="features-section section">
       <div class="container">
         <div class="section-heading">
@@ -464,8 +437,7 @@
       </div>
     </section>
 
-    <!-- ==================== TARIFS ==================== -->
-    <section id="tarifs" class="pricing-section">
+    <!--  <section id="tarifs" class="pricing-section">
       <div class="container">
         <div class="section-header pricing-header">
           <span class="section-badge">
@@ -482,7 +454,6 @@
         </div>
 
         <div class="pricing-grid">
-          <!-- ESSAI -->
           <div class="pricing-card pricing-trial">
             <div class="pricing-card-header">
               <div class="pricing-icon">
@@ -528,7 +499,6 @@
             </button>
           </div>
 
-          <!-- ESSENTIEL -->
           <div class="pricing-card">
             <div class="pricing-card-header">
               <div class="pricing-icon">
@@ -581,7 +551,6 @@
             </button>
           </div>
 
-          <!-- STANDARD -->
           <div class="pricing-card pricing-card-featured">
             <div class="pricing-recommended">
               <i class="fas fa-star"></i>
@@ -639,7 +608,7 @@
             </button>
           </div>
 
-          <!-- PREMIUM -->
+  
           <div class="pricing-card">
             <div class="pricing-card-header">
               <div class="pricing-icon">
@@ -691,6 +660,7 @@
               <i class="fas fa-arrow-right"></i>
             </button>
           </div>
+
         </div>
 
         <div class="pricing-note">
@@ -698,11 +668,8 @@
           <span> Tous les abonnements peuvent commencer par un essai gratuit de 15 jours. </span>
         </div>
       </div>
-    </section>
+    </section> -->
 
-    <!-- =========================================================
-         STATS
-         ========================================================= -->
     <section class="stats-section">
       <div class="container">
         <div class="stats-card">
@@ -724,9 +691,6 @@
       </div>
     </section>
 
-    <!-- =========================================================
-         WHY EDUSCHOOL
-         ========================================================= -->
     <section class="why-section section">
       <div class="container why-container">
         <div class="why-visual">
@@ -774,7 +738,7 @@
         </div>
 
         <div class="why-content">
-          <span class="section-eyebrow"> Pourquoi EduSchool ? </span>
+          <span class="section-eyebrow"> Pourquoi Scoolli ? </span>
 
           <h2>
             Plus qu'un logiciel,
@@ -782,8 +746,8 @@
           </h2>
 
           <p class="why-intro">
-            EduSchool vous aide à reprendre le contrôle de votre établissement en centralisant
-            toutes vos informations dans un seul espace.
+            Scoolli vous aide à reprendre le contrôle de votre établissement en centralisant toutes
+            vos informations dans un seul espace.
           </p>
 
           <div class="why-list">
@@ -834,16 +798,13 @@
           </div>
 
           <button type="button" class="text-button" (click)="startTrial()">
-            Découvrir EduSchool
+            Découvrir Scoolli
             <i class="fas fa-arrow-right"></i>
           </button>
         </div>
       </div>
     </section>
 
-    <!-- =========================================================
-         TESTIMONIALS
-         ========================================================= -->
     <section id="temoignages" class="testimonials-section section">
       <div class="container">
         <div class="section-heading">
@@ -888,9 +849,6 @@
       </div>
     </section>
 
-    <!-- =========================================================
-         CTA
-         ========================================================= -->
     <section class="cta-section">
       <div class="container">
         <div class="cta-card">
@@ -934,23 +892,19 @@
     </section>
   </main>
 
-  <!-- =========================================================
-       FOOTER
-       ========================================================= -->
   <footer id="ressources" class="site-footer">
     <div class="container">
       <div class="footer-main">
         <div class="footer-brand">
           <a class="brand" href="#accueil">
-            <div class="brand-icon">
-              <i class="fas fa-graduation-cap"></i>
-            </div>
+            <img
+              src="scoolli-logo.png"
+              alt="Scoolli"
+              class="brand-logo"
+              style="width: 130px; height: auto"
+            />
 
-            <div class="brand-text">
-              <span class="brand-name"> EduSchool </span>
-
-              <span class="brand-subtitle"> Système de gestion scolaire </span>
-            </div>
+            <div class="brand-text"></div>
           </a>
 
           <p>
@@ -1007,9 +961,9 @@
         <div class="footer-column footer-contact">
           <h3>Nous contacter</h3>
 
-          <a href="mailto:contact@eduschool.sn">
+          <a href="mailto:contact@scoolli.com">
             <i class="far fa-envelope"></i>
-            contact@eduschool.sn
+            contact@scoolli.com
           </a>
 
           <a href="tel:+221771234567">
@@ -1025,7 +979,7 @@
       </div>
 
       <div class="footer-bottom">
-        <span> © 2026 EduSchool. Tous droits réservés. </span>
+        <span> © 2026 Wokite. Tous droits réservés. </span>
 
         <div>
           <a href="#">Mentions légales</a>
@@ -1035,4 +989,3 @@
     </div>
   </footer>
 </div>
-```

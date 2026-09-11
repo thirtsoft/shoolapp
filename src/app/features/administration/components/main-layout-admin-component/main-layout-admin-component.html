@@ -1,6 +1,4 @@
-<!-- main-layout-admin.html -->
 <div class="layout-shell" [class.sidebar-collapsed]="sidebarCollapsed()">
-  <!-- Backdrop mobile -->
   @if (sidebarOpen()) {
     <div class="sidebar-backdrop" (click)="sidebarOpen.set(false)"></div>
   }
@@ -13,9 +11,7 @@
   >
   </app-side-bar-admin-component>
 
-  <!-- ══ ZONE PRINCIPALE ══ -->
   <div class="layout-main">
-    <!-- Topbar -->
     <header class="layout-topbar">
       <div class="lt-left">
         <button class="hamburger" (click)="sidebarOpen.set(true)" aria-label="Menu">
@@ -31,19 +27,43 @@
       </div>
       <div class="lt-right">
         <span class="lt-date">{{ dateAuj }}</span>
-        <div class="lt-user">
-          <div class="lt-ava">A</div>
-          <span class="lt-uname">Mme Diop</span>
+
+        <div class="lt-user" (click)="toggleDropdown($event)">
+          <div class="lt-ava">{{ userInitial || 'U' }}</div>
+          <span class="lt-uname">{{ userLastName || 'Utilisateur' }}</span>
+          <span class="lt-chevron">{{ dropdownOpen() ? '▲' : '▼' }}</span>
+
+          @if (dropdownOpen()) {
+            <div class="dropdown-menu">
+              <div class="dropdown-header">
+                <div class="dropdown-avatar">{{ userInitial || 'U' }}</div>
+                <div class="dropdown-user-info">
+                  <span class="dropdown-name">{{ userFullName || 'Utilisateur' }}</span>
+                  <span class="dropdown-email">{{ userMobile || '+221776532145' }}</span>
+                </div>
+              </div>
+
+              <div class="dropdown-divider"></div>
+
+              @for (item of dropdownItems; track item.action) {
+                <button class="dropdown-item" (click)="handleDropdownAction(item.action)">
+                  <span class="dropdown-item-icon">{{ item.icon }}</span>
+                  <div class="dropdown-item-content">
+                    <span class="dropdown-item-label">{{ item.label }}</span>
+                    <span class="dropdown-item-desc">{{ item.description }}</span>
+                  </div>
+                </button>
+              }
+            </div>
+          }
         </div>
       </div>
     </header>
 
-    <!-- ══ CONTENU ROUTÉ ══ -->
     <div class="layout-content">
       <router-outlet></router-outlet>
     </div>
 
-    <!-- ══ BOTTOM NAV MOBILE ══ -->
     <nav class="bottom-nav">
       @for (item of nav; track item.route) {
         <button class="bn-btn" [class.active]="isActive(item.route)" (click)="naviguer(item.route)">

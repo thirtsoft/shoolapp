@@ -1,3 +1,4 @@
+import { CommonModule } from '@angular/common';
 import { Component, HostListener } from '@angular/core';
 import { Router } from '@angular/router';
 
@@ -24,7 +25,7 @@ interface Testimonial {
 @Component({
   selector: 'app-home-component',
   standalone: true,
-  imports: [],
+  imports: [CommonModule],
   templateUrl: './home-component.html',
   styleUrl: './home-component.scss',
 })
@@ -179,7 +180,7 @@ export class HomeComponent {
   }
 
   requestDemo(): void {
-    this.router.navigate(['/home/demo']);
+    this.router.navigate(['demo']);
   }
 
 }
