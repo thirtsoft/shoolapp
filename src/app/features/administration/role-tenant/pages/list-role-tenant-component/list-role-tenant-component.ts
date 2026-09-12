@@ -1,49 +1,42 @@
 import { Component, inject, OnInit } from '@angular/core';
-import { Router } from '@angular/router';
 import { IFilterConfig } from '../../../../../core/filtered-config/FiltreConfiguration';
-import { GenericTableDossierComponent } from '../../../../../core/generic/generic-table-dossier/generic-table-dossier.component';
-import { OnboardingApiService } from '../../../service/onboarding-api.service';
+import { GenericTableReferentielComponent } from '../../../../../core/generic/generic-table-referentiel/generic-table-referentiel.component';
+import { UtilisateurResourceService } from '../../../utilisateur/service/utilisateur-resource.service';
+
+
 
 @Component({
-  selector: 'app-list-tenant-component',
+  selector: 'app-list-role-tenant-component',
   standalone: true,
-  imports: [GenericTableDossierComponent],
-  templateUrl: './list-tenant-component.html',
-  styleUrl: './list-tenant-component.css',
+  imports: [GenericTableReferentielComponent],
+  templateUrl: './list-role-tenant-component.html',
+  styleUrl: './list-role-tenant-component.css',
 })
-export class ListTenantComponent implements OnInit {
+export class ListRoleTenantComponent implements OnInit {
 
-  errorMessage?: string;
   isEdit: boolean = true;
   isLoading: boolean = false;
-  filteredDataTenant: any;
   isLockable: boolean = true;
   isTable: boolean = true;
-  deleteEndpoint = "tenants";
+  deleteEndpoint = "roles";
   columns: any = [];
-  tenantData: any = [];
-
-  readonly String = String;
+  roleData: any = [];
 
   currentPage = 0;
-  pageSize = 10;
+  pageSize = 5;
   totalElements = 0;
-  tableSizes = [10, 20, 50, 100];
-
+  tableSizes = [5, 10, 20, 50, 100];
   tableFilters: IFilterConfig[] = [];
   activeFilters: any = {};
   hasActiveFilters: boolean = false;
 
-  private readonly router = inject(Router);
-  private readonly api = inject(OnboardingApiService);
-
+  private readonly utilisateurService = inject(UtilisateurResourceService);
 
   ngOnInit(): void {
-    this.chargerLaListeDesTenants();
-
+    this.chargerLesRoles();
   }
 
-  async chargerLaListeDesTenants() {
+  async chargerLesRoles() {
     try {
       await Promise.all([
       ]);
@@ -59,10 +52,10 @@ export class ListTenantComponent implements OnInit {
     this.tableFilters = [
       {
         key: 'libelle',
-        label: 'Libellé',
+        label: 'Libelle',
         type: 'text',
-        placeholder: 'Rechercher un tenant...'
-      }
+        placeholder: 'Rechercher un profil'
+      },
     ];
   }
 
@@ -78,37 +71,33 @@ export class ListTenantComponent implements OnInit {
   chargerLesDonnees(useFilterApi: boolean) {
     this.isLoading = true;
     let apiCall;
+
     if (useFilterApi) {
-      const filtreParam = this.construireLesParametreDeFiltre();
-      apiCall = this.api.fetchFilterByElementDataTable(
-        'tenants',
+
+      const filtreParam = this.construireParametreDeFiltre();
+
+      apiCall = this.utilisateurService.fetchFilterDataTable(
+        'api/platform/security/roles/tenant',
         this.currentPage,
         this.pageSize,
         filtreParam)
+
     } else {
-      apiCall = this.api.getTenantResourcePaged('tenants', this.currentPage, this.pageSize);
+      apiCall = this.utilisateurService.getResourcePaged('api/platform/security/roles/tenant', this.currentPage, this.pageSize);
     }
     apiCall.subscribe({
       next: (response) => {
-        console.log('Data response', response);
-        this.tenantData = response.data?.content || [];
+        this.roleData = response.data?.content || [];
         this.totalElements = response.data?.totalElements || 0;
-
-        console.log('Eleves', this.tenantData)
 
         this.columns = [
           { key: 'code', header: 'Code' },
           { key: 'libelle', header: 'Libellé' },
-          { key: 'mobile', header: 'Mobile' },
-          { key: 'adresse', header: 'Adresse' },
-          { key: 'currencyUuid', header: 'Devise' },
-          { key: 'countryUuid', header: 'Pays' },
-
+          { key: 'description', header: 'Description' },
         ];
-        this.tenantData = this.tenantData?.map((item: any) => ({
+        this.roleData = this.roleData?.map((item: any) => ({
           ...item,
         }));
-        console.log('Data {}', this.tenantData);
         this.isLoading = false;
       },
       error: (error) => {
@@ -118,13 +107,12 @@ export class ListTenantComponent implements OnInit {
     });
   }
 
-  construireLesParametreDeFiltre(): any {
+  construireParametreDeFiltre(): any {
     const filtreObj: any = {};
     if (this.activeFilters.libelle) {
       filtreObj.libelle = this.activeFilters.libelle;
     }
     return Object.keys(filtreObj).length > 0 ? filtreObj : null;
-
   }
 
   get totalPages(): number {
@@ -154,4 +142,6 @@ export class ListTenantComponent implements OnInit {
     this.currentPage = 0;
     this.chargerLesDonnees(false);
   }
+
 }
+

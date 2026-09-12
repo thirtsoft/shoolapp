@@ -108,7 +108,7 @@ export class SideBarAdminComponent {
         { route: '/admin/referentiel/type-documents', ico: '📄', label: 'Types de document' },
 
         // Système
-        { route: '/admin/profils', ico: '🔑', label: 'Profils & Rôles', section: '', badge: '' },
+        { route: '/admin/roles', ico: '🔑', label: 'Rôles', section: '', badge: '' },
         { route: '/admin/utilisateur', ico: '👥', label: 'Utilisateurs' },
         { route: '/admin/referentiel/parametrage', ico: '🔧', label: 'Paramètres établissement' }
 

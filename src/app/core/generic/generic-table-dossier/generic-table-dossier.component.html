@@ -584,17 +584,17 @@
                                   class="icon-button"
                                   aria-label="Toggle Lock"
                                   [title]="
-                                    row.actif === 1 || row.est_valide ? 'Desactiver' : 'Activer'
+                                    row.actif === 1 || row.est_valide || row.recordStatus === 'ACTIVE' ? 'Desactiver' : 'Activer'
                                   "
                                   (click)="
-                                    row.actif === 1 || row.est_valide
+                                    row.actif === 1 || row.est_valide || row.recordStatus === 'ACTIVE'
                                       ? openConfirmationDialog('desactiver', deleteEndPoint, row)
                                       : openConfirmationDialog('activer', deleteEndPoint, row)
                                   "
                                 >
                                   <img
                                     [src]="
-                                      row.actif === 1 || row.est_valide
+                                      row.actif === 1 || row.est_valide || row.recordStatus === 'ACTIVE'
                                         ? 'assets/img/lock.png'
                                         : 'assets/img/unlock.png'
                                     "

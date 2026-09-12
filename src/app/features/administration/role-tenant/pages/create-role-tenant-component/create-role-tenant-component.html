@@ -1,0 +1,394 @@
+<div class="page-wrapper">
+  <div class="content container-fluid">
+    <div class="page-header">
+      <div class="row align-items-center">
+        <div class="col-sm-12">
+          <h3 class="page-title">Créer un rôle</h3>
+
+          <p class="text-muted mt-1 mb-0">
+            <i class="fas fa-user-shield me-1"></i>
+            Gestion des rôles et des permissions
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <div class="row mb-3">
+      <div class="col-sm-12">
+        <div class="badge-container">
+          <span class="badge badge-primary">
+            <i class="fas fa-plus-circle me-1"></i>
+
+            Nouveau rôle
+          </span>
+        </div>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-12">
+        <div class="card">
+          <div class="card-body p-4 p-md-5">
+            <!-- STEPS -->
+            <div class="step-indicator mb-4">
+              <button
+                type="button"
+                class="btn btn-outline-secondary back-button"
+                (click)="goBack()"
+              >
+                <i class="fas fa-arrow-left"></i>
+                Retour
+              </button>
+
+              <div
+                class="step"
+                [class.active]="currentStep === 1"
+                [class.completed]="currentStep > 1"
+              >
+                <span class="step-number">
+                  @if (currentStep > 1) {
+                    <i class="fas fa-check"></i>
+                  } @else {
+                    1
+                  }
+                </span>
+
+                <span class="step-label"> Informations </span>
+              </div>
+
+              <div class="step-line"></div>
+
+              <div class="step" [class.active]="currentStep === 2">
+                <span class="step-number"> 2 </span>
+
+                <span class="step-label"> Permissions </span>
+              </div>
+            </div>
+
+            <form [formGroup]="roleForm" novalidate>
+              <!-- ================================================= -->
+              <!-- STEP 1 -->
+              <!-- ================================================= -->
+
+              @if (currentStep === 1) {
+                <div class="enseignement-item">
+                  <div class="section-title">
+                    <i class="fas fa-user-shield me-2"></i>
+                    Informations du rôle
+                  </div>
+
+                  <div class="row form-row">
+                    <!-- LIBELLE -->
+                    <div class="col-lg-6 col-sm-12">
+                      <div class="form-group">
+                        <label class="form-label">
+                          Libellé
+                          <span class="text-danger">*</span>
+
+                          <i class="fas fa-tag ms-1 text-muted"></i>
+                        </label>
+
+                        <input
+                          type="text"
+                          class="form-control"
+                          formControlName="libelle"
+                          [class.is-invalid]="isFieldInvalid('libelle')"
+                          placeholder="Ex : Responsable pédagogique"
+                          maxlength="120"
+                        />
+
+                        @if (isFieldInvalid('libelle')) {
+                          <div class="invalid-feedback">
+                            <i class="fas fa-exclamation-circle me-1"></i>
+
+                            {{ getFieldErrorMessage('libelle') }}
+                          </div>
+                        }
+                      </div>
+                    </div>
+
+                    <!-- CODE -->
+                    <div class="col-lg-6 col-sm-12">
+                      <div class="form-group">
+                        <label class="form-label">
+                          Code
+                          <span class="text-danger">*</span>
+
+                          <i class="fas fa-code ms-1 text-muted"></i>
+                        </label>
+
+                        <input
+                          type="text"
+                          class="form-control role-code"
+                          formControlName="code"
+                          [class.is-invalid]="isFieldInvalid('code')"
+                          placeholder="Ex : RESPONSABLE_PEDAGO"
+                          maxlength="30"
+                        />
+
+                        @if (isFieldInvalid('code')) {
+                          <div class="invalid-feedback">
+                            <i class="fas fa-exclamation-circle me-1"></i>
+
+                            {{ getFieldErrorMessage('code') }}
+                          </div>
+                        }
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- DESCRIPTION -->
+                  <div class="row form-row">
+                    <div class="col-12">
+                      <div class="form-group">
+                        <label class="form-label">
+                          Description
+
+                          <i class="fas fa-align-left ms-1 text-muted"></i>
+                        </label>
+
+                        <textarea
+                          class="form-control"
+                          formControlName="description"
+                          [class.is-invalid]="isFieldInvalid('description')"
+                          placeholder="Décrivez les responsabilités associées à ce rôle..."
+                          maxlength="500"
+                          rows="4"
+                        ></textarea>
+
+                        @if (isFieldInvalid('description')) {
+                          <div class="invalid-feedback">
+                            <i class="fas fa-exclamation-circle me-1"></i>
+
+                            {{ getFieldErrorMessage('description') }}
+                          </div>
+                        }
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="alert-help">
+                    <i class="fas fa-info-circle"></i>
+
+                    <span>
+                      Le rôle sera créé comme rôle personnalisé pour votre établissement. Vous
+                      pourrez ensuite lui attribuer uniquement les permissions disponibles pour
+                      votre niveau d'accès.
+                    </span>
+                  </div>
+                </div>
+
+                <div class="form-actions">
+                  <button type="button" class="btn btn-secondary btn-lg" (click)="goBack()">
+                    <i class="fas fa-times me-2"></i>
+                    Annuler
+                  </button>
+
+                  <button
+                    type="button"
+                    class="btn btn-primary btn-lg"
+                    [disabled]="roleForm.invalid"
+                    (click)="goToPermissions()"
+                  >
+                    <i class="fas fa-arrow-right me-2"></i>
+                    Continuer
+                  </button>
+                </div>
+              }
+
+              <!-- ================================================= -->
+              <!-- STEP 2 -->
+              <!-- ================================================= -->
+
+              @if (currentStep === 2) {
+                <div class="enseignement-item">
+                  <div class="section-title">
+                    <i class="fas fa-key me-2"></i>
+
+                    Permissions du rôle
+                  </div>
+
+                  <div class="permission-intro">
+                    <div>
+                      <strong> Sélectionnez les permissions </strong>
+
+                      <p>
+                        Choisissez les actions que les utilisateurs possédant ce rôle pourront
+                        effectuer.
+                      </p>
+                    </div>
+
+                    <span class="permission-counter">
+                      <i class="fas fa-check-circle me-1"></i>
+
+                      {{ selectedPermissionCount }}
+                      permission(s)
+                    </span>
+                  </div>
+
+                  @if (loadingPermissions) {
+                    <div class="loading-container">
+                      <div class="spinner-border" role="status"></div>
+
+                      <span> Chargement des permissions... </span>
+                    </div>
+                  }
+
+                  @if (!loadingPermissions) {
+                    <div class="permission-groups">
+                      @for (group of permissionGroups; track group.moduleUid) {
+                        <div class="permission-module">
+                          <!-- MODULE HEADER -->
+                          <div class="module-header">
+                            <div class="module-title">
+                              <div class="module-icon">
+                                @if (group.moduleIcon) {
+                                  <i [class]="group.moduleIcon"></i>
+                                } @else {
+                                  <i class="fas fa-folder"></i>
+                                }
+                              </div>
+
+                              <div>
+                                <h5>
+                                  {{ group.moduleLibelle }}
+                                </h5>
+
+                                <small>
+                                  {{ group.permissions.length }}
+                                  permission(s)
+                                </small>
+                              </div>
+                            </div>
+
+                            <button
+                              type="button"
+                              class="select-module-button"
+                              (click)="toggleModule(group)"
+                            >
+                              @if (isModuleFullySelected(group)) {
+                                <i class="fas fa-check-square me-1"></i>
+
+                                Tout désélectionner
+                              } @else {
+                                <i class="far fa-square me-1"></i>
+
+                                Tout sélectionner
+                              }
+                            </button>
+                          </div>
+
+                          <!-- PERMISSIONS -->
+                          <div class="permissions-list">
+                            @for (permission of group.permissions; track permission.uuid) {
+                              <label
+                                class="permission-item"
+                                [class.selected]="isPermissionSelected(permission.uuid)"
+                              >
+                                <input
+                                  type="checkbox"
+                                  [checked]="isPermissionSelected(permission.uuid)"
+                                  (change)="
+                                    selectPermission(permission, $any($event.target).checked)
+                                  "
+                                />
+
+                                <span class="custom-checkbox">
+                                  @if (isPermissionSelected(permission.uuid)) {
+                                    <i class="fas fa-check"></i>
+                                  }
+                                </span>
+
+                                <span class="permission-content">
+                                  <span class="permission-label">
+                                    {{ permission.libelle }}
+                                  </span>
+
+                                  <span class="permission-code">
+                                    {{ permission.code }}
+                                  </span>
+                                </span>
+                              </label>
+                            }
+                          </div>
+                        </div>
+                      }
+                    </div>
+                  }
+
+                  @if (!loadingPermissions && permissionGroups.length === 0) {
+                    <div class="empty-permissions">
+                      <i class="fas fa-key"></i>
+
+                      <h5>Aucune permission disponible</h5>
+
+                      <p>Aucune permission ne peut être attribuée à votre niveau d'accès.</p>
+                    </div>
+                  }
+
+                  @if (errorMessage) {
+                    <div class="alert alert-danger mt-3">
+                      <i class="fas fa-exclamation-triangle me-2"></i>
+
+                      {{ errorMessage }}
+                    </div>
+                  }
+
+                  @if (successMessage) {
+                    <div class="alert alert-success mt-3">
+                      <i class="fas fa-check-circle me-2"></i>
+
+                      {{ successMessage }}
+                    </div>
+                  }
+                </div>
+
+                <!-- ACTIONS -->
+
+                <div class="form-actions">
+                  <button
+                    type="button"
+                    class="btn btn-secondary btn-lg"
+                    (click)="goBackToInformation()"
+                    [disabled]="saving"
+                  >
+                    <i class="fas fa-arrow-left me-2"></i>
+
+                    Retour
+                  </button>
+
+                  <button
+                    type="button"
+                    class="btn btn-primary btn-lg"
+                    [disabled]="saving || roleForm.invalid || selectedPermissionCount === 0"
+                    (click)="submit()"
+                  >
+                    @if (saving) {
+                      <span class="spinner-border spinner-border-sm me-2"></span>
+
+                      Enregistrement...
+                    } @else {
+                      <i class="fas fa-save me-2"></i>
+
+                      Enregistrer le rôle
+                    }
+                  </button>
+                </div>
+              }
+
+              <div class="alert alert-info mt-4 animate-fadeIn">
+                <i class="fas fa-info-circle me-2"></i>
+
+                <span>
+                  Les permissions proposées correspondent aux permissions que votre niveau d'accès
+                  vous autorise à déléguer. Le serveur vérifie également ces droits lors de la
+                  création du rôle.
+                </span>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

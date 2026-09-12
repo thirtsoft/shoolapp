@@ -1,6 +1,6 @@
 <app-generic-table-dossier
-  title="Liste des tenants"
-  titleFitre="Eleve"
+  title="Liste des clients SaaS"
+  titleFitre="Tenant"
   [tableColumns]="columns"
   [tableData]="tenantData"
   [isLoading]="isLoading"
@@ -19,7 +19,7 @@
   [showFilters]="true"
   (resetFilters)="resetFilters()"
   (sizeChange)="changeSize($event)"
-  addButtonLink="/admin/onboarding/start"
-  detailButtonLink="/admin/dossier-eleve/eleve/details"
+  addButtonLink="/saas-management/onboarding/start"
+  detailButtonLink="/saas-management/onboarding/details"
 >
 </app-generic-table-dossier>
