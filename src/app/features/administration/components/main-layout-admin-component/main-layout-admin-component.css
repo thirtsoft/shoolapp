@@ -279,17 +279,18 @@
 .layout-shell>app-side-bar-admin-component {
   height: 100%;
   overflow: hidden;
-  /* Pour le mobile, la sidebar est en fixed, donc pas besoin de cette règle */
 }
 
 @media (max-width: 768px) {
   .layout-shell>app-side-bar-admin-component {
-    height: auto;
+    position: fixed;
+    width: 0;
+    height: 0;
     overflow: visible;
+    z-index: 300;
   }
 }
 
-/* main-layout-admin-component.css - Ajouts pour le dropdown */
 
 /* ── User avec dropdown ────────────────────────────────────── */
 .lt-user {
