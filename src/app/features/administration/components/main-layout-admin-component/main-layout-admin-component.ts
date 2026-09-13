@@ -28,17 +28,18 @@ export class MainLayoutAdminComponent implements OnInit {
 
   nav: NavItem[] = [
     { route: '/admin/dashboard', ico: '📊', label: 'Tableau de bord' },
-    { route: '/admin/eleves', ico: '🎒', label: 'Élèves', badge: '1 200' },
-    { route: '/admin/inscriptions', ico: '📝', label: 'Inscriptions' },
-    { route: '/admin/parents', ico: '👪', label: 'Parents' },
-    { route: '/admin/classes', ico: '🏫', label: 'Classes' },
-    { route: '/admin/enseignants', ico: '👨‍🏫', label: 'Enseignants', badge: '85' },
-    { route: '/admin/bulletins', ico: '📋', label: 'Bulletins' },
-    { route: '/admin/emplois-temps', ico: '🕐', label: 'Emplois du temps' },
-    { route: '/admin/factures', ico: '💰', label: 'Factures' },
-    { route: '/admin/comptabilite', ico: '💼', label: 'Comptabilité' },
-    { route: '/admin/messagerie', ico: '✉️', label: 'Messagerie' },
-    { route: '/admin/parametres', ico: '⚙️', label: 'Paramètres' },
+    { route: '/admin/dossier-eleve/eleves', ico: '🎒', label: 'Élèves', badge: '' },
+    { route: '/admin/dossier-eleve/inscriptions', ico: '📝', label: 'Inscriptions' },
+    /*     { route: '/admin/parents', ico: '👪', label: 'Parents' },
+        { route: '/admin/classes', ico: '🏫', label: 'Classes' }, */
+    { route: '/admin/comptabilite/factures', ico: '💰', label: 'Factures' },
+    { route: '/admin/planification/enseignement', ico: '👨‍🏫', label: 'Cours', badge: '85' },
+    { route: '/admin/dossier-eleve/bulletins', ico: '📋', label: 'Bulletins' },
+    { route: '/admin/planification/emploi-du-temps', ico: '🕐', label: 'Emplois' },
+
+    /* { route: '/admin/comptabilite', ico: '💼', label: 'Comptabilité' },
+       { route: '/admin/messagerie', ico: '✉️', label: 'Messagerie' },
+      { route: '/admin/parametres', ico: '⚙️', label: 'Paramètres' }, */
   ];
 
 

@@ -1,7 +1,7 @@
-import { Component, inject, input, output, signal } from '@angular/core';
+import { Component, HostListener, inject, input, output, signal } from '@angular/core';
 import { Router } from '@angular/router';
-import { LocalStorageService } from '../../../../core/services/local-storage.service';
 import { NavItemChildren } from '../../../../core/components/sidebar-navbar-models/nav-item-children.model';
+import { LocalStorageService } from '../../../../core/services/local-storage.service';
 
 /*
 interface NavItem {
@@ -28,6 +28,13 @@ export class SideBarAdminComponent {
   toggleCollapse = output<void>();
   close = output<void>();
 
+  isMobile = signal<boolean>(window.innerWidth <= 768);
+
+  @HostListener('window:resize')
+  onResize(): void {
+    this.isMobile.set(window.innerWidth <= 768);
+  }
+
   readonly router = inject(Router);
   readonly localStorage = inject(LocalStorageService);
 
@@ -36,10 +43,6 @@ export class SideBarAdminComponent {
   nav: NavItemChildren[] = [
     { route: '/admin/dashboard', ico: '📊', label: 'Tableau de bord', section: '', badge: '' },
 
-    // ONBOARDING
-/*     { route: '/admin/onboarding/tenant', ico: '💰', label: 'Tenants', section: 'ONBOARDING', badge: '18' },
-    { route: '/admin/onboarding/process', ico: '💳', label: 'Onboarding process', section: '', badge: '' },
- */
     // FINANCES
     { route: '/admin/comptabilite/facture', ico: '💰', label: 'Factures', section: 'FINANCES', badge: '18' },
     { route: '/admin/comptabilite/paiement', ico: '💳', label: 'Paiements', section: '', badge: '' },
@@ -164,6 +167,13 @@ export class SideBarAdminComponent {
   deconnecter(): void {
     this.localStorage.clear();
     this.router.navigate(['/auth/login/v2']);
+  }
 
+  onToggleClick(): void {
+    if (this.isMobile()) {
+      this.close.emit();
+    } else {
+      this.toggleCollapse.emit();
+    }
   }
 }

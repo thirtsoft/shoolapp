@@ -1,28 +1,42 @@
-
 <div class="sidebar" [class.collapsed]="collapsed()" [class.drawer-open]="open()">
   <!-- Brand -->
   <div class="sb-brand">
-    <div class="sb-logo">🎓</div>
+    <!--  <div class="sb-logo">🎓</div> -->
+    <img
+      src="scoolli-logo.png"
+      alt="Scoolli"
+      class="brand-logo"
+      style="width: 100px; height: auto"
+    />
     <div class="sb-brand-text">
-      <span class="sb-name">EduSchool</span>
+      <span class="sb-name">Scoolli</span>
       <span class="sb-sub">Administration</span>
     </div>
-    <button class="sb-toggle" (click)="toggleCollapse.emit()" title="Réduire">
+    <!-- <button class="sb-toggle" (click)="toggleCollapse.emit()" title="Réduire">
       {{ collapsed() ? '→' : '←' }}
+    </button> -->
+
+    <button
+      class="sb-toggle"
+      (click)="onToggleClick()"
+      [title]="isMobile() ? 'Fermer' : collapsed() ? 'Étendre' : 'Réduire'"
+    >
+      @if (isMobile()) {
+        ✕
+      } @else {
+        {{ collapsed() ? '→' : '←' }}
+      }
     </button>
   </div>
 
-  <!-- Navigation -->
   <nav class="sb-nav">
     @for (item of nav; track item.label; let i = $index) {
-      <!-- Section header -->
       @if (item.section) {
         <div class="sb-section">
           <span class="sb-section-title">{{ item.section }}</span>
         </div>
       }
 
-      <!-- Item simple (sans enfants) -->
       @if (!hasChildren(item)) {
         <button
           class="sb-item"
@@ -38,7 +52,6 @@
         </button>
       }
 
-      <!-- Item dropdown (avec enfants) -->
       @if (hasChildren(item)) {
         <div class="sb-dropdown-group">
           <button
@@ -53,7 +66,6 @@
             <span class="sb-chevron">{{ isExpanded(item.label) ? '▾' : '▸' }}</span>
           </button>
 
-          <!-- Sous-menu -->
           @if (isExpanded(item.label)) {
             <div class="sb-submenu">
               @for (child of item.children; track child.label) {
@@ -74,7 +86,6 @@
     }
   </nav>
 
-  <!-- Footer — Déconnexion -->
   <div class="sb-footer">
     <button class="sb-deconnexion" (click)="deconnecter()">
       <span class="sb-ico">🚪</span>
