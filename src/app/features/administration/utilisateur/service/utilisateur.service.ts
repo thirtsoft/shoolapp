@@ -13,6 +13,8 @@ import { ResponseMessage } from '../../../../core/response/response-message';
 export class UtilisateurService {
 
   baseUrl_1 = environment.apiBaseUrl;
+  userUrl = this.baseUrl_1 + '/api/users';
+
   httpOptions = {
     headers: new HttpHeaders({
       'Accept': 'application/json',

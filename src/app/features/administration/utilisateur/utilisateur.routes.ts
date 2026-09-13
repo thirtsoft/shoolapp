@@ -12,6 +12,8 @@ import { DetailsEnseignantComponent } from './pages/enseignant/details-enseignan
 import { ListEnseignantComponent } from './pages/enseignant/list-enseignant/list-enseignant.component';
 import { MonProfilComponent } from './pages/mon-profil/mon-profil.component';
 import { UtilisateurComponent } from './utilisateur.component';
+import { ListUtilisateurComponent } from './pages/list-utilisateur/list-utilisateur.component';
+import { SuccessUserCreateComponent } from './pages/success-user-create-component/success-user-create-component';
 
 
 export const UTILISATEURS_ROUTES: Routes = [
@@ -19,20 +21,16 @@ export const UTILISATEURS_ROUTES: Routes = [
     path: '',
     component: UtilisateurComponent,
     children: [
-
       {
         path: '',
-        loadComponent: () =>
-          import('./pages/list-utilisateur/list-utilisateur.component')
-            .then(m => m.ListUtilisateurComponent),
-        title: 'List — Utilisateur',
+        component: ListUtilisateurComponent
       },
       {
         path: 'create',
         component: CreateUtilisateurComponent
       },
       {
-        path: 'edit/:id',
+        path: 'edit/:userUuid',
         component: CreateUtilisateurComponent
       },
 
@@ -93,6 +91,11 @@ export const UTILISATEURS_ROUTES: Routes = [
       {
         path: 'change-password',
         component: ChangerPasswordUtilisateurComponent
+      },
+
+      {
+        path: 'success-creation',
+        component: SuccessUserCreateComponent
       },
 
 

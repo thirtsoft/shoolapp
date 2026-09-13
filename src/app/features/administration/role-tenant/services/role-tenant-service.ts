@@ -8,15 +8,18 @@ import { RoleCreateRequest } from '../../../../core/models/role/role-create-requ
 import { ApiResponse } from '../../../../core/datamodel/api-response.model';
 import { RoleResponse } from '../../../../core/models/role/role-response.model';
 import { RoleUpdateRequest } from '../../../../core/models/role/role-update-request.model';
+import { RolesResponse } from '../../../../core/models/role/roles-response.model';
 
 @Injectable({
   providedIn: 'root'
 })
 export class RoleTenantService {
 
-  baseUrl_1 = environment.apiBaseUrl;
-  permissionUrl = this.baseUrl_1 + '/api/security/permissions';
-  roleUrl = this.baseUrl_1 + '/api/platform/security/roles';
+  private readonly baseUrl = environment.apiBaseUrl;
+  
+  private readonly permissionUrl = `${this.baseUrl}/api/security/permissions`;
+
+  private readonly roleUrl = `${this.baseUrl}/api/platform/security/roles`;
 
   constructor(private readonly http: HttpClient) { }
 
@@ -26,6 +29,10 @@ export class RoleTenantService {
 
   getPermissionByUuid(): Observable<ApiResponse<RoleResponse>> {
     return this.http.get<ApiResponse<RoleResponse>>(`${this.permissionUrl}/grouped`);
+  }
+
+  getAssignableRoles(): Observable<RolesResponse[]> {
+    return this.http.get<RolesResponse[]>(`${this.roleUrl}`);
   }
 
   createRole(info: RoleCreateRequest): Observable<RoleCreateResponse> {

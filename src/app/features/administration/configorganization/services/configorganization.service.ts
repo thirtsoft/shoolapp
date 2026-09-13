@@ -48,6 +48,11 @@ export class ConfigOrganizationService {
     return this.http.post<ApiResponse<NotificationConfigurationResponse>>(`${this.notificationConfigurationUrl}/configurations/${tenantUuid}`, value);
   }
 
+  createDefaultNotificationConfiguration(value: NotificationConfigurationUpdateRequest): Observable<void> {
+    return this.http.post<void>(`${this.notificationConfigurationUrl}/configurations/default`, value);
+  }
+
+
   /*
 
   createUtilisateur(info: Utilisateur) {

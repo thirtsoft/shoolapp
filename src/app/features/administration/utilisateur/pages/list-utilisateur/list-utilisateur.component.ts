@@ -2,10 +2,10 @@ import { Component, inject, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { IFilterConfig } from '../../../../../core/filtered-config/FiltreConfiguration';
-import { UtilisateurResourceService } from '../../service/utilisateur-resource.service';
 import { GenericTableReferentielComponent } from '../../../../../core/generic/generic-table-referentiel/generic-table-referentiel.component';
-import { ProfilageService } from '../../../profil/service/profilage.service';
 import { LocalStorageService } from '../../../../../core/services/local-storage.service';
+import { ProfilageService } from '../../../profil/service/profilage.service';
+import { UtilisateurResourceService } from '../../service/utilisateur-resource.service';
 
 @Component({
   selector: 'app-list-utilisateur',
@@ -120,26 +120,22 @@ export class ListUtilisateurComponent implements OnInit {
       const filtreParam = this.construireParametreDeFiltre();
 
       apiCall = this.utilisateurService.fetchFilterDataTable(
-        'utilisateur',
+        'api/users',
         this.currentPage,
         this.pageSize,
         filtreParam)
 
     } else {
-      apiCall = this.utilisateurService.getResourcePaged('utilisateur', this.currentPage, this.pageSize);
+      apiCall = this.utilisateurService.getResourcePaged('api/users', this.currentPage, this.pageSize);
     }
     apiCall.subscribe({
       next: (response) => {
         this.utilisateurData = response.data?.content || [];
         this.totalElements = response.data?.totalElements || 0;
         this.columns = [
-          { key: 'civility', header: 'Civilité' },
-          { key: 'nomComplet', header: 'Nom complet' },
-          { key: 'adress', header: 'Adresse' },
-          { key: 'telephone', header: 'Téléphone' },
+          { key: 'fullName', header: 'Nom complet' },
+          { key: 'mobile', header: 'Téléphone' },
           { key: 'email', header: 'Email' },
-          { key: 'profil', header: 'Profile' },
-          { key: 'username', header: 'Nom utilisateur' },
 
         ];
         this.utilisateurData = this.utilisateurData?.map((item: any) => ({
