@@ -1,15 +1,15 @@
-<app-generic-table-dossier
-  title="Liste des onboarding"
-  titleFitre="Eleve"
+<app-generic-table-referentiel
+  title="Liste des roles"
+  titleFitre="Roles"
   [tableColumns]="columns"
-  [tableData]="processData"
-  [isLoading]="isLoading"
-  [isEyesIcon]="true"
-  [isLockableIcon]="isLockable"
+  [tableData]="roleData"
   [tableSizes]="tableSizes"
   [totalElements]="totalElements"
   [currentPage]="currentPage"
   [pageSize]="pageSize"
+  [isLoading]="isLoading"
+  [isEditIcon]="isEdit"
+  [isLockableIcon]="isLockable"
   (pageChange)="changePage($event)"
   [deleteEndPoint]="deleteEndpoint"
   [showSearch]="false"
@@ -18,8 +18,7 @@
   [showFilters]="true"
   (resetFilters)="resetFilters()"
   (sizeChange)="changeSize($event)"
-
-    addButtonLink="/saas-management/onboarding/start"
-  detailButtonLink="/saas-management/onboarding/details"
+  addButtonLink="/admin/roles/create"
+  modifierButtonLink="/admin/roles/edit"
 >
-</app-generic-table-dossier>
+</app-generic-table-referentiel>

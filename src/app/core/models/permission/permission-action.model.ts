@@ -1,0 +1,144 @@
+
+export enum PermissionAction {
+  CREATE,
+
+  READ,
+
+  UPDATE,
+
+  VIEW,
+
+  SEARCH,
+
+  DELETE,
+
+  EXPORT,
+
+  IMPORT,
+
+  APPROVE,
+
+  VALIDATE,
+
+  CANCEL,
+
+  PRINT,
+
+  ACTIVATE,
+
+  DEACTIVATE,
+
+  ARCHIVED,
+
+  ACCEPTED,
+
+  REJECTED,
+
+  NOTIFICATION,
+
+  SEND,
+
+  SUBMIT,
+
+  GRADE,
+
+  LOCK,
+
+  UNLOCK,
+
+  TRANSFER,
+
+  PROMOTE,
+
+  REPEAT,
+
+  JUSTIFY,
+
+  EXCUSE,
+
+  UNEXCUS,
+
+  SANCTION,
+
+  OBSERVE,
+
+  INVOICE,
+
+  PAY,
+
+  REFUND,
+
+  REMIND,
+
+  SCHEDULE,
+
+  RESCHEDULE,
+
+  BOOK,
+
+  RELEASE,
+
+  PUBLISH,
+
+  UNPUBLISH,
+
+  HIDE,
+
+  RETRACT,
+
+  DRAFT,
+
+  RSVP,
+
+  INVITE,
+
+  ORDER,
+
+  TOP_UP,
+
+  MENU,
+
+  AUDIT,
+
+  ANONYMIZE,
+
+  BORROW,
+
+  RETURN,
+
+  RESERVE,
+
+  EXTEND,
+
+  UPLOAD,
+
+  DOWNLOAD,
+
+  OPEN,
+
+  CLOSE,
+
+  REPORTED,
+
+  REMOVE,
+
+  PAID,
+
+  PARTIAL_PAY,
+
+  INSTALLMENT,
+
+  WRITE_OFF,
+
+  PENALTY,
+
+  WAIVE,
+
+  ORGANIZE,
+
+  PLAN,
+
+  REQUEST,
+
+  AUTHORIZE,
+}

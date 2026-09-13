@@ -1,33 +1,26 @@
 import { Component, inject, OnInit } from '@angular/core';
-import { Router } from '@angular/router';
-import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { IFilterConfig } from '../../../../../core/filtered-config/FiltreConfiguration';
 import { GenericTableReferentielComponent } from '../../../../../core/generic/generic-table-referentiel/generic-table-referentiel.component';
-import { LocalStorageService } from '../../../../../core/services/local-storage.service';
-import { ProfilageService } from '../../../profil/service/profilage.service';
-import { UtilisateurResourceService } from '../../service/utilisateur-resource.service';
+import { UtilisateurResourceService } from '../../../utilisateur/service/utilisateur-resource.service';
+
+
 
 @Component({
-  selector: 'app-list-utilisateur',
+  selector: 'app-list-role-tenant-component',
   standalone: true,
   imports: [GenericTableReferentielComponent],
-  templateUrl: './list-utilisateur.component.html',
-  styleUrls: ['./list-utilisateur.component.css']
+  templateUrl: './list-role-tenant-component.html',
+  styleUrl: './list-role-tenant-component.css',
 })
-export class ListUtilisateurComponent implements OnInit {
+export class ListRoleTenantComponent implements OnInit {
 
-  errorMessage?: string;
-  today = new Date();
-  eleveId?: number | null;
   isEdit: boolean = true;
   isLoading: boolean = false;
-  filteredDataUtilisateur: any;
   isLockable: boolean = true;
   isTable: boolean = true;
-  deleteEndpoint = "utilisateur";
+  deleteEndpoint = "roles";
   columns: any = [];
-  utilisateurData: any = [];
-  readonly String = String;
+  roleData: any = [];
 
   currentPage = 0;
   pageSize = 5;
@@ -37,23 +30,15 @@ export class ListUtilisateurComponent implements OnInit {
   activeFilters: any = {};
   hasActiveFilters: boolean = false;
 
-  profilList: any[] = [];
-
   private readonly utilisateurService = inject(UtilisateurResourceService);
-  private readonly profileService = inject(ProfilageService);
-  private readonly localStorage = inject(LocalStorageService);
-  private readonly modalService = inject(NgbModal);
-  private readonly ngbModelService = inject(NgbModal);
-  private readonly router = inject(Router);
 
   ngOnInit(): void {
-    this.chargerLesUtilisateurs();
+    this.chargerLesRoles();
   }
 
-  async chargerLesUtilisateurs() {
+  async chargerLesRoles() {
     try {
       await Promise.all([
-        //     this.getProfileListt()
       ]);
 
       this.initialisationDesFiltres();
@@ -63,41 +48,13 @@ export class ListUtilisateurComponent implements OnInit {
     }
   }
 
-  /*
-  getProfileListt(): Promise<Profil[]> {
-    return new Promise((resolve, reject) => {
-      this.profileService.getProfilesAgents().subscribe({
-        next: (data) => {
-          this.profilList = data;
-          resolve(data);
-        },
-        error: (err) => reject(err)
-      });
-    });
-  }*/
-
   initialisationDesFiltres() {
     this.tableFilters = [
       {
-        key: 'nomPrenom',
-        label: 'Nom/Prénom',
+        key: 'libelle',
+        label: 'Libelle',
         type: 'text',
-        placeholder: 'Rechercher un nom/prénom...'
-      },
-      {
-        key: 'telephone',
-        label: 'Téléphone',
-        type: 'text',
-        placeholder: 'Rechercher par téléphone...'
-      },
-      {
-        key: 'profile',
-        label: 'Profile',
-        type: 'select',
-        options: this.profilList.map(p => ({
-          value: p.id,
-          label: p.libelle
-        })),
+        placeholder: 'Rechercher un profil'
       },
     ];
   }
@@ -120,25 +77,25 @@ export class ListUtilisateurComponent implements OnInit {
       const filtreParam = this.construireParametreDeFiltre();
 
       apiCall = this.utilisateurService.fetchFilterDataTable(
-        'api/users',
+        'api/platform/security/roles/tenant',
         this.currentPage,
         this.pageSize,
         filtreParam)
 
     } else {
-      apiCall = this.utilisateurService.getResourcePaged('api/users', this.currentPage, this.pageSize);
+      apiCall = this.utilisateurService.getResourcePaged('api/platform/security/roles/tenant', this.currentPage, this.pageSize);
     }
     apiCall.subscribe({
       next: (response) => {
-        this.utilisateurData = response.data?.content || [];
+        this.roleData = response.data?.content || [];
         this.totalElements = response.data?.totalElements || 0;
-        this.columns = [
-          { key: 'fullName', header: 'Nom complet' },
-          { key: 'mobile', header: 'Téléphone' },
-          { key: 'email', header: 'Email' },
 
+        this.columns = [
+          { key: 'code', header: 'Code' },
+          { key: 'libelle', header: 'Libellé' },
+          { key: 'description', header: 'Description' },
         ];
-        this.utilisateurData = this.utilisateurData?.map((item: any) => ({
+        this.roleData = this.roleData?.map((item: any) => ({
           ...item,
         }));
         this.isLoading = false;
@@ -152,15 +109,8 @@ export class ListUtilisateurComponent implements OnInit {
 
   construireParametreDeFiltre(): any {
     const filtreObj: any = {};
-
-    if (this.activeFilters.nomPrenom) {
-      filtreObj.nomPrenom = this.activeFilters.nomPrenom;
-    }
-    if (this.activeFilters.telephone) {
-      filtreObj.telephone = this.activeFilters.telephone;
-    }
-    if (this.activeFilters.profile) {
-      filtreObj.profile = this.activeFilters.profile;
+    if (this.activeFilters.libelle) {
+      filtreObj.libelle = this.activeFilters.libelle;
     }
     return Object.keys(filtreObj).length > 0 ? filtreObj : null;
   }
@@ -192,4 +142,6 @@ export class ListUtilisateurComponent implements OnInit {
     this.currentPage = 0;
     this.chargerLesDonnees(false);
   }
+
 }
+

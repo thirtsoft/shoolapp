@@ -1,0 +1,170 @@
+<div class="page-wrapper">
+  <div class="content container-fluid">
+    <div class="success-page">
+      <div class="success-icon-wrapper">
+        <div class="success-icon">
+          <i class="fas fa-check"></i>
+        </div>
+      </div>
+
+      <div class="success-header">
+        <h2>Compte créé avec succès</h2>
+
+        <p>Le compte utilisateur a été créé avec succès.</p>
+      </div>
+
+      @if (creationResponse) {
+        <div class="user-summary-card">
+          <div class="user-summary-icon">
+            <i class="fas fa-user"></i>
+          </div>
+
+          <div class="user-summary-content">
+            <span class="summary-label"> Utilisateur </span>
+
+            <strong>
+              {{ creationResponse.user.firstName }}
+              {{ creationResponse.user.lastName }}
+            </strong>
+
+            @if (creationResponse.credentials.roleName) {
+              <span class="summary-role">
+                <i class="fas fa-user-shield me-1"></i>
+                {{ creationResponse.credentials.roleName }}
+              </span>
+            }
+          </div>
+        </div>
+
+        <!-- Identifiants -->
+        <div class="credentials-card">
+          <div class="credentials-header">
+            <div>
+              <h4>
+                <i class="fas fa-key me-2"></i>
+                Identifiants de connexion
+              </h4>
+
+              <p>
+                Conservez ces informations et transmettez-les à l'utilisateur de manière sécurisée.
+              </p>
+            </div>
+          </div>
+
+          <div class="credential-item">
+            <label> Identifiant de connexion </label>
+
+            <div class="credential-value-row">
+              <div class="credential-value">
+                {{ creationResponse.credentials.loginIdentifier }}
+              </div>
+
+              <button type="button" class="copy-button" (click)="copyLoginIdentifier()">
+                @if (copiedField === 'login') {
+                  <i class="fas fa-check me-1"></i>
+                  Copié
+                } @else {
+                  <i class="fas fa-copy me-1"></i>
+                  Copier
+                }
+              </button>
+            </div>
+          </div>
+
+          <div class="credential-item">
+            <label> Mot de passe temporaire </label>
+
+            <div class="credential-value-row">
+              <div class="credential-value password">
+                {{ creationResponse.credentials.temporaryPassword }}
+              </div>
+
+              <button type="button" class="copy-button" (click)="copyTemporaryPassword()">
+                @if (copiedField === 'password') {
+                  <i class="fas fa-check me-1"></i>
+                  Copié
+                } @else {
+                  <i class="fas fa-copy me-1"></i>
+                  Copier
+                }
+              </button>
+            </div>
+          </div>
+
+          <div class="credentials-actions">
+            <button type="button" class="copy-all-button" (click)="copyCredentials()">
+              @if (copiedField === 'all') {
+                <i class="fas fa-check me-2"></i>
+                Identifiants copiés
+              } @else {
+                <i class="fas fa-copy me-2"></i>
+                Copier les identifiants
+              }
+            </button>
+          </div>
+
+          <!-- Sécurité -->
+          <div class="security-alert">
+            <i class="fas fa-shield-alt"></i>
+
+            <div>
+              <strong> Mot de passe temporaire </strong>
+
+              <p>L'utilisateur devra modifier ce mot de passe lors de sa première connexion.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="notification-card">
+          @if (
+            creationResponse.notification.emailProvided && creationResponse.notification.emailQueued
+          ) {
+            <div class="notification-success">
+              <i class="fas fa-envelope-circle-check"></i>
+
+              <div>
+                <strong> Identifiants envoyés par email </strong>
+
+                <p>Les informations de connexion ont été envoyées à l'adresse email renseignée.</p>
+              </div>
+            </div>
+          } @else if (creationResponse.notification.emailProvided) {
+            <div class="notification-warning">
+              <i class="fas fa-envelope"></i>
+
+              <div>
+                <strong> Email non envoyé </strong>
+
+                <p>
+                  L'adresse email a été renseignée, mais l'envoi n'a pas pu être effectué. Vous
+                  pouvez copier les identifiants ci-dessus.
+                </p>
+              </div>
+            </div>
+          } @else {
+            <div class="notification-info">
+              <i class="fas fa-info-circle"></i>
+
+              <div>
+                <strong> Transmission des identifiants </strong>
+
+                <p>
+                  Aucun email n'a été renseigné. Pensez à transmettre les identifiants à
+                  l'utilisateur de manière sécurisée.
+                </p>
+              </div>
+            </div>
+          }
+        </div>
+
+        <div class="success-actions">
+          <button type="button" class="btn btn-primary" (click)="goToUsers()">
+            <i class="fas fa-users me-2"></i>
+
+            Retour à la liste
+          </button>
+        </div>
+      }
+    </div>
+  </div>
+</div>

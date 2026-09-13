@@ -99,7 +99,6 @@ export class ListTenantComponent implements OnInit {
         this.columns = [
           { key: 'code', header: 'Code' },
           { key: 'libelle', header: 'Libellé' },
-          { key: 'domaine', header: 'Domaine' },
           { key: 'mobile', header: 'Mobile' },
           { key: 'adresse', header: 'Adresse' },
           { key: 'currencyUuid', header: 'Devise' },

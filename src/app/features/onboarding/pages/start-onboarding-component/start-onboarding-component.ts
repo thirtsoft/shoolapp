@@ -19,6 +19,8 @@ import { UserStepComponent } from '../../components/user-step-component/user-ste
 import { OnboardingApiService } from '../../service/onboarding-api.service';
 import { OnboardingStateService } from '../../service/onboarding-state.service';
 import { OnboardingProgressComponent } from '../../shared/onboarding-progress-component/onboarding-progress-component';
+import { ConfigOrganizationService } from '../../../administration/configorganization/services/configorganization.service';
+import { NotificationConfigurationUpdateRequest } from '../../../../core/models/notification/notification-configuration-update-request';
 
 
 @Component({
@@ -46,6 +48,7 @@ export class StartOnboardingComponent {
   readonly state = inject(OnboardingStateService);
   private readonly modalService = inject(NgbModal);
   private readonly toastr = inject(ToastrService)
+  private readonly configOrganizationService = inject(ConfigOrganizationService);
 
   readonly OnboardingStep = OnboardingStep;
 
@@ -377,6 +380,8 @@ export class StartOnboardingComponent {
 
           this.toastr.success('Votre espace a été créé avec succès.');
 
+          this.createDefaultConfigurationOrganization();
+
         } else {
 
           this.state.setError(response.message || 'La création de votre espace a échoué.');
@@ -395,6 +400,32 @@ export class StartOnboardingComponent {
           'Une erreur est survenue pendant la création.'
         );
 
+      }
+
+    });
+  }
+
+  private createDefaultConfigurationOrganization(): void {
+
+    const request = this.state.response()?.successData;
+
+    const payload : NotificationConfigurationUpdateRequest = {
+        senderName: request?.tenantName || '',
+        senderEmail: request?.tenantEmailContact || request?.organizationEmail,
+        senderPhone: request?.tenantMobileContact || request?.organizationMobile,
+        replyTo: request?.tenantEmailContact || request?.organizationEmail
+    } 
+
+    console.log("sending payload", request);
+
+    this.configOrganizationService.createDefaultNotificationConfiguration(payload).subscribe({
+      
+      next: response => {
+
+      },
+      error: error => {
+        this.state.setLoading(false);
+        console.error('Default config error ERROR');
       }
 
     });

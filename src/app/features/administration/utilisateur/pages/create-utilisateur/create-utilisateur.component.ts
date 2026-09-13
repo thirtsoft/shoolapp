@@ -1,12 +1,12 @@
 import { Component, inject, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { Profil } from '../../../../../core/models/profil/profil';
-import { Utilisateur } from '../../../../../core/models/utilisateur/utilisateur';
-import { LocalStorageService } from '../../../../../core/services/local-storage.service';
-import { ProfilageService } from '../../../profil/service/profilage.service';
-import { UtilisateurService } from '../../service/utilisateur.service';
 import { ToastrService } from 'ngx-toastr';
+import { RolesResponse } from '../../../../../core/models/role/roles-response.model';
+import { UserCreationRequest } from '../../../../../core/models/utilisateur/user-creation-request.model';
+import { UserResponse } from '../../../../../core/models/utilisateur/user-response.model';
+import { RoleTenantService } from '../../../role-tenant/services/role-tenant-service';
+import { UserApiService } from '../../service/user-api.service';
 
 
 @Component({
@@ -19,121 +19,229 @@ import { ToastrService } from 'ngx-toastr';
 export class CreateUtilisateurComponent implements OnInit {
 
   utilisateurFormGroup!: FormGroup;
+
+  roles: RolesResponse[] = [];
+
+  user?: UserResponse;
+
+  userUuid?: string;
+
   errorMessage?: string;
-  utilisateur?: Utilisateur;
-  userId?: number;
-  civilites?: string[] = ["M.", "Me"];
 
-  profils: Profil[] = [];
+  loading = false;
 
-  today = new Date();
+  loadingRoles = false;
 
-  title = "Création d'un compte d'un agent";
+  title = "Création d'un compte utilisateur";
 
-  private readonly utilisateurService = inject(UtilisateurService);
-  private readonly profilageService = inject(ProfilageService);
+  private readonly userApiService = inject(UserApiService);
+  private readonly roleTenantService = inject(RoleTenantService);
   private readonly toastService = inject(ToastrService);
-  private readonly localStorage = inject(LocalStorageService);
-  private readonly _formBuilder = inject(FormBuilder);
+  private readonly formBuilder = inject(FormBuilder);
   private readonly router = inject(Router);
   private readonly route = inject(ActivatedRoute);
 
+
   ngOnInit(): void {
-    this.userId = this.route.snapshot.params['id'];
-    this.getProfils();
-    this.initializeForm(null);
-    if (this.userId && this.userId != null) {
-      this.getUtilisateurById(this.userId);
-      this.title = "Modification d'un compte d'un agent";
+
+    this.userUuid = this.route.snapshot.params['userUuid'];
+
+    this.initializeForm();
+
+    this.loadRoles();
+
+    if (this.userUuid) {
+
+      this.title = "Modification d'un compte utilisateur";
+
+      this.loadUser(this.userUuid);
     }
   }
 
-  getProfils() {
-    this.profilageService.getProfilesAgents().subscribe(
-      (data: any[]) => {
-        this.profils = data;
-        console.log(this.profils);
-      },
-      (error: any) => (this.errorMessage = <any>error)
-    );
+  private initializeForm(): void {
+    this.utilisateurFormGroup = this.formBuilder.group({
+      firstName: ['', [Validators.required, Validators.maxLength(100)]],
+      lastName: ['', [Validators.required, Validators.maxLength(100)]],
+      email: ['', [Validators.email, Validators.maxLength(150)]],
+      mobile: ['', [Validators.required, Validators.maxLength(30)]],
+      loginIdentifier: ['', [Validators.required, Validators.maxLength(150)]],
+      roleUuid: ['', Validators.required],
+      fonction: ['', Validators.maxLength(100)]
+    });
   }
 
-  getUtilisateurById(eleveId: number) {
-    this.utilisateurService.getUtilisateur(eleveId).subscribe({
-      next: (data) => {
-        this.utilisateur = data;
-        console.log(this.utilisateur);
-        this.initializeForm(this.utilisateur);
-        this.title = 'Modification d\'un utilisateur';
+  private loadRoles(): void {
+
+    this.loadingRoles = true;
+
+    this.roleTenantService.getAssignableRoles().subscribe({
+
+      next: (roles) => {
+
+        this.roles = roles ?? [];
+
+        this.loadingRoles = false;
+      },
+
+      error: (error) => {
+
+        this.loadingRoles = false;
+
+        console.error('Erreur lors du chargement des rôles', error);
+
+        this.toastService.error('Impossible de charger les rôles disponibles.');
       }
     });
   }
 
-  initializeForm(utilisateur: Utilisateur | null) {
-    this.utilisateurFormGroup = this._formBuilder.group({
-      id: [utilisateur?.id ? utilisateur.id : ''],
-      civility: [utilisateur?.civility ? utilisateur.civility : ''],
-      nom: [utilisateur?.nom ? utilisateur.nom : '', Validators.required],
-      prenom: [utilisateur?.prenom ? utilisateur.prenom : '', Validators.required],
-      address: [utilisateur?.address ? utilisateur.address : ''],
-      email: [utilisateur?.email ? utilisateur.email : '', Validators.required],
-      telephone: [utilisateur?.telephone ? utilisateur.telephone : '', Validators.required],
-      username: [utilisateur?.username ? utilisateur.username : '', Validators.required],
-      profession: [utilisateur?.profession ? utilisateur.profession : ''],
-      profileId: [utilisateur?.profilDTO!.id ? utilisateur?.profilDTO.id : '', Validators.required],
+
+  private loadUser(userUuid: string): void {
+
+    this.loading = true;
+
+    this.userApiService.getUser(userUuid).subscribe({
+
+      next: (user) => {
+
+        this.user = user;
+
+        this.utilisateurFormGroup.patchValue({
+          firstName: user.firstName,
+          lastName: user.lastName,
+          email: user.email ?? '',
+          mobile: user.mobile ?? '',
+          loginIdentifier: '',
+          roleUuid: '',
+          fonction: ''
+        });
+        this.loading = false;
+      },
+
+      error: (error) => {
+
+        this.loading = false;
+
+        console.error('Erreur lors du chargement de l’utilisateur', error);
+
+        this.toastService.error('Impossible de charger l’utilisateur.');
+      }
     });
   }
 
 
-  ajouterPersonnel() {
-    const payload: Utilisateur = {
-      id: this.utilisateurFormGroup.get("id")!.value,
-      civility: this.utilisateurFormGroup.get("civility")!.value,
-      nom: this.utilisateurFormGroup.get("nom")!.value,
-      prenom: this.utilisateurFormGroup.get("prenom")!.value,
-      address: this.utilisateurFormGroup.get("address")!.value,
-      email: this.utilisateurFormGroup.get("email")!.value,
-      telephone: this.utilisateurFormGroup.get("telephone")!.value,
-      username: this.utilisateurFormGroup.get("username")!.value,
-      profession: this.utilisateurFormGroup.get("profession")!.value,
-      profilDTO: this.profils.filter(r => r.id == this.utilisateurFormGroup.get("profileId")!.value)[0]
+  ajouterPersonnel(): void {
+
+    if (this.utilisateurFormGroup.invalid) {
+      this.utilisateurFormGroup.markAllAsTouched();
+      return;
     }
-    if (this.userId === null || this.userId === undefined) {
-      this.utilisateurService.createUtilisateur(payload).subscribe({
-        next: (data) => {
-          console.log('payload after : ', data);
-          if (data.statut === 'OK') {
-            this.toastService.success('success', 'Le compte de l\'agent a été crée avec succès.');
-            this.router.navigate(['/admin/utilisateur/list']);
-          } else if (data.statut === 'FAILED') {
-            this.toastService.warning('error', 'Erreur lors de la création : ' + data.message);
-          }
-        },
-        error: (data) => {
-          console.log('error', 'Erreur lors de la création : ' + data.error);
-          this.toastService.warning('error', 'Erreur lors de la création : ' + data.error);
-        }
-      });
+
+    const formValue = this.utilisateurFormGroup.getRawValue();
+
+    const payload: UserCreationRequest = {
+
+      firstName: formValue.firstName.trim(),
+
+      lastName: formValue.lastName.trim(),
+
+      email: formValue.email?.trim() || undefined,
+
+      mobile: formValue.mobile.trim(),
+
+      loginIdentifier: formValue.loginIdentifier.trim(),
+
+      roleUuid: formValue.roleUuid,
+
+      fonction: formValue.fonction?.trim() || undefined
+    };
+
+    this.loading = true;
+
+    if (!this.userUuid) {
+
+      this.createUser(payload);
+
     } else {
-      this.utilisateurService.updateUtilisateur(this.userId, payload).subscribe({
-        next: data => {
-          if (data.statut === 'OK') {
-            this.toastService.success('success', 'Le compte de l\'agent a été modifié avec succès.');
-            this.router.navigate(['/admin/utilisateur/list']);
-          } else if (data.statut === 'FAILED') {
-            this.toastService.warning('error', 'Erreur lors de la modification : ' + data.message);
-          }
-        },
-        error: (data) => {
-          console.log('error', 'Erreur lors de la création : ' + data.error);
-          this.toastService.warning('error', 'Erreur lors de la modification : ' + data.error);
-        }
-      });
+
+      this.updateUser(payload);
     }
   }
 
-  goBack() {
+
+  private createUser(payload: UserCreationRequest): void {
+
+    this.userApiService.createUser(payload).subscribe({
+
+      next: (response) => {
+
+        this.loading = false;
+
+        console.log('Utilisateur créé', response);
+
+        this.toastService.success('Le compte utilisateur a été créé avec succès.');
+
+        this.router.navigate(
+          ['/admin/utilisateur/success-creation'],
+          {
+            state: {
+              creationResponse: response
+            }
+          }
+        );
+      },
+
+      error: (error) => {
+
+        this.loading = false;
+
+        console.error('Erreur création utilisateur', error);
+
+        const message = error?.error?.message ?? 'Erreur lors de la création du compte utilisateur.';
+
+        this.toastService.error(message);
+      }
+    });
+  }
+
+  private updateUser(payload: UserCreationRequest): void {
+
+    if (!this.userUuid) {
+      return;
+    }
+
+    this.userApiService.updateUser(this.userUuid,
+      {
+        firstName: payload.firstName,
+        lastName: payload.lastName,
+        email: payload.email,
+        mobile: payload.mobile
+      }
+    ).subscribe({
+
+      next: () => {
+
+        this.loading = false;
+
+        this.toastService.success('Le compte utilisateur a été modifié avec succès.');
+
+        this.goBack();
+      },
+
+      error: (error) => {
+
+        this.loading = false;
+
+        console.error('Erreur modification utilisateur', error);
+
+        const message = error?.error?.message ?? 'Erreur lors de la modification du compte utilisateur.';
+
+        this.toastService.error(message);
+      }
+    });
+  }
+
+
+  goBack(): void {
     this.router.navigate(['/admin/utilisateur/list']);
   }
-
 }

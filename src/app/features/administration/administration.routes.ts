@@ -8,12 +8,12 @@ export const ADMIN_ROUTES: Routes = [
     component: MainLayoutAdminComponent,
     children: [
 
-    /*   {
-        path: 'onboarding',
-        loadChildren: () =>
-          import('../onboarding/onboarding.routes')
-            .then(m => m.ONBOARDING_TENANT_ROUTES)
-      }, */
+      /*   {
+          path: 'onboarding',
+          loadChildren: () =>
+            import('../onboarding/onboarding.routes')
+              .then(m => m.ONBOARDING_TENANT_ROUTES)
+        }, */
 
       {
         path: 'dashboard',
@@ -72,6 +72,13 @@ export const ADMIN_ROUTES: Routes = [
         loadChildren: () =>
           import('./configorganization/configorganization.routes')
             .then(m => m.CONFIG_ORGANIZATION_ROUTES)
+      },
+
+      {
+        path: 'roles',
+        loadChildren: () =>
+          import('./role-tenant/role-tenant.routes')
+            .then(m => m.ROLES_TENANT_ROUTES)
       },
 
       // ── Redirection par défaut ────────────────────────
