@@ -42,10 +42,11 @@ export class LoginV2Component {
 
   // Données conservées pour le design du panneau gauche
   stats = [
-    { val: '1 200', lbl: 'Élèves' },
-    { val: '85', lbl: 'Professeurs' },
+    { val: '-', lbl: 'Administration' },
+    { val: '-', lbl: 'Professeurs' },
+    { val: '-', lbl: 'Parents' },
     { val: '24/7', lbl: 'Disponible' },
-    { val: '🇸🇳', lbl: 'Dakar' },
+    //  { val: '🇸🇳', lbl: 'Dakar' },
   ];
 
   features = [

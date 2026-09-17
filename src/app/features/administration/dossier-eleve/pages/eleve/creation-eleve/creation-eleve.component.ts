@@ -58,7 +58,7 @@ export class CreationEleveComponent implements OnInit {
   }
 
   getEleveById(eleveId: number) {
-    this.dossierEleveService.getEleveToEdit(eleveId).subscribe({
+   /*  this.dossierEleveService.getEleveToEdit(eleveId).subscribe({
       next: (data) => {
         this.eleve = data;
         console.log("editer eleve", this.eleve);
@@ -68,7 +68,7 @@ export class CreationEleveComponent implements OnInit {
           this.preview = 'data:image/png;base64,' + this.eleve.piecesJointesDTO.content;
         }
       }
-    });
+    }); */
   }
 
   initializeForm(eleve: Eleve | null) {

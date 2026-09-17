@@ -1,19 +1,23 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
-import { Observable, of, throwError } from 'rxjs';
+import { Observable, of } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 import { environment } from '../../../../../environments/environment';
+import { ApiResponse } from '../../../../core/datamodel/api-response.model';
 import { Paiement } from '../../../../core/models/comptabilite/paiement';
 import { DetailsEleve } from '../../../../core/models/dossiereleve/details-eleve';
 import { DetailsInscription } from '../../../../core/models/dossiereleve/details-inscription';
+import { GetEleveResponse } from '../../../../core/models/dossiereleve/eleve/get-eleve-response.model';
+import { ParentSearchToCreateEleve } from '../../../../core/models/dossiereleve/eleve/parent-search-to-create-eleve.model';
+import { UpdateElevePhotoResponse } from '../../../../core/models/dossiereleve/eleve/update-eleve-photo-response.model';
+import { UpdateEleveRequest } from '../../../../core/models/dossiereleve/eleve/update-eleve-request.model';
+import { ListeEleve } from '../../../../core/models/dossiereleve/liste-eleve';
 import { Eleve } from '../../../../core/models/dossiereleve/request/eleve';
 import { EleveEdit } from '../../../../core/models/dossiereleve/request/eleve-edit';
-import { EleveRequest, EleveRequeste } from '../../../../core/models/dossiereleve/request/eleve-request';
 import { Inscription } from '../../../../core/models/dossiereleve/request/inscription';
 import { ListeInscription } from '../../../../core/models/dossiereleve/request/liste-inscription';
 import { PaiementAdd } from '../../../../core/models/dossiereleve/request/paiement-add';
-import { ResponseEleve, ResponseMessage } from '../../../../core/models/message/response/response-message';
-import { ParentSearchToCreateEleve } from '../../../../core/models/dossiereleve/eleve/parent-search-to-create-eleve.model';
+import { CreateEleveResponse, ResponseEleve, ResponseMessage } from '../../../../core/models/message/response/response-message';
 
 @Injectable({
   providedIn: 'root'
@@ -23,6 +27,7 @@ export class DossierEleveService {
   baseUrl = environment.apiBaseUrl;
 
   eleveUrl = this.baseUrl;
+  photoUrl = this.baseUrl + '/v1/storage';
 
   httpOptions = {
     headers: new HttpHeaders({
@@ -47,10 +52,11 @@ export class DossierEleveService {
     return this.http.get<Eleve>(`${this.baseUrl}/eleve/${id}`);
   }
 
+  /*
   getEleveToEdit(id: number): Observable<EleveEdit> {
     return this.http.get<EleveEdit>(`${this.baseUrl}/eleve/gotoedit/${id}`);
   }
-
+ */
   getDetailsEleve(id: number): Observable<DetailsEleve> {
     return this.http.get<DetailsEleve>(`${this.baseUrl}/eleve/details/${id}`);
   }
@@ -59,6 +65,7 @@ export class DossierEleveService {
     return this.http.get<any>(`${this.baseUrl}/eleve/${id}/details`);
   }
 
+  /* 
   inscrireEleve(info: Eleve) {
     return this.http.post<ResponseEleve>(`${this.baseUrl}/eleve/save`, info);
   }
@@ -77,15 +84,48 @@ export class DossierEleveService {
       })
     );
 
-  }
+  } */
 
-  enregistrerEleveWithFiles(formData: FormData) {
-    return this.http.post<ResponseEleve>(
-      this.baseUrl + `/eleve/enregistrerwithfiles`,
+  enregistrerEleveAvecPhotoFiles(formData: FormData): Observable<ApiResponse<CreateEleveResponse>> {
+    return this.http.post<ApiResponse<CreateEleveResponse>>(
+      this.baseUrl + `/eleve/avec-photo`,
       formData
     );
   }
 
+  modifierEleve(eleveUuid: string, request: UpdateEleveRequest): Observable<ApiResponse<ListeEleve>> {
+    return this.http.patch<ApiResponse<ListeEleve>>(
+      `${this.baseUrl}/eleve/${eleveUuid}`,
+      request
+    );
+  }
+
+  modifierPhotoEleve(eleveUuid: string, file: File): Observable<ApiResponse<UpdateElevePhotoResponse>> {
+
+    const formData = new FormData();
+
+    formData.append('file', file);
+
+    return this.http.put<ApiResponse<UpdateElevePhotoResponse>>(
+      `${this.baseUrl}/eleve/${eleveUuid}/photo`,
+      formData
+    );
+  }
+
+  getEleveByUuid(eleveUuid: string): Observable<ApiResponse<GetEleveResponse>> {
+    return this.http.get<ApiResponse<GetEleveResponse>>(
+      `${this.baseUrl}/eleve/${eleveUuid}`
+    );
+  }
+
+  getPhotoContent(fileStorageUuid: string): Observable<Blob> {
+    return this.http.get(
+      `${this.photoUrl}/content/${fileStorageUuid}`,
+      {
+        responseType: 'blob'
+      }
+    );
+  }
 
   updateInscriptionEleve(id: number, value: Eleve) {
     return this.http.put<ResponseEleve>(`${this.baseUrl}/eleve/update/${id}`, value);
@@ -179,23 +219,23 @@ export class DossierEleveService {
 
 
   rechercherParents(query: string): Observable<ParentSearchToCreateEleve[]> {
-  if (!query || query.trim().length < 3) {
-    return of([]);
-  }
-
-  return this.http.get<ParentSearchToCreateEleve[]>(
-    `${this.baseUrl}/parent/search`,
-    {
-      ...this.httpOptions,
-      params: {
-        query: query.trim()
-      }
-    }
-  ).pipe(
-    catchError(error => {
-      console.error('Erreur lors de la recherche des parents :', error);
+    if (!query || query.trim().length < 3) {
       return of([]);
-    })
-  );
-}
+    }
+
+    return this.http.get<ParentSearchToCreateEleve[]>(
+      `${this.baseUrl}/parent/search`,
+      {
+        ...this.httpOptions,
+        params: {
+          query: query.trim()
+        }
+      }
+    ).pipe(
+      catchError(error => {
+        console.error('Erreur lors de la recherche des parents :', error);
+        return of([]);
+      })
+    );
+  }
 }

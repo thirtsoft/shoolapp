@@ -12,3 +12,11 @@ export interface ResponseEleve {
     eleve: number
 }
 
+export interface CreateEleveResponse {
+    photoMessage?: string;
+    eleveUuid?: string;
+    eleveId: number
+    photoProvided: boolean;
+    photoStored: boolean;
+}
+
