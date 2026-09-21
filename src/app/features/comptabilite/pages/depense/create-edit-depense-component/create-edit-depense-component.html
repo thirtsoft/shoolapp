@@ -214,7 +214,7 @@
                             }
                           </label>
                           <small class="text-muted d-block mt-2">
-                            Formats acceptés : PDF, Word, Excel, Images, Texte, Archives (max 2MB)
+                            Formats acceptés : PDF, Images, Texte, Archives (max 2MB)
                           </small>
                         </div>
 
@@ -254,19 +254,13 @@
                             <div class="file-item existing-file">
                               <img
                                 alt="File icon"
-                                [src]="getFileIcon(depense?.piecesJointesDTO?.nomTechnique ?? '')"
+                                [src]="getFileIcon(getExistingFileName())"
                                 class="file-icon"
                               />
                               <div class="file-info">
-                                <span
-                                  class="file-name"
-                                  [title]="depense?.piecesJointesDTO?.nomFichier"
-                                >
-                                  {{
-                                    depense?.piecesJointesDTO?.nomFichier ?? 'Fichier'
-                                      | slice: 0 : 25
-                                  }}
-                                  @if ((depense?.piecesJointesDTO?.nomFichier?.length ?? 0) > 25) {
+                                <span class="file-name" [title]="getExistingFileName()">
+                                  {{ getExistingFileName() | slice: 0 : 25 }}
+                                  @if (getExistingFileName().length > 25) {
                                     ...
                                   }
                                 </span>
@@ -315,6 +309,7 @@
                               <img
                                 [src]="getFileIcon(currentFile.name)"
                                 alt="File icon"
+                                è
                                 class="file-icon"
                               />
                               <div class="file-info">
@@ -333,20 +328,30 @@
                                 </span>
                               </div>
                               <div class="file-actions">
-                                <!-- Bouton pour uploader uniquement la pièce jointe -->
                                 <button
                                   type="button"
                                   class="btn btn-sm btn-success me-2"
                                   (click)="uploadFileOnly()"
-                                  title="Mettre à jour la pièce jointe uniquement"
+                                  [disabled]="isUploadingFile"
+                                  title="Mettre à jour la pièce jointe"
                                 >
-                                  <i class="fas fa-upload me-1"></i> Valider le fichier
+                                  @if (isUploadingFile) {
+                                    <i class="fas fa-spinner fa-spin me-1"></i>
+
+                                    Upload...
+                                  } @else {
+                                    <i class="fas fa-upload me-1"></i>
+
+                                    Valider le fichier
+                                  }
+                                  Valider le fichier
                                 </button>
-                                <!-- Bouton pour annuler -->
+
                                 <button
                                   type="button"
                                   class="btn btn-sm btn-outline-danger"
                                   (click)="removeCurrentFile()"
+                                  [disabled]="isUploadingFile"
                                   title="Annuler la sélection"
                                 >
                                   <i class="fas fa-times me-1"></i> Annuler
@@ -369,20 +374,33 @@
               </div>
 
               <div class="form-actions mt-4">
-                <button type="button" class="btn btn-secondary btn-lg" (click)="goBack()">
+                <button
+                  type="button"
+                  class="btn btn-secondary btn-lg"
+                  (click)="goBack()"
+                  [disabled]="isSaving || isUploadingFile"
+                >
                   <i class="fas fa-times me-2"></i>Annuler
                 </button>
 
-                <!-- Mode CRÉATION : un seul bouton pour tout envoyer -->
                 @if (!isEdit) {
                   <button
                     type="button"
                     class="btn btn-primary btn-lg"
-                    [disabled]="!isFormValid"
+                    [disabled]="!isFormValid || isSaving"
                     [title]="getButtonTooltip()"
                     (click)="onSubmit()"
                   >
-                    <i class="fas fa-save me-2"></i>Enregistrer la dépense
+                    @if (isSaving) {
+                      <i class="fas fa-spinner fa-spin me-2"></i>
+
+                      Enregistrement...
+                    } @else {
+                      <i class="fas fa-save me-2"></i>
+
+                      Enregistrer la dépense
+                    }
+                    Enregistrer la dépense
                   </button>
                 }
 
@@ -390,11 +408,20 @@
                   <button
                     type="button"
                     class="btn btn-primary btn-lg"
-                    [disabled]="!depenseForm.valid"
+                    [disabled]="depenseForm.invalid || isSaving || isUploadingFile"
                     title="Modifier les informations de la dépense (sans la pièce jointe)"
                     (click)="updateDepenseInfo()"
                   >
-                    <i class="fas fa-edit me-2"></i>Modifier les informations
+                    @if (isSaving) {
+                      <i class="fas fa-spinner fa-spin me-2"></i>
+
+                      Modification...
+                    } @else {
+                      <i class="fas fa-edit me-2"></i>
+
+                      Modifier les informations
+                    }
+                    Modifier les informations
                   </button>
                 }
               </div>

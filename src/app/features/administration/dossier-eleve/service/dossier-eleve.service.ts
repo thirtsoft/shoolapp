@@ -127,6 +127,10 @@ export class DossierEleveService {
     );
   }
 
+  getPhotoContentV2(fileStorageUuid: string): Observable<any[]> {
+    return this.http.get<any[]>(`${this.photoUrl}/content/${fileStorageUuid}`);
+  }
+
   updateInscriptionEleve(id: number, value: Eleve) {
     return this.http.put<ResponseEleve>(`${this.baseUrl}/eleve/update/${id}`, value);
   }

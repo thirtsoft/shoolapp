@@ -6,8 +6,6 @@ import { ApiResponse } from '../../../../../../core/datamodel/api-response.model
 import { GetEleveResponse } from '../../../../../../core/models/dossiereleve/eleve/get-eleve-response.model';
 import { UpdateElevePhotoResponse } from '../../../../../../core/models/dossiereleve/eleve/update-eleve-photo-response.model';
 import { UpdateEleveRequest } from '../../../../../../core/models/dossiereleve/eleve/update-eleve-request.model';
-import { LocalStorageService } from '../../../../../../core/services/local-storage.service';
-import { DateFormat } from '../../../../../../core/utilites/date-format';
 import { DossierEleveService } from '../../../service/dossier-eleve.service';
 
 @Component({

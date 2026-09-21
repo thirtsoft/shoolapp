@@ -1,3 +1,4 @@
+import { DocumentResponse } from "../../piecejointe/document-response.model";
 import { PieceJointe } from "../piecejointe/piece-jointe";
 
 export interface DepenseAddEdit {
@@ -48,4 +49,6 @@ export interface Depense {
   actif?: number;
 
   piecesJointesDTO?: PieceJointe;
+
+  documentResponse?: DocumentResponse;
 }
