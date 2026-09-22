@@ -190,11 +190,13 @@ export class GenericTableDossierComponent implements OnInit {
 
   generateLink(baseLink: string, row: any): void {
     if (this.isPopup) {
-      this.router.navigate([baseLink, this.selectedItem.id], {
+      const param = this.selectedItem.id ?? this.selectedItem.uuid;
+      this.router.navigate([baseLink, param], {
         state: { data: this.selectedItem }
       });
     } else {
-      this.router.navigate([baseLink, row.id], {
+      const rowParam = row.id ?? row.uuid;
+      this.router.navigate([baseLink, rowParam], {
         state: { data: row }
       });
     }

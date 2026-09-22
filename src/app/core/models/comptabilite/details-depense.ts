@@ -1,3 +1,5 @@
+import { DocumentResponse } from "../../piecejointe/document-response.model";
+import { RecordStatus } from "../onboarding/record-status";
 import { PieceJointe } from "../piecejointe/piece-jointe";
 
 export interface DetailsDepense {
@@ -24,5 +26,9 @@ export interface DetailsDepense {
   actif?: number;
 
   piecesJointesDTO?: PieceJointe;
+
+  documentResponse: DocumentResponse;
+
+  recordStatus: RecordStatus;
 }
 
