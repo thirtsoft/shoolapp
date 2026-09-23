@@ -1,3 +1,4 @@
+import { DocumentResponse } from "../../piecejointe/document-response.model";
 import { PieceJointe } from "../piecejointe/piece-jointe";
 
 export interface Exercice {
@@ -58,6 +59,8 @@ export interface ExerciceAddEdit {
     dateFin?: Date;
 
     piecesJointesDTO?: PieceJointe;
+
+    documentResponse: DocumentResponse;
     //
 
 }

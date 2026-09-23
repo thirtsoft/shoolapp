@@ -2,12 +2,12 @@ import { CommonModule, DatePipe } from '@angular/common';
 import { Component, DestroyRef, inject, OnDestroy, OnInit } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ReactiveFormsModule } from '@angular/forms';
+import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
 import { DetailsDepense } from '../../../../../core/models/comptabilite/details-depense';
 import { DossierEleveService } from '../../../../administration/dossier-eleve/service/dossier-eleve.service';
 import { ComptabiliteResourceService } from '../../../services/comptabilite-resource.service';
-import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 
 @Component({
   selector: 'app-details-depense-component',
@@ -93,12 +93,12 @@ export class DetailsDepenseComponent implements OnInit, OnDestroy {
   hasExistingFile(): boolean {
     return !!(
       this.depense?.documentResponse?.available &&
-      this.depense?.documentResponse?.photoUuid
+      this.depense?.documentResponse?.documentUuid
     );
   }
 
   private getDocumentUuid(): string | null {
-    return this.depense?.documentResponse?.photoUuid ?? null;
+    return this.depense?.documentResponse?.documentUuid ?? null;
   }
 
   getDocumentName(): string {

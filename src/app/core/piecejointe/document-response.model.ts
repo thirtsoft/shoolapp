@@ -1,7 +1,7 @@
 export interface DocumentResponse {
   available: boolean;
 
-  photoUuid: string;
+  documentUuid: string;
 
   dateCreation?: Date;
 
