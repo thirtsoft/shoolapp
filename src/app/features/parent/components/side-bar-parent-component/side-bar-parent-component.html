@@ -3,9 +3,12 @@
 
   <div class="ps-header">
     <div class="ps-ava">{{ parent().avatar }}</div>
+    <!--      <div class="ps-ava">{{ parent().nom }}</div> -->
     <div class="ps-info">
-      <div class="ps-nom">{{ parent().prenom }} {{ parent().nom }}</div>
-      <div class="ps-role">{{ parent().profession || 'Parent' }}</div>
+      <div class="ps-nom">{{ parent().nom }}</div>
+      <!--
+    <div class="ps-role">{{ parent().profession || 'Parent' }}</div> 
+          <div class="ps-role">{{ parent().prenom || 'Parent' }}</div> -->
     </div>
   </div>
 

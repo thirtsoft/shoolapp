@@ -2,7 +2,7 @@ import { CommonModule } from '@angular/common';
 import { Component, inject, OnInit } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
-import { ParentDetails } from '../../../../core/models/parent/parent-details';
+import { ParentElevesResponse } from '../../../../core/models/parent/parent-eleves-response.model';
 import { LocalStorageService } from '../../../../core/services/local-storage.service';
 import { ParentService } from '../../service/parent.service';
 
@@ -16,8 +16,9 @@ import { ParentService } from '../../service/parent.service';
 export class ChoisirEleveComponent implements OnInit {
 
   userId?: number;
-  parentDetails: ParentDetails = {};
-  eleveList: any[] = [];
+  useUuId?: string;
+  parentDetails?: ParentElevesResponse;
+  eleveList: any;
   TotalElevesLength: any;
 
   private readonly parentService = inject(ParentService);
@@ -29,18 +30,27 @@ export class ChoisirEleveComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    if (this.userId) {
-      this.getDetailsParent(this.userId);
-    }
+    /*     const userData = this.localStorage.getItem('v2_user');
+        this.useUuId = userData.uuid
+        if (this.useUuId) {
+          
+        } */
+
+    this.getDetailsParent();
   }
 
-  getDetailsParent(parentId: number) {
-    this.parentService.getDetailsParent(parentId)
-      .subscribe(res => {
+  getDetailsParent() {
+    this.parentService.getMesElevest().subscribe({
+      next: (res) => {
+        console.log('✅ Parent / élèves :', res);
+
         this.parentDetails = res;
-        this.eleveList = res?.eleveParentDTOList || [];
-        console.log('parent', this.parentDetails);
-      });
+        this.eleveList = res?.eleves ?? [];
+      },
+      error: (error) => {
+        console.error('❌ Erreur récupération élèves parent :', error);
+      }
+    });
   }
 
   afficherLesEleves(): any[] {
@@ -63,7 +73,6 @@ export class ChoisirEleveComponent implements OnInit {
     return '👦';
   }
 
-  /** Retourne la classe CSS de fond selon le genre */
   getAvatarBg(eleve: any): string {
     const prenom = (eleve?.prenom || '').toLowerCase();
     const prenomsFeminins = [
@@ -77,15 +86,26 @@ export class ChoisirEleveComponent implements OnInit {
   }
 
   afficherDossier(eleve: any) {
-    this.localStorage.setItem("eleveId", eleve?.id);
-    this.localStorage.setItem("classeId", eleve?.classeId);
-    this.router.navigateByUrl('/', { skipLocationChange: true }).then(() => {
-      this.router.navigate(['/parent/dashboard']);
-    });
+    console.log('📚 Élève sélectionné :', eleve);
+
+    if (!eleve?.id) {
+      console.error('❌ Aucun ID élève trouvé', eleve);
+      return;
+    }
+
+    this.localStorage.setItem('eleveId', eleve.id);
+
+    if (eleve?.classeId) {
+      this.localStorage.setItem('classeId', eleve.classeId);
+    }
+
+    console.log('➡️ Navigation vers /parent/dashboard');
+
+    this.router.navigate(['/parent/dashboard']);
   }
 
   deconnecter(): void {
     this.localStorage.clear();
-    this.router.navigate(['/auth/login']);
+    this.router.navigate(['/auth/login/v2']);
   }
 }

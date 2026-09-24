@@ -28,7 +28,8 @@ export class CreationExerciceComponent implements OnInit {
   errorMessage?: string;
   exerciceId: number;
   exerciceFormGroup!: FormGroup;
-  exercice?: ExerciceAddEdit;
+  // exercice?: ExerciceAddEdit;
+  exercice?: any;
   isEdit: boolean = false;
   livreList: any;
   enseignementList: ListeEnseignement[] = [];
@@ -147,7 +148,7 @@ export class CreationExerciceComponent implements OnInit {
     formData.append('piecejointeexercice', JSON.stringify(payload));
 
     if (!this.isEdit) {
-      this.planification.enregistrerExercicetWithFiles(formData).subscribe({
+      this.planification.enregistrerExerciceAvecPiceJointe(formData).subscribe({
         next: (data) => {
           if (data) {
             this.toastService.success('succès', 'L\'exercice a été enregistrées avec succès !!! ');

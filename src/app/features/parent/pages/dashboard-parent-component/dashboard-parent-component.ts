@@ -76,8 +76,9 @@ export class DashboardParentComponent implements OnInit {
   private fallbackCousEleve: any[] = [];
   private fallbackEvenements: EvenementLocal[] = [];
 
-  parentDetails = signal<ParentDetails>({});
-  parent = signal({ nom: '', prenom: '', email: '', telephone: '', profession: '' });
+  parentDetails = signal<any>({});
+  //  parent = signal({ nom: '', prenom: '', email: '', telephone: '', profession: '' });
+  parent = signal({ nom: '', prenom: '', email: '', telephone: '' });
 
   enfants = signal([
     { id: 1, nom: 'Moussa Diop', classe: 'Terminale S2', anneeScolaire: '2025-2026', photo: '👦', moyenne: 14.5, absences: 3, retards: 2 },
@@ -166,15 +167,31 @@ export class DashboardParentComponent implements OnInit {
     this.bulletinsParEnfant[2] = this.fallbackNotesEleve[1];
     this.bulletinsParEnfant[3] = this.fallbackNotesEleve[2];
   }
+  /* 
+    private chargerParentEtEleves() {
+      const userId = this.localStorage.getItem('id');
+      if (!userId) {
+        this.router.navigate(['/auth/login']);
+        return;
+      }
+  
+      this.parentService.getDetailsParent(Number(userId)).subscribe({
+        next: (res) => {
+          this.parentDetails.set(res);
+          this.parent.set({
+            nom: res.nom || '',
+            prenom: res.prenom || '',
+            email: res.email || '',
+            telephone: res.telephone || '',
+            profession: res.profession || '',
+          });
+        },
+        error: () => this.router.navigate(['/auth/login'])
+      });
+    } */
 
   private chargerParentEtEleves() {
-    const userId = this.localStorage.getItem('id');
-    if (!userId) {
-      this.router.navigate(['/auth/login']);
-      return;
-    }
-
-    this.parentService.getDetailsParent(Number(userId)).subscribe({
+    this.parentService.getMesElevest().subscribe({
       next: (res) => {
         this.parentDetails.set(res);
         this.parent.set({
@@ -182,10 +199,8 @@ export class DashboardParentComponent implements OnInit {
           prenom: res.prenom || '',
           email: res.email || '',
           telephone: res.telephone || '',
-          profession: res.profession || '',
         });
-      },
-      error: () => this.router.navigate(['/auth/login'])
+      }
     });
   }
 
@@ -200,13 +215,13 @@ export class DashboardParentComponent implements OnInit {
     this.dashboardService.afficherLesListDeStatsGlobaleEleve(eleveId)
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({ next: data => this.mettreAJourLesListe(data) });
-/* 
-    this.dossierResourceService.getSingleResource('inscription/eleve', eleveId).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
-      next: (data: any) => {
-        this.inscription = data;
-        console.log('Inscription', this.inscription);
-      }
-    }); */
+    /* 
+        this.dossierResourceService.getSingleResource('inscription/eleve', eleveId).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
+          next: (data: any) => {
+            this.inscription = data;
+            console.log('Inscription', this.inscription);
+          }
+        }); */
   }
 
   private mettreAJourDataStatsEleve(stats: DashboardStatsEleve) {

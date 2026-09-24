@@ -15,6 +15,12 @@ import { ListeEnseignement } from '../../../../core/models/planification/liste-e
 import { ListeExercie } from '../../../../core/models/planification/liste-exercice';
 import { Meeting } from '../../../../core/models/planification/meeting';
 import { ResponseMessage } from '../../../../core/response/response-message';
+import { ApiResponse } from '../../../../core/datamodel/api-response.model';
+import { CreateExerciceResponse } from '../../../../core/models/planification/exercice/create-exercice-response.model';
+import { UpdateExerciceDTO } from '../../../../core/models/planification/exercice/update-exercice-dto.model';
+import { UpdateExerciceResponseDTO } from '../../../../core/models/planification/exercice/update-exercice-response-dto.model';
+import { UpdateExerciceDocumentResponse } from '../../../../core/models/planification/exercice/update-exercice-document-response.model';
+import { GetExerciceResponse } from '../../../../core/models/planification/exercice/get-exercice-response.model';
 
 @Injectable({
   providedIn: 'root'
@@ -190,9 +196,29 @@ export class PlanificationResourceService {
     return this.http.delete<ResponseMessage>(url, this.httpOptions);
   }
 
-  enregistrerExercicetWithFiles(formData: FormData) {
-    return this.http.post<number>(
-      this.planificationUrl + `/planification/exercice/enregistrerwithfiles`,
+  getExerciceByUuId(exerciceUuid: string): Observable<ApiResponse<GetExerciceResponse>> {
+    return this.http.get<ApiResponse<GetExerciceResponse>>(`${this.planificationUrl}/planification/exercice/${exerciceUuid}`);
+  }
+
+  enregistrerExerciceAvecPiceJointe(formData: FormData): Observable<ApiResponse<CreateExerciceResponse>> {
+    return this.http.post<ApiResponse<CreateExerciceResponse>>(
+      this.planificationUrl + `/planification/exercice/avec-document`,
+      formData
+    );
+  }
+
+  modifierExercice(exerciceUuid: string, request: UpdateExerciceDTO): Observable<ApiResponse<UpdateExerciceResponseDTO>> {
+    return this.http.patch<ApiResponse<UpdateExerciceResponseDTO>>(
+      `${this.planificationUrl}/planification/exercice/edit/${exerciceUuid}`,
+      request
+    );
+  }
+
+  modifierDocumentExercice(exerciceUuid: string, file: File): Observable<ApiResponse<UpdateExerciceDocumentResponse>> {
+    const formData = new FormData();
+    formData.append('file', file);
+    return this.http.put<ApiResponse<UpdateExerciceDocumentResponse>>(
+      `${this.planificationUrl}/planification/exercice/${exerciceUuid}/document`,
       formData
     );
   }

@@ -40,7 +40,6 @@ export class LoginV2Component {
     password: ['', [Validators.required]],
   });
 
-  // Données conservées pour le design du panneau gauche
   stats = [
     { val: '-', lbl: 'Administration' },
     { val: '-', lbl: 'Professeurs' },
@@ -125,8 +124,7 @@ export class LoginV2Component {
 
             next: (setup) => {
 
-              const route =
-                this.accessV2Service.determineInitialRoute(setup.status);
+              const route = this.accessV2Service.determineInitialRoute(setup.status);
 
               this.navigateAfterLogin(route);
             },

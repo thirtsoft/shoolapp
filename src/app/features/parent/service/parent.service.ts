@@ -4,6 +4,7 @@ import { Observable } from 'rxjs';
 import { environment } from '../../../../environments/environment';
 import { ParentList } from '../../../core/models/parent/parent-list';
 import { ParentDetails } from '../../../core/models/parent/parent-details';
+import { ParentElevesResponse } from '../../../core/models/parent/parent-eleves-response.model';
 
 @Injectable({
   providedIn: 'root'
@@ -27,6 +28,10 @@ export class ParentService {
 
   getDetailsParent(id: number): Observable<ParentDetails> {
     return this.http.get<ParentDetails>(`${this.baseUrl}/parent/details/${id}`);
+  }
+
+  getMesElevest(): Observable<ParentElevesResponse> {
+    return this.http.get<ParentElevesResponse>(`${this.baseUrl}/parent/me/eleves`);
   }
 
   delete(id: number) {

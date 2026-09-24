@@ -321,7 +321,6 @@ export class GenericTableReferentielComponent implements OnInit {
   }
 
   updateVisiblePages() {
-    // Méthode conservée si utilisée ailleurs
     const pages: number[] = [];
     const maxVisible = 5;
     const start = Math.max(0, this.currentPage - Math.floor(maxVisible / 2));
@@ -334,11 +333,13 @@ export class GenericTableReferentielComponent implements OnInit {
   // Navigation
   generateLink(baseLink: string, row: any): void {
     if (this.isPopup) {
-      this.router.navigate([baseLink, this.selectedItem.id], {
+      const param = this.selectedItem.id ?? this.selectedItem.uuid;
+      this.router.navigate([baseLink, param], {
         state: { data: this.selectedItem }
       });
     } else {
-      this.router.navigate([baseLink, row.id], {
+      const rowParam = row.id ?? row.uuid;
+      this.router.navigate([baseLink, rowParam], {
         state: { data: row }
       });
     }

@@ -307,7 +307,7 @@ export class CreateEditDepenseComponent implements OnInit {
   hasExistingFile(): boolean {
     return !!(
       this.depense?.documentResponse?.available &&
-      this.depense?.documentResponse?.photoUuid
+      this.depense?.documentResponse?.documentUuid
     );
   }
 
@@ -316,7 +316,7 @@ export class CreateEditDepenseComponent implements OnInit {
   }
 
   getExistingFileUuid(): string | null {
-    return (this.depense?.documentResponse?.photoUuid ?? null);
+    return (this.depense?.documentResponse?.documentUuid ?? null);
   }
 
   onFileSelected(event: Event): void {
@@ -345,7 +345,7 @@ export class CreateEditDepenseComponent implements OnInit {
   }
 
   removeExistingFile(): void {
-    if (!this.depense?.documentResponse?.photoUuid) {
+    if (!this.depense?.documentResponse?.documentUuid) {
       this.toastService.warning(
         'Attention',
         'Aucune pièce jointe existante à supprimer'
