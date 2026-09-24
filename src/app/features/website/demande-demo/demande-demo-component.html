@@ -1,0 +1,395 @@
+<div class="demo-page">
+  <header class="demo-header">
+    <div class="container demo-navbar">
+      <button type="button" class="brand" (click)="goBackHome()" aria-label="Retour à l'accueil">
+        <!--  <span class="brand-icon">
+          <i class="fas fa-graduation-cap"></i>
+        </span> -->
+
+        <img
+          src="scoolli-logo.png"
+          alt="Scoolli"
+          class="brand-logo"
+          style="width: 130px; height: auto"
+        />
+
+        <!--     <span class="brand-text"> Edu<span>School</span> </span> -->
+      </button>
+
+      <div class="header-actions">
+        <button type="button" class="btn-login" (click)="goToLogin()">Se connecter</button>
+
+        <button type="button" class="btn-primary btn-small" (click)="startTrial()">
+          Essai gratuit
+          <i class="fas fa-arrow-right"></i>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <section class="demo-hero">
+      <div class="container">
+        <div class="demo-hero-content">
+          <div class="eyebrow">
+            <i class="fas fa-play-circle"></i>
+            Découvrez Scoolli
+          </div>
+
+          <h1>
+            Découvrez comment
+            <span>Scoolli simplifie</span>
+            la gestion de votre établissement
+          </h1>
+
+          <p class="hero-description">
+            En quelques minutes, découvrez les principales fonctionnalités qui permettent aux
+            établissements scolaires de gagner du temps, mieux suivre leurs élèves et simplifier
+            leur gestion quotidienne.
+          </p>
+        </div>
+
+        <!-- VIDEO -->
+        <div class="video-wrapper">
+          <div class="video-card">
+            <!--
+          Remplacer cette zone par la vraie vidéo
+          lorsque celle-ci sera disponible.
+        -->
+
+            <div class="video-placeholder">
+              <div class="video-background">
+                <div class="dashboard-preview">
+                  <div class="preview-sidebar">
+                    <div class="preview-logo">
+                      <i class="fas fa-graduation-cap"></i>
+                    </div>
+
+                    <div class="preview-menu active">
+                      <i class="fas fa-home"></i>
+                    </div>
+
+                    <div class="preview-menu">
+                      <i class="fas fa-user-graduate"></i>
+                    </div>
+
+                    <div class="preview-menu">
+                      <i class="fas fa-book"></i>
+                    </div>
+
+                    <div class="preview-menu">
+                      <i class="fas fa-wallet"></i>
+                    </div>
+
+                    <div class="preview-menu">
+                      <i class="fas fa-calendar-alt"></i>
+                    </div>
+                  </div>
+
+                  <div class="preview-content">
+                    <div class="preview-topbar">
+                      <div class="preview-line"></div>
+                      <div class="preview-avatar"></div>
+                    </div>
+
+                    <div class="preview-title"></div>
+
+                    <div class="preview-stats">
+                      <div class="preview-stat"></div>
+                      <div class="preview-stat"></div>
+                      <div class="preview-stat"></div>
+                      <div class="preview-stat"></div>
+                    </div>
+
+                    <div class="preview-chart">
+                      <div class="chart-bars">
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <button type="button" class="play-button" aria-label="Lire la démonstration">
+                <i class="fas fa-play"></i>
+              </button>
+
+              <div class="video-label">
+                <i class="fas fa-play"></i>
+                Démonstration Scoolli
+              </div>
+            </div>
+          </div>
+
+          <div class="video-caption">
+            <span>
+              <i class="fas fa-clock"></i>
+              Démonstration rapide
+            </span>
+
+            <span>
+              <i class="fas fa-desktop"></i>
+              Interface réelle
+            </span>
+
+            <span>
+              <i class="fas fa-check-circle"></i>
+              Sans engagement
+            </span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- FEATURES -->
+    <section class="features-section">
+      <div class="container">
+        <div class="section-heading">
+          <div class="eyebrow">
+            <i class="fas fa-th-large"></i>
+            Les fonctionnalités
+          </div>
+
+          <h2>
+            Tout ce qu'il faut pour
+            <span>gérer votre établissement</span>
+          </h2>
+
+          <p>
+            Scoolli centralise les principales opérations de votre établissement dans une seule
+            plateforme.
+          </p>
+        </div>
+
+        <div class="features-grid">
+          @for (feature of demoFeatures; track feature.title) {
+            <article class="feature-card">
+              <div class="feature-icon" [class]="feature.color">
+                <i [class]="feature.icon"></i>
+              </div>
+
+              <div class="feature-content">
+                <h3>{{ feature.title }}</h3>
+
+                <p>
+                  {{ feature.description }}
+                </p>
+              </div>
+
+              <div class="feature-arrow">
+                <i class="fas fa-arrow-right"></i>
+              </div>
+            </article>
+          }
+        </div>
+      </div>
+    </section>
+
+    <!-- HOW IT HELPS -->
+    <section class="benefits-section">
+      <div class="container benefits-layout">
+        <div class="benefits-content">
+          <div class="eyebrow">
+            <i class="fas fa-lightbulb"></i>
+            Pourquoi EduSchool ?
+          </div>
+
+          <h2>
+            Une gestion scolaire
+            <span>plus simple au quotidien</span>
+          </h2>
+
+          <p>
+            Fini les informations dispersées entre plusieurs fichiers, cahiers et outils. EduSchool
+            vous permet de centraliser votre gestion et de retrouver rapidement les informations
+            dont vous avez besoin.
+          </p>
+
+          <div class="benefit-list">
+            <div class="benefit-item">
+              <div class="benefit-check">
+                <i class="fas fa-check"></i>
+              </div>
+
+              <div>
+                <strong>Gagnez du temps</strong>
+                <p>Automatisez les tâches administratives répétitives.</p>
+              </div>
+            </div>
+
+            <div class="benefit-item">
+              <div class="benefit-check">
+                <i class="fas fa-check"></i>
+              </div>
+
+              <div>
+                <strong>Centralisez vos informations</strong>
+                <p>Toutes les données de votre établissement au même endroit.</p>
+              </div>
+            </div>
+
+            <div class="benefit-item">
+              <div class="benefit-check">
+                <i class="fas fa-check"></i>
+              </div>
+
+              <div>
+                <strong>Travaillez en équipe</strong>
+                <p>Administration, enseignants et parents peuvent collaborer plus facilement.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="benefits-visual">
+          <div class="visual-card">
+            <div class="visual-header">
+              <div>
+                <span class="visual-small-title">Tableau de bord</span>
+                <strong>Vue d'ensemble</strong>
+              </div>
+
+              <div class="visual-status">
+                <i class="fas fa-circle"></i>
+                En ligne
+              </div>
+            </div>
+
+            <div class="visual-metrics">
+              <div class="metric">
+                <div class="metric-icon blue">
+                  <i class="fas fa-user-graduate"></i>
+                </div>
+
+                <div>
+                  <span>Élèves</span>
+                  <strong>1 248</strong>
+                </div>
+              </div>
+
+              <div class="metric">
+                <div class="metric-icon green">
+                  <i class="fas fa-chalkboard-teacher"></i>
+                </div>
+
+                <div>
+                  <span>Enseignants</span>
+                  <strong>86</strong>
+                </div>
+              </div>
+
+              <div class="metric">
+                <div class="metric-icon purple">
+                  <i class="fas fa-wallet"></i>
+                </div>
+
+                <div>
+                  <span>Paiements</span>
+                  <strong>82%</strong>
+                </div>
+              </div>
+
+              <div class="metric">
+                <div class="metric-icon orange">
+                  <i class="fas fa-user-check"></i>
+                </div>
+
+                <div>
+                  <span>Présence</span>
+                  <strong>94%</strong>
+                </div>
+              </div>
+            </div>
+
+            <div class="visual-chart">
+              <div class="chart-header">
+                <strong>Évolution des inscriptions</strong>
+                <span>2026</span>
+              </div>
+
+              <div class="chart-area">
+                <div class="chart-line"></div>
+
+                <div class="chart-point point-1"></div>
+                <div class="chart-point point-2"></div>
+                <div class="chart-point point-3"></div>
+                <div class="chart-point point-4"></div>
+                <div class="chart-point point-5"></div>
+                <div class="chart-point point-6"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- CTA -->
+    <section class="demo-cta">
+      <div class="container">
+        <div class="cta-card">
+          <div class="cta-icon">
+            <i class="fas fa-rocket"></i>
+          </div>
+
+          <div class="cta-content">
+            <h2>Prêt à simplifier la gestion de votre établissement ?</h2>
+
+            <p>Commencez gratuitement et découvrez EduSchool pendant 15 jours, sans engagement.</p>
+          </div>
+
+          <button type="button" class="btn-cta" (click)="startTrial()">
+            Commencer gratuitement
+            <i class="fas fa-arrow-right"></i>
+          </button>
+        </div>
+      </div>
+    </section>
+    ```
+  </main>
+
+  <!-- FOOTER -->
+
+  <footer class="demo-footer">
+    ```
+    <div class="container">
+      <div class="footer-content">
+        <button type="button" class="footer-brand" (click)="goBackHome()">
+          <!--   <span class="brand-icon">
+            <i class="fas fa-graduation-cap"></i>
+          </span>
+
+          <span> Edu<span>School</span> </span> -->
+
+          <img
+            src="scoolli-logo.png"
+            alt="Scoolli"
+            class="brand-logo"
+            style="width: 130px; height: auto"
+          />
+        </button>
+
+        <p>La plateforme simple pour gérer votre établissement scolaire.</p>
+
+        <div class="footer-links">
+          <button type="button" (click)="goBackHome()">Accueil</button>
+
+          <button type="button" (click)="startTrial()">Essai gratuit</button>
+
+          <button type="button" (click)="goToLogin()">Se connecter</button>
+        </div>
+      </div>
+
+      <div class="footer-bottom">
+        <span>© 2026 Wokite. Tous droits réservés.</span>
+
+        <span> Gestion scolaire simplifiée. </span>
+      </div>
+    </div>
+  </footer>
+</div>

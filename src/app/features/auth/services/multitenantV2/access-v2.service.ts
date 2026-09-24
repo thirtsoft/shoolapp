@@ -41,6 +41,14 @@ export class AccessV2Service {
 
           return '/setup';
         }
+        if (this.hasRole('PARENT')) {
+          return '/parent';
+        }
+
+         if (this.hasRole('ENSEIGNANT')) {
+          return '/enseignant';
+        }
+
         return '/admin';
 
 

@@ -176,7 +176,7 @@ export class HomeComponent {
     this.closeMobileMenu();
 
     // À remplacer par la route réelle de l'inscription/onboarding.
-    this.router.navigate(['/inscription']);
+    this.router.navigate(['/demande-demo']);
   }
 
   requestDemo(): void {

@@ -2,6 +2,7 @@ import { CommonModule } from '@angular/common';
 import { Component, inject, input, output, signal } from '@angular/core';
 import { Router } from '@angular/router';
 import { DetailsEleveParent } from '../../../../core/models/dossiereleve/details-eleve-parent';
+import { ParentElevesResponse } from '../../../../core/models/parent/parent-eleves-response.model';
 import { LocalStorageService } from '../../../../core/services/local-storage.service';
 
 
@@ -51,19 +52,17 @@ export class SideBarParentComponent {
   nav: NavItem[] = [
     { route: '/parent/dashboard', ico: '📊', label: 'Tableau de bord', section: '', badge: '' },
 
-    // Suivi quotidien
     { route: '/parent/absences', ico: '❌', label: 'Absences', section: 'Suivi quotidien', badge: '18' },
     { route: '/parent/evaluations', ico: '🎯', label: 'Évaluations', section: '', badge: '' },
     { route: '/parent/notes', ico: '📝', label: 'Notes', section: '', badge: '' },
     { route: '/parent/bulletins', ico: '📋', label: 'Bulletins', section: '', badge: '' },
     { route: '/parent/exercices', ico: '✏️', label: 'Exercice', section: '', badge: '' },
 
-    // FINANCES
     { route: '/parent/factures', ico: '💰', label: 'Factures', section: 'Finances', badge: '18' },
     { route: '/parent/services', ico: '📋', label: 'Inscriptions services', section: '', badge: '' },
 
 
-  //  { route: '/parent/emploi-temps', ico: '🕐', label: 'Emploi du temps', section: 'Ressources', badge: '18' },
+    //  { route: '/parent/emploi-temps', ico: '🕐', label: 'Emploi du temps', section: 'Ressources', badge: '18' },
     { route: '/parent/cours', ico: '📚', label: 'Cours & Ressources', section: 'Ressources', badge: '18' },
 
     // VIE SCOLAIRE
@@ -149,7 +148,7 @@ export class SideBarParentComponent {
 
   deconnecter(): void {
     this.localStorage.clear();
-    this.router.navigate(['/auth/login']);
+    this.router.navigate(['/auth/']);
   }
 
 }

@@ -1,12 +1,12 @@
 <div class="setup-page">
   <header class="setup-header">
     <div class="brand">
-      <div class="brand-icon">🎓</div>
-
-      <div class="brand-text">
-        <span class="brand-name">EduSchool</span>
-        <span class="brand-subtitle"> Configuration de votre établissement </span>
-      </div>
+      <img
+        src="scoolli-logo.png"
+        alt="Scoolli"
+        class="brand-logo"
+        style="width: 130px; height: auto"
+      />
     </div>
 
     <div class="header-right">
@@ -36,8 +36,6 @@
         paramètres à tout moment.
       </p>
     </div>
-
-    <!-- STEPPER -->
 
     <div class="stepper">
       <div class="stepper-line">
@@ -75,8 +73,6 @@
       }
     </div>
 
-    <!-- CARD -->
-
     <section class="setup-card">
       <div class="card-header">
         <div class="card-title-zone">
@@ -101,8 +97,6 @@
 
         <div class="step-counter">{{ currentStep() }} / {{ steps.length }}</div>
       </div>
-
-      <!-- CONTENU DE L'ÉTAPE -->
 
       <div class="card-body">
         @switch (currentStep()) {
@@ -199,7 +193,7 @@
 
       <span class="footer-separator"> • </span>
 
-      <span> EduSchool Sénégal </span>
+      <span> Scoolli </span>
     </div>
   </main>
 </div>
