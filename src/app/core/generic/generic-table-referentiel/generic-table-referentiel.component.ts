@@ -380,7 +380,9 @@ export class GenericTableReferentielComponent implements OnInit {
 
   // Actions sur les éléments
   desactiverElement(endpoint: string, row: any): void {
-    this.serviceCommun.desactiverResource(endpoint, row.id).subscribe({
+    const param = row.id ?? row.uuid;
+    this.serviceCommun.desactiverResource(endpoint, param).subscribe({
+      //  this.serviceCommun.desactiverResource(endpoint, row.id).subscribe({
       next: () => {
         this.toast.success('success', `L'élément "${row.libelle}" a été ${this.lockAction} avec succès.`);
         setTimeout(() => window.location.reload(), 500);
@@ -393,7 +395,8 @@ export class GenericTableReferentielComponent implements OnInit {
   }
 
   activerElement(endpoint: string, row: any): void {
-    this.serviceCommun.activeResource(endpoint, row.id).subscribe({
+    const param = row.id ?? row.uuid;
+    this.serviceCommun.activeResource(endpoint, param).subscribe({
       next: () => {
         this.toast.success('success', `L'élément "${row.libelle}" a été ${this.lockAction} avec succès.`);
         setTimeout(() => window.location.reload(), 500);

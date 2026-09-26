@@ -266,7 +266,9 @@ export class GenericTableDossierComponent implements OnInit {
   }
 
   desactiverElement(endpoint: string, row: any): void {
-    this.serviceCommun.desactiverResource(endpoint, row.id).subscribe(
+    const param = row.id ?? row.uuid;
+    this.serviceCommun.desactiverResource(endpoint, param).subscribe(
+      //  this.serviceCommun.desactiverResource(endpoint, row.id).subscribe(
       (response) => {
 
         this.toast.success('success', `L'élément "${row.libelle}" a été ${this.lockAction} avec succès.`);
@@ -280,7 +282,9 @@ export class GenericTableDossierComponent implements OnInit {
   }
 
   activerElement(endpoint: string, row: any): void {
-    this.serviceCommun.activeResource(endpoint, row.id).subscribe(
+    const param = row.id ?? row.uuid;
+    this.serviceCommun.activeResource(endpoint, param).subscribe(
+      //  this.serviceCommun.activeResource(endpoint, row.id).subscribe(
       (response) => {
 
         this.toast.success('success', `L'élément "${row.libelle}" a été ${this.lockAction} avec succès.`);
