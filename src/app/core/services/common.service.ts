@@ -20,12 +20,12 @@ export class CommonService {
   constructor(private readonly http: HttpClient) { }
 
 
-  desactiverResource(endpoint: string, id: number) {
+  desactiverResource(endpoint: string, id: any) {
     const url = `${this.baseUrl_1}/${endpoint}/desactiver/${id}`;
     return this.http.delete(url, this.httpOptions);
   }
 
-  activeResource(endpoint: string, id: number) {
+  activeResource(endpoint: string, id: any) {
     const url = `${this.baseUrl_1}/${endpoint}/activer/${id}`;
     return this.http.post(url, null, this.httpOptions);
 
