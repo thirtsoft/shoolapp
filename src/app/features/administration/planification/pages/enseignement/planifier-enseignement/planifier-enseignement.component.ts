@@ -33,9 +33,6 @@ export class PlanifierEnseignementComponent implements OnInit {
   matiereList: Matiere[] = [];
   enseigantList: EnseigantList[] = [];
   anneeScolaireList: AnneeScolaire[] = [];
-  ecoleId?: number;
-  userId: number;
-  utilisateur: Utilisateur = {};
 
   title = "Planifier un enseignement";
 
@@ -56,11 +53,9 @@ export class PlanifierEnseignementComponent implements OnInit {
   constructor(
   ) {
     this.enseignementId = this.activeRoute.snapshot.params['id'] ? Number(this.activeRoute.snapshot.params['id']) : undefined;
-    this.userId = Number(localStorage.getItem('id'));
   }
 
   ngOnInit(): void {
-    this.getConnectedUserInfos();
     this.loadReferentiels();
     this.initializeForm();
     if (this.enseignementId) {
@@ -68,15 +63,6 @@ export class PlanifierEnseignementComponent implements OnInit {
       this.isEdit = true;
       this.getEnseignement(this.enseignementId);
     }
-  }
-
-  private getConnectedUserInfos() {
-    this.utilisateurService.getUtilisateur(this.userId)
-      .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe({
-        next: data => this.utilisateur = data,
-        error: error => console.error('Erreur utilisateur:', error)
-      });
   }
 
   private loadReferentiels() {
@@ -156,7 +142,6 @@ export class PlanifierEnseignementComponent implements OnInit {
       dateDebut: [enseignement.dateDebut || '', Validators.required],
       dateFin: [enseignement.dateFin || ''],
       estProfPrincipal: [enseignement.estProfPrincipal || false],
-      ecole: this.ecoleId
     });
   }
 
@@ -218,27 +203,6 @@ export class PlanifierEnseignementComponent implements OnInit {
     });
   }
 
-  /*
-  formatEnseignementForAPI(enseignement: any): any {
-    const enseignantId = enseignement.enseignant?.id || enseignement.enseignant;
-    const classeId = enseignement.classe?.id || enseignement.classe;
-    const anneeScolaireId = enseignement.anneeScolaire?.id || enseignement.anneeScolaire;
-    const matiereId = enseignement.matiere?.id || enseignement.matiere;
-    return {
-      id: enseignement.id || null,
-      description: enseignement.description || '',
-      enseignant: Number(enseignantId),
-      classe: Number(classeId),
-      anneeScolaire: Number(anneeScolaireId),
-      matiere: Number(matiereId),
-      dateDebut: enseignement.dateDebut,
-      dateFin: enseignement.dateFin || null,
-      actif: 1,
-      estProfPrincipal: enseignement.estProfPrincipal || false,
-      ecole: this.ecoleId
-    };
-  }*/
-
   private formatEnseignementForAPI(enseignement: any): any {
     return {
       id: enseignement.id ? Number(enseignement.id) : null,
@@ -251,7 +215,6 @@ export class PlanifierEnseignementComponent implements OnInit {
       dateFin: enseignement.dateFin || null,
       actif: 1,
       estProfPrincipal: !!enseignement.estProfPrincipal,
-      ecole: this.ecoleId
     };
   }
 

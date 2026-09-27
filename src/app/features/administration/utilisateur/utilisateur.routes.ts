@@ -71,7 +71,7 @@ export const UTILISATEURS_ROUTES: Routes = [
         component: CreateEnseignantComponent
       },
       {
-        path: 'enseignant/edit/:id',
+        path: 'enseignant/edit/:uuid',
         component: CreateEnseignantComponent
       },
       {
