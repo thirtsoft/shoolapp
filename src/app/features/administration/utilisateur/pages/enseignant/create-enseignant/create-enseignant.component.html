@@ -8,7 +8,7 @@
             <i class="fas fa-chalkboard-teacher me-1"></i>
             <span class="badge badge-primary">
               <i class="fas fa-plus-circle me-1"></i>
-              @if (!enseignantId) {
+              @if (!enseignantUuid) {
                 Nouvel enseignant
               } @else {
                 Modification
@@ -124,7 +124,7 @@
                           placeholder="77 810 12 12"
                         />
                         @if (
-                          enseignantFormGroup.get('nom')?.invalid &&
+                          enseignantFormGroup.get('mobile')?.invalid &&
                           enseignantFormGroup.get('mobile')?.touched
                         ) {
                           <small class="form-text text-danger"
@@ -266,7 +266,7 @@
                   [disabled]="!enseignantFormGroup.valid"
                 >
                   <i class="fas fa-save me-2"></i>
-                  @if (!enseignantId) {
+                  @if (!enseignantUuid) {
                     Enregistrer l'enseignant
                   } @else {
                     Modifier l'enseignant

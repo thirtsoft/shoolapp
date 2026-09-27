@@ -36,9 +36,6 @@ export class InscrireEleveServiceComponent implements OnInit, AfterViewInit {
   classList?: any[];
   selectedPrimary: number | null = null;
   selectedSecondary: number | null = null;
-  ecoleId: any;
-  userId: number;
-  utilisateur: Utilisateur = {};
 
   title = "Inscrire un élève à un service";
 
@@ -55,12 +52,9 @@ export class InscrireEleveServiceComponent implements OnInit, AfterViewInit {
 
   constructor() {
     this.eleveinscrireId = this.activeRoute.snapshot.params['id'];
-    this.userId = Number(localStorage.getItem('id'));
-    this.ecoleId = Number(localStorage.getItem('ecoleId'));
   }
 
   ngOnInit(): void {
-    this.getConnectedUserInfos();
     this.getClassList();
     this.getTypeServiceList();
     this.getAnneeScolaires();
@@ -87,15 +81,6 @@ export class InscrireEleveServiceComponent implements OnInit, AfterViewInit {
 
   onDropdownClick(event: MouseEvent) {
     event.stopPropagation();
-  }
-
-  getConnectedUserInfos() {
-    this.utilisateurService.getUtilisateur(this.userId).subscribe({
-      next: data => {
-        this.utilisateur = data;
-      },
-      error: error => { console.log(error) },
-    });
   }
 
   getTypeServiceList() {
@@ -241,7 +226,6 @@ export class InscrireEleveServiceComponent implements OnInit, AfterViewInit {
       benefice_remise: this.eleveinscrireFormGroup.get('benefice_remise')?.value,
       remise: this.eleveinscrireFormGroup.get('remise')?.value,
       typeServiceOffertDTOList: this.typeServiceList.filter((action: any) => typeServiceOffertSelected.includes(Number(action.id))),
-      ecole: this.ecoleId
     };
     if (!this.isEdit) {
       this.comptabiliteResource.creerUneRessource('eleveservice', payload).subscribe({

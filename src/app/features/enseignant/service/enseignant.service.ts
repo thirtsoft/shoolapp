@@ -2,15 +2,19 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { environment } from '../../../../environments/environment';
-import { EnseigantList } from '../../../core/models/enseignant/enseignant-list';
-import { Enseignant } from '../../../core/models/enseignant/enseignant';
-import { DetailsEnseignant } from '../../../core/models/enseignant/details-enseignant';
-import { DetailsEnseignantUtilisateur } from '../../../core/models/enseignant/details-enseignant-utilisateur';
-import { ResponseMessage } from '../../../core/response/response-message';
+import { ApiResponse } from '../../../core/datamodel/api-response.model';
 import { ListEleveNote, ListNote } from '../../../core/models/dossiereleve/list-note';
 import { Note } from '../../../core/models/dossiereleve/note';
-import { ListeConge } from '../../../core/models/enseignant/liste-conge';
 import { Conge } from '../../../core/models/enseignant/conge';
+import { CreateEnseignantResponse } from '../../../core/models/enseignant/create-enseignant-response.model';
+import { DetailsEnseignant } from '../../../core/models/enseignant/details-enseignant';
+import { DetailsEnseignantUtilisateur } from '../../../core/models/enseignant/details-enseignant-utilisateur';
+import { Enseignant } from '../../../core/models/enseignant/enseignant';
+import { EnseigantList } from '../../../core/models/enseignant/enseignant-list';
+import { EnseignantUpdateRequest } from '../../../core/models/enseignant/enseignant-update-request.model';
+import { GetEnseignantResponse } from '../../../core/models/enseignant/get-enseignant-response.model';
+import { ListeConge } from '../../../core/models/enseignant/liste-conge';
+import { ResponseMessage } from '../../../core/response/response-message';
 
 @Injectable({
   providedIn: 'root'
@@ -61,6 +65,37 @@ export class EnseignantService {
       formData
     );
   }
+
+  //
+  enregistrerEnseignantAvecPhotoFiles(formData: FormData): Observable<ApiResponse<CreateEnseignantResponse>> {
+    return this.http.post<ApiResponse<CreateEnseignantResponse>>(
+      `${this.baseUrl}/enseignant/avec-photo`,
+      formData
+    );
+  }
+
+  modifierEnseignant(enseignantUuid: string, request: EnseignantUpdateRequest): Observable<ApiResponse<EnseigantList>> {
+    return this.http.patch<ApiResponse<EnseigantList>>(
+      `${this.baseUrl}/enseignant/edit/${enseignantUuid}`,
+      request
+    );
+  }
+
+  modifierPhotoEnseignant(enseignantUuid: string, file: File): Observable<ApiResponse<CreateEnseignantResponse>> {
+    const formData = new FormData();
+    formData.append('file', file);
+    return this.http.put<ApiResponse<CreateEnseignantResponse>>(
+      `${this.baseUrl}/enseignant/${enseignantUuid}/photo`,
+      formData
+    );
+  }
+
+  getEnseignantByUuid(enseignantUuid: string): Observable<ApiResponse<GetEnseignantResponse>> {
+    return this.http.get<ApiResponse<GetEnseignantResponse>>(
+      `${this.baseUrl}/enseignant/by-uuid/${enseignantUuid}`
+    );
+  }
+  //
 
   updateEnseigant(id: number, value: Enseignant) {
     return this.http.put<number>(`${this.baseUrl}/enseignant/edit/${id}`, value);

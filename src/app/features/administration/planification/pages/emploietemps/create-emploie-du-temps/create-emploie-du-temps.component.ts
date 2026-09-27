@@ -11,7 +11,6 @@ import { ListeClasse } from '../../../../../../core/models/referentiels/classe';
 import { Matiere } from '../../../../../../core/models/referentiels/matiere';
 import { Salle } from '../../../../../../core/models/referentiels/salle';
 import { SessionSemestre } from '../../../../../../core/models/referentiels/session-semestre';
-import { Utilisateur } from '../../../../../../core/models/utilisateur/utilisateur';
 import { ReferentielResourceService } from '../../../../referentiel/service/referentiel-resource.service';
 import { UtilisateurService } from '../../../../utilisateur/service/utilisateur.service';
 import { PlanificationResourceService } from '../../../services/planification-resource.service';
@@ -37,9 +36,6 @@ export class CreateEmploieDuTempsComponent implements OnInit {
   enseignantList: EnseigantList[] = [];
   enseignementList: ListeEnseignement[] = [];
   anneeScolaireList: AnneeScolaire[] = [];
-  ecoleId: any;
-  userId: number;
-  utilisateur: Utilisateur = {};
   enseignementsParCours: { [index: number]: ListeEnseignement[] } = {};
 
   title = "Création d'un emploi du temps ";
@@ -56,7 +52,6 @@ export class CreateEmploieDuTempsComponent implements OnInit {
   constructor(
   ) {
     this.emploieId = this.route.snapshot.params['id'];
-    this.userId = Number(localStorage.getItem('id'));
   }
 
   ngOnInit(): void {
@@ -68,10 +63,6 @@ export class CreateEmploieDuTempsComponent implements OnInit {
   }
 
   private chargerLesDonnees() {
-    this.utilisateurService.getUtilisateur(this.userId).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
-      next: data => this.utilisateur = data
-    });
-
     this.referentielService.getResourceList('sessionsemestre').pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
       next: (data: any) => {
         this.sessionSemestreList = data;
@@ -227,7 +218,6 @@ export class CreateEmploieDuTempsComponent implements OnInit {
       classe: this.emploiFormGroup.get("classe")!.value,
       coursEditDTOList: this.emploiFormGroup.get("coursEditDTOList")!.value,
     }
-    payload.ecole = this.ecoleId;
     if (!this.emploieId && this.emploieId == undefined) {
       this.planificationService.createEmploiDuTempsAnneeScolaire(payload).subscribe({
         next: (data) => {
@@ -245,7 +235,6 @@ export class CreateEmploieDuTempsComponent implements OnInit {
       });
     } else {
       this.addEditEmploie = this.emploiFormGroup.value;
-      this.addEditEmploie.ecole = this.ecoleId;
       this.planificationService.updateEmploiDuTempsAnneeScolaire(this.emploieId, this.addEditEmploie).subscribe({
         next: (data) => {
           if (data.statut === 'OK') {
