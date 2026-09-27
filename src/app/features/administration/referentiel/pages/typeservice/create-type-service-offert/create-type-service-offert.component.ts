@@ -22,11 +22,6 @@ export class CreateTypeServiceOffertComponent implements OnInit {
   typeService: any;
   isEdit: boolean = false;
 
-  ecoleId: any;
-  userId: number;
-
-  utilisateur: Utilisateur = {};
-
   title = "Ajouter un service offert";
 
 
@@ -39,28 +34,16 @@ export class CreateTypeServiceOffertComponent implements OnInit {
 
   constructor() {
     this.typeServiceId = this.activeRoute.snapshot.params['id'];
-    this.userId = Number(localStorage.getItem('id'));
   }
 
 
   ngOnInit(): void {
-    this.getConnectedUserInfos();
     this.initializeForm(null);
     if (this.typeServiceId != null && this.typeServiceId != undefined) {
       this.getTypeService(this.typeServiceId);
       this.title = 'Modifier un service offert';
       this.isEdit = true;
     }
-  }
-
-  getConnectedUserInfos() {
-    this.utilisateurService.getUtilisateur(this.userId).subscribe({
-      next: data => {
-        this.utilisateur = data;
-      },
-      error: error => { console.log(error) },
-    });
-
   }
 
   getTypeService(typeServiceId: number) {
@@ -82,7 +65,6 @@ export class CreateTypeServiceOffertComponent implements OnInit {
 
   ajouteditTypeService() {
     const payload = this.typeServiceFormGroup.value;
-    payload.ecole = this.ecoleId;
     if (!this.isEdit) {
       this.referentielResource.creerUneRessource('typeserviceoffert', payload).subscribe({
         next: (data) => {
