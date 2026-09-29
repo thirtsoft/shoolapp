@@ -1,6 +1,9 @@
 import { Eleve } from "../dossiereleve/request/eleve";
 import { DetailsLigneFacture } from "./details-ligne-facture";
 
+import { PaiementFacture } from "./paiement-facture";
+
+
 export interface DetailsFacture {
   id?: number;
 
@@ -21,6 +24,8 @@ export interface DetailsFacture {
   eleve?: Eleve;
 
   detailsLigneFactureDTOS?: DetailsLigneFacture[];
+
+  paiements?: PaiementFacture[];
 
   mois?: number;
 

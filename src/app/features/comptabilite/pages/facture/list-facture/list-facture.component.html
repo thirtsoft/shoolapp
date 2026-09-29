@@ -11,8 +11,6 @@
   [currentPage]="currentPage"
   [pageSize]="pageSize"
   (pageChange)="changePage($event)"
-  addButtonLink="/admin/comptabilite/facture/generer"
-  modifierButtonLink="/admin/comptabilite/facture/edit"
   [deleteEndPoint]="deleteEndpoint"
   [showSearch]="false"
   [filtered]="tableFilters"
@@ -20,6 +18,7 @@
   [showFilters]="true"
   (resetFilters)="resetFilters()"
   (sizeChange)="changeSize($event)"
+  addButtonLink="/admin/comptabilite/facture/generer"
   detailButtonLink="/admin/comptabilite/facture/details"
 >
 </app-generic-table-dossier>

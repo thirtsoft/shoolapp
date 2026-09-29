@@ -578,34 +578,7 @@
                               }
                             </div>
 
-                            <div class="icon-position center">
-                              @if (isLockableIcon && showEditOrDeleteCondition(row)) {
-                                <button
-                                  class="icon-button"
-                                  aria-label="Toggle Lock"
-                                  [title]="
-                                    row.actif === 1 || row.est_valide || row.recordStatus === 'ACTIVE' ? 'Desactiver' : 'Activer'
-                                  "
-                                  (click)="
-                                    row.actif === 1 || row.est_valide || row.recordStatus === 'ACTIVE'
-                                      ? openConfirmationDialog('desactiver', deleteEndPoint, row)
-                                      : openConfirmationDialog('activer', deleteEndPoint, row)
-                                  "
-                                >
-                                  <img
-                                    [src]="
-                                      row.actif === 1 || row.est_valide || row.recordStatus === 'ACTIVE'
-                                        ? 'assets/img/lock.png'
-                                        : 'assets/img/unlock.png'
-                                    "
-                                    class="icon"
-                                    style="width: 14px; height: 15px"
-                                  />
-                                </button>
-                              }
-                            </div>
-
-                            <div class="icon-position right">
+  <div class="icon-position center">
                               @if (isEyesIcon) {
                                 <button
                                   class="icon-button"
@@ -682,6 +655,43 @@
                                 </button>
                               }
                             </div>
+
+                            <div class="icon-position right">
+                              @if (isLockableIcon && showEditOrDeleteCondition(row)) {
+                                <button
+                                  class="icon-button"
+                                  aria-label="Toggle Lock"
+                                  [title]="
+                                    row.actif === 1 ||
+                                    row.est_valide ||
+                                    row.recordStatus === 'ACTIVE'
+                                      ? 'Desactiver'
+                                      : 'Activer'
+                                  "
+                                  (click)="
+                                    row.actif === 1 ||
+                                    row.est_valide ||
+                                    row.recordStatus === 'ACTIVE'
+                                      ? openConfirmationDialog('desactiver', deleteEndPoint, row)
+                                      : openConfirmationDialog('activer', deleteEndPoint, row)
+                                  "
+                                >
+                                  <img
+                                    [src]="
+                                      row.actif === 1 ||
+                                      row.est_valide ||
+                                      row.recordStatus === 'ACTIVE'
+                                        ? 'assets/img/lock.png'
+                                        : 'assets/img/unlock.png'
+                                    "
+                                    class="icon"
+                                    style="width: 14px; height: 15px"
+                                  />
+                                </button>
+                              }
+                            </div>
+
+                          
                           </td>
                         </tr>
                       }

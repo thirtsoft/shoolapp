@@ -3,6 +3,7 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { IFilterConfig } from '../../../../../../core/filtered-config/FiltreConfiguration';
 import { GenericTableReferentielComponent } from '../../../../../../core/generic/generic-table-referentiel/generic-table-referentiel.component';
 import { UtilisateurResourceService } from '../../../../utilisateur/service/utilisateur-resource.service';
+import { ParentService } from '../../../../../parent/service/parent.service';
 
 @Component({
   selector: 'app-parent-list',
@@ -32,6 +33,7 @@ export class ParentListComponent implements OnInit {
   hasActiveFilters: boolean = false;
 
   private readonly utilisateurService = inject(UtilisateurResourceService);
+  private readonly parentService = inject(ParentService)
 
 
   ngOnInit(): void {
@@ -84,14 +86,14 @@ export class ParentListComponent implements OnInit {
 
       const filtreParam = this.construireParametreDeFiltre();
 
-      apiCall = this.utilisateurService.fetchFilterDataTable(
+      apiCall = this.parentService.fetchFilterDataTable(
         'parent',
         this.currentPage,
         this.pageSize,
         filtreParam)
 
     } else {
-      apiCall = this.utilisateurService.getResourcePaged('parent', this.currentPage, this.pageSize);
+      apiCall = this.parentService.getResourcePaged('parent', this.currentPage, this.pageSize);
     }
     apiCall.subscribe({
       next: (response) => {
