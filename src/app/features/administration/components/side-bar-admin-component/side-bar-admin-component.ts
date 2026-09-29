@@ -3,16 +3,6 @@ import { Router } from '@angular/router';
 import { NavItemChildren } from '../../../../core/components/sidebar-navbar-models/nav-item-children.model';
 import { LocalStorageService } from '../../../../core/services/local-storage.service';
 
-/*
-interface NavItem {
-  route?: string;
-  ico: string;
-  label: string;
-  badge?: string;
-  section?: string;
-  children?: NavItem[];
-}*/
-
 @Component({
   selector: 'app-side-bar-admin-component',
   standalone: true,

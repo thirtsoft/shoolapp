@@ -4,11 +4,15 @@
       <div class="row">
         <div class="col-sm-7 col-auto">
           <h3 class="page-title">Facture</h3>
+
           <ul class="breadcrumb">
             <li class="breadcrumb-item">
-              <a [routerLink]="'/admin/'">Tableau de bord</a>
+              <a [routerLink]="'/admin/'"> Tableau de bord </a>
             </li>
-            <li class="breadcrumb-item active">{{ title }}</li>
+
+            <li class="breadcrumb-item active">
+              {{ title }}
+            </li>
           </ul>
         </div>
       </div>
@@ -18,83 +22,136 @@
       <div class="col-sm-12">
         <div class="card">
           <div class="card-body">
+            <!-- ========================= -->
+            <!-- EN-TÊTE FACTURE -->
+            <!-- ========================= -->
+
             <div class="invoice-header">
               <div class="invoice-header-left">
                 <div class="invoice-logo">
                   @if (parametresEtablissement.logoBase64) {
                     <img
                       [src]="'data:image/png;base64,' + parametresEtablissement.logoBase64"
-                      alt="logo"
+                      alt="Logo établissement"
                     />
                   } @else {
                     <i class="fas fa-school"></i>
                   }
                 </div>
               </div>
+
               <div class="invoice-header-right">
                 <p class="invoice-details">
-                  <strong>N°:</strong> {{ detailsFacture?.numeroFacture }}
+                  <strong>N°:</strong>
+                  {{ detailsFacture?.numeroFacture }}
+
                   <br />
-                  <strong>Date:</strong> {{ detailsFacture?.dateFacture | date: 'dd/MM/yyyy' }}
+
+                  <strong>Date:</strong>
+                  {{ detailsFacture?.dateFacture | date: 'dd/MM/yyyy' }}
+
                   <br />
+
                   <strong>Statut:</strong>
-                  <span [class]="'status-badge ' + getStatusClass(detailsFacture?.etat!)">
+
+                  <span [class]="'status-badge ' + getStatusClass(detailsFacture?.etat)">
                     {{ detailsFacture?.etat }}
                   </span>
                 </p>
               </div>
             </div>
 
+            <!-- ========================= -->
+            <!-- INFORMATIONS ÉCOLE / ÉLÈVE -->
+            <!-- ========================= -->
+
             <div class="info-row">
               <div class="info-col">
                 <div class="invoice-info">
                   <strong class="customer-text">
-                    <i class="fas fa-building me-2"></i>Informations école
+                    <i class="fas fa-building me-2"></i>
+                    Informations école
                   </strong>
+
                   <p class="invoice-details-left">
-                    <strong>{{ parametresEtablissement.nom || 'Établissement' }}</strong
-                    ><br />
+                    <strong>
+                      {{ parametresEtablissement.nom || 'Établissement' }}
+                    </strong>
+
+                    <br />
+
                     @if (parametresEtablissement.slogan) {
-                      {{ parametresEtablissement.slogan }}<br />
+                      {{ parametresEtablissement.slogan }}
+                      <br />
                     }
-                    {{ parametresEtablissement.adresse || 'Adresse non renseignée' }}<br />
+
+                    {{ parametresEtablissement.adresse || 'Adresse non renseignée' }}
+
+                    <br />
+
                     @if (parametresEtablissement.telephone) {
-                      <i class="fas fa-phone me-1"></i> {{ parametresEtablissement.telephone
-                      }}<br />
+                      <i class="fas fa-phone me-1"></i>
+                      {{ parametresEtablissement.telephone }}
+                      <br />
                     }
+
                     @if (parametresEtablissement.email) {
-                      <i class="fas fa-envelope me-1"></i> {{ parametresEtablissement.email }}
+                      <i class="fas fa-envelope me-1"></i>
+                      {{ parametresEtablissement.email }}
                     }
                   </p>
                 </div>
               </div>
+
               <div class="info-col">
                 <div class="invoice-info invoice-info2">
                   <strong class="customer-text">
-                    <i class="fas fa-user-graduate me-2"></i>Facture de :
+                    <i class="fas fa-user-graduate me-2"></i>
+                    Facture de :
                   </strong>
+
                   <p class="invoice-details-left">
-                    <strong>{{ detailEleve?.prenom }} {{ detailEleve?.nom }}</strong
-                    ><br />
-                    {{ detailEleve?.lieuNaissance }}, {{ detailEleve?.nationalite }}<br />
+                    <strong>
+                      {{ detailEleve?.prenom }}
+                      {{ detailEleve?.nom }}
+                    </strong>
+
+                    <br />
+
+                    {{ detailEleve?.lieuNaissance }},
+                    {{ detailEleve?.nationalite }}
+
+                    <br />
+
                     {{ detailEleve?.address }}
                   </p>
                 </div>
               </div>
             </div>
 
+            <!-- ========================= -->
+            <!-- PÉRIODE -->
+            <!-- ========================= -->
+
             <div class="invoice-item">
               <div class="invoice-info full-width">
                 <div class="payment-method-row">
                   <strong class="customer-text">
-                    <i class="fas fa-credit-card me-2"></i>Méthode paiement
+                    <i class="fas fa-calendar-alt me-2"></i>
+                    Période
                   </strong>
+
                   <p class="payment-value">
-                    {{ detailsFacture?.modePaiement || 'Virement bancaire' }}
+                    {{ detailsFacture?.mois }}
+                    {{ detailsFacture?.annee }}
                   </p>
                 </div>
               </div>
             </div>
+
+            <!-- ========================= -->
+            <!-- LIGNES FACTURE -->
+            <!-- ========================= -->
 
             <div class="invoice-table-wrap">
               <div class="table-responsive">
@@ -107,14 +164,23 @@
                       <th class="text-right">Montant après remise</th>
                     </tr>
                   </thead>
+
                   <tbody>
                     @for (tarif of detailsFacture?.detailsLigneFactureDTOS; track tarif.id) {
                       <tr>
-                        <td>{{ tarif?.numeroFacture }}</td>
-                        <td>{{ tarif?.typeServiceOffertDTO?.libelle }}</td>
-                        <td class="text-right">
-                          {{ tarif?.montantInitial | number: '1.0-0' }} FCFA
+                        <td>
+                          {{ tarif?.numeroFacture }}
                         </td>
+
+                        <td>
+                          {{ tarif?.typeServiceOffertDTO?.libelle }}
+                        </td>
+
+                        <td class="text-right">
+                          {{ tarif?.montantInitial | number: '1.0-0' }}
+                          FCFA
+                        </td>
+
                         <td class="text-right">
                           @if (
                             tarif?.typeServiceOffertDTO?.libelle === 'Mensualité' && remisePourcent
@@ -124,7 +190,8 @@
                             }}
                             FCFA
                           } @else {
-                            {{ tarif?.montantInitial | number: '1.0-0' }} FCFA
+                            {{ tarif?.montantInitial | number: '1.0-0' }}
+                            FCFA
                           }
                         </td>
                       </tr>
@@ -134,72 +201,234 @@
               </div>
             </div>
 
+            <!-- ========================= -->
+            <!-- TOTAUX FACTURE -->
+            <!-- ========================= -->
+
             <div class="totals-container">
               <div class="totals-box">
                 <table class="totals-table">
                   <tbody>
                     <tr>
                       <th>Sous total :</th>
-                      <td>{{ detailsFacture?.montant | number: '1.0-0' }} FCFA</td>
+
+                      <td>
+                        {{ detailsFacture?.montant | number: '1.0-0' }}
+                        FCFA
+                      </td>
                     </tr>
-                    @if (detailsFacture?.montantPayement) {
+
+                    @if (getMontantDejaPaye() > 0) {
                       <tr>
-                        <th>Somme avancée :</th>
-                        <td>{{ detailsFacture?.montantPayement | number: '1.0-0' }} FCFA</td>
+                        <th>Déjà payé :</th>
+
+                        <td class="text-success">
+                          {{ getMontantDejaPaye() | number: '1.0-0' }}
+                          FCFA
+                        </td>
                       </tr>
                     }
+
                     @if (remisePourcent) {
                       <tr>
                         <th>Remise :</th>
+
                         <td>{{ remisePourcent }}%</td>
                       </tr>
                     }
+
                     <tr class="total-row">
                       <th>Total facture :</th>
-                      <td>{{ getTotalFinal() | number: '1.0-0' }} FCFA</td>
+
+                      <td>
+                        {{ detailsFacture?.montant | number: '1.0-0' }}
+                        FCFA
+                      </td>
+                    </tr>
+
+                    <tr>
+                      <th>Reste à payer :</th>
+
+                      <td
+                        [class.text-success]="getMontantRestantFacture() === 0"
+                        [class.text-danger]="getMontantRestantFacture() > 0"
+                      >
+                        {{ getMontantRestantFacture() | number: '1.0-0' }}
+                        FCFA
+                      </td>
                     </tr>
                   </tbody>
                 </table>
               </div>
             </div>
 
+            @if (detailsFacture?.paiements?.length) {
+              <div class="invoice-item mt-4">
+                <div class="invoice-info full-width">
+                  <div class="payment-history-header">
+                    <strong class="customer-text">
+                      <i class="fas fa-money-bill-wave me-2"></i>
+                      Historique des paiements
+                    </strong>
+                  </div>
+
+                  <div class="payment-table-wrapper mt-3">
+                    <div class="table-responsive">
+                      <table class="invoice-table payment-history-table">
+                        <thead>
+                          <tr>
+                            <th>N° reçu</th>
+                            <th>Date</th>
+                            <th>Moyen de paiement</th>
+                            <th>Référence</th>
+                            <th>État</th>
+                            <th class="text-right">Montant</th>
+                          </tr>
+                        </thead>
+
+                        <tbody>
+                          @for (paiement of detailsFacture?.paiements; track paiement.id) {
+                            <tr>
+                              <td data-label="N° reçu">
+                                <strong>
+                                  {{ paiement.numeroRecu || '-' }}
+                                </strong>
+                              </td>
+
+                              <td data-label="Date">
+                                {{ paiement.datePaiement | date: 'dd/MM/yyyy' }}
+                              </td>
+
+                              <td data-label="Moyen de paiement">
+                                <span class="payment-method-value">
+                                  <i class="fas fa-credit-card me-1"></i>
+                                  {{ paiement.moyenPaiement || '-' }}
+                                </span>
+                              </td>
+
+                              <td data-label="Référence">
+                                {{ paiement.reference || '-' }}
+                              </td>
+
+                              <td data-label="État">
+                                <div class="payment-status-cell">
+                                  <span
+                                    [class]="
+                                      'status-badge ' + getPaiementStatusClass(paiement.etat)
+                                    "
+                                  >
+                                    {{ paiement.etat || '-' }}
+                                  </span>
+
+                                  @if (isPaiementEnAttente(paiement.etat)) {
+                                    <div class="payment-actions">
+                                      <button
+                                        type="button"
+                                        class="btn-payment-confirm"
+                                        title="Confirmer le paiement"
+                                        [disabled]="paiementActionLoading === paiement.id"
+                                        (click)="
+                                          openPaiementActionModal(
+                                            etatPaiementModal,
+                                            paiement,
+                                            'confirmer'
+                                          )
+                                        "
+                                      >
+                                        @if (
+                                          paiementActionLoading === paiement.id &&
+                                          paiementAction === 'confirm'
+                                        ) {
+                                          <i class="fas fa-spinner fa-spin"></i>
+                                        } @else {
+                                          <i class="fas fa-check"></i>
+                                        }
+
+                                        <span>Confirmer</span>
+                                      </button>
+
+                                      <button
+                                        type="button"
+                                        class="btn-payment-reject"
+                                        title="Rejeter le paiement"
+                                        [disabled]="paiementActionLoading === paiement.id"
+                                        (click)="
+                                          openPaiementActionModal(
+                                            etatPaiementModal,
+                                            paiement,
+                                            'rejeter'
+                                          )
+                                        "
+                                      >
+                                        <i class="fas fa-times"></i>
+                                        <span>Rejeter</span>
+                                      </button>
+                                    </div>
+                                  }
+                                </div>
+                              </td>
+
+                              <!-- MONTANT -->
+                              <td data-label="Montant" class="text-right payment-amount">
+                                <strong>
+                                  {{ paiement.montant | number: '1.0-0' }}
+                                  FCFA
+                                </strong>
+                              </td>
+                            </tr>
+                          }
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            } @else {
+              <div class="invoice-item mt-4">
+                <div class="invoice-info full-width">
+                  <strong class="customer-text">
+                    <i class="fas fa-money-bill-wave me-2"></i>
+                    Historique des paiements
+                  </strong>
+
+                  <div class="empty-payment-history mt-3">
+                    <i class="fas fa-receipt"></i>
+
+                    <div>
+                      <strong>Aucun paiement enregistré</strong>
+                      <p class="text-muted mb-0">
+                        Aucun paiement n'a encore été enregistré pour cette facture.
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            }
+
             <div class="action-buttons">
               <div class="action-buttons-left">
                 <button type="button" class="btn-back" routerLink="/admin/comptabilite/facture">
-                  <i class="fas fa-arrow-left me-2"></i>Retour
+                  <i class="fas fa-arrow-left me-2"></i>
+                  Retour
                 </button>
               </div>
 
               <div class="action-buttons-right">
-                @if ([libelleEtat.LIBELLE_ETAT_ENCOURS].includes(detailsFacture?.etat!)) {
+                @if (peutEnregistrerPaiement()) {
                   <button type="button" class="btn-pay" (click)="openPaiementModal()">
-                    <i class="fas fa-hand-holding-usd me-2"></i>Payer cette facture
-                  </button>
-                }
-
-                @if ([libelleEtat.LIBELLE_ETAT_PAYEE_PARTIELLE].includes(detailsFacture?.etat!)) {
-                  <button type="button" class="btn-validate" (click)="openPaiementModal()">
-                    <i class="fas fa-hand-holding-usd me-2"></i>Solder la facture
-                  </button>
-                }
-
-                @if ([libelleEtat.LIBELLE_ETAT_A_CONFIRMEE].includes(detailsFacture?.etat!)) {
-                  <button
-                    class="btn-secondary"
-                    (click)="openEtatModal(etatModal, 'confirmer', 'E20')"
-                  >
-                    <i class="fas fa-eye-slash me-2"></i>Confimer le paiement
-                  </button>
-                  <button class="btn-success" (click)="openEtatModal(etatModal, 'rejeter', 'E19')">
-                    <i class="fas fa-flag-checkered me-2"></i>Rejeté
+                    <i class="fas fa-hand-holding-usd me-2"></i>
+                    Enregistrer un paiement
                   </button>
                 }
 
                 <button type="button" class="btn-print" (click)="imprimerFacture()">
-                  <i class="fas fa-print me-2"></i>Imprimer
+                  <i class="fas fa-print me-2"></i>
+                  Imprimer
                 </button>
+
                 <button type="button" class="btn-download" (click)="DownloadPdf()">
-                  <i class="fas fa-download me-2"></i>Télécharger
+                  <i class="fas fa-download me-2"></i>
+                  Télécharger
                 </button>
               </div>
             </div>
@@ -218,7 +447,8 @@
           <i class="fas fa-hand-holding-usd me-2"></i>
           Paiement de la facture
         </h3>
-        <button class="modal-close" (click)="closePaiementModal()">
+
+        <button type="button" class="modal-close" (click)="closePaiementModal()">
           <i class="fas fa-times"></i>
         </button>
       </div>
@@ -226,38 +456,56 @@
       <div class="modal-body">
         <div class="recap-section mb-4">
           <div class="recap-item">
-            <span class="recap-label">Facture N° :</span>
-            <span class="recap-value">{{ detailsFacture?.numeroFacture }}</span>
+            <span class="recap-label"> Facture N° : </span>
+
+            <span class="recap-value">
+              {{ detailsFacture?.numeroFacture }}
+            </span>
           </div>
+
           <div class="recap-item">
-            <span class="recap-label">Élève :</span>
-            <span class="recap-value"
-              >{{ detailsFacture?.eleve?.prenom }} {{ detailsFacture?.eleve?.nom }}</span
-            >
+            <span class="recap-label"> Élève : </span>
+
+            <span class="recap-value">
+              {{ detailsFacture?.eleve?.prenom }}
+              {{ detailsFacture?.eleve?.nom }}
+            </span>
           </div>
+
           <div class="recap-item">
-            <span class="recap-label">Montant total :</span>
-            <span class="recap-value">{{ detailsFacture?.montant | number }} CFA</span>
+            <span class="recap-label"> Montant total : </span>
+
+            <span class="recap-value">
+              {{ detailsFacture?.montant | number: '1.0-0' }}
+              FCFA
+            </span>
           </div>
-          @if (detailsFacture?.montantPayement && detailsFacture?.montantPayement! > 0) {
+
+          @if (getMontantDejaPaye() > 0) {
             <div class="recap-item">
-              <span class="recap-label">Déjà payé :</span>
-              <span class="recap-value text-warning"
-                >{{ detailsFacture?.montantPayement | number }} CFA</span
-              >
+              <span class="recap-label"> Déjà payé : </span>
+
+              <span class="recap-value text-warning">
+                {{ getMontantDejaPaye() | number: '1.0-0' }}
+                FCFA
+              </span>
             </div>
           }
+
           <div class="recap-item">
-            <span class="recap-label">Reste à payer :</span>
+            <span class="recap-label"> Reste à payer : </span>
+
             <span
               class="recap-value"
-              [class.text-success]="isMontantValide()"
-              [class.text-primary]="!isMontantValide()"
+              [class.text-success]="getMontantRestantFacture() === 0"
+              [class.text-primary]="getMontantRestantFacture() > 0"
             >
-              @if (getMontantRestant() === 0) {
-                <i class="fas fa-check-circle me-1"></i>Payé
+              @if (getMontantRestantFacture() === 0) {
+                <i class="fas fa-check-circle me-1"></i>
+                Payé
               } @else {
-                {{ getMontantRestant() | number }} CFA
+                {{ getMontantRestantFacture() | number: '1.0-0' }}
+                FCFA
               }
             </span>
           </div>
@@ -265,50 +513,70 @@
 
         <form [formGroup]="paiementForm">
           <div class="form-group">
-            <label class="form-label"> Montant à payer <span class="text-danger">*</span> </label>
+            <label class="form-label">
+              Montant à payer
+              <span class="text-danger">*</span>
+            </label>
+
             <div class="input-group">
-              <span class="input-group-text">CFA</span>
+              <span class="input-group-text"> CFA </span>
+
               <input
                 type="number"
                 class="form-control"
                 formControlName="montant"
-                [max]="getMontantRestant()"
-                min="1"
+                [max]="getMontantRestantFacture()"
+                min="0.01"
                 step="100"
                 placeholder="0"
                 autofocus
               />
             </div>
+
             <small
               class="form-text"
-              [class.text-danger]="getMontantRestant() === 0"
-              [class.text-muted]="getMontantRestant() > 0"
+              [class.text-danger]="getMontantRestantFacture() === 0"
+              [class.text-muted]="getMontantRestantFacture() > 0"
             >
-              @if (getMontantRestant() === 0) {
-                <i class="fas fa-info-circle me-1"></i>Cette facture est déjà entièrement payée
+              @if (getMontantRestantFacture() === 0) {
+                <i class="fas fa-info-circle me-1"></i>
+                Cette facture est déjà entièrement payée.
               } @else {
-                Montant maximum : {{ getMontantRestant() | number }} CFA
+                Montant maximum :
+                {{ getMontantRestantFacture() | number: '1.0-0' }}
+                FCFA
               }
             </small>
           </div>
 
           <div class="form-group">
-            <label class="form-label"> Moyen de paiement <span class="text-danger">*</span> </label>
+            <label class="form-label">
+              Moyen de paiement
+              <span class="text-danger">*</span>
+            </label>
+
             <select class="form-select" formControlName="moyenPaiement">
-              <option value="" disabled selected>— Sélectionnez un mode de paiement —</option>
-              @for (item of moyenPayementList; track item.id) {
-                <option [value]="item.id">{{ item.libelle }}</option>
+              <option value="" disabled>— Sélectionnez un mode de paiement —</option>
+
+              @for (item of moyenPayementList; track item.uuid) {
+                <option [value]="item.uuid">
+                  {{ item.libelle }}
+                </option>
               }
             </select>
           </div>
 
           <div class="form-group">
-            <label class="form-label">Référence du paiement (Optionnel)</label>
+            <label class="form-label">
+              Référence du paiement
+              <span class="text-muted"> (Optionnel) </span>
+            </label>
+
             <input
               type="text"
               class="form-control"
               formControlName="reference"
-              placeholder="N° chèque, référence virement, etc."
+              placeholder="N° chèque, référence virement, transaction, etc."
             />
           </div>
         </form>
@@ -316,24 +584,35 @@
 
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary" (click)="closePaiementModal()">
-          <i class="fas fa-times me-2"></i>Annuler
+          <i class="fas fa-times me-2"></i>
+          Annuler
         </button>
-        <button type="button" class="btn btn-primary" (click)="enregistrerUnPaiement()">
-          <i class="fas fa-check-circle me-2"></i>Confirmer le paiement
+
+        <button
+          type="button"
+          class="btn btn-primary"
+          [disabled]="paiementForm.invalid || !isMontantValide() || getMontantRestantFacture() <= 0"
+          (click)="enregistrerUnPaiement()"
+        >
+          <i class="fas fa-check-circle me-2"></i>
+          Enregistrer le paiement
         </button>
       </div>
     </div>
   </div>
 }
 
-<ng-template #etatModal let-modal>
+<ng-template #etatPaiementModal let-modal>
   <div class="modal-custom-overlay" (click)="modal.dismiss()">
     <div class="modal-custom-container" (click)="$event.stopPropagation()">
       <div class="modal-header-custom">
         <h5 class="modal-title-custom">
           <i class="fas fa-question-circle me-2"></i>
-          Confirmer l'action : {{ modalActionLabel | titlecase }}
+
+          Confirmer l'action :
+          {{ modalActionLabel | titlecase }}
         </h5>
+
         <button type="button" class="btn-close-custom" (click)="modal.dismiss()">
           <i class="fas fa-times"></i>
         </button>
@@ -342,34 +621,49 @@
       <div class="modal-body-custom">
         <p class="modal-message">
           Êtes-vous sûr de vouloir
-          <strong class="action-highlight">{{ modalActionLabel }}</strong> cette réunion ?
+          <strong class="action-highlight">
+            {{ modalActionLabel }}
+          </strong>
+          ce paiement ?
         </p>
 
         <form [formGroup]="actionForm">
           @if (isMotifRequired) {
             <div class="form-group-motif">
-              <label for="motifAnnulation" class="motif-label">
+              <label for="motifPaiement" class="motif-label">
                 <i class="fas fa-exclamation-triangle text-danger me-1"></i>
-                Motif requis pour l'action :
+
+                Motif du rejet
+                <span class="text-danger">*</span>
               </label>
+
               <textarea
-                id="motifAnnulation"
+                id="motifPaiement"
                 class="form-control-motif"
                 rows="3"
-                formControlName="motifAnnulation"
-                placeholder="Veuillez saisir la raison précise ici..."
+                formControlName="motif"
+                maxlength="95"
+                placeholder="Veuillez saisir la raison du rejet..."
                 [class.is-invalid]="
-                  actionForm.get('motifAnnulation')?.invalid &&
-                  actionForm.get('motifAnnulation')?.touched
+                  actionForm.get('motif')?.invalid && actionForm.get('motif')?.touched
                 "
               ></textarea>
-              @if (
-                actionForm.get('motifAnnulation')?.invalid &&
-                actionForm.get('motifAnnulation')?.touched
-              ) {
+
+              <div class="text-muted small mt-1">
+                {{ actionForm.get('motif')?.value?.length || 0 }}/95
+              </div>
+
+              @if (actionForm.get('motif')?.invalid && actionForm.get('motif')?.touched) {
                 <small class="error-message">
                   <i class="fas fa-info-circle me-1"></i>
-                  Le motif est obligatoire pour effectuer cette action.
+
+                  @if (actionForm.get('motif')?.hasError('required')) {
+                    Le motif de rejet est obligatoire.
+                  }
+
+                  @if (actionForm.get('motif')?.hasError('maxlength')) {
+                    Le motif ne doit pas dépasser 95 caractères.
+                  }
                 </small>
               }
             </div>
@@ -379,26 +673,20 @@
 
       <div class="modal-footer-custom">
         <button type="button" class="btn-cancel" (click)="modal.dismiss()">
-          <i class="fas fa-times me-2"></i>Annuler
+          <i class="fas fa-times me-2"></i>
+          Annuler
         </button>
+
         <button
           type="button"
           class="btn-confirm"
-          [class.btn-confirm-publish]="modalActionLabel === 'publier'"
-          [class.btn-confirm-terminer]="modalActionLabel === 'terminer'"
-          [class.btn-confirm-danger]="
-            modalActionLabel === 'annuler' || modalActionLabel === 'dépublier'
-          "
-          [class.btn-confirm-primary]="
-            modalActionLabel !== 'publier' &&
-            modalActionLabel !== 'terminer' &&
-            modalActionLabel !== 'annuler' &&
-            modalActionLabel !== 'dépublier'
-          "
-          [disabled]="actionForm.invalid"
+          [class.btn-confirm-danger]="modalActionLabel === 'rejeter'"
+          [class.btn-pay]="modalActionLabel === 'confirmer'"
+          [disabled]="isMotifRequired && actionForm.get('motif')?.invalid"
           (click)="modal.close('confirm')"
         >
-          <i class="fas fa-check-circle me-2"></i>Confirmer
+          <i class="fas fa-check-circle me-2"></i>
+          {{ modalActionLabel === 'confirmer' ? 'Confirmer' : 'Rejeter' }}
         </button>
       </div>
     </div>

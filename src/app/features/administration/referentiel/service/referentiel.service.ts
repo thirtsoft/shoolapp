@@ -20,6 +20,8 @@ import { TypePaiement } from '../../../../core/models/referentiels/type-paiement
 import { ResponseMessage } from '../../../../core/response/response-message';
 import { FraisInscription } from '../../../../core/models/referentiels/frais-inscription';
 import { MoyenPaiement } from '../../../../core/models/referentiels/moyen-paiement';
+import { ApiResponse } from '../../../../core/datamodel/api-response.model';
+import { VerificationCreationDataResponse } from '../../../../core/models/datamodel/verification-creation-data-response-model';
 
 
 @Injectable({
@@ -127,10 +129,15 @@ export class ReferentielService {
     return this.http.post<ResponseMessage>(`${this.referentiel}/anneescolaire/save`, info);
   }
 
+  verificationCreationAnneeScolaire(): Observable<ApiResponse<VerificationCreationDataResponse>> {
+    return this.http.get<ApiResponse<VerificationCreationDataResponse>>(
+      `${this.referentiel}/anneescolaire/verification-creation-anneescolaire`
+    );
+  }
+
   initierNouvelleAnneeScolaire(info: AnneeScolaire) {
     return this.http.post<ResponseMessage>(`${this.referentiel}/anneescolaire/initiernouvelleannee`, info);
   }
-
 
   updateAnneeScolaire(id: number, value: AnneeScolaire) {
     return this.http.put<ResponseMessage>(`${this.referentiel}/anneescolaire/update/${id}`, value);

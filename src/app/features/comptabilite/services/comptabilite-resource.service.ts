@@ -108,7 +108,6 @@ export class ComptabiliteResourceService {
     return this.http.get<T>(url, this.httpOptions);
   }
 
-
   creerUneRessource<T>(endpoint: string, resource: T) {
     const url = `${this.comptabiliteUrl}/${endpoint}/save`;
     return this.http.post<ResponseMessage>(url, resource, this.httpOptions);
@@ -143,6 +142,22 @@ export class ComptabiliteResourceService {
   changeEtatResource<T>(endpoint: string, id: number, resource: Partial<T>): Observable<any> {
     const url = `${this.comptabiliteUrl}/${endpoint}/${id}/changeretat`;
     return this.http.patch<ResponseMessage>(url, resource, this.httpOptions);
+  }
+
+  confirmerPaiement(id: number): Observable<ResponseMessage> {
+    return this.http.patch<ResponseMessage>(
+      `${this.comptabiliteUrl}/payement/${id}/confirmer`,
+      {}
+    );
+  }
+
+  rejeterPaiement(id: number, motif: string): Observable<ResponseMessage> {
+    return this.http.patch<ResponseMessage>(
+      `${this.comptabiliteUrl}/payement/${id}/rejeter`,
+      {
+        motif: motif
+      }
+    );
   }
 
   enregistrerExercicetWithFiles<T>(endpoint: string, formData: FormData) {

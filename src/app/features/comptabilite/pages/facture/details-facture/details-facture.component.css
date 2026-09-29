@@ -1,8 +1,3 @@
-/* ============================================
-   INVOICE DETAILS - STYLE PROFESSIONNEL
-   ============================================ */
-
-/* Variables */
 :host {
   --primary: #2c5282;
   --primary-dark: #1e3a5f;
@@ -368,9 +363,120 @@
   color: var(--danger);
 }
 
-/* ============================================
-   RESPONSIVE
-   ============================================ */
+.payment-history-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.payment-table-wrapper {
+  width: 100%;
+}
+
+.payment-history-table {
+  width: 100%;
+  min-width: 900px;
+}
+
+.payment-status-cell {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  min-width: 250px;
+}
+
+.payment-actions {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.btn-payment-confirm,
+.btn-payment-reject {
+  border: 0;
+  border-radius: 5px;
+  padding: 5px 9px;
+  font-size: 12px;
+  font-weight: 500;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.btn-payment-confirm {
+  background: #e8f7ee;
+  color: #198754;
+}
+
+.btn-payment-confirm:hover {
+  background: #198754;
+  color: #fff;
+}
+
+.btn-payment-reject {
+  background: #fdecec;
+  color: #dc3545;
+}
+
+.btn-payment-reject:hover {
+  background: #dc3545;
+  color: #fff;
+}
+
+.btn-payment-confirm:disabled,
+.btn-payment-reject:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.payment-amount {
+  white-space: nowrap;
+}
+
+.empty-payment-history {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  padding: 18px;
+  border: 1px dashed #dfe3e8;
+  border-radius: 8px;
+  color: #6c757d;
+}
+
+.empty-payment-history>i {
+  font-size: 24px;
+  color: #adb5bd;
+}
+
+@media (max-width: 768px) {
+
+  .payment-table-wrapper {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .payment-history-table {
+    min-width: 900px;
+  }
+
+  .payment-status-cell {
+    min-width: 230px;
+  }
+
+  .payment-actions {
+    width: 100%;
+  }
+
+  .btn-payment-confirm,
+  .btn-payment-reject {
+    flex: 1;
+    justify-content: center;
+  }
+}
+
 @media (max-width: 768px) {
   .page-wrapper {
     padding: 1rem;
@@ -895,5 +1001,363 @@
 
   100% {
     box-shadow: 0 0 0 0 rgba(56, 161, 105, 0);
+  }
+}
+
+/* =========================================================
+   MODAL CONFIRMATION / REJET PAIEMENT
+   ========================================================= */
+
+.modal-custom-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  padding: 1rem;
+
+  background: rgba(15, 23, 42, 0.55);
+  backdrop-filter: blur(3px);
+  -webkit-backdrop-filter: blur(3px);
+
+  animation: modalOverlayFadeIn 0.2s ease-out;
+}
+
+.modal-custom-container {
+  width: 100%;
+  max-width: 460px;
+
+  background: #ffffff;
+  border-radius: 14px;
+
+  box-shadow:
+    0 20px 50px rgba(15, 23, 42, 0.20),
+    0 4px 12px rgba(15, 23, 42, 0.10);
+
+  overflow: hidden;
+
+  animation: modalCustomFadeIn 0.2s ease-out;
+}
+
+
+/* =========================
+   HEADER
+   ========================= */
+
+.modal-header-custom {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  padding: 1rem 1.25rem;
+
+  border-bottom: 1px solid #e5e7eb;
+  background: #ffffff;
+}
+
+.modal-title-custom {
+  display: flex;
+  align-items: center;
+
+  margin: 0;
+
+  font-size: 1rem;
+  font-weight: 600;
+  color: #1f2937;
+}
+
+.modal-title-custom i {
+  color: var(--primary);
+}
+
+.btn-close-custom {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  width: 34px;
+  height: 34px;
+
+  padding: 0;
+
+  border: none;
+  border-radius: 8px;
+
+  background: transparent;
+  color: #6b7280;
+
+  cursor: pointer;
+
+  transition:
+    background-color 0.2s ease,
+    color 0.2s ease;
+}
+
+.btn-close-custom:hover {
+  background: #f3f4f6;
+  color: #dc3545;
+}
+
+
+/* =========================
+   BODY
+   ========================= */
+
+.modal-body-custom {
+  padding: 1.5rem 1.25rem;
+}
+
+.modal-message {
+  margin: 0 0 1.25rem;
+
+  font-size: 0.95rem;
+  line-height: 1.6;
+
+  color: #4b5563;
+}
+
+.action-highlight {
+  font-weight: 600;
+  color: var(--primary);
+}
+
+
+/* =========================
+   MOTIF DE REJET
+   ========================= */
+
+.form-group-motif {
+  margin-top: 1rem;
+}
+
+.motif-label {
+  display: block;
+
+  margin-bottom: 0.5rem;
+
+  font-size: 0.85rem;
+  font-weight: 600;
+
+  color: #374151;
+}
+
+.form-control-motif {
+  display: block;
+
+  width: 100%;
+  min-height: 90px;
+
+  padding: 0.7rem 0.8rem;
+
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+
+  background: #ffffff;
+  color: #1f2937;
+
+  font-size: 0.875rem;
+  line-height: 1.5;
+
+  resize: vertical;
+
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.form-control-motif:focus {
+  outline: none;
+
+  border-color: var(--primary);
+
+  box-shadow: 0 0 0 3px rgba(44, 82, 130, 0.10);
+}
+
+.form-control-motif.is-invalid {
+  border-color: #dc3545;
+}
+
+.form-control-motif.is-invalid:focus {
+  border-color: #dc3545;
+
+  box-shadow: 0 0 0 3px rgba(220, 53, 69, 0.10);
+}
+
+.error-message {
+  display: block;
+
+  margin-top: 0.4rem;
+
+  font-size: 0.78rem;
+  line-height: 1.4;
+
+  color: #dc3545;
+}
+
+
+/* =========================
+   FOOTER
+   ========================= */
+
+.modal-footer-custom {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+
+  gap: 0.75rem;
+
+  padding: 1rem 1.25rem;
+
+  border-top: 1px solid #e5e7eb;
+
+  background: #f8fafc;
+}
+
+
+/* =========================
+   BOUTON ANNULER
+   ========================= */
+
+.btn-cancel {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  padding: 0.55rem 1rem;
+
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+
+  background: #ffffff;
+  color: #4b5563;
+
+  font-size: 0.85rem;
+  font-weight: 500;
+
+  cursor: pointer;
+
+  transition:
+    background-color 0.2s ease,
+    border-color 0.2s ease,
+    color 0.2s ease;
+}
+
+.btn-cancel:hover {
+  background: #f3f4f6;
+  border-color: #9ca3af;
+  color: #1f2937;
+}
+
+
+/* =========================
+   BOUTON CONFIRMER
+   ========================= */
+
+.btn-confirm {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  min-width: 110px;
+
+  padding: 0.55rem 1rem;
+
+  border: none;
+  border-radius: 8px;
+
+  color: #ffffff;
+
+  font-size: 0.85rem;
+  font-weight: 500;
+
+  cursor: pointer;
+
+  transition:
+    background-color 0.2s ease,
+    box-shadow 0.2s ease,
+    transform 0.2s ease;
+}
+
+
+.btn-confirm-danger {
+  background: #dc3545;
+}
+
+.btn-confirm-danger:hover {
+  background: #bb2d3b;
+  box-shadow: 0 4px 10px rgba(220, 53, 69, 0.20);
+}
+
+.btn-confirm:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+  box-shadow: none;
+}
+
+
+/* =========================
+   ANIMATIONS
+   ========================= */
+
+@keyframes modalOverlayFadeIn {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes modalCustomFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-15px) scale(0.98);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+
+/* =========================
+   RESPONSIVE
+   ========================= */
+
+@media (max-width: 480px) {
+
+  .modal-custom-overlay {
+    padding: 0.75rem;
+  }
+
+  .modal-custom-container {
+    max-width: 100%;
+    border-radius: 12px;
+  }
+
+  .modal-header-custom {
+    padding: 0.9rem 1rem;
+  }
+
+  .modal-body-custom {
+    padding: 1.25rem 1rem;
+  }
+
+  .modal-footer-custom {
+    padding: 0.85rem 1rem;
+  }
+
+  .modal-message {
+    font-size: 0.9rem;
+  }
+
+  .btn-cancel,
+  .btn-confirm {
+    flex: 1;
   }
 }
