@@ -1,71 +1,171 @@
-import { Component } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { Component, inject } from '@angular/core';
+import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 
-interface DemoFeature {
-  title: string;
-  description: string;
-  icon: string;
-  color: string;
-}
+import {
+  DemandeDemoService
+} from '../../website/services/demande-demo.service';
+
+import {
+  DemandeDemoRequest
+} from '../../../core/models/website/demande-demo-request';
+
 
 @Component({
   selector: 'app-demande-demo-component',
-  imports: [],
+  standalone: true,
+  imports: [CommonModule, ReactiveFormsModule],
   templateUrl: './demande-demo-component.html',
   styleUrl: './demande-demo-component.css',
 })
 export class DemandeDemoComponent {
 
-  demoFeatures: DemoFeature[] = [
-    {
-      title: 'Gestion des élèves',
-      description: 'Gérez les inscriptions, les classes, les dossiers élèves et les informations des responsables.',
-      icon: 'fas fa-user-graduate',
-      color: 'blue'
-    },
-    {
-      title: 'Notes & bulletins',
-      description: 'Saisissez les notes, calculez automatiquement les résultats et générez les bulletins.',
-      icon: 'fas fa-book',
-      color: 'green'
-    },
-    {
-      title: 'Paiements & facturation',
-      description: 'Suivez les frais de scolarité, les paiements reçus et les situations financières.',
-      icon: 'fas fa-wallet',
-      color: 'purple'
-    },
-    {
-      title: 'Absences & retards',
-      description: 'Suivez les présences et les absences des élèves au quotidien.',
-      icon: 'fas fa-calendar-check',
-      color: 'orange'
-    },
-    {
-      title: 'Emploi du temps',
-      description: 'Organisez les cours, les enseignants, les salles et les horaires.',
-      icon: 'fas fa-calendar-alt',
-      color: 'coral'
-    },
-    {
-      title: 'Communication',
-      description: 'Facilitez les échanges entre l\'administration, les enseignants et les parents.',
-      icon: 'fas fa-comments',
-      color: 'sky'
+
+  private readonly demandeDemoService = inject(DemandeDemoService);
+  private fb = inject(FormBuilder);
+  private readonly router = inject(Router);
+
+  isSubmitting = false;
+  submitted = false;
+  errorMessage = '';
+  submitting = false;
+  success = false;
+
+  demandeForm = this.fb.group({
+
+    etablissement: this.fb.group({
+      nom: ['', Validators.required],
+      type: ['', Validators.required],
+      cycle: ['', Validators.required],
+      ville: ['', Validators.required],
+      nombreEleves: ['', Validators.required]
+    }),
+
+    responsable: this.fb.group({
+      prenom: ['', Validators.required],
+      nom: ['', Validators.required],
+      fonction: ['', Validators.required],
+      telephone: ['', Validators.required],
+      email: ['', [Validators.email]]
+    }),
+
+    besoins: this.fb.group({
+      gestionEleves: [false],
+      facturation: [false],
+      paiements: [false],
+      notesBulletins: [false],
+      absences: [false],
+      enseignants: [false],
+      emploiDuTemps: [false],
+      espaceParent: [false]
+    }),
+
+    message: [''],
+
+    consentement: [false, Validators.requiredTrue]
+  });
+
+
+  submit(): void {
+
+    this.errorMessage = '';
+
+    if (this.demandeForm.invalid) {
+      this.demandeForm.markAllAsTouched();
+      return;
     }
-  ];
 
-  constructor(private router: Router) {}
+    const formValue = this.demandeForm.getRawValue();
 
-  goToLogin(): void {
-    this.router.navigate(['/auth']);
+    const request: DemandeDemoRequest = {
+      etablissement: {
+        nom: formValue.etablissement.nom!,
+        type: formValue.etablissement.type!,
+        cycle: formValue.etablissement.cycle!,
+        ville: formValue.etablissement.ville!,
+        nombreEleves: formValue.etablissement.nombreEleves!
+      },
+
+      responsable: {
+        prenom: formValue.responsable.prenom!,
+        nom: formValue.responsable.nom!,
+        fonction: formValue.responsable.fonction!,
+        telephone: formValue.responsable.telephone!,
+        email: formValue.responsable.email!
+      },
+
+      besoin: {
+        gestionEleves: formValue.besoins.gestionEleves ?? false,
+        facturation: formValue.besoins.facturation ?? false,
+        paiements: formValue.besoins.paiements ?? false,
+        notesBulletins: formValue.besoins.notesBulletins ?? false,
+        absences: formValue.besoins.absences ?? false,
+        enseignants: formValue.besoins.enseignants ?? false,
+        emploiDuTemps: formValue.besoins.emploiDuTemps ?? false,
+        espaceParent: formValue.besoins.espaceParent ?? false
+      },
+
+      message: formValue?.message!,
+
+      consentement: formValue.consentement ?? false
+    };
+
+    this.isSubmitting = true;
+
+    this.demandeDemoService.creer(request).subscribe({
+      next: (response) => {
+        this.isSubmitting = false;
+        this.submitted = true;
+
+        console.log('Demande envoyée :', response);
+
+        this.demandeForm.reset({
+          etablissement: {
+            nom: '',
+            type: '',
+            ville: '',
+            nombreEleves: ''
+          },
+          responsable: {
+            prenom: '',
+            nom: '',
+            fonction: '',
+            telephone: '',
+            email: ''
+          },
+          besoins: {
+            gestionEleves: false,
+            facturation: false,
+            paiements: false,
+            notesBulletins: false,
+            absences: false,
+            enseignants: false,
+            emploiDuTemps: false,
+            espaceParent: false
+          },
+          message: '',
+          consentement: false
+        });
+      },
+
+      error: (error) => {
+        this.isSubmitting = false;
+
+        console.error('Erreur lors de l’envoi de la demande :', error);
+
+        this.errorMessage =
+          error?.error?.message ??
+          'Une erreur est survenue lors de l’envoi de votre demande. Veuillez réessayer.';
+      }
+    });
   }
-
-  startTrial(): void {
-    this.router.navigate(['/inscription']);
-  }
+ 
 
   goBackHome(): void {
     this.router.navigate(['/']);
   }
+
+
+
 }
