@@ -56,13 +56,9 @@
           <div class="logo-section">
             <div class="logo-preview-container">
               @if (logoPreview) {
-                <img [src]="logoPreview" alt="Aperçu du logo" class="logo-preview" />
-              } @else if (organizationData.logoFileUid) {
-                <img
-                  [src]="'https://api.myschool.sn/files/' + organizationData.logoFileUid"
-                  alt="Logo de l'organisation"
-                  class="logo-preview"
-                />
+                <img [src]="logoPreview" alt="Logo de l'organisation" class="logo-preview" />
+              } @else if (organizationData.logo?.available) {
+                <img [src]="logoPreview" alt="Logo de l'organisation" class="logo-preview" />
               } @else {
                 <div class="logo-placeholder">
                   <span class="logo-placeholder-icon">🏢</span>
@@ -120,7 +116,7 @@
               <button type="button" class="btn btn-secondary" (click)="cancelLogoEdit()">
                 <i class="fas fa-times me-2"></i>Annuler
               </button>
-              @if (organizationData.logoFileUid) {
+              @if (organizationData.logo?.available) {
                 <button
                   type="button"
                   class="btn btn-danger"

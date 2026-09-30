@@ -103,7 +103,7 @@ export class SideBarAdminComponent {
         // Système
         { route: '/admin/roles', ico: '🔑', label: 'Rôles', section: '', badge: '' },
         { route: '/admin/utilisateur', ico: '👥', label: 'Utilisateurs' },
-        { route: '/admin/referentiel/parametrage', ico: '🔧', label: 'Paramètres établissement' }
+        { route: '/admin/organization/information', ico: '🔧', label: 'Paramètres établissement' }
 
       ]
     },

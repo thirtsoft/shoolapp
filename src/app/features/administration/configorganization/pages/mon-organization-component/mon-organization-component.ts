@@ -109,14 +109,34 @@ export class MonOrganizationComponent implements OnInit {
       .subscribe({
         next: (response: any) => {
           this.organizationData = response;
-          console.log('Organization data', this.organizationData);
           this.populateForms(this.organizationData);
+          this.loadLogo(this.organizationData);
           this.loading.set(false);
         },
         error: (error) => {
           console.error('Erreur chargement organisation:', error);
           this.toastService.error('Erreur', 'Impossible de charger les informations');
           this.loading.set(false);
+        }
+      });
+  }
+
+  private loadLogo(organization: OrganizationResponse): void {
+
+    this.logoPreview = null;
+
+    if (!organization.logo?.available || !organization.logo.logoUuid) {
+      return;
+    }
+    this.organizationConfigService.getLogoContent(organization.logo.logoUuid)
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: (blob: Blob) => {
+          this.logoPreview = URL.createObjectURL(blob);
+        },
+        error: (error) => {
+          console.error('Erreur lors du chargement du logo :', error);
+          this.logoPreview = null;
         }
       });
   }
@@ -144,7 +164,6 @@ export class MonOrganizationComponent implements OnInit {
       departmentUuid: org.departmentUuid || ''
     });
 
-    // Si un pays est défini, charger les régions
     if (org.countryUuid) {
       this.loadRegions(org.countryUuid, org.regionUuid || undefined, org.departmentUuid || undefined);
     }
@@ -280,41 +299,53 @@ export class MonOrganizationComponent implements OnInit {
     }
 
     const organizationUuid = localStorage.getItem('v2_organization_uuid');
+
     if (!organizationUuid) {
       this.toastService.error('Erreur', 'Organisation non trouvée');
       return;
     }
-
     this.uploadingLogo.set(true);
-    const formData = new FormData();
-    formData.append('logo', this.selectedLogoFile);
-
-    // TODO: Décommenter quand le service sera prêt
-    /*
-    this.organizationConfigService.uploadLogo(organizationUuid, formData)
+    this.organizationConfigService.modifierLogo(organizationUuid, this.selectedLogoFile)
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: (response) => {
-          this.toastService.success('Succès', 'Logo mis à jour avec succès');
+
+          if (!response.success) {
+            this.toastService.error(
+              'Erreur',
+              response.message || 'Impossible de mettre à jour le logo'
+            );
+            this.uploadingLogo.set(false);
+            return;
+          }
+
+          this.toastService.success(
+            'Succès',
+            response.message || 'Logo mis à jour avec succès'
+          );
+
           this.selectedLogoFile = null;
           this.logoPreview = null;
+
           this.uploadingLogo.set(false);
+
           this.loadOrganizationInfos();
+
+          this.editingSection.set(null);
+          this.isEditing.set(false);
         },
+
         error: (error) => {
-          console.error('Erreur upload logo:', error);
-          this.toastService.error('Erreur', 'Impossible de mettre à jour le logo');
+          console.error('Erreur modification logo :', error);
+
+          this.toastService.error(
+            'Erreur',
+            error?.error?.message || 'Impossible de mettre à jour le logo'
+          );
+
           this.uploadingLogo.set(false);
         }
       });
-    */
-
-    setTimeout(() => {
-      this.toastService.success('Succès', 'Logo mis à jour avec succès');
-      this.selectedLogoFile = null;
-      this.logoPreview = null;
-      this.uploadingLogo.set(false);
-    }, 1500);
   }
 
   deleteLogo(): void {
@@ -364,87 +395,159 @@ export class MonOrganizationComponent implements OnInit {
   }
 
   saveIdentification(): void {
+
     if (this.identificationForm.invalid) {
       this.identificationForm.markAllAsTouched();
-      this.toastService.warning('Attention', 'Veuillez remplir tous les champs obligatoires');
+
+      this.toastService.warning(
+        'Attention',
+        'Veuillez remplir tous les champs obligatoires'
+      );
+
       return;
     }
 
     const organizationUuid = localStorage.getItem('v2_organization_uuid');
+
     if (!organizationUuid) {
-      this.toastService.error('Erreur', 'Organisation non trouvée');
+      this.toastService.error(
+        'Erreur',
+        'Organisation non trouvée'
+      );
       return;
     }
 
     this.loading.set(true);
+
     const payload: any = {
       code: this.identificationForm.get('code')?.value,
       libelle: this.identificationForm.get('libelle')?.value,
       sigle: this.identificationForm.get('sigle')?.value,
       schoolType: this.identificationForm.get('schoolType')?.value,
-      anneeCreation: this.identificationForm.get('anneeCreation')?.value,
-      description: this.identificationForm.get('description')?.value
+      anneeCreation: this.identificationForm.get('anneeCreation')?.value || null,
+      description: this.identificationForm.get('description')?.value || null
     };
 
-    this.organizationConfigService.updateOranizationInfo(organizationUuid, payload)
+    this.organizationConfigService.modifierInfo(organizationUuid, payload)
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
-        next: () => {
-          this.organizationData = { ...this.organizationData, ...payload };
-          this.toastService.success('Succès', 'Identification mise à jour avec succès');
+        next: (response) => {
+
+          if (!response.success) {
+            this.toastService.error(
+              'Erreur',
+              response.message || 'Impossible de modifier l\'organisation'
+            );
+
+            this.loading.set(false);
+            return;
+          }
+
+          this.organizationData = {
+            ...this.organizationData,
+            ...payload
+          };
+
+          this.toastService.success(
+            'Succès',
+            response.message || 'Identification mise à jour avec succès'
+          );
+
           this.editingSection.set(null);
           this.isEditing.set(false);
           this.loading.set(false);
+
           this.updateLocalStorage(payload);
         },
+
         error: (error) => {
-          console.error('Erreur mise à jour:', error);
-          this.toastService.error('Erreur', 'Impossible de mettre à jour l\'identification');
+          console.error('Erreur modification identification :', error);
+          this.toastService.error(
+            'Erreur',
+            error?.error?.message || 'Impossible de mettre à jour l\'identification'
+          );
+
           this.loading.set(false);
         }
       });
   }
 
   saveLocation(): void {
+
     if (this.locationForm.invalid) {
       this.locationForm.markAllAsTouched();
-      this.toastService.warning('Attention', 'Veuillez remplir tous les champs obligatoires');
+
+      this.toastService.warning(
+        'Attention',
+        'Veuillez remplir tous les champs obligatoires'
+      );
+
       return;
     }
 
     const organizationUuid = localStorage.getItem('v2_organization_uuid');
+
     if (!organizationUuid) {
-      this.toastService.error('Erreur', 'Organisation non trouvée');
+      this.toastService.error(
+        'Erreur',
+        'Organisation non trouvée'
+      );
       return;
     }
 
     this.loading.set(true);
+
     const payload: any = {
       email: this.locationForm.get('email')?.value,
       mobile: this.locationForm.get('mobile')?.value,
-      telephone: this.locationForm.get('telephone')?.value,
-      adresse: this.locationForm.get('adresse')?.value,
-      boitePostale: this.locationForm.get('boitePostale')?.value,
-      siteWeb: this.locationForm.get('siteWeb')?.value,
+      telephone: this.locationForm.get('telephone')?.value || null,
+      adresse: this.locationForm.get('adresse')?.value || null,
+      boitePostale: this.locationForm.get('boitePostale')?.value || null,
+      siteWeb: this.locationForm.get('siteWeb')?.value || null,
       countryUuid: this.locationForm.get('countryUuid')?.value,
-      regionUuid: this.locationForm.get('regionUuid')?.value,
-      departmentUuid: this.locationForm.get('departmentUuid')?.value
+      regionUuid: this.locationForm.get('regionUuid')?.value || null,
+      departmentUuid: this.locationForm.get('departmentUuid')?.value || null
     };
 
-    this.organizationConfigService.updateOranizationInfo(organizationUuid, payload)
+    this.organizationConfigService.modifierInfo(organizationUuid, payload)
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
-        next: () => {
-          this.organizationData = { ...this.organizationData, ...payload };
-          this.toastService.success('Succès', 'Coordonnées mises à jour avec succès');
+        next: (response) => {
+
+          if (!response.success) {
+            this.toastService.error(
+              'Erreur',
+              response.message || 'Impossible de modifier les coordonnées'
+            );
+
+            this.loading.set(false);
+            return;
+          }
+
+          this.organizationData = {
+            ...this.organizationData,
+            ...payload
+          };
+
+          this.toastService.success(
+            'Succès',
+            response.message || 'Coordonnées mises à jour avec succès'
+          );
+
           this.editingSection.set(null);
           this.isEditing.set(false);
           this.loading.set(false);
+
           this.updateLocalStorage(payload);
         },
+
         error: (error) => {
-          console.error('Erreur mise à jour:', error);
-          this.toastService.error('Erreur', 'Impossible de mettre à jour les coordonnées');
+          console.error('Erreur modification coordonnées :', error);
+          this.toastService.error(
+            'Erreur',
+            error?.error?.message || 'Impossible de mettre à jour les coordonnées'
+          );
+
           this.loading.set(false);
         }
       });

@@ -4,9 +4,12 @@ import { Observable } from 'rxjs';
 import { environment } from '../../../../../environments/environment';
 import { ApiResponse } from '../../../../core/datamodel/api-response.model';
 import { NotificationConfigurationResponse } from '../../../../core/models/notification/notification-configuration-response';
-import { OrganizationResponse } from '../../../../core/models/onboarding/organization/organization-response';
-import { OrganizationRequest } from '../../../../core/models/organization/organization-request.model';
 import { NotificationConfigurationUpdateRequest } from '../../../../core/models/notification/notification-configuration-update-request';
+import { OrganizationGetConfigInformationResponse } from '../../../../core/models/onboarding/organization/organization-get-config-information-response';
+import { OrganizationResponse } from '../../../../core/models/onboarding/organization/organization-response';
+import { OrganizationUpdateConfigInformationRequest } from '../../../../core/models/onboarding/organization/organization-update-config-information-request';
+import { UpdateLogoOrganizationResponse } from '../../../../core/models/onboarding/organization/update-logo-organization-response';
+import { OrganizationRequest } from '../../../../core/models/organization/organization-request.model';
 
 @Injectable({
   providedIn: 'root'
@@ -17,6 +20,7 @@ export class ConfigOrganizationService {
   organizationUrl = this.baseUrl_1 + '/platform/organizations';
   securityUrl = this.baseUrl_1 + '/api/security';
   notificationConfigurationUrl = this.baseUrl_1 + '/api/v1/notifications';
+  photoUrl = this.baseUrl_1 + '/v1/storage';
 
 
   httpOptions = {
@@ -34,6 +38,31 @@ export class ConfigOrganizationService {
 
   updateOranizationInfo(organizationUuid: string, value: OrganizationRequest): Observable<OrganizationResponse> {
     return this.http.patch<OrganizationResponse>(`${this.organizationUrl}/${organizationUuid}`, value);
+  }
+
+  modifierInfo(organizationUuid: string, request: OrganizationUpdateConfigInformationRequest): Observable<ApiResponse<OrganizationGetConfigInformationResponse>> {
+    return this.http.patch<ApiResponse<OrganizationGetConfigInformationResponse>>(
+      `${this.organizationUrl}/edit/${organizationUuid}`,
+      request
+    );
+  }
+
+  modifierLogo(organizationUuid: string, file: File): Observable<ApiResponse<UpdateLogoOrganizationResponse>> {
+    const formData = new FormData();
+    formData.append('file', file);
+    return this.http.put<ApiResponse<UpdateLogoOrganizationResponse>>(
+      `${this.organizationUrl}/${organizationUuid}/logo`,
+      formData
+    );
+  }
+
+  getLogoContent(fileStorageUuid: string): Observable<Blob> {
+    return this.http.get(
+      `${this.photoUrl}/content/${fileStorageUuid}`,
+      {
+        responseType: 'blob'
+      }
+    );
   }
 
   getNotificationConfiguration(configUuid: string): Observable<ApiResponse<NotificationConfigurationResponse>> {

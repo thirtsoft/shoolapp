@@ -1,10 +1,5 @@
 import { Component, EventEmitter, inject, Input, OnInit, Output } from '@angular/core';
-import {
-  FormBuilder,
-  FormGroup,
-  ReactiveFormsModule,
-  Validators
-} from '@angular/forms';
+import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { OrganizationResponse } from '../../../../core/models/onboarding/organization/organization-response';
 import { OnboardingReferentialService } from '../../../onboarding/service/onboarding-referential.service';
 
@@ -31,11 +26,9 @@ export class InformationEcoleComponent implements OnInit {
 
   loading = false;
 
-  constructor(
-    private readonly fb: FormBuilder
-  ) {
-    this.form = this.fb.group({
+  constructor(private readonly fb: FormBuilder) {
 
+    this.form = this.fb.group({
       code: ['', [Validators.required, Validators.minLength(2)]],
       libelle: ['', [Validators.required, Validators.minLength(2)]],
       sigle: ['', [Validators.maxLength(20)]],
@@ -61,9 +54,7 @@ export class InformationEcoleComponent implements OnInit {
 
   ngOnInit(): void {
     this.form.statusChanges.subscribe(() => {
-      this.formValidityChange.emit(
-        this.form.valid
-      );
+      this.formValidityChange.emit(this.form.valid);
     });
 
     this.chargerOrganisation();
@@ -77,41 +68,35 @@ export class InformationEcoleComponent implements OnInit {
 
     this.loading = true;
 
-    this.organizationService.getOrganizationByUUID(this.organizationUuid)
+    this.organizationService.getOrganizationByUUID(this.organizationUuid).subscribe({
+      next: (organization: OrganizationResponse) => {
+        console.log('Organisation récupérer est {} ', organization);
+        this.form.patchValue({
+          code: organization.code,
+          libelle: organization.libelle,
+          sigle: organization.sigle,
+          schoolType: organization.schoolType,
+          boitePostale: organization.boitePostale,
+          adresse: organization.adresse,
+          telephone: organization.telephone,
+          mobile: organization.mobile,
+          email: organization.email,
+          siteWeb: organization.siteWeb,
+          description: organization.description,
+          directeur: '',
+          anneeCreation: organization.anneeCreation
+        });
 
-      .subscribe({
+        this.loading = false;
 
-        next: (organization: OrganizationResponse) => {
-          console.log('Organisation récupérer est {} ', organization);
-          this.form.patchValue({
-            code: organization.code,
-            libelle: organization.libelle,
-            sigle: organization.sigle,
-            schoolType: organization.schoolType,
-            boitePostale: organization.boitePostale,
-            adresse: organization.adresse,
-            telephone: organization.telephone,
-            mobile: organization.mobile,
-            email: organization.email,
-            siteWeb: organization.siteWeb,
-            description: organization.description,
-            directeur: '',
-            anneeCreation: organization.anneeCreation
-          });
+      },
+      error: (error) => {
+        console.error('Erreur lors du chargement de l’organisation', error);
 
-          this.loading = false;
-
-        },
-        error: (error) => {
-          console.error(
-            'Erreur lors du chargement de l’organisation',
-            error
-          );
-
-          this.loading = false;
-        }
+        this.loading = false;
       }
-      );
+    }
+    );
 
   }
 
