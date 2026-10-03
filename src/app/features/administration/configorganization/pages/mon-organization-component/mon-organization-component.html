@@ -56,13 +56,9 @@
           <div class="logo-section">
             <div class="logo-preview-container">
               @if (logoPreview) {
-                <img [src]="logoPreview" alt="Aperçu du logo" class="logo-preview" />
-              } @else if (organizationData.logoFileUid) {
-                <img
-                  [src]="'https://api.myschool.sn/files/' + organizationData.logoFileUid"
-                  alt="Logo de l'organisation"
-                  class="logo-preview"
-                />
+                <img [src]="logoPreview" alt="Logo de l'organisation" class="logo-preview" />
+              } @else if (organizationData.logo?.available) {
+                <img [src]="logoPreview" alt="Logo de l'organisation" class="logo-preview" />
               } @else {
                 <div class="logo-placeholder">
                   <span class="logo-placeholder-icon">🏢</span>
@@ -120,7 +116,7 @@
               <button type="button" class="btn btn-secondary" (click)="cancelLogoEdit()">
                 <i class="fas fa-times me-2"></i>Annuler
               </button>
-              @if (organizationData.logoFileUid) {
+              @if (organizationData.logo?.available) {
                 <button
                   type="button"
                   class="btn btn-danger"
@@ -163,7 +159,7 @@
               }
             </div>
 
-            <form [formGroup]="identificationForm">
+            <!--    <form [formGroup]="identificationForm">
               <div class="form-group">
                 <label class="form-label">
                   Code <span class="text-danger">*</span>
@@ -263,6 +259,178 @@
                     [disabled]="identificationForm.invalid"
                   >
                     <i class="fas fa-save me-2"></i>Enregistrer
+                  </button>
+                </div>
+              }
+            </form> -->
+
+            <form [formGroup]="identificationForm">
+              <!-- Code + Sigle -->
+              <div class="geo-grid geo-grid-2">
+                <div class="form-group">
+                  <label for="code">Code <span class="required">*</span></label>
+                  <input
+                    id="code"
+                    type="text"
+                    class="form-control"
+                    formControlName="code"
+                    [readonly]="!isEditing()"
+                  />
+                </div>
+
+                <div class="form-group">
+                  <label for="sigle">Sigle <span class="required">*</span></label>
+                  <input
+                    id="sigle"
+                    type="text"
+                    class="form-control"
+                    formControlName="sigle"
+                    [readonly]="!isEditing()"
+                  />
+                </div>
+              </div>
+
+              <!-- Libellé -->
+              <div class="form-group">
+                <label for="libelle">Nom / Libellé <span class="required">*</span></label>
+                <input
+                  id="libelle"
+                  type="text"
+                  class="form-control"
+                  formControlName="libelle"
+                  [readonly]="!isEditing()"
+                />
+              </div>
+
+              <!-- Type école + Année création -->
+              <div class="geo-grid geo-grid-2">
+                <div class="form-group">
+                  <label for="schoolType"> Type d'école <span class="required">*</span> </label>
+
+                  @if (isEditing()) {
+                    <select id="schoolType" class="form-control" formControlName="schoolType">
+                      <option value="">Sélectionner</option>
+                      @for (type of schoolTypes; track type.value) {
+                        <option [value]="type.value">
+                          {{ type.label }}
+                        </option>
+                      }
+                    </select>
+                  } @else {
+                    <input
+                      type="text"
+                      class="form-control"
+                      [value]="
+                        schoolTypes.find(
+                          (t) => t.value === identificationForm.get('schoolType')?.value
+                        )?.label || ''
+                      "
+                      readonly
+                    />
+                  }
+                </div>
+
+                <div class="form-group">
+                  <label for="anneeCreation">Année de création</label>
+                  <input
+                    id="anneeCreation"
+                    type="number"
+                    class="form-control"
+                    formControlName="anneeCreation"
+                    [readonly]="!isEditing()"
+                  />
+                </div>
+              </div>
+
+              <!-- Slogan : ligne complète -->
+              <div class="form-group">
+                <label for="slogan">
+                  Slogan
+                  <span class="badge-new">Nouveau</span>
+                </label>
+
+                <input
+                  id="slogan"
+                  type="text"
+                  class="form-control"
+                  formControlName="slogan"
+                  [readonly]="!isEditing()"
+                  placeholder="Ex. L'excellence au service de la réussite"
+                />
+              </div>
+
+              <!-- Inspections -->
+              <div class="geo-grid geo-grid-2">
+                <div class="form-group">
+                  <label for="inspectionAcademique">
+                    Inspection d'académie (I.A)
+                    <span class="badge-new">Nouveau</span>
+                  </label>
+
+                  <input
+                    id="inspectionAcademique"
+                    type="text"
+                    class="form-control"
+                    formControlName="inspectionAcademique"
+                    [readonly]="!isEditing()"
+                      placeholder="Ex. Inspection académique de Dakar"
+                  />
+                </div>
+
+                <div class="form-group">
+                  <label for="inspectionEduFormation">
+                    Inspection éducation formation (I.E.F)
+                    <span class="badge-new">Nouveau</span>
+                  </label>
+
+                  <input
+                    id="inspectionEduFormation"
+                    type="text"
+                    class="form-control"
+                    formControlName="inspectionEduFormation"
+                    [readonly]="!isEditing()"
+                    placeholder="Ex. Dakar"
+                  />
+                </div>
+              </div>
+
+              <!-- Description -->
+              <div class="form-group">
+                <label for="description">Description</label>
+                <textarea
+                  id="description"
+                  class="form-control"
+                  formControlName="description"
+                  rows="3"
+                  [readonly]="!isEditing()"
+                ></textarea>
+              </div>
+
+              <!-- Actions -->
+              @if (isEditing() && editingSection() === 'identification') {
+                <div class="form-actions">
+                  <button
+                    type="button"
+                    class="btn btn-secondary"
+                    (click)="cancelEditing()"
+                    [disabled]="loading()"
+                  >
+                    Annuler
+                  </button>
+
+                  <button
+                    type="button"
+                    class="btn btn-primary"
+                    (click)="saveIdentification()"
+                    [disabled]="loading()"
+                  >
+                    @if (loading()) {
+                      <span class="spinner-border spinner-border-sm me-1"></span>
+                      Enregistrement...
+                    } @else {
+                      <i class="fas fa-save me-1"></i>
+                      Enregistrer
+                    }
                   </button>
                 </div>
               }

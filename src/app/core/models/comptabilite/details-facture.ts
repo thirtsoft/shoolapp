@@ -32,5 +32,9 @@ export interface DetailsFacture {
   annee?: number;
 
   remise?: number;
+
+  echeanceDate?: Date;
+
+  anneeScolaire?: string;
 }
 

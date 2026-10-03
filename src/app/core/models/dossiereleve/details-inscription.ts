@@ -1,6 +1,6 @@
 import { AnneeScolaire } from "../referentiels/annee-scolaire";
-import { Classe } from "../referentiels/classe";
-import { Eleve } from "./request/eleve";
+import { GetEleveResponse } from "./eleve/get-eleve-response.model";
+
 
 
 export interface DetailsInscription {
@@ -10,11 +10,9 @@ export interface DetailsInscription {
 
     reference?: string;
 
-    eleveDTO?: Eleve;
+    getEleveResponse?: GetEleveResponse;
 
     anneeScolaireDTO?: AnneeScolaire;
-
-    classeDTO?: Classe;
 
     classe?: string;
 
@@ -35,8 +33,6 @@ export interface DetailsInscription {
     motifAnnulation?: string;
 
     dateInscription?: Date;
-
-    createdBy?: number;
 
     actif?: number;
 }

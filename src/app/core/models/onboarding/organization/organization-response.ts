@@ -1,5 +1,6 @@
-export interface OrganizationResponse {
+import { LogoOrganizationResponse } from "./logo-organization-response";
 
+export interface OrganizationResponse {
   id: number;
   uuid: string;
   tenantUuid: string;
@@ -23,5 +24,10 @@ export interface OrganizationResponse {
   creationDate: Date;
   anneeCreation: number;
   status: string;
+  logo?: LogoOrganizationResponse;
+  slogan: string;
+  inspectionAcademique: string;
+  inspectionEduFormation: string;
+
 
 }

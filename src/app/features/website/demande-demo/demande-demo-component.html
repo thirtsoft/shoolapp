@@ -538,11 +538,7 @@
                     <span> Vos informations sont sécurisées. </span>
                   </div>
 
-                  <button
-                    type="submit"
-                    class="btn-submit"
-                    [disabled]="isSubmitting || !demandeForm.valid"
-                  >
+                  <button type="submit" class="btn-submit" [disabled]="isSubmitting">
                     @if (isSubmitting) {
                       <i class="fas fa-spinner fa-spin"></i>
                       Envoi en cours...

@@ -52,11 +52,6 @@ export class DossierEleveService {
     return this.http.get<Eleve>(`${this.baseUrl}/eleve/${id}`);
   }
 
-  /*
-  getEleveToEdit(id: number): Observable<EleveEdit> {
-    return this.http.get<EleveEdit>(`${this.baseUrl}/eleve/gotoedit/${id}`);
-  }
- */
   getDetailsEleve(id: number): Observable<DetailsEleve> {
     return this.http.get<DetailsEleve>(`${this.baseUrl}/eleve/details/${id}`);
   }
@@ -64,27 +59,6 @@ export class DossierEleveService {
   getDetailsDossierEleve(id: number): Observable<any> {
     return this.http.get<any>(`${this.baseUrl}/eleve/${id}/details`);
   }
-
-  /* 
-  inscrireEleve(info: Eleve) {
-    return this.http.post<ResponseEleve>(`${this.baseUrl}/eleve/save`, info);
-  }
-
-  ajouterEleve(info: EleveRequeste) {
-    return this.http.post<ResponseEleve>(`${this.baseUrl}/eleve/create`, info);
-  }
-
-  enregistrerEleve(eleve: EleveRequest) {
-    return this.http.post<ResponseEleve>(`${this.baseUrl}/eleve/enregistrer`, eleve).pipe(
-      catchError(error => {
-        if (error.status === 400) {
-          return of(error.error);
-        }
-        return throwError(error);
-      })
-    );
-
-  } */
 
   enregistrerEleveAvecPhotoFiles(formData: FormData): Observable<ApiResponse<CreateEleveResponse>> {
     return this.http.post<ApiResponse<CreateEleveResponse>>(

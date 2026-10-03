@@ -1,8 +1,3 @@
-/* mon-organization-component.css */
-/* ============================================
-   ORGANISATION - VERSION OPTIMISÉE
-   ============================================ */
-
 :host {
   --blue-deep: #1e3a5f;
   --blue-ocean: #2c5282;
@@ -10,36 +5,47 @@
   --blue-sky: #90cdf4;
   --blue-pale: #ebf4ff;
   --blue-ghost: #f7fafc;
+
   --gris-fonce: #2d3748;
   --gris-moyen: #718096;
   --gris-doux: #edf2f7;
+
   --border-color: #e2e8f0;
+
   --success: #38a169;
   --warning: #d4943a;
   --danger: #e53e3e;
+
   --font-display: 'Playfair Display', serif;
   --font-body: 'DM Sans', sans-serif;
+
   --radius-sm: 8px;
   --radius-md: 12px;
   --radius-lg: 20px;
+
   --shadow-soft: 0 8px 30px rgba(0, 0, 0, 0.08);
   --shadow-hover: 0 12px 40px rgba(30, 58, 95, 0.12);
+
   --transition: all 0.2s ease;
 }
 
-/* ══════════════════════════════════════════════
+
+/* =========================================================
    LAYOUT PRINCIPAL
-   ══════════════════════════════════════════════ */
+   ========================================================= */
+
 .page-wrapper {
   min-height: 100vh;
-  background: linear-gradient(135deg, #f8fafc 0%, var(--blue-pale) 100%);
   padding: 1rem;
+  background: linear-gradient(135deg,
+      #f8fafc 0%,
+      var(--blue-pale) 100%);
 }
 
 .content {
-  padding: 0;
   width: 100%;
   max-width: 100%;
+  padding: 0;
 }
 
 .page-header {
@@ -47,11 +53,11 @@
 }
 
 .page-title {
-  font-family: var(--font-display);
-  font-weight: 700;
+  margin: 0 0 0.25rem;
   color: var(--blue-deep);
-  margin: 0 0 0.25rem 0;
+  font-family: var(--font-display);
   font-size: 1.75rem;
+  font-weight: 700;
   text-align: center;
 }
 
@@ -60,14 +66,16 @@
   font-size: 0.875rem;
 }
 
-/* ══════════════════════════════════════════════
+
+/* =========================================================
    BADGES
-   ══════════════════════════════════════════════ */
+   ========================================================= */
+
 .badge-container {
   display: flex;
   align-items: center;
-  gap: 0.75rem;
   flex-wrap: wrap;
+  gap: 0.75rem;
 }
 
 .badge-primary,
@@ -81,41 +89,61 @@
 }
 
 .badge-primary {
-  background: rgba(44, 82, 130, 0.12);
   color: var(--blue-ocean);
+  background: rgba(44, 82, 130, 0.12);
 }
 
 .badge-success {
-  background: rgba(56, 161, 105, 0.12);
   color: var(--success);
+  background: rgba(56, 161, 105, 0.12);
 }
 
 .badge-warning {
-  background: rgba(212, 148, 58, 0.12);
   color: var(--warning);
+  background: rgba(212, 148, 58, 0.12);
 }
 
 .badge-danger {
-  background: rgba(229, 62, 62, 0.12);
   color: var(--danger);
+  background: rgba(229, 62, 62, 0.12);
 }
 
 .badge-info {
-  background: rgba(66, 153, 225, 0.12);
   color: var(--blue-light);
+  background: rgba(66, 153, 225, 0.12);
 }
 
-/* ══════════════════════════════════════════════
+
+/* =========================================================
    CARDS
-   ══════════════════════════════════════════════ */
+   ========================================================= */
+
+/*
+ * Les deux cards Identification et Localisation
+ * ont exactement la même hauteur grâce à align-items: stretch.
+ */
+.cards-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  align-items: stretch;
+  gap: 1.5rem;
+  margin-bottom: 1.5rem;
+}
+
 .profile-card {
-  background: white;
-  border-radius: var(--radius-lg);
-  box-shadow: var(--shadow-soft);
-  border: 1px solid rgba(66, 153, 225, 0.1);
+  display: flex;
+  flex-direction: column;
+
+  height: 100%;
   overflow: hidden;
+
+  background: #fff;
+  border: 1px solid rgba(66, 153, 225, 0.1);
+  border-radius: var(--radius-lg);
+
+  box-shadow: var(--shadow-soft);
+
   transition: var(--transition);
-  height: fit-content;
 }
 
 .profile-card:hover {
@@ -123,99 +151,130 @@
 }
 
 .profile-card .card-body {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
   padding: 1.75rem;
 }
 
-/* Logo card pleine largeur */
+/*
+ * Card logo pleine largeur
+ */
 .logo-card {
   margin-bottom: 1.5rem;
 }
 
-/* ══════════════════════════════════════════════
-   EN-TÊTE DE CHAQUE CARD
-   ══════════════════════════════════════════════ */
+
+/* =========================================================
+   EN-TÊTE DES CARDS
+   ========================================================= */
+
 .card-section-header {
   display: flex;
   align-items: center;
   justify-content: space-between;
+
   gap: 1rem;
+
   margin-bottom: 1.5rem;
   padding-bottom: 1rem;
+
   border-bottom: 2px solid var(--gris-doux);
 }
 
 .section-title-wrapper {
   display: flex;
   align-items: center;
-  gap: 0.75rem;
-  flex: 1;
+
   min-width: 0;
+  flex: 1;
+
+  gap: 0.75rem;
 }
 
 .section-icon {
-  font-size: 1.25rem;
-  width: 40px;
-  height: 40px;
-  background: rgba(66, 153, 225, 0.1);
-  border-radius: var(--radius-sm);
   display: flex;
   align-items: center;
   justify-content: center;
+
+  width: 40px;
+  height: 40px;
+
   flex-shrink: 0;
+
+  background: rgba(66, 153, 225, 0.1);
+  border-radius: var(--radius-sm);
+
+  font-size: 1.25rem;
 }
 
 .section-title {
-  font-family: var(--font-display);
-  font-weight: 600;
-  color: var(--blue-deep);
-  margin: 0;
-  font-size: 1.1rem;
-  white-space: nowrap;
   overflow: hidden;
+
+  margin: 0;
+
+  color: var(--blue-deep);
+  font-family: var(--font-display);
+  font-size: 1.1rem;
+  font-weight: 600;
+
+  white-space: nowrap;
   text-overflow: ellipsis;
 }
 
-/* ══════════════════════════════════════════════
+
+/* =========================================================
    SECTION LOGO
-   ══════════════════════════════════════════════ */
+   ========================================================= */
+
 .logo-section {
   display: grid;
-  grid-template-columns: 200px 1fr;
-  gap: 2rem;
+  grid-template-columns: 200px minmax(0, 1fr);
+
   align-items: start;
+
+  gap: 2rem;
 }
 
-/* Container de prévisualisation */
 .logo-preview-container {
-  width: 180px;
-  height: 180px;
-  border-radius: var(--radius-md);
-  border: 2px dashed var(--border-color);
-  background: var(--blue-ghost);
   display: flex;
   align-items: center;
   justify-content: center;
+
+  width: 180px;
+  height: 180px;
+
   overflow: hidden;
+
+  background: var(--blue-ghost);
+
+  border: 2px dashed var(--border-color);
+  border-radius: var(--radius-md);
+
   transition: var(--transition);
 }
 
 .logo-preview-container:hover {
-  border-color: var(--blue-light);
   background: var(--blue-pale);
+  border-color: var(--blue-light);
 }
 
 .logo-preview {
   max-width: 100%;
   max-height: 100%;
-  object-fit: contain;
+
   padding: 0.5rem;
+
+  object-fit: contain;
 }
 
 .logo-placeholder {
   display: flex;
   flex-direction: column;
   align-items: center;
+
   gap: 0.5rem;
+
   color: var(--gris-moyen);
 }
 
@@ -229,16 +288,25 @@
   font-weight: 500;
 }
 
-/* Zone d'upload */
+
+/* =========================================================
+   UPLOAD LOGO
+   ========================================================= */
+
 .logo-upload-zone {
+  margin-bottom: 1rem;
+  padding: 1.5rem;
+
+  text-align: center;
+
   background: var(--blue-ghost);
+
   border: 2px dashed var(--blue-light);
   border-radius: var(--radius-md);
-  padding: 1.5rem;
-  text-align: center;
-  transition: var(--transition);
-  margin-bottom: 1rem;
+
   cursor: pointer;
+
+  transition: var(--transition);
 }
 
 .logo-upload-zone:hover {
@@ -250,19 +318,22 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 0.5rem;
-  cursor: pointer;
+
   width: 100%;
+
+  gap: 0.5rem;
+
+  cursor: pointer;
 }
 
 .upload-icon {
-  font-size: 2rem;
   color: var(--blue-light);
+  font-size: 2rem;
 }
 
 .upload-text {
-  font-size: 0.875rem;
   color: var(--gris-fonce);
+  font-size: 0.875rem;
 }
 
 .upload-text strong {
@@ -270,41 +341,54 @@
 }
 
 .upload-hint {
-  font-size: 0.7rem;
   color: var(--gris-moyen);
+  font-size: 0.7rem;
   font-style: italic;
 }
 
 .selected-file-info {
   display: flex;
   align-items: center;
+
   gap: 0.5rem;
+
+  margin-bottom: 1rem;
   padding: 0.625rem 1rem;
+
+  color: var(--success);
+  font-size: 0.8rem;
+
   background: rgba(56, 161, 105, 0.1);
+
   border: 1px solid rgba(56, 161, 105, 0.2);
   border-radius: var(--radius-sm);
-  font-size: 0.8rem;
-  color: var(--success);
-  margin-bottom: 1rem;
 }
 
 .selected-file-info i {
   font-size: 1rem;
 }
 
-/* Infos complémentaires du logo */
+
+/* =========================================================
+   INFORMATIONS LOGO
+   ========================================================= */
+
 .logo-info {
-  background: var(--blue-ghost);
-  border-radius: var(--radius-md);
   padding: 1rem;
+
+  background: var(--blue-ghost);
+
   border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
 }
 
 .logo-info .info-row {
   display: flex;
-  justify-content: space-between;
   align-items: center;
+  justify-content: space-between;
+
   padding: 0.5rem 0;
+
   font-size: 0.875rem;
 }
 
@@ -318,87 +402,102 @@
 }
 
 .logo-info .info-value {
+  max-width: 60%;
+
+  overflow: hidden;
+
   color: var(--blue-deep);
   font-weight: 600;
+
   text-align: right;
-  max-width: 60%;
-  overflow: hidden;
-  text-overflow: ellipsis;
+
   white-space: nowrap;
+  text-overflow: ellipsis;
 }
 
-/* ══════════════════════════════════════════════
-   GRILLE DES DEUX CARDS
-   ══════════════════════════════════════════════ */
-.cards-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 1.5rem;
-  margin-bottom: 1.5rem;
-}
 
-/* ══════════════════════════════════════════════
+/* =========================================================
    FORMULAIRES
-   ══════════════════════════════════════════════ */
+   ========================================================= */
+
 .form-group {
   margin-bottom: 1.25rem;
 }
 
-.form-label {
+.form-label,
+form label {
   display: block;
+
   margin-bottom: 0.5rem;
-  font-weight: 600;
-  font-size: 0.875rem;
+
   color: var(--gris-fonce);
+  font-size: 0.875rem;
+  font-weight: 600;
 }
 
-.form-label i {
+.form-label i,
+form label i {
+  margin-left: 0.5rem;
+
+  color: var(--gris-moyen);
+
   font-size: 0.75rem;
   opacity: 0.7;
-  margin-left: 0.5rem;
 }
 
-.text-danger {
+.text-danger,
+.required {
   color: var(--danger);
 }
 
 .form-control,
 .form-select {
   width: 100%;
+
   padding: 0.75rem 1rem;
+
+  color: var(--gris-fonce);
+  font-family: inherit;
   font-size: 0.875rem;
+
+  background-color: #fff;
+
   border: 1.5px solid var(--border-color);
   border-radius: var(--radius-md);
-  background-color: white;
+
   transition: var(--transition);
-  font-family: inherit;
 }
 
 .form-control:focus,
 .form-select:focus {
   outline: none;
+
   border-color: var(--blue-light);
+
   box-shadow: 0 0 0 3px rgba(66, 153, 225, 0.15);
 }
 
 .form-control:hover:not([readonly]),
-.form-select:hover:not([disabled]) {
+.form-select:hover:not(:disabled) {
   border-color: var(--blue-sky);
 }
 
 .form-control[readonly],
 .form-select:disabled {
+  color: var(--gris-fonce);
   background-color: var(--blue-ghost);
   cursor: default;
 }
 
 .form-select:disabled {
+  color: var(--gris-moyen);
+  cursor: not-allowed;
   opacity: 0.7;
 }
 
 textarea.form-control {
-  resize: vertical;
   min-height: 80px;
+  resize: vertical;
 }
 
 .is-invalid {
@@ -407,47 +506,196 @@ textarea.form-control {
 
 .invalid-feedback {
   display: block;
+
   width: 100%;
+
   margin-top: 0.375rem;
-  font-size: 0.7rem;
+
   color: var(--danger);
+  font-size: 0.7rem;
 }
 
-/* ══════════════════════════════════════════════
+
+/* =========================================================
+   GRILLES DES FORMULAIRES
+   ========================================================= */
+
+/*
+ * Grille générale
+ *
+ * Dans le HTML actuel :
+ *
+ * <div class="geo-grid">
+ *   Pays
+ *   Région
+ *   Département
+ * </div>
+ *
+ * Donc par défaut : 3 colonnes.
+ */
+.geo-grid {
+  display: grid;
+
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+
+  gap: 1rem;
+
+  margin-bottom: 1.25rem;
+}
+
+.geo-grid.geo-grid-2 {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+/*
+ * Les champs contenus dans une grille
+ * ne doivent pas provoquer de débordement.
+ */
+.geo-grid .form-group {
+  min-width: 0;
+  margin-bottom: 0;
+}
+
+/*
+ * Select et input doivent occuper toute
+ * la largeur de leur colonne.
+ */
+.geo-grid .form-control,
+.geo-grid .form-select {
+  width: 100%;
+  min-width: 0;
+}
+
+/* =========================================================
+   BADGE "NOUVEAU"
+   ========================================================= */
+
+.badge-new {
+  display: inline-flex;
+  align-items: center;
+
+  margin-left: 6px;
+  padding: 2px 6px;
+
+  color: #1a5276;
+  font-size: 9px;
+  font-weight: 600;
+  line-height: 1.2;
+
+  background-color: #eaf3f8;
+
+  border-radius: 4px;
+
+  vertical-align: middle;
+}
+
+
+/* =========================================================
+   SECTIONS DES FORMULAIRES
+   ========================================================= */
+
+.form-section-title {
+  display: flex;
+  align-items: center;
+
+  gap: 0.5rem;
+
+  margin-bottom: 1rem;
+  padding: 0.5rem 0;
+
+  color: var(--blue-ocean);
+
+  font-size: 0.8rem;
+  font-weight: 700;
+
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+
+  border-bottom: 1px dashed var(--border-color);
+}
+
+.form-section-title i {
+  color: var(--blue-light);
+  font-size: 0.875rem;
+}
+
+.form-section-title.mt-3 {
+  margin-top: 1.5rem;
+}
+
+
+/* =========================================================
+   ACTIONS DES FORMULAIRES
+   ========================================================= */
+
+.form-actions {
+  display: flex;
+  flex-wrap: wrap;
+
+  gap: 0.75rem;
+
+  margin-top: auto;
+  padding-top: 1rem;
+
+  border-top: 1px solid var(--border-color);
+}
+
+.form-actions .btn {
+  min-width: 120px;
+  flex: 1;
+}
+
+
+/* =========================================================
    BOUTONS
-   ══════════════════════════════════════════════ */
+   ========================================================= */
+
 .btn {
   display: inline-flex;
   align-items: center;
   justify-content: center;
+
   gap: 0.5rem;
+
   padding: 0.75rem 1.5rem;
-  font-weight: 600;
-  font-size: 0.875rem;
-  border-radius: var(--radius-md);
-  transition: var(--transition);
-  cursor: pointer;
+
   border: none;
-  flex: 1;
+  border-radius: var(--radius-md);
+
   font-family: inherit;
+  font-size: 0.875rem;
+  font-weight: 600;
+
+  cursor: pointer;
+
+  transition: var(--transition);
 }
 
 .btn-edit {
   display: inline-flex;
   align-items: center;
+
+  flex-shrink: 0;
+
   gap: 0.375rem;
+
   padding: 0.375rem 0.75rem;
-  background: rgba(66, 153, 225, 0.1);
+
   color: var(--blue-ocean);
-  border: 1px solid rgba(66, 153, 225, 0.2);
-  border-radius: var(--radius-sm);
+  font-family: inherit;
   font-size: 0.75rem;
   font-weight: 600;
+
+  background: rgba(66, 153, 225, 0.1);
+
+  border: 1px solid rgba(66, 153, 225, 0.2);
+  border-radius: var(--radius-sm);
+
   cursor: pointer;
-  transition: var(--transition);
+
   white-space: nowrap;
-  flex-shrink: 0;
-  font-family: inherit;
+
+  transition: var(--transition);
 }
 
 .btn-edit:hover {
@@ -456,23 +704,25 @@ textarea.form-control {
 }
 
 .btn-primary {
-  background: linear-gradient(135deg, var(--blue-ocean), var(--blue-deep));
   color: white;
+  background: linear-gradient(135deg,
+      var(--blue-ocean),
+      var(--blue-deep));
 }
 
 .btn-primary:hover:not(:disabled) {
-  transform: translateY(-1px);
   box-shadow: 0 4px 12px rgba(30, 58, 95, 0.25);
+  transform: translateY(-1px);
 }
 
 .btn-primary:disabled {
-  opacity: 0.5;
   cursor: not-allowed;
+  opacity: 0.5;
 }
 
 .btn-secondary {
-  background: white;
   color: var(--blue-ocean);
+  background: white;
   border: 1.5px solid #cbd5e0;
 }
 
@@ -483,35 +733,51 @@ textarea.form-control {
 }
 
 .btn-danger {
-  background: linear-gradient(135deg, #fc8181, var(--danger));
   color: white;
+  background: linear-gradient(135deg,
+      #fc8181,
+      var(--danger));
 }
 
 .btn-danger:hover:not(:disabled) {
-  transform: translateY(-1px);
   box-shadow: 0 4px 12px rgba(229, 62, 62, 0.3);
+  transform: translateY(-1px);
 }
 
 .btn-danger:disabled {
-  opacity: 0.5;
   cursor: not-allowed;
+  opacity: 0.5;
 }
+
+
+/* =========================================================
+   BOUTON RETOUR
+   ========================================================= */
 
 .btn-back {
   display: inline-flex;
   align-items: center;
   justify-content: center;
+
+  flex: 0 0 auto;
+
   gap: 0.5rem;
+
   padding: 0.75rem 1.5rem;
-  background: var(--blue-ghost);
+
   color: var(--gris-fonce);
+
+  font-size: 0.875rem;
+  font-weight: 600;
+
+  background: var(--blue-ghost);
+
   border: 1.5px solid var(--border-color);
   border-radius: var(--radius-md);
-  font-weight: 600;
-  font-size: 0.875rem;
+
   cursor: pointer;
+
   transition: var(--transition);
-  flex: 0 0 auto;
 }
 
 .btn-back:hover {
@@ -519,47 +785,45 @@ textarea.form-control {
   transform: translateY(-1px);
 }
 
-/* ══════════════════════════════════════════════
-   ACTIONS
-   ══════════════════════════════════════════════ */
-.form-actions {
-  display: flex;
-  gap: 0.75rem;
-  margin-top: 1.5rem;
-  padding-top: 1rem;
-  border-top: 1px solid var(--border-color);
-  flex-wrap: wrap;
-}
 
-.form-actions .btn {
-  flex: 1;
-  min-width: 120px;
-}
+/* =========================================================
+   ACTIONS GÉNÉRALES
+   ========================================================= */
 
 .profile-actions {
   display: flex;
   align-items: center;
   justify-content: flex-start;
+
   gap: 1rem;
+
   margin-top: 1.5rem;
   padding-top: 1.5rem;
+
   border-top: 1px solid var(--border-color);
 }
 
-/* ══════════════════════════════════════════════
-   ALERT HELP
-   ══════════════════════════════════════════════ */
+
+/* =========================================================
+   ALERT INFORMATION
+   ========================================================= */
+
 .alert-help {
-  background: var(--blue-ghost);
-  border-radius: var(--radius-md);
-  padding: 0.875rem 1rem;
-  margin-top: 1.5rem;
   display: flex;
   align-items: center;
+
   gap: 0.75rem;
+
+  margin-top: 1.5rem;
+  padding: 0.875rem 1rem;
+
   color: #4a5568;
   font-size: 0.75rem;
+
+  background: var(--blue-ghost);
+
   border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
 }
 
 .alert-help i {
@@ -567,9 +831,11 @@ textarea.form-control {
   font-size: 1rem;
 }
 
-/* ══════════════════════════════════════════════
-   SPINNER
-   ══════════════════════════════════════════════ */
+
+/* =========================================================
+   SPINNERS
+   ========================================================= */
+
 .spinner-border {
   width: 3rem;
   height: 3rem;
@@ -581,9 +847,11 @@ textarea.form-control {
   border-width: 0.15em;
 }
 
-/* ══════════════════════════════════════════════
+
+/* =========================================================
    UTILITAIRES
-   ══════════════════════════════════════════════ */
+   ========================================================= */
+
 .text-center {
   text-align: center;
 }
@@ -613,15 +881,57 @@ textarea.form-control {
   margin-right: 0.5rem;
 }
 
-/* ══════════════════════════════════════════════
-   RESPONSIVE
-   ══════════════════════════════════════════════ */
+
+/* =========================================================
+   SYSTÈME ROW / COL
+   ========================================================= */
+
+.row {
+  display: flex;
+  flex-wrap: wrap;
+
+  margin-right: -0.5rem;
+  margin-left: -0.5rem;
+}
+
+.form-row {
+  margin-bottom: 0.5rem;
+}
+
+.col-lg-4,
+.col-sm-12 {
+  padding-right: 0.5rem;
+  padding-left: 0.5rem;
+}
+
+.col-lg-4 {
+  width: 33.333333%;
+  flex: 0 0 auto;
+}
+
+.col-sm-12 {
+  width: 100%;
+  flex: 0 0 auto;
+}
+
+
+/* =========================================================
+   RESPONSIVE — TABLETTE
+   ========================================================= */
+
 @media (max-width: 992px) {
+
+  /*
+   * Les deux grandes cards passent l'une sous l'autre.
+   */
   .cards-grid {
     grid-template-columns: 1fr;
     gap: 1rem;
   }
 
+  /*
+   * Logo
+   */
   .logo-section {
     grid-template-columns: 1fr;
     gap: 1.5rem;
@@ -630,11 +940,34 @@ textarea.form-control {
   .logo-preview-container {
     width: 150px;
     height: 150px;
+
     margin: 0 auto;
+  }
+
+  /*
+   * Grille 3 colonnes :
+   * Pays / Région / Département
+   */
+  .geo-grid-3 {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  /*
+   * Bootstrap-like grid
+   */
+  .col-lg-4 {
+    width: 100%;
+    margin-bottom: 0.5rem;
   }
 }
 
+
+/* =========================================================
+   RESPONSIVE — MOBILE
+   ========================================================= */
+
 @media (max-width: 768px) {
+
   .page-wrapper {
     padding: 0.75rem;
   }
@@ -655,16 +988,31 @@ textarea.form-control {
     font-size: 0.95rem;
   }
 
+  /*
+   * Toutes les grilles deviennent une colonne.
+   */
+  .geo-grid-2,
+  .geo-grid-3 {
+    grid-template-columns: 1fr;
+  }
+
+  /*
+   * Boutons empilés
+   */
   .form-actions {
     flex-direction: column;
-    gap: 0.75rem;
+  }
+
+  .form-actions .btn {
+    width: 100%;
   }
 
   .profile-actions {
     flex-direction: column;
+    align-items: stretch;
   }
 
-  .btn {
+  .btn-back {
     width: 100%;
   }
 
@@ -674,7 +1022,13 @@ textarea.form-control {
   }
 }
 
+
+/* =========================================================
+   RESPONSIVE — PETIT MOBILE
+   ========================================================= */
+
 @media (max-width: 480px) {
+
   .page-wrapper {
     padding: 0.5rem;
   }
@@ -692,6 +1046,7 @@ textarea.form-control {
   .section-icon {
     width: 32px;
     height: 32px;
+
     font-size: 1rem;
   }
 
@@ -716,22 +1071,17 @@ textarea.form-control {
   .logo-placeholder-icon {
     font-size: 2rem;
   }
-}
 
-/* ══════════════════════════════════════════════
-   ANIMATIONS
-   ══════════════════════════════════════════════ */
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-    transform: translateY(-10px);
-  }
-
-  to {
-    opacity: 1;
-    transform: translateY(0);
+  .badge-new {
+    font-size: 8px;
+    padding: 2px 5px;
   }
 }
+
+
+/* =========================================================
+   ACCESSIBILITÉ / FOCUS
+   ========================================================= */
 
 .form-control:focus-visible,
 .form-select:focus-visible,
@@ -741,166 +1091,19 @@ textarea.form-control {
   outline-offset: 2px;
 }
 
-/* ══════════════════════════════════════════════
-   FORM SECTION TITLE (Séparateur de sections)
-   ══════════════════════════════════════════════ */
-.form-section-title {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  font-size: 0.8rem;
-  font-weight: 700;
-  color: var(--blue-ocean);
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-  padding: 0.5rem 0;
-  margin-bottom: 1rem;
-  border-bottom: 1px dashed var(--border-color);
-}
 
-.form-section-title i {
-  color: var(--blue-light);
-  font-size: 0.875rem;
-}
+/* =========================================================
+   ANIMATION
+   ========================================================= */
 
-.form-section-title.mt-3 {
-  margin-top: 1.5rem;
-}
-
-/* ══════════════════════════════════════════════
-   SELECT DISABLED STATE
-   ══════════════════════════════════════════════ */
-.form-select:disabled {
-  background-color: var(--blue-ghost);
-  color: var(--gris-moyen);
-  cursor: not-allowed;
-  opacity: 0.7;
-}
-
-.form-select:disabled option {
-  color: var(--gris-moyen);
-}
-
-/* ══════════════════════════════════════════════
-   SELECT ACTIVE STATE (quand activé)
-   ══════════════════════════════════════════════ */
-.form-select:not(:disabled):hover {
-  border-color: var(--blue-sky);
-}
-
-.form-select:not(:disabled):focus {
-  border-color: var(--blue-light);
-  box-shadow: 0 0 0 3px rgba(66, 153, 225, 0.15);
-}
-
-/* ══════════════════════════════════════════════
-   SYSTÈME DE GRILLE (Row + Col)
-   ══════════════════════════════════════════════ */
-.row {
-  display: flex;
-  flex-wrap: wrap;
-  margin-right: -0.5rem;
-  margin-left: -0.5rem;
-}
-
-.form-row {
-  margin-bottom: 0.5rem;
-}
-
-.col-lg-4,
-.col-sm-12 {
-  padding-right: 0.5rem;
-  padding-left: 0.5rem;
-}
-
-.col-lg-4 {
-  flex: 0 0 auto;
-  width: 33.333333%;
-}
-
-.col-sm-12 {
-  flex: 0 0 auto;
-  width: 100%;
-}
-
-/* Responsive : Passe en 1 colonne sur mobile */
-@media (max-width: 992px) {
-  .col-lg-4 {
-    width: 100%;
-    margin-bottom: 0.5rem;
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
   }
-}
 
-/* ══════════════════════════════════════════════
-   GRILLE GÉOGRAPHIQUE (Pays / Région / Département)
-   3 colonnes sur desktop, 1 colonne sur mobile
-   ══════════════════════════════════════════════ */
-.geo-grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 1rem;
-  margin-bottom: 0.5rem;
-}
-
-/* Chaque form-group dans la grille n'a pas besoin de margin-bottom supplémentaire */
-.geo-grid .form-group {
-  margin-bottom: 0;
-}
-
-/* ══════════════════════════════════════════════
-   RESPONSIVE
-   ══════════════════════════════════════════════ */
-
-/* Tablette : 2 colonnes puis 1 */
-@media (max-width: 992px) {
-  .geo-grid {
-    grid-template-columns: 1fr 1fr;
-  }
-}
-
-/* Mobile : 1 colonne */
-@media (max-width: 576px) {
-  .geo-grid {
-    grid-template-columns: 1fr;
-    gap: 0.75rem;
-  }
-}
-
-/* ══════════════════════════════════════════════
-   GRILLES RÉUTILISABLES
-   ══════════════════════════════════════════════ */
-
-/* Grille 3 colonnes : Pays / Région / Département */
-.geo-grid {
-  display: grid;
-  gap: 1rem;
-  margin-bottom: 1.25rem;
-}
-
-.geo-grid-3 {
-  grid-template-columns: repeat(3, 1fr);
-}
-
-.geo-grid-2 {
-  grid-template-columns: repeat(2, 1fr);
-}
-
-/* Les form-group dans la grille ne doivent pas ajouter de marge supplémentaire */
-.geo-grid .form-group {
-  margin-bottom: 0;
-}
-
-@media (max-width: 992px) {
-  .geo-grid-3 {
-    grid-template-columns: 1fr 1fr;
-  }
-}
-
-@media (max-width: 576px) {
-
-  .geo-grid-3,
-  .geo-grid-2 {
-    grid-template-columns: 1fr;
-    gap: 0.75rem;
+  to {
+    opacity: 1;
+    transform: translateY(0);
   }
 }

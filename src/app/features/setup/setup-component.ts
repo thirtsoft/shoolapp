@@ -207,23 +207,20 @@ export class SetupComponent implements OnInit {
   }
 
   private getCurrentSetupProcess(): void {
-    this.setupApiService.getCurrent()
-      .subscribe({
-        next: (response) => {
-          console.log('[SETUP][ÉTAPE 0] API → Enregistrement réussi');
-          console.log('[SETUP][ÉTAPE 0] Response :', response);
+    this.setupApiService.getCurrent().subscribe({
+      next: (response) => {
 
-          this.localStorage.setItem('setup_uuid', response.setupUuid);
+        this.localStorage.setItem('setup_uuid', response.setupUuid);
 
-          this.setupUuid = this.localStorage.getItem('setup_uuid');
+        this.setupUuid = this.localStorage.getItem('setup_uuid');
 
-        },
+      },
 
-        error: (error) => {
-          console.error('[SETUP][ÉTAPE 0] Erreur API :', error);
-        }
+      error: (error) => {
+        console.error('[SETUP][ÉTAPE 0] Erreur API :', error);
+      }
 
-      });
+    });
   }
 
 

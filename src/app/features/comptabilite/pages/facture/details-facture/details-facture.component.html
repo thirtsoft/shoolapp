@@ -22,25 +22,18 @@
       <div class="col-sm-12">
         <div class="card">
           <div class="card-body">
-            <!-- ========================= -->
-            <!-- EN-TÊTE FACTURE -->
-            <!-- ========================= -->
-
             <div class="invoice-header">
               <div class="invoice-header-left">
                 <div class="invoice-logo">
-                  @if (parametresEtablissement.logoBase64) {
-                    <img
-                      [src]="'data:image/png;base64,' + parametresEtablissement.logoBase64"
-                      alt="Logo établissement"
-                    />
+                  @if (logoPreview) {
+                    <img [src]="logoPreview" alt="Logo de l'établissement" />
                   } @else {
                     <i class="fas fa-school"></i>
                   }
                 </div>
               </div>
 
-              <div class="invoice-header-right">
+              <!--  <div class="invoice-header-right">
                 <p class="invoice-details">
                   <strong>N°:</strong>
                   {{ detailsFacture?.numeroFacture }}
@@ -58,12 +51,37 @@
                     {{ detailsFacture?.etat }}
                   </span>
                 </p>
+              </div> -->
+              <div class="invoice-header-right">
+                <p class="invoice-details">
+                  <strong>N° :</strong>
+                  {{ detailsFacture?.numeroFacture }}
+
+                  <br />
+
+                  <strong>Date d'émission :</strong>
+                  {{ detailsFacture?.dateFacture | date: 'dd/MM/yyyy' }}
+
+                  <br />
+
+                  <strong>Année scolaire :</strong>
+                  {{ detailsFacture?.anneeScolaire }}
+
+                  <br />
+
+                  <strong>Date d'échéance :</strong>
+                  {{ detailsFacture?.echeanceDate | date: 'dd/MM/yyyy' }}
+
+                  <br />
+
+                  <strong>Statut :</strong>
+
+                  <span [class]="'status-badge ' + getStatusClass(detailsFacture?.etat)">
+                    {{ detailsFacture?.etat }}
+                  </span>
+                </p>
               </div>
             </div>
-
-            <!-- ========================= -->
-            <!-- INFORMATIONS ÉCOLE / ÉLÈVE -->
-            <!-- ========================= -->
 
             <div class="info-row">
               <div class="info-col">
@@ -74,9 +92,11 @@
                   </strong>
 
                   <p class="invoice-details-left">
-                    <strong>
-                      {{ parametresEtablissement.nom || 'Établissement' }}
-                    </strong>
+                    @if (organizationData.libelle) {
+                      <strong>
+                        {{ organizationData.libelle || 'Établissement' }}
+                      </strong>
+                    }
 
                     <br />
 
@@ -85,19 +105,19 @@
                       <br />
                     }
 
-                    {{ parametresEtablissement.adresse || 'Adresse non renseignée' }}
+                    {{ organizationData.adresse || 'Adresse non renseignée' }}
 
                     <br />
 
-                    @if (parametresEtablissement.telephone) {
+                    @if (organizationData.telephone) {
                       <i class="fas fa-phone me-1"></i>
-                      {{ parametresEtablissement.telephone }}
+                      {{ organizationData.telephone }}
                       <br />
                     }
 
-                    @if (parametresEtablissement.email) {
+                    @if (organizationData.email) {
                       <i class="fas fa-envelope me-1"></i>
-                      {{ parametresEtablissement.email }}
+                      {{ organizationData.email }}
                     }
                   </p>
                 </div>
@@ -117,9 +137,12 @@
                     </strong>
 
                     <br />
+                    Né(e) le : {{ detailEleve.dateNaissance | date: 'dd/MM/yyyy' }}
+
+                    <br />
+                    A :
 
                     {{ detailEleve?.lieuNaissance }},
-                    {{ detailEleve?.nationalite }}
 
                     <br />
 
@@ -128,10 +151,6 @@
                 </div>
               </div>
             </div>
-
-            <!-- ========================= -->
-            <!-- PÉRIODE -->
-            <!-- ========================= -->
 
             <div class="invoice-item">
               <div class="invoice-info full-width">
@@ -148,10 +167,6 @@
                 </div>
               </div>
             </div>
-
-            <!-- ========================= -->
-            <!-- LIGNES FACTURE -->
-            <!-- ========================= -->
 
             <div class="invoice-table-wrap">
               <div class="table-responsive">
@@ -200,10 +215,6 @@
                 </table>
               </div>
             </div>
-
-            <!-- ========================= -->
-            <!-- TOTAUX FACTURE -->
-            <!-- ========================= -->
 
             <div class="totals-container">
               <div class="totals-box">
