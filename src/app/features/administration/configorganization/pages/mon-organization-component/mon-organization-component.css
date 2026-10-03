@@ -29,11 +29,6 @@
   --transition: all 0.2s ease;
 }
 
-
-/* =========================================================
-   LAYOUT PRINCIPAL
-   ========================================================= */
-
 .page-wrapper {
   min-height: 100vh;
   padding: 1rem;
@@ -65,11 +60,6 @@
   color: var(--gris-moyen) !important;
   font-size: 0.875rem;
 }
-
-
-/* =========================================================
-   BADGES
-   ========================================================= */
 
 .badge-container {
   display: flex;
@@ -113,15 +103,6 @@
   background: rgba(66, 153, 225, 0.12);
 }
 
-
-/* =========================================================
-   CARDS
-   ========================================================= */
-
-/*
- * Les deux cards Identification et Localisation
- * ont exactement la même hauteur grâce à align-items: stretch.
- */
 .cards-grid {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -157,17 +138,10 @@
   padding: 1.75rem;
 }
 
-/*
- * Card logo pleine largeur
- */
+
 .logo-card {
   margin-bottom: 1.5rem;
 }
-
-
-/* =========================================================
-   EN-TÊTE DES CARDS
-   ========================================================= */
 
 .card-section-header {
   display: flex;
@@ -221,11 +195,6 @@
   white-space: nowrap;
   text-overflow: ellipsis;
 }
-
-
-/* =========================================================
-   SECTION LOGO
-   ========================================================= */
 
 .logo-section {
   display: grid;
@@ -287,11 +256,6 @@
   font-size: 0.75rem;
   font-weight: 500;
 }
-
-
-/* =========================================================
-   UPLOAD LOGO
-   ========================================================= */
 
 .logo-upload-zone {
   margin-bottom: 1rem;
@@ -368,11 +332,6 @@
   font-size: 1rem;
 }
 
-
-/* =========================================================
-   INFORMATIONS LOGO
-   ========================================================= */
-
 .logo-info {
   padding: 1rem;
 
@@ -414,11 +373,6 @@
   white-space: nowrap;
   text-overflow: ellipsis;
 }
-
-
-/* =========================================================
-   FORMULAIRES
-   ========================================================= */
 
 .form-group {
   margin-bottom: 1.25rem;
@@ -515,24 +469,6 @@ textarea.form-control {
   font-size: 0.7rem;
 }
 
-
-/* =========================================================
-   GRILLES DES FORMULAIRES
-   ========================================================= */
-
-/*
- * Grille générale
- *
- * Dans le HTML actuel :
- *
- * <div class="geo-grid">
- *   Pays
- *   Région
- *   Département
- * </div>
- *
- * Donc par défaut : 3 colonnes.
- */
 .geo-grid {
   display: grid;
 
@@ -547,10 +483,6 @@ textarea.form-control {
   grid-template-columns: repeat(2, minmax(0, 1fr));
 }
 
-/*
- * Les champs contenus dans une grille
- * ne doivent pas provoquer de débordement.
- */
 .geo-grid .form-group {
   min-width: 0;
   margin-bottom: 0;
@@ -565,10 +497,6 @@ textarea.form-control {
   width: 100%;
   min-width: 0;
 }
-
-/* =========================================================
-   BADGE "NOUVEAU"
-   ========================================================= */
 
 .badge-new {
   display: inline-flex;
@@ -589,10 +517,6 @@ textarea.form-control {
   vertical-align: middle;
 }
 
-
-/* =========================================================
-   SECTIONS DES FORMULAIRES
-   ========================================================= */
 
 .form-section-title {
   display: flex;
@@ -623,11 +547,6 @@ textarea.form-control {
   margin-top: 1.5rem;
 }
 
-
-/* =========================================================
-   ACTIONS DES FORMULAIRES
-   ========================================================= */
-
 .form-actions {
   display: flex;
   flex-wrap: wrap;
@@ -644,11 +563,6 @@ textarea.form-control {
   min-width: 120px;
   flex: 1;
 }
-
-
-/* =========================================================
-   BOUTONS
-   ========================================================= */
 
 .btn {
   display: inline-flex;
@@ -749,11 +663,6 @@ textarea.form-control {
   opacity: 0.5;
 }
 
-
-/* =========================================================
-   BOUTON RETOUR
-   ========================================================= */
-
 .btn-back {
   display: inline-flex;
   align-items: center;
@@ -785,11 +694,6 @@ textarea.form-control {
   transform: translateY(-1px);
 }
 
-
-/* =========================================================
-   ACTIONS GÉNÉRALES
-   ========================================================= */
-
 .profile-actions {
   display: flex;
   align-items: center;
@@ -802,11 +706,6 @@ textarea.form-control {
 
   border-top: 1px solid var(--border-color);
 }
-
-
-/* =========================================================
-   ALERT INFORMATION
-   ========================================================= */
 
 .alert-help {
   display: flex;
@@ -831,11 +730,6 @@ textarea.form-control {
   font-size: 1rem;
 }
 
-
-/* =========================================================
-   SPINNERS
-   ========================================================= */
-
 .spinner-border {
   width: 3rem;
   height: 3rem;
@@ -846,11 +740,6 @@ textarea.form-control {
   height: 1rem;
   border-width: 0.15em;
 }
-
-
-/* =========================================================
-   UTILITAIRES
-   ========================================================= */
 
 .text-center {
   text-align: center;
@@ -881,11 +770,6 @@ textarea.form-control {
   margin-right: 0.5rem;
 }
 
-
-/* =========================================================
-   SYSTÈME ROW / COL
-   ========================================================= */
-
 .row {
   display: flex;
   flex-wrap: wrap;
@@ -914,24 +798,11 @@ textarea.form-control {
   flex: 0 0 auto;
 }
 
-
-/* =========================================================
-   RESPONSIVE — TABLETTE
-   ========================================================= */
-
 @media (max-width: 992px) {
-
-  /*
-   * Les deux grandes cards passent l'une sous l'autre.
-   */
   .cards-grid {
     grid-template-columns: 1fr;
     gap: 1rem;
   }
-
-  /*
-   * Logo
-   */
   .logo-section {
     grid-template-columns: 1fr;
     gap: 1.5rem;
@@ -943,28 +814,14 @@ textarea.form-control {
 
     margin: 0 auto;
   }
-
-  /*
-   * Grille 3 colonnes :
-   * Pays / Région / Département
-   */
   .geo-grid-3 {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
-
-  /*
-   * Bootstrap-like grid
-   */
   .col-lg-4 {
     width: 100%;
     margin-bottom: 0.5rem;
   }
 }
-
-
-/* =========================================================
-   RESPONSIVE — MOBILE
-   ========================================================= */
 
 @media (max-width: 768px) {
 
@@ -988,17 +845,11 @@ textarea.form-control {
     font-size: 0.95rem;
   }
 
-  /*
-   * Toutes les grilles deviennent une colonne.
-   */
   .geo-grid-2,
   .geo-grid-3 {
     grid-template-columns: 1fr;
   }
 
-  /*
-   * Boutons empilés
-   */
   .form-actions {
     flex-direction: column;
   }
@@ -1022,10 +873,6 @@ textarea.form-control {
   }
 }
 
-
-/* =========================================================
-   RESPONSIVE — PETIT MOBILE
-   ========================================================= */
 
 @media (max-width: 480px) {
 
@@ -1078,11 +925,6 @@ textarea.form-control {
   }
 }
 
-
-/* =========================================================
-   ACCESSIBILITÉ / FOCUS
-   ========================================================= */
-
 .form-control:focus-visible,
 .form-select:focus-visible,
 .btn:focus-visible,
@@ -1090,11 +932,6 @@ textarea.form-control {
   outline: 2px solid var(--blue-light);
   outline-offset: 2px;
 }
-
-
-/* =========================================================
-   ANIMATION
-   ========================================================= */
 
 @keyframes fadeIn {
   from {

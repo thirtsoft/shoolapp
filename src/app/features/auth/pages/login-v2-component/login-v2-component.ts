@@ -100,7 +100,7 @@ export class LoginV2Component {
 
       next: (response) => {
 
-        console.log('Connexion V2 réussie');
+        console.log('Connexion V2 réussie', response);
 
         this.sessionV2Service.saveSession(response);
 
