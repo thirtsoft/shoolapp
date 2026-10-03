@@ -78,6 +78,9 @@ export class MonOrganizationComponent implements OnInit {
       libelle: ['', [Validators.required]],
       sigle: ['', [Validators.required]],
       schoolType: ['', [Validators.required]],
+      slogan: [''],
+      inspectionAcademique: ['', [Validators.required]],
+      inspectionEduFormation: ['', [Validators.required]],
       anneeCreation: [''],
       description: ['']
     });
@@ -149,6 +152,9 @@ export class MonOrganizationComponent implements OnInit {
       schoolType: org.schoolType || '',
       anneeCreation: org.anneeCreation || '',
       description: org.description || '',
+      slogan: org.slogan || '',
+      inspectionAcademique: org.inspectionAcademique || '',
+      inspectionEduFormation: org.inspectionEduFormation || '',
       tenantUuid: org.tenantUuid || ''
     });
 
@@ -425,7 +431,10 @@ export class MonOrganizationComponent implements OnInit {
       sigle: this.identificationForm.get('sigle')?.value,
       schoolType: this.identificationForm.get('schoolType')?.value,
       anneeCreation: this.identificationForm.get('anneeCreation')?.value || null,
-      description: this.identificationForm.get('description')?.value || null
+      description: this.identificationForm.get('description')?.value || null,
+      slogan: this.identificationForm.get('slogan')?.value || null,
+      inspectionAcademique: this.identificationForm.get('inspectionAcademique')?.value || null,
+      inspectionEduFormation: this.identificationForm.get('inspectionEduFormation')?.value || null
     };
 
     this.organizationConfigService.modifierInfo(organizationUuid, payload)

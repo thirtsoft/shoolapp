@@ -25,5 +25,9 @@ export interface OrganizationResponse {
   anneeCreation: number;
   status: string;
   logo?: LogoOrganizationResponse;
+  slogan: string;
+  inspectionAcademique: string;
+  inspectionEduFormation: string;
+
 
 }

@@ -166,6 +166,11 @@ export class SharedResourceService {
     return this.http.get<T>(url, this.httpOptions);
   }
 
+  afficherUneResource<T>(endpoint: string, id: number): Observable<T> {
+    const url = `${this.baseUrl_1}/${endpoint}/response/${id}`;
+    return this.http.get<T>(url, this.httpOptions);
+  }
+
   afficherListeEleveParClassEtAnneeScolaire<T>(endpoint: string, classId: number, anneeId: number): Observable<T[]> {
     const url = `${this.baseUrl_1}/${endpoint}/classe/${classId}/anneescolaire/${anneeId}`;
     return this.http.get<T[]>(url, this.httpOptions);

@@ -25,7 +25,7 @@ export class ListPaiementComponent implements OnInit {
   paiementData: any = [];
 
   isView: boolean = true;
-  public readonly String = String;
+  readonly String = String;
 
   currentPage = 0;
   pageSize = 10;
@@ -177,13 +177,15 @@ export class ListPaiementComponent implements OnInit {
         this.columns = [
           { key: 'facture', header: 'N° facture' },
           { key: 'nomCompletEleve', header: 'Elève' },
-          { key: 'moyenPaiement', header: 'Moyen paiement' },
+          { key: 'moyenPaiement', header: 'Moyen' },
           { key: 'montant', header: 'Montant' },
+           { key: 'pay', header: 'Reçu' },
           { key: 'datePaiement', header: 'Date' },
         ];
 
         this.paiementData = this.paiementData.map((item: any) => ({
           ...item,
+          pay: '',
         }));
         this.isLoading = false;
       },

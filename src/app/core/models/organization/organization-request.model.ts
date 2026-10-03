@@ -24,5 +24,9 @@ export interface OrganizationRequest {
   departmentCode?: string;
   creationDate?: Date;
   anneeCreation?: number;
+  slogan?: string;
+  inspectionAcademique?: string;
+  inspectionEduFormation?: string;
+
 
 }

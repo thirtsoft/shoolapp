@@ -16,4 +16,8 @@ export interface OrganizationUpdateConfigInformationRequest {
   siteWeb: string;
   anneeCreation: string;
   description: string;
+  slogan: string;
+  inspectionAcademique: string;
+  inspectionEduFormation: string;
+
 }

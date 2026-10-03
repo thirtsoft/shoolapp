@@ -1,4 +1,4 @@
-<div class="page-wrapper">
+<!-- <div class="page-wrapper">
   <div class="content container-fluid">
     <div class="page-header">
       <div class="row">
@@ -238,6 +238,495 @@
           <i class="fas fa-check-circle me-2"></i>Confirmer
         </button>
       </div>
+    </div>
+  </div>
+</ng-template>
+ -->
+
+<div class="page-wrapper">
+  <div class="content container-fluid">
+    <!-- ===================================================== -->
+    <!-- EN-TÊTE -->
+    <!-- ===================================================== -->
+
+    <div class="page-header-custom">
+      <div class="header-main">
+        <button type="button" class="back-link" (click)="goBack()">
+          <i class="fas fa-arrow-left"></i>
+          <span>Retour aux inscriptions</span>
+        </button>
+
+        <div class="header-title-block">
+          <div class="title-line">
+            <h3>Dossier d'inscription</h3>
+
+            <span class="status-badge" [class]="getStatusClass()">
+              <i class="fas" [class]="getStatusIcon()"></i>
+
+              {{ detailsInscription.etat || 'État inconnu' }}
+            </span>
+          </div>
+
+          <div class="header-meta">
+            <span>
+              <i class="fas fa-folder-open"></i>
+              {{ detailsInscription.code || '-' }}
+            </span>
+
+            <span class="meta-separator"></span>
+
+            <span>
+              <i class="fas fa-calendar-alt"></i>
+              {{ anneeScolaireLabel }}
+            </span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===================================================== -->
+    <!-- BARRE ACTIONS -->
+    <!-- ===================================================== -->
+
+    <div class="action-bar">
+      <div class="action-section">
+        <div class="action-section-title">
+          <i class="fas fa-file-alt"></i>
+          Documents
+        </div>
+
+        <div class="action-buttons">
+          <button
+            type="button"
+            class="action-btn action-btn-neutral"
+            (click)="imprimerUneInscription()"
+          >
+            <i class="fas fa-print"></i>
+            <span>Imprimer</span>
+          </button>
+
+          <button type="button" class="action-btn action-btn-primary" (click)="DownloadPdfRecu()">
+            <i class="fas fa-file-pdf"></i>
+            <span>Télécharger</span>
+          </button>
+
+          <button
+            type="button"
+            class="action-btn action-btn-school"
+            (click)="imprimerCarteScolaire()"
+          >
+            <i class="fas fa-id-card"></i>
+            <span>Carte scolaire</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- ACTIONS WORKFLOW UNIQUEMENT A_CONFIRMEE -->
+
+      @if (isAConfirmee) {
+        <div class="action-divider"></div>
+
+        <div class="action-section workflow-section">
+          <div class="action-section-title">
+            <i class="fas fa-tasks"></i>
+            Traitement de l'inscription
+          </div>
+
+          <div class="action-buttons">
+            <button
+              type="button"
+              class="action-btn action-btn-confirm"
+              (click)="openEtatModal(etatModal, 'confirmer')"
+            >
+              <i class="fas fa-check-circle"></i>
+              <span>Confirmer</span>
+            </button>
+
+            <button
+              type="button"
+              class="action-btn action-btn-reject"
+              (click)="openEtatModal(etatModal, 'rejeter')"
+            >
+              <i class="fas fa-times-circle"></i>
+              <span>Rejeter</span>
+            </button>
+          </div>
+        </div>
+      }
+    </div>
+
+    <!-- ===================================================== -->
+    <!-- PROFIL ÉLÈVE + INSCRIPTION -->
+    <!-- ===================================================== -->
+
+    <div class="main-grid">
+      <!-- ================================================= -->
+      <!-- PROFIL ÉLÈVE -->
+      <!-- ================================================= -->
+
+      <div class="card-custom student-card">
+        <div class="card-header-custom">
+          <div class="card-title-wrapper">
+            <div class="card-icon student-icon">
+              <i class="fas fa-user-graduate"></i>
+            </div>
+
+            <div>
+              <h4>Élève</h4>
+              <span>Informations personnelles</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="student-profile">
+          <div class="student-photo-wrapper">
+            <img
+              [src]="photoPreview || getPhotoFallback()"
+              alt="Photo de l'élève"
+              class="student-photo"
+            />
+          </div>
+
+          <div class="student-main-info">
+            <h2>{{ fullName }}</h2>
+
+            <div class="student-matricule">
+              <i class="fas fa-id-badge"></i>
+              {{ eleve?.matricule || '-' }}
+            </div>
+
+            <div class="student-info-grid">
+              <div class="profile-info">
+                <span class="profile-label">Sexe</span>
+                <span class="profile-value">
+                  {{ eleve?.sexe || '-' }}
+                </span>
+              </div>
+
+              <div class="profile-info">
+                <span class="profile-label">Nationalité</span>
+                <span class="profile-value">
+                  {{ eleve?.nationalite || '-' }}
+                </span>
+              </div>
+
+              <div class="profile-info">
+                <span class="profile-label">Date de naissance</span>
+                <span class="profile-value">
+                  {{ eleve?.dateNaissance ? (eleve?.dateNaissance | date: 'dd/MM/yyyy') : '-' }}
+                </span>
+              </div>
+
+              <div class="profile-info">
+                <span class="profile-label">Lieu de naissance</span>
+                <span class="profile-value">
+                  {{ eleve?.lieuNaissance || '-' }}
+                </span>
+              </div>
+
+              <div class="profile-info profile-info-full">
+                <span class="profile-label">Adresse</span>
+                <span class="profile-value">
+                  {{ eleve?.address || '-' }}
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ================================================= -->
+      <!-- INSCRIPTION -->
+      <!-- ================================================= -->
+
+      <div class="card-custom">
+        <div class="card-header-custom">
+          <div class="card-title-wrapper">
+            <div class="card-icon school-icon">
+              <i class="fas fa-school"></i>
+            </div>
+
+            <div>
+              <h4>Inscription</h4>
+              <span>Informations scolaires</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="details-list">
+          <div class="detail-item">
+            <span class="detail-label"> Dossier </span>
+
+            <span class="detail-value strong">
+              {{ detailsInscription.code || '-' }}
+            </span>
+          </div>
+
+          <div class="detail-item">
+            <span class="detail-label"> Classe </span>
+
+            <span class="detail-value">
+              {{ classLabel }}
+            </span>
+          </div>
+
+          <div class="detail-item">
+            <span class="detail-label"> Niveau </span>
+
+            <span class="detail-value">
+              {{ niveauLabel }}
+            </span>
+          </div>
+
+          @if (serieLabel !== '-') {
+            <div class="detail-item">
+              <span class="detail-label"> Série </span>
+
+              <span class="detail-value">
+                {{ serieLabel }}
+              </span>
+            </div>
+          }
+
+          <div class="detail-item">
+            <span class="detail-label"> Année scolaire </span>
+
+            <span class="detail-value">
+              {{ anneeScolaireLabel }}
+            </span>
+          </div>
+
+          <div class="detail-item">
+            <span class="detail-label"> Date d'inscription </span>
+
+            <span class="detail-value">
+              {{ dateInscriptionParsed | date: 'dd/MM/yyyy' }}
+            </span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===================================================== -->
+    <!-- SITUATION FINANCIÈRE -->
+    <!-- ===================================================== -->
+
+    <div class="card-custom financial-card">
+      <div class="card-header-custom">
+        <div class="card-title-wrapper">
+          <div class="card-icon financial-icon">
+            <i class="fas fa-wallet"></i>
+          </div>
+
+          <div>
+            <h4>Situation financière</h4>
+            <span>État du règlement des frais d'inscription</span>
+          </div>
+        </div>
+
+        <div
+          class="payment-status"
+          [class.payment-status-paid]="isPaid"
+          [class.payment-status-pending]="!isPaid"
+        >
+          <i class="fas" [class.fa-check-circle]="isPaid" [class.fa-clock]="!isPaid"></i>
+
+          {{ isPaid ? 'Soldé' : 'Paiement partiel' }}
+        </div>
+      </div>
+
+      <div class="financial-grid">
+        <!-- FRAIS -->
+
+        <div class="financial-item">
+          <span class="financial-label"> Frais d'inscription </span>
+
+          <div class="financial-amount">
+            {{ montantInscription | number: '1.0-0' }}
+            <small>F CFA</small>
+          </div>
+        </div>
+
+        <!-- REÇU -->
+
+        <div class="financial-item">
+          <span class="financial-label"> Montant reçu </span>
+
+          <div class="financial-amount amount-success">
+            {{ montantRecu | number: '1.0-0' }}
+            <small>F CFA</small>
+          </div>
+        </div>
+
+        <!-- RESTE -->
+
+        <div class="financial-item">
+          <span class="financial-label"> Reste à payer </span>
+
+          <div
+            class="financial-amount"
+            [class.amount-success]="isPaid"
+            [class.amount-danger]="!isPaid"
+          >
+            {{ resteAPaye | number: '1.0-0' }}
+            <small>F CFA</small>
+          </div>
+        </div>
+
+        <!-- MOYEN -->
+
+        <div class="financial-item">
+          <span class="financial-label"> Moyen de paiement </span>
+
+          <div class="payment-method">
+            <span class="payment-method-icon">
+              <i class="fas fa-money-bill-wave"></i>
+            </span>
+
+            {{ paymentMethod }}
+          </div>
+        </div>
+      </div>
+
+      <!-- PROGRESSION PAIEMENT -->
+
+      <div class="payment-progress-section">
+        <div class="progress-header">
+          <span> Paiement effectué </span>
+
+          <strong>
+            {{
+              montantInscription > 0
+                ? ((montantRecu / montantInscription) * 100 | number: '1.0-0')
+                : 0
+            }}
+            %
+          </strong>
+        </div>
+
+        <div class="progress-track">
+          <div class="progress-bar-fill" [style.width.%]="paymentProgress"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===================================================== -->
+    <!-- MOTIF DE REJET -->
+    <!-- ===================================================== -->
+
+    @if (detailsInscription.motifAnnulation) {
+      <div class="rejection-card">
+        <div class="rejection-icon">
+          <i class="fas fa-exclamation-circle"></i>
+        </div>
+
+        <div>
+          <div class="rejection-title">Motif du rejet</div>
+
+          <div class="rejection-text">
+            {{ detailsInscription.motifAnnulation }}
+          </div>
+        </div>
+      </div>
+    }
+  </div>
+</div>
+
+<!-- ========================================================= -->
+<!-- MODAL CONFIRMATION / REJET                                -->
+<!-- ========================================================= -->
+
+<ng-template #etatModal>
+  <div class="workflow-modal">
+    <div class="modal-header-custom">
+      <div
+        class="modal-icon"
+        [class.modal-icon-confirm]="modalActionLabel === 'confirmer'"
+        [class.modal-icon-reject]="modalActionLabel === 'rejeter'"
+      >
+        <i
+          class="fas"
+          [class.fa-check-circle]="modalActionLabel === 'confirmer'"
+          [class.fa-times-circle]="modalActionLabel === 'rejeter'"
+        ></i>
+      </div>
+
+      <div>
+        <h4>
+          {{
+            modalActionLabel === 'confirmer' ? 'Confirmer l’inscription' : 'Rejeter l’inscription'
+          }}
+        </h4>
+
+        <p>
+          {{
+            modalActionLabel === 'confirmer'
+              ? 'Vous êtes sur le point de confirmer cette inscription.'
+              : 'Vous êtes sur le point de rejeter cette inscription.'
+          }}
+        </p>
+      </div>
+    </div>
+
+    <div class="modal-body-custom">
+      @if (modalActionLabel === 'confirmer') {
+        <div class="confirmation-message">
+          <i class="fas fa-info-circle"></i>
+
+          <span>
+            Après confirmation, l’inscription sera considérée comme
+            <strong>validée</strong>.
+          </span>
+        </div>
+      }
+
+      @if (modalActionLabel === 'rejeter') {
+        <div class="form-group-custom">
+          <label for="motifAnnulation">
+            Motif du rejet
+            <span>*</span>
+          </label>
+
+          <textarea
+            id="motifAnnulation"
+            class="form-control"
+            rows="4"
+            placeholder="Saisissez le motif du rejet..."
+            formControlName="motifAnnulation"
+          ></textarea>
+
+          @if (
+            actionForm.get('motifAnnulation')?.touched && actionForm.get('motifAnnulation')?.invalid
+          ) {
+            <div class="field-error">
+              Le motif du rejet est obligatoire et doit contenir au moins 5 caractères.
+            </div>
+          }
+        </div>
+      }
+    </div>
+
+    <div class="modal-footer-custom">
+      <button type="button" class="modal-btn modal-btn-cancel" (click)="modalService.dismissAll()">
+        Annuler
+      </button>
+
+      <button
+        type="button"
+        class="modal-btn"
+        [class.modal-btn-confirm]="modalActionLabel === 'confirmer'"
+        [class.modal-btn-reject]="modalActionLabel === 'rejeter'"
+        [disabled]="modalActionLabel === 'rejeter' && actionForm.get('motifAnnulation')?.invalid"
+        (click)="modalService.dismissAll('confirm')"
+      >
+        <i
+          class="fas"
+          [class.fa-check]="modalActionLabel === 'confirmer'"
+          [class.fa-times]="modalActionLabel === 'rejeter'"
+        ></i>
+
+        {{ modalActionLabel === 'confirmer' ? 'Confirmer' : 'Rejeter' }}
+      </button>
     </div>
   </div>
 </ng-template>

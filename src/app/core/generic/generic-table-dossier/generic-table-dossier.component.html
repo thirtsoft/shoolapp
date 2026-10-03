@@ -538,6 +538,14 @@
                                 >
                                   <i class="fas fa-file-pdf fa-lg" style="color: #dc3545"></i>
                                 </button>
+                              } @else if (column.key === 'pay') {
+                                <button
+                                  class="icon-button"
+                                  title="Générer le reçu paiement"
+                                  (click)="generatePdfPaiement(row)"
+                                >
+                                  <i class="fas fa-file-pdf fa-lg" style="color: #dc3545"></i>
+                                </button>
                               } @else {
                                 @if (isNumber(row[column.key])) {
                                   <span>{{ row[column.key] }}</span>
@@ -578,7 +586,7 @@
                               }
                             </div>
 
-  <div class="icon-position center">
+                            <div class="icon-position center">
                               @if (isEyesIcon) {
                                 <button
                                   class="icon-button"
@@ -690,8 +698,6 @@
                                 </button>
                               }
                             </div>
-
-                          
                           </td>
                         </tr>
                       }

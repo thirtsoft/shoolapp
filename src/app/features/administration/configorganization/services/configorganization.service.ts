@@ -10,6 +10,7 @@ import { OrganizationResponse } from '../../../../core/models/onboarding/organiz
 import { OrganizationUpdateConfigInformationRequest } from '../../../../core/models/onboarding/organization/organization-update-config-information-request';
 import { UpdateLogoOrganizationResponse } from '../../../../core/models/onboarding/organization/update-logo-organization-response';
 import { OrganizationRequest } from '../../../../core/models/organization/organization-request.model';
+import { OrganizationMiniResponse } from '../../../../core/models/onboarding/organization/organization-mini-response';
 
 @Injectable({
   providedIn: 'root'
@@ -34,6 +35,10 @@ export class ConfigOrganizationService {
 
   getOrganizationInfos(organizationUuid: string): Observable<OrganizationResponse> {
     return this.http.get<OrganizationResponse>(this.organizationUrl + `/${organizationUuid}`, this.httpOptions);
+  }
+
+  getOrganizationConfigInfos(organizationUuid: string): Observable<OrganizationMiniResponse> {
+    return this.http.get<OrganizationMiniResponse>(this.organizationUrl + `/by/${organizationUuid}`, this.httpOptions);
   }
 
   updateOranizationInfo(organizationUuid: string, value: OrganizationRequest): Observable<OrganizationResponse> {
