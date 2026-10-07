@@ -3,8 +3,6 @@ import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angula
 import { ActivatedRoute, Router } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
 import { Serie } from '../../../../../../core/models/referentiels/serie';
-import { Utilisateur } from '../../../../../../core/models/utilisateur/utilisateur';
-import { UtilisateurService } from '../../../../utilisateur/service/utilisateur.service';
 import { ReferentielResourceService } from '../../../service/referentiel-resource.service';
 
 @Component({
@@ -20,15 +18,10 @@ export class CreateEditSerieComponent {
   serieFormGroup!: FormGroup;
   serie: any;
   isEdit: boolean = false;
-  ecoleId: any;
-  userId: number;
-
-  utilisateur: Utilisateur = {};
 
   title = "Ajouter une série";
 
   private readonly referentielService = inject(ReferentielResourceService);
-  private readonly utilisateurService = inject(UtilisateurService);
   private readonly _formBuilder = inject(FormBuilder);
   private readonly toastService = inject(ToastrService);
   private readonly activeRoute = inject(ActivatedRoute);
@@ -37,29 +30,15 @@ export class CreateEditSerieComponent {
   constructor(
   ) {
     this.serieId = this.activeRoute.snapshot.params['id'];
-    this.userId = Number(localStorage.getItem('id'));
   }
 
   ngOnInit(): void {
-    this.getConnectedUserInfos();
     this.initializeForm(null);
-
     if (this.serieId != null && this.serieId != undefined) {
       this.getSerie(this.serieId);
       this.title = 'Modifier une série';
       this.isEdit = true;
     }
-
-  }
-
-  getConnectedUserInfos() {
-    this.utilisateurService.getUtilisateur(this.userId).subscribe({
-      next: data => {
-        this.utilisateur = data;
-        //      this.ecoleId = this.utilisateur.ecoleId;
-      },
-      error: error => { console.log(error) },
-    });
   }
 
   getSerie(serieId: number) {
@@ -82,7 +61,6 @@ export class CreateEditSerieComponent {
 
   ajoutEditSerie() {
     const payload = this.serieFormGroup.value;
-    payload.ecole = this.ecoleId;
     if (!this.isEdit) {
       this.referentielService.creerUneRessource('serie', payload).subscribe({
         next: (data) => {

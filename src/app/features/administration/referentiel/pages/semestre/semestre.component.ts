@@ -1,8 +1,6 @@
 import { Component, inject, OnInit } from '@angular/core';
-import { FormGroup } from '@angular/forms';
 import { IFilterConfig } from '../../../../../core/filtered-config/FiltreConfiguration';
 import { GenericTableReferentielComponent } from '../../../../../core/generic/generic-table-referentiel/generic-table-referentiel.component';
-import { Semestre } from '../../../../../core/models/referentiels/semestre';
 import { ReferentielResourceService } from '../../service/referentiel-resource.service';
 
 @Component({

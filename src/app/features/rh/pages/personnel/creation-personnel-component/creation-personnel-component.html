@@ -1,0 +1,532 @@
+<div class="page-wrapper">
+  <div class="content container-fluid">
+    <div class="page-header">
+      <div class="row align-items-center">
+        <div class="col-sm-12">
+          <h3 class="page-title">
+            {{ title }}
+          </h3>
+
+          <p class="text-muted mt-1 mb-0">
+            <i class="fas fa-id-card me-1"></i>
+
+            Gestion du personnel de l'établissement
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <div class="badge-container">
+      <span class="badge badge-primary">
+        <i class="fas fa-user-plus me-1"></i>
+
+        Nouveau personnel
+      </span>
+    </div>
+
+    <div class="card">
+      <div class="card-body p-4 p-md-5">
+        <div class="step-indicator">
+          <div class="step active">
+            <span class="step-number"> 1 </span>
+
+            <span class="step-label"> Identité </span>
+          </div>
+
+          <div class="step-line"></div>
+
+          <div class="step">
+            <span class="step-number"> 2 </span>
+
+            <span class="step-label"> Informations </span>
+          </div>
+
+          <div class="step-line"></div>
+
+          <div class="step">
+            <span class="step-number"> 3 </span>
+
+            <span class="step-label"> Compte </span>
+          </div>
+        </div>
+
+        <form [formGroup]="personnelFormGroup" (ngSubmit)="ajouterPersonnel()">
+          <div class="section-title">
+            <div class="section-icon">
+              <i class="fas fa-user"></i>
+            </div>
+
+            <div>
+              <h4>Informations personnelles</h4>
+
+              <p>Identité et coordonnées du personnel</p>
+            </div>
+          </div>
+
+          <!-- Nom + Prénom -->
+
+          <div class="two-columns-row">
+            <div class="form-group">
+              <label class="form-label">
+                Nom
+
+                <span class="text-danger">*</span>
+
+                <i class="fas fa-user ms-1 text-muted"></i>
+              </label>
+
+              <input
+                type="text"
+                class="form-control"
+                formControlName="lastName"
+                placeholder="Nom"
+              />
+
+              @if (
+                personnelFormGroup.get('lastName')?.invalid &&
+                personnelFormGroup.get('lastName')?.touched
+              ) {
+                <div class="invalid-feedback">Le nom est requis.</div>
+              }
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">
+                Prénom
+
+                <span class="text-danger">*</span>
+
+                <i class="fas fa-user ms-1 text-muted"></i>
+              </label>
+
+              <input
+                type="text"
+                class="form-control"
+                formControlName="firstName"
+                placeholder="Prénom"
+              />
+
+              @if (
+                personnelFormGroup.get('firstName')?.invalid &&
+                personnelFormGroup.get('firstName')?.touched
+              ) {
+                <div class="invalid-feedback">Le prénom est requis.</div>
+              }
+            </div>
+          </div>
+
+          <!-- Email + Mobile -->
+
+          <div class="two-columns-row">
+            <div class="form-group">
+              <label class="form-label">
+                Email
+
+                <i class="fas fa-envelope ms-1 text-muted"></i>
+              </label>
+
+              <input
+                type="email"
+                class="form-control"
+                formControlName="email"
+                placeholder="exemple@email.com"
+              />
+
+              @if (
+                personnelFormGroup.get('email')?.invalid && personnelFormGroup.get('email')?.touched
+              ) {
+                <div class="invalid-feedback">Veuillez saisir une adresse email valide.</div>
+              }
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">
+                Téléphone
+
+                <i class="fas fa-phone ms-1 text-muted"></i>
+              </label>
+
+              <input
+                type="tel"
+                class="form-control"
+                formControlName="mobile"
+                placeholder="77 000 00 00"
+              />
+            </div>
+          </div>
+
+          <!-- CNI + Adresse -->
+
+          <div class="two-columns-row">
+            <div class="form-group">
+              <label class="form-label">
+                CNI
+
+                <i class="fas fa-id-card ms-1 text-muted"></i>
+              </label>
+
+              <input
+                type="text"
+                class="form-control"
+                formControlName="cni"
+                placeholder="Numéro de CNI"
+              />
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">
+                Adresse
+
+                <i class="fas fa-map-marker-alt ms-1 text-muted"></i>
+              </label>
+
+              <input
+                type="text"
+                class="form-control"
+                formControlName="address"
+                placeholder="Adresse du personnel"
+              />
+            </div>
+          </div>
+
+          <!-- =================================== -->
+          <!-- INFORMATIONS PROFESSIONNELLES -->
+          <!-- =================================== -->
+
+          <div class="section-title section-spacing">
+            <div class="section-icon">
+              <i class="fas fa-briefcase"></i>
+            </div>
+
+            <div>
+              <h4>Informations professionnelles</h4>
+
+              <p>Fonction et situation du personnel</p>
+            </div>
+          </div>
+
+          <!-- Matricule + Type -->
+
+          <div class="two-columns-row">
+            <div class="form-group">
+              <label class="form-label">
+                Matricule
+
+                <span class="text-danger">*</span>
+
+                <i class="fas fa-hashtag ms-1 text-muted"></i>
+              </label>
+
+              <input
+                type="text"
+                class="form-control"
+                formControlName="matricule"
+                placeholder="Ex : PER-2026-0001"
+              />
+
+              @if (
+                personnelFormGroup.get('matricule')?.invalid &&
+                personnelFormGroup.get('matricule')?.touched
+              ) {
+                <div class="invalid-feedback">Le matricule est requis.</div>
+              }
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">
+                Type de personnel
+
+                <span class="text-danger">*</span>
+
+                <i class="fas fa-users ms-1 text-muted"></i>
+              </label>
+
+              <select class="form-select" formControlName="typePersonnelUuid">
+                <option value="" disabled>— Sélectionnez un type —</option>
+
+                @if (loadingTypes) {
+                  <option disabled>Chargement des types...</option>
+                }
+
+                @for (type of typePersonnels; track type.uuid) {
+                  <option [value]="type.uuid">
+                    {{ type.libelle }}
+                  </option>
+                }
+              </select>
+
+              @if (
+                personnelFormGroup.get('typePersonnelUuid')?.invalid &&
+                personnelFormGroup.get('typePersonnelUuid')?.touched
+              ) {
+                <div class="invalid-feedback">Le type de personnel est requis.</div>
+              }
+            </div>
+          </div>
+
+          <!-- Dates -->
+
+          <div class="two-columns-row">
+            <div class="form-group">
+              <label class="form-label">
+                Date de début de service
+
+                <span class="text-danger">*</span>
+
+                <i class="fas fa-calendar-alt ms-1 text-muted"></i>
+              </label>
+
+              <input type="date" class="form-control" formControlName="dateDebutService" />
+
+              @if (
+                personnelFormGroup.get('dateDebutService')?.invalid &&
+                personnelFormGroup.get('dateDebutService')?.touched
+              ) {
+                <div class="invalid-feedback">La date de début est requise.</div>
+              }
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">
+                Date de fin de service
+
+                <i class="fas fa-calendar-times ms-1 text-muted"></i>
+              </label>
+
+              <input type="date" class="form-control" formControlName="dateFinService" />
+            </div>
+          </div>
+
+          <!-- Statut + Paie -->
+
+          <div class="two-columns-row">
+            <div class="form-group">
+              <label class="form-label">
+                Statut
+
+                <i class="fas fa-toggle-on ms-1 text-muted"></i>
+              </label>
+
+              <select class="form-select" formControlName="statut">
+                <option value="ACTIF">Actif</option>
+
+                <option value="INACTIF">Inactif</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">
+                Éligibilité à la paie
+
+                <i class="fas fa-money-check-alt ms-1 text-muted"></i>
+              </label>
+
+              <div class="checkbox-card">
+                <label class="checkbox-label">
+                  <input type="checkbox" formControlName="eligiblePaie" />
+
+                  <span class="checkbox-custom"></span>
+
+                  <span> Personnel éligible à la paie </span>
+                </label>
+              </div>
+            </div>
+          </div>
+
+          <!-- =================================== -->
+          <!-- COMPTE SCOOLLI -->
+          <!-- =================================== -->
+
+          <div class="section-title section-spacing">
+            <div class="section-icon account-icon">
+              <i class="fas fa-lock"></i>
+            </div>
+
+            <div>
+              <h4>Compte Scoolli</h4>
+
+              <p>Créer éventuellement un accès à Scoolli</p>
+            </div>
+          </div>
+
+          <!-- Création compte -->
+
+          <div class="account-option-card">
+            <label class="checkbox-label account-checkbox">
+              <input
+                type="checkbox"
+                formControlName="creerCompte"
+                (change)="onCreerCompteChange()"
+              />
+
+              <span class="checkbox-custom"></span>
+
+              <div>
+                <strong> Créer également un compte Scoolli </strong>
+
+                <small>
+                  Le personnel pourra se connecter à Scoolli avec les droits du rôle sélectionné.
+                </small>
+              </div>
+            </label>
+          </div>
+
+          @if (creerCompte) {
+            <div class="account-form-card">
+              <!-- Login + Role -->
+
+              <div class="two-columns-row">
+                <div class="form-group">
+                  <label class="form-label">
+                    Identifiant de connexion
+
+                    <span class="text-danger">*</span>
+
+                    <i class="fas fa-key ms-1 text-muted"></i>
+                  </label>
+
+                  <input
+                    type="text"
+                    class="form-control"
+                    formControlName="login"
+                    placeholder="Ex : fatou.ndiaye"
+                  />
+
+                  @if (
+                    personnelFormGroup.get('login')?.invalid &&
+                    personnelFormGroup.get('login')?.touched
+                  ) {
+                    <div class="invalid-feedback">L'identifiant de connexion est requis.</div>
+                  }
+
+                  <small class="text-muted">
+                    Cet identifiant sera utilisé pour se connecter à Scoolli.
+                  </small>
+                </div>
+
+                <div class="form-group">
+                  <label class="form-label">
+                    Rôle
+
+                    <span class="text-danger">*</span>
+
+                    <i class="fas fa-user-shield ms-1 text-muted"></i>
+                  </label>
+
+                  <select class="form-select" formControlName="roleUuid">
+                    <option value="" disabled>— Sélectionnez un rôle —</option>
+
+                    @if (loadingRoles) {
+                      <option disabled>Chargement des rôles...</option>
+                    }
+
+                    @for (role of roles; track role.uuid) {
+                      <option [value]="role.uuid">
+                        {{ role.libelle }}
+
+                        @if (role.code) {
+                          — {{ role.code }}
+                        }
+                      </option>
+                    }
+                  </select>
+
+                  @if (
+                    personnelFormGroup.get('roleUuid')?.invalid &&
+                    personnelFormGroup.get('roleUuid')?.touched
+                  ) {
+                    <div class="invalid-feedback">Le rôle est requis.</div>
+                  }
+                </div>
+              </div>
+
+              <div class="account-info">
+                <i class="fas fa-info-circle"></i>
+
+                <span>
+                  Un mot de passe temporaire sera généré automatiquement lors de la création du
+                  compte.
+                </span>
+              </div>
+            </div>
+          }
+
+          <!-- =================================== -->
+          <!-- RÉCAPITULATIF -->
+          <!-- =================================== -->
+
+          @if (
+            personnelFormGroup.get('firstName')?.value && personnelFormGroup.get('lastName')?.value
+          ) {
+            <div class="recap-card">
+              <div class="d-flex align-items-center gap-3">
+                <div class="recap-icon">
+                  <i class="fas fa-user-check"></i>
+                </div>
+
+                <div class="recap-content">
+                  <span class="recap-label"> Récapitulatif </span>
+
+                  <span class="recap-value">
+                    Personnel :
+
+                    <strong>
+                      {{ personnelFormGroup.get('firstName')?.value }}
+
+                      {{ personnelFormGroup.get('lastName')?.value }}
+                    </strong>
+
+                    @if (personnelFormGroup.get('typePersonnelUuid')?.value) {
+                      <span> • Personnel enregistré </span>
+                    }
+                  </span>
+                </div>
+              </div>
+            </div>
+          }
+
+          <!-- =================================== -->
+          <!-- ACTIONS -->
+          <!-- =================================== -->
+
+          <div class="form-actions">
+            <button type="button" class="btn btn-secondary" (click)="goBack()" [disabled]="loading">
+              <i class="fas fa-times me-2"></i>
+
+              Annuler
+            </button>
+
+            <button
+              type="submit"
+              class="btn btn-primary"
+              [disabled]="personnelFormGroup.invalid || loading"
+            >
+              @if (loading) {
+                <i class="fas fa-spinner fa-spin me-2"></i>
+
+                Création...
+              } @else {
+                <i class="fas fa-save me-2"></i>
+
+                Créer le personnel
+              }
+            </button>
+          </div>
+
+          <!-- =================================== -->
+          <!-- AIDE -->
+          <!-- =================================== -->
+
+          <div class="alert-help mt-4" role="alert">
+            <i class="fas fa-info-circle"></i>
+
+            <span>
+              Le personnel peut être créé sans compte Scoolli. Vous pourrez créer son compte
+              ultérieurement depuis la gestion des utilisateurs.
+            </span>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>

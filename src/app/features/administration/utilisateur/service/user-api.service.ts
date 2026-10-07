@@ -18,10 +18,6 @@ import { UserCreationRequest } from '../../../../core/models/utilisateur/user-cr
 })
 export class UserApiService {
 
-  /*   baseUrl_1 = environment.apiBaseUrl;
-    userUrl = this.baseUrl_1 + '/api/users';
-    securityUrl = this.baseUrl_1 + '/api/security'; */
-
   private readonly baseUrl = environment.apiBaseUrl;
   private readonly userUrl = `${this.baseUrl}/api/users`;
   private readonly securityUrl = `${this.baseUrl}/api/security`;

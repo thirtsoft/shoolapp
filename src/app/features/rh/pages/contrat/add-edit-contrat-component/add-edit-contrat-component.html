@@ -1,0 +1,811 @@
+<!-- <div class="page-wrapper">
+  <div class="content container-fluid">
+    <div class="page-header">
+      <div class="row align-items-center">
+        <div class="col-sm-12">
+          <h3 class="page-title">
+            {{ pageTitle }}
+          </h3>
+
+          <p class="text-muted mt-1 mb-0">
+            <i class="fas fa-file-contract me-1"></i>
+            {{ pageSubtitle }}
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <div class="badge-container">
+      <span class="badge badge-primary">
+        <i class="fas" [class.fa-file-contract]="!isEdit" [class.fa-edit]="isEdit"></i>
+
+        {{ isEdit ? 'Modification du contrat' : 'Nouveau contrat' }}
+      </span>
+    </div>
+
+    @if (loading() && isEdit) {
+      <div class="card">
+        <div class="loading-container">
+          <div class="spinner"></div>
+
+          <span>Chargement du contrat...</span>
+        </div>
+      </div>
+    } @else {
+
+      <div class="card">
+        <div class="card-body p-4 p-md-5">
+          <form [formGroup]="form" (ngSubmit)="submit()" novalidate>
+            <div class="section-title">
+              <div class="section-icon">
+                <i class="fas fa-file-signature"></i>
+              </div>
+
+              <div>
+                <h4>Informations du contrat</h4>
+
+                <p>Référence, personnel et type de contrat</p>
+              </div>
+            </div>
+
+            <div class="two-columns-row">
+              <div class="form-group">
+                <label for="reference" class="form-label">
+                  Référence
+                  <span class="required">*</span>
+                </label>
+
+                <input
+                  id="reference"
+                  type="text"
+                  formControlName="reference"
+                  maxlength="50"
+                  class="form-control"
+                  placeholder="Ex. CONT-2026-001"
+                  [class.is-invalid]="hasError('reference', 'required')"
+                />
+
+                @if (hasError('reference', 'required')) {
+                  <div class="invalid-feedback">La référence est obligatoire.</div>
+                }
+              </div>
+
+              <div class="form-group">
+                <label for="personnelUuid" class="form-label">
+                  Personnel
+                  <span class="required">*</span>
+                </label>
+
+                <select
+                  id="personnelUuid"
+                  formControlName="personnelUuid"
+                  class="form-select"
+                  [class.is-invalid]="hasError('personnelUuid', 'required')"
+                >
+                  <option value="">Sélectionner un personnel</option>
+
+                  @for (personnel of personnels(); track personnel.uuid) {
+                    <option [value]="personnel.uuid">
+                      {{ getPersonnelName(personnel) }}
+                    </option>
+                  }
+                </select>
+
+                @if (hasError('personnelUuid', 'required')) {
+                  <div class="invalid-feedback">Le personnel est obligatoire.</div>
+                }
+              </div>
+            </div>
+
+            <div class="two-columns-row">
+              <div class="form-group">
+                <label for="typeContratUuid" class="form-label">
+                  Type de contrat
+                  <span class="required">*</span>
+                </label>
+
+                <select
+                  id="typeContratUuid"
+                  formControlName="typeContratUuid"
+                  class="form-select"
+                  [class.is-invalid]="hasError('typeContratUuid', 'required')"
+                >
+                  <option value="">Sélectionner un type de contrat</option>
+
+                  @for (type of typesContrat(); track type.uuid) {
+                    <option [value]="type.uuid">
+                      {{ getTypeContratName(type) }}
+                    </option>
+                  }
+                </select>
+
+                @if (hasError('typeContratUuid', 'required')) {
+                  <div class="invalid-feedback">Le type de contrat est obligatoire.</div>
+                }
+              </div>
+
+              <div class="form-group">
+                <label for="statut" class="form-label">
+                  Statut
+                  <span class="required">*</span>
+                </label>
+
+                <select id="statut" formControlName="statut" class="form-select">
+                  <option value="ACTIF">Actif</option>
+
+                  <option value="SUSPENDU">Suspendu</option>
+
+                  <option value="TERMINE">Terminé</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="section-title section-spacing">
+              <div class="section-icon">
+                <i class="fas fa-money-check-alt"></i>
+              </div>
+
+              <div>
+                <h4>Rémunération</h4>
+
+                <p>Modalités et montant de rémunération</p>
+              </div>
+            </div>
+
+            <div class="two-columns-row">
+              <div class="form-group">
+                <label for="modeRemuneration" class="form-label">
+                  Mode de rémunération
+                  <span class="required">*</span>
+                </label>
+
+                <select
+                  id="modeRemuneration"
+                  formControlName="modeRemuneration"
+                  class="form-select"
+                >
+                  <option value="MENSUEL">Mensuel</option>
+
+                  <option value="HORAIRE">Horaire</option>
+                </select>
+              </div>
+
+              <div class="form-group">
+                <label for="montantReference" class="form-label">
+                  Montant de référence
+                  <span class="required">*</span>
+                </label>
+
+                <div class="input-with-suffix">
+                  <input
+                    id="montantReference"
+                    type="number"
+                    formControlName="montantReference"
+                    min="0"
+                    step="0.01"
+                    class="form-control"
+                    placeholder="Ex. 250000"
+                    [class.is-invalid]="hasError('montantReference', 'required')"
+                  />
+
+                  <span>FCFA</span>
+                </div>
+
+                @if (hasError('montantReference', 'required')) {
+                  <div class="invalid-feedback">Le montant est obligatoire.</div>
+                }
+              </div>
+            </div>
+
+            <div class="section-title section-spacing">
+              <div class="section-icon">
+                <i class="fas fa-calendar-alt"></i>
+              </div>
+
+              <div>
+                <h4>Période du contrat</h4>
+
+                <p>Dates de début et de fin du contrat</p>
+              </div>
+            </div>
+
+            <div class="two-columns-row">
+              <div class="form-group">
+                <label for="dateDebut" class="form-label">
+                  Date de début
+                  <span class="required">*</span>
+                </label>
+
+                <input
+                  id="dateDebut"
+                  type="date"
+                  formControlName="dateDebut"
+                  class="form-control"
+                  [class.is-invalid]="hasError('dateDebut', 'required')"
+                />
+
+                @if (hasError('dateDebut', 'required')) {
+                  <div class="invalid-feedback">La date de début est obligatoire.</div>
+                }
+              </div>
+
+              <div class="form-group">
+                <label for="dateFin" class="form-label">
+                  Date de fin
+                  <span class="optional"> Facultative </span>
+                </label>
+
+                <input id="dateFin" type="date" formControlName="dateFin" class="form-control" />
+
+                <small class="field-help"> Laissez vide pour un contrat sans date de fin. </small>
+              </div>
+            </div>
+
+            <div class="section-title section-spacing">
+              <div class="section-icon">
+                <i class="fas fa-file-upload"></i>
+              </div>
+
+              <div>
+                <h4>Document du contrat</h4>
+
+                <p>Pièce jointe associée au contrat</p>
+              </div>
+            </div>
+
+            <div class="file-section">
+              <label class="file-dropzone" for="fichier">
+                <input
+                  id="fichier"
+                  type="file"
+                  accept=".pdf,.jpg,.jpeg,.png,.doc,.docx"
+                  (change)="onFileSelected($event)"
+                />
+
+                <i class="fas fa-cloud-upload-alt"></i>
+
+                @if (fichier) {
+                  <strong>
+                    {{ fichier.name }}
+                  </strong>
+
+                  <span> {{ (fichier.size / 1024 / 1024).toFixed(2) }} Mo </span>
+                } @else {
+                  <strong> Cliquez pour sélectionner le document </strong>
+
+                  <span> PDF, JPG, PNG, DOC ou DOCX — maximum 10 Mo </span>
+                }
+              </label>
+
+              @if (fichier) {
+                <button type="button" class="remove-file" (click)="supprimerFichierSelectionne()">
+                  <i class="fas fa-times-circle"></i>
+
+                  Retirer le nouveau fichier
+                </button>
+              }
+
+              @if (isEdit && fichierExistant()) {
+                <div class="existing-file">
+                  <div class="existing-file-icon">
+                    <i class="fas fa-file-alt"></i>
+                  </div>
+
+                  <div>
+                    <strong> Document actuellement enregistré </strong>
+
+                    <span>
+                      La pièce jointe actuelle sera conservée si vous ne sélectionnez pas un nouveau
+                      fichier.
+                    </span>
+                  </div>
+                </div>
+              }
+
+              @if (!isEdit && !fichier) {
+                <div class="required-file-info">
+                  <i class="fas fa-info-circle"></i>
+
+                  Le document du contrat est obligatoire.
+                </div>
+              }
+            </div>
+
+            <div class="section-title section-spacing">
+              <div class="section-icon">
+                <i class="fas fa-comment-alt"></i>
+              </div>
+
+              <div>
+                <h4>Observation</h4>
+
+                <p>Information complémentaire sur le contrat</p>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label for="observation" class="form-label">
+                Observation
+                <span class="optional"> Facultative </span>
+              </label>
+
+              <textarea
+                id="observation"
+                formControlName="observation"
+                rows="4"
+                maxlength="200"
+                class="form-control"
+                placeholder="Observation concernant le contrat..."
+              ></textarea>
+            </div>
+
+            <div class="alert-help">
+              <i class="fas fa-info-circle"></i>
+
+              <span>
+                Le document du contrat est obligatoire lors de la création. Lors d'une modification,
+                le document existant est conservé si aucun nouveau fichier n'est sélectionné.
+              </span>
+            </div>
+
+            <div class="form-actions">
+              <button
+                type="button"
+                class="btn btn-secondary"
+                (click)="retourListe()"
+                [disabled]="loading()"
+              >
+                <i class="fas fa-times"></i>
+
+                Annuler
+              </button>
+
+              <button type="submit" class="btn btn-primary" [disabled]="loading()">
+                @if (loading()) {
+                  <span class="button-spinner"></span>
+
+                  Enregistrement...
+                } @else {
+                  <i class="fas" [class.fa-check]="!isEdit" [class.fa-save]="isEdit"></i>
+
+                  {{ submitLabel }}
+                }
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    }
+  </div>
+</div>
+ -->
+
+<div class="page-wrapper">
+  <div class="content container-fluid">
+    <div class="page-header">
+      <div class="row align-items-center">
+        <div class="col-sm-12">
+          <h3 class="page-title">
+            {{ pageTitle }}
+          </h3>
+
+          <p class="text-muted mt-1 mb-0">
+            <i class="fas fa-file-contract me-1"></i>
+            {{ pageSubtitle }}
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <div class="badge-container">
+      <span class="badge badge-primary">
+        <i class="fas" [class.fa-file-contract]="!isEdit" [class.fa-edit]="isEdit"></i>
+
+        {{ isEdit ? 'Modification du contrat' : 'Nouveau contrat' }}
+      </span>
+    </div>
+
+    @if (loading() && isEdit) {
+      <div class="card">
+        <div class="loading-container">
+          <div class="spinner"></div>
+
+          <span> Chargement du contrat... </span>
+        </div>
+      </div>
+    } @else {
+      <div class="card">
+        <div class="card-body p-4 p-md-5">
+          <form [formGroup]="form" (ngSubmit)="submit()" novalidate>
+            <!-- ====================================================== -->
+            <!-- INFORMATIONS DU CONTRAT -->
+            <!-- ====================================================== -->
+
+            <div class="section-title">
+              <div class="section-icon">
+                <i class="fas fa-file-signature"></i>
+              </div>
+
+              <div>
+                <h4>Informations du contrat</h4>
+
+                <p>Référence, personnel et type de contrat</p>
+              </div>
+            </div>
+
+            <div class="two-columns-row">
+              <div class="form-group">
+                <label for="reference" class="form-label">
+                  Référence
+                  <span class="required">*</span>
+                </label>
+
+                <input
+                  id="reference"
+                  type="text"
+                  formControlName="reference"
+                  maxlength="50"
+                  class="form-control"
+                  placeholder="Ex. CONT-2026-001"
+                  [class.is-invalid]="hasError('reference', 'required')"
+                />
+
+                @if (hasError('reference', 'required')) {
+                  <div class="invalid-feedback">La référence est obligatoire.</div>
+                }
+              </div>
+
+              <div class="form-group">
+                <label for="personnelUuid" class="form-label">
+                  Personnel
+                  <span class="required">*</span>
+                </label>
+
+                <select
+                  id="personnelUuid"
+                  formControlName="personnelUuid"
+                  class="form-select"
+                  [class.is-invalid]="hasError('personnelUuid', 'required')"
+                >
+                  <option value="">Sélectionner un personnel</option>
+
+                  @for (personnel of personnels(); track personnel.uuid) {
+                    <option [value]="personnel.uuid">
+                      {{ getPersonnelName(personnel) }}
+                    </option>
+                  }
+                </select>
+
+                @if (hasError('personnelUuid', 'required')) {
+                  <div class="invalid-feedback">Le personnel est obligatoire.</div>
+                }
+              </div>
+            </div>
+
+            <div class="two-columns-row">
+              <div class="form-group">
+                <label for="typeContratUuid" class="form-label">
+                  Type de contrat
+                  <span class="required">*</span>
+                </label>
+
+                <select
+                  id="typeContratUuid"
+                  formControlName="typeContratUuid"
+                  class="form-select"
+                  [class.is-invalid]="hasError('typeContratUuid', 'required')"
+                >
+                  <option value="">Sélectionner un type de contrat</option>
+
+                  @for (type of typesContrat(); track type.uuid) {
+                    <option [value]="type.uuid">
+                      {{ getTypeContratName(type) }}
+                    </option>
+                  }
+                </select>
+
+                @if (hasError('typeContratUuid', 'required')) {
+                  <div class="invalid-feedback">Le type de contrat est obligatoire.</div>
+                }
+              </div>
+
+              <div class="form-group">
+                <label for="statut" class="form-label">
+                  Statut
+                  <span class="required">*</span>
+                </label>
+
+                <select id="statut" formControlName="statut" class="form-select">
+                  <option value="ACTIF">Actif</option>
+
+                  <option value="SUSPENDU">Suspendu</option>
+
+                  <option value="TERMINE">Terminé</option>
+                </select>
+              </div>
+            </div>
+
+            <!-- ====================================================== -->
+            <!-- REMUNERATION -->
+            <!-- ====================================================== -->
+
+            <div class="section-title section-spacing">
+              <div class="section-icon">
+                <i class="fas fa-money-check-alt"></i>
+              </div>
+
+              <div>
+                <h4>Rémunération</h4>
+
+                <p>Modalités et montant de rémunération</p>
+              </div>
+            </div>
+
+            <div class="two-columns-row">
+              <div class="form-group">
+                <label for="modeRemuneration" class="form-label">
+                  Mode de rémunération
+                  <span class="required">*</span>
+                </label>
+
+                <select
+                  id="modeRemuneration"
+                  formControlName="modeRemuneration"
+                  class="form-select"
+                >
+                  <option value="MENSUEL">Mensuel</option>
+
+                  <option value="HORAIRE">Horaire</option>
+                </select>
+              </div>
+
+              <div class="form-group">
+                <label for="montantReference" class="form-label">
+                  Montant de référence
+                  <span class="required">*</span>
+                </label>
+
+                <div class="input-with-suffix">
+                  <input
+                    id="montantReference"
+                    type="number"
+                    formControlName="montantReference"
+                    min="0"
+                    step="0.01"
+                    class="form-control"
+                    placeholder="Ex. 250000"
+                    [class.is-invalid]="hasError('montantReference', 'required')"
+                  />
+
+                  <span> FCFA </span>
+                </div>
+
+                @if (hasError('montantReference', 'required')) {
+                  <div class="invalid-feedback">Le montant est obligatoire.</div>
+                }
+              </div>
+            </div>
+
+            <!-- ====================================================== -->
+            <!-- PERIODE DU CONTRAT -->
+            <!-- ====================================================== -->
+
+            <div class="section-title section-spacing">
+              <div class="section-icon">
+                <i class="fas fa-calendar-alt"></i>
+              </div>
+
+              <div>
+                <h4>Période du contrat</h4>
+
+                <p>Dates de début et de fin du contrat</p>
+              </div>
+            </div>
+
+            <div class="two-columns-row">
+              <div class="form-group">
+                <label for="dateDebut" class="form-label">
+                  Date de début
+                  <span class="required">*</span>
+                </label>
+
+                <input
+                  id="dateDebut"
+                  type="date"
+                  formControlName="dateDebut"
+                  class="form-control"
+                  [class.is-invalid]="hasError('dateDebut', 'required')"
+                />
+
+                @if (hasError('dateDebut', 'required')) {
+                  <div class="invalid-feedback">La date de début est obligatoire.</div>
+                }
+              </div>
+
+              <div class="form-group">
+                <label for="dateFin" class="form-label">
+                  Date de fin
+
+                  <span class="optional"> Facultative </span>
+                </label>
+
+                <input id="dateFin" type="date" formControlName="dateFin" class="form-control" />
+
+                <small class="field-help"> Laissez vide pour un contrat sans date de fin. </small>
+              </div>
+            </div>
+
+            <!-- ====================================================== -->
+            <!-- DOCUMENT DU CONTRAT -->
+            <!-- ====================================================== -->
+
+            <div class="section-title section-spacing">
+              <div class="section-icon">
+                <i class="fas fa-file-upload"></i>
+              </div>
+
+              <div>
+                <h4>Document du contrat</h4>
+
+                <p>Pièce jointe associée au contrat</p>
+              </div>
+            </div>
+
+            <div class="file-section">
+              <!-- DOCUMENT EXISTANT -->
+              @if (isEdit && fichierExistant()) {
+                <div class="existing-file">
+                  <div class="existing-file-icon">
+                    <i class="fas fa-file-alt"></i>
+                  </div>
+
+                  <div class="existing-file-info">
+                    <strong>
+                      {{ fichierExistantNom() || 'Document du contrat' }}
+                    </strong>
+
+                    <span> Document actuellement enregistré </span>
+                  </div>
+
+                 
+                </div>
+              }
+
+              <!-- SELECTION NOUVEAU FICHIER -->
+              <label class="file-dropzone" for="fichier">
+                <input
+                  id="fichier"
+                  type="file"
+                  accept=".pdf,.jpg,.jpeg,.png,.doc,.docx"
+                  (change)="onFileSelected($event)"
+                />
+
+                <i class="fas fa-cloud-upload-alt"></i>
+
+                @if (fichier) {
+                  <strong>
+                    {{ fichier.name }}
+                  </strong>
+
+                  <span>
+                    {{ (fichier.size / 1024 / 1024).toFixed(2) }}
+                    Mo
+                  </span>
+                } @else {
+                  <strong>
+                    Cliquez pour sélectionner
+                    {{ isEdit ? 'un nouveau document' : 'le document' }}
+                  </strong>
+
+                  <span> PDF, JPG, PNG, DOC ou DOCX — maximum 10 Mo </span>
+                }
+              </label>
+
+              <!-- NOUVEAU FICHIER SELECTIONNE -->
+              @if (fichier) {
+                <button type="button" class="remove-file" (click)="supprimerFichierSelectionne()">
+                  <i class="fas fa-times-circle"></i>
+
+                  Retirer le nouveau fichier
+                </button>
+              }
+
+              <!-- DOCUMENT OBLIGATOIRE A LA CREATION -->
+              @if (!isEdit && !fichier) {
+                <div class="required-file-info">
+                  <i class="fas fa-info-circle"></i>
+
+                  Le document du contrat est obligatoire.
+                </div>
+              }
+
+              <!-- INFORMATION EN MODIFICATION -->
+              @if (isEdit && !fichier) {
+                <div class="required-file-info">
+                  <i class="fas fa-info-circle"></i>
+
+                  Le document actuel sera conservé si vous ne sélectionnez pas de nouveau fichier.
+                </div>
+              }
+            </div>
+
+            <!-- ====================================================== -->
+            <!-- OBSERVATION -->
+            <!-- ====================================================== -->
+
+            <div class="section-title section-spacing">
+              <div class="section-icon">
+                <i class="fas fa-comment-alt"></i>
+              </div>
+
+              <div>
+                <h4>Observation</h4>
+
+                <p>Information complémentaire sur le contrat</p>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label for="observation" class="form-label">
+                Observation
+
+                <span class="optional"> Facultative </span>
+              </label>
+
+              <textarea
+                id="observation"
+                formControlName="observation"
+                rows="4"
+                maxlength="200"
+                class="form-control"
+                placeholder="Observation concernant le contrat..."
+              ></textarea>
+            </div>
+
+            <!-- ====================================================== -->
+            <!-- INFORMATION -->
+            <!-- ====================================================== -->
+
+            <div class="alert-help">
+              <i class="fas fa-info-circle"></i>
+
+              <span>
+                Le document du contrat est obligatoire lors de la création. Lors d'une modification,
+                le document existant est conservé si aucun nouveau fichier n'est sélectionné.
+              </span>
+            </div>
+
+            <!-- ====================================================== -->
+            <!-- ACTIONS -->
+            <!-- ====================================================== -->
+
+            <div class="form-actions">
+              <button
+                type="button"
+                class="btn btn-secondary"
+                (click)="retourListe()"
+                [disabled]="loading()"
+              >
+                <i class="fas fa-times"></i>
+
+                Annuler
+              </button>
+
+              <button type="submit" class="btn btn-primary" [disabled]="loading()">
+                @if (loading()) {
+                  <span class="button-spinner"></span>
+
+                  Enregistrement...
+                } @else {
+                  <i class="fas" [class.fa-check]="!isEdit" [class.fa-save]="isEdit"></i>
+
+                  {{ submitLabel }}
+                }
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    }
+  </div>
+</div>

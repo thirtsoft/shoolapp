@@ -39,6 +39,20 @@ export class SideBarAdminComponent {
     { route: '/admin/comptabilite/services', ico: '📋', label: 'Inscriptions services', section: '', badge: '' },
     { route: '/admin/comptabilite/depenses', ico: '💸', label: 'Dépenses', section: '', badge: '' },
 
+    //
+    {
+      ico: '👥',
+      label: 'Ressources humaines',
+      section: 'RH',
+      badge: '',
+      children: [
+        { route: '/admin/rh/personnels', ico: '👤', label: 'Personnel' },
+        { route: '/admin/rh/contrats', ico: '📄', label: 'Contrats' },
+        { route: '/admin/rh/paies', ico: '💵', label: 'Paie' },
+        { route: '/admin/rh/avances-salaires', ico: '💰', label: 'Demandes d’avance' }
+      ]
+    },
+
     // GESTION SCOLAIRE
     { route: '/admin/dossier-eleve/eleves', ico: '🎒', label: 'Élèves', section: 'GESTION SCOLAIRE', badge: '1 200' },
     { route: '/admin/dossier-eleve/inscriptions', ico: '📝', label: 'Inscriptions', section: '', badge: '24' },
@@ -96,6 +110,11 @@ export class SideBarAdminComponent {
         { route: '/admin/referentiel/typedepense', ico: '💲', label: 'Type dépense' },
         //  { route: '/admin/referentiel/menus', ico: '🍽️', label: 'Menus' },
         { route: '/admin/referentiel/category-menu', ico: '🍽️', label: 'Menus' },
+
+        // RH
+        { route: '/admin/referentiel/type-personnels', ico: '👥', label: 'Types de personnel' },
+        { route: '/admin/referentiel/type-contrats', ico: '📄', label: 'Types de contrat' },
+
 
         // Documents
         { route: '/admin/referentiel/type-documents', ico: '📄', label: 'Types de document' },

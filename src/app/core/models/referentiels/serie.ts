@@ -5,6 +5,4 @@ export interface Serie {
 
   code?: string;
 
-  ecole?: number;
-
 }

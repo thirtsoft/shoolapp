@@ -4,7 +4,6 @@ import { Router } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
 import { GenereFactureClasse } from '../../../../../core/models/comptabilite/generer-facture-classe';
 import { ListeClasse } from '../../../../../core/models/referentiels/classe';
-import { Utilisateur } from '../../../../../core/models/utilisateur/utilisateur';
 import { ReferentielResourceService } from '../../../../administration/referentiel/service/referentiel-resource.service';
 import { UtilisateurService } from '../../../../administration/utilisateur/service/utilisateur.service';
 import { ComptabiliteResourceService } from '../../../services/comptabilite-resource.service';
@@ -30,38 +29,20 @@ export class GenererFactureClasseComponent implements OnInit {
   selectedClasse: any;
   selectedMois: any;
   selectedAnnee: any;
-  ecoleId: any;
-  userId: number;
-  utilisateur: Utilisateur = {};
 
   title = "Générer une facture pour une classe";
 
   private readonly comptabiliteResource = inject(ComptabiliteResourceService);
   private readonly referentielResource = inject(ReferentielResourceService);
-  private readonly utilisateurService = inject(UtilisateurService);
   private readonly toastService = inject(ToastrService);
   private readonly router = inject(Router);
 
-  constructor(
-  ) {
-    this.userId = Number(localStorage.getItem('id'));
-  }
+  constructor() { }
 
   ngOnInit(): void {
-    this.getConnectedUserInfos();
     this.getClassList();
     this.getListMois();
     this.getListAnnees();
-  }
-
-  getConnectedUserInfos() {
-    this.utilisateurService.getUtilisateur(this.userId).subscribe({
-      next: data => {
-        this.utilisateur = data;
-      },
-      error: error => { console.log(error) },
-    });
-
   }
 
   getClassList() {
