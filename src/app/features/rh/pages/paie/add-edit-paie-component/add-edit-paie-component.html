@@ -1,0 +1,481 @@
+<div class="page-wrapper">
+  <div class="content container-fluid">
+    <!-- ====================================================== -->
+    <!-- HEADER -->
+    <!-- ====================================================== -->
+
+    <div class="page-header">
+      <div class="row align-items-center">
+        <div class="col-sm-12">
+          <h3 class="page-title">
+            {{ pageTitle }}
+          </h3>
+
+          <p class="text-muted mt-1 mb-0">
+            <i class="fas fa-money-check-alt me-1"></i>
+            {{ pageSubtitle }}
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <!-- ====================================================== -->
+    <!-- BADGE -->
+    <!-- ====================================================== -->
+
+    <div class="badge-container">
+      <span class="badge badge-primary">
+        <i class="fas" [class.fa-money-check-alt]="!isEdit" [class.fa-edit]="isEdit"> </i>
+
+        {{ isEdit ? 'Modification de la paie' : 'Nouvelle paie' }}
+      </span>
+    </div>
+
+    <!-- ====================================================== -->
+    <!-- LOADING EDITION -->
+    <!-- ====================================================== -->
+
+    @if (loading() && isEdit) {
+      <div class="card">
+        <div class="loading-container">
+          <div class="spinner"></div>
+
+          <span> Chargement de la paie... </span>
+        </div>
+      </div>
+    } @else {
+      <div class="card">
+        <div class="card-body p-4 p-md-5">
+          <form [formGroup]="form" (ngSubmit)="submit()" novalidate>
+            <!-- ================================================== -->
+            <!-- PERSONNEL ET PERIODE -->
+            <!-- ================================================== -->
+
+            <div class="section-title">
+              <div class="section-icon">
+                <i class="fas fa-user"></i>
+              </div>
+
+              <div>
+                <h4>Personnel et période</h4>
+
+                <p>Sélectionnez le personnel et la période de paie</p>
+              </div>
+            </div>
+
+            <div class="two-columns-row">
+              <!-- PERSONNEL -->
+
+              <div class="form-group">
+                <label for="personnelUuid" class="form-label">
+                  Personnel
+
+                  <span class="required">*</span>
+                </label>
+
+                <select
+                  id="personnelUuid"
+                  formControlName="personnelUuid"
+                  class="form-select"
+                  [class.is-invalid]="hasError('personnelUuid', 'required')"
+                >
+                  <option value="">Sélectionner un personnel</option>
+
+                  @for (personnel of personnels(); track personnel.uuid) {
+                    <option [value]="personnel.uuid">
+                      {{ getPersonnelName(personnel) }}
+                    </option>
+                  }
+                </select>
+
+                @if (hasError('personnelUuid', 'required')) {
+                  <div class="invalid-feedback">Le personnel est obligatoire.</div>
+                }
+              </div>
+
+              <!-- CONTRAT -->
+
+              <div class="form-group">
+                <label for="contratUuid" class="form-label">
+                  Contrat
+
+                  <span class="required">*</span>
+                </label>
+
+                <select
+                  id="contratUuid"
+                  formControlName="contratUuid"
+                  class="form-select"
+                  [class.is-invalid]="hasError('contratUuid', 'required')"
+                >
+                  <option value="">Sélectionner un contrat actif</option>
+
+                  @for (contrat of contratsDisponibles; track contrat.uuid) {
+                    <option [value]="contrat.uuid">
+                      {{ getContratName(contrat) }}
+                    </option>
+                  }
+                </select>
+
+                @if (hasError('contratUuid', 'required')) {
+                  <div class="invalid-feedback">Le contrat est obligatoire.</div>
+                }
+
+                @if (form.get('personnelUuid')?.value && contratsDisponibles.length === 0) {
+                  <small class="field-warning">
+                    <i class="fas fa-exclamation-triangle"></i>
+
+                    Aucun contrat actif n'est disponible pour ce personnel.
+                  </small>
+                }
+              </div>
+            </div>
+
+            <div class="two-columns-row">
+              <!-- ANNEE -->
+
+              <div class="form-group">
+                <label for="annee" class="form-label">
+                  Année
+
+                  <span class="required">*</span>
+                </label>
+
+                <input
+                  id="annee"
+                  type="number"
+                  formControlName="annee"
+                  min="2000"
+                  max="2100"
+                  class="form-control"
+                  [class.is-invalid]="
+                    hasError('annee', 'required') ||
+                    hasError('annee', 'min') ||
+                    hasError('annee', 'max')
+                  "
+                />
+
+                @if (hasError('annee', 'required')) {
+                  <div class="invalid-feedback">L'année est obligatoire.</div>
+                }
+              </div>
+
+              <!-- MOIS -->
+
+              <div class="form-group">
+                <label for="mois" class="form-label">
+                  Mois
+
+                  <span class="required">*</span>
+                </label>
+
+                <select
+                  id="mois"
+                  formControlName="mois"
+                  class="form-select"
+                  [class.is-invalid]="hasError('mois', 'required')"
+                >
+                  <option [value]="1">Janvier</option>
+                  <option [value]="2">Février</option>
+                  <option [value]="3">Mars</option>
+                  <option [value]="4">Avril</option>
+                  <option [value]="5">Mai</option>
+                  <option [value]="6">Juin</option>
+                  <option [value]="7">Juillet</option>
+                  <option [value]="8">Août</option>
+                  <option [value]="9">Septembre</option>
+                  <option [value]="10">Octobre</option>
+                  <option [value]="11">Novembre</option>
+                  <option [value]="12">Décembre</option>
+                </select>
+
+                @if (hasError('mois', 'required')) {
+                  <div class="invalid-feedback">Le mois est obligatoire.</div>
+                }
+              </div>
+            </div>
+
+            <!-- ================================================== -->
+            <!-- REMUNERATION -->
+            <!-- ================================================== -->
+
+            <div class="section-title section-spacing">
+              <div class="section-icon">
+                <i class="fas fa-coins"></i>
+              </div>
+
+              <div>
+                <h4>Rémunération</h4>
+
+                <p>Montant de la paie calculé à partir du contrat</p>
+              </div>
+            </div>
+
+            @if (contratSelectionne) {
+              <div class="salary-info">
+                <div class="salary-info-item">
+                  <span class="salary-info-label"> Mode de rémunération </span>
+
+                  <strong>
+                    {{ getModeRemunerationLabel(contratSelectionne.modeRemuneration) }}
+                  </strong>
+                </div>
+
+                <div class="salary-info-item">
+                  <span class="salary-info-label"> Montant de référence </span>
+
+                  <strong> {{ formatMontant(montantReference) }} FCFA </strong>
+                </div>
+              </div>
+            }
+
+            @if (isHoraire) {
+              <div class="two-columns-row">
+                <div class="form-group">
+                  <label for="nombreHeures" class="form-label">
+                    Nombre d'heures
+
+                    <span class="required">*</span>
+                  </label>
+
+                  <div class="input-with-suffix">
+                    <input
+                      id="nombreHeures"
+                      type="number"
+                      formControlName="nombreHeures"
+                      min="0.01"
+                      step="0.01"
+                      class="form-control"
+                      placeholder="Ex. 160"
+                    />
+
+                    <span> heures </span>
+                  </div>
+
+                  <small class="field-help">
+                    Le montant brut est calculé à partir du tarif horaire.
+                  </small>
+                </div>
+
+                <div class="form-group">
+                  <label class="form-label"> Tarif horaire </label>
+
+                  <div class="readonly-value">
+                    {{ formatMontant(montantReference) }}
+                    <span>FCFA / heure</span>
+                  </div>
+                </div>
+              </div>
+            }
+
+            <div class="two-columns-row">
+              <!-- RETENUES -->
+
+              <div class="form-group">
+                <label for="retenues" class="form-label">
+                  Retenues
+
+                  <span class="optional"> Facultatives </span>
+                </label>
+
+                <div class="input-with-suffix">
+                  <input
+                    id="retenues"
+                    type="number"
+                    formControlName="retenues"
+                    min="0"
+                    step="0.01"
+                    class="form-control"
+                    placeholder="Ex. 25000"
+                  />
+
+                  <span> FCFA </span>
+                </div>
+
+                <small class="field-help">
+                  Les retenues ne peuvent pas dépasser le montant brut.
+                </small>
+              </div>
+
+              <!-- DATE CALCUL -->
+
+              <div class="form-group">
+                <label for="dateCalcul" class="form-label">
+                  Date de calcul
+
+                  <span class="required">*</span>
+                </label>
+
+                <input
+                  id="dateCalcul"
+                  type="date"
+                  formControlName="dateCalcul"
+                  class="form-control"
+                  [class.is-invalid]="hasError('dateCalcul', 'required')"
+                />
+
+                @if (hasError('dateCalcul', 'required')) {
+                  <div class="invalid-feedback">La date de calcul est obligatoire.</div>
+                }
+              </div>
+            </div>
+
+            <!-- ================================================== -->
+            <!-- APERCU CALCUL -->
+            <!-- ================================================== -->
+
+            <div class="salary-summary">
+              <div class="summary-item">
+                <span> Montant brut </span>
+
+                <strong>
+                  {{ formatMontant(montantBrutEstime) }}
+                  FCFA
+                </strong>
+              </div>
+
+              <div class="summary-item">
+                <span> Retenues </span>
+
+                <strong>
+                  {{ formatMontant(retenuesEstimees) }}
+                  FCFA
+                </strong>
+              </div>
+
+              <div class="summary-item summary-total">
+                <span> Net à payer </span>
+
+                <strong>
+                  {{ formatMontant(netAPayerEstime) }}
+                  FCFA
+                </strong>
+              </div>
+            </div>
+
+            <!-- ================================================== -->
+            <!-- DEMANDE D'AVANCE -->
+            <!-- ================================================== -->
+
+            <div class="section-title section-spacing">
+              <div class="section-icon">
+                <i class="fas fa-hand-holding-usd"></i>
+              </div>
+
+              <div>
+                <h4>Demande d'avance sur salaire</h4>
+
+                <p>Associer éventuellement une demande d'avance en attente</p>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label for="demandeAvanceUuid" class="form-label">
+                Demande d'avance
+
+                <span class="optional"> Facultative </span>
+              </label>
+
+              <select
+                id="demandeAvanceUuid"
+                formControlName="demandeAvanceUuid"
+                class="form-select"
+              >
+                <option value="">Aucune demande d'avance</option>
+
+                @for (demande of demandesAvanceDisponibles; track demande.uuid) {
+                  <option [value]="demande.uuid">
+                    {{ demande.numeroDemande || 'Demande' }}
+
+                    —
+                    {{ formatMontant(demande.montant) }}
+                    FCFA
+                  </option>
+                }
+              </select>
+
+              @if (form.get('personnelUuid')?.value && demandesAvanceDisponibles.length === 0) {
+                <small class="field-help">
+                  <i class="fas fa-info-circle"></i>
+
+                  Aucune demande d'avance en attente pour ce personnel.
+                </small>
+              } @else {
+                <small class="field-help">
+                  Seules les demandes d'avance en attente du personnel sélectionné sont proposées.
+                </small>
+              }
+            </div>
+
+            <!-- ================================================== -->
+            <!-- OBSERVATION -->
+            <!-- ================================================== -->
+
+            <div class="section-title section-spacing">
+              <div class="section-icon">
+                <i class="fas fa-comment-alt"></i>
+              </div>
+
+              <div>
+                <h4>Observation</h4>
+
+                <p>Information complémentaire sur la paie</p>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label for="observation" class="form-label">
+                Observation
+
+                <span class="optional"> Facultative </span>
+              </label>
+
+              <textarea
+                id="observation"
+                formControlName="observation"
+                rows="4"
+                maxlength="500"
+                class="form-control"
+                placeholder="Observation concernant la paie..."
+              ></textarea>
+            </div>
+
+            <div class="alert-help">
+              <i class="fas fa-info-circle"></i>
+
+              <span>
+                Le montant brut et le net à payer sont calculés automatiquement à partir du contrat,
+                du nombre d'heures et des retenues. La demande d'avance est facultative.
+              </span>
+            </div>
+
+            <div class="form-actions">
+              <button
+                type="button"
+                class="btn btn-secondary"
+                (click)="retourListe()"
+                [disabled]="loading()"
+              >
+                <i class="fas fa-times"></i>
+
+                Annuler
+              </button>
+
+              <button type="submit" class="btn btn-primary" [disabled]="loading()">
+                @if (loading()) {
+                  <span class="button-spinner"></span>
+
+                  Enregistrement...
+                } @else {
+                  <i class="fas" [class.fa-check]="!isEdit" [class.fa-save]="isEdit"> </i>
+
+                  {{ submitLabel }}
+                }
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    }
+  </div>
+</div>

@@ -42,18 +42,18 @@
 
           <div class="form-group">
             <label class="form-label">
-              Code <span class="text-danger">*</span>
+              Numéro semestre <span class="text-danger">*</span>
               <i class="fas fa-barcode ms-1 text-muted"></i>
             </label>
             <input
               type="text"
               class="form-control"
-              formControlName="code"
-              placeholder="Ex: S1, SEM1"
+              formControlName="numero"
+              placeholder="Ex: 1, 2, 3"
               required
             />
-            @if (semestreFormGroup.get('code')?.invalid && semestreFormGroup.get('code')?.touched) {
-              <div class="invalid-feedback">Le code est requis</div>
+            @if (semestreFormGroup.get('numero')?.invalid && semestreFormGroup.get('numero')?.touched) {
+              <div class="invalid-feedback">Le numero est requis</div>
             }
           </div>
 
@@ -76,38 +76,28 @@
             }
           </div>
 
-          <div class="two-columns-row">
-            <div class="form-group">
-              <label class="form-label">
-                Date de début <span class="text-danger">*</span>
-                <i class="fas fa-calendar-day ms-1 text-muted"></i>
-              </label>
-              <input type="date" class="form-control" formControlName="dateDebut" required />
-              @if (
-                semestreFormGroup.get('dateDebut')?.invalid &&
-                semestreFormGroup.get('dateDebut')?.touched
-              ) {
-                <div class="invalid-feedback">La date de début est requise</div>
+         <div class="form-group">
+            <label class="form-label">
+              Type périodicité <span class="text-danger">*</span>
+              <i class="fas fa-chalkboard-user ms-1 text-muted"></i>
+            </label>
+            <select class="form-select" formControlName="typePeriode" required>
+              <option value="" disabled selected>— Sélectionnez un semestre —</option>
+              @for (item of typePeriodicites; track item) {
+                <option [value]="item">{{ item }}</option>
               }
-            </div>
-
-            <div class="form-group">
-              <label class="form-label">
-                Date de fin <span class="text-danger">*</span>
-                <i class="fas fa-calendar-check ms-1 text-muted"></i>
-              </label>
-              <input type="date" class="form-control" formControlName="dateFin" required />
-              @if (
-                semestreFormGroup.get('dateFin')?.invalid &&
-                semestreFormGroup.get('dateFin')?.touched
-              ) {
-                <div class="invalid-feedback">La date de fin est requise</div>
-              }
-            </div>
+            </select>
+            @if (
+              semestreFormGroup.get('typePeriode')?.invalid &&
+              semestreFormGroup.get('typePeriode')?.touched
+            ) {
+              <div class="invalid-feedback">La périodicité est requise</div>
+            }
           </div>
 
+
           @if (
-            semestreFormGroup.get('libelle')?.value && semestreFormGroup.get('dateDebut')?.value
+            semestreFormGroup.get('libelle')?.value && semestreFormGroup.get('typePeriode')?.value
           ) {
             <div class="recap-card">
               <div class="d-flex align-items-center gap-3">
@@ -117,16 +107,10 @@
                 <div class="recap-content">
                   <span class="recap-label">Récapitulatif du semestre</span>
                   <span class="recap-value">
-                    <strong>{{ semestreFormGroup.get('code')?.value }}</strong> -
+                    <strong>{{ semestreFormGroup.get('numero')?.value }}</strong> -
                     <strong>{{ semestreFormGroup.get('libelle')?.value }}</strong>
-                    du
-                    <strong>{{
-                      semestreFormGroup.get('dateDebut')?.value | date: 'dd/MM/yyyy'
-                    }}</strong>
-                    au
-                    <strong>{{
-                      semestreFormGroup.get('dateFin')?.value | date: 'dd/MM/yyyy'
-                    }}</strong>
+                    type
+                    <strong>{{ semestreFormGroup.get('typePeriode')?.value }}</strong>
                   </span>
                 </div>
               </div>

@@ -23,10 +23,6 @@ export class CreateSessionSemestreComponent implements OnInit {
   sessionSemestreFormGroup!: FormGroup;
   sessionSemestre: any;
   isEdit: boolean = false;
-  ecoleId: any;
-  userId: number;
-
-  utilisateur: Utilisateur = {};
 
   semestreList: Semestre[] = [];
   anneeScolaireList: AnneeScolaire[] = [];
@@ -42,7 +38,6 @@ export class CreateSessionSemestreComponent implements OnInit {
   constructor(
   ) {
     this.semestreId = this.activeRoute.snapshot.params['id'];
-    this.userId = Number(localStorage.getItem('id'));
   }
 
   ngOnInit(): void {
@@ -94,7 +89,6 @@ export class CreateSessionSemestreComponent implements OnInit {
 
   ajoutSessionSemestre() {
     const payload = this.sessionSemestreFormGroup.value;
-    payload.ecole = this.ecoleId;
     this.referentielService.creerUneRessource('sessionsemestre', payload).subscribe({
       next: (data) => {
         if (data.statut === 'OK') {

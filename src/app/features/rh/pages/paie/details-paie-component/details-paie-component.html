@@ -1,0 +1,790 @@
+<div class="page-wrapper">
+  <div class="page-container">
+    <!-- ===================================================== -->
+    <!-- HEADER -->
+    <!-- ===================================================== -->
+
+    <div class="page-header">
+      <div class="header-left">
+        <button type="button" class="back-button" (click)="goBack()" title="Retour">
+          <i class="fas fa-arrow-left"></i>
+        </button>
+
+        <div>
+          <h1>{{ title }}</h1>
+
+          @if (paie) {
+            <p class="page-subtitle">
+              {{ paie.numeroPaie }}
+            </p>
+          }
+        </div>
+      </div>
+
+      @if (paie) {
+        <div class="header-actions">
+          <button
+            type="button"
+            class="btn btn-outline-action"
+            (click)="imprimerPaie()"
+            [disabled]="isLoading"
+          >
+            <i class="fas fa-print me-2"></i>
+            Imprimer
+          </button>
+
+          <button
+            type="button"
+            class="btn btn-outline-action"
+            (click)="downloadPdf()"
+            [disabled]="isLoading"
+          >
+            <i class="fas fa-download me-2"></i>
+            Télécharger
+          </button>
+
+          <button
+            type="button"
+            class="btn btn-primary"
+            (click)="openPaiementModal()"
+            [disabled]="!peutEnregistrerPaiement()"
+          >
+            <i class="fas fa-money-bill-wave me-2"></i>
+            Enregistrer paiement
+          </button>
+        </div>
+      }
+    </div>
+
+    <!-- ===================================================== -->
+    <!-- CHARGEMENT -->
+    <!-- ===================================================== -->
+
+    @if (isLoading) {
+      <div class="loading-container">
+        <div class="spinner-border" role="status">
+          <span class="visually-hidden"> Chargement... </span>
+        </div>
+
+        <p>Chargement des détails de la paie...</p>
+      </div>
+    }
+
+    <!-- ===================================================== -->
+    <!-- CONTENU -->
+    <!-- ===================================================== -->
+
+    @if (!isLoading && paie) {
+      <div class="page-content">
+        <!-- ================================================= -->
+        <!-- INFORMATIONS PERSONNEL -->
+        <!-- ================================================= -->
+
+        <div class="row mb-4">
+          <div class="col-12">
+            <div class="card info-card">
+              <div class="card-header">
+                <div class="card-header-content">
+                  <div class="icon-wrapper">
+                    <i class="fas fa-user"></i>
+                  </div>
+
+                  <h4 class="card-title">Informations du personnel</h4>
+                </div>
+              </div>
+
+              <div class="card-body">
+                <div class="row">
+                  <div class="col-md-4 mb-3">
+                    <div class="info-label">Nom complet</div>
+
+                    <div class="info-value">
+                      {{ getPersonnelFullName() }}
+                    </div>
+                  </div>
+
+                  <div class="col-md-4 mb-3">
+                    <div class="info-label">Matricule</div>
+
+                    <div class="info-value">
+                      {{ paie.personnelResponse.matricule || 'Non renseigné' }}
+                    </div>
+                  </div>
+
+                  <div class="col-md-4 mb-3">
+                    <div class="info-label">Statut</div>
+
+                    <div class="info-value">
+                      {{ paie.personnelResponse.statut || 'Non renseigné' }}
+                    </div>
+                  </div>
+
+                  <div class="col-md-4 mb-3">
+                    <div class="info-label">Téléphone</div>
+
+                    <div class="info-value">
+                      {{ paie.personnelResponse.mobile || 'Non renseigné' }}
+                    </div>
+                  </div>
+
+                  <div class="col-md-4 mb-3">
+                    <div class="info-label">Email</div>
+
+                    <div class="info-value">
+                      {{ paie.personnelResponse.email || 'Non renseigné' }}
+                    </div>
+                  </div>
+
+                  <div class="col-md-4 mb-3">
+                    <div class="info-label">CNI</div>
+
+                    <div class="info-value">
+                      {{ paie.personnelResponse.cni || 'Non renseigné' }}
+                    </div>
+                  </div>
+
+                  <div class="col-md-12">
+                    <div class="info-label">Adresse</div>
+
+                    <div class="info-value">
+                      {{ paie.personnelResponse.address || 'Non renseignée' }}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ================================================= -->
+        <!-- PAIE + CONTRAT -->
+        <!-- ================================================= -->
+
+        <div class="row mb-4">
+          <!-- PAIE -->
+
+          <div class="col-md-8">
+            <div class="card info-card h-100">
+              <div class="card-header">
+                <div class="card-header-content">
+                  <div class="icon-wrapper">
+                    <i class="fas fa-file-invoice-dollar"></i>
+                  </div>
+
+                  <h4 class="card-title">Informations de la paie</h4>
+                </div>
+              </div>
+
+              <div class="card-body">
+                <div class="row">
+                  <div class="col-md-6 mb-3">
+                    <div class="info-label">Numéro de paie</div>
+
+                    <div class="info-value">
+                      {{ getNumeroPaie() }}
+                    </div>
+                  </div>
+
+                  <div class="col-md-6 mb-3">
+                    <div class="info-label">Période</div>
+
+                    <div class="info-value">
+                      {{ getPeriodePaie() }}
+                    </div>
+                  </div>
+
+                  <div class="col-md-6 mb-3">
+                    <div class="info-label">Type</div>
+
+                    <div class="info-value">
+                      {{ paie.type || 'Non renseigné' }}
+                    </div>
+                  </div>
+
+                  <div class="col-md-6 mb-3">
+                    <div class="info-label">État</div>
+
+                    <div class="info-value">
+                      <span
+                        class="status-badge"
+                        [class.status-success]="isPaiePayee()"
+                        [class.status-warning]="isPaiePartiellementPayee()"
+                        [class.status-info]="isPaieEnCours()"
+                      >
+                        {{ paie.etatLibelle }}
+                      </span>
+                    </div>
+                  </div>
+
+                  <div class="col-md-6 mb-3">
+                    <div class="info-label">Date de calcul</div>
+
+                    <div class="info-value">
+                      {{ formatDate(paie.dateCalcul) }}
+                    </div>
+                  </div>
+
+                  <div class="col-md-6 mb-3">
+                    <div class="info-label">Date de validation</div>
+
+                    <div class="info-value">
+                      @if (paie.dateValidation) {
+                        {{ formatDate(paie.dateValidation) }}
+                      } @else {
+                        Non validée
+                      }
+                    </div>
+                  </div>
+
+                  @if (paie.observation) {
+                    <div class="col-md-12">
+                      <div class="info-label">Observation</div>
+
+                      <div class="info-value observation">
+                        {{ paie.observation }}
+                      </div>
+                    </div>
+                  }
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- CONTRAT -->
+
+          <div class="col-md-4">
+            <div class="card info-card h-100">
+              <div class="card-header">
+                <div class="card-header-content">
+                  <div class="icon-wrapper">
+                    <i class="fas fa-file-contract"></i>
+                  </div>
+
+                  <h4 class="card-title">Contrat</h4>
+                </div>
+              </div>
+
+              <div class="card-body">
+                <div class="info-item mb-3">
+                  <div class="info-label">Référence</div>
+
+                  <div class="info-value">
+                    {{ paie.contratPaieResponse.reference || 'Non renseignée' }}
+                  </div>
+                </div>
+
+                <div class="info-item mb-3">
+                  <div class="info-label">Type de contrat</div>
+
+                  <div class="info-value">
+                    {{ paie.contratPaieResponse.typeContratLibelle || 'Non renseigné' }}
+                  </div>
+                </div>
+
+                <div class="info-item mb-3">
+                  <div class="info-label">Mode de rémunération</div>
+
+                  <div class="info-value">
+                    {{ getTypeRemuneration() }}
+                  </div>
+                </div>
+
+                <div class="info-item mb-3">
+                  <div class="info-label">Montant de référence</div>
+
+                  <div class="info-value amount-value">
+                    {{ formatMontant(paie.contratPaieResponse.montantReference) }}
+                    FCFA
+                  </div>
+                </div>
+
+                <div class="info-item">
+                  <div class="info-label">Statut</div>
+
+                  <div class="info-value">
+                    {{ paie.contratPaieResponse.statut || 'Non renseigné' }}
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ================================================= -->
+        <!-- CALCUL DE LA PAIE -->
+        <!-- ================================================= -->
+
+        <div class="row mb-4">
+          <div class="col-12">
+            <div class="card info-card">
+              <div class="card-header">
+                <div class="card-header-content">
+                  <div class="icon-wrapper">
+                    <i class="fas fa-calculator"></i>
+                  </div>
+
+                  <h4 class="card-title">Calcul de la paie</h4>
+                </div>
+              </div>
+
+              <div class="card-body">
+                <div class="row">
+                  <div class="col-md-4 mb-3">
+                    <div class="info-label">Montant brut</div>
+
+                    <div class="info-value amount-value">
+                      {{ formatMontant(paie.montantBrut) }} FCFA
+                    </div>
+                  </div>
+
+                  <div class="col-md-4 mb-3">
+                    <div class="info-label">Retenues</div>
+
+                    <div class="info-value amount-value">
+                      {{ formatMontant(paie.retenues) }} FCFA
+                    </div>
+                  </div>
+
+                  <div class="col-md-4 mb-3">
+                    <div class="info-label">Net à payer</div>
+
+                    <div class="info-value amount-value net-amount">
+                      {{ formatMontant(paie.netAPayer) }} FCFA
+                    </div>
+                  </div>
+
+                  @if (paie.nombreHeures !== null && paie.nombreHeures !== undefined) {
+                    <div class="col-md-4 mb-3">
+                      <div class="info-label">Nombre d'heures</div>
+
+                      <div class="info-value">
+                        {{ paie.nombreHeures }}
+                      </div>
+                    </div>
+                  }
+
+                  @if (paie.tarifHoraire !== null && paie.tarifHoraire !== undefined) {
+                    <div class="col-md-4 mb-3">
+                      <div class="info-label">Tarif horaire</div>
+
+                      <div class="info-value amount-value">
+                        {{ formatMontant(paie.tarifHoraire) }} FCFA
+                      </div>
+                    </div>
+                  }
+                </div>
+
+                <!-- RECAP PAIEMENT -->
+
+                <div class="payment-summary">
+                  <div class="payment-summary-item">
+                    <div class="payment-summary-label">
+                      <i class="fas fa-file-invoice-dollar"></i>
+                      Net à payer
+                    </div>
+
+                    <div class="payment-summary-value">
+                      {{ formatMontant(paie.netAPayer) }} FCFA
+                    </div>
+                  </div>
+
+                  <div class="payment-summary-item">
+                    <div class="payment-summary-label">
+                      <i class="fas fa-money-bill-wave"></i>
+                      Montant déjà payé
+                    </div>
+
+                    <div class="payment-summary-value paid">
+                      {{ formatMontant(paie.montantDejaPaye) }} FCFA
+                    </div>
+                  </div>
+
+                  <div class="payment-summary-item">
+                    <div class="payment-summary-label">
+                      <i class="fas fa-hourglass-half"></i>
+                      Reste à payer
+                    </div>
+
+                    <div class="payment-summary-value remaining">
+                      {{ formatMontant(paie.montantRestantAPayer) }} FCFA
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ================================================= -->
+        <!-- HISTORIQUE DES PAIEMENTS -->
+        <!-- ================================================= -->
+
+        <div class="row mb-4">
+          <div class="col-12">
+            <div class="card info-card">
+              <div class="card-header">
+                <div class="card-header-content">
+                  <div class="icon-wrapper">
+                    <i class="fas fa-money-check-alt"></i>
+                  </div>
+
+                  <h4 class="card-title">Historique des paiements</h4>
+                </div>
+              </div>
+
+              <div class="card-body">
+                @if (!paie.paiementsPaieResponses || paie.paiementsPaieResponses.length === 0) {
+                  <div class="empty-state">
+                    <i class="fas fa-money-bill-wave"></i>
+
+                    <p>Aucun paiement enregistré pour cette paie.</p>
+                  </div>
+                } @else {
+                  <div class="table-responsive">
+                    <table class="table payment-history-table">
+                      <thead>
+                        <tr>
+                          <th>Date</th>
+                          <th>Numéro de reçu</th>
+                          <th>Moyen de paiement</th>
+                          <th>Référence</th>
+                          <th>État</th>
+                          <th class="text-end">Montant</th>
+                        </tr>
+                      </thead>
+
+                      <tbody>
+                        @for (paiement of paie.paiementsPaieResponses; track paiement.uuid) {
+                          <tr>
+                            <td>
+                              {{ formatDate(paiement.datePaiement) }}
+                            </td>
+
+                            <td>
+                              <strong>
+                                {{ paiement.numeroRecu || 'Non renseigné' }}
+                              </strong>
+                            </td>
+
+                            <td>
+                              {{ paiement.moyenPaiement || 'Non renseigné' }}
+                            </td>
+
+                            <td>
+                              {{ paiement.reference || '—' }}
+                            </td>
+
+                            <td>
+                              <span
+                                class="payment-status"
+                                [class.validated]="
+                                  normaliserEtat(paiement.etatLibelle) === 'VALIDEE'
+                                "
+                              >
+                                {{ paiement.etatLibelle || 'Non renseigné' }}
+                              </span>
+                            </td>
+
+                            <td class="text-end">
+                              <strong> {{ formatMontant(paiement.montant) }} FCFA </strong>
+                            </td>
+                          </tr>
+                        }
+                      </tbody>
+                    </table>
+                  </div>
+                }
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ================================================= -->
+        <!-- DEMANDE D'AVANCE -->
+        <!-- ================================================= -->
+
+        @if (paie.demandeAvanceSalairePaieResponse) {
+          <div class="row mb-4">
+            <div class="col-12">
+              <div class="card info-card">
+                <div class="card-header">
+                  <div class="card-header-content">
+                    <div class="icon-wrapper">
+                      <i class="fas fa-hand-holding-usd"></i>
+                    </div>
+
+                    <h4 class="card-title">Demande d'avance sur salaire</h4>
+                  </div>
+                </div>
+
+                <div class="card-body">
+                  <div class="row">
+                    <div class="col-md-4 mb-3">
+                      <div class="info-label">Numéro de demande</div>
+
+                      <div class="info-value">
+                        {{ paie.demandeAvanceSalairePaieResponse.numeroDemande || 'Non renseigné' }}
+                      </div>
+                    </div>
+
+                    <div class="col-md-4 mb-3">
+                      <div class="info-label">Montant demandé</div>
+
+                      <div class="info-value amount-value">
+                        {{ formatMontant(paie.demandeAvanceSalairePaieResponse.montant) }}
+                        FCFA
+                      </div>
+                    </div>
+
+                    <div class="col-md-4 mb-3">
+                      <div class="info-label">Date de demande</div>
+
+                      <div class="info-value">
+                        {{ paie.demandeAvanceSalairePaieResponse.dateDemande }}
+                      </div>
+                    </div>
+
+                    <div class="col-md-4 mb-3">
+                      <div class="info-label">État</div>
+
+                      <div class="info-value">
+                        {{ paie.demandeAvanceSalairePaieResponse.etatLibelle || 'Non renseigné' }}
+                      </div>
+                    </div>
+
+                    <div class="col-md-4 mb-3">
+                      <div class="info-label">Date de décision</div>
+
+                      <div class="info-value">
+                        @if (paie.demandeAvanceSalairePaieResponse.dateDecision) {
+                          {{ paie.demandeAvanceSalairePaieResponse.dateDecision }}
+                        } @else {
+                          Non renseignée
+                        }
+                      </div>
+                    </div>
+
+                    <div class="col-md-12 mb-3">
+                      <div class="info-label">Motif</div>
+
+                      <div class="info-value">
+                        {{ paie.demandeAvanceSalairePaieResponse.motif || 'Non renseigné' }}
+                      </div>
+                    </div>
+
+                    @if (paie.demandeAvanceSalairePaieResponse.commentaireDecision) {
+                      <div class="col-md-12">
+                        <div class="info-label">Commentaire de décision</div>
+
+                        <div class="info-value observation">
+                          {{ paie.demandeAvanceSalairePaieResponse.commentaireDecision }}
+                        </div>
+                      </div>
+                    }
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        }
+
+        <!-- ================================================= -->
+        <!-- ACTION PAIEMENT -->
+        <!-- ================================================= -->
+
+        @if (peutEnregistrerPaiement()) {
+          <div class="payment-action-card">
+            <div class="payment-action-content">
+              <div>
+                <h5>
+                  <i class="fas fa-money-bill-wave me-2"></i>
+                  Paiement de la paie
+                </h5>
+
+                <p>
+                  Il reste
+                  <strong> {{ formatMontant(paie.montantRestantAPayer) }} FCFA </strong>
+                  à payer pour cette paie.
+                </p>
+              </div>
+
+              <button type="button" class="btn btn-primary" (click)="openPaiementModal()">
+                <i class="fas fa-plus-circle me-2"></i>
+                Enregistrer un paiement
+              </button>
+            </div>
+          </div>
+        }
+      </div>
+    }
+  </div>
+</div>
+
+<!-- ========================================================= -->
+<!-- MODAL PAIEMENT -->
+<!-- ========================================================= -->
+
+@if (showPaiementModal) {
+  <div class="modal-backdrop-custom" (click)="closePaiementModal()">
+    <div class="paiement-modal" (click)="$event.stopPropagation()">
+      <!-- HEADER MODAL -->
+
+      <div class="modal-header">
+        <h5 class="modal-title">
+          <i class="fas fa-money-bill-wave me-2"></i>
+
+          Enregistrer un paiement
+        </h5>
+
+        <button
+          type="button"
+          class="btn-close"
+          (click)="closePaiementModal()"
+          [disabled]="isSavingPaiement"
+          aria-label="Fermer"
+        >
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
+
+      <!-- CORPS MODAL -->
+
+      <div class="modal-body">
+        <!-- RECAP -->
+
+        <div class="payment-modal-summary">
+          <div class="summary-line">
+            <span> Net à payer </span>
+
+            <strong> {{ formatMontant(paie?.netAPayer) }} FCFA </strong>
+          </div>
+
+          <div class="summary-line">
+            <span> Déjà payé </span>
+
+            <strong class="text-success"> {{ formatMontant(paie?.montantDejaPaye) }} FCFA </strong>
+          </div>
+
+          <div class="summary-line total-line">
+            <span> Reste à payer </span>
+
+            <strong> {{ formatMontant(paie?.montantRestantAPayer) }} FCFA </strong>
+          </div>
+        </div>
+
+        <!-- FORMULAIRE -->
+
+        <form [formGroup]="paiementForm" (ngSubmit)="enregistrerUnPaiement()">
+          <!-- MONTANT -->
+
+          <div class="mb-3">
+            <label for="montant" class="form-label">
+              Montant du paiement
+              <span class="text-danger">*</span>
+            </label>
+
+            <div class="input-group">
+              <input
+                type="number"
+                id="montant"
+                class="form-control"
+                formControlName="montant"
+                min="1"
+                step="1"
+                placeholder="Ex : 100000"
+              />
+
+              <span class="input-group-text"> FCFA </span>
+            </div>
+
+            @if (
+              paiementForm.get('montant')?.touched &&
+              paiementForm.get('montant')?.hasError('required')
+            ) {
+              <div class="text-danger mt-1">Le montant du paiement est obligatoire.</div>
+            }
+
+            @if (
+              paiementForm.get('montant')?.touched && paiementForm.get('montant')?.hasError('min')
+            ) {
+              <div class="text-danger mt-1">Le montant doit être supérieur à zéro.</div>
+            }
+
+            @if (paiementForm.get('montant')?.value && !isMontantValide()) {
+              <div class="text-danger mt-1">Le montant ne peut pas dépasser le reste à payer.</div>
+            }
+          </div>
+
+          <!-- MOYEN DE PAIEMENT -->
+
+          <div class="mb-3">
+            <label for="moyenPaiement" class="form-label">
+              Moyen de paiement
+              <span class="text-danger">*</span>
+            </label>
+
+            <select id="moyenPaiement" class="form-select" formControlName="moyenPaiement">
+              <option value="">Sélectionner</option>
+
+              @for (moyen of moyenPayementList; track moyen.uuid) {
+                <option [value]="moyen.uuid">
+                  {{ getMoyenPaiementLabel(moyen) }}
+                </option>
+              }
+            </select>
+
+            @if (
+              paiementForm.get('moyenPaiement')?.touched &&
+              paiementForm.get('moyenPaiement')?.hasError('required')
+            ) {
+              <div class="text-danger mt-1">Veuillez sélectionner un moyen de paiement.</div>
+            }
+          </div>
+
+          <!-- REFERENCE -->
+
+          <div class="mb-3">
+            <label for="reference" class="form-label"> Référence </label>
+
+            <input
+              type="text"
+              id="reference"
+              class="form-control"
+              formControlName="reference"
+              placeholder="Référence du paiement"
+            />
+          </div>
+
+          <!-- FOOTER -->
+
+          <div class="modal-footer">
+            <button
+              type="button"
+              class="btn btn-secondary"
+              (click)="closePaiementModal()"
+              [disabled]="isSavingPaiement"
+            >
+              Annuler
+            </button>
+
+            <button
+              type="submit"
+              class="btn btn-primary"
+              [disabled]="paiementForm.invalid || !isMontantValide() || isSavingPaiement"
+            >
+              @if (isSavingPaiement) {
+                <span class="spinner-border spinner-border-sm me-2"></span>
+
+                Enregistrement...
+              } @else {
+                <i class="fas fa-check me-2"></i>
+
+                Confirmer le paiement
+              }
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+}

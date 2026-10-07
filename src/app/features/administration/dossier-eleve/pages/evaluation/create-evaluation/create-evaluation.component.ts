@@ -8,7 +8,6 @@ import { Evaluation } from '../../../../../../core/models/dossiereleve/evaluatio
 import { ListeEnseignement } from '../../../../../../core/models/planification/liste-enseignement';
 import { ListeClasse } from '../../../../../../core/models/referentiels/classe';
 import { SessionSemestre } from '../../../../../../core/models/referentiels/session-semestre';
-import { Utilisateur } from '../../../../../../core/models/utilisateur/utilisateur';
 import { PlanificationResourceService } from '../../../../planification/services/planification-resource.service';
 import { ReferentielResourceService } from '../../../../referentiel/service/referentiel-resource.service';
 import { UtilisateurService } from '../../../../utilisateur/service/utilisateur.service';
@@ -33,12 +32,7 @@ export class CreateEvaluationComponent implements OnInit {
   classeList: ListeClasse[] = [];
   sessionSemestreList: SessionSemestre[] = [];
 
-
-  ecoleId: any;
-  utilisateur: Utilisateur = {};
-
   addEditEvaluation: any;
-  userId?: number;
 
   title = "Ajouter une évaluation";
 
@@ -46,7 +40,6 @@ export class CreateEvaluationComponent implements OnInit {
 
 
   private readonly dossierResource = inject(DossierResourceService);
-  private readonly utilisateurService = inject(UtilisateurService);
   private readonly planification = inject(PlanificationResourceService);
   private readonly referentielService = inject(ReferentielResourceService);
   private readonly _formBuilder = inject(FormBuilder);
@@ -56,16 +49,11 @@ export class CreateEvaluationComponent implements OnInit {
 
 
   ngOnInit(): void {
-    this.userId = Number(localStorage.getItem('id'));
     this.chargerLesDonnees();
     this.initializeForm(null);
   }
 
   private chargerLesDonnees() {
-    this.utilisateurService.getUtilisateur(this.userId!).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
-      next: data => this.utilisateur = data
-    });
-
     this.referentielService.getResourceList('sessionsemestre').pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
       next: (data: any) => {
         this.sessionSemestreList = data;
@@ -121,14 +109,12 @@ export class CreateEvaluationComponent implements OnInit {
       heureDebut: this.evaluationFormGroup.get("heureDebut")!.value,
       heureFin: this.evaluationFormGroup.get("heureFin")!.value,
     }
-    payload.createur = this.userId;
-    payload.ecole = this.ecoleId;
     console.log('Log', payload);
     this.dossierResource.ajouterEditResource('evaluation', payload).subscribe({
       next: (data) => {
         if (data.statut === 'OK') {
           this.toastService.success('succès', 'L\'évaluation a été enregistrées avec succès !!! ');
-          this.router.navigate(['/admin/dossier-eleve/evaluations']);
+          this.goBack();
         } else if (data.statut === 'FAILED') {
           this.toastService.error('error', 'Erreur lors de la création : ' + data.message);
         }

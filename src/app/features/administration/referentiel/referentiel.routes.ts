@@ -42,6 +42,10 @@ import { TypeDepenseComponent } from './pages/type-depense/type-depense-componen
 import { CreateEditTypeDepenseComponent } from './pages/type-depense/create-edit-type-depense-component/create-edit-type-depense-component';
 import { ListeSerieComponent } from './pages/serie/liste-serie-component/liste-serie-component';
 import { CreateEditSerieComponent } from './pages/serie/create-edit-serie-component/create-edit-serie-component';
+import { TypePersonnelComponent } from './pages/typepersonnel/type-personnel-component/type-personnel-component';
+import { AddEditTypePersonnelComponent } from './pages/typepersonnel/add-edit-type-personnel-component/add-edit-type-personnel-component';
+import { TypeContratComponent } from './pages/typecontrat/type-contrat-component/type-contrat-component';
+import { AddEditTypeContratComponent } from './pages/typecontrat/add-edit-type-contrat-component/add-edit-type-contrat-component';
 
 export const REFERENTIELS_ROUTES: Routes = [
   {
@@ -281,6 +285,31 @@ export const REFERENTIELS_ROUTES: Routes = [
       {
         path: 'series/edit/:id',
         component: CreateEditSerieComponent
+      },
+      //
+      {
+        path: 'type-personnels',
+        component: TypePersonnelComponent
+      },
+      {
+        path: 'type-personnel/create',
+        component: AddEditTypePersonnelComponent
+      },
+      {
+        path: 'type-personnel/edit/:uuid',
+        component: AddEditTypePersonnelComponent
+      },
+      {
+        path: 'type-contrats',
+        component: TypeContratComponent
+      },
+      {
+        path: 'type-contrat/create',
+        component: AddEditTypeContratComponent
+      },
+      {
+        path: 'type-contrat/edit/:uuid',
+        component: AddEditTypeContratComponent
       },
 
       {

@@ -19,5 +19,8 @@ export interface SignInV2Response {
 
   accessibleOrganizations: AccessibleOrganizationResponse[];
 
+  permissions: string[];
+
   temporaryToken: string | null;
+
 }

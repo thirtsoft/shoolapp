@@ -1,4 +1,3 @@
-
 export interface Semestre {
     id?: number;
 
@@ -6,10 +5,20 @@ export interface Semestre {
 
     libelle?: string;
 
-    dateDebut?: Date;
+    typePeriode?: string;
 
-    dateFin?: Date;
-
-    ecole?: number;
+    numero?: number;
 
 }
+
+export interface SemestreRequest {
+    id?: number;
+
+    libelle?: string;
+
+    typePeriode?: string;
+
+    numero?: number;
+
+}
+

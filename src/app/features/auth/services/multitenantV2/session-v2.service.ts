@@ -18,13 +18,26 @@ export class SessionV2Service {
     this.localStorage.setItem('v2_tenant_uuid', response.tenantUuid);
 
     if (response.currentOrganizationUuid) {
-      this.localStorage.setItem('v2_organization_uuid', response.currentOrganizationUuid);
+      this.localStorage.setItem(
+        'v2_organization_uuid',
+        response.currentOrganizationUuid
+      );
     }
 
-    this.localStorage.setItem('v2_user', JSON.stringify(response.user));
+    this.localStorage.setItem(
+      'v2_user',      
+      JSON.stringify(response.user)
+    );
 
-    this.localStorage.setItem('v2_organizations', JSON.stringify(response.accessibleOrganizations));
+    this.localStorage.setItem(
+      'v2_organizations',
+      JSON.stringify(response.accessibleOrganizations)
+    );
 
+    this.localStorage.setItem(
+      'v2_permissions',
+      JSON.stringify(response.permissions ?? [])
+    );
   }
 
   getTenantUuid(): string | null {
@@ -45,12 +58,20 @@ export class SessionV2Service {
     return value ? JSON.parse(value) : [];
   }
 
+  getPermissions(): string[] {
+    const value = this.localStorage.getItem('v2_permissions');
+    return value ? JSON.parse(value) : [];
+  }
+
   getCurrentOrganization(): AccessibleOrganizationResponse | null {
     const uuid = this.getOrganizationUuid();
+
     if (!uuid) {
       return null;
     }
-    return this.getOrganizations().find(org => org.uuid === uuid) ?? null;
+
+    return this.getOrganizations()
+      .find(org => org.uuid === uuid) ?? null;
   }
 
   clear(): void {
@@ -59,6 +80,61 @@ export class SessionV2Service {
     this.localStorage.removeItem('v2_organization_uuid');
     this.localStorage.removeItem('v2_user');
     this.localStorage.removeItem('v2_organizations');
+    this.localStorage.removeItem('v2_permissions');
   }
 
 }
+
+/*
+
+saveSession(response: SignInV2Response): void {
+
+  this.localStorage.setItem('v2_access_token', response.accessToken);
+
+  this.localStorage.setItem('v2_tenant_uuid', response.tenantUuid);
+
+  if (response.currentOrganizationUuid) {
+    this.localStorage.setItem('v2_organization_uuid', response.currentOrganizationUuid);
+  }
+
+  this.localStorage.setItem('v2_user', JSON.stringify(response.user));
+
+  this.localStorage.setItem('v2_organizations', JSON.stringify(response.accessibleOrganizations));
+
+}
+
+getTenantUuid(): string | null {
+  return this.localStorage.getItem('v2_tenant_uuid');
+}
+
+getOrganizationUuid(): string | null {
+  return this.localStorage.getItem('v2_organization_uuid');
+}
+
+getUser(): UserV2Response | null {
+  const value = this.localStorage.getItem('v2_user');
+  return value ? JSON.parse(value) : null;
+}
+
+getOrganizations(): AccessibleOrganizationResponse[] {
+  const value = this.localStorage.getItem('v2_organizations');
+  return value ? JSON.parse(value) : [];
+}
+
+getCurrentOrganization(): AccessibleOrganizationResponse | null {
+  const uuid = this.getOrganizationUuid();
+  if (!uuid) {
+    return null;
+  }
+  return this.getOrganizations().find(org => org.uuid === uuid) ?? null;
+}
+
+clear(): void {
+  this.localStorage.removeItem('v2_access_token');
+  this.localStorage.removeItem('v2_tenant_uuid');
+  this.localStorage.removeItem('v2_organization_uuid');
+  this.localStorage.removeItem('v2_user');
+  this.localStorage.removeItem('v2_organizations');
+}
+
+}*/

@@ -1,18 +1,15 @@
-import { DatePipe } from '@angular/common';
 import { Component, inject, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { Semestre } from '../../../../../../core/models/referentiels/semestre';
-import { Utilisateur } from '../../../../../../core/models/utilisateur/utilisateur';
-import { UtilisateurService } from '../../../../utilisateur/service/utilisateur.service';
-import { ReferentielService } from '../../../service/referentiel.service';
 import { ToastrService } from 'ngx-toastr';
+import { SemestreRequest } from '../../../../../../core/models/referentiels/semestre';
+import { ReferentielService } from '../../../service/referentiel.service';
 
 
 @Component({
   selector: 'app-create-semestre',
   standalone: true,
-  imports: [ReactiveFormsModule, DatePipe],
+  imports: [ReactiveFormsModule],
   templateUrl: './create-semestre.component.html',
   styleUrls: ['./create-semestre.component.css']
 })
@@ -23,15 +20,12 @@ export class CreateSemestreComponent implements OnInit {
   semestreFormGroup!: FormGroup;
   semestre: any;
   isEdit: boolean = false;
-  ecoleId: any;
-  userId: number;
-
-  utilisateur: Utilisateur = {};
 
   title = "Ajouter un semestre";
 
+  typePeriodicites: string[] = ['SEMESTRE', 'TRIMESTRE'];
+
   private readonly referentielService = inject(ReferentielService);
-  private readonly utilisateurService = inject(UtilisateurService);
   private readonly _formBuilder = inject(FormBuilder);
   private readonly toastService = inject(ToastrService);
   private readonly activeRoute = inject(ActivatedRoute);
@@ -40,27 +34,15 @@ export class CreateSemestreComponent implements OnInit {
   constructor(
   ) {
     this.semestreId = this.activeRoute.snapshot.params['id'];
-    this.userId = Number(localStorage.getItem('id'));
   }
 
   ngOnInit(): void {
-    this.getConnectedUserInfos();
     this.initializeForm(null);
     if (this.semestreId != null && this.semestreId != undefined) {
       this.getSemestre(this.semestreId);
       this.title = 'Modifier un semestre';
       this.isEdit = true;
     }
-  }
-
-  getConnectedUserInfos() {
-    this.utilisateurService.getUtilisateur(this.userId).subscribe({
-      next: data => {
-        this.utilisateur = data;
-        //      this.ecoleId = this.utilisateur.ecoleId;
-      },
-      error: error => { console.log(error) },
-    });
   }
 
   getSemestre(semestreId: number) {
@@ -72,20 +54,18 @@ export class CreateSemestreComponent implements OnInit {
     });
   }
 
-  initializeForm(semestre: Semestre | null) {
+  initializeForm(semestre: SemestreRequest | null) {
     this.semestreFormGroup = this._formBuilder.group({
       id: [semestre?.id ? semestre.id : ''],
-      code: [semestre?.code ? semestre.code : '', Validators.required],
+      numero: [semestre?.numero ? semestre.numero : '', Validators.required],
       libelle: [semestre?.libelle ? semestre.libelle : '', Validators.required],
-      dateDebut: [semestre?.dateDebut ? semestre.dateDebut : '', Validators.required],
-      dateFin: [semestre?.dateFin ? semestre.dateFin : '', Validators.required],
+      typePeriode: [semestre?.typePeriode ? semestre.typePeriode : '', Validators.required],
     });
   }
 
 
   ajouteditSemestre() {
     const payload = this.semestreFormGroup.value;
-    payload.ecole = this.ecoleId;
     if (!this.isEdit) {
       this.referentielService.createSemestre(payload).subscribe({
         next: (data) => {

@@ -355,6 +355,7 @@ export class DetailsFactureComponent implements OnInit {
     }
 
     const payload = {
+       typePaiement: 'FACTURE',
       facture: this.detailsFacture?.id,
       montant: montantRecu,
       moyenPaiement: this.paiementForm.get('moyenPaiement')?.value,

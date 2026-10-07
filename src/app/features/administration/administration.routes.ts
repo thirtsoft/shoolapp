@@ -37,6 +37,13 @@ export const ADMIN_ROUTES: Routes = [
             .then(m => m.COMPTA_ROUTES)
       },
 
+      {
+        path: 'rh',
+        loadChildren: () =>
+          import('../rh/rh.routes')
+            .then(m => m.RH_ROUTES)
+      },
+
 
       {
         path: 'planification',
