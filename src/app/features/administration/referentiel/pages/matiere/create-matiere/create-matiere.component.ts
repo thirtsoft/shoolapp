@@ -4,8 +4,6 @@ import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angula
 import { ActivatedRoute, Router } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
 import { Matiere } from '../../../../../../core/models/referentiels/matiere';
-import { Utilisateur } from '../../../../../../core/models/utilisateur/utilisateur';
-import { UtilisateurService } from '../../../../utilisateur/service/utilisateur.service';
 import { ReferentielService } from '../../../service/referentiel.service';
 
 @Component({
@@ -25,12 +23,7 @@ export class CreateMatiereComponent implements OnInit {
 
   title = "Ajouter une matière";
 
-  ecoleId: any;
-  userId: number;
-  utilisateur: Utilisateur = {};
-
   private readonly referentielService = inject(ReferentielService);
-  private readonly utilisateurService = inject(UtilisateurService);
   private readonly _formBuilder = inject(FormBuilder);
   private readonly toastService = inject(ToastrService);
   private readonly activeRoute = inject(ActivatedRoute);
@@ -39,27 +32,15 @@ export class CreateMatiereComponent implements OnInit {
   constructor(
   ) {
     this.matiereId = this.activeRoute.snapshot.params['id'];
-    this.userId = Number(localStorage.getItem('id'));
   }
 
   ngOnInit(): void {
-    this.getConnectedUserInfos();
     this.initializeForm(null);
     if (this.matiereId != null && this.matiereId != undefined) {
       this.getMatiere(this.matiereId);
       this.title = 'Modifier une matière';
       this.isEdit = true;
     }
-  }
-
-  getConnectedUserInfos() {
-    this.utilisateurService.getUtilisateur(this.userId).subscribe({
-      next: data => {
-        this.utilisateur = data;
-      },
-      error: error => { console.log(error) },
-    });
-
   }
 
   getMatiere(matiereId: number) {
@@ -77,7 +58,6 @@ export class CreateMatiereComponent implements OnInit {
       id: [matiere?.id ? matiere.id : ''],
       code: [matiere?.code ? matiere.code : '', Validators.required],
       libelle: [matiere?.libelle ? matiere.libelle : '', Validators.required],
-      ecole: [matiere?.ecole ? matiere.ecole : '', Validators.required],
     });
   }
 
@@ -85,12 +65,11 @@ export class CreateMatiereComponent implements OnInit {
   ajouteditMatiere() {
     const payload = this.matiereFormGroup.value;
     if (!this.isEdit) {
-      payload.ecole = this.ecoleId;
       this.referentielService.createMatiere(payload).subscribe({
         next: (data) => {
           if (data.statut === 'OK') {
             this.toastService.success('succès', 'Les informations de la matière ont été enregistrées avec succès !!! ');
-            this.router.navigate(['admin/referentiels/matiere'])
+           this.goBack();
           } else if (data.statut === 'FAILED') {
             this.toastService.error('error', 'Erreur lors de la création : ' + data.message);
           }
@@ -105,7 +84,7 @@ export class CreateMatiereComponent implements OnInit {
         next: (data) => {
           if (data.statut === 'OK') {
             this.toastService.success('succès', 'Les informations de année scolaire ont été modifiées avec succès !!! ');
-            this.router.navigate(['admin/referentiels/matiere'])
+            this.goBack();
           } else if (data.statut === 'FAILED') {
             this.toastService.error('error', 'Erreur lors de la modification : ' + data.message);
           }

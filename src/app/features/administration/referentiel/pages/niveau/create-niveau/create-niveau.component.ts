@@ -2,12 +2,10 @@ import { Component, inject, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
-import { Niveau } from '../../../../../../core/models/referentiels/niveau';
-import { Utilisateur } from '../../../../../../core/models/utilisateur/utilisateur';
-import { UtilisateurService } from '../../../../utilisateur/service/utilisateur.service';
-import { ReferentielService } from '../../../service/referentiel.service';
 import { Cycle } from '../../../../../../core/models/referentiels/cycle';
+import { Niveau } from '../../../../../../core/models/referentiels/niveau';
 import { ReferentielResourceService } from '../../../service/referentiel-resource.service';
+import { ReferentielService } from '../../../service/referentiel.service';
 
 @Component({
   selector: 'app-create-niveau',
@@ -23,17 +21,13 @@ export class CreateNiveauComponent implements OnInit {
   niveauFormGroup!: FormGroup;
   niveau: any;
   isEdit: boolean = false;
-  ecoleId: any;
-  userId: number;
   cycleList: Cycle[] = [];
-  utilisateur: Utilisateur = {};
 
 
   title = "Ajouter un niveau";
 
   private readonly referentielService = inject(ReferentielService);
   private readonly referentielResource = inject(ReferentielResourceService);
-  private readonly utilisateurService = inject(UtilisateurService);
   private readonly _formBuilder = inject(FormBuilder);
   private readonly toastService = inject(ToastrService);
   private readonly activeRoute = inject(ActivatedRoute);
@@ -43,7 +37,6 @@ export class CreateNiveauComponent implements OnInit {
   constructor(
   ) {
     this.niveauId = this.activeRoute.snapshot.params['id'];
-    this.userId = Number(localStorage.getItem('id'));
   }
 
   ngOnInit(): void {
@@ -54,15 +47,6 @@ export class CreateNiveauComponent implements OnInit {
       this.title = 'Modifier un niveau';
       this.isEdit = true;
     }
-  }
-
-  getConnectedUserInfos() {
-    this.utilisateurService.getUtilisateur(this.userId).subscribe({
-      next: data => {
-        this.utilisateur = data;
-      },
-      error: error => { console.log(error) },
-    });
   }
 
   getCycleList() {
@@ -99,13 +83,12 @@ export class CreateNiveauComponent implements OnInit {
 
   ajouteditNiveau() {
     const payload = this.niveauFormGroup.value;
-    payload.ecole = this.ecoleId;
     if (!this.niveauId && this.niveauId == undefined) {
       this.referentielService.createNiveau(payload).subscribe({
         next: (data) => {
           if (data.statut === 'OK') {
             this.toastService.success('succès', 'Le niveau a été enregistrées avec succès !!! ');
-            this.router.navigate(['admin/referentiels/niveau'])
+            this.goBack();
           } else if (data.statut === 'FAILED') {
             this.toastService.error('error', 'Erreur lors de la création : ' + data.message);
           }
@@ -120,7 +103,7 @@ export class CreateNiveauComponent implements OnInit {
         next: (data) => {
           if (data.statut === 'OK') {
             this.toastService.success('succès', 'Le niveau a été modifiées avec succès !!! ');
-            this.router.navigate(['admin/referentiel/niveau'])
+            this.goBack();
           } else if (data.statut === 'FAILED') {
             this.toastService.error('error', 'Erreur lors de la modification : ' + data.message);
           }

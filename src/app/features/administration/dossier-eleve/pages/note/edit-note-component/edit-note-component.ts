@@ -21,8 +21,6 @@ export class EditNoteComponent implements OnInit {
   note: NoteEdit = {};
   title = "Modifier une note";
   disableAddButton = false;
-  userId?: number;
-  ecoleId: any;
 
   private readonly dossierResource = inject(DossierResourceService);
   private readonly _formBuilder = inject(FormBuilder);
@@ -33,7 +31,6 @@ export class EditNoteComponent implements OnInit {
 
   ngOnInit(): void {
     this.noteId = this.activeRoute.snapshot.params['id'];
-    this.userId = Number(localStorage.getItem('id'));
     this.initialiserFormGroup();
     if (this.noteId != null && this.noteId != undefined) {
       this.getNoteByID(this.noteId);
@@ -86,17 +83,13 @@ export class EditNoteComponent implements OnInit {
       this.noteFormGroup?.markAllAsTouched();
       return;
     }
-
     const payload = this.noteFormGroup?.value;
-    payload.createur = this.userId;
     payload.dateCreation = this.note.dateCreation;
-    payload.ecole = this.ecoleId;
-
     this.dossierResource.updateUneReource('note', this.noteId, payload).subscribe({
       next: (data) => {
         if (data.statut === 'OK') {
           this.toastService.success('succès', 'La note a été modifiée avec succès !!! ');
-          this.router.navigate(['/admin/dossier-eleve/notes']);
+           this.goBack();
         } else if (data.statut === 'FAILED') {
           this.toastService.error('error', 'Erreur lors de la modification : ' + data.message);
         }

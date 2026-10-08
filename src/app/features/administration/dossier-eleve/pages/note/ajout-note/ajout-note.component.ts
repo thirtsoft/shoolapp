@@ -7,9 +7,7 @@ import { EvaluationEditNote } from '../../../../../../core/models/dossiereleve/e
 import { ListeEleve } from '../../../../../../core/models/dossiereleve/liste-eleve';
 import { Classe } from '../../../../../../core/models/referentiels/classe';
 import { Semestre } from '../../../../../../core/models/referentiels/semestre';
-import { Utilisateur } from '../../../../../../core/models/utilisateur/utilisateur';
 import { ReferentielService } from '../../../../referentiel/service/referentiel.service';
-import { UtilisateurService } from '../../../../utilisateur/service/utilisateur.service';
 import { DossierResourceService } from '../../../service/dossier-resource.service';
 
 
@@ -34,9 +32,6 @@ export class AjoutNoteComponent implements OnInit {
   selectedClass: any;
 
   title = "Ajouter une note";
-  userId?: number;
-  ecoleId: any;
-  utilisateur?: Utilisateur;
   selectedClasseId: any;
   selectedEvaluationForNotes: any = null;
   notesData = signal<any[]>([]);
@@ -48,22 +43,10 @@ export class AjoutNoteComponent implements OnInit {
   private readonly router = inject(Router);
   private readonly dossierResource = inject(DossierResourceService);
   private readonly referentielService = inject(ReferentielService);
-  private readonly utilisateurService = inject(UtilisateurService);
   private readonly toastService = inject(ToastrService);
 
   ngOnInit(): void {
-    this.userId = Number(localStorage.getItem('id'));
-    this.getConnectedUserInfos();
     this.getClasseList();
-  }
-
-  getConnectedUserInfos() {
-    this.utilisateurService.getUtilisateur(Number(this.userId)).subscribe({
-      next: data => {
-        this.utilisateur = data;
-      },
-      error: error => { console.log(error) },
-    });
   }
 
   getClasseList() {
@@ -256,14 +239,12 @@ export class AjoutNoteComponent implements OnInit {
       dateRemise: evaluationComplete.dateRemise,
       dateCreation: formatLocalDateTime(evaluationComplete.dateCreation),
       enseignementId: evaluationComplete.enseignementId,
-      createur: this.userId,
       evaluationType: evaluationComplete.evaluationType,
       evaluationMode: evaluationComplete.evaluationMode || 'NORMAL',
       etatId: evaluationComplete.etatId || 1,
       classeId: evaluationComplete.classeId,
       heureDebut: evaluationComplete.heureDebut,
       heureFin: evaluationComplete.heureFin,
-      ecole: this.ecoleId,
       actif: evaluationComplete.actif !== undefined ? evaluationComplete.actif : 1,
       noteEditRequestDTOList: this.notesData().map(note => ({
         id: note.id,
@@ -272,15 +253,13 @@ export class AjoutNoteComponent implements OnInit {
         type: evaluationComplete.evaluationType || 'DEVOIR',
         dateCreation: formatLocalDateTime(new Date()),
         appreciation: note.appreciation || '',
-        createur: this.userId,
-        ecole: this.ecoleId,
         actif: 1
       }))
     };
 
     console.log('Payload:', payload);
 
-    delete payload.noteEditRequestDTOListOld; // si existe
+    delete payload.noteEditRequestDTOListOld; 
 
     console.log('Payload:', payload);
 
@@ -289,7 +268,7 @@ export class AjoutNoteComponent implements OnInit {
         console.log('response:', response);
         this.toastService.success('Succès', 'Notes sauvegardées avec succès');
         this.updateEvaluationNotesInList();
-        this.router.navigate(['/admin/dossier-eleve/notes']);
+        this.goBack();
       },
       error: (error) => {
         console.error('Erreur:', error);

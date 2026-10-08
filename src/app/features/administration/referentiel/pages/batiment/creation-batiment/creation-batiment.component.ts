@@ -3,8 +3,6 @@ import { FormArray, FormBuilder, FormGroup, ReactiveFormsModule, Validators } fr
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
 import { Batiment } from '../../../../../../core/models/referentiels/batiment';
-import { Utilisateur } from '../../../../../../core/models/utilisateur/utilisateur';
-import { UtilisateurService } from '../../../../utilisateur/service/utilisateur.service';
 import { ReferentielService } from '../../../service/referentiel.service';
 
 
@@ -22,14 +20,9 @@ export class CreationBatimentComponent implements OnInit {
   editBatiment: Batiment = {};
   typeSalles?: string[] = ["Ordinaire", "Spécialisée", "Extérieure"];
 
-  ecoleId: any;
-  userId: number;
-  utilisateur: Utilisateur = {};
-
   title = "Création d'un batiment ";
 
   private readonly referentielService = inject(ReferentielService);
-  private readonly utilisateurService = inject(UtilisateurService);
   private readonly _formBuilder = inject(FormBuilder);
   private readonly toastService = inject(ToastrService);
   private readonly route = inject(ActivatedRoute);
@@ -38,26 +31,15 @@ export class CreationBatimentComponent implements OnInit {
   constructor(
   ) {
     this.batimentId = this.route.snapshot.params['id'];
-    this.userId = Number(localStorage.getItem('id'));
   }
 
   ngOnInit(): void {
-    this.getConnectedUserInfos();
     this.initializeForm(null);
     if (this.batimentId != null && this.batimentId != undefined) {
       this.getBatimentById(this.batimentId);
     }
   }
 
-  getConnectedUserInfos() {
-    this.utilisateurService.getUtilisateur(this.userId).subscribe({
-      next: data => {
-        this.utilisateur = data;
-      },
-      error: error => { console.log(error) },
-    });
-
-  }
 
   getBatimentById(batId: number) {
     this.referentielService.getBatimentById(batId).subscribe({
@@ -75,7 +57,6 @@ export class CreationBatimentComponent implements OnInit {
               libelle: [this.editBatiment.salleDTOList![i].libelle, Validators.required],
               type_salle: [this.editBatiment.salleDTOList![i].type_salle, Validators.required],
               capacite: [this.editBatiment.salleDTOList![i].capacite, Validators.required],
-              eocle: [this.editBatiment.ecole],
             })
           )
         }
@@ -107,7 +88,6 @@ export class CreationBatimentComponent implements OnInit {
       libelle: ['', Validators.required],
       type_salle: ['', Validators.required],
       capacite: ['', Validators.required],
-      eocle: [this.ecoleId],
     })
   }
 
@@ -127,7 +107,6 @@ export class CreationBatimentComponent implements OnInit {
         libelle: this.batimentFormGroup.get("libelle")!.value,
         salleDTOList: this.batimentFormGroup.get("salleDTOList")!.value,
       }
-      payload.ecole = this.ecoleId;
       this.referentielService.createBatiment(payload).subscribe({
         next: (data) => {
           if (data.statut === 'OK') {

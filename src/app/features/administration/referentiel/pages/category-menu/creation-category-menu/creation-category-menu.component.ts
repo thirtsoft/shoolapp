@@ -3,8 +3,6 @@ import { FormArray, FormBuilder, FormGroup, ReactiveFormsModule, Validators } fr
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
 import { CategoryMenu } from '../../../../../../core/models/referentiels/category-menu';
-import { Utilisateur } from '../../../../../../core/models/utilisateur/utilisateur';
-import { UtilisateurService } from '../../../../utilisateur/service/utilisateur.service';
 import { ReferentielService } from '../../../service/referentiel.service';
 
 @Component({
@@ -19,14 +17,10 @@ export class CreationCategoryMenuComponent implements OnInit {
   categoryMenuId: number;
   categoryMenuFormGroup!: FormGroup;
   editCategoryMenu: CategoryMenu = {};
-  ecoleId: any;
-  userId: number;
-  utilisateur: Utilisateur = {};
 
   title = "Création d'un menu ";
 
   private readonly referentielService = inject(ReferentielService);
-  private readonly utilisateurService = inject(UtilisateurService);
   private readonly _formBuilder = inject(FormBuilder);
   private readonly toastService = inject(ToastrService);
   private readonly route = inject(ActivatedRoute);
@@ -35,25 +29,13 @@ export class CreationCategoryMenuComponent implements OnInit {
   constructor(
   ) {
     this.categoryMenuId = this.route.snapshot.params['id'];
-    this.userId = Number(localStorage.getItem('id'));
   }
 
   ngOnInit(): void {
-    this.getConnectedUserInfos();
     this.initializeForm(null);
     if (this.categoryMenuId != null && this.categoryMenuId != undefined) {
       this.getCategoryMenuById(this.categoryMenuId);
     }
-  }
-
-  getConnectedUserInfos() {
-    this.utilisateurService.getUtilisateur(this.userId).subscribe({
-      next: data => {
-        this.utilisateur = data;
-      },
-      error: error => { console.log(error) },
-    });
-
   }
 
   getCategoryMenuById(batId: number) {
@@ -122,7 +104,6 @@ export class CreationCategoryMenuComponent implements OnInit {
         libelle: this.categoryMenuFormGroup.get("libelle")!.value,
         menuDTOs: this.categoryMenuFormGroup.get("menuDTOs")!.value,
       }
-      payload.ecole = this.ecoleId;
       this.referentielService.createCategoryMenu(payload).subscribe({
         next: (data) => {
           if (data.statut === 'OK') {
@@ -139,7 +120,6 @@ export class CreationCategoryMenuComponent implements OnInit {
       });
     } else {
       this.editCategoryMenu = this.categoryMenuFormGroup.value;
-      this.editCategoryMenu.ecole = this.editCategoryMenu.ecole;
       this.referentielService.updateCategoryMenu(this.categoryMenuId, this.editCategoryMenu).subscribe({
         next: (data) => {
           if (data.statut === 'OK') {

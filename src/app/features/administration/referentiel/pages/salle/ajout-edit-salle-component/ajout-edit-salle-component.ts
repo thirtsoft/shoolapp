@@ -4,8 +4,6 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
 import { Batiment } from '../../../../../../core/models/referentiels/batiment';
 import { SalleAddEdit } from '../../../../../../core/models/referentiels/salle';
-import { Utilisateur } from '../../../../../../core/models/utilisateur/utilisateur';
-import { UtilisateurService } from '../../../../utilisateur/service/utilisateur.service';
 import { ReferentielService } from '../../../service/referentiel.service';
 
 @Component({
@@ -22,14 +20,10 @@ export class AjoutEditSalleComponent implements OnInit {
   salle?: any;
   salleId?: number;
   batimentList: Batiment[] = [];
-  ecoleId: any;
-  userId: number;
-  utilisateur: Utilisateur = {};
   typeSalles?: string[] = ["Ordinaire", "Spécialisée", "Extérieure"];
 
   title = "Gestion salle";
 
-  private readonly utilisateurService = inject(UtilisateurService);
   private readonly referentielService = inject(ReferentielService);
   private readonly _formBuilder = inject(FormBuilder);
   private readonly toastService = inject(ToastrService);
@@ -40,26 +34,15 @@ export class AjoutEditSalleComponent implements OnInit {
   constructor(
   ) {
     this.salleId = this.activeRoute.snapshot.params['id'];
-    this.userId = Number(localStorage.getItem('id'));
   }
 
   ngOnInit(): void {
-    this.getConnectedUserInfos();
     this.getBatimentList();
     this.initializeForm(null);
     if (this.salleId != null && this.salleId != undefined) {
       this.getSalleById(this.salleId);
       this.title = 'Reprogrammer le cours';
     }
-  }
-
-  getConnectedUserInfos() {
-    this.utilisateurService.getUtilisateur(this.userId).subscribe({
-      next: data => {
-        this.utilisateur = data;
-      },
-      error: error => { console.log(error) },
-    });
   }
 
   getBatimentList() {
