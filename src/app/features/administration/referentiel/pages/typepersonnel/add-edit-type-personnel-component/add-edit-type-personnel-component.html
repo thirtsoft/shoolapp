@@ -40,26 +40,6 @@
         <form [formGroup]="typePersonnelFormGroup" (ngSubmit)="ajoutEditTypeContrat()">
           <div class="form-group">
             <label class="form-label">
-              Code <span class="text-danger">*</span>
-              <i class="fas fa-barcode ms-1 text-muted"></i>
-            </label>
-            <input
-              type="text"
-              class="form-control"
-              formControlName="code"
-              placeholder="Ex: SEC, COMP, RESP"
-              required
-            />
-            @if (
-              typePersonnelFormGroup.get('code')?.invalid &&
-              typePersonnelFormGroup.get('code')?.touched
-            ) {
-              <div class="invalid-feedback">Le code est requis</div>
-            }
-          </div>
-
-          <div class="form-group">
-            <label class="form-label">
               Libellé <span class="text-danger">*</span>
               <i class="fas fa-tag ms-1 text-muted"></i>
             </label>
@@ -78,10 +58,7 @@
             }
           </div>
 
-          @if (
-            typePersonnelFormGroup.get('libelle')?.value &&
-            typePersonnelFormGroup.get('code')?.value
-          ) {
+          @if (typePersonnelFormGroup.get('libelle')?.value) {
             <div class="recap-card">
               <div class="d-flex align-items-center gap-3">
                 <div class="recap-icon">
@@ -90,7 +67,6 @@
                 <div class="recap-content">
                   <span class="recap-label">Récapitulatif type personnel</span>
                   <span class="recap-value">
-                    <strong>{{ typePersonnelFormGroup.get('code')?.value }}</strong> -
                     <strong>{{ typePersonnelFormGroup.get('libelle')?.value }}</strong>
                   </span>
                 </div>

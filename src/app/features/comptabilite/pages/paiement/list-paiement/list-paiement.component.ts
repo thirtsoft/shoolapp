@@ -174,19 +174,32 @@ export class ListPaiementComponent implements OnInit {
       next: (response) => {
         this.paiementData = response.data?.content || [];
         this.totalElements = response.data?.totalElements || 0;
-        this.columns = [
-          { key: 'facture', header: 'N° facture' },
-          { key: 'nomCompletEleve', header: 'Elève' },
-          { key: 'moyenPaiement', header: 'Moyen' },
-          { key: 'montant', header: 'Montant' },
-           { key: 'pay', header: 'Reçu' },
-          { key: 'datePaiement', header: 'Date' },
-        ];
 
         this.paiementData = this.paiementData.map((item: any) => ({
           ...item,
-          pay: '',
+
+          numeroDocument:
+            item.typePaiement === 'SALAIRE'
+              ? item.numeroPaie
+              : item.facture,
+
+          nomCompletBeneficiaire:
+            item.typePaiement === 'SALAIRE'
+              ? item.nomCompletPersonnel
+              : item.nomCompletEleve,
+
+          pay: ''
         }));
+
+        this.columns = [
+          { key: 'numeroDocument', header: 'N°' },
+          { key: 'typePaiement', header: 'Type' },
+          { key: 'nomCompletBeneficiaire', header: 'Bénéficiaire' },
+          { key: 'moyenPaiement', header: 'Moyen' },
+          { key: 'montant', header: 'Montant' },
+          { key: 'pay', header: 'Reçu' },
+          { key: 'datePaiement', header: 'Date' },
+        ];
         this.isLoading = false;
       },
       error: (error) => {

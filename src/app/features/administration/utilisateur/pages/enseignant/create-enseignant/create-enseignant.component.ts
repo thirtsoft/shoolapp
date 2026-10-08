@@ -3,14 +3,12 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
-import { Constants } from '../../../../../../core/constants/constants';
 import { Enseignant } from '../../../../../../core/models/enseignant/enseignant';
 import { EnseignantCreateRequest } from '../../../../../../core/models/enseignant/enseignant-request.model';
 import { Enseignement } from '../../../../../../core/models/planification/enseignement';
 import { AnneeScolaire } from '../../../../../../core/models/referentiels/annee-scolaire';
 import { ListeClasse } from '../../../../../../core/models/referentiels/classe';
 import { NiveauEducation } from '../../../../../../core/models/referentiels/niveau-eduction';
-import { PieceJointeService } from '../../../../../../core/services/piece-jointe';
 import { EnseignantService } from '../../../../../enseignant/service/enseignant.service';
 import { ReferentielService } from '../../../../referentiel/service/referentiel.service';
 import { EnseignantUpdateRequest } from '../../../../../../core/models/enseignant/enseignant-update-request.model';
@@ -122,25 +120,8 @@ export class CreateEnseignantComponent implements OnInit {
             return;
           }
           this.enseignant = data as any;
-
-          /*     this.enseignantFormGroup.patchValue({
-                firstName: data.firstName ?? '',
-                lastName: data.lastName ?? '',
-                address: data.address ?? '',
-                email: data.email ?? '',
-                mobile: data.mobile ?? '',
-                situationMatrimoniale: data.situationMatrimoniale ?? '',
-                cni: data.cni ?? '',
-                niveauEducation: data.niveauEducation ?? '',
-                dateDebut: data.dateDebut ?? '',
-                dateFin: data.dateFin ?? ''
-              }); */
           this.patchEnseignantForm(data);
           this.loadPhoto(response.data);
-
-          /*     if (data.photo && data.photo.available && data.photo.url) {
-                this.preview = data.photo.url;
-              } */
         },
 
         error: error => {
@@ -259,12 +240,6 @@ export class CreateEnseignantComponent implements OnInit {
           { type: 'application/json' }
         )
       );
-
-
-      /*     formData.append(
-            'enseignant',
-            JSON.stringify(payload)
-          ); */
 
       console.log('Payload création enseignant :', payload);
 

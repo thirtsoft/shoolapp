@@ -57,7 +57,6 @@ export class AddEditTypePersonnelComponent {
 
   initializeForm(typeContrat: TypePersonnelRequest | null) {
     this.typePersonnelFormGroup = this._formBuilder.group({
-      code: [typeContrat?.code ?? '', Validators.required],
       libelle: [typeContrat?.libelle ? typeContrat.libelle : '', Validators.required],
     });
   }

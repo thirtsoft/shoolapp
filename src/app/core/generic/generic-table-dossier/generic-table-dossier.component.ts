@@ -1912,18 +1912,26 @@ export class GenericTableDossierComponent implements OnInit {
     }
 
     const numeroRecu = paiement.numeroRecu || '—';
-    const numeroFacture = paiement.numeroFacture || '—';
-    const montant = Number(paiement.montant || 0);
-    const nomEleve = paiement.nomCompletEleve || '—';
+
+    const isSalaire = paiement.typePaiement === 'SALAIRE';
+
+    const numeroDocument = isSalaire ? (paiement.numeroPaie || '—') : (paiement.numeroFacture || '—');
+
+    const nomBeneficiaire = isSalaire ? (paiement.nomCompletPersonnel || '—') : (paiement.nomCompletEleve || '—');
+    const libelleBeneficiaire = isSalaire ? 'EMPLOYE' : 'ÉLÈVE';
+    const libelleDocument = isSalaire ? 'Paie' : 'Facture';
+    const descriptionPaiement = isSalaire ? `Paiement du salaire ${numeroDocument}` : `Paiement de la facture ${numeroDocument}`;
+
+    const typePaiementLibelle = paiement.typePaiement || '—';
+
     const moyenPaiement = paiement.moyenPaiement || '—';
     const reference = paiement.reference || '—';
     const etat = paiement.etat || '—';
-    const datePaiement = paiement.datePaiement
-      ? paiement.datePaiement
-      : '—';
-    const dateValidation = paiement.dateValidation
-      ? paiement.dateValidation
-      : '—';
+    const datePaiement = paiement.datePaiement ? paiement.datePaiement : '—';
+    const dateValidation = paiement.dateValidation ? paiement.dateValidation : '—';
+
+    const montant = Number(paiement.montant || 0);
+
 
     const nomOrganisation = organization.libelle || 'ÉTABLISSEMENT SCOLAIRE';
     const adresseOrganisation = organization.adresse || '';
@@ -1951,135 +1959,74 @@ export class GenericTableDossierComponent implements OnInit {
       text: nomOrganisation,
       fontSize: 14,
       bold: true,
-
       color: '#173F68',
-
       margin: [0, 0, 0, 4]
-
     });
-
     if (adresseOrganisation) {
-
       headerLeft.push({
-
         text: adresseOrganisation,
-
         fontSize: 8.5,
-
-        color: '#667085',
-
-        margin: [0, 0, 0, 2]
-
+        color: '#66785',
+        margin: [0, 0, , 2]
       });
 
     }
 
     if (telephoneOrganisation) {
-
       headerLeft.push({
-
         text: `Tél. : ${telephoneOrganisation}`,
-
         fontSize: 8.5,
-
         color: '#667085',
-
         margin: [0, 0, 0, 2]
-
       });
-
     }
-
     if (emailOrganisation) {
-
       headerLeft.push({
-
         text: emailOrganisation,
-
         fontSize: 8.5,
-
         color: '#667085',
-
         margin: [0, 0, 0, 2]
-
       });
-
     }
 
     const headerRight: any[] = [
-
       {
 
         text: 'REÇU DE PAIEMENT',
-
         fontSize: 19,
-
         bold: true,
-
         color: '#173F68',
-
         alignment: 'right',
-
         margin: [0, 0, 0, 8]
-
       },
-
       {
-
         text: `N° ${numeroRecu}`,
-
         fontSize: 9,
-
         bold: true,
-
         color: '#667085',
-
         alignment: 'right',
-
         margin: [0, 0, 0, 4]
-
       },
-
       {
-
-        text: `Facture : ${numeroFacture}`,
-
+        text: `${libelleDocument} : ${numeroDocument}`,
         fontSize: 9,
-
         color: '#667085',
-
         alignment: 'right',
-
         margin: [0, 0, 0, 4]
-
       },
 
       {
-
         text: `Date : ${datePaiement}`,
-
         fontSize: 9,
-
         color: '#667085',
-
         alignment: 'right',
-
         margin: [0, 0, 0, 8]
-
       },
-
       {
-
         text: etat,
-
         fontSize: 8,
-
         bold: true,
-
-        color: etat.toLowerCase() === 'validée'
-          ? '#027A48'
-          : '#B54708',
-
+        color: etat.toLowerCase() === 'validée' ? '#027A48' : '#B54708',
         alignment: 'right'
 
       }
@@ -2091,78 +2038,47 @@ export class GenericTableDossierComponent implements OnInit {
       [
 
         {
-
           text: 'DESCRIPTION',
-
           style: 'tableHeader',
-
           alignment: 'left'
-
         },
 
         {
-
           text: 'MOYEN DE PAIEMENT',
-
           style: 'tableHeader',
-
           alignment: 'center'
-
         },
-
         {
-
           text: 'MONTANT',
-
           style: 'tableHeader',
-
           alignment: 'right'
-
         }
-
       ],
 
       [
 
         {
 
-          text:
-            `Paiement de la facture ${numeroFacture}`,
-
+          text: `${descriptionPaiement} ${numeroDocument}`,
           fontSize: 9.5,
-
           color: '#344054',
-
           margin: [0, 12, 0, 12]
-
         },
 
         {
-
           text: moyenPaiement,
-
           fontSize: 9,
-
           color: '#344054',
-
           alignment: 'center',
-
           margin: [0, 12, 0, 12]
-
         },
 
         {
-
           text: formatDevise(montant),
-
           fontSize: 10,
-
           bold: true,
-
           color: '#173F68',
-
           alignment: 'right',
-
           margin: [0, 12, 0, 12]
 
         }
@@ -2184,47 +2100,31 @@ export class GenericTableDossierComponent implements OnInit {
           columns: [
 
             {
-
               width: '*',
-
               stack: headerLeft
-
             },
 
             {
-
               width: 'auto',
-
               stack: headerRight
 
             }
 
           ],
-
           columnGap: 20,
-
           margin: [0, 0, 0, 18]
 
         },
 
         {
-
           canvas: [
-
             {
-
               type: 'line',
-
               x1: 0,
-
               y1: 0,
-
               x2: 510,
-
               y2: 0,
-
               lineWidth: 1,
-
               lineColor: '#2F80C0'
 
             }
@@ -2239,13 +2139,9 @@ export class GenericTableDossierComponent implements OnInit {
         {
 
           text: 'REÇU DE PAIEMENT',
-
           fontSize: 20,
-
           bold: true,
-
-          color: '#173F68',
-
+          color: '#73F68',
           margin: [0, 0, 0, 5]
 
         },
@@ -2253,15 +2149,11 @@ export class GenericTableDossierComponent implements OnInit {
         {
 
           text: `N° ${numeroRecu}`,
-
           fontSize: 9,
-
           color: '#667085',
-
           margin: [0, 0, 0, 18]
 
         },
-
 
         {
 
@@ -2279,40 +2171,28 @@ export class GenericTableDossierComponent implements OnInit {
 
                     {
 
-                      text: 'ÉLÈVE',
-
+                      text: libelleBeneficiaire,
                       fontSize: 8,
-
                       bold: true,
-
                       color: '#98A2B3',
-
                       characterSpacing: 0.5,
-
                       margin: [0, 0, 0, 5]
 
                     },
 
                     {
-
-                      text: nomEleve,
-
+                      text: nomBeneficiaire,
                       fontSize: 11,
-
                       bold: true,
-
                       color: '#173F68',
-
                       margin: [0, 0, 0, 3]
 
                     },
 
                     {
 
-                      text: `Facture : ${numeroFacture}`,
-
+                      text: `${libelleDocument} : ${numeroDocument}`,
                       fontSize: 8.5,
-
                       color: '#667085'
 
                     }
@@ -2330,29 +2210,27 @@ export class GenericTableDossierComponent implements OnInit {
                   stack: [
 
                     {
-
                       text: 'INFORMATIONS DU PAIEMENT',
-
                       fontSize: 8,
-
                       bold: true,
-
                       color: '#98A2B3',
-
                       characterSpacing: 0.5,
-
                       margin: [0, 0, 0, 5]
 
                     },
 
                     {
+                      text: `Type de paiement : ${typePaiementLibelle}`,
+                      fontSize: 8.5,
+                      color: '#344054',
+                      margin: [0, 0, 0, 3]
+                    },
+
+                    {
 
                       text: `Date de paiement : ${datePaiement}`,
-
                       fontSize: 8.5,
-
                       color: '#344054',
-
                       margin: [0, 0, 0, 3]
 
                     },
@@ -2360,11 +2238,8 @@ export class GenericTableDossierComponent implements OnInit {
                     {
 
                       text: `Date de validation : ${dateValidation}`,
-
                       fontSize: 8.5,
-
                       color: '#344054',
-
                       margin: [0, 0, 0, 3]
 
                     },
@@ -2372,11 +2247,8 @@ export class GenericTableDossierComponent implements OnInit {
                     {
 
                       text: `État : ${etat}`,
-
                       fontSize: 8.5,
-
                       bold: true,
-
                       color: '#027A48'
 
                     }
@@ -2384,7 +2256,6 @@ export class GenericTableDossierComponent implements OnInit {
                   ],
 
                   fillColor: '#F2F7FC',
-
                   margin: [12, 12, 12, 12]
 
                 }
@@ -2411,15 +2282,10 @@ export class GenericTableDossierComponent implements OnInit {
         {
 
           text: 'DÉTAIL DU PAIEMENT',
-
           fontSize: 8,
-
           bold: true,
-
           color: '#98A2B3',
-
           characterSpacing: 0.5,
-
           margin: [0, 0, 0, 8]
 
         },
@@ -2594,13 +2460,9 @@ export class GenericTableDossierComponent implements OnInit {
 
                 {
 
-                  text:
-                    'Ce reçu constitue la preuve de l’enregistrement du paiement indiqué ci-dessus. Il doit être conservé pour toute démarche administrative ou comptable.',
-
+                  text: 'Ce reçu constitue la preuve de l’enregistrement du paiement indiqué ci-dessus. Il doit être conservé pour toute démarche administrative ou comptable.',
                   fontSize: 8,
-
                   color: '#667085',
-
                   lineHeight: 1.2
 
                 }
@@ -2788,8 +2650,7 @@ export class GenericTableDossierComponent implements OnInit {
 
             {
 
-              text:
-                'Une solution Wokite Technologies & Innovation',
+              text: 'Une solution Wokite Technologies & Innovation',
 
               fontSize: 6.5,
 
@@ -2826,7 +2687,7 @@ export class GenericTableDossierComponent implements OnInit {
       }
     });
   }
-  
+
   async imprimerBulletin(): Promise<void> {
     const document = await this.getDocumentFicheBulletin();
     pdfMake.createPdf(document).open();
