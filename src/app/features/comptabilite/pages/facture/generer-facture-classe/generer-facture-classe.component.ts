@@ -5,7 +5,6 @@ import { ToastrService } from 'ngx-toastr';
 import { GenereFactureClasse } from '../../../../../core/models/comptabilite/generer-facture-classe';
 import { ListeClasse } from '../../../../../core/models/referentiels/classe';
 import { ReferentielResourceService } from '../../../../administration/referentiel/service/referentiel-resource.service';
-import { UtilisateurService } from '../../../../administration/utilisateur/service/utilisateur.service';
 import { ComptabiliteResourceService } from '../../../services/comptabilite-resource.service';
 
 @Component({

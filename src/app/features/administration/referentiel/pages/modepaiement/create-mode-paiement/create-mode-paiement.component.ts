@@ -3,8 +3,6 @@ import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angula
 import { ActivatedRoute, Router } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
 import { MoyenPaiement } from '../../../../../../core/models/referentiels/moyen-paiement';
-import { Utilisateur } from '../../../../../../core/models/utilisateur/utilisateur';
-import { UtilisateurService } from '../../../../utilisateur/service/utilisateur.service';
 import { ReferentielResourceService } from '../../../service/referentiel-resource.service';
 
 @Component({
@@ -21,14 +19,10 @@ export class CreateModePaiementComponent implements OnInit {
   moyenPaiementFormGroup!: FormGroup;
   moyenPaiement: any;
   isEdit: boolean = false;
-  ecoleId: any;
-  userId: number;
-  utilisateur: Utilisateur = {};
 
   title = "Ajouter un moyen de paiement";
 
   private readonly referentielResource = inject(ReferentielResourceService);
-  private readonly utilisateurService = inject(UtilisateurService);
   private readonly _formBuilder = inject(FormBuilder);
   private readonly toastService = inject(ToastrService);
   private readonly activeRoute = inject(ActivatedRoute);
@@ -38,27 +32,15 @@ export class CreateModePaiementComponent implements OnInit {
   constructor(
   ) {
     this.moyenpaiementId = this.activeRoute.snapshot.params['id'];
-    this.userId = Number(localStorage.getItem('id'));
   }
 
   ngOnInit(): void {
-    this.getConnectedUserInfos();
     this.initializeForm(null);
     if (this.moyenpaiementId != null && this.moyenpaiementId != undefined) {
       this.getMoyenPaiement(this.moyenpaiementId);
       this.title = 'Modifier un moyen de paiement';
       this.isEdit = true;
     }
-  }
-
-  getConnectedUserInfos() {
-    this.utilisateurService.getUtilisateur(this.userId).subscribe({
-      next: data => {
-        this.utilisateur = data;
-      },
-      error: error => { console.log(error) },
-    });
-
   }
 
   getMoyenPaiement(moyenpaiementId: number) {

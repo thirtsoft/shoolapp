@@ -1,13 +1,13 @@
+import { DatePipe, TitleCasePipe } from '@angular/common';
 import { Component, inject, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ToastrService } from 'ngx-toastr';
 import { ConfirmationDialogModalComponent } from '../../../../../../core/components/confirmation-dialog-modal/confirmation-dialog-modal.component';
+import { EtatLibelle } from '../../../../../../core/constants/etat-libelle';
 import { DetailsSessionSemestre } from '../../../../../../core/models/referentiels/details-tsession-semestre';
 import { ReferentielResourceService } from '../../../service/referentiel-resource.service';
-import { DatePipe, TitleCasePipe } from '@angular/common';
-import { EtatLibelle } from '../../../../../../core/constants/etat-libelle';
 
 @Component({
   selector: 'app-details-session-semestres-component',
@@ -69,7 +69,6 @@ export class DetailsSessionSemestresComponent implements OnInit {
   openEtatModal(content: any, action: 'demarrer' | 'clôturer' | 'reactiver', etatCode: string): void {
     this.modalActionLabel = action;
     this.targetEtatCode = etatCode;
-
     this.isMotifRequired = ['annuler', 'dépublier'].includes(action);
 
     if (!this.actionForm) {
@@ -106,7 +105,7 @@ export class DetailsSessionSemestresComponent implements OnInit {
   }
 
   changerEtat(action: string, evalId: number, payload: any) {
-    this.referentielResourceService.modifierEtatResource('anneescolaire', evalId, payload).subscribe({
+    this.referentielResourceService.modifierEtatResource('sessionsemestre', evalId, payload).subscribe({
       next: (data: any) => {
         const successMessages: { [key: string]: string } = {
           demarrer: `L\'année scolaire a été démarrée avec succès.`,

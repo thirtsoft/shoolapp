@@ -4,8 +4,6 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
 import { CategoryMenu } from '../../../../../../core/models/referentiels/category-menu';
 import { MenuAddEdit } from '../../../../../../core/models/referentiels/menu';
-import { Utilisateur } from '../../../../../../core/models/utilisateur/utilisateur';
-import { UtilisateurService } from '../../../../utilisateur/service/utilisateur.service';
 import { ReferentielService } from '../../../service/referentiel.service';
 
 @Component({
@@ -22,13 +20,9 @@ export class CreationMenuComponent implements OnInit {
   menu?: any;
   menuId?: number;
   categoryMenuList: CategoryMenu[] = [];
-  ecoleId: any;
-  userId: number;
-  utilisateur: Utilisateur = {};
 
   title = "Gestion menu";
 
-  private readonly utilisateurService = inject(UtilisateurService);
   private readonly referentielService = inject(ReferentielService);
   private readonly _formBuilder = inject(FormBuilder);
   private readonly toastService = inject(ToastrService);
@@ -39,26 +33,15 @@ export class CreationMenuComponent implements OnInit {
   constructor(
   ) {
     this.menuId = this.activeRoute.snapshot.params['id'];
-    this.userId = Number(localStorage.getItem('id'));
   }
 
   ngOnInit(): void {
-    this.getConnectedUserInfos();
     this.getCategoryMenuList();
     this.initializeForm(null);
     if (this.menuId != null && this.menuId != undefined) {
       this.getMenuById(this.menuId);
       this.title = 'Modifier menu';
     }
-  }
-
-  getConnectedUserInfos() {
-    this.utilisateurService.getUtilisateur(this.userId).subscribe({
-      next: data => {
-        this.utilisateur = data;
-      },
-      error: error => { console.log(error) },
-    });
   }
 
   getCategoryMenuList() {

@@ -3,8 +3,6 @@ import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angula
 import { ActivatedRoute, Router } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
 import { NiveauEducation } from '../../../../../../core/models/referentiels/niveau-eduction';
-import { Utilisateur } from '../../../../../../core/models/utilisateur/utilisateur';
-import { UtilisateurService } from '../../../../utilisateur/service/utilisateur.service';
 import { ReferentielService } from '../../../service/referentiel.service';
 
 @Component({
@@ -22,15 +20,9 @@ export class CreateNiveauEducationComponent implements OnInit {
   niveau: any;
   isEdit: boolean = false;
 
-  ecoleId: any;
-  userId: number;
-
-  utilisateur: Utilisateur = {};
-
   title = "Ajouter un niveau éducation";
 
   private readonly referentielService = inject(ReferentielService);
-  private readonly utilisateurService = inject(UtilisateurService);
   private readonly _formBuilder = inject(FormBuilder);
   private readonly toastService = inject(ToastrService);
   private readonly activeRoute = inject(ActivatedRoute);
@@ -40,27 +32,15 @@ export class CreateNiveauEducationComponent implements OnInit {
   constructor(
   ) {
     this.niveauId = this.activeRoute.snapshot.params['id'];
-    this.userId = Number(localStorage.getItem('id'));
   }
 
   ngOnInit(): void {
-    this.getConnectedUserInfos();
     this.initializeForm(null);
     if (this.niveauId != null && this.niveauId != undefined) {
       this.getNiveau(this.niveauId);
       this.title = 'Modifier un niveau éducation';
       this.isEdit = true;
     }
-  }
-
-  getConnectedUserInfos() {
-    this.utilisateurService.getUtilisateur(this.userId).subscribe({
-      next: data => {
-        this.utilisateur = data;
-      },
-      error: error => { console.log(error) },
-    });
-
   }
 
   getNiveau(niveauId: number) {
@@ -83,7 +63,6 @@ export class CreateNiveauEducationComponent implements OnInit {
 
   ajouteditNiveau() {
     const payload = this.niveauFormGroup.value;
-    payload.ecole = this.ecoleId;
     if (!this.niveauId && this.niveauId == undefined) {
       this.referentielService.createNiveauEducation(payload).subscribe({
         next: (data) => {

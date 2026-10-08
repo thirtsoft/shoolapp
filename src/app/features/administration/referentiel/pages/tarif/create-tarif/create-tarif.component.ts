@@ -29,10 +29,6 @@ export class CreateTarifComponent implements OnInit {
   typeServiceList: TypeServiceOffert[] = [];
   anneeScolaireList: AnneeScolaire[] = [];
 
-  ecoleId: any;
-  userId: number;
-  utilisateur: Utilisateur = {};
-
   title = "Ajouter un tarif";
 
   private readonly referentielResource = inject(ReferentielResourceService);
@@ -44,7 +40,6 @@ export class CreateTarifComponent implements OnInit {
   constructor(
   ) {
     this.tarifId = this.activeRoute.snapshot.params['id'];
-    this.userId = Number(localStorage.getItem('id'));
   }
 
   ngOnInit(): void {
@@ -128,7 +123,6 @@ export class CreateTarifComponent implements OnInit {
 
   ajouteditTarif() {
     const payload = this.tarifFormGroup.value;
-    payload.ecole = this.ecoleId;
     if (!this.isEdit) {
       this.referentielResource.creerUneRessource('tarif', payload).subscribe({
         next: (data) => {

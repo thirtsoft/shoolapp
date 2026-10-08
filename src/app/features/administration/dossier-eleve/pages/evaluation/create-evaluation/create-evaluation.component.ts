@@ -1,7 +1,6 @@
 import { Component, DestroyRef, inject, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
-
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ToastrService } from 'ngx-toastr';
 import { Evaluation } from '../../../../../../core/models/dossiereleve/evaluation/evaluation';
@@ -10,7 +9,6 @@ import { ListeClasse } from '../../../../../../core/models/referentiels/classe';
 import { SessionSemestre } from '../../../../../../core/models/referentiels/session-semestre';
 import { PlanificationResourceService } from '../../../../planification/services/planification-resource.service';
 import { ReferentielResourceService } from '../../../../referentiel/service/referentiel-resource.service';
-import { UtilisateurService } from '../../../../utilisateur/service/utilisateur.service';
 import { DossierResourceService } from '../../../service/dossier-resource.service';
 
 @Component({

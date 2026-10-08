@@ -5,8 +5,6 @@ import { ToastrService } from 'ngx-toastr';
 import { MatiereAvecCoefficient } from '../../../../../../core/models/referentiels/matiere';
 import { Niveau } from '../../../../../../core/models/referentiels/niveau';
 import { Serie } from '../../../../../../core/models/referentiels/serie';
-import { Utilisateur } from '../../../../../../core/models/utilisateur/utilisateur';
-import { UtilisateurService } from '../../../../utilisateur/service/utilisateur.service';
 import { ReferentielResourceService } from '../../../service/referentiel-resource.service';
 import { ReferentielService } from '../../../service/referentiel.service';
 
@@ -26,15 +24,11 @@ export class CreateMatiereAvecCoefficientComponent implements OnInit {
   isEdit: boolean = false;
   niveauList: Niveau[] = [];
   serieList: Serie[] = [];
-  ecoleId: any;
-  userId: number;
-  utilisateur: Utilisateur = {};
 
   title = "Ajouter une matière";
 
   private readonly referentielResource = inject(ReferentielResourceService);
   private readonly referentielService = inject(ReferentielService);
-  private readonly utilisateurService = inject(UtilisateurService);
   private readonly _formBuilder = inject(FormBuilder);
   private readonly toastService = inject(ToastrService);
   private readonly activeRoute = inject(ActivatedRoute);
@@ -44,7 +38,6 @@ export class CreateMatiereAvecCoefficientComponent implements OnInit {
   constructor(
   ) {
     this.matiereAvecCoefficientId = this.activeRoute.snapshot.params['id'];
-    this.userId = Number(localStorage.getItem('id'));
   }
 
   ngOnInit(): void {
@@ -56,15 +49,6 @@ export class CreateMatiereAvecCoefficientComponent implements OnInit {
       this.title = 'Modifier une matière';
       this.isEdit = true;
     }
-  }
-
-  getConnectedUserInfos() {
-    this.utilisateurService.getUtilisateur(this.userId).subscribe({
-      next: data => {
-        this.utilisateur = data;
-      },
-      error: error => { console.log(error) },
-    });
   }
 
   getNiveauList() {
@@ -191,12 +175,11 @@ export class CreateMatiereAvecCoefficientComponent implements OnInit {
         libelle: formValue.libelle,
         coefficientMatiereAddEditDTOList: formValue.coefficientMatiereAddEditDTOList.map((item: any) => ({
           id: item.id ? Number(item.id) : null,
-          niveau: item.niveau ? Number(item.niveau) : null,  // Conversion string → number
-          serie: item.serie ? Number(item.serie) : null,      // Conversion string → number
-          coefficient: Number(item.coefficient)               // Conversion string → number
+          niveau: item.niveau ? Number(item.niveau) : null,  
+          serie: item.serie ? Number(item.serie) : null,      
+          coefficient: Number(item.coefficient)               
         }))
       };
-      payload.ecole = this.ecoleId;
       console.log('payload envoyé', payload);
       this.referentielService.createMatiereAvecCoefficient(payload).subscribe({
         next: (data) => {
@@ -214,7 +197,6 @@ export class CreateMatiereAvecCoefficientComponent implements OnInit {
       });
     } else {
       this.matiereAvecCoeeficient = this.matiereAvecCoeficientFormGroup.value;
-      this.matiereAvecCoeeficient.ecole = this.ecoleId;
       this.referentielService.updateMatiereAvecCoefficient(this.matiereAvecCoefficientId, this.matiereAvecCoeeficient).subscribe({
         next: (data) => {
           if (data.statut === 'OK') {

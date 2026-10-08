@@ -19,7 +19,6 @@ export class CreateEditTypeDepenseComponent implements OnInit {
   typeDepenseFormGroup!: FormGroup;
   typedepense: any;
   isEdit: boolean = false;
-  ecoleId: any;
 
   title = "Ajouter une type dépense";
 
@@ -63,7 +62,6 @@ export class CreateEditTypeDepenseComponent implements OnInit {
 
   ajoutEditTypeDepnse() {
     const payload = this.typeDepenseFormGroup.value;
-    payload.ecole = this.ecoleId;
     if (!this.isEdit) {
       this.referentielResource.creerUneRessource('typedepense', payload).subscribe({
         next: (data) => {

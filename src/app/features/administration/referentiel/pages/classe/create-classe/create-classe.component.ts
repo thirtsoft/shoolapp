@@ -6,8 +6,6 @@ import { AnneeScolaire } from '../../../../../../core/models/referentiels/annee-
 import { Classe } from '../../../../../../core/models/referentiels/classe';
 import { Niveau } from '../../../../../../core/models/referentiels/niveau';
 import { Serie } from '../../../../../../core/models/referentiels/serie';
-import { Utilisateur } from '../../../../../../core/models/utilisateur/utilisateur';
-import { UtilisateurService } from '../../../../utilisateur/service/utilisateur.service';
 import { ReferentielResourceService } from '../../../service/referentiel-resource.service';
 import { ReferentielService } from '../../../service/referentiel.service';
 
@@ -28,15 +26,11 @@ export class CreateClasseComponent implements OnInit {
   niveauList: Niveau[] = [];
   serieList: Serie[] = [];
   anneeScolaireList: AnneeScolaire[] = [];
-  ecoleId: any;
-  userId: number;
-  utilisateur: Utilisateur = {};
 
   title = "Ajouter une classe";
 
   private readonly referentielService = inject(ReferentielService);
   private readonly referentielResource = inject(ReferentielResourceService);
-  private readonly utilisateurService = inject(UtilisateurService);
   private readonly _formBuilder = inject(FormBuilder);
   private readonly toastService = inject(ToastrService);
   private readonly activeRoute = inject(ActivatedRoute);
@@ -46,7 +40,6 @@ export class CreateClasseComponent implements OnInit {
   constructor(
   ) {
     this.classeId = this.activeRoute.snapshot.params['id'];
-    this.userId = Number(localStorage.getItem('id'));
   }
 
   ngOnInit(): void {
@@ -59,15 +52,6 @@ export class CreateClasseComponent implements OnInit {
       this.title = 'Modifier une classe';
       this.isEdit = true;
     }
-  }
-
-  getConnectedUserInfos() {
-    this.utilisateurService.getUtilisateur(this.userId).subscribe({
-      next: data => {
-        this.utilisateur = data;
-      },
-      error: error => { console.log(error) },
-    });
   }
 
   getNiveauList() {
@@ -162,8 +146,6 @@ export class CreateClasseComponent implements OnInit {
       payload.id = this.classeId;
     }
 
-
-    payload.ecole = this.ecoleId;
     if (!this.isEdit) {
       this.referentielService.createClasse(payload).subscribe({
         next: (data) => {

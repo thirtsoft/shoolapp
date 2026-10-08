@@ -4,8 +4,6 @@ import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angula
 import { ActivatedRoute, Router } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
 import { SessionSemestreAddEdit } from '../../../../../../core/models/referentiels/session-semestre';
-import { Utilisateur } from '../../../../../../core/models/utilisateur/utilisateur';
-import { UtilisateurService } from '../../../../utilisateur/service/utilisateur.service';
 import { ReferentielResourceService } from '../../../service/referentiel-resource.service';
 
 export interface Etat {
@@ -28,11 +26,8 @@ export class EditerSessionSemestreComponent implements OnInit {
   sessionSemestreFormGroup!: FormGroup;
   sessionSemestre: any;
   isEdit: boolean = false;
-  ecoleId: any;
-
   SemestreEtAnnee?: string;
 
-  utilisateur: Utilisateur = {};
 
   listEtat: any = [
     { id: 8, code: 'E8', libelle: 'En cours' },
@@ -43,7 +38,6 @@ export class EditerSessionSemestreComponent implements OnInit {
   title = "Ajouter un semestre";
 
   private readonly referentielService = inject(ReferentielResourceService);
-  private readonly utilisateurService = inject(UtilisateurService);
   private readonly _formBuilder = inject(FormBuilder);
   private readonly toastService = inject(ToastrService);
   private readonly activeRoute = inject(ActivatedRoute);
@@ -86,7 +80,6 @@ export class EditerSessionSemestreComponent implements OnInit {
 
   editerSessionSemestre() {
     const payload = this.sessionSemestreFormGroup.value;
-    payload.ecole = this.ecoleId;
     this.referentielService.modifierUneRessource('sessionsemestre', Number(this.sessionSemestreId), payload).subscribe({
       next: (data) => {
         if (data.statut === 'OK') {
