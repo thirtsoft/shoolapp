@@ -8,8 +8,13 @@
       </p>
     </div>
     <div class="header-actions">
-      <button class="btn-action" (click)="voirInscriptions()">
-        📝 Inscriptions ({{ nombreTotalEleveNonInscrits }})
+      <button class="btn-action" (click)="reInscription()">
+        📝 RéInscriptions ({{ nombreTotalEleveNonInscrits }})
+      </button>
+
+      <button class="btn-pay" (click)="nouvelleInscription()">
+        <i class="fas fa-plus-circle me-2"></i>
+        Nouvelle Inscriptions
       </button>
     </div>
   </div>

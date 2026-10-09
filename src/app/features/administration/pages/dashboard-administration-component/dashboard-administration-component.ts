@@ -191,9 +191,14 @@ export class DashboardAdministrationComponent implements OnInit {
     return icones[type] ?? '📅';
   }
 
-  voirInscriptions(): void {
-    this.router.navigate(['/admin/dossier-eleve/inscriptions']);
+  nouvelleInscription(): void {
+    this.router.navigate(['/admin/dossier-eleve/inscrire-eleve']);
   }
+
+  reInscription(): void {
+    this.router.navigate(['/admin/dossier-eleve/inscription']);
+  }
+
 
   voirAbsenceEleves(): void {
     this.router.navigate(['/admin/dossier-eleve/absences']);

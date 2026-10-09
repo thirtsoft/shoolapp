@@ -155,7 +155,7 @@ export class SuccessCreationPersonnelComponent implements OnInit {
       `Mot de passe temporaire : ${this.account.temporaryPassword ?? '—'}\n\n` +
 
       `🌐 Accès à Scoolli :\n` +
-      `https://scoolli.com/\n\n` +
+      `https://scoolli.com/auth/login/v2/\n\n` +
 
       `Vous pouvez utiliser ces identifiants pour vous connecter à votre espace Scoolli.\n\n` +
 
