@@ -71,7 +71,7 @@ export class AjoutNoteComponent implements OnInit {
   }
 
   loadEvaluationsForClasse(classId: number) {
-    this.dossierResource.getResourceListByElement('evaluation/by-classe', classId).subscribe({
+    this.dossierResource.getResourceListByElement('evaluation/add-note-classe', classId).subscribe({
       next: (data: any[]) => {
         this.evaluationList = data;
         console.log('Évaluations chargées:', this.evaluationList);
@@ -259,7 +259,7 @@ export class AjoutNoteComponent implements OnInit {
 
     console.log('Payload:', payload);
 
-    delete payload.noteEditRequestDTOListOld; 
+    delete payload.noteEditRequestDTOListOld;
 
     console.log('Payload:', payload);
 
