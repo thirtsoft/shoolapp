@@ -278,7 +278,7 @@ export class AjoutNoteComponent implements OnInit {
   }
 
   goBack() {
-    this.router.navigate(['/admin/dossier-eleve/notes']);
+    void this.router.navigate(['/admin/dossier-eleve/notes']);
   }
 
 }

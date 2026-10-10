@@ -1,10 +1,6 @@
 @if (response(); as data) {
   @if (data.successData; as success) {
     <div class="success-container">
-      <!-- ============================= -->
-      <!-- HEADER -->
-      <!-- ============================= -->
-
       <div class="success-header">
         <div class="success-icon">
           <i class="fas fa-check-circle"></i>
@@ -15,16 +11,7 @@
         <p>Votre environnement SaaS est maintenant opérationnel.</p>
       </div>
 
-      <!-- =====================================================
-           LIGNE 1
-           Informations de connexion + User & Role
-           ===================================================== -->
-
       <div class="cards-row">
-        <!-- =========================
-             IDENTIFIANTS DE CONNEXION
-             ========================= -->
-
         <section class="credentials-card">
           <div class="credentials-header">
             <div class="credentials-title">
@@ -57,8 +44,6 @@
             </div>
           </div>
 
-          <!-- Bloc prêt à copier -->
-
           <div class="credentials-content">
             <div class="school-name">
               {{ success.tenantName }}
@@ -85,8 +70,6 @@
               </button>
             </div>
 
-            <!-- Mot de passe -->
-
             <div class="credential-row">
               <div class="credential-info">
                 <span class="credential-label"> Mot de passe temporaire </span>
@@ -107,17 +90,23 @@
             </div>
           </div>
 
-          <!-- Copie de tout le bloc -->
+          <div class="credentials-actions">
+            <button type="button" class="btn btn-whatsapp" (click)="envoyerWhatsAppTenant()">
+              <i class="fab fa-whatsapp"></i>
+              WhatsApp — Responsable du compte
+            </button>
 
-          <button type="button" class="copy-all-button" (click)="copyCredentials()">
-            <i class="fas fa-copy me-2"></i>
-            Copier les identifiants
-          </button>
+            <button type="button" class="btn btn-whatsapp" (click)="envoyerWhatsAppOrganisation()">
+              <i class="fab fa-whatsapp"></i>
+              WhatsApp — Établissement
+            </button>
+
+            <button type="button" class="copy-all-button" (click)="copyCredentials()">
+              <i class="fas fa-copy"></i>
+              Copier les identifiants
+            </button>
+          </div>
         </section>
-
-        <!-- =========================
-             USER + ROLE
-             ========================= -->
 
         <section class="info-section">
           <div class="section-heading">
@@ -130,8 +119,6 @@
               <span>Compte et droits d'accès</span>
             </div>
           </div>
-
-          <!-- Administrateur -->
 
           <div class="sub-section">
             <div class="sub-section-title">
@@ -166,8 +153,6 @@
             </div>
           </div>
 
-          <!-- Rôle -->
-
           <div class="sub-section role-section">
             <div class="sub-section-title">
               <i class="fas fa-user-cog"></i>
@@ -199,16 +184,7 @@
         </section>
       </div>
 
-      <!-- =====================================================
-           LIGNE 2
-           Espace client + Organisation
-           ===================================================== -->
-
       <div class="cards-row">
-        <!-- =========================
-             ESPACE CLIENT
-             ========================= -->
-
         <section class="info-section">
           <div class="section-heading">
             <div class="section-icon">
@@ -256,10 +232,6 @@
           </div>
         </section>
 
-        <!-- =========================
-             ORGANISATION
-             ========================= -->
-
         <section class="info-section">
           <div class="section-heading">
             <div class="section-icon">
@@ -300,16 +272,7 @@
         </section>
       </div>
 
-      <!-- =====================================================
-           LIGNE 3
-           Abonnement + Facturation
-           ===================================================== -->
-
       <div class="cards-row">
-        <!-- =========================
-             ABONNEMENT
-             ========================= -->
-
         <section class="info-section">
           <div class="section-heading">
             <div class="section-icon">
@@ -364,10 +327,6 @@
           </div>
         </section>
 
-        <!-- =========================
-             FACTURATION
-             ========================= -->
-
         <section class="info-section">
           <div class="section-heading">
             <div class="section-icon">
@@ -400,10 +359,6 @@
         </section>
       </div>
 
-      <!-- =====================================================
-           MESSAGE FINAL
-           ===================================================== -->
-
       <div class="completion-message">
         <div class="completion-icon">
           <i class="fas fa-check-circle"></i>
@@ -419,12 +374,8 @@
         </div>
       </div>
 
-      <!-- =====================================================
-           ACTION FINALE
-           ===================================================== -->
-
       <div class="success-actions">
-        <button type="button" class="finish-button">
+        <button type="button" class="finish-button" (click)="terminer()">
           <i class="fas fa-check me-2"></i>
           Terminer
         </button>

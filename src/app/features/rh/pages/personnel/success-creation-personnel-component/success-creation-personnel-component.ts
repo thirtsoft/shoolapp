@@ -71,7 +71,7 @@ export class SuccessCreationPersonnelComponent implements OnInit {
     const creationResponse = state?.creationResponse as PersonnelCreationResponse | undefined;
 
     if (!creationResponse) {
-      this.router.navigate(['/admin/rh/personnels']);
+      this.retourListe();
       return;
     }
 
@@ -223,10 +223,10 @@ export class SuccessCreationPersonnelComponent implements OnInit {
   }
 
   retourListe(): void {
-    this.router.navigate(['/admin/rh/personnels']);
+    void this.router.navigate(['/admin/rh/personnels']);
   }
 
   creerAutrePersonnel(): void {
-    this.router.navigate(['/admin/rh/personnel/create']);
+    void this.router.navigate(['/admin/rh/personnel/create']);
   }
 }

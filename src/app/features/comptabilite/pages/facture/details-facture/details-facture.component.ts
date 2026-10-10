@@ -652,14 +652,6 @@ export class DetailsFactureComponent implements OnInit {
     pdfMake.createPdf(document).download(`${this.detailsFacture?.numeroFacture || 'facture'}.pdf`);
   }
 
-  private formatDatePdf(date: string | null | undefined): string {
-    if (!date) {
-      return '—';
-    }
-
-    return this.dateFormat.formatDate(date);
-  }
-
   private getPaiementsValides(): any[] {
     return (this.detailsFacture?.paiements ?? []).filter(
       (paiement: any) => {
@@ -1017,7 +1009,6 @@ export class DetailsFactureComponent implements OnInit {
       })
     };
   }
-
 
 
   async getDocumentFicheFactureV2(): Promise<any> {

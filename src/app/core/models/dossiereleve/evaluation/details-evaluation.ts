@@ -7,6 +7,8 @@ export interface DetailsEvaluation {
 
   titre?: string;
 
+  numeroEvaluation?: string;
+
   description?: string;
 
   dateCreation?: Date;
@@ -43,6 +45,6 @@ export interface DetailsEvaluation {
 
   actif?: number;
 
-  detailsNoteEleveDTOList?: DetailsNote[]
+  detailsNoteEleveDTOList?: DetailsNote[];
 
 }
