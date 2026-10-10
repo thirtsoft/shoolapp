@@ -147,11 +147,22 @@ export class SetupComponent implements OnInit {
 
   ];
 
+  /*  ngOnInit(): void {
+     if (this.tenantUuid && this.organizationUuid && this.userUuid && !this.setupUuid) {
+       this.demarrerInitialisationDonnees();
+     }
+     this.getCurrentSetupProcess();
+   } */
+
   ngOnInit(): void {
-    if (this.tenantUuid && this.organizationUuid && this.userUuid && !this.setupUuid) {
-      this.demarrerInitialisationDonnees();
+    if (!this.tenantUuid || !this.organizationUuid || !this.userUuid) {
+      console.error(
+        '[SETUP] Impossible de démarrer : tenantUuid, organizationUuid ou userUuid manquant.'
+      );
+      return;
     }
-    this.getCurrentSetupProcess();
+
+    this.demarrerInitialisationDonnees();
   }
 
   get currentStepData(): SetupStep {
@@ -224,7 +235,7 @@ export class SetupComponent implements OnInit {
   }
 
 
-  private demarrerInitialisationDonnees(): void {
+  private demarrerInitialisationDonneesV1(): void {
     if (!this.tenantUuid) {
       console.error('[SETUP][ÉTAPE 0] tenantUuid introuvable');
       return;
@@ -253,7 +264,9 @@ export class SetupComponent implements OnInit {
           console.log('[SETUP][ÉTAPE 0] API → Enregistrement réussi');
           console.log('[SETUP][ÉTAPE 0] Response :', response);
 
-          this.localStorage.setItem('setup_uuid', response.setupUuid);
+          this.setupUuid = response.setupUuid;
+
+          this.localStorage.setItem('setup_uuid', this.setupUuid);
 
           this.setupUuid = this.localStorage.getItem('setup_uuid');
 
@@ -266,7 +279,103 @@ export class SetupComponent implements OnInit {
       });
   }
 
+  private demarrerInitialisationDonneesV2(): void {
+    if (!this.tenantUuid || !this.organizationUuid || !this.userUuid) {
+      console.error(
+        '[SETUP][ÉTAPE 0] tenantUuid, organizationUuid ou userUuid introuvable'
+      );
+      return;
+    }
+
+    const payload: SetupProcessStartRequest = {
+      setupMode: SetupMode.INITIALISATION,
+      tenantUuid: this.tenantUuid,
+      organizationUuid: this.organizationUuid,
+      userUuid: this.userUuid,
+    };
+
+    console.log('[SETUP][ÉTAPE 0] POST /api/setup/start');
+    console.log('[SETUP][ÉTAPE 0] Payload JSON :', payload);
+
+    this.setupApiService.startSetup(payload).subscribe({
+      next: (response) => {
+        console.log('[SETUP][ÉTAPE 0] Processus récupéré ou créé');
+        console.log('[SETUP][ÉTAPE 0] Response :', response);
+
+        if (!response?.setupUuid) {
+          console.error(
+            '[SETUP][ÉTAPE 0] Le backend n’a retourné aucun setupUuid'
+          );
+          return;
+        }
+
+        this.setupUuid = response.setupUuid;
+        this.localStorage.setItem('setup_uuid', response.setupUuid);
+
+        console.log('[SETUP][ÉTAPE 0] setupUuid =', this.setupUuid);
+
+      },
+
+      error: (error) => {
+        console.error(
+          '[SETUP][ÉTAPE 0] Erreur lors du démarrage du setup :',
+          error
+        );
+      }
+    });
+  }
+
+  private demarrerInitialisationDonnees(): void {
+    if (!this.tenantUuid || !this.organizationUuid || !this.userUuid) {
+      console.error(
+        '[SETUP] tenantUuid, organizationUuid ou userUuid introuvable'
+      );
+      return;
+    }
+    const payload: SetupProcessStartRequest = {
+      setupMode: SetupMode.INITIALISATION,
+      tenantUuid: this.tenantUuid,
+      organizationUuid: this.organizationUuid,
+      userUuid: this.userUuid,
+    };
+
+    this.saving.set(true);
+
+    this.setupApiService.startSetup(payload).subscribe({
+      next: (response: SetupProcessResponse) => {
+        if (!response?.setupUuid) {
+          console.error(
+            '[SETUP] Le backend n\'a retourné aucun setupUuid.'
+          );
+          this.saving.set(false);
+          return;
+        }
+
+        // L'identifiant retourné par le backend est la référence.
+        this.setupUuid = response.setupUuid;
+        this.localStorage.setItem('setup_uuid', response.setupUuid);
+        this.setupDetails = response;
+
+        console.log('[SETUP] Processus récupéré ou créé :', response.setupUuid);
+
+        this.saving.set(false);
+      },
+
+      error: (error) => {
+        console.error(
+          '[SETUP] Erreur lors du démarrage ou de la reprise du setup :',
+          error
+        );
+        this.saving.set(false);
+      }
+    });
+  }
+
+
+
   private enregistrerInformationEcole(): void {
+
+    this.setupUuid = this.setupUuid || this.localStorage.getItem('setup_uuid');
 
     console.log('SetupUUID est {} ', this.setupUuid);
 
@@ -327,6 +436,19 @@ export class SetupComponent implements OnInit {
           console.log('[SETUP][ÉTAPE 1] API → Enregistrement réussi');
           console.log('[SETUP][ÉTAPE 1] Response :', response);
 
+
+          if (!response?.setupUuid) {
+            console.error(
+              '[SETUP][ÉTAPE 0] Le backend n’a retourné aucun setupUuid'
+            );
+            return;
+          }
+
+          this.setupUuid = response.setupUuid;
+          this.localStorage.setItem('setup_uuid', response.setupUuid);
+
+          console.log('[SETUP][ÉTAPE 0] setupUuid =', this.setupUuid);
+
           this.saving.set(false);
 
           this.currentStep.update(step => step + 1);
@@ -345,6 +467,8 @@ export class SetupComponent implements OnInit {
   }
 
   private enregistrerAnneeScolaire(): void {
+    this.setupUuid = this.setupUuid || this.localStorage.getItem('setup_uuid');
+
     const component = this.initierAnneeScolaireComponent;
     if (!component) {
       console.error('[SETUP][ÉTAPE 2] Formulaire année scolaire introuvable');
@@ -393,6 +517,19 @@ export class SetupComponent implements OnInit {
           console.log('[SETUP][ÉTAPE 2] API → Enregistrement réussi');
           console.log('[SETUP][ÉTAPE 2] Response :', response);
 
+
+          if (!response?.setupUuid) {
+            console.error(
+              '[SETUP][ÉTAPE 0] Le backend n’a retourné aucun setupUuid'
+            );
+            return;
+          }
+
+          this.setupUuid = response.setupUuid;
+          this.localStorage.setItem('setup_uuid', response.setupUuid);
+
+          console.log('[SETUP][ÉTAPE 0] setupUuid =', this.setupUuid);
+
           this.saving.set(false);
           this.currentStep.update(step => step + 1);
 
@@ -407,6 +544,8 @@ export class SetupComponent implements OnInit {
   }
 
   private enregistrerStructurePedagogique(): void {
+
+    this.setupUuid = this.setupUuid || this.localStorage.getItem('setup_uuid');
 
     const component = this.structurePedagogiqueComponent;
 
@@ -444,6 +583,19 @@ export class SetupComponent implements OnInit {
           console.log('[SETUP][ÉTAPE 3] API → Enregistrement réussi');
 
           console.log('[SETUP][ÉTAPE 3] Response :', response);
+
+
+          if (!response?.setupUuid) {
+            console.error(
+              '[SETUP][ÉTAPE 0] Le backend n’a retourné aucun setupUuid'
+            );
+            return;
+          }
+
+          this.setupUuid = response.setupUuid;
+          this.localStorage.setItem('setup_uuid', response.setupUuid);
+
+          console.log('[SETUP][ÉTAPE 0] setupUuid =', this.setupUuid);
 
           const structureResponse: SetupStructurePedagogiqueResponse = response.structurePedagogique;
 
@@ -487,6 +639,8 @@ export class SetupComponent implements OnInit {
 
   private enregistrerClasses(): void {
 
+    this.setupUuid = this.setupUuid || this.localStorage.getItem('setup_uuid');
+
     const component = this.classeAAjouterComponent;
 
     if (!component) {
@@ -525,6 +679,19 @@ export class SetupComponent implements OnInit {
           console.log('[SETUP][ÉTAPE 4] API → Enregistrement réussi');
           console.log('[SETUP][ÉTAPE 4] Response :', response);
 
+
+          if (!response?.setupUuid) {
+            console.error(
+              '[SETUP][ÉTAPE 0] Le backend n’a retourné aucun setupUuid'
+            );
+            return;
+          }
+
+          this.setupUuid = response.setupUuid;
+          this.localStorage.setItem('setup_uuid', response.setupUuid);
+
+          console.log('[SETUP][ÉTAPE 0] setupUuid =', this.setupUuid);
+
           this.saving.set(false);
           this.currentStep.update(step => step + 1);
 
@@ -540,6 +707,8 @@ export class SetupComponent implements OnInit {
   }
 
   private enregistrerPeriodes(): void {
+
+    this.setupUuid = this.setupUuid || this.localStorage.getItem('setup_uuid');
 
     const component = this.periodesScolairesComponent;
 
@@ -582,6 +751,19 @@ export class SetupComponent implements OnInit {
 
           console.log('[SETUP][ÉTAPE 5] Response :', response);
 
+
+          if (!response?.setupUuid) {
+            console.error(
+              '[SETUP][ÉTAPE 0] Le backend n’a retourné aucun setupUuid'
+            );
+            return;
+          }
+
+          this.setupUuid = response.setupUuid;
+          this.localStorage.setItem('setup_uuid', response.setupUuid);
+
+          console.log('[SETUP][ÉTAPE 0] setupUuid =', this.setupUuid);
+
           this.saving.set(false);
           this.currentStep.update(step => step + 1);
         },
@@ -595,6 +777,8 @@ export class SetupComponent implements OnInit {
   }
 
   private enregistrerMatieres(): void {
+
+    this.setupUuid = this.setupUuid || this.localStorage.getItem('setup_uuid');
 
     const component = this.matieresPrepareesComponent;
 
@@ -632,6 +816,19 @@ export class SetupComponent implements OnInit {
           console.log('[SETUP][ÉTAPE 6] API → Création des matières réussie');
           console.log('[SETUP][ÉTAPE 6] Response :', response);
 
+
+          if (!response?.setupUuid) {
+            console.error(
+              '[SETUP][ÉTAPE 0] Le backend n’a retourné aucun setupUuid'
+            );
+            return;
+          }
+
+          this.setupUuid = response.setupUuid;
+          this.localStorage.setItem('setup_uuid', response.setupUuid);
+
+          console.log('[SETUP][ÉTAPE 0] setupUuid =', this.setupUuid);
+
           this.finaliserSetup();
         },
 
@@ -645,6 +842,8 @@ export class SetupComponent implements OnInit {
   }
 
   private finaliserSetup(): void {
+
+    this.setupUuid = this.setupUuid || this.localStorage.getItem('setup_uuid');
 
     if (!this.setupUuid) {
       console.error('[SETUP][FINALISATION] setupUuid introuvable');
@@ -743,7 +942,7 @@ export class SetupComponent implements OnInit {
   terminer(): void {
     console.log('[SETUP] Configuration terminée');
     this.completed.set(true);
-    this.router.navigate(['/admin'])
+    void this.router.navigate(['/admin'])
   }
 
 }
