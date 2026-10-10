@@ -99,10 +99,11 @@ export class ListTenantComponent implements OnInit {
         this.columns = [
           { key: 'code', header: 'Code' },
           { key: 'libelle', header: 'Libellé' },
-          { key: 'mobile', header: 'Mobile' },
+          { key: 'mobileContact', header: 'Mobile' },
+            { key: 'emailContact', header: 'Email' },
           { key: 'adresse', header: 'Adresse' },
-          { key: 'currencyUuid', header: 'Devise' },
-          { key: 'countryUuid', header: 'Pays' },
+          { key: 'currencyLibelle', header: 'Devise' },
+          { key: 'countryLibelle', header: 'Pays' },
 
         ];
         this.tenantData = this.tenantData?.map((item: any) => ({

@@ -1,9 +1,10 @@
 :host {
   display: block;
-
   --primary: #1e3a5f;
   --primary-light: #2c5282;
+
   --success: #198754;
+  --success-hover: #146c43;
   --success-light: #eaf7ef;
 
   --warning: #9a6700;
@@ -16,9 +17,8 @@
   --white: #ffffff;
 }
 
-
 /* =========================================================
-   CONTAINER
+   CONTENEUR PRINCIPAL
    ========================================================= */
 
 .success-container {
@@ -28,9 +28,8 @@
   padding: 30px 20px 50px;
 }
 
-
 /* =========================================================
-   HEADER
+   EN-TÊTE DE SUCCÈS
    ========================================================= */
 
 .success-header {
@@ -39,13 +38,13 @@
 }
 
 .success-icon {
-  width: 64px;
-  height: 64px;
-  margin: 0 auto 16px;
-
   display: flex;
   align-items: center;
   justify-content: center;
+
+  width: 64px;
+  height: 64px;
+  margin: 0 auto 16px;
 
   border-radius: 50%;
 
@@ -72,9 +71,24 @@
   line-height: 1.6;
 }
 
+/* =========================================================
+   DISPOSITION DES CARTES
+   ========================================================= */
+
+.cards-row {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 20px;
+  align-items: stretch;
+}
+
+.credentials-card,
+.info-section {
+  min-width: 0;
+}
 
 /* =========================================================
-   IDENTIFIANTS
+   CARTE DES IDENTIFIANTS
    ========================================================= */
 
 .credentials-card {
@@ -102,6 +116,7 @@
   display: flex;
   align-items: center;
   gap: 14px;
+  min-width: 0;
 }
 
 .credentials-title h3 {
@@ -117,15 +132,18 @@
   font-size: 13px;
 }
 
+/* =========================================================
+   ICÔNES DES SECTIONS
+   ========================================================= */
+
 .section-icon {
-  width: 42px;
-  height: 42px;
-
-  flex-shrink: 0;
-
   display: flex;
   align-items: center;
   justify-content: center;
+
+  width: 42px;
+  height: 42px;
+  flex-shrink: 0;
 
   border-radius: 10px;
 
@@ -135,9 +153,14 @@
   font-size: 17px;
 }
 
+/* =========================================================
+   BADGE IMPORTANT
+   ========================================================= */
+
 .important-badge {
   display: inline-flex;
   align-items: center;
+  flex-shrink: 0;
 
   padding: 6px 10px;
 
@@ -151,13 +174,13 @@
   white-space: nowrap;
 }
 
-
 /* =========================================================
-   WARNING
+   AVERTISSEMENT DE SÉCURITÉ
    ========================================================= */
 
 .credentials-warning {
   display: flex;
+  align-items: flex-start;
   gap: 12px;
 
   margin-bottom: 20px;
@@ -171,6 +194,7 @@
 
 .credentials-warning>i {
   margin-top: 3px;
+  flex-shrink: 0;
 }
 
 .credentials-warning strong {
@@ -187,9 +211,8 @@
   line-height: 1.5;
 }
 
-
 /* =========================================================
-   BLOC DES IDENTIFIANTS
+   CONTENU DES IDENTIFIANTS
    ========================================================= */
 
 .credentials-content {
@@ -208,6 +231,8 @@
 
   font-size: 19px;
   font-weight: 700;
+
+  overflow-wrap: anywhere;
 }
 
 .credential-row {
@@ -223,6 +248,7 @@
 
 .credential-info {
   min-width: 0;
+  flex: 1;
 }
 
 .credential-label {
@@ -241,27 +267,25 @@
   color: var(--text);
 
   font-size: 16px;
-  word-break: break-word;
+  overflow-wrap: anywhere;
 }
 
 .password-value {
   letter-spacing: 0.5px;
 }
 
-
 /* =========================================================
-   BOUTONS COPIE
+   BOUTON DE COPIE INDIVIDUELLE
    ========================================================= */
 
 .copy-button {
-  width: 38px;
-  height: 38px;
-
-  flex-shrink: 0;
-
   display: flex;
   align-items: center;
   justify-content: center;
+
+  width: 38px;
+  height: 38px;
+  flex-shrink: 0;
 
   border: 1px solid var(--border);
   border-radius: 8px;
@@ -272,7 +296,7 @@
   cursor: pointer;
 
   transition:
-    background 0.2s ease,
+    background-color 0.2s ease,
     border-color 0.2s ease,
     transform 0.2s ease;
 }
@@ -286,38 +310,110 @@
   transform: scale(0.96);
 }
 
-.copy-all-button {
+.copy-button:focus-visible {
+  outline: 2px solid var(--primary-light);
+  outline-offset: 2px;
+}
+
+/* =========================================================
+   ACTIONS DES IDENTIFIANTS
+   Les trois boutons sont sur une seule colonne.
+   ========================================================= */
+
+.credentials-actions {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 12px;
+
   width: 100%;
-  margin-top: 16px;
-  padding: 14px 18px;
+  margin-top: 20px;
+}
 
-  border: none;
-  border-radius: 9px;
+.credentials-actions button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 9px;
 
-  background: var(--primary);
-  color: var(--white);
+  width: 100%;
+  min-height: 46px;
+  padding: 11px 16px;
+  box-sizing: border-box;
 
-  font-size: 15px;
+  border-radius: 8px;
+
+  font-family: inherit;
+  font-size: 14px;
   font-weight: 600;
+  line-height: 1.4;
+  text-align: center;
 
   cursor: pointer;
 
   transition:
-    background 0.2s ease,
+    background-color 0.2s ease,
+    border-color 0.2s ease,
     transform 0.2s ease;
 }
 
-.copy-all-button:hover {
-  background: var(--primary-light);
+.credentials-actions button i {
+  flex-shrink: 0;
 }
 
-.copy-all-button:active {
+/* WhatsApp : vert */
+
+.credentials-actions .btn-whatsapp {
+  color: #ffffff;
+  background: var(--success);
+  border: 1px solid var(--success);
+}
+
+.credentials-actions .btn-whatsapp:hover {
+  color: #ffffff;
+  background: var(--success-hover);
+  border-color: var(--success-hover);
+}
+
+.credentials-actions .btn-whatsapp:active {
   transform: translateY(1px);
 }
 
+/* Copier tous les identifiants : bleu initial */
+
+.credentials-actions .copy-all-button {
+  color: #ffffff;
+  background: var(--primary);
+  border: 1px solid var(--primary);
+}
+
+.credentials-actions .copy-all-button:hover {
+  color: #ffffff;
+  background: var(--primary-light);
+  border-color: var(--primary-light);
+}
+
+.credentials-actions .copy-all-button:active {
+  transform: translateY(1px);
+}
+
+/* État désactivé */
+
+.credentials-actions button:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* Focus clavier */
+
+.credentials-actions button:focus-visible {
+  outline: 2px solid var(--primary-light);
+  outline-offset: 3px;
+}
 
 /* =========================================================
-   SECTIONS
+   SECTIONS D'INFORMATIONS
    ========================================================= */
 
 .info-section {
@@ -352,9 +448,8 @@
   font-size: 12px;
 }
 
-
 /* =========================================================
-   INFO GRID
+   GRILLE DES INFORMATIONS
    ========================================================= */
 
 .info-grid {
@@ -392,14 +487,16 @@
   color: var(--text);
 
   font-size: 14px;
-
-  word-break: break-word;
+  overflow-wrap: anywhere;
 }
 
-
 /* =========================================================
-   ROLE
+   RÔLE ATTRIBUÉ
    ========================================================= */
+
+.role-section {
+  margin-top: 20px;
+}
 
 .role-content {
   padding: 16px;
@@ -425,6 +522,7 @@
   color: var(--primary);
 
   font-size: 17px;
+  overflow-wrap: anywhere;
 }
 
 .role-main small {
@@ -433,6 +531,7 @@
   color: var(--muted);
 
   font-size: 12px;
+  overflow-wrap: anywhere;
 }
 
 .role-description {
@@ -445,11 +544,12 @@
 
   font-size: 13px;
   line-height: 1.5;
+
+  overflow-wrap: anywhere;
 }
 
-
 /* =========================================================
-   MESSAGE FINAL
+   MESSAGE DE FIN D'ONBOARDING
    ========================================================= */
 
 .completion-message {
@@ -467,6 +567,8 @@
 }
 
 .completion-icon {
+  flex-shrink: 0;
+
   color: var(--success);
   font-size: 20px;
 }
@@ -488,7 +590,6 @@
   line-height: 1.5;
 }
 
-
 /* =========================================================
    ACTION FINALE
    ========================================================= */
@@ -509,37 +610,48 @@
   background: var(--primary);
   color: var(--white);
 
+  font-family: inherit;
   font-size: 14px;
   font-weight: 600;
 
   cursor: pointer;
 
   transition:
-    background 0.2s ease,
+    background-color 0.2s ease,
+    border-color 0.2s ease,
     transform 0.2s ease;
 }
 
 .finish-button:hover {
   background: var(--primary-light);
+  border-color: var(--primary-light);
 }
 
 .finish-button:active {
   transform: translateY(1px);
 }
 
+.finish-button:focus-visible {
+  outline: 2px solid var(--primary-light);
+  outline-offset: 3px;
+}
 
 /* =========================================================
-   RESPONSIVE
+   RESPONSIVE : TABLETTES ET MOBILES
    ========================================================= */
 
 @media (max-width: 700px) {
-
   .success-container {
     padding: 20px 12px 35px;
   }
 
   .success-header h2 {
     font-size: 24px;
+  }
+
+  .cards-row {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 0;
   }
 
   .credentials-card {
@@ -549,10 +661,15 @@
   .credentials-header {
     flex-direction: column;
     align-items: flex-start;
+    gap: 12px;
+  }
+
+  .credentials-title h3 {
+    font-size: 17px;
   }
 
   .info-grid {
-    grid-template-columns: 1fr;
+    grid-template-columns: minmax(0, 1fr);
   }
 
   .info-item-full {
@@ -565,5 +682,34 @@
 
   .finish-button {
     width: 100%;
+  }
+}
+
+@media (max-width: 400px) {
+
+  .credentials-card,
+  .info-section {
+    padding: 14px;
+  }
+
+  .credentials-content {
+    padding: 14px;
+  }
+
+  .credentials-title {
+    gap: 10px;
+  }
+
+  .credentials-title h3 {
+    font-size: 16px;
+  }
+
+  .credentials-actions button {
+    padding: 11px 10px;
+    font-size: 13px;
+  }
+
+  .important-badge {
+    font-size: 10px;
   }
 }

@@ -16,11 +16,16 @@ export class PeriodesScolairesComponent {
   readonly semestres = signal<SetupSemestreRequest[]>([
     {
       code: 'S1',
+      numero: 1,
       libelle: 'Semestre 1',
+      typePeriode: 'SEMESTRE'
     },
     {
       code: 'S2',
+      numero: 2,
       libelle: 'Semestre 2',
+      typePeriode: 'SEMESTRE'
+
     },
   ]);
 
@@ -29,11 +34,15 @@ export class PeriodesScolairesComponent {
     this.semestres.set([
       {
         code: 'S1',
+        numero: 1,
         libelle: 'Semestre 1',
+        typePeriode: 'SEMESTRE'
       },
       {
         code: 'S2',
+        numero: 2,
         libelle: 'Semestre 2',
+        typePeriode: 'SEMESTRE'
       },
     ]);
   }
@@ -54,8 +63,10 @@ export class PeriodesScolairesComponent {
       periodicite: this.periodicite(),
       semestres: this.semestres().map(
         semestre => ({
+          numero: semestre.numero,
           code: semestre.code,
           libelle: semestre.libelle,
+          typePeriode: semestre.typePeriode
         })
       ),
     };

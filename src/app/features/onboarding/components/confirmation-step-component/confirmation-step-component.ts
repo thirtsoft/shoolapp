@@ -12,51 +12,23 @@ import { OnboardingStateService } from '../../service/onboarding-state.service';
 })
 export class ConfirmationStepComponent {
 
+  private readonly state =    inject(OnboardingStateService);
 
-  private readonly state =
-    inject(OnboardingStateService);
+  readonly request =    this.state.request;
 
+  readonly viewModel =    this.state.viewModel;
 
-
-  /**
-   * Données métier prêtes pour le backend
-   */
-  readonly request =
-    this.state.request;
-
-
-
-  /**
-   * Données d'affichage uniquement UI
-   */
-  readonly viewModel =
-    this.state.viewModel;
-
-
-
-  /**
-   * Gestion ouverture cartes résumé
-   */
   readonly openedCard =    signal<string | null>(null);
 
 
-
   toggle(card: string): void {
-
     if (this.openedCard() === card) {
-
       this.openedCard.set(null);
-
       return;
-
     }
-
-
     this.openedCard.set(card);
 
   }
-
-
 
   isOpened(card: string): boolean {
 

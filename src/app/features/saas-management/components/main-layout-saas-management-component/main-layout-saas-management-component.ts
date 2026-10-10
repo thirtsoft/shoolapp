@@ -3,14 +3,6 @@ import { Router, RouterOutlet } from '@angular/router';
 import { SideBarSaasManagementComponent } from '../side-bar-saas-management-component/side-bar-saas-management-component';
 import { NavItem } from '../../../../core/components/sidebar-navbar-models/nav-item.model';
 
-// interface NavItem {
-//   route: string;
-//   ico: string;
-//   label: string;
-//   badge?: string;
-// }
-
-
 @Component({
   selector: 'app-main-layout-saas-management-component',
   standalone: true,

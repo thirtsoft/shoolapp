@@ -23,11 +23,15 @@
             <i class="fas fa-check-circle me-2"></i>Valider
           </button>
         }
-        @if (['Validée'].includes(detailsEvaluation.etat!)) {
-          <button class="btn-print" (click)="imprimerUneEvaluation(detailsEvaluation.id)">
-            <i class="fas fa-print me-2"></i>Imprimer
-          </button>
-        }
+
+        <button class="btn-print" (click)="imprimerUneEvaluation()">
+          <i class="fas fa-print me-2"></i>Imprimer
+        </button>
+
+         <button class="btn-print" (click)="telechargerEvaluationPdf()">
+          <i class="fas fa-print me-2"></i>Télécharger
+        </button>
+
       </div>
       <div class="action-right">
         <span class="status-badge" [class]="getStatusClass()">

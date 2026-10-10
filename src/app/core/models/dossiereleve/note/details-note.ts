@@ -25,5 +25,4 @@ export interface DetailsNote {
 
   actif?: number;
 
-
 }
