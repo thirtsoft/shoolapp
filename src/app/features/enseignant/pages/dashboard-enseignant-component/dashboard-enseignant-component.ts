@@ -1,6 +1,6 @@
-import { CommonModule } from '@angular/common';
 import { Component, computed, inject, OnInit, signal } from '@angular/core';
 import { Router } from '@angular/router';
+import { CoursEnseignantCalendrier } from '../../../../core/models/enseignant/cours-enseignant-calendrier.model';
 import { DetailsEnseignantUtilisateur } from '../../../../core/models/enseignant/details-enseignant-utilisateur';
 import { AgendaSemaine } from '../../../../core/models/planification/agenda-semaine';
 import { ListeCours } from '../../../../core/models/planification/liste-cours';
@@ -14,7 +14,16 @@ import { LocalStorageService } from '../../../../core/services/local-storage.ser
 import { PlanificationResourceService } from '../../../administration/planification/services/planification-resource.service';
 import { EnseigantResourceService } from '../../service/enseigant-resource.service';
 
-
+import { SlicePipe } from '@angular/common';
+import { CalendarOptions, EventInput, FullCalendarModule } from '@fullcalendar/angular';
+import dayGridPlugin from '@fullcalendar/angular/daygrid';
+import interactionPlugin from '@fullcalendar/angular/interaction';
+import listPlugin from '@fullcalendar/angular/list';
+import classicThemePlugin from '@fullcalendar/angular/themes/classic';
+import timeGridPlugin from '@fullcalendar/angular/timegrid';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { ListeEnseignement } from '../../../../core/models/planification/liste-enseignement';
+import { EnseignementContextService, EnseignementItem } from '../../service/enseignement-contexte.service';
 interface ClasseProfesseur {
   id: number;
   nom: string;
@@ -69,7 +78,7 @@ interface AbsenceClasse {
 @Component({
   selector: 'app-dashboard-enseignant-component',
   standalone: true,
-  imports: [CommonModule],
+  imports: [FullCalendarModule, SlicePipe],
   templateUrl: './dashboard-enseignant-component.html',
   styleUrl: './dashboard-enseignant-component.css',
 })
@@ -87,16 +96,101 @@ export class DashboardEnseignantComponent implements OnInit {
   activitesAvenir = signal<ActiviteAvenirEnseignant[]>([]);
   notesARemplir = signal<NoteASaisirEnseignant[]>([]);
 
-  userId: number;
+  coursEnseignant = signal<CoursEnseignantCalendrier[]>([]);
+
+  mesEnseignements = signal<ListeEnseignement[]>([]);
+
+  coursDuJour = computed(() => {
+
+    const jours: Record<number, string> = {
+      0: 'DIMANCHE',
+      1: 'LUNDI',
+      2: 'MARDI',
+      3: 'MERCREDI',
+      4: 'JEUDI',
+      5: 'VENDREDI',
+      6: 'SAMEDI'
+    };
+
+    const jourActuel = jours[new Date().getDay()];
+
+    return this.coursEnseignant()
+      .filter(cours => cours.jourSemaine === jourActuel)
+      .sort((a, b) =>
+        a.heureDebut.localeCompare(b.heureDebut)
+      );
+  });
+
+
+  showDetailsCoursModal = false;
+
+  coursSelectionne = signal<CoursEnseignantCalendrier | null>(null);
+
+  calendarOptions: CalendarOptions = {
+    initialView: 'timeGridDay',
+    initialDate: '2026-06-15',
+
+    plugins: [
+      classicThemePlugin,
+      dayGridPlugin,
+      timeGridPlugin,
+      interactionPlugin,
+      listPlugin
+    ],
+
+    firstDay: 1,
+    weekends: true,
+
+    allDaySlot: false,
+
+    slotMinTime: '07:00:00',
+    slotMaxTime: '19:00:00',
+    slotDuration: '00:30:00',
+
+    height: 650,
+
+    nowIndicator: true,
+
+    editable: false,
+    selectable: false,
+    eventOverlap: true,
+
+    headerToolbar: {
+      left: 'prev,next today',
+      center: 'title',
+      right: 'dayGridMonth,timeGridWeek,timeGridDay,listWeek'
+    },
+
+    eventTimeFormat: {
+      hour: '2-digit',
+      minute: '2-digit',
+      hour12: false
+    },
+
+    dayHeaderFormat: {
+      weekday: 'short',
+      day: 'numeric',
+      month: 'short'
+    },
+
+    events: [],
+
+    eventContent: (arg) => this.afficherContenuCours(arg),
+
+    eventClick: (info) => this.onCoursCalendarClick(info)
+  };
 
 
   private readonly router = inject(Router);
   private readonly planificationService = inject(PlanificationResourceService);
   private readonly enseigantResourceService = inject(EnseigantResourceService);
   private readonly localStorage = inject(LocalStorageService);
+  private readonly modalService = inject(NgbModal);
+
+  private readonly enseignementContextService = inject(EnseignementContextService);
 
   constructor() {
-    this.userId = this.localStorage.getItem('id');
+    //  this.userId = this.localStorage.getItem('id');
   }
 
   // ── Informations professeur ────────────────────────
@@ -188,9 +282,268 @@ export class DashboardEnseignantComponent implements OnInit {
   messagesNonLus = computed(() => this.messages().filter(m => m.nonLu).length);
 
   ngOnInit(): void {
-    if (this.userId && this.userId != undefined) {
-      this.getEnseignantByUtilisateurId(this.userId);
+    this.chargerMesCours();
+    this.chargerMesEnseignements();
+  }
+
+  chargerMesCours(): void {
+    this.planificationService.getMesCoursEnseignant().subscribe({
+      next: (data) => {
+        const cours = data ?? [];
+
+        this.coursEnseignant.set(cours);
+
+        console.log('Mes cours enseignant :', this.coursEnseignant());
+
+        const events = this.convertirCoursEnEvenements(cours);
+
+        this.calendarOptions = {
+          ...this.calendarOptions,
+          events
+        };
+      },
+
+      error: (err) => {
+        console.error(
+          'Erreur lors du chargement des cours de l’enseignant',
+          err
+        );
+
+        this.coursEnseignant.set([]);
+
+        this.calendarOptions = {
+          ...this.calendarOptions,
+          events: []
+        };
+      }
+    });
+  }
+
+  chargerMesEnseignements(): void {
+    this.planificationService.getMesEnseignements().subscribe({
+      next: (data) => {
+        const enseignements = data ?? [];
+
+        this.mesEnseignements.set(enseignements);
+
+        console.log('Mes cours enseignant :', this.mesEnseignements());
+      },
+
+      error: (err) => {
+        console.error(
+          'Erreur lors du chargement des enseignements de l’enseignant',
+          err
+        );
+
+        this.mesEnseignements.set([]);
+      }
+    });
+  }
+
+  gererClasse(enseignement: ListeEnseignement): void {
+
+    this.enseignementContextService.setGestionClasseContext({
+      classId: enseignement.classId,
+      classe: enseignement.classe,
+      matiere: enseignement.matiere,
+      anneeScolaire: enseignement.anneeScolaire,
+      enseignementId: enseignement.id
+    });
+
+    void this.router.navigate(['/enseignant/gestion-classe', enseignement.classId]);
+  }
+
+  private convertirCoursEnEvenements(cours: CoursEnseignantCalendrier[]): EventInput[] {
+
+    return cours.map(c => {
+
+      const couleur = this.getCouleurClasse(c.classe?.id);
+
+      return {
+        id: String(c.coursId),
+        title: c.libelle,
+        daysOfWeek: [this.convertirJourSemaine(c.jourSemaine)],
+        startTime: this.normaliserHeure(c.heureDebut),
+        endTime: this.normaliserHeure(c.heureFin),
+        startRecur: c.dateDebut,
+        endRecur: this.ajouterUnJour(c.dateFin!),
+
+        backgroundColor: couleur,
+        borderColor: couleur,
+        textColor: '#ffffff',
+
+        extendedProps: {
+          coursId: c.coursId,
+          enseignementId: c.enseignementId,
+          classe: c.classe?.libelle,
+          matiere: c.matiere?.libelle,
+          salle: c.salle?.libelle,
+          anneeScolaire: c.anneeScolaire?.libelle,
+          emploiDuTemps: c.emploiDuTemps?.titre,
+          dateDebut: c.dateDebut,
+          dateFin: c.dateFin,
+          heureDebut: c.heureDebut,
+          heureFin: c.heureFin
+        }
+      };
+    });
+  }
+
+  private convertirJourSemaine(jour: string): number {
+    const jours: Record<string, number> = {
+      DIMANCHE: 0,
+      LUNDI: 1,
+      MARDI: 2,
+      MERCREDI: 3,
+      JEUDI: 4,
+      VENDREDI: 5,
+      SAMEDI: 6
+    };
+    return jours[jour?.trim().toUpperCase()] ?? 1;
+  }
+
+  private normaliserHeure(heure: string): string {
+    if (!heure) {
+      return '00:00:00';
     }
+    return heure.length >= 8 ? heure.substring(0, 8) : `${heure.substring(0, 5)}:00`;
+  }
+
+  private ajouterUnJour(date: string): string {
+    if (!date) {
+      return '';
+    }
+    const d = new Date(`${date.substring(0, 10)}T00:00:00`);
+    d.setDate(d.getDate() + 1);
+    return d.toISOString().substring(0, 10);
+  }
+
+  private getCouleurClasse(classeId?: number): string {
+    const couleurs: Record<number, string> = {
+      10: '#2563eb',
+      14: '#7c3aed'
+    };
+    return couleurs[classeId ?? 0] ?? '#2c5282';
+  }
+
+
+  onCoursCalendarClick(info: any): void {
+    const coursId = Number(info.event.extendedProps?.coursId);
+
+    console.log('Cours info', info);
+
+    const cours = this.coursEnseignant().find(
+      c => c.coursId === coursId
+    );
+
+    if (!cours) {
+      return;
+    }
+
+    this.coursSelectionne.set(cours);
+    this.showDetailsCoursModal = true;
+  }
+
+  closeDetailsCoursModal(): void {
+    this.showDetailsCoursModal = false;
+    this.coursSelectionne.set(null);
+  }
+
+  private getLibelleJour(jour: number | undefined): string {
+    const jours: Record<number, string> = {
+      0: 'DIMANCHE',
+      1: 'LUNDI',
+      2: 'MARDI',
+      3: 'MERCREDI',
+      4: 'JEUDI',
+      5: 'VENDREDI',
+      6: 'SAMEDI'
+    };
+
+    return jours[jour ?? 0] ?? '';
+  }
+
+  formaterDate(date: string | undefined): string {
+    if (!date) {
+      return '';
+    }
+    const valeur = date.substring(0, 10);
+    const [annee, mois, jour] = valeur.split('-');
+    return `${jour}/${mois}/${annee}`;
+  }
+
+  afficherContenuCours(arg: any): { domNodes: HTMLElement[] } {
+    const container = document.createElement('div');
+    container.className = 'calendar-event-content';
+
+    const titre = document.createElement('div');
+    titre.className = 'calendar-event-title';
+    titre.textContent = arg.event.title;
+
+    const horaire = document.createElement('div');
+    horaire.className = 'calendar-event-time';
+
+    const heureDebut = arg.event.extendedProps.heureDebut ?? '';
+    const heureFin = arg.event.extendedProps.heureFin ?? '';
+
+    horaire.textContent = `${heureDebut.substring(0, 5)} - ${heureFin.substring(0, 5)}`;
+
+    container.appendChild(titre);
+    container.appendChild(horaire);
+
+    return {
+      domNodes: [container]
+    };
+  }
+
+  getStatutCours(cours: CoursEnseignantCalendrier): 'termine' | 'en_cours' | 'a_venir' {
+    const maintenant = new Date();
+    const [heureDebut, minuteDebut] = cours.heureDebut.substring(0, 5).split(':').map(Number);
+
+    const [heureFin, minuteFin] = cours.heureFin.substring(0, 5).split(':').map(Number);
+
+    const debut = new Date();
+    debut.setHours(heureDebut, minuteDebut, 0, 0);
+
+    const fin = new Date();
+    fin.setHours(heureFin, minuteFin, 0, 0);
+
+    if (maintenant < debut) {
+      return 'a_venir';
+    }
+
+    if (maintenant >= debut && maintenant <= fin) {
+      return 'en_cours';
+    }
+
+    return 'termine';
+  }
+
+  getStatutCoursLabel(cours: CoursEnseignantCalendrier): string {
+    const statut = this.getStatutCours(cours);
+    const labels = {
+      termine: 'Terminé',
+      en_cours: 'En cours',
+      a_venir: 'À venir'
+    };
+    return labels[statut];
+  }
+
+  getDureeCours(cours: CoursEnseignantCalendrier): string {
+    const [h1, m1] = cours.heureDebut.substring(0, 5).split(':').map(Number);
+
+    const [h2, m2] = cours.heureFin.substring(0, 5).split(':').map(Number);
+
+    const minutes = (h2 * 60 + m2) - (h1 * 60 + m1);
+
+    const heures = Math.floor(minutes / 60);
+    const reste = minutes % 60;
+
+    if (reste === 0) {
+      return `${heures}h`;
+    }
+
+    return `${heures}h${reste.toString().padStart(2, '0')}`;
   }
 
   // ── Méthodes ───────────────────────────────────────
@@ -203,20 +556,20 @@ export class DashboardEnseignantComponent implements OnInit {
     return classes[statut] || '';
   }
 
-  getEnseignantByUtilisateurId(userId: number): Promise<[DetailsEnseignantUtilisateur]> {
-    return new Promise((resolve, reject) => {
-      this.enseigantResourceService.getSingleResource('enseignant/utilisateur', userId).subscribe({
-        next: (data: any) => {
-          this.enseignantDetails = data;
-          console.log('enseignantDetails', this.enseignantDetails);
-          this.getEnseignantDashboardKpis(this.enseignantDetails.id!);
-          this.getEnseignantDashboardListData(this.enseignantDetails.id!)
-          resolve(data);
-        },
-        error: (err) => reject(err)
+  /*   getEnseignantByUtilisateurId(userId: number): Promise<[DetailsEnseignantUtilisateur]> {
+      return new Promise((resolve, reject) => {
+        this.enseigantResourceService.getSingleResource('enseignant/utilisateur', userId).subscribe({
+          next: (data: any) => {
+            this.enseignantDetails = data;
+            console.log('enseignantDetails', this.enseignantDetails);
+            this.getEnseignantDashboardKpis(this.enseignantDetails.id!);
+            this.getEnseignantDashboardListData(this.enseignantDetails.id!)
+            resolve(data);
+          },
+          error: (err) => reject(err)
+        });
       });
-    });
-  }
+    } */
 
   getEnseignantDashboardKpis(ensId: number): Promise<EnseignantDashboardKpis> {
     return new Promise((resolve, reject) => {
@@ -296,20 +649,20 @@ export class DashboardEnseignantComponent implements OnInit {
     });
   }
 
-
-  getAgendatSemaineEnseignant(userId: number): Promise<[AgendaSemaine]> {
-    return new Promise((resolve, reject) => {
-      this.planificationService.getResources('enseignant/agenda/semaine', this.userId).subscribe({
-        next: (data: any) => {
-          this.agendaSemaineList = data;
-          console.log('Cours list', this.agendaSemaineList);
-          resolve(data);
-        },
-        error: (err) => reject(err)
+  /* 
+    getAgendatSemaineEnseignant(userId: number): Promise<[AgendaSemaine]> {
+      return new Promise((resolve, reject) => {
+        this.planificationService.getResources('enseignant/agenda/semaine', this.userId).subscribe({
+          next: (data: any) => {
+            this.agendaSemaineList = data;
+            console.log('Cours list', this.agendaSemaineList);
+            resolve(data);
+          },
+          error: (err) => reject(err)
+        });
       });
-    });
-  }
-
+    }
+   */
   getCoursSemaineEnseignant(enseiId: number): Promise<ListeCours[]> {
     return new Promise((resolve, reject) => {
       this.planificationService.getListeCoursSemaineByEnseignant(enseiId).subscribe({
@@ -347,14 +700,14 @@ export class DashboardEnseignantComponent implements OnInit {
     });
   }
 
-  getStatutCoursLabel(statut: string): string {
-    const labels: Record<string, string> = {
-      termine: 'Terminé',
-      en_cours: 'En cours',
-      a_venir: 'À venir'
-    };
-    return labels[statut] || statut;
-  }
+  /*   getStatutCoursLabel(statut: string): string {
+      const labels: Record<string, string> = {
+        termine: 'Terminé',
+        en_cours: 'En cours',
+        a_venir: 'À venir'
+      };
+      return labels[statut] || statut;
+    } */
 
   getTypeEleveCls(type: string): string {
     const classes: Record<string, string> = {

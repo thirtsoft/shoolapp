@@ -194,10 +194,11 @@
   opacity: 0.7;
 }
 
-/* ── Grille & Cards ────────────────────────── */
+/* ══════════ GRILLE & CARDS ══════════ */
+
 .dp-grid {
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: minmax(0, 65fr) minmax(0, 35fr);
   gap: 16px;
   flex-shrink: 0;
 }
@@ -558,7 +559,6 @@
   flex-shrink: 0;
 }
 
-/* ── Responsive ───────────────────────────────── */
 @media (max-width: 1200px) {
   .dp-grid {
     grid-template-columns: 1fr;
@@ -601,5 +601,454 @@
 
   .kpi-ico {
     font-size: 24px;
+  }
+}
+
+.calendar-card {
+  width: 100%;
+}
+
+.calendar-container {
+  width: 100%;
+  min-height: 650px;
+  overflow: hidden;
+}
+
+.calendar-container .fc-event {
+  cursor: pointer;
+  transition: filter 0.15s ease, transform 0.15s ease;
+}
+
+.calendar-container .fc-event:hover {
+  filter: brightness(0.95);
+  transform: translateY(-1px);
+}
+
+.calendar-container .fc-event {
+  cursor: pointer;
+}
+
+
+/* ============================================
+   MODAL DÉTAILS DU COURS
+   ============================================ */
+
+.cours-modal-overlay {
+  position: fixed;
+  inset: 0;
+
+  z-index: 9999;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  padding: 1rem;
+
+  background: rgba(15, 23, 42, 0.55);
+
+  backdrop-filter: blur(3px);
+  -webkit-backdrop-filter: blur(3px);
+
+  animation: coursModalOverlayFadeIn 0.2s ease-out;
+}
+
+.cours-modal-container {
+  width: 100%;
+  max-width: 500px;
+
+  max-height: 90vh;
+
+  background: #ffffff;
+
+  border-radius: 14px;
+
+  box-shadow:
+    0 20px 50px rgba(15, 23, 42, 0.20),
+    0 4px 12px rgba(15, 23, 42, 0.10);
+
+  overflow: hidden;
+
+  animation: coursModalFadeIn 0.2s ease-out;
+}
+
+
+/* =========================
+   HEADER
+   ========================= */
+
+.cours-modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  padding: 1rem 1.25rem;
+
+  border-bottom: 1px solid #e5e7eb;
+
+  background: #ffffff;
+}
+
+.cours-modal-header h3 {
+  display: flex;
+  align-items: center;
+
+  margin: 0;
+
+  font-size: 1rem;
+  font-weight: 600;
+
+  color: #1f2937;
+}
+
+.cours-modal-header h3 i {
+  color: var(--primary);
+}
+
+.cours-modal-close {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  width: 34px;
+  height: 34px;
+
+  padding: 0;
+
+  border: none;
+  border-radius: 8px;
+
+  background: transparent;
+
+  color: #6b7280;
+
+  cursor: pointer;
+
+  transition:
+    background-color 0.2s ease,
+    color 0.2s ease;
+}
+
+.cours-modal-close:hover {
+  background: #f3f4f6;
+  color: #dc3545;
+}
+
+
+/* =========================
+   BODY
+   ========================= */
+
+.cours-modal-body {
+  padding: 1.25rem;
+}
+
+
+/* =========================
+   DÉTAILS
+   ========================= */
+
+.cours-detail {
+  display: flex;
+  flex-direction: column;
+
+  gap: 0;
+
+  border: 1px solid #e5e7eb;
+  border-radius: 10px;
+
+  overflow: hidden;
+}
+
+.cours-detail-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  gap: 1rem;
+
+  padding: 0.85rem 1rem;
+
+  border-bottom: 1px solid #edf2f7;
+}
+
+.cours-detail-item:last-child {
+  border-bottom: none;
+}
+
+.cours-detail-label {
+  display: flex;
+  align-items: center;
+
+  gap: 0.5rem;
+
+  min-width: 105px;
+
+  font-size: 0.8rem;
+  font-weight: 600;
+
+  color: #718096;
+}
+
+.cours-detail-label i {
+  width: 16px;
+
+  color: #2c5282;
+
+  text-align: center;
+}
+
+.cours-detail-value {
+  flex: 1;
+
+  text-align: right;
+
+  font-size: 0.875rem;
+  font-weight: 500;
+
+  color: #2d3748;
+}
+
+.cours-detail-title {
+  font-weight: 600;
+  color: #1f2937;
+}
+
+
+/* =========================
+   FOOTER
+   ========================= */
+
+.cours-modal-footer {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+
+  padding: 0.85rem 1.25rem;
+
+  border-top: 1px solid #e5e7eb;
+
+  background: #f8fafc;
+}
+
+.cours-btn-close {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  padding: 0.55rem 1rem;
+
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+
+  background: #ffffff;
+
+  color: #4b5563;
+
+  font-size: 0.85rem;
+  font-weight: 500;
+
+  cursor: pointer;
+
+  transition:
+    background-color 0.2s ease,
+    border-color 0.2s ease,
+    color 0.2s ease;
+}
+
+.cours-btn-close:hover {
+  background: #f3f4f6;
+  border-color: #9ca3af;
+  color: #1f2937;
+}
+
+
+/* =========================
+   ANIMATION
+   ========================= */
+
+@keyframes coursModalOverlayFadeIn {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes coursModalFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-15px) scale(0.98);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+
+/* =========================
+   RESPONSIVE
+   ========================= */
+
+@media (max-width: 480px) {
+
+  .cours-modal-overlay {
+    padding: 0.75rem;
+  }
+
+  .cours-modal-container {
+    max-width: 100%;
+    border-radius: 12px;
+  }
+
+  .cours-modal-header {
+    padding: 0.9rem 1rem;
+  }
+
+  .cours-modal-body {
+    padding: 1rem;
+  }
+
+  .cours-detail-item {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 0.35rem;
+  }
+
+  .cours-detail-value {
+    width: 100%;
+    text-align: left;
+  }
+
+  .cours-modal-footer {
+    padding: 0.85rem 1rem;
+  }
+}
+
+/* =========================================================
+   MES CLASSES / ENSEIGNEMENTS
+   ========================================================= */
+
+.enseignement-item {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 14px 16px;
+  border-bottom: 1px solid #eef1f5;
+  transition: background-color 0.2s ease;
+}
+
+.enseignement-item:last-child {
+  border-bottom: none;
+}
+
+.enseignement-item:hover {
+  background: #f8fafc;
+}
+
+.enseignement-item .eleve-ico {
+  width: 42px;
+  height: 42px;
+  min-width: 42px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 10px;
+  background: #eef6ff;
+  font-size: 21px;
+}
+
+.enseignement-item .eleve-info {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.enseignement-item .eleve-nom {
+  font-size: 15px;
+  font-weight: 700;
+  color: #1f2937;
+}
+
+.enseignement-item .eleve-classe {
+  font-size: 13px;
+  font-weight: 500;
+  color: #2563eb;
+}
+
+.enseignement-annee {
+  font-size: 12px;
+  color: #8a94a6;
+}
+
+/* =========================================================
+   BOUTON GÉRER LA CLASSE
+   ========================================================= */
+
+.enseignement-action {
+  flex-shrink: 0;
+}
+
+.btn-gerer-classe {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 8px 13px;
+  border: 1px solid #dbe4f0;
+  border-radius: 8px;
+  background: #ffffff;
+  color: #2563eb;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition:
+    background-color 0.2s ease,
+    border-color 0.2s ease,
+    color 0.2s ease,
+    transform 0.2s ease;
+}
+
+.btn-gerer-classe:hover {
+  background: #2563eb;
+  border-color: #2563eb;
+  color: #ffffff;
+  transform: translateX(2px);
+}
+
+.btn-arrow {
+  font-size: 15px;
+  line-height: 1;
+}
+
+/* =========================================================
+   RESPONSIVE
+   ========================================================= */
+
+@media (max-width: 700px) {
+
+  .enseignement-item {
+    align-items: flex-start;
+  }
+
+  .enseignement-action {
+    margin-left: auto;
+  }
+
+  .btn-gerer-classe {
+    padding: 7px 10px;
+  }
+
+  .btn-gerer-classe span:first-child {
+    display: none;
+  }
+
+  .btn-arrow {
+    font-size: 18px;
   }
 }

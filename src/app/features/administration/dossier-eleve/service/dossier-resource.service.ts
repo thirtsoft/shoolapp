@@ -183,8 +183,20 @@ export class DossierResourceService {
     return this.http.post<ResponseMessage>(url, resource);
   }
 
+
+  createUneEvaluationRessource<T>(endpoint: string, resource: T): Observable<ResponseMessage> {
+    const url = `${this.baseUrl_1}/${endpoint}/save`;
+    return this.http.post<ResponseMessage>(url, resource, this.httpOptions);
+  }
+
+
   updateUneReource(endpoint: string, id: number, value: any) {
     const url = `${this.baseUrl_1}/${endpoint}/update/${id}`;
+    return this.http.put<ResponseMessage>(url, value);
+  }
+
+  updateNotesEvaluationsReource(endpoint: string, id: number, value: any) {
+    const url = `${this.baseUrl_1}/${endpoint}/update/${id}/notes`;
     return this.http.put<ResponseMessage>(url, value);
   }
 

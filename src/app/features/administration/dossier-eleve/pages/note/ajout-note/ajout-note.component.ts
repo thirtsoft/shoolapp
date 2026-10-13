@@ -263,7 +263,7 @@ export class AjoutNoteComponent implements OnInit {
 
     console.log('Payload:', payload);
 
-    this.dossierResource.updateUneReource('evaluation', this.selectedEvaluationForNotes.id, payload).subscribe({
+    this.dossierResource.updateNotesEvaluationsReource('evaluation', this.selectedEvaluationForNotes.id, payload).subscribe({
       next: (response) => {
         console.log('response:', response);
         this.toastService.success('Succès', 'Notes sauvegardées avec succès');

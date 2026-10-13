@@ -2,6 +2,8 @@
 export interface EvaluationEditNote {
   id?: number;
 
+  numeroEvaluation?: string;
+  
   titre?: string;
 
   description?: string;

@@ -108,7 +108,7 @@ export class CreateEvaluationComponent implements OnInit {
       heureFin: this.evaluationFormGroup.get("heureFin")!.value,
     }
     console.log('Log', payload);
-    this.dossierResource.ajouterEditResource('evaluation', payload).subscribe({
+    this.dossierResource.createUneEvaluationRessource('evaluation', payload).subscribe({
       next: (data) => {
         if (data.statut === 'OK') {
           this.toastService.success('succès', 'L\'évaluation a été enregistrées avec succès !!! ');
@@ -125,7 +125,7 @@ export class CreateEvaluationComponent implements OnInit {
   }
 
   goBack() {
-    this.router.navigate(['/admin/dossier-eleve/evaluations'])
+    void this.router.navigate(['/admin/dossier-eleve/evaluations'])
   }
 
 

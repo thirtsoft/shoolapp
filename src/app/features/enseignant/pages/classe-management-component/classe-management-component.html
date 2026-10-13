@@ -3,15 +3,13 @@
   <!-- ═══════════ HEADER ═══════════ -->
   <header class="page-header">
     <div class="header-top">
-      <button class="btn-back" routerLink="/enseignant/mes-enseignements" title="Retour">
-        ← Retour
-      </button>
+      <button class="btn-back" routerLink="/enseignant/dashboard" title="Retour">← Retour</button>
       <h1 class="header-title">
-        <span class="matiere-badge">{{ matiere() }}</span>
+        <span class="matiere-badge">{{ this.contexteClasse()?.matiere }}</span>
         <span class="separator">•</span>
-        <span class="classe-badge">{{ classe() }}</span>
+        <span class="classe-badge">{{ this.contexteClasse()?.classe }}</span>
       </h1>
-      <span class="annee-scolaire">{{ anneeScolaire() }}</span>
+      <span class="annee-scolaire">{{ this.contexteClasse()?.anneeScolaire }}</span>
     </div>
 
     <!-- Bloc stats rapide -->
@@ -42,7 +40,7 @@
   <!-- ═══════════ NAVIGATION PAR ONGLETS ═══════════ -->
   <div class="tabs">
     <button class="tab" [class.active]="activeTab() === 'appel'" (click)="changerOnglet('appel')">
-      📋 Appel des absences
+      📋 Faire l'appel
       @if (totalAbsents > 0) {
         <span class="tab-badge">{{ totalAbsents }}</span>
       }
@@ -89,7 +87,7 @@
   @if (activeTab() === 'appel') {
     <div class="tab-content">
       <div class="tab-header">
-        <h2>📋 Appel des absences</h2>
+        <h2>📋 Faire l'appel</h2>
         <span class="date-jour">{{ today() }}</span>
         <button class="btn btn-primary" (click)="sauvegarderAppel()">💾 Sauvegarder l'appel</button>
       </div>
@@ -104,8 +102,7 @@
           <thead>
             <tr>
               <th>N°</th>
-              <th>Nom</th>
-              <th>Prénom</th>
+              <th>Élève</th>
               <th>Statut</th>
               <th>Motif</th>
               <th>Action</th>
@@ -116,9 +113,8 @@
               <tr [class.absent-row]="eleve.absent">
                 <td class="text-center">{{ i + 1 }}</td>
                 <td>
-                  <strong>{{ eleve.nom }}</strong>
+                  <strong>{{ eleve.prenom }} - {{ eleve.nom }}</strong>
                 </td>
-                <td>{{ eleve.prenom }}</td>
                 <td>
                   <span
                     class="status-badge"
@@ -163,7 +159,7 @@
         <button class="btn btn-primary" (click)="creerExercice()">➕ Créer un exercice</button>
       </div>
 
-      <div class="table-responsive">
+      <!--  <div class="table-responsive">
         <table class="data-table">
           <thead>
             <tr>
@@ -207,7 +203,31 @@
             }
           </tbody>
         </table>
-      </div>
+      </div> -->
+      <app-generic-table-dossier
+        titleFitre="Exercice"
+        [tableColumns]="columns"
+        [tableData]="exerciceData"
+        [isLoading]="isLoading"
+        [isNoAjout]="true"
+        [isEditIcon]="true"
+        [isLockableIcon]="isLockable"
+        [tableSizes]="tableSizes"
+        [totalElements]="totalElements"
+        [currentPage]="currentPage"
+        [pageSize]="pageSize"
+        (pageChange)="changePage($event)"
+        addButtonLink="/admin/planification/exercice/create"
+        modifierButtonLink="/admin/planification/exercice/edit"
+        [deleteEndPoint]="deleteExerciceEndpoint"
+        [showSearch]="false"
+        [filtered]="tableFilters"
+        (filterChange)="onFilterChange($event.filter, $event.value)"
+        [showFilters]="true"
+        (resetFilters)="resetFilters()"
+        (sizeChange)="changeSize($event)"
+      >
+      </app-generic-table-dossier>
     </div>
   }
 
@@ -219,168 +239,139 @@
         <button class="btn btn-primary" (click)="creerEvaluation()">➕ Créer une évaluation</button>
       </div>
 
-      <div class="table-responsive">
-        <table class="data-table">
-          <thead>
-            <tr>
-              <th>Titre</th>
-              <th>Type</th>
-              <th>Date</th>
-              <th>Coefficient</th>
-              <th>Note max</th>
-              <th>Statut</th>
-              <th>Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            @for (evaluation of evaluations(); track evaluation.id) {
-              <tr>
-                <td>
-                  <strong>{{ evaluation.titre }}</strong>
-                </td>
-                <td>
-                  <span class="eval-type" [class]="evaluation.type.toLowerCase()">
-                    {{ evaluation.type }}
-                  </span>
-                </td>
-                <td>{{ evaluation.date | date: 'dd/MM/yyyy' }}</td>
-                <td class="text-center">×{{ evaluation.coefficient }}</td>
-                <td class="text-center">/{{ evaluation.noteMax }}</td>
-                <td>
-                  <span
-                    class="status-badge"
-                    [class.status-present]="evaluation.statut === 'Publiée'"
-                    [class.status-absent]="evaluation.statut === 'En attente'"
-                  >
-                    {{ evaluation.statut }}
-                  </span>
-                </td>
-                <td>
-                  <button class="btn-icon" title="Modifier">✏️</button>
-                  <button class="btn-icon btn-danger" title="Supprimer">🗑️</button>
-                </td>
-              </tr>
-            }
-          </tbody>
-        </table>
-      </div>
+      <app-generic-table-dossier
+        titleFitre="Evaluation"
+        [tableColumns]="columns"
+        [tableData]="evaluationData"
+        [isLoading]="isLoading"
+        [isNoAjout]="true"
+        [isEditIcon]="isEdit"
+        [showEditOrDeleteCondition]="canEditOrDeleteEvaluation.bind(this)"
+        [isEyesIcon]="true"
+        [isLockableIcon]="isLockable"
+        [tableSizes]="tableSizes"
+        [totalElements]="totalElements"
+        [currentPage]="currentPage"
+        [pageSize]="pageSize"
+        (pageChange)="changePage($event)"
+        [deleteEndPoint]="deleteEvaluationEndpoint"
+        [showSearch]="false"
+        [filtered]="tableFilters"
+        (filterChange)="onFilterChange($event.filter, $event.value)"
+        [showFilters]="true"
+        (resetFilters)="resetFilters()"
+        (sizeChange)="changeSize($event)"
+        modifierButtonLink="/enseignant/evaluation/edit"
+        detailButtonLink="/enseignant/evaluation/details"
+      >
+      </app-generic-table-dossier>
     </div>
   }
 
   <!-- Onglet 4 : SAISIE DES NOTES -->
   @if (activeTab() === 'notes') {
-    <!-- Onglet 4 : SAISIE DES NOTES -->
-    @if (activeTab() === 'notes') {
-      <div class="tab-content">
-        <div class="tab-header">
-          <h2>✏️ Saisie des notes</h2>
-          <div class="notes-summary">
-            <span
-              >Moyenne : <strong>{{ moyenneClasse }}/20</strong></span
-            >
-            <span
-              >Max : <strong>{{ noteMaximale }}/20</strong></span
-            >
-            <span
-              >Min : <strong>{{ noteMinimale }}/20</strong></span
-            >
-          </div>
+    <div class="tab-content">
+      <div class="tab-header">
+        <h2>✏️ Saisie des notes</h2>
+        <div class="notes-summary">
+          <span
+            >Moyenne : <strong>{{ moyenneClasse }}/20</strong></span
+          >
+          <span
+            >Max : <strong>{{ noteMaximale }}/20</strong></span
+          >
+          <span
+            >Min : <strong>{{ noteMinimale }}/20</strong></span
+          >
         </div>
+      </div>
 
-        <!-- Sélecteur d'évaluation -->
-        <div class="evaluation-selector">
-          <div class="selector-group">
-            <label class="selector-label">
-              <i class="fas fa-clipboard-list"></i> Choisir une évaluation :
-            </label>
-            <select class="form-select evaluation-select" (change)="onEvaluationChange($event)">
-              <option value="" disabled selected>— Sélectionnez une évaluation —</option>
-              @for (evaluation of evaluations(); track evaluation.id) {
-                <option [value]="evaluation.id">
-                  {{ evaluation.titre }} ({{ evaluation.type }} - Coef.
-                  {{ evaluation.coefficient }})
-                </option>
-              }
-            </select>
-          </div>
-
-          @if (selectedEvaluationForNotes) {
-            <div class="selected-info">
-              <span class="badge-info"> 📝 {{ selectedEvaluationForNotes.titre }} </span>
-              <span class="badge-info">
-                📅 {{ selectedEvaluationForNotes.date | date: 'dd/MM/yyyy' }}
-              </span>
-              <span class="badge-info">
-                ⚖️ Coefficient ×{{ selectedEvaluationForNotes.coefficient }}
-              </span>
-            </div>
-          }
+      <!-- Sélecteur d'évaluation -->
+      <div class="evaluation-selector">
+        <div class="selector-group">
+          <label class="selector-label">
+            <i class="fas fa-clipboard-list"></i> Choisir une évaluation :
+          </label>
+          <select class="form-select evaluation-select" (change)="onEvaluationChange($event)">
+            <option value="" disabled selected>— Sélectionnez une évaluation —</option>
+            @for (evaluation of evaluationForNotes; track evaluation.id) {
+              <option [value]="evaluation.id">
+                {{ evaluation.titre }} ({{ evaluation.evaluationType }} - Coef.
+                {{ evaluation.numeroEvaluation }})
+              </option>
+            }
+          </select>
         </div>
 
         @if (selectedEvaluationForNotes) {
-          <div class="notes-actions">
-            <button class="btn btn-primary" (click)="sauvegarderNotes()">
-              💾 Sauvegarder toutes les notes
-            </button>
-          </div>
-
-          <div class="table-responsive">
-            <table class="data-table notes-table">
-              <thead>
-                <tr>
-                  <th class="sticky-col">Élève</th>
-                  <th>Note /{{ selectedEvaluationForNotes.noteMax }}</th>
-                  <th>Coefficient ×{{ selectedEvaluationForNotes.coefficient }}</th>
-                  <th>Appréciation</th>
-                </tr>
-              </thead>
-              <tbody>
-                @for (note of notes(); track note.eleveId; let i = $index) {
-                  <tr>
-                    <td class="sticky-col">
-                      <div class="eleve-cell">
-                        <div class="eleve-avatar-small">
-                          {{ (note.prenom.charAt(0) || '') + (note.nom.charAt(0) || '') }}
-                        </div>
-                        <span>{{ note.nom }} {{ note.prenom }}</span>
-                      </div>
-                    </td>
-                    <td class="text-center">
-                      <input
-                        type="number"
-                        class="note-input"
-                        [(ngModel)]="note.evaluations[selectedEvaluationForNotes.id]"
-                        min="0"
-                        [max]="selectedEvaluationForNotes.noteMax"
-                        step="0.5"
-                      />
-                    </td>
-                    <td class="text-center">
-                      <span class="coefficient-badge"
-                        >×{{ selectedEvaluationForNotes.coefficient }}</span
-                      >
-                    </td>
-                    <td>
-                      <input
-                        type="text"
-                        class="appreciation-input"
-                        [(ngModel)]="note.appreciation"
-                        placeholder="Appréciation..."
-                      />
-                    </td>
-                  </tr>
-                }
-              </tbody>
-            </table>
-          </div>
-        } @else {
-          <div class="empty-notes-state">
-            <i class="fas fa-chart-line"></i>
-            <p>Veuillez sélectionner une évaluation pour commencer la saisie des notes</p>
+          <div class="selected-info">
+            <span class="badge-info"> 📝 {{ selectedEvaluationForNotes.titre }} </span>
+            <span class="badge-info">
+              📅 {{ selectedEvaluationForNotes.dateEvaluation | date: 'dd/MM/yyyy' }}
+            </span>
+            <span class="badge-info"> ⚖️ ×{{ selectedEvaluationForNotes.evaluationType }} </span>
           </div>
         }
       </div>
-    }
+
+      @if (selectedEvaluationForNotes) {
+        <div class="notes-actions">
+          <button
+            type="button"
+            class="btn btn-primary"
+            [disabled]="isSavingNotes"
+            (click)="sauvegarderNotes()"
+          >
+            @if (isSavingNotes) {
+              <i class="fas fa-spinner fa-spin"></i>
+              Enregistrement...
+            } @else {
+              <i class="fas fa-save"></i>
+              Enregistrer les notes
+            }
+          </button>
+        </div>
+
+        <div class="table-responsive">
+          <table class="data-table notes-table">
+            <thead>
+              <tr>
+                <th class="sticky-col">Élève</th>
+                <th>Note /{{ selectedEvaluationForNotes.noteMax }}</th>
+                <th>Appréciation</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (note of notesData(); track note.id) {
+                <tr>
+                  <td>{{ note.nomComplet }}</td>
+
+                  <td>
+                    <input
+                      type="number"
+                      class="note-input"
+                      min="0"
+                      [max]="selectedEvaluationForNotes?.noteMax || 20"
+                      [(ngModel)]="note.note"
+                      (ngModelChange)="calculerStatistiques()"
+                    />
+                  </td>
+
+                  <td>
+                    <input type="text" class="appreciation-input" [(ngModel)]="note.appreciation" />
+                  </td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      } @else {
+        <div class="empty-notes-state">
+          <i class="fas fa-chart-line"></i>
+          <p>Veuillez sélectionner une évaluation pour commencer la saisie des notes</p>
+        </div>
+      }
+    </div>
   }
 
   <!-- Onglet 5 : BULLETINS -->
@@ -686,7 +677,7 @@
         </div>
 
         <!-- Ligne 2: Livre au programme -->
-        <div class="form-group">
+        <!--   <div class="form-group">
           <label class="form-label"> Livre au programme </label>
           <select class="form-select" [(ngModel)]="exerciceForm.livreChoisi">
             <option value="" selected>— Aucun livre —</option>
@@ -694,7 +685,7 @@
               <option [value]="livre">{{ livre }}</option>
             }
           </select>
-        </div>
+        </div> -->
 
         <!-- Ligne 3: Numéro exercice + Lien (2 colonnes) -->
         <div class="row-2cols">

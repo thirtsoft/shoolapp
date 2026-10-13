@@ -1,12 +1,22 @@
 import { DatePipe } from '@angular/common';
 import { Component, inject, OnInit, signal } from '@angular/core';
-import { FormBuilder, FormsModule } from '@angular/forms';
+import { FormBuilder, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
+import { ToastrService } from 'ngx-toastr';
+import { IFilterConfig } from '../../../../core/filtered-config/FiltreConfiguration';
+import { GenericTableDossierComponent } from '../../../../core/generic/generic-table-dossier/generic-table-dossier.component';
+import { EvaluationEditNote } from '../../../../core/models/dossiereleve/evaluation/evaluation-edit-note';
+import { EvaluationEditRequest } from '../../../../core/models/dossiereleve/evaluation/evaluation-edit-resquest';
+import { ListeEleve } from '../../../../core/models/dossiereleve/liste-eleve';
+import { SessionSemestre } from '../../../../core/models/referentiels/session-semestre';
+import { CommonService } from '../../../../core/services/common.service';
 import { PieceJointeService } from '../../../../core/services/piece-jointe';
+import { DossierResourceService } from '../../../administration/dossier-eleve/service/dossier-resource.service';
 import { PlanificationResourceService } from '../../../administration/planification/services/planification-resource.service';
+import { Etat } from '../../../administration/referentiel/pages/semestre/editer-session-semestre-component/editer-session-semestre-component';
 import { ReferentielService } from '../../../administration/referentiel/service/referentiel.service';
 import { EnseignantService } from '../../service/enseignant.service';
-import { ToastrService } from 'ngx-toastr';
+import { EnseignementContextService, GestionClasseContext } from '../../service/enseignement-contexte.service';
 // ─── Interfaces ───────────────────────────────────────
 export interface Eleve {
   id: string;
@@ -46,6 +56,14 @@ export interface NoteEleve {
   };
   moyenne: number;
   appreciation?: string;
+}
+
+export interface NoteSaisie {
+  id: number;
+  eleve: number;
+  nomComplet: string;
+  note: number;
+  appreciation: string;
 }
 
 export interface Bulletin {
@@ -97,15 +115,77 @@ interface ExerciceForm {
 @Component({
   selector: 'app-classe-management-component',
   standalone: true,
-  imports: [RouterModule, FormsModule, DatePipe],
+  imports: [RouterModule, FormsModule, DatePipe, ReactiveFormsModule, GenericTableDossierComponent],
   templateUrl: './classe-management-component.html',
   styleUrl: './classe-management-component.css',
 })
 export class ClasseManagementComponent implements OnInit {
 
+  isEdit: boolean = true;
+  isLoading: boolean = false;
+  filteredDataExercice: any;
+  isLockable: boolean = true;
+  isTable: boolean = true;
+  deleteExerciceEndpoint = "exercice";
+  columns: any = [];
+  exerciceData: any = [];
+
+  deleteEvaluationEndpoint = "evaluation";
+  evaluationData: any = [];
+
+  sessionSemestreList: any[] = [];
+  etatEvaluationOptions: any[] = [];
+
+
+  etatCongesList: Etat[] = [
+    {
+      id: 8,
+      code: 'E8',
+      libelle: 'En cours',
+
+    },
+    {
+      id: 2,
+      code: 'E2',
+      libelle: 'Remise',
+
+    },
+    {
+      id: 3,
+      code: 'E3',
+      libelle: 'Envoyée',
+
+    },
+    {
+      id: 4,
+      code: 'E4',
+      libelle: 'Validée',
+
+    }
+  ];
+
+
+
+  public readonly String = String;
+
+  currentPage = 0;
+  pageSize = 10;
+  totalElements = 0;
+  tableSizes = [10, 20, 50, 100];
+
+  moisList: any[] = [];
+
+  tableFilters: IFilterConfig[] = [];
+  activeFilters: any = {};
+  hasActiveFilters: boolean = false;
 
   classeId?: number;
-  //  classe: Classe = {};
+
+  contexteClasse = signal<GestionClasseContext | null>(null);
+
+  isSavingNotes: boolean = false;
+  selectedEvaluationForNotes: any = null;
+  currentNotesData: NoteEleve[] = [];
 
   private readonly route = inject(ActivatedRoute);
   private readonly referentielService = inject(ReferentielService);
@@ -116,11 +196,26 @@ export class ClasseManagementComponent implements OnInit {
   private readonly activeRoute = inject(ActivatedRoute);
   private readonly router = inject(Router);
   private readonly _formBuilder = inject(FormBuilder);
+  private readonly commonService = inject(CommonService);
+  private readonly enseignementContextService = inject(EnseignementContextService);
+  private readonly dossierResource = inject(DossierResourceService);
 
   constructor(
   ) {
     this.classeId = Number(this.activeRoute.snapshot.params['id']);
+
     console.log('ClassID', this.classeId);
+
+    const contexte = this.enseignementContextService.getGestionClasseContext();
+
+    if (contexte) {
+      this.contexteClasse.set(contexte);
+
+      console.log('contexteClasse', this.contexteClasse()?.classe);
+      console.log('contexteClasse', this.contexteClasse()?.matiere);
+      console.log('contexteClasse', this.contexteClasse()?.anneeScolaire);
+    }
+
   }
 
   // ─── Contexte (vient des query params) ──────────────
@@ -137,6 +232,15 @@ export class ClasseManagementComponent implements OnInit {
   notes = signal<NoteEleve[]>([]);
   bulletins = signal<Bulletin[]>([]);
   exercices = signal<Exercice[]>([]);
+
+  evaluationForNotes: EvaluationEditNote[] = [];
+
+  notesData = signal<NoteSaisie[]>([]);
+  eleveList: ListeEleve[] = [];
+
+  moyenneClasse: number = 0;
+  noteMaximale: number = 0;
+  noteMinimale: number = 0;
 
   // Dans le composant
   showAbsenceFormModal = signal<boolean>(false);
@@ -167,22 +271,6 @@ export class ClasseManagementComponent implements OnInit {
   typesEvaluation: string[] = ['DEVOIR', 'COMPOSITION', 'TP', 'EXAMEN'];
   modesEvaluation: string[] = ['NORMAL', 'RATTRAPAGE'];
 
-  livresProgramme: string[] = [
-    'Mathématiques 3ème - Collection Sirius',
-    'Mathématiques 3ème - Transmath',
-    'Mathématiques 3ème - Phare',
-    'Mathématiques 3ème - Dimathème',
-    'Physique Chimie 3ème - Collection Euclide',
-    'Physique Chimie 3ème - Collection Espace',
-    'Français 3ème - Fleurs d\'encre',
-    'Français 3ème - Terres Littéraires',
-    'Anglais 3ème - Join the Team',
-    'Anglais 3ème - New Live',
-    'Histoire-Géographie 3ème - Hatier',
-    'Histoire-Géographie 3ème - Nathan',
-    'SVT 3ème - Collection Lizeaux',
-    'SVT 3ème - Collection Escalier'
-  ];
 
   // Dans le composant
   showExerciceModal = signal<boolean>(false);
@@ -197,17 +285,339 @@ export class ClasseManagementComponent implements OnInit {
     pieceJointe: null
   };
 
-  // Ajouter dans le composant
-  selectedEvaluationForNotes: any = null;
-  currentNotesData: NoteEleve[] = [];
+
 
   ngOnInit(): void {
-    this.route.queryParams.subscribe(params => {
-      if (params['matiere']) this.matiere.set(params['matiere']);
-      if (params['classe']) this.classe.set(params['classe']);
-      if (params['annee']) this.anneeScolaire.set(params['annee']);
-    });
     this.chargerDonnees();
+    this.chargerLesExercices();
+    this.chargerLesEvaluations();
+    this.getEvaluationsList();
+  }
+
+  async chargerLesExercices() {
+    try {
+      await Promise.all([
+        this.getMoisList(),
+      ]);
+
+      this.initialisationDesFiltresExercice();
+      this.chargerLesDonneesExercices(false);
+    } catch (error) {
+      console.error('Erreur chargement données:', error);
+    }
+  }
+
+  async chargerLesEvaluations() {
+    try {
+      await Promise.all([
+        this.getEtatEvaluationList(),
+        this.getMoisList(),
+        this.getSessionSemestreList()
+      ]);
+
+      this.initialisationDesFiltresEvaluation();
+      this.chargerLesDonneesEvaluation(false);
+    } catch (error) {
+      console.error('Erreur chargement données:', error);
+    }
+  }
+
+  getSessionSemestreList(): Promise<SessionSemestre[]> {
+    return new Promise((resolve, reject) => {
+      this.planification.getResourceListe('referentiel/sessionsemestre').subscribe({
+        next: (data: any) => {
+          this.sessionSemestreList = data;
+          resolve(data);
+        },
+        error: (err: any) => reject(err)
+      });
+    });
+  }
+
+  getEvaluationsList(): Promise<EvaluationEditRequest[]> {
+    return new Promise((resolve, reject) => {
+      this.planification.getResourceListByElement('evaluation/listclasse', Number(this.classeId)).subscribe({
+        next: (data: any) => {
+          this.evaluationForNotes = data;
+          resolve(data);
+        },
+        error: (err: any) => reject(err)
+      });
+    });
+  }
+
+  getEtatEvaluationList(): Promise<any[]> {
+    return new Promise((resolve, reject) => {
+      this.commonService.getEtatEvaluations().subscribe({
+        next: (data: any) => {
+          this.etatEvaluationOptions = data;
+          resolve(data);
+        },
+        error: (err: any) => reject(err)
+      });
+    });
+  }
+
+  initialisationDesFiltresEvaluation() {
+    this.tableFilters = [
+      {
+        key: 'sessionSemestre',
+        label: 'Semestre',
+        type: 'select',
+        options: this.sessionSemestreList.map(s => ({
+          value: s.id,
+          label: `${s.semestre}`
+        }))
+      },
+
+      {
+        key: 'etat',
+        label: 'Etat',
+        type: 'select',
+        options: this.etatEvaluationOptions.map(e => ({
+          value: e.etat,
+          label: e.etat
+        }))
+      },
+      {
+        key: 'mois',
+        label: 'Mois',
+        type: 'select',
+        options: this.moisList.map(m => ({
+          value: m.id,
+          label: m.mois
+        }))
+      },
+
+    ];
+  }
+
+  chargerLesDonneesEvaluation(useFilterApi: boolean) {
+    this.isLoading = true;
+    let apiCall;
+
+    if (useFilterApi) {
+
+      const filtreParam = this.construireParametreDeFiltreEvaluation();
+
+      apiCall = this.planification.fetchFilterDataTable(
+        'evaluation/classe',
+        this.currentPage,
+        this.pageSize,
+        filtreParam)
+
+    } else {
+      apiCall = this.planification.getResourceByIdPaged('evaluation/classe', Number(this.classeId), this.currentPage, this.pageSize);
+    }
+    apiCall.subscribe({
+      next: (response) => {
+        this.evaluationData = response.data?.content || [];
+        this.totalElements = response.data?.totalElements || 0;
+
+        this.evaluationData = this.evaluationData?.map((item: any) => ({
+          ...item,
+
+          dureEvaluation: item.heureDebut + ' à  ' + item.heureFin
+
+        }));
+
+        this.columns = [
+          { key: 'numeroEvaluation', header: 'N°' },
+          { key: 'titre', header: 'Titre' },
+          { key: 'evaluationMode', header: 'Mode' },
+          { key: 'sessionSemestre', header: 'Semestre' },
+          { key: 'evaluationType', header: 'Type' },
+          { key: 'etat', header: 'Etat' },
+          { key: 'dateEvaluation', header: 'Date' },
+          { key: 'dureEvaluation', header: 'Heure' },
+
+        ];
+
+
+        this.isLoading = false;
+      },
+      error: (error) => {
+        console.error("Erreur:", error);
+        this.isLoading = false;
+      }
+    });
+  }
+
+  construireParametreDeFiltreEvaluation(): any {
+    const filtreObj: any = {};
+    if (this.activeFilters?.sessionSemestre) {
+      filtreObj.sessionSemestre = this.activeFilters.sessionSemestre;
+    }
+    if (this.activeFilters.etat) {
+      filtreObj.etat = this.activeFilters.etat;
+    }
+    if (this.activeFilters.mois) {
+      filtreObj.mois = this.activeFilters.mois;
+    }
+    return Object.keys(filtreObj).length > 0 ? filtreObj : null;
+
+  }
+
+  get totalPagesEvaluation(): number {
+    return Math.ceil(this.totalElements / this.pageSize);
+  }
+
+  changePageEvaluation(pageNumber: number) {
+    if (pageNumber >= 0 && pageNumber < this.totalPages) {
+      this.currentPage = pageNumber;
+      this.chargerLesDonneesEvaluation(this.hasActiveFilters);
+    }
+  }
+
+  changeSizeEvaluation(size: number | string) {
+    const newSize = typeof size === 'string' ? parseInt(size, 10) : size;
+    if (this.pageSize !== newSize) {
+      this.pageSize = newSize;
+      this.currentPage = 0;
+      this.chargerLesDonneesEvaluation(this.hasActiveFilters);
+    }
+  }
+
+  resetFiltersEvaluation() {
+    this.activeFilters = {};
+    this.hasActiveFilters = false;
+    this.initialisationDesFiltresEvaluation();
+    this.currentPage = 0;
+    this.chargerLesDonneesEvaluation(false);
+  }
+
+  canEditOrDeleteEvaluation(item: any): boolean {
+    return item.etat !== 'Validée';
+  }
+
+
+  getMoisList(): Promise<any[]> {
+    return new Promise((resolve, reject) => {
+      this.commonService.getAllMois().subscribe({
+        next: (data) => {
+          this.moisList = data;
+          resolve(data);
+        },
+        error: (err) => reject(err)
+      });
+    });
+  }
+
+  initialisationDesFiltresExercice() {
+    this.tableFilters = [
+      {
+        key: 'titre',
+        label: 'Titre exercice',
+        type: 'text',
+        placeholder: 'Rechercher un exercie...'
+      },
+      {
+        key: 'mois',
+        label: 'Mois',
+        type: 'select',
+        options: this.moisList.map(m => ({
+          value: m.id,
+          label: `${m.mois}`
+        }))
+      },
+    ];
+  }
+
+  onFilterChange(filter: IFilterConfig, value: any) {
+    this.activeFilters[filter.key] = value;
+
+    this.hasActiveFilters = Object.values(this.activeFilters).some(val =>
+      val !== null && val !== undefined && val !== ''
+    );
+    this.currentPage = 0;
+    this.chargerLesDonneesExercices(this.hasActiveFilters);
+  }
+
+  chargerLesDonneesExercices(useFilterApi: boolean) {
+    this.isLoading = true;
+    let apiCall;
+
+    if (useFilterApi) {
+
+      const filtreParam = this.construireParametreFiltre();
+
+      apiCall = this.planification.fetchFilterDataTable(
+        'planification/enseignant/exercice/me',
+        this.currentPage,
+        this.pageSize,
+        filtreParam)
+
+    } else {
+      apiCall = this.planification.getResourceByIdPaged('planification/enseignant/exercice/me', Number(this.classeId), this.currentPage, this.pageSize);
+    }
+    apiCall.subscribe({
+      next: (response) => {
+        this.exerciceData = response.data?.content || [];
+        this.totalElements = response.data?.totalElements || 0;
+
+        this.columns = [
+          { key: 'numeroExercice', header: 'N°' },
+          { key: 'titre', header: 'Titre' },
+          { key: 'livre', header: 'Livre' },
+          { key: 'page', header: 'Page' },
+          { key: 'etatLibelle', header: 'Etat' },
+          { key: 'description', header: 'Description' },
+          { key: 'dateDebut', header: 'Date début' },
+          { key: 'dateFin', header: 'Date Fin' },
+        ];
+        this.exerciceData = this.exerciceData.map((item: any) => ({
+          ...item,
+        }));
+
+        this.isLoading = false;
+      },
+      error: (error) => {
+        console.error("Erreur:", error);
+        this.isLoading = false;
+      }
+    });
+  }
+
+  construireParametreFiltre(): any {
+    const filtreObj: any = {};
+
+    if (this.activeFilters.titre) {
+      filtreObj.titre = this.activeFilters.titre;
+    }
+    if (this.activeFilters.mois) {
+      filtreObj.mois = this.activeFilters.mois;
+    }
+    return Object.keys(filtreObj).length > 0 ? filtreObj : null;
+
+  }
+
+  get totalPages(): number {
+    return Math.ceil(this.totalElements / this.pageSize);
+  }
+
+  changePage(pageNumber: number) {
+    if (pageNumber >= 0 && pageNumber < this.totalPages) {
+      this.currentPage = pageNumber;
+      this.chargerLesDonneesExercices(this.hasActiveFilters);
+    }
+  }
+
+
+  changeSize(size: number | string) {
+    const newSize = typeof size === 'string' ? parseInt(size, 10) : size;
+    if (this.pageSize !== newSize) {
+      this.pageSize = newSize;
+      this.currentPage = 0;
+      this.chargerLesDonneesExercices(this.hasActiveFilters);
+    }
+  }
+
+  resetFilters() {
+    this.activeFilters = {};
+    this.hasActiveFilters = false;
+    this.initialisationDesFiltresExercice();
+    this.currentPage = 0;
+    this.chargerLesDonneesExercices(false);
   }
 
   chargerDonnees(): void {
@@ -280,16 +690,6 @@ export class ClasseManagementComponent implements OnInit {
       },
     ]);
 
-    this.bulletins.set([
-      { eleveId: '1', nom: 'Dupont', prenom: 'Marie', moyenne: 13.5, rang: 4, appreciation: 'Bon trimestre. Continue à participer en classe.', decision: 'Admis' },
-      { eleveId: '2', nom: 'Martin', prenom: 'Lucas', moyenne: 9, rang: 7, appreciation: 'Résultats insuffisants. Baisse de concentration constatée.', decision: 'Avertissement' },
-      { eleveId: '3', nom: 'Bernard', prenom: 'Chloé', moyenne: 17.5, rang: 1, appreciation: 'Excellent trimestre. Félicitations pour ton investissement !', decision: 'Encouragement' },
-      { eleveId: '4', nom: 'Petit', prenom: 'Thomas', moyenne: 5.5, rang: 8, appreciation: 'Très grandes difficultés. Un redoublement est envisagé.', decision: 'Redouble' },
-      { eleveId: '5', nom: 'Robert', prenom: 'Emma', moyenne: 14.5, rang: 3, appreciation: 'Très bon trimestre, progrès constants.', decision: 'Admis' },
-      { eleveId: '6', nom: 'Richard', prenom: 'Hugo', moyenne: 10, rang: 6, appreciation: 'Trimestre correct, mais peut mieux faire en s\'investissant davantage.', decision: 'Admis' },
-      { eleveId: '7', nom: 'Durand', prenom: 'Léa', moyenne: 15, rang: 2, appreciation: 'Très bon travail, continue ainsi !', decision: 'Admis' },
-      { eleveId: '8', nom: 'Moreau', prenom: 'Nathan', moyenne: 7.5, rang: 5, appreciation: 'Trop d\'absences. Les résultats s\'en ressentent.', decision: 'Avertissement' },
-    ]);
   }
 
   // ─── Changement d'onglet ─────────────────────────────
@@ -313,26 +713,6 @@ export class ClasseManagementComponent implements OnInit {
 
   get evaluationsEnAttente(): number {
     return this.evaluations().filter(e => e.statut === 'En attente').length;
-  }
-
-  // ─── Calculs pour les notes ──────────────────────────
-  get moyenneClasse(): number {
-    const notes = this.notes();
-    if (notes.length === 0) return 0;
-    const somme = notes.reduce((acc, n) => acc + n.moyenne, 0);
-    return parseFloat((somme / notes.length).toFixed(2));
-  }
-
-  get noteMaximale(): number {
-    const notes = this.notes();
-    if (notes.length === 0) return 0;
-    return Math.max(...notes.map(n => n.moyenne));
-  }
-
-  get noteMinimale(): number {
-    const notes = this.notes();
-    if (notes.length === 0) return 0;
-    return Math.min(...notes.map(n => n.moyenne));
   }
 
   // ─── Sauvegarde (simulation) ─────────────────────────
@@ -486,7 +866,7 @@ export class ClasseManagementComponent implements OnInit {
   }
 
   creerEvaluation(): void {
-    this.showEvaluationModal.set(true);
+    void this.router.navigate(['/enseignant/evaluation']);
   }
 
   // Fermer le popup
@@ -569,10 +949,6 @@ export class ClasseManagementComponent implements OnInit {
       fichier: this.evaluationForm.fichier?.name || null
     };
 
-    // Ajouter à la liste des évaluations
-    //  this.evaluations.update(prev => [...prev, nouvelleEvaluation]);
-
-    // Afficher le fichier si présent
     if (this.evaluationForm.fichier) {
       console.log('Fichier joint:', this.evaluationForm.fichier.name);
     }
@@ -581,49 +957,173 @@ export class ClasseManagementComponent implements OnInit {
     this.fermerEvaluationModal();
   }
 
+  onEvaluationChange(event: Event): void {
+    const select = event.target as HTMLSelectElement;
+    const evaluationId = Number(select.value);
 
+    const evaluationComplete = this.evaluationForNotes.find(
+      e => e.id === evaluationId
+    );
 
-  // Sélectionner une évaluation pour saisir les notes
-  onEvaluationChange(event: any) {
-    const evaluationId = event.target.value;
-    this.selectedEvaluationForNotes = this.evaluations().find(e => e.id === evaluationId);
-
-    // Charger les notes existantes pour cette évaluation
-    this.chargerNotesPourEvaluation(this.selectedEvaluationForNotes);
-  }
-
-  // Charger les notes pour l'évaluation sélectionnée
-  chargerNotesPourEvaluation(evaluation: any) {
-    // Initialiser ou mettre à jour les notes
-    this.currentNotesData = this.notes().map(note => ({
-      ...note,
-      noteActuelle: note.evaluations[evaluation.id] || null
-    }));
-  }
-
-  // Sauvegarder la note pour un élève
-  sauvegarderNote(eleveId: string, evaluationId: string, noteValue: number) {
-    console.log(`Note ${noteValue} pour l'élève ${eleveId} à l'évaluation ${evaluationId}`);
-    // Ici, appel API pour sauvegarder la note
-  }
-
-  // Sauvegarder toutes les notes
-  sauvegarderNotes() {
-    if (!this.selectedEvaluationForNotes) {
-      alert('Veuillez d\'abord sélectionner une évaluation');
+    if (!evaluationComplete) {
+      this.selectedEvaluationForNotes = null;
+      this.notesData.set([]);
+      this.calculerStatistiques();
       return;
     }
 
-    // Récupérer toutes les notes saisies
-    const notesSaisies = this.currentNotesData.map(notes => ({
-      eleveId: notes.eleveId,
-      evaluationId: this.selectedEvaluationForNotes.id,
-      //    note: notes.noteActuelle,
-      appreciation: notes.appreciation
+    this.selectedEvaluationForNotes = evaluationComplete;
+
+    this.loadNotesFromEvaluation(evaluationComplete);
+  }
+
+  loadNotesFromEvaluation(evaluation: any): void {
+
+    const listeNotes = evaluation.noteEditRequestDTOList ?? [];
+
+    const notesFormatees: NoteSaisie[] = listeNotes.map((note: any) => ({
+      id: note.id,
+      eleve: note.eleve,
+      nomComplet: note.nomCompletEleve ?? `Élève ${note.eleve}`,
+      note: note.note ?? null,
+      appreciation: note.appreciation ?? ''
     }));
 
-    console.log('Notes sauvegardées:', notesSaisies);
-    alert(`Notes pour "${this.selectedEvaluationForNotes.titre}" sauvegardées avec succès !`);
+    this.notesData.set(notesFormatees);
+
+    this.calculerStatistiques();
+
+    console.log('Évaluation sélectionnée :', evaluation);
+    console.log('Notes chargées :', this.notesData());
+  }
+
+  calculerStatistiques(): void {
+    const notes = this.notesData();
+
+    const notesValues = notes
+      .map(n => n.note)
+      .filter((note): note is number =>
+        note !== null &&
+        note !== undefined &&
+        !Number.isNaN(Number(note))
+      )
+      .map(note => Number(note));
+
+    if (notesValues.length === 0) {
+      this.moyenneClasse = 0;
+      this.noteMaximale = 0;
+      this.noteMinimale = 0;
+      return;
+    }
+
+    const somme = notesValues.reduce((total, note) => total + note, 0);
+
+    this.moyenneClasse = Number((somme / notesValues.length).toFixed(2));
+
+    this.noteMaximale = Math.max(...notesValues);
+    this.noteMinimale = Math.min(...notesValues);
+  }
+
+  sauvegarderNotes(): void {
+    if (!this.selectedEvaluationForNotes) {
+      this.toastService.warning('Veuillez d’abord sélectionner une évaluation.');
+      return;
+    }
+
+    const evaluation = this.selectedEvaluationForNotes as EvaluationEditRequest;
+    const noteMax = 20;
+    const evaluationId = Number(evaluation.id);
+
+    const noteInvalide = this.notesData().find(note =>
+      note.note !== null &&
+      (
+        Number.isNaN(Number(note.note)) ||
+        Number(note.note) < 0 ||
+        Number(note.note) > noteMax
+      )
+    );
+
+    if (noteInvalide) {
+      this.toastService.error(`La note de ${noteInvalide.nomComplet} doit être comprise entre 0 et ${noteMax}.`);
+      return;
+    }
+
+    const noteEditRequestDTOList = this.notesData().map(note => {
+
+      const noteOriginale = (evaluation.noteEditRequestDTOList ?? [])
+        .find((n: any) => n.id === note.id);
+
+      return {
+        id: note.id,
+        eleve: Number(note.eleve),
+        nomCompletEleve: noteOriginale?.nomCompletEleve ?? note.nomComplet,
+        note: note.note !== null
+          ? Number(note.note)
+          : null,
+
+        type: evaluation.evaluationType,
+        dateCreation: noteOriginale?.dateCreation ?? null,
+        appreciation: note.appreciation ?? '',
+        actif: noteOriginale?.actif ?? 1
+      };
+    });
+
+    const payload: any = {
+      id: evaluation.id,
+      numeroEvaluation: evaluation.numeroEvaluation,
+      titre: evaluation.titre,
+      description: evaluation.description,
+      dateEvaluation: evaluation.dateEvaluation,
+      dateRemise: evaluation.dateRemise,
+      dateCreation: evaluation.dateCreation,
+      enseignementId: evaluation.enseignementId,
+      sessionSemestre: evaluation.sessionSemestre,
+      evaluationType: evaluation.evaluationType,
+      evaluationMode: evaluation.evaluationMode,
+      etatId: evaluation.etatId,
+      libelleEtat: evaluation.libelleEtat,
+      classeId: evaluation.classeId,
+      heureDebut: evaluation.heureDebut,
+      heureFin: evaluation.heureFin,
+      noteEditRequestDTOList,
+      actif: evaluation.actif
+    };
+    console.log('Payload UPDATE évaluation + notes :', JSON.stringify(payload, null, 2));
+
+    this.isSavingNotes = true;
+
+    this.dossierResource.updateNotesEvaluationsReource(`evaluation`, evaluationId, payload)
+      .subscribe({
+        next: (response: any) => {
+
+          this.isSavingNotes = false;
+
+          this.toastService.success(
+            `Les notes de "${evaluation.titre}" ont été enregistrées avec succès.`
+          );
+
+          this.getEvaluationsList().then(() => {
+
+            const evaluationUpdated = this.evaluationForNotes.find(e => e.id === evaluation.id);
+
+            if (evaluationUpdated) {
+              this.selectedEvaluationForNotes = evaluationUpdated;
+              this.loadNotesFromEvaluation(evaluationUpdated);
+            }
+          });
+        },
+
+        error: (error: any) => {
+
+          this.isSavingNotes = false;
+          console.error('Erreur lors de la sauvegarde des notes :', error);
+
+          this.toastService.error(
+            error?.error?.message ??
+            'Une erreur est survenue lors de l’enregistrement des notes.'
+          );
+        }
+      });
   }
 
   genererBulletins(): void {

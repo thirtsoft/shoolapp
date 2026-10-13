@@ -93,11 +93,11 @@ export const ENSEIGNANTS_ROUTES: Routes = [
       },
       {
         path: 'evaluation/edit/:id',
-        component: EditEvaluationEnseignantComponent
+        component: CreateEvaluationEnseignantComponent
       },
 
       {
-        path: 'evaluation/detail/:id',
+        path: 'evaluation/details/:id',
         component: DetailEvaluationEnseignantComponent
       },
       {
