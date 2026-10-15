@@ -777,8 +777,10 @@ export class ClasseManagementComponent implements OnInit {
 
   // Ouvrir le popup de création d'exercice
   creerExercice(): void {
-    this.showExerciceModal.set(true);
+    void this.router.navigate(['/enseignant/exercice/create']);
   }
+
+
 
   // Fermer le popup
   fermerExerciceModal() {

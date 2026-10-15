@@ -11,39 +11,6 @@ import { LocalStorageService } from '../services/local-storage.service';
 })
 export class InterceptorService implements HttpInterceptor {
 
-
-  /*    V1
-  private readonly localStorage = inject(LocalStorageService);
-  private readonly router = inject(Router);
-
-  intercept(request: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
-    const token = this.localStorage.getItem('token');
-
-    console.log('================ HTTP INTERCEPTOR ================');
-    console.log('URL:', request.url);
-    console.log('TOKEN:', token);
-    console.log('TOKEN LENGTH:', token?.length);
-    console.log('===================================================');
-
-    if (token && !request.url.includes('/myschool/api/auth/signin')) {
-      request = request.clone({
-        headers: request.headers.set('Authorization', 'Bearer ' + token)
-      });
-    }
-    return next.handle(request).pipe(
-      catchError((err) => {
-        if (err instanceof HttpErrorResponse) {
-          if (err.status === 401) {
-            this.localStorage.clear();
-            this.router.navigate(['/']);
-          }
-        }
-        return throwError(() => err?.error);
-      })
-    )
-
-  } */
-
   private readonly localStorage = inject(LocalStorageService);
   private readonly router = inject(Router);
 
@@ -55,14 +22,6 @@ export class InterceptorService implements HttpInterceptor {
     const isV2Session = !!v2Token;
     const token = v2Token ?? v1Token;
 
-
-    console.log('================ HTTP INTERCEPTOR ================');
-    console.log('URL:', request.url);
-    console.log('V1 TOKEN:', v1Token);
-    console.log('V2 TOKEN:', v2Token);
-    console.log('SESSION:', isV2Session ? 'V2' : 'V1');
-    console.log('TOKEN USED:', token);
-    console.log('===================================================');
 
     if (token) {
       request = request.clone({
