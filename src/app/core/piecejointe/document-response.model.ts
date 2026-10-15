@@ -6,4 +6,6 @@ export interface DocumentResponse {
   dateCreation?: Date;
 
   nomFichier: string;
+
+  typeDocument: string;
 }

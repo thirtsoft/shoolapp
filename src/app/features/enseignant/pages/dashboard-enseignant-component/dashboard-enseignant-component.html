@@ -31,7 +31,7 @@
   </div>
 
   <div class="dp-grid">
-    <div class="dp-col">
+    <!--  <div class="dp-col">
       <div class="card">
         <div class="card-head">
           <h2>🕐 Cours du jour</h2>
@@ -87,35 +87,71 @@
           </div>
         }
       </div>
+    </div> -->
+
+    <div class="dp-col">
+      <div class="card calendar-card">
+        <div class="card-head">
+          <h2>🗓️ Mon emploi du temps</h2>
+
+          <button class="card-link" (click)="naviguer('/enseignant/agenda')">
+            Voir mes cours →
+          </button>
+        </div>
+
+        <div class="calendar-container">
+          <full-calendar [options]="calendarOptions"> </full-calendar>
+        </div>
+      </div>
     </div>
 
     <div class="dp-col">
       <div class="card">
         <div class="card-head">
-          <h2>👥 Mes Responsabilités</h2>
+          <h2>🏫 Mes classes</h2>
+
           <button class="card-link" (click)="naviguer('/enseignant/mes-enseignements')">
-            Tous voir →
+            Voir tous →
           </button>
         </div>
+
         <div class="eleves-list">
-          @if (mesResponsabilites().length > 0) {
-            @for (r of mesResponsabilites(); track r.classeId) {
-              <div class="eleve-item" [class.excellent]="r.type === 'ENSEIGNEE'">
+          @if (mesEnseignements().length > 0) {
+            @for (enseignement of mesEnseignements(); track enseignement.id) {
+              <div class="eleve-item enseignement-item">
+                <!-- Icône -->
                 <span class="eleve-ico">🏫</span>
+
+                <!-- Informations classe -->
                 <div class="eleve-info">
-                  <span class="eleve-nom">{{ r.classe }}</span>
-                  <span class="eleve-classe">Type : {{ r.type }}</span>
+                  <span class="eleve-nom">
+                    {{ enseignement.classe }}
+                  </span>
+
+                  <span class="eleve-classe">
+                    {{ enseignement.matiere }}
+                  </span>
+
+                  <span class="enseignement-annee">
+                    {{ enseignement.anneeScolaire }}
+                  </span>
                 </div>
-                <div class="eleve-note">
-                  <span class="eleve-score">{{ r.effectif }}</span>
-                  <span class="eleve-type">Élèves</span>
+
+                <!-- Action -->
+                <div class="enseignement-action">
+                  <button
+                    type="button"
+                    class="btn-gerer-classe"
+                    (click)="gererClasse(enseignement)"
+                  >
+                    <span>Gérer</span>
+                    <span class="btn-arrow">→</span>
+                  </button>
                 </div>
               </div>
             }
           } @else {
-            <div class="empty-message" style="padding: 20px; text-align: center; color: #777">
-              📭 Aucune responsabilité ou classe assignée pour le moment.
-            </div>
+            <div class="empty-message">📭 Aucune classe ne vous est actuellement assignée.</div>
           }
         </div>
       </div>
@@ -170,3 +206,103 @@
     </div>
   </div>
 </div>
+
+@if (showDetailsCoursModal) {
+  <div class="cours-modal-overlay" (click)="closeDetailsCoursModal()">
+    <div class="cours-modal-container" (click)="$event.stopPropagation()">
+      <div class="cours-modal-header">
+        <h3>
+          <i class="fas fa-calendar-day me-2"></i>
+          Détails du cours
+        </h3>
+
+        <button type="button" class="cours-modal-close" (click)="closeDetailsCoursModal()">
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
+
+      <div class="cours-modal-body">
+        @if (coursSelectionne(); as cours) {
+          <div class="cours-detail">
+            <div class="cours-detail-item">
+              <span class="cours-detail-label">
+                <i class="fas fa-calendar-day"></i>
+                Jour
+              </span>
+
+              <span class="cours-detail-value">
+                {{ cours.jourSemaine }}
+              </span>
+            </div>
+
+            <div class="cours-detail-item">
+              <span class="cours-detail-label">
+                <i class="fas fa-book"></i>
+                Cours
+              </span>
+
+              <span class="cours-detail-value cours-detail-title">
+                {{ cours.libelle }} - {{ cours.classe?.libelle }}
+              </span>
+            </div>
+
+            <div class="cours-detail-item">
+              <span class="cours-detail-label">
+                <i class="fas fa-clock"></i>
+                Horaire
+              </span>
+
+              <span class="cours-detail-value">
+                {{ cours.heureDebut | slice: 0 : 5 }}
+                -
+                {{ cours.heureFin | slice: 0 : 5 }}
+              </span>
+            </div>
+
+            <div class="cours-detail-item">
+              <span class="cours-detail-label">
+                <i class="fas fa-book-open"></i>
+                Matière
+              </span>
+
+              <span class="cours-detail-value">
+                {{ cours.matiere?.libelle }}
+              </span>
+            </div>
+
+            <div class="cours-detail-item">
+              <span class="cours-detail-label">
+                <i class="fas fa-door-open"></i>
+                Salle
+              </span>
+
+              <span class="cours-detail-value">
+                {{ cours.salle?.libelle }}
+              </span>
+            </div>
+
+            <div class="cours-detail-item">
+              <span class="cours-detail-label">
+                <i class="fas fa-calendar-alt"></i>
+                Période
+              </span>
+
+              <span class="cours-detail-value">
+                {{ cours.dateDebut }}
+                -
+                {{ cours.dateFin }}
+              </span>
+            </div>
+          </div>
+        }
+      </div>
+
+      <div class="cours-modal-footer">
+        <button type="button" class="cours-btn-close" (click)="closeDetailsCoursModal()">
+          <i class="fas fa-times me-2"></i>
+          Fermer
+        </button>
+      </div>
+    </div>
+  </div>
+}

@@ -1,164 +1,754 @@
 <div class="page-wrapper">
   <div class="content container-fluid">
-    <!-- Page Header -->
+    <!-- ========================================================= -->
+    <!-- EN-TÊTE -->
+    <!-- ========================================================= -->
+
     <div class="page-header">
       <div class="row">
         <div class="col-sm-12">
           <h3 class="page-title">Détails évaluation</h3>
+
           <p class="text-muted mt-1 mb-0">
-            <i class="fas fa-clipboard-list me-1"></i> Visualisation des informations de
-            l'évaluation
+            <i class="fas fa-clipboard-list me-1"></i>
+            Visualisation et gestion de votre évaluation
           </p>
         </div>
       </div>
     </div>
 
+    <!-- ========================================================= -->
+    <!-- BARRE D'ACTIONS -->
+    <!-- ========================================================= -->
+
     <div class="action-bar">
       <div class="action-left">
-        <button class="btn-back" (click)="goBack()">
-          <i class="fas fa-arrow-left me-2"></i>Retour
+        <!-- Retour -->
+        <button type="button" class="btn-back" (click)="goBack()">
+          <i class="fas fa-arrow-left me-2"></i>
+          Retour
         </button>
-        @if (['Remise', 'Envoyée'].includes(detailsEvaluation.etat!)) {
-          <button class="btn-validate" (click)="openConfirmationDialog('valider')">
-            <i class="fas fa-check-circle me-2"></i>Valider
+
+        <!-- Modifier -->
+        @if (detailsEvaluation.etat === 'Brouillon') {
+          <button type="button" class="btn-edit" (click)="modifierEvaluation()">
+            <i class="fas fa-edit me-2"></i>
+            Modifier
           </button>
         }
-        @if (['Validée'].includes(detailsEvaluation.etat!)) {
-          <button class="btn-print" (click)="imprimerUneEvaluation(detailsEvaluation.id)">
-            <i class="fas fa-print me-2"></i>Imprimer
+
+        <!-- Envoyer à l'administration -->
+        @if (peutEnvoyerEvaluation()) {
+          <button type="button" class="btn-send" (click)="envoyerEvaluation()">
+            <i class="fas fa-paper-plane me-2"></i>
+            Envoyer à l'administration
           </button>
         }
       </div>
+
+      <!-- État -->
       <div class="action-right">
         <span class="status-badge" [class]="getStatusClass()">
           <i class="fas fa-info-circle me-1"></i>
-          État : {{ detailsEvaluation.etat || 'Brouillon' }}
+
+          État :
+          {{ detailsEvaluation.etat || 'Brouillon' }}
         </span>
       </div>
     </div>
 
-    <div class="two-cards-grid">
-      <div class="info-card">
-        <div class="card-header-custom">
-          <i class="fas fa-clipboard-list"></i>
-          <h4>Détails évaluation</h4>
-        </div>
-        <div class="info-list">
-          <div class="info-row">
-            <div class="info-label">Titre</div>
-            <div class="info-value">{{ detailsEvaluation.titre || '-' }}</div>
-          </div>
-          <div class="info-row">
-            <div class="info-label">Date évaluation</div>
-            <div class="info-value">
-              {{ detailsEvaluation.dateEvaluation | date: 'dd/MM/yyyy' }}
-            </div>
-          </div>
-          <div class="info-row">
-            <div class="info-label">Heure début</div>
-            <div class="info-value">{{ detailsEvaluation.heureDebut || '-' }}</div>
-          </div>
-          <div class="info-row">
-            <div class="info-label">Heure fin</div>
-            <div class="info-value">{{ detailsEvaluation.heureFin || '-' }}</div>
-          </div>
-          <div class="info-row">
-            <div class="info-label">État</div>
-            <div class="info-value">
-              <span class="status-inline" [class]="getStatusClass()">
-                {{ detailsEvaluation.etat || 'Brouillon' }}
-              </span>
-            </div>
-          </div>
-          <div class="info-row">
-            <div class="info-label">Type</div>
-            <div class="info-value">{{ detailsEvaluation.evaluationType || '-' }}</div>
-          </div>
-          <div class="info-row">
-            <div class="info-label">Mode évaluation</div>
-            <div class="info-value">{{ detailsEvaluation.evaluationMode || '-' }}</div>
-          </div>
-          <div class="info-row">
-            <div class="info-label">Description</div>
-            <div class="info-value description-text">
-              {{ detailsEvaluation.description || '-' }}
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div class="info-card">
-        <div class="card-header-custom">
-          <i class="fas fa-school"></i>
-          <h4>Autres informations</h4>
-        </div>
-        <div class="info-list">
-          <div class="info-row">
-            <div class="info-label">Classe</div>
-            <div class="info-value">{{ detailsEvaluation.libelleClasse || '-' }}</div>
-          </div>
-          <div class="info-row">
-            <div class="info-label">Année scolaire</div>
-            <div class="info-value">{{ detailsEvaluation.anneeScolaire || '-' }}</div>
-          </div>
-          <div class="info-row">
-            <div class="info-label">Matière</div>
-            <div class="info-value">{{ detailsEvaluation.matiere || '-' }}</div>
-          </div>
-          <div class="info-row">
-            <div class="info-label">Semestre</div>
-            <div class="info-value">{{ detailsEvaluation.sessionSemestre || '-' }}</div>
-          </div>
-          <div class="info-row">
-            <div class="info-label">Enseignant</div>
-            <div class="info-value">{{ detailsEvaluation.nomCompletEnseignant || '-' }}</div>
-          </div>
-        </div>
-      </div>
-    </div>
+    <!-- ========================================================= -->
+    <!-- INFORMATIONS DE L'ÉVALUATION -->
+    <!-- ========================================================= -->
 
     <div class="info-card full-width">
       <div class="card-header-custom">
-        <i class="fas fa-star"></i>
-        <h4>Notes des élèves</h4>
+        <i class="fas fa-clipboard-list"></i>
+
+        <div class="card-header-content">
+          <h4>Informations de l'évaluation</h4>
+
+          <p>Retrouvez ici les principales informations concernant cette évaluation.</p>
+        </div>
       </div>
-      <div class="table-responsive">
-        <table class="data-table">
-          <thead>
-            <tr>
-              <th>Nom & Prénom</th>
-              <th>Type note</th>
-              <th>Note /20</th>
-              <th>Appréciation</th>
-            </tr>
-          </thead>
-          <tbody>
-            @for (note of detailsEvaluation.detailsNoteEleveDTOList; track $index) {
-              <tr>
-                <td class="eleve-cell">
-                  <div class="eleve-avatar">
-                    <div class="avatar-circle">
-                      {{ (note?.nomCompletEleve || '?').charAt(0) }}
-                    </div>
-                    <span>{{ note?.nomCompletEleve || '-' }}</span>
-                  </div>
-                </td>
-                <td class="type-cell">
-                  <span class="badge-type">{{ note?.type || '-' }}</span>
-                </td>
-                <td class="note-value">{{ note?.note || '-' }}</td>
-                <td class="appreciation-cell">{{ note?.appreciation || '-' }}</td>
-              </tr>
-            }
-          </tbody>
-        </table>
+
+      <div class="info-grid">
+        <!-- Titre -->
+        <div class="info-row">
+          <div class="info-label">Titre</div>
+
+          <div class="info-value">
+            {{ detailsEvaluation.titre || '-' }}
+          </div>
+        </div>
+
+        <!-- Classe -->
+        <div class="info-row">
+          <div class="info-label">Classe</div>
+
+          <div class="info-value">
+            {{ detailsEvaluation.libelleClasse || '-' }}
+          </div>
+        </div>
+
+        <!-- Matière -->
+        <div class="info-row">
+          <div class="info-label">Matière</div>
+
+          <div class="info-value">
+            {{ detailsEvaluation.matiere || '-' }}
+          </div>
+        </div>
+
+        <!-- Année scolaire -->
+        <div class="info-row">
+          <div class="info-label">Année scolaire</div>
+
+          <div class="info-value">
+            {{ detailsEvaluation.anneeScolaire || '-' }}
+          </div>
+        </div>
+
+        <!-- Date -->
+        <div class="info-row">
+          <div class="info-label">Date évaluation</div>
+
+          <div class="info-value">
+            {{ detailsEvaluation.dateEvaluation | date: 'dd/MM/yyyy' }}
+          </div>
+        </div>
+
+        <!-- Horaire -->
+        <div class="info-row">
+          <div class="info-label">Horaire</div>
+
+          <div class="info-value">
+            {{ detailsEvaluation.heureDebut || '-' }}
+
+            <span class="mx-1">-</span>
+
+            {{ detailsEvaluation.heureFin || '-' }}
+          </div>
+        </div>
+
+        <!-- Type -->
+        <div class="info-row">
+          <div class="info-label">Type</div>
+
+          <div class="info-value">
+            {{ detailsEvaluation.evaluationType || '-' }}
+          </div>
+        </div>
+
+        <!-- Mode -->
+        <div class="info-row">
+          <div class="info-label">Mode évaluation</div>
+
+          <div class="info-value">
+            {{ detailsEvaluation.evaluationMode || '-' }}
+          </div>
+        </div>
+
+        <!-- Semestre -->
+        <div class="info-row">
+          <div class="info-label">Semestre</div>
+
+          <div class="info-value">
+            {{ detailsEvaluation.sessionSemestre || '-' }}
+          </div>
+        </div>
+
+        <!-- Enseignant -->
+        <div class="info-row">
+          <div class="info-label">Enseignant</div>
+
+          <div class="info-value">
+            {{ detailsEvaluation.nomCompletEnseignant || '-' }}
+          </div>
+        </div>
+
+        <!-- État -->
+        <div class="info-row">
+          <div class="info-label">État</div>
+
+          <div class="info-value">
+            <span class="status-inline" [class]="getStatusClass()">
+              {{ detailsEvaluation.etat || 'Brouillon' }}
+            </span>
+          </div>
+        </div>
       </div>
-      @if (!detailsEvaluation.detailsNoteEleveDTOList?.length) {
-        <div class="empty-state">
-          <i class="fas fa-chart-line"></i>
-          <p>Aucune note disponible pour cette évaluation</p>
+
+      <!-- Description -->
+      @if (detailsEvaluation.description) {
+        <div class="description-section">
+          <div class="info-label">Description</div>
+
+          <div class="description-text">
+            {{ detailsEvaluation.description }}
+          </div>
         </div>
       }
     </div>
+
+    <!-- ========================================================= -->
+    <!-- SUJET DE L'ÉPREUVE -->
+    <!-- ========================================================= -->
+
+    <div class="info-card full-width document-card">
+      <div class="card-header-custom">
+        <i class="fas fa-file-alt"></i>
+
+        <div class="card-header-content">
+          <h4>Sujet de l'épreuve</h4>
+
+          <p>
+            Joignez le sujet utilisé pour cette évaluation. Le document pourra être consulté par
+            l'administration pour organiser et suivre l'épreuve.
+          </p>
+        </div>
+      </div>
+
+      <!-- ======================================================= -->
+      <!-- INPUT FICHIER SUJET -->
+      <!-- ======================================================= -->
+
+      <input
+        #sujetFileInput
+        type="file"
+        hidden
+        accept=".pdf,.doc,.docx,.jpg,.jpeg,.png"
+        (change)="onSujetFileSelected($event)"
+      />
+
+      <!-- ======================================================= -->
+      <!-- SUJET DÉJÀ ENREGISTRÉ -->
+      <!-- ======================================================= -->
+
+      @if (sujetEvaluation) {
+        <div class="document-item">
+          <!-- Icône -->
+          <div class="document-icon">
+            <i class="fas fa-file-pdf"></i>
+          </div>
+
+          <!-- Informations -->
+          <div class="document-info">
+            <div class="document-name">
+              {{ sujetEvaluation.nomFichier }}
+            </div>
+
+            <div class="document-meta">
+              @if (sujetEvaluation.tailleFormatee) {
+                <span>
+                  {{ sujetEvaluation.tailleFormatee }}
+                </span>
+              }
+
+              @if (sujetEvaluation.dateCreation) {
+                <span>
+                  · Ajouté le
+                  {{ sujetEvaluation.dateCreation | date: 'dd/MM/yyyy' }}
+                </span>
+              }
+            </div>
+          </div>
+
+          <!-- ================================================= -->
+          <!-- ACTIONS DOCUMENT -->
+          <!-- ================================================= -->
+
+          <div class="document-actions">
+            <!-- Aperçu -->
+            <button
+              type="button"
+              class="btn btn-sm btn-outline-primary"
+              (click)="visualiserDocument(sujetEvaluation)"
+              [disabled]="isDocumentLoading"
+              title="Visualiser le sujet"
+            >
+              @if (
+                isDocumentLoading &&
+                documentSelectionne?.documentUuid === sujetEvaluation.documentUuid
+              ) {
+                <i class="fas fa-spinner fa-spin me-2"></i>
+              } @else {
+                <i class="fas fa-eye me-2"></i>
+              }
+
+              Aperçu
+            </button>
+
+            <!-- Télécharger -->
+            <button
+              type="button"
+              class="btn btn-sm btn-outline-secondary"
+              (click)="telechargerDocument(sujetEvaluation)"
+              [disabled]="isDocumentLoading"
+              title="Télécharger le sujet"
+            >
+              <i class="fas fa-download me-2"></i>
+
+              Télécharger
+            </button>
+
+            <!-- Remplacer / Supprimer -->
+            @if (peutModifierDocuments()) {
+              <!-- Remplacer -->
+              <button
+                type="button"
+                class="btn-document btn-replace"
+                title="Remplacer le sujet"
+                (click)="sujetFileInput.click()"
+              >
+                <i class="fas fa-sync-alt"></i>
+              </button>
+
+              <!-- Supprimer -->
+              <button
+                type="button"
+                class="btn-document btn-delete"
+                title="Supprimer le sujet"
+                (click)="supprimerDocument(sujetEvaluation)"
+              >
+                <i class="fas fa-trash"></i>
+              </button>
+            }
+          </div>
+        </div>
+      } @else {
+        <!-- ===================================================== -->
+        <!-- AUCUN SUJET -->
+        <!-- ===================================================== -->
+
+        <div class="document-empty">
+          <div class="document-empty-icon">
+            <i class="fas fa-file-upload"></i>
+          </div>
+
+          <div class="document-empty-content">
+            <h5>Aucun sujet joint</h5>
+
+            <p>
+              Ajoutez le sujet de l'épreuve afin de conserver une copie du document utilisé pour
+              l'évaluation.
+            </p>
+          </div>
+
+          @if (peutModifierDocuments()) {
+            <button type="button" class="btn-attach" (click)="sujetFileInput.click()">
+              <i class="fas fa-paperclip me-2"></i>
+              Joindre le sujet
+            </button>
+          }
+        </div>
+      }
+    </div>
+
+    <!-- ========================================================= -->
+    <!-- GESTION DES NOTES -->
+    <!-- ========================================================= -->
+
+    <div class="info-card full-width notes-card">
+      <div class="card-header-custom">
+        <i class="fas fa-star"></i>
+
+        <div class="card-header-content">
+          <h4>Gestion des notes</h4>
+
+          <p>
+            Après avoir corrigé les copies, saisissez les notes des élèves directement dans Scoolli.
+            Les notes pourront ensuite être contrôlées par l'administration.
+          </p>
+        </div>
+      </div>
+
+      <!-- ======================================================= -->
+      <!-- RÉSUMÉ DES NOTES -->
+      <!-- ======================================================= -->
+
+      <div class="notes-management">
+        <div class="notes-summary">
+          <div class="notes-summary-icon">
+            <i class="fas fa-pen"></i>
+          </div>
+
+          <div class="notes-summary-content">
+            <span class="notes-summary-label"> Notes saisies </span>
+
+            <strong> {{ nombreNotesSaisies }} / {{ nombreEleves }} </strong>
+          </div>
+        </div>
+
+        <div class="notes-actions">
+          <button type="button" class="btn-notes" (click)="saisirNotes()">
+            <i class="fas fa-edit me-2"></i>
+
+            @if (nombreNotesSaisies > 0) {
+              Modifier les notes
+            } @else {
+              Saisir les notes
+            }
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ========================================================= -->
+    <!-- NOTES DES ÉLÈVES -->
+    <!-- ========================================================= -->
+
+    @if (detailsEvaluation.detailsNoteEleveDTOList?.length) {
+      <div class="info-card full-width">
+        <div class="card-header-custom">
+          <i class="fas fa-users"></i>
+
+          <div class="card-header-content">
+            <h4>Notes des élèves</h4>
+
+            <p>Notes actuellement enregistrées dans Scoolli.</p>
+          </div>
+        </div>
+
+        <div class="table-responsive">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Nom & Prénom</th>
+
+                <th>Type note</th>
+
+                <th>Note /20</th>
+
+                <th>Appréciation</th>
+              </tr>
+            </thead>
+
+            <tbody>
+              @for (note of detailsEvaluation.detailsNoteEleveDTOList; track $index) {
+                <tr>
+                  <td class="eleve-cell">
+                    <div class="eleve-avatar">
+                      <div class="avatar-circle">
+                        {{ (note?.nomCompletEleve || '?').charAt(0) }}
+                      </div>
+
+                      <span>
+                        {{ note?.nomCompletEleve || '-' }}
+                      </span>
+                    </div>
+                  </td>
+
+                  <td class="type-cell">
+                    <span class="badge-type">
+                      {{ note?.type || '-' }}
+                    </span>
+                  </td>
+
+                  <td class="note-value">
+                    {{ note?.note ?? '-' }}
+                  </td>
+
+                  <td class="appreciation-cell">
+                    {{ note?.appreciation || '-' }}
+                  </td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      </div>
+    } @else {
+      <div class="info-card full-width empty-notes-card">
+        <div class="empty-state">
+          <i class="fas fa-chart-line"></i>
+
+          <h5>Aucune note saisie</h5>
+
+          <p>Les notes des élèves pourront être saisies après la correction des copies.</p>
+
+          <button type="button" class="btn-notes" (click)="saisirNotes()">
+            <i class="fas fa-edit me-2"></i>
+            Saisir les notes
+          </button>
+        </div>
+      </div>
+    }
+
+    <!-- ========================================================= -->
+    <!-- FEUILLE DE NOTES -->
+    <!-- ========================================================= -->
+
+    <div class="info-card full-width document-card">
+      <div class="card-header-custom">
+        <i class="fas fa-file-invoice"></i>
+
+        <div class="card-header-content">
+          <div class="document-title-line">
+            <h4>Feuille de notes</h4>
+
+            <span class="optional-badge"> Facultatif </span>
+          </div>
+
+          <p>
+            Vous pouvez joindre la feuille de notes utilisée lors de la correction. Elle pourra
+            servir de document de référence à l'administration pour contrôler les résultats.
+          </p>
+        </div>
+      </div>
+
+      <!-- ======================================================= -->
+      <!-- INPUT FICHIER FEUILLE DE NOTES -->
+      <!-- ======================================================= -->
+
+      <input
+        #feuilleNotesFileInput
+        type="file"
+        hidden
+        accept=".pdf,.xls,.xlsx,.csv,.doc,.docx,.jpg,.jpeg,.png"
+        (change)="onFeuilleNotesFileSelected($event)"
+      />
+
+      <!-- ======================================================= -->
+      <!-- FEUILLE DÉJÀ ENREGISTRÉE -->
+      <!-- ======================================================= -->
+
+      @if (feuilleNotesEvaluation) {
+        <div class="document-item">
+          <!-- Icône -->
+          <div class="document-icon">
+            <i class="fas fa-file-excel"></i>
+          </div>
+
+          <!-- Informations -->
+          <div class="document-info">
+            <div class="document-name">
+              {{ feuilleNotesEvaluation.nomFichier }}
+            </div>
+
+            <div class="document-meta">
+              @if (feuilleNotesEvaluation.tailleFormatee) {
+                <span>
+                  {{ feuilleNotesEvaluation.tailleFormatee }}
+                </span>
+              }
+
+              @if (feuilleNotesEvaluation.dateCreation) {
+                <span>
+                  · Ajouté le
+                  {{ feuilleNotesEvaluation.dateCreation | date: 'dd/MM/yyyy' }}
+                </span>
+              }
+            </div>
+          </div>
+
+          <!-- ================================================= -->
+          <!-- ACTIONS DOCUMENT -->
+          <!-- ================================================= -->
+
+          <div class="document-actions">
+            <!-- Aperçu -->
+            <button
+              type="button"
+              class="btn btn-sm btn-outline-primary"
+              (click)="visualiserDocument(feuilleNotesEvaluation)"
+              [disabled]="isDocumentLoading"
+              title="Visualiser la feuille de notes"
+            >
+              @if (
+                isDocumentLoading &&
+                documentSelectionne?.documentUuid === feuilleNotesEvaluation.documentUuid
+              ) {
+                <i class="fas fa-spinner fa-spin me-2"></i>
+              } @else {
+                <i class="fas fa-eye me-2"></i>
+              }
+
+              Aperçu
+            </button>
+
+            <!-- Télécharger -->
+            <button
+              type="button"
+              class="btn btn-sm btn-outline-secondary"
+              (click)="telechargerDocument(feuilleNotesEvaluation)"
+              [disabled]="isDocumentLoading"
+              title="Télécharger la feuille de notes"
+            >
+              <i class="fas fa-download me-2"></i>
+
+              Télécharger
+            </button>
+
+            @if (peutModifierDocuments()) {
+              <!-- Remplacer -->
+              <button
+                type="button"
+                class="btn-document btn-replace"
+                title="Remplacer la feuille de notes"
+                (click)="feuilleNotesFileInput.click()"
+              >
+                <i class="fas fa-sync-alt"></i>
+              </button>
+
+              <!-- Supprimer -->
+              <button
+                type="button"
+                class="btn-document btn-delete"
+                title="Supprimer la feuille de notes"
+                (click)="supprimerDocument(feuilleNotesEvaluation)"
+              >
+                <i class="fas fa-trash"></i>
+              </button>
+            }
+          </div>
+        </div>
+      } @else {
+        <!-- ===================================================== -->
+        <!-- AUCUNE FEUILLE DE NOTES -->
+        <!-- ===================================================== -->
+
+        <div class="document-empty document-empty-small">
+          <div class="document-empty-icon">
+            <i class="fas fa-file-upload"></i>
+          </div>
+
+          <div class="document-empty-content">
+            <h5>Aucune feuille de notes jointe</h5>
+
+            <p>
+              Cette pièce est facultative. Vous pouvez la joindre après avoir terminé la correction
+              des copies.
+            </p>
+          </div>
+
+          @if (peutModifierDocuments()) {
+            <button
+              type="button"
+              class="btn-attach-secondary"
+              (click)="feuilleNotesFileInput.click()"
+            >
+              <i class="fas fa-paperclip me-2"></i>
+              Joindre la feuille de notes
+            </button>
+          }
+        </div>
+      }
+    </div>
+
+    <!-- ========================================================= -->
+    <!-- TRANSMISSION À L'ADMINISTRATION -->
+    <!-- ========================================================= -->
+
+    @if (peutEnvoyerEvaluation()) {
+      <div class="submission-card">
+        <div class="submission-icon">
+          <i class="fas fa-paper-plane"></i>
+        </div>
+
+        <div class="submission-content">
+          <h4>Transmettre l'évaluation</h4>
+
+          <p>
+            Lorsque la correction est terminée et que les notes sont renseignées, vous pouvez
+            transmettre l'évaluation à l'administration pour contrôle et validation.
+          </p>
+        </div>
+
+        <button type="button" class="btn-submit" (click)="envoyerEvaluation()">
+          <i class="fas fa-paper-plane me-2"></i>
+          Envoyer à l'administration
+        </button>
+      </div>
+    }
   </div>
 </div>
+
+<!-- ============================================================= -->
+<!-- MODAL APERÇU DOCUMENT -->
+<!-- ============================================================= -->
+
+@if (showPreviewModal) {
+  <div class="modal-overlay" (click)="closePreviewModal()">
+    <div class="modal-container" (click)="$event.stopPropagation()">
+      <div class="modal-header">
+        <div class="modal-header-info">
+          <h5 class="modal-title">
+            <i class="fas fa-file-alt me-2"></i>
+
+            {{ getDocumentName() }}
+          </h5>
+
+          <div class="modal-header-summary">
+            <span class="modal-header-item">
+              <i class="fas fa-file me-1"></i>
+
+              <strong>
+                {{ getDocumentTypeLabel() }}
+              </strong>
+            </span>
+
+            <span class="modal-header-separator"> • </span>
+
+            <span class="modal-header-item">
+              <i class="fas fa-book me-1"></i>
+
+              {{ detailsEvaluation.matiere || '—' }}
+            </span>
+
+            <span class="modal-header-separator"> • </span>
+
+            <span class="modal-header-item">
+              <i class="fas fa-users me-1"></i>
+
+              {{ detailsEvaluation.libelleClasse || '—' }}
+            </span>
+          </div>
+        </div>
+
+        <div class="modal-header-actions">
+          <button
+            type="button"
+            class="btn btn-sm btn-modal-download"
+            (click)="telechargerDocument(documentSelectionne!)"
+            [disabled]="isDocumentLoading"
+          >
+            @if (isDocumentLoading) {
+              <i class="fas fa-spinner fa-spin me-2"></i>
+            } @else {
+              <i class="fas fa-download me-2"></i>
+            }
+
+            Télécharger
+          </button>
+
+          <button type="button" class="btn-close" (click)="closePreviewModal()">
+            <i class="fas fa-times"></i>
+          </button>
+        </div>
+      </div>
+
+      <div class="modal-body">
+        @if (isDocumentLoading) {
+          <div class="d-flex flex-column align-items-center justify-content-center h-100">
+            <div class="spinner-border" role="status"></div>
+
+            <p class="mt-3 text-muted">Chargement du document...</p>
+          </div>
+        } @else if (documentPreviewUrl) {
+          <iframe
+            [src]="documentPreviewUrl"
+            class="document-preview-frame"
+            title="Aperçu du document"
+          ></iframe>
+        } @else {
+          <div class="d-flex flex-column align-items-center justify-content-center h-100">
+            <i class="fas fa-file-circle-exclamation fa-3x mb-3"></i>
+
+            <p class="text-muted">Impossible d'afficher le document.</p>
+          </div>
+        }
+      </div>
+    </div>
+  </div>
+}

@@ -1,3 +1,4 @@
+import { DocumentResponse } from "../../../piecejointe/document-response.model";
 import { DetailsNote } from "../note/details-note";
 
 
@@ -46,5 +47,7 @@ export interface DetailsEvaluation {
   actif?: number;
 
   detailsNoteEleveDTOList?: DetailsNote[];
+
+  documentResponses?: DocumentResponse[];
 
 }

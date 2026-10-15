@@ -3,9 +3,13 @@
     <div class="page-header">
       <div class="row align-items-center">
         <div class="col-sm-12">
-          <h3 class="page-title">{{ title }}</h3>
+          <h3 class="page-title">
+            {{ title }}
+          </h3>
+
           <p class="text-muted mt-1 mb-0">
-            <i class="fas fa-dumbbell me-1"></i> Gestion des exercices scolaires
+            <i class="fas fa-dumbbell me-1"></i>
+            Gestion des exercices scolaires
           </p>
         </div>
       </div>
@@ -15,7 +19,8 @@
       <div class="col-sm-12">
         <div class="badge-container">
           <span class="badge badge-primary">
-            <i class="fas fa-plus-circle me-1"></i> Nouvel exercice
+            <i class="fas fa-plus-circle me-1"></i>
+            {{ isEdit ? 'Modification de l’exercice' : 'Nouvel exercice' }}
           </span>
         </div>
       </div>
@@ -25,35 +30,58 @@
       <div class="col-12">
         <div class="card">
           <div class="card-body p-4 p-md-5">
-            <div class="step-indicator">
-              <div class="step active">
-                <span class="step-number">1</span>
-                <span class="step-label">Information</span>
-              </div>
-              <div class="step-line"></div>
-              <div class="step">
-                <span class="step-number">2</span>
-                <span class="step-label">Confirmation</span>
+            <div class="step-indicator-wrapper">
+              <div class="step-indicator">
+                <button type="button" class="btn btn-outline-secondary btn-back" (click)="goBack()">
+                  <i class="fas fa-arrow-left"></i>
+                  Retour
+                </button>
+
+                <div class="step active">
+                  <span class="step-number">1</span>
+                  <span class="step-label">Information</span>
+                </div>
+
+                <div class="step-line"></div>
+
+                <div class="step">
+                  <span class="step-number">2</span>
+                  <span class="step-label">Confirmation</span>
+                </div>
               </div>
             </div>
 
+            <!-- ================================================= -->
+            <!-- FORM -->
+            <!-- ================================================= -->
+
             <form [formGroup]="exerciceFormGroup" (ngSubmit)="ajouteditExerciceWithFiles()">
+              <!-- ID technique éventuel -->
               <input type="hidden" formControlName="id" />
 
               <div class="enseignement-item">
+                <!-- ================================================= -->
+                <!-- TITRE + LIVRE -->
+                <!-- ================================================= -->
+
                 <div class="row form-row">
+                  <!-- TITRE -->
                   <div class="col-lg-6 col-sm-12">
                     <div class="form-group">
                       <label class="form-label">
-                        Titre exercice <span class="text-danger">*</span>
+                        Titre exercice
+                        <span class="text-danger">*</span>
+
                         <i class="fas fa-tag ms-1 text-muted"></i>
                       </label>
+
                       <input
                         type="text"
                         class="form-control"
                         formControlName="titre"
                         placeholder="Ex: Exercice sur les équations"
                       />
+
                       @if (
                         exerciceFormGroup.get('titre')?.invalid &&
                         exerciceFormGroup.get('titre')?.touched
@@ -63,14 +91,17 @@
                     </div>
                   </div>
 
+                  <!-- LIVRE -->
                   <div class="col-lg-6 col-sm-12">
                     <div class="form-group">
                       <label class="form-label">
                         Livre
                         <i class="fas fa-book ms-1 text-muted"></i>
                       </label>
+
                       <select class="form-select" formControlName="livre">
-                        <option value="" disabled selected>— Sélectionnez un livre —</option>
+                        <option value="" disabled>— Sélectionnez un livre —</option>
+
                         @for (item of livreList; track item.id) {
                           <option [value]="item.id">
                             {{ item.titre }}
@@ -79,17 +110,18 @@
                       </select>
                     </div>
                   </div>
-
                 </div>
 
-               
                 <div class="row form-row">
+                  <!-- PAGE -->
                   <div class="col-lg-4 col-sm-12">
                     <div class="form-group">
                       <label class="form-label">
                         Page
+
                         <i class="fas fa-file-alt ms-1 text-muted"></i>
                       </label>
+
                       <input
                         type="text"
                         class="form-control"
@@ -99,12 +131,15 @@
                     </div>
                   </div>
 
+                  <!-- NUMERO EXERCICE -->
                   <div class="col-lg-4 col-sm-12">
                     <div class="form-group">
                       <label class="form-label">
                         Numéro exercice
+
                         <i class="fas fa-hashtag ms-1 text-muted"></i>
                       </label>
+
                       <input
                         type="number"
                         class="form-control"
@@ -114,12 +149,15 @@
                     </div>
                   </div>
 
+                  <!-- URL -->
                   <div class="col-lg-4 col-sm-12">
                     <div class="form-group">
                       <label class="form-label">
                         Lien
+
                         <i class="fas fa-link ms-1 text-muted"></i>
                       </label>
+
                       <input
                         type="text"
                         class="form-control"
@@ -130,19 +168,23 @@
                   </div>
                 </div>
 
+                <!-- ================================================= -->
+                <!-- DATES -->
+                <!-- ================================================= -->
+
                 <div class="row form-row">
+                  <!-- DATE DEBUT -->
                   <div class="col-lg-6 col-sm-12">
                     <div class="form-group">
                       <label class="form-label">
-                        Date début <span class="text-danger">*</span>
+                        Date début
+                        <span class="text-danger">*</span>
+
                         <i class="fas fa-calendar-alt ms-1 text-muted"></i>
                       </label>
-                      <input
-                        type="date"
-                        class="form-control"
-                        formControlName="dateDebut"
-                        required
-                      />
+
+                      <input type="date" class="form-control" formControlName="dateDebut" />
+
                       @if (
                         exerciceFormGroup.get('dateDebut')?.invalid &&
                         exerciceFormGroup.get('dateDebut')?.touched
@@ -152,30 +194,41 @@
                     </div>
                   </div>
 
+                  <!-- DATE FIN -->
                   <div class="col-lg-6 col-sm-12">
                     <div class="form-group">
                       <label class="form-label">
                         Date fin
+
                         <i class="fas fa-calendar-check ms-1 text-muted"></i>
                       </label>
+
                       <input type="date" class="form-control" formControlName="dateFin" />
                     </div>
                   </div>
                 </div>
 
+                <!-- ================================================= -->
+                <!-- DESCRIPTION -->
+                <!-- ================================================= -->
+
                 <div class="row form-row">
                   <div class="col-12">
                     <div class="form-group">
                       <label class="form-label">
-                        Description <span class="text-danger">*</span>
+                        Description
+                        <span class="text-danger">*</span>
+
                         <i class="fas fa-align-left ms-1 text-muted"></i>
                       </label>
+
                       <textarea
                         class="form-control"
                         formControlName="description"
                         rows="4"
                         placeholder="Décrivez l'exercice..."
                       ></textarea>
+
                       @if (
                         exerciceFormGroup.get('description')?.invalid &&
                         exerciceFormGroup.get('description')?.touched
@@ -186,21 +239,36 @@
                   </div>
                 </div>
 
+                <!-- ================================================= -->
+                <!-- DOCUMENT -->
+                <!-- ================================================= -->
+
                 <div class="row form-row">
                   <div class="col-12">
                     <div class="form-group">
                       <label class="form-label">
                         <i class="fas fa-paperclip me-1"></i>
-                        Pièces jointes
+
+                        Document
                       </label>
+
+                      <!-- ================================================= -->
+                      <!-- BOUTON SELECTION -->
+                      <!-- ================================================= -->
 
                       <div class="upload-container">
                         <label class="upload-button">
                           <i class="fas fa-plus"></i>
-                          <input type="file" multiple (change)="onFileSelected($event)" />
-                          Ajouter une pièce jointe
+
+                          <input type="file" (change)="onFileSelected($event)" />
+
+                          {{ isEdit ? 'Remplacer le document' : 'Ajouter un document' }}
                         </label>
                       </div>
+
+                      <!-- ================================================= -->
+                      <!-- ERREUR FICHIER -->
+                      <!-- ================================================= -->
 
                       @if (errorMessage) {
                         <div class="error-message">
@@ -208,49 +276,78 @@
                         </div>
                       }
 
+                      <!-- ================================================= -->
+                      <!-- APERCU DOCUMENT -->
+                      <!-- ================================================= -->
+
                       <div class="file-preview">
-                        @if (exercice?.piecesJointesDTO) {
+                        <!-- =============================================== -->
+                        <!-- DOCUMENT EXISTANT -->
+                        <!-- =============================================== -->
+
+                        @if (
+                          isEdit &&
+                          exercice &&
+                          !existingFileRemoved &&
+                          !currentFile &&
+                          exercice.documentResponse
+                        ) {
                           <div class="file-item">
                             <img
                               alt="File icon"
-                              [src]="getFileIcon(exercice?.piecesJointesDTO!.nomTechnique!)"
+                              [src]="getFileIcon(exercice.documentResponse.nomFichier)"
                               class="file-icon"
-                              [title]="exercice?.piecesJointesDTO?.nomFichier"
+                              [title]="exercice.documentResponse.nomFichier"
                             />
-                            <span
-                              class="file-name"
-                              [title]="exercice?.piecesJointesDTO?.nomFichier"
-                            >
+
+                            <span class="file-name" [title]="exercice.documentResponse.nomFichier">
                               {{
-                                exercice?.piecesJointesDTO?.nomFichier?.length! > 15
-                                  ? (exercice?.piecesJointesDTO?.nomFichier | slice: 0 : 15) + '...'
-                                  : exercice?.piecesJointesDTO?.nomFichier
+                                exercice.documentResponse.nomFichier.length > 15
+                                  ? (exercice.documentResponse.nomFichier | slice: 0 : 15) + '...'
+                                  : exercice.documentResponse.nomFichier
                               }}
                             </span>
-                            <span class="file-status saved-file">Enregistré</span>
-                            <button class="remove-button" (click)="removeFileNoApi(true)">
+
+                            <span class="file-status saved-file"> Enregistré </span>
+
+                            <button
+                              type="button"
+                              class="remove-button"
+                              (click)="removeFileNoApi(true)"
+                            >
                               <i class="fas fa-trash"></i>
                             </button>
                           </div>
                         }
 
+                        <!-- =============================================== -->
+                        <!-- NOUVEAU DOCUMENT -->
+                        <!-- =============================================== -->
+
                         @if (currentFile) {
                           <div class="file-item newItem">
                             <img
-                              [src]="getFileIcon(currentFile!.name)"
+                              [src]="getFileIcon(currentFile.name)"
                               alt="File icon"
                               class="file-icon"
-                              [title]="currentFile!.name"
+                              [title]="currentFile.name"
                             />
-                            <span class="file-name" [title]="currentFile!.name">
+
+                            <span class="file-name" [title]="currentFile.name">
                               {{
-                                currentFile!.name.length > 15
-                                  ? (currentFile!.name | slice: 0 : 15) + '...'
-                                  : currentFile!.name
+                                currentFile.name.length > 15
+                                  ? (currentFile.name | slice: 0 : 15) + '...'
+                                  : currentFile.name
                               }}
                             </span>
-                            <span class="file-status new-file">Nouveau</span>
-                            <button class="remove-button" (click)="removeFileNoApi(false)">
+
+                            <span class="file-status new-file"> Nouveau </span>
+
+                            <button
+                              type="button"
+                              class="remove-button"
+                              (click)="removeFileNoApi(false)"
+                            >
                               <i class="fas fa-trash"></i>
                             </button>
                           </div>
@@ -261,21 +358,35 @@
                 </div>
               </div>
 
+              <!-- ================================================= -->
+              <!-- ACTIONS -->
+              <!-- ================================================= -->
+
               <div class="form-actions">
                 <button type="button" class="btn btn-secondary" (click)="goBack()">
-                  <i class="fas fa-times me-2"></i>Annuler
+                  <i class="fas fa-times me-2"></i>
+
+                  Annuler
                 </button>
+
                 <button type="submit" class="btn btn-primary" [disabled]="!exerciceFormGroup.valid">
-                  <i class="fas fa-save me-2"></i>Enregistrer l'exercice
+                  <i class="fas fa-save me-2"></i>
+
+                  {{ isEdit ? 'Modifier l’exercice' : 'Enregistrer l’exercice' }}
                 </button>
               </div>
 
+              <!-- ================================================= -->
+              <!-- AIDE -->
+              <!-- ================================================= -->
+
               <div class="alert-help mt-4" role="alert">
                 <i class="fas fa-info-circle me-2"></i>
-                <span
-                  >Les exercices permettent aux élèves de pratiquer et consolider leurs
-                  connaissances.</span
-                >
+
+                <span>
+                  Les exercices permettent aux élèves de pratiquer et consolider leurs
+                  connaissances.
+                </span>
               </div>
             </form>
           </div>
@@ -284,3 +395,4 @@
     </div>
   </div>
 </div>
+```

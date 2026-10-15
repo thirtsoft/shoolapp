@@ -1,6 +1,10 @@
 
 @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700;900&family=DM+Sans:wght@300;400;500;600;700&display=swap');
+@import '@fullcalendar/angular/skeleton.css';
+@import '@fullcalendar/angular/themes/classic/theme.css';
+@import '@fullcalendar/angular/themes/classic/palette.css';
 
+/* ton CSS existant reste ici */
 :root {
   --primary-deep: #1E3A5F;
   --primary-ocean: #2C5282;

@@ -4,6 +4,8 @@ import { NoteEditRequest } from "../note/note-edit-request";
 export interface EvaluationEditRequest {
   id?: number;
 
+  numeroEvaluation?: string;
+
   titre?: string;
 
   description?: string;
@@ -27,6 +29,8 @@ export interface EvaluationEditRequest {
   evaluationMode?: string;
 
   etatId?: number;
+
+  libelleEtat?: string;
 
   heureDebut?: string;
 

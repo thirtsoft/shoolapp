@@ -3,24 +3,25 @@ import { Injectable } from '@angular/core';
 import { Observable, throwError } from 'rxjs';
 import { catchError, tap } from 'rxjs/operators';
 import { environment } from '../../../../../environments/environment';
+import { ApiResponse } from '../../../../core/datamodel/api-response.model';
 import { DataResult } from '../../../../core/datamodel/data-model';
+import { CoursEnseignantCalendrier } from '../../../../core/models/enseignant/cours-enseignant-calendrier.model';
 import { Cours } from '../../../../core/models/planification/cours';
 import { EmploiDuTemps } from '../../../../core/models/planification/emploi-du-temp';
 import { Enseignement } from '../../../../core/models/planification/enseignement';
 import { Evenement } from '../../../../core/models/planification/evenement';
 import { Exercice } from '../../../../core/models/planification/exercice';
+import { CreateExerciceResponse } from '../../../../core/models/planification/exercice/create-exercice-response.model';
+import { GetExerciceResponse } from '../../../../core/models/planification/exercice/get-exercice-response.model';
+import { UpdateExerciceDocumentResponse } from '../../../../core/models/planification/exercice/update-exercice-document-response.model';
+import { UpdateExerciceDTO } from '../../../../core/models/planification/exercice/update-exercice-dto.model';
+import { UpdateExerciceResponseDTO } from '../../../../core/models/planification/exercice/update-exercice-response-dto.model';
 import { ListeEmploiDuTemps } from '../../../../core/models/planification/list-emploi-du-temp';
 import { ListeCours } from '../../../../core/models/planification/liste-cours';
 import { ListeEnseignement } from '../../../../core/models/planification/liste-enseignement';
 import { ListeExercie } from '../../../../core/models/planification/liste-exercice';
 import { Meeting } from '../../../../core/models/planification/meeting';
 import { ResponseMessage } from '../../../../core/response/response-message';
-import { ApiResponse } from '../../../../core/datamodel/api-response.model';
-import { CreateExerciceResponse } from '../../../../core/models/planification/exercice/create-exercice-response.model';
-import { UpdateExerciceDTO } from '../../../../core/models/planification/exercice/update-exercice-dto.model';
-import { UpdateExerciceResponseDTO } from '../../../../core/models/planification/exercice/update-exercice-response-dto.model';
-import { UpdateExerciceDocumentResponse } from '../../../../core/models/planification/exercice/update-exercice-document-response.model';
-import { GetExerciceResponse } from '../../../../core/models/planification/exercice/get-exercice-response.model';
 
 @Injectable({
   providedIn: 'root'
@@ -42,6 +43,12 @@ export class PlanificationResourceService {
 
   getResourceList<T>(endpoint: string): Observable<T> {
     const url = `${this.planificationUrl}/${endpoint}/list`;
+    return this.http.get<T>(url, this.httpOptions);
+  }
+
+
+  getResourceListe<T>(endpoint: string): Observable<T> {
+    const url = `${this.planificationUrl}/${endpoint}`;
     return this.http.get<T>(url, this.httpOptions);
   }
 
@@ -402,6 +409,14 @@ export class PlanificationResourceService {
   }
 
   // *****************  Cours **********************//
+
+  getMesCoursEnseignant(): Observable<CoursEnseignantCalendrier[]> {
+    return this.http.get<CoursEnseignantCalendrier[]>(`${this.planificationUrl}/planification/enseignant/me/cours`);
+  }
+
+  getMesEnseignements(): Observable<ListeEnseignement[]> {
+    return this.http.get<ListeEnseignement[]>(`${this.planificationUrl}/planification/enseignant/me/enseignements`);
+  }
 
   getAllCourses(): Observable<ListeCours[]> {
     return this.http.get<ListeCours[]>(`${this.planificationUrl}/planification/cours/list`, this.httpOptions);

@@ -1,7 +1,7 @@
 import { Component, inject, OnInit } from '@angular/core';
+import { IFilterConfig } from '../../../../core/filtered-config/FiltreConfiguration';
 import { GenericTableDossierComponent } from '../../../../core/generic/generic-table-dossier/generic-table-dossier.component';
 import { DetailsEnseignantUtilisateur } from '../../../../core/models/enseignant/details-enseignant-utilisateur';
-import { IFilterConfig } from '../../../../core/filtered-config/FiltreConfiguration';
 import { PlanificationResourceService } from '../../../administration/planification/services/planification-resource.service';
 import { ReferentielService } from '../../../administration/referentiel/service/referentiel.service';
 import { EnseignantService } from '../../service/enseignant.service';
@@ -40,7 +40,6 @@ export class MonAgendaComponent implements OnInit {
   activeFilters: any = {};
   hasActiveFilters: boolean = false;
 
-  userId: number;
   enseignantId?: number;
 
   private readonly planificationResource = inject(PlanificationResourceService);
@@ -49,11 +48,10 @@ export class MonAgendaComponent implements OnInit {
 
   constructor(
   ) {
-    this.userId = Number(localStorage.getItem('id'));
   }
 
   ngOnInit(): void {
-    this.getEnseignantByUtilisateur(this.userId);
+    this.chargerLesCoursDeEnseignant();
   }
 
 

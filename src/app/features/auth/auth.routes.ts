@@ -1,6 +1,5 @@
 import { Routes } from '@angular/router';
 import { ForgotPasswordComponent } from './pages/forgot-password-component/forgot-password-component';
-import { LoginComponent } from './pages/login-component/login-component';
 import { LoginV2Component } from './pages/login-v2-component/login-v2-component';
 import { ResetPasswordComponent } from './pages/reset-password-component/reset-password-component';
 import { SuccessPasswordHandlerComponent } from './pages/success-password-handler-component/success-password-handler-component';
@@ -18,11 +17,6 @@ export const AUTH_ROUTES: Routes = [
   {
     path: 'login/v2',
     component: LoginV2Component
-  },
-
-  {
-    path: 'login',
-    component: LoginComponent
   },
 
   {

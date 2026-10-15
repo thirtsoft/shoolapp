@@ -1,13 +1,18 @@
 <aside class="sidebar" [class.collapsed]="collapsed()" [class.open]="open()">
   <button class="sidebar-close" (click)="close.emit()">✕</button>
 
-  <!-- Brand -->
   <div class="sidebar-brand">
-    <div class="brand-logo">🏫</div>
+    <img
+      src="scoolli-logo.png"
+      alt="Scoolli"
+      class="brand-logo"
+      style="width: 100px; height: auto"
+    />
+
     @if (!collapsed()) {
       <div class="brand-text">
-        <span class="brand-name">EduSchool</span>
-        <span class="brand-sub">Espace Enseignant</span>
+        <span class="brand-name">Scoolli</span>
+        <span class="brand-sub">Enseignant</span>
       </div>
     }
     <button

@@ -398,7 +398,6 @@ export class ListEvaluationComponent implements OnInit {
     this.chargerLesDonnees(false);
   }
 
-
   canEditOrDeleteEvaluation(item: any): boolean {
     return item.etat !== 'Validée';
   }
