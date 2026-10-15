@@ -10,13 +10,14 @@ interface DemoFeature {
 
 @Component({
   selector: 'app-demo-component',
+  standalone: true,
   imports: [],
   templateUrl: './demo-component.html',
   styleUrl: './demo-component.css',
 })
 export class DemoComponent {
 
-  demoFeatures: DemoFeature[] = [
+  readonly demoFeatures: DemoFeature[] = [
     {
       title: 'Gestion des élèves',
       description: 'Gérez les inscriptions, les classes, les dossiers élèves et les informations des responsables.',
@@ -55,7 +56,7 @@ export class DemoComponent {
     }
   ];
 
-  constructor(private router: Router) {}
+  constructor(private router: Router) { }
 
   goToLogin(): void {
     this.router.navigate(['/auth']);

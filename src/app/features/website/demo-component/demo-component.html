@@ -2,9 +2,6 @@
   <header class="demo-header">
     <div class="container demo-navbar">
       <button type="button" class="brand" (click)="goBackHome()" aria-label="Retour à l'accueil">
-        <!--  <span class="brand-icon">
-          <i class="fas fa-graduation-cap"></i>
-        </span> -->
 
         <img
           src="scoolli-logo.png"
@@ -13,7 +10,6 @@
           style="width: 130px; height: auto"
         />
 
-        <!--     <span class="brand-text"> Edu<span>School</span> </span> -->
       </button>
 
       <div class="header-actions">
@@ -31,22 +27,12 @@
     <section class="demo-hero">
       <div class="container">
         <div class="demo-hero-content">
-          <div class="eyebrow">
-            <i class="fas fa-play-circle"></i>
-            Découvrez Scoolli
-          </div>
-
           <h1>
             Découvrez comment
             <span>Scoolli simplifie</span>
             la gestion de votre établissement
           </h1>
 
-          <p class="hero-description">
-            En quelques minutes, découvrez les principales fonctionnalités qui permettent aux
-            établissements scolaires de gagner du temps, mieux suivre leurs élèves et simplifier
-            leur gestion quotidienne.
-          </p>
         </div>
 
         <!-- VIDEO -->
@@ -57,7 +43,7 @@
           lorsque celle-ci sera disponible.
         -->
 
-            <div class="video-placeholder">
+         <!--    <div class="video-placeholder">
               <div class="video-background">
                 <div class="dashboard-preview">
                   <div class="preview-sidebar">
@@ -124,7 +110,22 @@
                 <i class="fas fa-play"></i>
                 Démonstration Scoolli
               </div>
-            </div>
+            </div> -->
+          
+            <div class="video-player">
+  <video
+    class="demo-video"
+    controls
+    preload="metadata"
+  >
+    <source
+      src="assets/video/demo-scoolli.mp4"
+      type="video/mp4"
+    />
+
+    Votre navigateur ne prend pas en charge la lecture des vidéos.
+  </video>
+</div>
           </div>
 
           <div class="video-caption">
