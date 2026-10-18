@@ -1,16 +1,15 @@
-import { Component, computed, effect, inject, OnInit } from '@angular/core';
-import { ReactiveFormsModule } from '@angular/forms';
+import { Component, inject, OnInit, signal } from '@angular/core';
+import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
+import { ActivatedRoute, Router } from '@angular/router';
+import { ToastrService } from 'ngx-toastr';
 import { IFilterConfig } from '../../../../../core/filtered-config/FiltreConfiguration';
 import { GenericTableDossierComponent } from '../../../../../core/generic/generic-table-dossier/generic-table-dossier.component';
-import { DetailsEnseignantUtilisateur } from '../../../../../core/models/enseignant/details-enseignant-utilisateur';
-import { ListeEnseignement } from '../../../../../core/models/planification/liste-enseignement';
-import { Matiere } from '../../../../../core/models/referentiels/matiere';
 import { SessionSemestre } from '../../../../../core/models/referentiels/session-semestre';
+import { CommonService } from '../../../../../core/services/common.service';
 import { DossierResourceService } from '../../../../administration/dossier-eleve/service/dossier-resource.service';
 import { PlanificationResourceService } from '../../../../administration/planification/services/planification-resource.service';
-import { ReferentielResourceService } from '../../../../administration/referentiel/service/referentiel-resource.service';
-import { EnseignantService } from '../../../service/enseignant.service';
-import { EnseignementContextService } from '../../../service/enseignement-contexte.service';
+import { Etat } from '../../../../administration/referentiel/pages/semestre/editer-session-semestre-component/editer-session-semestre-component';
+import { EnseignementContextService, GestionClasseContext } from '../../../service/enseignement-contexte.service';
 
 @Component({
   selector: 'app-list-evaluation-enseignant',
@@ -21,224 +20,298 @@ import { EnseignementContextService } from '../../../service/enseignement-contex
 })
 export class ListEvaluationEnseignantComponent implements OnInit {
 
-  errorMessage?: string;
-  today = new Date();
-  noteId?: number | null;
   isEdit: boolean = true;
   isLoading: boolean = false;
-  filteredDataEvaluation: any;
   isLockable: boolean = true;
   isTable: boolean = true;
-  deleteEndpoint = "evaluation";
   columns: any = [];
+
+  deleteEndpoint = 'evaluation';
   evaluationData: any = [];
 
-  currentPage = 0;
-  pageSize = 5;
-  totalElements = 0;
-  tableSizes = [5, 10, 20, 50, 100];
+  sessionSemestreList: any[] = [];
+  etatEvaluationOptions: any[] = [];
 
-  classesList: any[] = [];
-  matiereList: any[] = [];
-  semestreList: any[] = [];
-  enseignementList: ListeEnseignement[] = [];
+  etatCongesList: Etat[] = [
+    {
+      id: 8,
+      code: 'E8',
+      libelle: 'En cours',
+    },
+    {
+      id: 2,
+      code: 'E2',
+      libelle: 'Remise',
+    },
+    {
+      id: 3,
+      code: 'E3',
+      libelle: 'Envoyée',
+    },
+    {
+      id: 4,
+      code: 'E4',
+      libelle: 'Validée',
+    }
+  ];
+
+
+  public readonly String = String;
+
+  currentPage = 0;
+  pageSize = 10;
+  totalElements = 0;
+
+  tableSizes = [10, 20, 50, 100];
+
+  moisList: any[] = [];
 
   tableFilters: IFilterConfig[] = [];
   activeFilters: any = {};
   hasActiveFilters: boolean = false;
 
-  isSelected = false;
-  detailsEnseignant: DetailsEnseignantUtilisateur = {};
-  userId: number;
-  enseignantId?: number;
   classeId?: number;
-  titile: string = '';
+
+  contexteClasse = signal<GestionClasseContext | null>(null);
 
 
-  private readonly referentielResourceService = inject(ReferentielResourceService);
+  private readonly route = inject(ActivatedRoute);
   private readonly planification = inject(PlanificationResourceService);
+  private readonly toastService = inject(ToastrService);
+  private readonly activeRoute = inject(ActivatedRoute);
+  private readonly router = inject(Router);
+  private readonly _formBuilder = inject(FormBuilder);
+  private readonly commonService = inject(CommonService);
+  private readonly enseignementContextService = inject(EnseignementContextService);
   private readonly dossierResource = inject(DossierResourceService);
-  private readonly classeContext = inject(EnseignementContextService);
 
-  constructor(
-  ) {
-    this.userId = Number(localStorage.getItem('id'));
-    this.userId = Number(localStorage.getItem('id'));
-    effect(() => {
-      const activeClassId = Number(this.classeContext.activeClasseId());
-      console.log('active classe is', activeClassId);
-      if (activeClassId) {
-        this.classeId = Number(activeClassId);
-        this.chargerLesEvaluations();
-      }
-    });
+  constructor() {
+    this.classeId = Number(this.activeRoute.snapshot.params['id']);
+    console.log('ClassID', this.classeId);
+
+    const contexte = this.enseignementContextService.getGestionClasseContext();
+
+    console.log('contexteClasse', contexte?.classe);
+    console.log('contexteMatiere', contexte?.matiere);
+
+    console.log('contexteAnneeScolaire', contexte?.anneeScolaire);
+
+    console.log('contexteCours', contexte?.courseId);
+
+
+    if (contexte) {
+      this.contexteClasse.set(contexte);
+      console.log('Contexte chargé :', this.contexteClasse());
+    }
   }
 
-  readonly libelleClasse = computed(() => {
-    const classes = this.classeContext.mesClasses();
-    const activeId = this.classeContext.activeClasseId();
-    const enseignementActif = classes.find(ens => String(ens.classId) === String(activeId));
-    return enseignementActif?.classe;
-  });
-
   ngOnInit(): void {
-
+    void this.chargerLesEvaluations();
   }
 
   async chargerLesEvaluations() {
     try {
-      const [matiere, semestre] = await Promise.all([
-        this.getMatiereList(),
-        this.getSemestreList(),
+      await Promise.all([
+        this.getEtatEvaluationList(),
+        this.getMoisList(),
+        this.getSessionSemestreList()
       ]);
 
-      this.initialisationDesFiltres(matiere, semestre);
-      this.chargerLesDonnees(false);
+      this.initialisationDesFiltresEvaluation();
+      this.chargerLesDonneesEvaluation(false);
+
     } catch (error) {
+
       console.error('Erreur chargement données:', error);
     }
   }
 
-  getMatiereList(): Promise<Matiere[]> {
-    return new Promise((resolve, reject) => {
-      this.referentielResourceService.getResourceList('matiere').subscribe({
-        next: (data: any) => {
-          this.matiereList = data;
-          resolve(data);
-        },
-        error: (err) => reject(err)
-      });
-    });
+  getSessionSemestreList(): Promise<SessionSemestre[]> {
+    return new Promise(
+      (resolve, reject) => {
+
+        this.planification.getResourceListe('referentiel/sessionsemestre')
+          .subscribe({
+
+            next: (data: any) => {
+              this.sessionSemestreList = data;
+              resolve(data);
+            },
+
+            error: (err: any) => reject(err)
+
+          });
+      }
+    );
   }
 
-  getSemestreList(): Promise<SessionSemestre[]> {
-    return new Promise((resolve, reject) => {
-      this.referentielResourceService.getResourceList('sessionsemestre').subscribe({
-        next: (data: any) => {
-          this.semestreList = data;
-          resolve(data);
-        },
-        error: (err) => reject(err)
-      });
-    });
+  getEtatEvaluationList(): Promise<any[]> {
+    return new Promise(
+      (resolve, reject) => {
+
+        this.commonService.getEtatEvaluations().subscribe({
+
+          next: (data: any) => {
+            this.etatEvaluationOptions = data;
+            resolve(data);
+          },
+
+          error: (err: any) =>
+            reject(err)
+
+        });
+      }
+    );
   }
 
-  getEnseignementList(enseignantId: number): Promise<ListeEnseignement[]> {
-    return new Promise((resolve, reject) => {
-      this.planification.getAllEnseignementByEnseignant(enseignantId).subscribe({
-        next: (data) => {
-          this.enseignementList = data;
-          resolve(data);
-        },
-        error: (err) => reject(err)
-      });
-    });
-  }
+  initialisationDesFiltresEvaluation() {
 
-  initialisationDesFiltres(matieres: any[], semestre: any[]) {
     this.tableFilters = [
-      {
-        key: 'nomPrenom',
-        label: 'Nom/Prénom',
-        type: 'text',
-        placeholder: 'Rechercher un élève...'
-      },
-      {
-        key: 'matiere',
-        label: 'Matière',
-        type: 'select',
-        options: matieres.map(c => ({
-          value: c.id,
-          label: c.libelle
-        })),
-      },
 
       {
-        key: 'semestre',
+        key: 'sessionSemestre',
         label: 'Semestre',
         type: 'select',
-        options: semestre.map(a => ({
-          value: a.id,
-          label: `${a.libelle}`
-        }))
+        options: this.sessionSemestreList.map(
+          s => ({
+            value: s.id,
+            label: `${s.semestre}`
+          })
+        )
       },
 
+      {
+        key: 'etat',
+        label: 'Etat',
+        type: 'select',
+        options: this.etatEvaluationOptions.map(
+          e => ({
+            value: e.etat,
+            label: e.etat
+          })
+        )
+      },
 
+      {
+        key: 'mois',
+        label: 'Mois',
+        type: 'select',
+        options: this.moisList.map(
+          m => ({
+            value: m.id,
+            label: m.mois
+          })
+        )
+      }
 
     ];
   }
 
-  onFilterChange(filter: IFilterConfig, value: any) {
-    this.activeFilters[filter.key] = value;
-    this.hasActiveFilters = Object.values(this.activeFilters).some(val =>
-      val !== null && val !== undefined && val !== ''
-    );
-    this.currentPage = 0;
-    this.chargerLesDonnees(this.hasActiveFilters);
-  }
-
-  chargerLesDonnees(useFilterApi: boolean) {
+  chargerLesDonneesEvaluation(useFilterApi: boolean) {
     this.isLoading = true;
     let apiCall;
-
     if (useFilterApi) {
-
-      const filtreParam = this.construireParametreDeFiltre();
-
-      apiCall = this.dossierResource.fetchFilterByElementDataTable(
+      const filtreParam = this.construireParametreDeFiltreEvaluation();
+      apiCall = this.planification.fetchFilterDataTable(
         'evaluation/classe',
         this.currentPage,
         this.pageSize,
-        filtreParam)
+        filtreParam
+      );
 
     } else {
-      apiCall = this.planification.getResourceByIdPaged('evaluation/classe', this.classeId!, this.currentPage, this.pageSize);
+
+      apiCall = this.planification.getResourceByIdPaged(
+        'evaluation/classe',
+        Number(this.classeId),
+        this.currentPage,
+        this.pageSize
+      );
     }
+
     apiCall.subscribe({
+
       next: (response) => {
+
         this.evaluationData = response.data?.content || [];
         this.totalElements = response.data?.totalElements || 0;
+        this.evaluationData = this.evaluationData?.map(
+          (item: any) => ({
+
+            ...item,
+
+            dureEvaluation: item.heureDebut + ' à  ' + item.heureFin
+
+          })
+        );
 
         this.columns = [
-          { key: 'titre', header: 'Titre' },
-          { key: 'matiere', header: 'Matière' },
-          { key: 'semestre', header: 'Semestre' },
-          { key: 'evaluationType', header: 'Type' },
-          { key: 'etat', header: 'Etat' },
-          { key: 'datePublication', header: 'Date' },
+
+          {
+            key: 'numeroEvaluation',
+            header: 'N°'
+          },
+
+          {
+            key: 'titre',
+            header: 'Titre'
+          },
+
+          {
+            key: 'evaluationMode',
+            header: 'Mode'
+          },
+
+          {
+            key: 'sessionSemestre',
+            header: 'Semestre'
+          },
+
+          {
+            key: 'evaluationType',
+            header: 'Type'
+          },
+
+          {
+            key: 'etat',
+            header: 'Etat'
+          },
+
+          {
+            key: 'dateEvaluation',
+            header: 'Date'
+          },
+
+          {
+            key: 'dureEvaluation',
+            header: 'Heure'
+          }
 
         ];
-        this.evaluationData = this.evaluationData?.map((item: any) => ({
-          ...item,
-        }));
-
         this.isLoading = false;
       },
+
       error: (error) => {
-        console.error("Erreur:", error);
+        console.error('Erreur:', error);
         this.isLoading = false;
       }
+
     });
   }
 
-  construireParametreDeFiltre(): any {
+  construireParametreDeFiltreEvaluation(): any {
     const filtreObj: any = {};
 
-    if (this.activeFilters.nomPrenom) {
-      filtreObj.nomPrenom = this.activeFilters.nomPrenom;
+    if (this.activeFilters?.sessionSemestre) {
+      filtreObj.sessionSemestre = this.activeFilters.sessionSemestre;
     }
-    if (this.activeFilters.matiere) {
-      filtreObj.matiere = this.activeFilters.matiere;
+    if (this.activeFilters.etat) {
+      filtreObj.etat = this.activeFilters.etat;
     }
-    if (this.activeFilters?.semestre) {
-      filtreObj.semestre = this.activeFilters.semestre;
+    if (this.activeFilters.mois) {
+      filtreObj.mois = this.activeFilters.mois;
     }
-    if (this.activeFilters.type) {
-      filtreObj.type = this.activeFilters.type;
-    }
-
     return Object.keys(filtreObj).length > 0 ? filtreObj : null;
-
   }
 
   get totalPages(): number {
@@ -248,25 +321,61 @@ export class ListEvaluationEnseignantComponent implements OnInit {
   changePage(pageNumber: number) {
     if (pageNumber >= 0 && pageNumber < this.totalPages) {
       this.currentPage = pageNumber;
-      this.chargerLesDonnees(this.hasActiveFilters);
+      this.chargerLesDonneesEvaluation(this.hasActiveFilters);
     }
   }
 
   changeSize(size: number | string) {
+
     const newSize = typeof size === 'string' ? parseInt(size, 10) : size;
+
     if (this.pageSize !== newSize) {
       this.pageSize = newSize;
       this.currentPage = 0;
-      this.chargerLesDonnees(this.hasActiveFilters);
+
+      this.chargerLesDonneesEvaluation(this.hasActiveFilters);
     }
+  }
+
+  onFilterChange(filter: IFilterConfig, value: any) {
+    this.activeFilters[filter.key] = value;
+    this.hasActiveFilters = Object.values(this.activeFilters).some(
+      val =>
+        val !== null &&
+        val !== undefined &&
+        val !== ''
+    );
+
+    this.currentPage = 0;
+    this.chargerLesDonneesEvaluation(this.hasActiveFilters);
   }
 
   resetFilters() {
     this.activeFilters = {};
     this.hasActiveFilters = false;
-    this.initialisationDesFiltres(this.matiereList, this.semestreList);
+    this.initialisationDesFiltresEvaluation();
     this.currentPage = 0;
-    this.chargerLesDonnees(false);
+    this.chargerLesDonneesEvaluation(false);
+  }
+
+  canEditOrDeleteEvaluation(item: any): boolean {
+    return item.etat !== 'Validée';
+  }
+
+  getMoisList(): Promise<any[]> {
+    return new Promise(
+      (resolve, reject) => {
+
+        this.commonService.getAllMois().subscribe({
+
+          next: (data) => {
+            this.moisList = data;
+            resolve(data);
+          },
+          error: (err) => reject(err)
+        });
+      }
+    );
   }
 
 

@@ -2,8 +2,8 @@ import { Component, inject, OnInit } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { Utilisateur } from '../../../../core/models/utilisateur/utilisateur';
-import { UtilisateurService } from '../../../administration/utilisateur/service/utilisateur.service';
 import { LocalStorageService } from '../../../../core/services/local-storage.service';
+import { UtilisateurService } from '../../../administration/utilisateur/service/utilisateur.service';
 
 
 @Component({
@@ -26,7 +26,7 @@ export class SideMenuEnseignantComponent implements OnInit {
   private readonly userService = inject(UtilisateurService);
   private readonly router = inject(Router);
   private readonly localStorage = inject(LocalStorageService);
-  
+
   constructor(
   ) {
     this.userId = this.localStorage.getItem('id');
@@ -44,7 +44,7 @@ export class SideMenuEnseignantComponent implements OnInit {
         console.log(this.utilisateur);
       },
       error: error => {
-        
+
       }
     })
   }
@@ -52,7 +52,7 @@ export class SideMenuEnseignantComponent implements OnInit {
   ngAfterViewInit() {
     this.loadDynmicallyScript('assets/admin/js/script.js');
   }
-  loadDynmicallyScript(js:any) {
+  loadDynmicallyScript(js: any) {
     var script = document.createElement('script');
     script.src = js;
     script.async = false;
@@ -60,8 +60,8 @@ export class SideMenuEnseignantComponent implements OnInit {
     script.onload = () => this.doSomethingWhenScriptIsLoaded();
   }
 
-  doSomethingWhenScriptIsLoaded() {}
-  change(name:any) {
+  doSomethingWhenScriptIsLoaded() { }
+  change(name: any) {
     this.page = name;
   }
 
@@ -83,12 +83,12 @@ export class SideMenuEnseignantComponent implements OnInit {
   }
 
   goToProfil() {
-    this.router.navigate(['/admin/doc-profile', this.userId]);
+    void this.router.navigate(['/admin/doc-profile', this.userId]);
   }
 
   logout() {
     this.localStorage.clear();
-    this.router.navigate(['/']).then(() => {
+    void this.router.navigate(['/']).then(() => {
       window.location.reload();
     });
   }

@@ -4,6 +4,7 @@ export interface ListeEnseignement {
   description?: string;
   enseignant?: string;
   classe?: string;
+  anneeScolaireId?: number;
   anneeScolaire?: string;
   matiere?: string;
   dateDebut?: Date;

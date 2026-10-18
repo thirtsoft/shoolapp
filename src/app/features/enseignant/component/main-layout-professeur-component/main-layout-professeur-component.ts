@@ -1,7 +1,6 @@
-import { Component, computed, inject, OnInit, signal } from '@angular/core';
+import { Component, inject, OnInit, signal } from '@angular/core';
 import { Router, RouterOutlet } from '@angular/router';
-import { PlanificationResourceService } from '../../../administration/planification/services/planification-resource.service';
-import { EnseignantService } from '../../service/enseignant.service';
+import { LocalStorageService } from '../../../../core/services/local-storage.service';
 import { EnseignementContextService } from '../../service/enseignement-contexte.service';
 import { SideBarProfesseurComponent } from '../side-bar-professeur-component/side-bar-professeur-component';
 
@@ -21,104 +20,113 @@ interface NavItem {
 export class MainLayoutProfesseurComponent implements OnInit {
 
   readonly router = inject(Router);
-  readonly classeContext = inject(EnseignementContextService);
-  private readonly enseignantService = inject(EnseignantService);
-  private readonly planificationResource = inject(PlanificationResourceService);
+  readonly localStorage = inject(LocalStorageService);
+  private readonly context = inject(EnseignementContextService);
 
   sidebarCollapsed = signal(false);
   sidebarOpen = signal(false);
   userId?: number;
 
-  readonly matiereActive = computed(() => {
-    const classes = this.classeContext.mesClasses();
-    const activeId = this.classeContext.activeClasseId();
-    
-    const enseignementActif = classes.find(ens => String(ens.classId) === String(activeId));
-    
-    // On retourne sa matière, ou une valeur par défaut s'il n'y a rien
-    return enseignementActif?.matiere || 'Matière';
-  });
+  dropdownOpen = signal(false);
 
-  professeur = {
-    nom: 'M. Sall',
-    prenom: 'Moussa',
-    matiere: 'Mathématiques',
-    avatar: '👨‍🏫'
-  };
+  userFirstName: string = '';
+  userLastName: string = '';
+  userInitial: string = '';
+  userFullName: string = '';
+  userMobile: string = '';
+
 
   readonly todayStr = new Date().toLocaleDateString('fr-FR', {
-    weekday: 'long',
-    day: 'numeric',
-    month: 'long',
-    year: 'numeric'
+    weekday: 'long', day: 'numeric', month: 'long', year: 'numeric'
   });
 
   nav: NavItem[] = [
     { route: '/enseignant/dashboard', ico: '📊', label: 'Accueil' },
-    { route: '/enseignant/mes-eleves', ico: '👨‍🎓', label: 'Élèves' },
-    { route: '/enseignant/notes', ico: '📝', label: 'Notes' },
-    { route: '/enseignant/absences', ico: '✅', label: 'Appel' },
+    { route: '/enseignant/contrats', ico: '📄', label: 'Contrat' },
+    { route: '/enseignant/paies', ico: '💵', label: 'Paie' },
+    { route: '/enseignant/activites', ico: '🗓️', label: 'Activités' },
     { route: '/enseignant/mon-compte', ico: '👤', label: 'Profil' },
 
   ];
 
   private readonly sectionLabels: Record<string, string> = {
     'dashboard': 'Tableau de bord',
-    'mes-eleves': 'Mes élèves',
-    'absences': 'Appel & Absences',
-    'demande-conge': 'Demande de congé',
-    'mes-conges': 'Mes congés',
-    'mes-enseignements': 'Mes enseignements',
-    'notes': 'Saisie des notes',
-    'evaluations': 'Évaluations',
-    'exercices': 'Exercices',
-    'mes-cours': 'Cours & Ressources',
-    'mes-reunions': 'Réunions',
+    'contrats': 'Contrat',
+    'paies': 'Paie',
+    'activites': 'Activités',
     'mon-compte': 'Mon compte',
   };
 
+  dropdownItems = [
+    {
+      icon: '👤',
+      label: 'Profil',
+      action: 'profile',
+      description: 'Voir mes informations'
+    },
+    {
+      icon: '🔑',
+      label: 'Modifier mot de passe',
+      action: 'change-password',
+      description: 'Changer votre mot de passe'
+    },
+    {
+      icon: '🚪',
+      label: 'Déconnexion',
+      action: 'logout',
+      description: 'Quitter l\'application'
+    }
+  ];
 
-  constructor() {
-    this.userId = Number(localStorage.getItem('id'));
-  }
+
+  constructor() { }
 
   ngOnInit(): void {
-    if (this.userId) {
-      this.chargerContexteEnseignements(this.userId);
+    this.loadUserInfo();
+  }
+
+  loadUserInfo(): void {
+    try {
+      const userData = this.localStorage.getItem('v2_user');
+
+      if (userData) {
+        const user = JSON.parse(userData);
+        this.userFirstName = user.firstName || user.firstname || user.prenom || '';
+        this.userLastName = user.lastName || user.lastname || user.nom || '';
+        this.userInitial = this.userFirstName.charAt(0).toUpperCase();
+        this.userFullName = `${this.userFirstName} ${this.userLastName}`.trim();
+        this.userMobile = user.mobile || user.mobile || user.mobile || '';
+      } else {
+        this.userFirstName = 'Utilisateur';
+        this.userLastName = '';
+        this.userInitial = 'U';
+        this.userFullName = 'Utilisateur';
+        this.userMobile = '+221776532145';
+      }
+    } catch (error) {
+      console.error('Erreur lors du chargement des données utilisateur:', error);
+      this.userFirstName = 'Utilisateur';
+      this.userLastName = '';
+      this.userInitial = 'U';
+      this.userFullName = 'Utilisateur';
+      this.userMobile = '+221776532145';
     }
   }
-  chargerContexteEnseignements(userId: number) {
-    this.enseignantService.getDetailsEnseignantUtilisateur(userId).subscribe({
-      next: (data) => {
-        const enseignantId = data?.id;
-        if (enseignantId) {
-          // On récupère la liste complète et non paginée (ex: avec une taille de 100 pour tout avoir dans le select)
-          this.planificationResource.getResourceByIdPaged('planification/enseignement/enseignant', enseignantId, 0, 100)
-            .subscribe({
-              next: (response) => {
-                const listeBrute: any = response.data?.content || [];
 
-                console.log("Données reçues pour la Navbar :", listeBrute);
+  refreshUserInfo(): void {
+    this.loadUserInfo();
+  }
 
-                // Mise à jour de la liste globale dans ton service partagé
-                this.classeContext.setClasses(listeBrute);
-              },
-              error: (err) => console.error('Erreur liste enseignements navbar:', err)
-            });
-        }
-      },
-      error: (err) => console.error('Erreur enseignant navbar:', err)
-    });
+  toggleDropdown(event: Event): void {
+    event.stopPropagation();
+    this.dropdownOpen.update(v => !v);
   }
 
   onClasseChange(event: Event): void {
     const selectElement = event.target as HTMLSelectElement;
-    this.classeContext.activeClasseId.set(selectElement.value);
+    this.context.activeClasseId.set(selectElement.value);
 
     console.log("Classe choisi :", selectElement.value);
-
-    // Optionnel : Tu peux forcer le rafraîchissement de la route courante 
-    // ou laisser le composant enfant réagir dynamiquement au signal.
   }
 
   get sectionLabel(): string {
@@ -137,7 +145,7 @@ export class MainLayoutProfesseurComponent implements OnInit {
 
   naviguer(route: string): void {
     this.sidebarOpen.set(false);
-    this.router.navigate([route]);
+    void this.router.navigate([route]);
   }
 
   onToggleCollapse(): void {
@@ -146,5 +154,38 @@ export class MainLayoutProfesseurComponent implements OnInit {
 
   onSidebarClose(): void {
     this.sidebarOpen.set(false);
+  }
+
+  handleDropdownAction(action: string): void {
+    switch (action) {
+      case 'profile':
+        this.goToProfile();
+        break;
+      case 'change-password':
+        this.goToChangePassword();
+        break;
+      case 'logout':
+        this.logout();
+        break;
+
+      default:
+        break;
+    }
+  }
+
+  goToProfile(): void {
+    void this.router.navigate(['/enseignant/mon-compte']);
+  }
+
+  goToChangePassword(): void {
+    void this.router.navigate(['/enseignant/change-password']);
+  }
+
+  logout(): void {
+    this.localStorage.clear();
+    localStorage.removeItem('v2_user');
+    localStorage.removeItem('v2_token');
+    this.context.clearGestionClasseContext();
+    void this.router.navigate(['/auth/login/v2']);
   }
 }

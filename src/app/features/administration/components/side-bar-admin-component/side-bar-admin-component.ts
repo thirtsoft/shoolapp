@@ -164,7 +164,7 @@ export class SideBarAdminComponent {
 
   naviguer(route: string | undefined): void {
     if (route) {
-      this.router.navigate([route]);
+      void this.router.navigate([route]);
       this.close.emit();
     }
   }
@@ -175,7 +175,7 @@ export class SideBarAdminComponent {
 
   deconnecter(): void {
     this.localStorage.clear();
-    this.router.navigate(['/auth/login/v2']);
+    void this.router.navigate(['/auth/login/v2']);
   }
 
   onToggleClick(): void {

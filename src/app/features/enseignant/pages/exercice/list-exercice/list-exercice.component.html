@@ -1,9 +1,10 @@
 <app-generic-table-dossier
-  [title]="'Liste des exercices de ' + libelleClasse()"
+  titleFitre="Exercice"
   titleFitre="Exercice"
   [tableColumns]="columns"
   [tableData]="exerciceData"
   [isLoading]="isLoading"
+  [isNoAjout]="true"
   [isEditIcon]="true"
   [isEyesIcon]="true"
   [isLockableIcon]="isLockable"
@@ -12,9 +13,6 @@
   [currentPage]="currentPage"
   [pageSize]="pageSize"
   (pageChange)="changePage($event)"
-  addButtonLink="/enseignant/exercice/create"
-  modifierButtonLink="/enseignant/exercice/edit"
-  detailButtonLink="/enseignant/exercice/detail"
   [deleteEndPoint]="deleteEndpoint"
   [showSearch]="false"
   [filtered]="tableFilters"
@@ -22,5 +20,7 @@
   [showFilters]="true"
   (resetFilters)="resetFilters()"
   (sizeChange)="changeSize($event)"
+  addButtonLink="/admin/planification/exercice/create"
+  modifierButtonLink="/admin/planification/exercice/edit"
 >
 </app-generic-table-dossier>

@@ -7,6 +7,7 @@ import { SignInRequest } from '../../../../core/models/auth/sign-in-request';
 import { ChangePassword } from '../../../../core/models/utilisateur/change-password.model';
 import { ForgotPasswordResponse } from '../../../../core/models/utilisateur/forgot-password-response.model';
 import { ForgotPassword } from '../../../../core/models/utilisateur/forgot-password.model';
+import { SecurityCredentialResponse } from '../../../../core/models/utilisateur/security-credential-response.model';
 
 @Injectable({
   providedIn: 'root'
@@ -36,6 +37,14 @@ export class AuthenticationV2Service {
 
   forgotPassword(request: ForgotPassword): Observable<ForgotPasswordResponse> {
     return this.http.post<ForgotPasswordResponse>(`${this.apiServer}/api/auth/forgot-password`, request);
+  }
+
+  getInfoConnexion(userUuid: string): Observable<SecurityCredentialResponse> {
+    return this.http.get<SecurityCredentialResponse>(`${this.securityUrl}/${userUuid}/identifier`);
+  }
+
+  changeIdentifiant(userUuid: string, request: ForgotPassword): Observable<SecurityCredentialResponse> {
+    return this.http.put<SecurityCredentialResponse>(`${this.securityUrl}/${userUuid}/changeidentifier`, request);
   }
 
 }

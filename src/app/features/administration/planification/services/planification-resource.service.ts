@@ -22,6 +22,7 @@ import { ListeEnseignement } from '../../../../core/models/planification/liste-e
 import { ListeExercie } from '../../../../core/models/planification/liste-exercice';
 import { Meeting } from '../../../../core/models/planification/meeting';
 import { ResponseMessage } from '../../../../core/response/response-message';
+import { ActiviteEnseignant } from '../../../../core/models/planification/activite-enseignant';
 
 @Injectable({
   providedIn: 'root'
@@ -312,6 +313,11 @@ export class PlanificationResourceService {
   deleteEvenement(id?: number) {
     return this.http.delete<ResponseMessage>(`${this.planificationUrl}/planification/evenement/delete/${id}`);
   }
+
+  getActivitesAvenirEnseignant(): Observable<ActiviteEnseignant[]> {
+    return this.http.get<ActiviteEnseignant[]>(`${this.planificationUrl}/planification/activites`);
+  }
+
 
 
   /*************     Emploi du temps      ***********/

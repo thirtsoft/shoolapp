@@ -1,0 +1,242 @@
+<div class="page-wrapper">
+  <div class="content container-fluid">
+    <div class="page-header">
+      <div class="row align-items-center">
+        <div class="col-sm-12">
+          <h3 class="page-title">
+            {{ isEditMode ? 'Modifier une demande d’avance' : 'Nouvelle demande d’avance' }}
+          </h3>
+
+          <p class="text-muted mt-1 mb-0">
+            <i class="fas fa-hand-holding-usd me-1"></i>
+            Demandez une avance sur votre salaire auprès de l’administration
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <div class="badge-container">
+      <span class="badge badge-primary">
+        <i class="fas" [class.fa-hand-holding-usd]="!isEditMode" [class.fa-edit]="isEditMode"> </i>
+
+        {{ isEditMode ? 'Modification de la demande' : 'Nouvelle demande d’avance' }}
+      </span>
+    </div>
+
+    <!-- ====================================================== -->
+    <!-- LOADING -->
+    <!-- ====================================================== -->
+
+    @if (isLoading() && isEditMode) {
+      <div class="card">
+        <div class="loading-container">
+          <div class="spinner"></div>
+
+          <span>Chargement de la demande...</span>
+        </div>
+      </div>
+    } @else {
+      <div class="card">
+        <div class="card-body p-4 p-md-5">
+          <form [formGroup]="form" (ngSubmit)="enregistrer()" novalidate>
+            <!-- ================================================== -->
+            <!-- INFORMATIONS DEMANDE -->
+            <!-- ================================================== -->
+
+            @if (isEditMode) {
+              <div class="section-title">
+                <div class="section-icon">
+                  <i class="fas fa-file-invoice-dollar"></i>
+                </div>
+
+                <div>
+                  <h4>Informations de la demande</h4>
+
+                  <p>Informations générales concernant votre demande</p>
+                </div>
+              </div>
+
+              <div class="demande-info">
+                <div class="demande-info-item">
+                  <span class="demande-info-label"> Numéro de demande </span>
+
+                  <strong>
+                    {{ demande()?.numeroDemande || '—' }}
+                  </strong>
+                </div>
+
+                <div class="demande-info-item">
+                  <span class="demande-info-label"> État </span>
+
+                  <span
+                    class="status-badge"
+                    [class.status-brouillon]="isBrouillon"
+                    [class.status-attente]="demande()?.etatCode === 'EN_ATTENTE'"
+                    [class.status-approved]="demande()?.etatCode === 'APPROUVEE'"
+                    [class.status-refused]="demande()?.etatCode === 'REFUSEE'"
+                  >
+                    {{ demande()?.etatCode || '—' }}
+                  </span>
+                </div>
+              </div>
+            }
+
+            <div class="section-title section-spacing">
+              <div class="section-icon">
+                <i class="fas fa-money-bill-wave"></i>
+              </div>
+
+              <div>
+                <h4>Demande d'avance sur salaire</h4>
+
+                <p>Indiquez le montant souhaité et le motif de votre demande</p>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label for="montant" class="form-label">
+                Montant demandé
+
+                <span class="required">*</span>
+              </label>
+
+              <div class="input-with-suffix">
+                <input
+                  id="montant"
+                  type="text"
+                  inputmode="numeric"
+                  autocomplete="off"
+                  formControlName="montant"
+                  class="form-control amount-input"
+                  placeholder="Ex. 100 000"
+                  [class.is-invalid]="form.get('montant')?.touched && form.get('montant')?.invalid"
+                  (input)="onMontantInput($event)"
+                />
+
+                <span>FCFA</span>
+              </div>
+
+              @if (form.get('montant')?.touched && form.get('montant')?.hasError('required')) {
+                <div class="invalid-feedback">Le montant est obligatoire.</div>
+              }
+
+              @if (form.get('montant')?.touched && form.get('montant')?.hasError('min')) {
+                <div class="invalid-feedback">Le montant doit être supérieur à 0.</div>
+              }
+
+              <small class="field-help">
+                Le montant doit être saisi en FCFA. Exemple : 100 000 FCFA.
+              </small>
+            </div>
+
+            <div class="section-title section-spacing">
+              <div class="section-icon">
+                <i class="fas fa-comment-alt"></i>
+              </div>
+
+              <div>
+                <h4>Motif</h4>
+
+                <p>Expliquez brièvement la raison de votre demande</p>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label for="motif" class="form-label">
+                Motif
+
+                <span class="required">*</span>
+              </label>
+
+              <textarea
+                id="motif"
+                formControlName="motif"
+                rows="5"
+                maxlength="1000"
+                class="form-control"
+                placeholder="Indiquez le motif de votre demande d’avance..."
+                [class.is-invalid]="form.get('motif')?.touched && form.get('motif')?.invalid"
+              >
+              </textarea>
+
+              @if (form.get('motif')?.touched && form.get('motif')?.hasError('required')) {
+                <div class="invalid-feedback">Le motif est obligatoire.</div>
+              }
+
+              <small class="field-help"> Maximum 1000 caractères. </small>
+            </div>
+
+            @if (!isEditMode || isBrouillon) {
+              <div class="alert-help">
+                <i class="fas fa-info-circle"></i>
+
+                <span>
+                  Votre demande sera d'abord enregistrée en brouillon. Vous pourrez la modifier
+                  avant de l'envoyer à l'administration pour traitement.
+                </span>
+              </div>
+            } @else {
+              <div class="alert-help alert-locked">
+                <i class="fas fa-lock"></i>
+
+                <span>
+                  Cette demande a déjà été envoyée pour traitement. Elle ne peut plus être modifiée.
+                </span>
+              </div>
+            }
+
+            <div class="form-actions">
+              <button
+                type="button"
+                class="btn btn-secondary"
+                (click)="retour()"
+                [disabled]="isSaving() || isSending()"
+              >
+                <i class="fas fa-times"></i>
+
+                Annuler
+              </button>
+
+              @if (!isEditMode || isBrouillon) {
+                <button
+                  type="submit"
+                  class="btn btn-primary"
+                  [disabled]="isSaving() || isSending()"
+                >
+                  @if (isSaving()) {
+                    <span class="button-spinner"></span>
+
+                    Enregistrement...
+                  } @else {
+                    <i class="fas" [class.fa-check]="!isEditMode" [class.fa-save]="isEditMode"> </i>
+
+                    {{ isEditMode ? 'Enregistrer les modifications' : 'Enregistrer le brouillon' }}
+                  }
+                </button>
+              }
+
+              @if (isEditMode && isBrouillon) {
+                <button
+                  type="button"
+                  class="btn btn-success"
+                  (click)="envoyer()"
+                  [disabled]="isSaving() || isSending()"
+                >
+                  @if (isSending()) {
+                    <span class="button-spinner"></span>
+
+                    Envoi...
+                  } @else {
+                    <i class="fas fa-paper-plane"></i>
+
+                    Envoyer pour traitement
+                  }
+                </button>
+              }
+            </div>
+          </form>
+        </div>
+      </div>
+    }
+  </div>
+</div>

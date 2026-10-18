@@ -94,13 +94,9 @@ export class LoginV2Component {
       password: this.password!.value
     };
 
-    console.log('Tentative de connexion V2...');
-
     this.authenticationV2Service.signIn(signInRequest).subscribe({
 
       next: (response) => {
-
-        console.log('Connexion V2 réussie', response);
 
         this.sessionV2Service.saveSession(response);
 
@@ -113,11 +109,6 @@ export class LoginV2Component {
 
         const roles = organization.roles ?? [];
 
-        /*
-         * ADMIN_SCHOOL :
-         * le statut du Setup doit être récupéré avant
-         * de déterminer la route finale.
-         */
         if (roles.includes('ADMIN_SCHOOL')) {
 
           this.setupService.getCurrent().subscribe({
@@ -168,7 +159,7 @@ export class LoginV2Component {
   private navigateAfterLogin(route: string): void {
     this.succes = true;
     this.loading = false;
-    setTimeout(() => { this.router.navigateByUrl(route); }, 1000);
+    setTimeout(() => { void this.router.navigateByUrl(route); }, 1000);
 
   }
 

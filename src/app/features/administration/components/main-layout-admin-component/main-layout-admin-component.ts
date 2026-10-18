@@ -151,19 +151,19 @@ export class MainLayoutAdminComponent implements OnInit {
   }
 
   goToProfile(): void {
-    this.router.navigate(['/admin/utilisateur/profil']);
+    void this.router.navigate(['/admin/utilisateur/profil']);
   }
 
   goToOrganizationInfos(): void {
-    this.router.navigate(['/admin/organization/information']);
+    void this.router.navigate(['/admin/organization/information']);
   }
 
   goToNotificationConfiguration(): void {
-    this.router.navigate(['/admin/organization/notification-configuration']);
+    void this.router.navigate(['/admin/organization/notification-configuration']);
   }
 
   goToChangePassword(): void {
-    this.router.navigate(['/admin/utilisateur/change-password']);
+    void this.router.navigate(['/admin/utilisateur/change-password']);
   }
 
 
@@ -171,8 +171,7 @@ export class MainLayoutAdminComponent implements OnInit {
     this.localStorage.clear();
     localStorage.removeItem('v2_user');
     localStorage.removeItem('v2_token');
-    this.router.navigate(['/auth/login/v2']);
-
+    void this.router.navigate(['/auth/login/v2']);
   }
 
   @HostListener('document:click', ['$event'])
@@ -207,7 +206,7 @@ export class MainLayoutAdminComponent implements OnInit {
   }
 
   naviguer(route: string): void {
-    this.router.navigate([route]);
+    void this.router.navigate([route]);
   }
 
   onToggleCollapse(): void {

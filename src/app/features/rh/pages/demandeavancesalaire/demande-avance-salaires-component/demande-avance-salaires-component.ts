@@ -31,7 +31,7 @@ export class DemandeAvanceSalairesComponent implements OnInit {
   private readonly rhResource = inject(RhResourceService);
 
   ngOnInit(): void {
-    this.chargerLesDemandeAvSalaires()
+    void this.chargerLesDemandeAvSalaires()
   }
 
   async chargerLesDemandeAvSalaires() {

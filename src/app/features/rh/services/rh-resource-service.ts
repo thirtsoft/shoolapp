@@ -6,12 +6,14 @@ import { environment } from '../../../../environments/environment';
 import { DataResult } from '../../../core/datamodel/data-model';
 import { ContratRequest } from '../../../core/models/rh/contrat-request.model';
 import { ContratResponse } from '../../../core/models/rh/contrat-response.model';
+import { DemandeAvanceSalaireResponse } from '../../../core/models/rh/demande-avance-salaire-response.model';
+import { DemandeBonSalaireRequest } from '../../../core/models/rh/demande-bon-salaire-request.model';
 import { DetailsContratResponse } from '../../../core/models/rh/details-contrat-response.model';
+import { DetailsPaieResponse } from '../../../core/models/rh/details-paie-response.model';
+import { PaieRequest } from '../../../core/models/rh/paie-request.model';
 import { PersonnelRequest } from '../../../core/models/rh/personnel-request.model';
 import { PersonnelResponse } from '../../../core/models/rh/personnel-response.model';
 import { ResponseMessage } from '../../../core/response/response-message';
-import { PaieRequest } from '../../../core/models/rh/paie-request.model';
-import { DetailsPaieResponse } from '../../../core/models/rh/details-paie-response.model';
 
 @Injectable({
   providedIn: 'root'
@@ -156,7 +158,22 @@ export class RhResourceService {
     return this.http.get<DetailsPaieResponse>(`${this.rhUrl}/paies/${uuid}/details`);
   }
 
+  getDemandeBonSalaire(uuid: string): Observable<DemandeAvanceSalaireResponse> {
+    return this.http.get<DemandeAvanceSalaireResponse>(`${this.rhUrl}/demandes-avance-salaire/${uuid}`);
+  }
 
+  creerMaDemande(request: DemandeBonSalaireRequest): Observable<DemandeAvanceSalaireResponse> {
+    return this.http.post<any>(`${this.rhUrl}/demandes-avance-salaire/me`, request);
+  }
+
+  modifierMaDemande(uuid: string, request: DemandeBonSalaireRequest): Observable<DemandeAvanceSalaireResponse> {
+    return this.http.patch<any>(`${this.rhUrl}/demandes-avance-salaire/me/${uuid}`, request);
+  }
+
+  envoyerMaDemande(uuid: string): Observable<DemandeAvanceSalaireResponse> {
+    return this.http.post<any>(`${this.rhUrl}/demandes-avance-salaire/me/${uuid}/envoyer`, {});
+
+  }
 
 
 }

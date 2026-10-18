@@ -1,10 +1,10 @@
 <div class="dashboard-prof">
   <div class="dp-header">
     <div>
-      <h1>👨‍🏫 Bonjour, {{ professeur().nom }}</h1>
-      <p>{{ professeur().matiere }} — {{ classes().length }} classes cette année</p>
+      <h1>👨‍🏫 Bonjour, {{ userFullName }}</h1>
+      <p>Bienvenue à votre espace</p>
     </div>
-    <div class="dp-actions">
+    <!--   <div class="dp-actions">
       <button class="btn-action" (click)="naviguer('/professeur/notes')">
         📝 Saisir des notes
       </button>
@@ -14,10 +14,10 @@
           <span class="msg-badge">{{ messagesNonLus() }}</span>
         }
       </button>
-    </div>
+    </div> -->
   </div>
 
-  <div class="kpis-grid">
+  <!-- <div class="kpis-grid">
     @for (k of kpis(); track k.label) {
       <div class="kpi-card" [class]="'kpi-' + k.couleur">
         <span class="kpi-ico">{{ k.ico }}</span>
@@ -28,7 +28,7 @@
         </div>
       </div>
     }
-  </div>
+  </div> -->
 
   <div class="dp-grid">
     <!--  <div class="dp-col">
@@ -108,11 +108,7 @@
     <div class="dp-col">
       <div class="card">
         <div class="card-head">
-          <h2>🏫 Mes classes</h2>
-
-          <button class="card-link" (click)="naviguer('/enseignant/mes-enseignements')">
-            Voir tous →
-          </button>
+          <h2><i class="fas fa-school"></i> Mes classes</h2>
         </div>
 
         <div class="eleves-list">
@@ -120,9 +116,8 @@
             @for (enseignement of mesEnseignements(); track enseignement.id) {
               <div class="eleve-item enseignement-item">
                 <!-- Icône -->
-                <span class="eleve-ico">🏫</span>
+                <span class="eleve-ico"><i class="fas fa-school"></i></span>
 
-                <!-- Informations classe -->
                 <div class="eleve-info">
                   <span class="eleve-nom">
                     {{ enseignement.classe }}
@@ -137,14 +132,13 @@
                   </span>
                 </div>
 
-                <!-- Action -->
                 <div class="enseignement-action">
                   <button
                     type="button"
                     class="btn-gerer-classe"
                     (click)="gererClasse(enseignement)"
                   >
-                    <span>Gérer</span>
+                    <span>Gérer la classe</span>
                     <span class="btn-arrow">→</span>
                   </button>
                 </div>
@@ -159,8 +153,10 @@
       <div class="card">
         <div class="card-head">
           <h2>📌 Activités à venir</h2>
-          <button class="card-link" (click)="naviguer('/professeur/absences')">Tout voir →</button>
+
+          <button class="card-link" (click)="naviguer('/enseignant/activites')">Tout voir →</button>
         </div>
+
         @if (activitesAvenir().length > 0) {
           @for (act of activitesAvenir(); track act.id) {
             <div
@@ -168,17 +164,45 @@
               style="border-left: 4px solid #4f46e5; padding-left: 10px; margin-bottom: 15px"
             >
               <div class="absence-info">
-                <span class="absence-classe" style="font-weight: 600">{{ act.titre }}</span>
-                <span class="absence-date">📅 {{ act.date }} à {{ act.heure }}</span>
+                <!-- Titre -->
+                <span class="absence-classe" style="font-weight: 600">
+                  {{ act.libelle }}
+                </span>
+
+                @if (act.type === 'REUNION') {
+                  <span class="absence-date">
+                    {{ act.typeReunion }}
+
+                    @if (act.salle) {
+                      · {{ act.salle }}
+                    }
+                  </span>
+                } @else if (act.type === 'EVENEMENT') {
+                  <span class="absence-date"> Événement </span>
+                }
+
+                <!-- Date / heure -->
+                <span class="absence-date">
+                  📅 {{ formaterDate(act.date) }} · {{ act.heureDebut.substring(0, 5) }}
+
+                  @if (act.heureFin) {
+                    - {{ act.heureFin.substring(0, 5) }}
+                  }
+                </span>
               </div>
+
               <div class="absence-stats">
-                <span class="absence-nb">📍 {{ act.lieu }}</span>
+                @if (act.type === 'REUNION') {
+                  <span class="absence-nb"> Réunion </span>
+                } @else {
+                  <span class="absence-nb"> Événement </span>
+                }
               </div>
             </div>
           }
         } @else {
           <div class="empty-message" style="padding: 20px; text-align: center; color: #777">
-            🎉 Aucune activité ou événement de prévu prochainement.
+            🎉 Aucune activité prévue prochainement.
           </div>
         }
       </div>

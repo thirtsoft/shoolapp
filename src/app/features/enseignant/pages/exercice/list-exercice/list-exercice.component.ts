@@ -1,10 +1,12 @@
-import { Component, computed, effect, inject, OnInit } from '@angular/core';
+import { Component, inject, OnInit, signal } from '@angular/core';
+import { ActivatedRoute, Router } from '@angular/router';
+import { ToastrService } from 'ngx-toastr';
 import { IFilterConfig } from '../../../../../core/filtered-config/FiltreConfiguration';
 import { GenericTableDossierComponent } from '../../../../../core/generic/generic-table-dossier/generic-table-dossier.component';
-import { DetailsEnseignantUtilisateur } from '../../../../../core/models/enseignant/details-enseignant-utilisateur';
 import { CommonService } from '../../../../../core/services/common.service';
+import { DossierResourceService } from '../../../../administration/dossier-eleve/service/dossier-resource.service';
 import { PlanificationResourceService } from '../../../../administration/planification/services/planification-resource.service';
-import { EnseignementContextService } from '../../../service/enseignement-contexte.service';
+import { EnseignementContextService, GestionClasseContext } from '../../../service/enseignement-contexte.service';
 
 @Component({
   selector: 'app-list-exercice',
@@ -17,102 +19,100 @@ export class ListExerciceComponent implements OnInit {
 
   isEdit: boolean = true;
   isLoading: boolean = false;
+
   filteredDataExercice: any;
   isLockable: boolean = true;
   isTable: boolean = true;
-  deleteEndpoint = "exercice";
+
+  deleteEndpoint = 'exercice';
   columns: any = [];
   exerciceData: any = [];
 
-  readonly String = String;
+
+  public readonly String = String;
 
   currentPage = 0;
-  pageSize = 5;
+  pageSize = 10;
   totalElements = 0;
-  tableSizes = [5, 10, 20, 50, 100];
 
-  livreList: any;
-  classesList: any[] = [];
-  enseignantList: any[] = [];
+  tableSizes = [10, 20, 50, 100];
+
   moisList: any[] = [];
-  anneesList: any[] = [];
 
   tableFilters: IFilterConfig[] = [];
   activeFilters: any = {};
   hasActiveFilters: boolean = false;
-  detailsEnseignant: DetailsEnseignantUtilisateur = {};
-  userId: number;
-  enseignantId?: number;
-  classeId?: number;
-  titile: string = '';
 
-  private readonly planificationResource = inject(PlanificationResourceService);
+  classeId: number;
+
+  contexteClasse = signal<GestionClasseContext | null>(null);
+
+  private readonly route = inject(ActivatedRoute);
+  private readonly planification = inject(PlanificationResourceService);
+  private readonly toastService = inject(ToastrService);
+  private readonly activeRoute = inject(ActivatedRoute);
+  private readonly router = inject(Router);
   private readonly commonService = inject(CommonService);
-  private readonly classeContext = inject(EnseignementContextService);
+  private readonly enseignementContextService = inject(EnseignementContextService);
+  private readonly dossierResource = inject(DossierResourceService);
 
-  readonly libelleClasse = computed(() => {
-    const classes = this.classeContext.mesClasses();
-    const activeId = this.classeContext.activeClasseId();
-    const enseignementActif = classes.find(ens => String(ens.classId) === String(activeId));
-    return enseignementActif?.classe || '5ème A';
-  });
+  constructor() {
+    this.classeId = Number(this.activeRoute.snapshot.params['id']);
+    console.log('ClassID', this.classeId);
 
-  constructor(
-  ) {
-    this.userId = Number(localStorage.getItem('id'));
-    effect(() => {
-      const activeClasseId = this.classeContext.activeClasseId();
-      console.log('active classe is', this.classeId);
-      if (activeClasseId) {
-        this.classeId = Number(activeClasseId);
-         this.chargerLesExercices();
-      }
-    });
+    const contexte = this.enseignementContextService.getGestionClasseContext();
+
+    console.log('contexteClasse', contexte?.classe);
+    console.log('contexteMatiere', contexte?.matiere);
+
+    console.log('contexteAnneeScolaire', contexte?.anneeScolaire);
+
+    console.log('contexteCours', contexte?.courseId);
+
+
+    if (contexte) {
+      this.contexteClasse.set(contexte);
+      console.log('Contexte chargé :', this.contexteClasse());
+    }
   }
 
   ngOnInit(): void {
-   
+    void this.chargerLesExercices();
   }
 
   async chargerLesExercices() {
     try {
-      await Promise.all([
-        this.getLivreList(),
-        this.getMoisList(),
-      ]);
 
-      this.initialisationDesFiltres();
-      this.chargerLesDonnees(false);
+      await Promise.all([this.getMoisList(),]);
+      this.initialisationDesFiltresExercice();
+      this.chargerLesDonneesExercices(false);
+
     } catch (error) {
       console.error('Erreur chargement données:', error);
     }
   }
 
-  getLivreList(): Promise<any> {
-    return new Promise((resolve, reject) => {
-      this.planificationResource.getResourceList('livre').subscribe({
-        next: (data) => {
-          this.livreList = data;
-          resolve(data);
-        },
-        error: (err) => reject(err)
-      });
-    });
+  canEditOrDeleteEvaluation(item: any): boolean {
+    return item.etat !== 'Validée';
   }
 
   getMoisList(): Promise<any[]> {
-    return new Promise((resolve, reject) => {
-      this.commonService.getAllMois().subscribe({
-        next: (data) => {
-          this.moisList = data;
-          resolve(data);
-        },
-        error: (err) => reject(err)
-      });
-    });
+    return new Promise(
+      (resolve, reject) => {
+
+        this.commonService.getAllMois().subscribe({
+
+          next: (data) => {
+            this.moisList = data;
+            resolve(data);
+          },
+          error: (err) => reject(err)
+        });
+      }
+    );
   }
 
-  initialisationDesFiltres() {
+  initialisationDesFiltresExercice() {
     this.tableFilters = [
       {
         key: 'titre',
@@ -120,53 +120,56 @@ export class ListExerciceComponent implements OnInit {
         type: 'text',
         placeholder: 'Rechercher un exercie...'
       },
-      {
-        key: 'livre',
-        label: 'Livre',
-        type: 'select',
-        options: this.livreList.map((c: any) => ({
-          value: c.id,
-          label: c.titre
-        })),
-      },
+
       {
         key: 'mois',
         label: 'Mois',
         type: 'select',
-        options: this.moisList.map(m => ({
-          value: m.id,
-          label: `${m.mois}`
-        }))
-      },
+        options: this.moisList.map(
+          m => ({
+            value: m.id,
+            label: `${m.mois}`
+          })
+        )
+      }
+
     ];
   }
 
   onFilterChange(filter: IFilterConfig, value: any) {
     this.activeFilters[filter.key] = value;
-
-    this.hasActiveFilters = Object.values(this.activeFilters).some(val =>
-      val !== null && val !== undefined && val !== ''
+    this.hasActiveFilters = Object.values(this.activeFilters).some(
+      val =>
+        val !== null &&
+        val !== undefined &&
+        val !== ''
     );
+
     this.currentPage = 0;
-    this.chargerLesDonnees(this.hasActiveFilters);
+    this.chargerLesDonneesExercices(this.hasActiveFilters);
   }
 
-  chargerLesDonnees(useFilterApi: boolean) {
+  chargerLesDonneesExercices(useFilterApi: boolean) {
     this.isLoading = true;
     let apiCall;
 
     if (useFilterApi) {
-
       const filtreParam = this.construireParametreFiltre();
-
-      apiCall = this.planificationResource.fetchFilterDataTable(
-        'planification/exercice/classe',
+      apiCall = this.planification.fetchFilterDataTable(
+        'planification/enseignant/exercice/me',
         this.currentPage,
         this.pageSize,
-        filtreParam)
+        filtreParam
+      );
 
     } else {
-      apiCall = this.planificationResource.getResourceByIdPaged('planification/exercice/classe', this.classeId!, this.currentPage, this.pageSize);
+
+      apiCall = this.planification.getResourceByIdPaged(
+        'planification/enseignant/exercice/me',
+        Number(this.classeId),
+        this.currentPage,
+        this.pageSize
+      );
     }
     apiCall.subscribe({
       next: (response) => {
@@ -174,22 +177,64 @@ export class ListExerciceComponent implements OnInit {
         this.totalElements = response.data?.totalElements || 0;
 
         this.columns = [
-          { key: 'titre', header: 'Titre' },
-          { key: 'livre', header: 'Livre' },
-          { key: 'page', header: 'Page' },
-          { key: 'numeroExercice', header: 'N°' },
-          { key: 'dateDebut', header: 'Date' },
+
+          {
+            key: 'numeroExercice',
+            header: 'N°'
+          },
+
+          {
+            key: 'titre',
+            header: 'Titre'
+          },
+
+          {
+            key: 'livre',
+            header: 'Livre'
+          },
+
+          {
+            key: 'page',
+            header: 'Page'
+          },
+
+          {
+            key: 'etatLibelle',
+            header: 'Etat'
+          },
+
+          {
+            key: 'description',
+            header: 'Description'
+          },
+
+          {
+            key: 'dateDebut',
+            header: 'Date début'
+          },
+
+          {
+            key: 'dateFin',
+            header: 'Date Fin'
+          }
+
         ];
-        this.exerciceData = this.exerciceData.map((item: any) => ({
-          ...item,
-        }));
+
+        this.exerciceData = this.exerciceData.map(
+          (item: any) => ({
+            ...item
+          })
+        );
 
         this.isLoading = false;
       },
+
+
       error: (error) => {
-        console.error("Erreur:", error);
+        console.error('Erreur:', error);
         this.isLoading = false;
       }
+
     });
   }
 
@@ -199,12 +244,11 @@ export class ListExerciceComponent implements OnInit {
     if (this.activeFilters.titre) {
       filtreObj.titre = this.activeFilters.titre;
     }
-    if (this.activeFilters.livre) {
-      filtreObj.livre = this.activeFilters.livre;
-    }
+
     if (this.activeFilters.mois) {
       filtreObj.mois = this.activeFilters.mois;
     }
+
     return Object.keys(filtreObj).length > 0 ? filtreObj : null;
   }
 
@@ -215,27 +259,36 @@ export class ListExerciceComponent implements OnInit {
   changePage(pageNumber: number) {
     if (pageNumber >= 0 && pageNumber < this.totalPages) {
       this.currentPage = pageNumber;
-      this.chargerLesDonnees(this.hasActiveFilters);
+      this.chargerLesDonneesExercices(this.hasActiveFilters);
     }
   }
 
-
   changeSize(size: number | string) {
     const newSize = typeof size === 'string' ? parseInt(size, 10) : size;
+
     if (this.pageSize !== newSize) {
       this.pageSize = newSize;
       this.currentPage = 0;
-      this.chargerLesDonnees(this.hasActiveFilters);
+      this.chargerLesDonneesExercices(this.hasActiveFilters);
     }
   }
 
   resetFilters() {
     this.activeFilters = {};
     this.hasActiveFilters = false;
-    this.initialisationDesFiltres();
+    this.initialisationDesFiltresExercice();
     this.currentPage = 0;
-    this.chargerLesDonnees(false);
+    this.chargerLesDonneesExercices(false);
   }
 
+  today(): string {
+    const options: Intl.DateTimeFormatOptions = {
+      weekday: 'long',
+      day: 'numeric',
+      month: 'long',
+      year: 'numeric'
+    };
+    return new Date().toLocaleDateString('fr-FR', options);
+  }
 
 }

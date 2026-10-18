@@ -106,13 +106,13 @@ export class ListReunionComponent implements OnInit {
       const filtreParam = this.construireLesParamereDeFiltre();
 
       apiCall = this.refentielResourceService.fetchFilterDataTable(
-        'planification/activitespubliees',
+        'planification/activites',
         this.currentPage,
         this.pageSize,
         filtreParam)
 
     } else {
-      apiCall = this.refentielResourceService.getResourcePaged('planification/activitespubliees', this.currentPage, this.pageSize);
+      apiCall = this.refentielResourceService.getResourcePaged('planification/activites', this.currentPage, this.pageSize);
     }
     apiCall.subscribe({
       next: (response) => {
@@ -121,16 +121,20 @@ export class ListReunionComponent implements OnInit {
 
         this.columns = [
           { key: 'libelle', header: 'Libellé' },
-          { key: 'type', header: 'Type événement' },
-          { key: 'typeActivite', header: 'Type activité' },
+          { key: 'type', header: 'Type' },
+          { key: 'typeReunion', header: 'Type de réunion' },
+          { key: 'salle', header: 'Salle' },
           { key: 'date', header: 'Date' },
-          { key: 'heure', header: 'Heure' },
-        ]
+          { key: 'heure', header: 'Heure' }
+        ];
 
         this.activiteData = this.activiteData.map((item: any) => ({
           ...item,
-
+          heure: item.heureDebut
+            ? `${item.heureDebut.substring(0, 5)}${item.heureFin ? ' - ' + item.heureFin.substring(0, 5) : ''}`
+            : ''
         }));
+
         this.isLoading = false;
       },
       error: (error) => {

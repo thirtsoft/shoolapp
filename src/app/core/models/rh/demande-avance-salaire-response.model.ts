@@ -1,7 +1,7 @@
 import { RecordStatus } from "../onboarding/record-status";
 
 export interface DemandeAvanceSalaireResponse {
-  uuid: number;
+  uuid: string;
   personnelUuid: string;
   numeroDemande: string;
   montant: number;

@@ -5,6 +5,8 @@ import { catchError, tap } from 'rxjs/operators';
 import { environment } from '../../../../../environments/environment';
 import { DataResult } from '../../../../core/datamodel/data-model';
 import { ResponseMessage } from '../../../../core/response/response-message';
+import { FaireAppelRequest } from '../../../../core/models/dossiereleve/absence/faire-appel-request';
+import { AttendanceRecordResponse } from '../../../../core/models/dossiereleve/absence/attendance-record-response';
 
 @Injectable({
   providedIn: 'root'
@@ -136,8 +138,6 @@ export class DossierResourceService {
       url = `${url}?page=${page}&size=${size}`;
     }
 
-    console.log('URL:', url); // Debug URL
-
     return this.http.get<DataResult<T>>(url, this.httpOptions).pipe(
       tap(response => console.log('Réponse API:', response)),
       catchError(error => {
@@ -231,4 +231,14 @@ export class DossierResourceService {
     const url = `${this.baseUrl_1}/${endpoint}/'delete'/${id}`;
     return this.http.delete<ResponseMessage>(url, this.httpOptions);
   }
+
+  faireAppel(request: FaireAppelRequest): Observable<any> {
+    const url = `${this.baseUrl_1}/attendancerecord/enseignant/faire-appel`;
+    return this.http.post<any>(url, request);
+  }
+
+  getAppelDuJour(courseId: number, attendanceDate: string): Observable<AttendanceRecordResponse[]> {
+    return this.getResourceList(`attendancerecord/course/${courseId}/date/${attendanceDate}`);
+  }
+
 }
