@@ -168,13 +168,16 @@ export class MeetingComponent implements OnInit {
         this.columns = [
           { key: 'libelle', header: 'Libellé' },
           { key: 'dateMeeting', header: 'Date' },
-          { key: 'heureDebut', header: 'Heure début' },
-          { key: 'heureFin', header: 'Heure fin' },
+          { key: 'heure', header: 'Heure' },
           { key: 'typeReunion', header: 'Nature reunion' },
         ]
 
         this.meetingData = this.meetingData.map((item: any) => ({
           ...item,
+
+           heure: item.heureDebut
+            ? `${item.heureDebut.substring(0, 5)}${item.heureFin ? ' - ' + item.heureFin.substring(0, 5) : ''}`
+            : ''
 
         }),);
 

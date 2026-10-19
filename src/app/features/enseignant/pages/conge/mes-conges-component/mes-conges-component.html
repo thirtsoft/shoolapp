@@ -1,20 +1,17 @@
 <app-generic-table-dossier
   title="Mes congés"
-  titleFitre="Cours"
   [tableColumns]="columns"
   [tableData]="congesData"
   [isLoading]="isLoading"
   [isEditIcon]="isEdit"
-  [isEyesIcon]="true"
   [isLockableIcon]="isLockable"
+  [showSubmitIcon]="true"
+  (submitAction)="confirmerSoumission($event)"
   [tableSizes]="tableSizes"
   [totalElements]="totalElements"
   [currentPage]="currentPage"
   [pageSize]="pageSize"
   (pageChange)="changePage($event)"
-  addButtonLink="/enseignant/demandeconge"
-  modifierButtonLink="/enseignant/demandeconge/edit"
-  detailButtonLink="/enseignant/detailsdemandeconge/detail"
   [deleteEndPoint]="deleteEndpoint"
   [showSearch]="false"
   [filtered]="tableFilters"
@@ -22,5 +19,73 @@
   [showFilters]="true"
   (resetFilters)="resetFilters()"
   (sizeChange)="changeSize($event)"
+  addButtonLink="/enseignant/demandeconge"
+  modifierButtonLink="/enseignant/demandeconge/edit"
 >
 </app-generic-table-dossier>
+
+@if (showConfirmationModal) {
+  <div class="modal-custom-overlay" (click)="annulerSoumission()">
+    <div class="modal-custom-container" (click)="$event.stopPropagation()">
+      <!-- HEADER -->
+      <div class="modal-header-custom">
+        <h5 class="modal-title-custom">
+          <i class="fas fa-question-circle me-2"></i>
+          Confirmer la soumission
+        </h5>
+
+        <button type="button" class="btn-close-custom" (click)="annulerSoumission()">
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
+
+      <!-- BODY -->
+      <div class="modal-body-custom">
+        <p class="modal-message">
+          Êtes-vous sûr de vouloir
+          <strong class="action-highlight"> soumettre </strong>
+          cette demande de congé ?
+        </p>
+
+        @if (congeAConfirmer) {
+          <div class="recap-section">
+            <div class="recap-item">
+              <span class="recap-label"> Motif </span>
+
+              <span class="recap-value">
+                {{ congeAConfirmer.motif }}
+              </span>
+            </div>
+
+            <div class="recap-item">
+              <span class="recap-label"> Période </span>
+
+              <span class="recap-value">
+                {{ congeAConfirmer.periode }}
+              </span>
+            </div>
+          </div>
+        }
+
+        <div class="alert alert-warning mt-3 mb-0">
+          <i class="fas fa-exclamation-triangle me-2"></i>
+
+          Après soumission, cette demande ne pourra plus être modifiée.
+        </div>
+      </div>
+
+      <!-- FOOTER -->
+      <div class="modal-footer-custom">
+        <button type="button" class="btn-cancel" (click)="annulerSoumission()">
+          <i class="fas fa-times me-2"></i>
+          Annuler
+        </button>
+
+        <button type="button" class="btn-pay" (click)="soumettreConge()">
+          <i class="fas fa-check-circle me-2"></i>
+          Soumettre
+        </button>
+      </div>
+    </div>
+  </div>
+}

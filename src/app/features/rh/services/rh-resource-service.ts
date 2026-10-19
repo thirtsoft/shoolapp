@@ -4,16 +4,20 @@ import { Observable, throwError } from 'rxjs';
 import { catchError, tap } from 'rxjs/operators';
 import { environment } from '../../../../environments/environment';
 import { DataResult } from '../../../core/datamodel/data-model';
+import { CongesRequest } from '../../../core/models/rh/conges-request.model';
+import { CongesResponse } from '../../../core/models/rh/conges-response.model';
 import { ContratRequest } from '../../../core/models/rh/contrat-request.model';
 import { ContratResponse } from '../../../core/models/rh/contrat-response.model';
 import { DemandeAvanceSalaireResponse } from '../../../core/models/rh/demande-avance-salaire-response.model';
 import { DemandeBonSalaireRequest } from '../../../core/models/rh/demande-bon-salaire-request.model';
 import { DetailsContratResponse } from '../../../core/models/rh/details-contrat-response.model';
 import { DetailsPaieResponse } from '../../../core/models/rh/details-paie-response.model';
+import { MotifRejetConges } from '../../../core/models/rh/motif-rejet-conges-request.model';
 import { PaieRequest } from '../../../core/models/rh/paie-request.model';
 import { PersonnelRequest } from '../../../core/models/rh/personnel-request.model';
 import { PersonnelResponse } from '../../../core/models/rh/personnel-response.model';
 import { ResponseMessage } from '../../../core/response/response-message';
+import { DetailsDemandeAvanceSalaireComponent } from '../pages/demandeavancesalaire/details-demande-avance-salaire-component/details-demande-avance-salaire-component';
 
 @Injectable({
   providedIn: 'root'
@@ -23,6 +27,7 @@ export class RhResourceService {
   baseUrl_1 = environment.apiBaseUrl;
   rhUrl = this.baseUrl_1 + '/rh';
   documentUrl = this.baseUrl_1 + '/v1/storage';
+  congesUrl = `${this.baseUrl_1}/conges`;
 
   httpOptions = {
     headers: new HttpHeaders({
@@ -162,6 +167,10 @@ export class RhResourceService {
     return this.http.get<DemandeAvanceSalaireResponse>(`${this.rhUrl}/demandes-avance-salaire/${uuid}`);
   }
 
+  getDetailsBonSalairee(uuid: string): Observable<DetailsDemandeAvanceSalaireComponent> {
+    return this.http.get<DetailsDemandeAvanceSalaireComponent>(`${this.rhUrl}/demandes-avance-salaire/${uuid}/details`);
+  }
+
   creerMaDemande(request: DemandeBonSalaireRequest): Observable<DemandeAvanceSalaireResponse> {
     return this.http.post<any>(`${this.rhUrl}/demandes-avance-salaire/me`, request);
   }
@@ -172,7 +181,58 @@ export class RhResourceService {
 
   envoyerMaDemande(uuid: string): Observable<DemandeAvanceSalaireResponse> {
     return this.http.post<any>(`${this.rhUrl}/demandes-avance-salaire/me/${uuid}/envoyer`, {});
+  }
 
+  soumettreDemande(uuid: string): Observable<DemandeAvanceSalaireResponse> {
+    return this.http.patch<any>(`${this.rhUrl}/demandes-avance-salaire/${uuid}/soumettre`, {});
+  }
+
+  approuverDemande(uuid: string): Observable<DemandeAvanceSalaireResponse> {
+    return this.http.patch<any>(`${this.rhUrl}/demandes-avance-salaire/${uuid}/approuver`, {});
+  }
+
+  refuserDemande(uuid: string, motifRejet: string): Observable<ResponseMessage> {
+    return this.http.patch<ResponseMessage>(
+      `${this.rhUrl}/demandes-avance-salaire/${uuid}/refuser`,
+      {},
+      {
+        params: {
+          motifRejet
+        }
+      }
+    );
+  }
+
+  createConges(request: CongesRequest): Observable<CongesResponse> {
+    return this.http.post<CongesResponse>(this.congesUrl, request);
+  }
+
+  updateConges(id: number, request: CongesRequest): Observable<CongesResponse> {
+    return this.http.patch<CongesResponse>(`${this.congesUrl}/${id}`, request);
+  }
+
+  soumettreConges(id: number): Observable<ResponseMessage> {
+    return this.http.patch<ResponseMessage>(`${this.congesUrl}/${id}/soumettre`, {});
+  }
+
+  approuverConges(id: number): Observable<ResponseMessage> {
+    return this.http.patch<ResponseMessage>(`${this.congesUrl}/${id}/approuver`, {});
+  }
+
+  refuserConges(id: number, motifRejet: string): Observable<ResponseMessage> {
+    return this.http.patch<ResponseMessage>(
+      `${this.congesUrl}/${id}/refuser`,
+      {},
+      {
+        params: {
+          motifRejet
+        }
+      }
+    );
+  }
+
+  getCongesById(id: number): Observable<CongesResponse> {
+    return this.http.get<CongesResponse>(`${this.congesUrl}/${id}`);
   }
 
 

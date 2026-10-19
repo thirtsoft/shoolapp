@@ -5,6 +5,8 @@ import { CommonService } from '../../../../../../core/services/common.service';
 import { PlanificationResourceService } from '../../../services/planification-resource.service';
 import { Etat } from '../../../../referentiel/pages/semestre/editer-session-semestre-component/editer-session-semestre-component';
 import { UtilisateurList } from '../../../../../../core/models/utilisateur/utilisateur-list';
+import { ToastrService } from 'ngx-toastr';
+import { RhResourceService } from '../../../../../rh/services/rh-resource-service';
 
 @Component({
   selector: 'app-list-conges-component',
@@ -64,8 +66,13 @@ export class ListCongesComponent implements OnInit {
   activeFilters: any = {};
   hasActiveFilters: boolean = false;
 
+  congeAConfirmer: any = null;
+  showConfirmationModal = false;
+
   private readonly planificationResource = inject(PlanificationResourceService);
   private readonly commonService = inject(CommonService);
+  private readonly rhResource = inject(RhResourceService);
+  private readonly toast = inject(ToastrService);
 
   ngOnInit(): void {
     this.chargerLesConges();
@@ -86,10 +93,10 @@ export class ListCongesComponent implements OnInit {
     }
   }
 
-   getDemanderCongesList(): Promise<any[]> {
+  getDemanderCongesList(): Promise<any[]> {
     return new Promise((resolve, reject) => {
       this.planificationResource.getResourceList('utilisateur/demandeur-conges').subscribe({
-        next: (data:any) => {
+        next: (data: any) => {
           this.demanderCongesList = data;
           resolve(data);
         },
@@ -130,7 +137,7 @@ export class ListCongesComponent implements OnInit {
         type: 'text',
         placeholder: 'Rechercher un congé...'
       },
-       {
+      {
         key: 'demandeurId',
         label: 'Demandeur',
         type: 'select',
@@ -205,15 +212,14 @@ export class ListCongesComponent implements OnInit {
 
         this.columns = [
           { key: 'objet', header: 'Objet' },
-          { key: 'demandeur', header: 'Demandeur' },
-          { key: 'etat', header: 'Etat' },
-          { key: 'dateDebut', header: 'Date début' },
-          { key: 'dateFin', header: 'Date fin' },
-        ]
+          { key: 'motif', header: 'Motif' },
+          { key: 'periode', header: 'Période' },
 
+          { key: 'etat', header: 'Etat' },
+        ];
         this.congesData = this.congesData.map((item: any) => ({
           ...item,
-
+          periode: this.formaterPeriode(item.dateDebut, item.dateFin)
         }));
         this.isLoading = false;
       },
@@ -222,6 +228,34 @@ export class ListCongesComponent implements OnInit {
         this.isLoading = false;
       }
     });
+  }
+
+  formaterPeriode(dateDebut: string, dateFin: string): string {
+    if (!dateDebut || !dateFin) {
+      return '-';
+    }
+    const debut = new Date(dateDebut + 'T00:00:00');
+    const fin = new Date(dateFin + 'T00:00:00');
+    const mois = ['janv.', 'févr.', 'mars', 'avr.', 'mai', 'juin', 'juil.', 'août', 'sept.', 'oct.', 'nov.', 'déc.'];
+
+    const jourDebut = debut.getDate();
+    const jourFin = fin.getDate();
+
+    const moisDebut = mois[debut.getMonth()];
+    const moisFin = mois[fin.getMonth()];
+
+    if (
+      debut.getMonth() === fin.getMonth() &&
+      debut.getFullYear() === fin.getFullYear()
+    ) {
+      return `${jourDebut} → ${jourFin} ${moisDebut}`;
+    }
+
+    if (debut.getFullYear() === fin.getFullYear()) {
+      return `${jourDebut} ${moisDebut} → ${jourFin} ${moisFin}`;
+    }
+
+    return `${jourDebut} ${moisDebut} ${debut.getFullYear()} → ${jourFin} ${moisFin} ${fin.getFullYear()}`;
   }
 
   construireLesParamereDeFiltre(): any {
@@ -233,7 +267,7 @@ export class ListCongesComponent implements OnInit {
     if (this.activeFilters.demandeurId) {
       filtreObj.demandeurId = this.activeFilters.demandeurId;
     }
-     if (this.activeFilters.etat) {
+    if (this.activeFilters.etat) {
       filtreObj.etat = this.activeFilters.etat;
     }
     if (this.activeFilters.mois) {
@@ -271,6 +305,42 @@ export class ListCongesComponent implements OnInit {
     this.initialisationDesFiltres();
     this.currentPage = 0;
     this.chargerLesDonnees(false);
+  }
+
+  confirmerSoumission(conge: any): void {
+    this.congeAConfirmer = conge;
+    this.showConfirmationModal = true;
+  }
+
+  annulerSoumission(): void {
+    this.showConfirmationModal = false;
+    this.congeAConfirmer = null;
+  }
+
+  soumettreConge(): void {
+    if (!this.congeAConfirmer?.id) {
+      return;
+    }
+
+    const congeId = this.congeAConfirmer.id;
+
+    this.rhResource.soumettreConges(congeId)
+      .subscribe({
+        next: () => {
+          this.showConfirmationModal = false;
+          this.congeAConfirmer = null;
+
+          this.toast.success('success', `La demande "${this.congeAConfirmer.motif}" a été envoyée avec succès.`);
+
+          this.chargerLesDonnees(this.hasActiveFilters);
+        },
+        error: (error) => {
+          console.error(
+            'Erreur lors de la soumission du congé:',
+            error
+          );
+        }
+      });
   }
 
 }

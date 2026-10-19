@@ -34,11 +34,9 @@
         </div>
 
         <form [formGroup]="congeFormGroup" (ngSubmit)="ajouterEditUneDemandeConge()">
-          <input type="hidden" formControlName="id" />
-
           <div class="enseignement-item">
             <div class="row form-row">
-              <div class="col-lg-4 col-sm-12">
+              <div class="col-lg-6 col-sm-12">
                 <div class="form-group">
                   <label class="form-label">
                     Object congé <span class="text-danger">*</span>
@@ -61,7 +59,32 @@
                 </div>
               </div>
 
-              <div class="col-lg-4 col-sm-12">
+              <div class="col-lg-6 col-sm-12">
+                <div class="form-group">
+                  <label class="form-label">
+                    Motif <span class="text-danger">*</span>
+                    <i class="fas fa-tag ms-1 text-muted"></i>
+                  </label>
+                  <input
+                    type="text"
+                    class="form-control"
+                    formControlName="motif"
+                    placeholder="Ex: Congé annuel, raison familiale..."
+                    [class.is-invalid]="
+                      congeFormGroup!.get('motif')?.invalid && congeFormGroup!.get('motif')?.touched
+                    "
+                  />
+                  @if (
+                    congeFormGroup!.get('motif')?.invalid && congeFormGroup!.get('motif')?.touched
+                  ) {
+                    <div class="invalid-feedback">Le motif est requis</div>
+                  }
+                </div>
+              </div>
+            </div>
+
+            <div class="row form-row">
+              <div class="col-lg-6 col-sm-12">
                 <div class="form-group">
                   <label class="form-label">
                     Date début <span class="text-danger">*</span>
@@ -86,7 +109,7 @@
                 </div>
               </div>
 
-              <div class="col-lg-4 col-sm-12">
+              <div class="col-lg-6 col-sm-12">
                 <div class="form-group">
                   <label class="form-label">
                     Date fin <span class="text-danger">*</span>
@@ -103,8 +126,8 @@
                     "
                   />
                   @if (
-                    congeFormGroup!.get('dateDebut')?.invalid &&
-                    congeFormGroup!.get('dateDebut')?.touched
+                    congeFormGroup!.get('dateFin')?.invalid &&
+                    congeFormGroup!.get('dateFin')?.touched
                   ) {
                     <div class="invalid-feedback">La date fin est requise</div>
                   }

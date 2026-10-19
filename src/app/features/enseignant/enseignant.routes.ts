@@ -5,7 +5,6 @@ import { FaireAppelComponent } from './pages/absence/faire-appel-component/faire
 import { ListAbsenceComponent } from './pages/absence/list-absence-component/list-absence-component';
 import { ClasseManagementComponent } from './pages/classe-management-component/classe-management-component';
 import { DemanderUnCongeComponent } from './pages/conge/demander-un-conge-component/demander-un-conge-component';
-import { DetailsCongeComponent } from './pages/conge/details-conge-component/details-conge-component';
 import { MesCongesComponent } from './pages/conge/mes-conges-component/mes-conges-component';
 import { CreateEvaluationEnseignantComponent } from './pages/evaluation/create-evaluation-enseignant/create-evaluation-enseignant.component';
 import { DetailEvaluationEnseignantComponent } from './pages/evaluation/detail-evaluation-enseignant/detail-evaluation-enseignant.component';
@@ -15,7 +14,6 @@ import { DetailsExerciceComponent } from './pages/exercice/details-exercice/deta
 import { ListExerciceComponent } from './pages/exercice/list-exercice/list-exercice.component';
 import { AjoutEditBonSalaireComponent } from './pages/finance/ajout-edit-bon-salaire-component/ajout-edit-bon-salaire-component';
 import { BonSalairesComponent } from './pages/finance/bon-salaires-component/bon-salaires-component';
-import { DetailsBonSalaireComponent } from './pages/finance/details-bon-salaire-component/details-bon-salaire-component';
 import { MesContratsComponent } from './pages/finance/mes-contrats-component/mes-contrats-component';
 import { MesPaiesComponent } from './pages/finance/mes-paies-component/mes-paies-component';
 import { ListCoursComponent } from './pages/list-cours/list-cours.component';
@@ -137,11 +135,6 @@ export const ENSEIGNANTS_ROUTES: Routes = [
         component: DemanderUnCongeComponent
       },
       {
-        path: 'detailsdemandeconge/detail/:id',
-        component: DetailsCongeComponent
-      },
-
-      {
         path: 'contrats',
         component: MesContratsComponent
       },
@@ -161,11 +154,6 @@ export const ENSEIGNANTS_ROUTES: Routes = [
       {
         path: 'bon-salaire/edit/:uuid',
         component: AjoutEditBonSalaireComponent
-      },
-
-      {
-        path: 'bon-salaire/detail/:id',
-        component: DetailsBonSalaireComponent
       },
 
       {

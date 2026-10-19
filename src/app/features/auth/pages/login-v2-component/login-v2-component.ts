@@ -59,7 +59,7 @@ export class LoginV2Component {
   }
 
   goToForgotPassword(): void {
-    this.router.navigate(['auth/mot-de-passe-oublie']);
+    void this.router.navigate(['auth/mot-de-passe-oublie']);
   }
 
   get username() {

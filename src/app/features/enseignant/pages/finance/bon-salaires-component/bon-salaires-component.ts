@@ -1,6 +1,7 @@
 import { Component, inject, OnInit } from '@angular/core';
-import { GenericTableDossierComponent } from '../../../../../core/generic/generic-table-dossier/generic-table-dossier.component';
+import { ToastrService } from 'ngx-toastr';
 import { IFilterConfig } from '../../../../../core/filtered-config/FiltreConfiguration';
+import { GenericTableDossierComponent } from '../../../../../core/generic/generic-table-dossier/generic-table-dossier.component';
 import { RhResourceService } from '../../../../rh/services/rh-resource-service';
 
 @Component({
@@ -30,7 +31,11 @@ export class BonSalairesComponent implements OnInit {
   activeFilters: any = {};
   hasActiveFilters: boolean = false;
 
+  demandeAConfirmer: any = null;
+  showConfirmationModal = false;
+
   private readonly rhResource = inject(RhResourceService);
+  private readonly toast = inject(ToastrService);
 
   ngOnInit(): void {
     void this.chargerMesDemandeAvSalaires()
@@ -90,11 +95,12 @@ export class BonSalairesComponent implements OnInit {
         this.demandeAvSalaireData = response.data?.content || [];
         this.totalElements = response.data?.totalElements || 0;
         this.columns = [
-          { key: 'personnelUuid', header: 'Référence' },
+          { key: 'numeroDemande', header: 'N°' },
           { key: 'montant', header: 'Montant' },
-          { key: 'etatUuid', header: 'Etat' },
-          { key: 'dateDemande', header: 'Date demande' },
           { key: 'motif', header: 'Motif' },
+          { key: 'etat', header: 'Etat' },
+          { key: 'dateDemande', header: 'Date' },
+
         ];
         this.demandeAvSalaireData = this.demandeAvSalaireData.map((item: any) => ({
           ...item,
@@ -143,6 +149,44 @@ export class BonSalairesComponent implements OnInit {
     this.initialisationDesFiltres();
     this.currentPage = 0;
     this.chargerLesDonnees(false);
+  }
+
+  confirmerSoumission(demande: any): void {
+    this.demandeAConfirmer = demande;
+    this.showConfirmationModal = true;
+  }
+
+  annulerSoumission(): void {
+    this.showConfirmationModal = false;
+    this.demandeAConfirmer = null;
+  }
+
+  soumettreConge(): void {
+    if (!this.demandeAConfirmer?.uuid) {
+      return;
+    }
+
+    console.log('Sending data', this.demandeAConfirmer);
+
+    const demandeId = this.demandeAConfirmer.uuid;
+
+    this.rhResource.soumettreDemande(demandeId)
+      .subscribe({
+        next: () => {
+          this.showConfirmationModal = false;
+          this.demandeAConfirmer = null;
+
+          this.toast.success('success', `La demande "${this.demandeAConfirmer.numeroDemande}" a été envoyée avec succès.`);
+
+          this.chargerLesDonnees(this.hasActiveFilters);
+        },
+        error: (error) => {
+          console.error(
+            'Erreur lors de la soumission du congé:',
+            error
+          );
+        }
+      });
   }
 
 

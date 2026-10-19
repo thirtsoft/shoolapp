@@ -39,7 +39,7 @@ export class SideBarProfesseurComponent {
 
   nav: NavItem[] = [
     { route: '/enseignant/dashboard', ico: '📊', label: 'Tableau de bord' },
-    { route: '/enseignant/agenda', ico: '📖', label: 'Mes classes', section: 'QUOTIDIEN' },
+    //  { route: '/enseignant/agenda', ico: '📖', label: 'Mes classes', section: 'QUOTIDIEN' },
 
     //
     { route: '/enseignant/contrats', ico: '📄', label: 'Contrats', section: 'FINANCES' },
