@@ -17,6 +17,7 @@ import { CommonService } from '../../../../core/services/common.service';
 import { DossierResourceService } from '../../../administration/dossier-eleve/service/dossier-resource.service';
 import { PlanificationResourceService } from '../../../administration/planification/services/planification-resource.service';
 import { EnseignementContextService, GestionClasseContext } from '../../service/enseignement-contexte.service';
+import { CahierTexteEnseignantComponent } from '../cahiertexte/cahier-texte-enseignant-component/cahier-texte-enseignant-component';
 import { ListEvaluationEnseignantComponent } from '../evaluation/list-evaluation-enseignant/list-evaluation-enseignant.component';
 import { ListExerciceComponent } from '../exercice/list-exercice/list-exercice.component';
 
@@ -75,7 +76,7 @@ export interface NoteSaisie {
   standalone: true,
   imports: [RouterModule, FormsModule, DatePipe, ReactiveFormsModule,
     GenericTableDossierComponent,
-    ListExerciceComponent, ListEvaluationEnseignantComponent],
+    ListExerciceComponent, ListEvaluationEnseignantComponent, CahierTexteEnseignantComponent],
   templateUrl: './classe-management-component.html',
   styleUrl: './classe-management-component.css',
 })
@@ -144,6 +145,8 @@ export class ClasseManagementComponent implements OnInit {
   currentEleveForAbsence: Eleve | null = null;
   showEvaluationModal = signal<boolean>(false);
 
+  showCreationCahierTexte = signal(false);
+
   private readonly route = inject(ActivatedRoute);
   private readonly planification = inject(PlanificationResourceService);
   private readonly toastService = inject(ToastrService);
@@ -166,6 +169,10 @@ export class ClasseManagementComponent implements OnInit {
 
   ngOnInit(): void {
     this.chargerLesDonneesEleves();
+  }
+
+  creerEntreeCahierTexte(): void {
+    this.showCreationCahierTexte.set(true);
   }
 
 

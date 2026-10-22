@@ -26,7 +26,12 @@ export interface GestionClasseContext {
   courseId?: number;
   heureDebut?: string;
   heureFin?: string;
+
+  classeUuid?: string;
+  anneeScolaireUuid?: string;
+  courseUuid?: string | null;
 }
+
 
 @Injectable({
   providedIn: 'root'

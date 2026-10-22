@@ -54,6 +54,14 @@ export const ADMIN_ROUTES: Routes = [
 
 
       {
+        path: 'cahiers-textes',
+        loadChildren: () =>
+          import('./cahiertexte/cahier-texte.routes')
+            .then(m => m.CAHIER_TEXTE_ROUTES)
+      },
+
+
+      {
         path: 'referentiel',
         loadChildren: () =>
           import('./referentiel/referentiel.routes')

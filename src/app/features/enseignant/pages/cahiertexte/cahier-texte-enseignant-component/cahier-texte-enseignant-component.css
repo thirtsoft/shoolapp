@@ -1,0 +1,490 @@
+.form-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  gap: 16px;
+  padding: 18px 24px;
+  border-top: 1px solid #e5e7eb;
+  background: #fff;
+}
+
+.form-title {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.cahier-reference {
+  font-size: 13px;
+  color: #6b7280;
+  font-weight: 500;
+}
+
+.form-footer .btn-secondary {
+  margin-right: auto;
+}
+
+.form-footer .btn-primary {
+  margin-left: auto;
+}
+
+.cahier-list-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  margin-bottom: 20px;
+}
+
+.cahier-list-header h3 {
+  margin: 0;
+}
+
+.form-group-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 8px;
+}
+
+.form-help {
+  font-size: 12px;
+  color: #6b7280;
+}
+
+.contenu-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+.contenu-number {
+  flex: 0 0 30px;
+  width: 30px;
+  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background: #f1f5f9;
+  color: #475569;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.contenu-input {
+  flex: 1;
+}
+
+.btn-delete-line {
+  flex: 0 0 36px;
+  width: 36px;
+  height: 36px;
+  border: 0;
+  background: transparent;
+  color: #9ca3af;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.btn-delete-line:hover {
+  color: #dc2626;
+  background: #fef2f2;
+}
+
+.contenu-hint {
+  margin-top: 8px;
+  font-size: 12px;
+  color: #6b7280;
+}
+
+.contenu-hint i {
+  margin-right: 5px;
+}
+
+/* =========================================================
+   HEADER CAHIER
+   ========================================================= */
+
+.cahier-week-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  margin-bottom: 18px;
+}
+
+.cahier-title-main {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.cahier-title-main>i {
+  font-size: 22px;
+  color: #475569;
+}
+
+.cahier-title-main h3 {
+  margin: 0;
+  font-size: 20px;
+  font-weight: 600;
+  color: #1f2937;
+}
+
+.cahier-title-main .cahier-reference {
+  display: block;
+  margin-top: 3px;
+}
+
+
+/* =========================================================
+   NAVIGATION SEMAINE
+   ========================================================= */
+
+.week-navigation {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 18px;
+  padding: 14px 18px;
+  margin-bottom: 20px;
+  border: 1px solid #e5e7eb;
+  border-radius: 10px;
+  background: #fff;
+}
+
+.week-current {
+  min-width: 260px;
+  text-align: center;
+}
+
+.week-label {
+  font-size: 16px;
+  font-weight: 600;
+  color: #1f2937;
+  text-transform: capitalize;
+}
+
+.week-nav-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 38px;
+  height: 38px;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  background: #fff;
+  color: #475569;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.week-nav-button:hover {
+  background: #f8fafc;
+  border-color: #cbd5e1;
+  color: #1f2937;
+}
+
+.btn-current-week {
+  margin-top: 6px;
+  border: 0;
+  background: transparent;
+  color: #2563eb;
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.btn-current-week:hover {
+  text-decoration: underline;
+}
+
+
+/* =========================================================
+   VUE SEMAINE
+   ========================================================= */
+
+.week-view {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+
+/* =========================================================
+   JOUR
+   ========================================================= */
+
+.week-day {
+  border: 1px solid #e5e7eb;
+  border-radius: 10px;
+  background: #fff;
+  overflow: hidden;
+}
+
+.week-day.today {
+  border-color: #93c5fd;
+}
+
+
+/* =========================================================
+   HEADER DU JOUR
+   ========================================================= */
+
+.week-day-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 18px;
+  border-bottom: 1px solid #e5e7eb;
+  background: #f8fafc;
+}
+
+.week-day.today .week-day-header {
+  background: #eff6ff;
+}
+
+.week-day-name {
+  font-size: 13px;
+  font-weight: 700;
+  text-transform: uppercase;
+  color: #475569;
+}
+
+.week-day.today .week-day-name {
+  color: #2563eb;
+}
+
+.week-day-date {
+  font-size: 13px;
+  color: #64748b;
+  text-transform: capitalize;
+}
+
+
+/* =========================================================
+   ENTRÉES DU JOUR
+   ========================================================= */
+
+.day-entries {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 14px 18px;
+}
+
+
+/* =========================================================
+   CARTE SÉANCE
+   ========================================================= */
+
+.entree-card {
+  padding: 14px 16px;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  background: #fff;
+}
+
+.entree-card:hover {
+  border-color: #cbd5e1;
+}
+
+
+/* =========================================================
+   HEADER SÉANCE
+   ========================================================= */
+
+.entree-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.entree-time {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #475569;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.entree-time i {
+  color: #64748b;
+}
+
+
+/* =========================================================
+   COURS
+   ========================================================= */
+
+.entree-course {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 10px;
+}
+
+.matiere-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 8px;
+  border-radius: 5px;
+  background: #eff6ff;
+  color: #2563eb;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.cours-libelle {
+  color: #1f2937;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+
+/* =========================================================
+   ACTIONS
+   ========================================================= */
+
+.entree-actions {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.btn-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border: 0;
+  border-radius: 6px;
+  background: transparent;
+  color: #64748b;
+  cursor: pointer;
+}
+
+.btn-icon:hover {
+  background: #f1f5f9;
+  color: #1f2937;
+}
+
+.btn-icon.danger:hover {
+  background: #fef2f2;
+  color: #dc2626;
+}
+
+
+/* =========================================================
+   CONTENU
+   ========================================================= */
+
+.entree-content {
+  margin-top: 10px;
+  padding-top: 10px;
+  border-top: 1px solid #f1f5f9;
+}
+
+.entree-content ul {
+  margin: 0;
+  padding-left: 20px;
+}
+
+.entree-content li {
+  margin-bottom: 4px;
+  color: #374151;
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.entree-content li:last-child {
+  margin-bottom: 0;
+}
+
+
+/* =========================================================
+   OBSERVATION
+   ========================================================= */
+
+.entree-observation {
+  margin-top: 12px;
+  padding: 9px 11px;
+  border-radius: 6px;
+  background: #f8fafc;
+  color: #64748b;
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+.entree-observation strong {
+  color: #475569;
+}
+
+
+/* =========================================================
+   JOUR VIDE
+   ========================================================= */
+
+.day-empty {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 18px;
+  color: #94a3b8;
+  font-size: 13px;
+}
+
+.day-empty i {
+  font-size: 14px;
+}
+
+
+/* =========================================================
+   RESPONSIVE
+   ========================================================= */
+
+@media (max-width: 768px) {
+
+  .cahier-week-header {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .cahier-week-header .btn-primary {
+    width: 100%;
+  }
+
+  .week-navigation {
+    gap: 10px;
+  }
+
+  .week-current {
+    min-width: 0;
+    flex: 1;
+  }
+
+  .week-label {
+    font-size: 14px;
+  }
+
+  .week-day-header {
+    padding: 11px 14px;
+  }
+
+  .day-entries {
+    padding: 10px;
+  }
+
+  .entree-card {
+    padding: 12px;
+  }
+
+}

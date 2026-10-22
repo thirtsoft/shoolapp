@@ -2,6 +2,7 @@
 export interface CoursEnseignantCalendrier {
     coursId: number;
     libelle: string;
+    courseUuid: string;
 
     jourSemaine: string;
     heureDebut: string;

@@ -647,7 +647,6 @@ export class GenericTableDossierComponent implements OnInit {
     this.sharedResourceService.afficherUneResource('inscription', inscriptionId).subscribe({
       next: (data: any) => {
         this.inscriptionEleve = data;
-        console.log('details inscription', this.inscriptionEleve)
         this.imprimerRecu();
       }
     });
@@ -2533,6 +2532,7 @@ export class GenericTableDossierComponent implements OnInit {
 
   }
 
+
   generatePdfDuBulletin(row: any) {
     if (row.id) {
       this.getDetailsBulletinEleve(row.id);
@@ -2543,7 +2543,6 @@ export class GenericTableDossierComponent implements OnInit {
     this.sharedResourceService.afficherDetailsResource('bulletin', bulletinId).subscribe({
       next: (data) => {
         this.detailsBulletinEleve = data;
-        console.log('Details bulletin', this.detailsBulletinEleve)
         this.imprimerBulletin();
       }
     });
@@ -4780,6 +4779,9 @@ export class GenericTableDossierComponent implements OnInit {
     };
   }
 
+  onRowAction(action: string, row: any): void {
+    this.rowAction.emit({ action, row });
+  }
 
 
 

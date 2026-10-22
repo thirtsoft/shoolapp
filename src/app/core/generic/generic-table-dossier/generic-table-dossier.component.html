@@ -546,6 +546,15 @@
                                 >
                                   <i class="fas fa-file-pdf fa-lg" style="color: #dc3545"></i>
                                 </button>
+                              } @else if (column.key === 'paie') {
+                                <button
+                                  type="button"
+                                  class="icon-button"
+                                  (click)="onRowAction('generer-paie-pdf', row)"
+                                  title="Générer le reçu de paie"
+                                >
+                                  <i class="fas fa-file-pdf fa-lg" style="color: #dc3545"></i>
+                                </button>
                               } @else {
                                 @if (isNumber(row[column.key])) {
                                   <span>{{ row[column.key] }}</span>

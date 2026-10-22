@@ -63,6 +63,7 @@ export class SideBarAdminComponent {
     { route: '/admin/dossier-eleve/absences', ico: '❌', label: 'Absences', section: 'VIE SCOLAIRE', badge: '7' },
     { route: '/admin/dossier-eleve/evaluations', ico: '🎯', label: 'Évaluations', section: '', badge: '' },
     { route: '/admin/dossier-eleve/notes', ico: '📝', label: 'Notes', section: '', badge: '' },
+    { route: '/admin/cahiers-textes', ico: '📖', label: 'Cahier de texte', section: '', badge: '' },
     { route: '/admin/dossier-eleve/bulletin', ico: '📋', label: 'Bulletins', section: '', badge: '' },
     { route: '/admin/planification/exercice', ico: '📅', label: 'Exercice', section: '', badge: '' },
 

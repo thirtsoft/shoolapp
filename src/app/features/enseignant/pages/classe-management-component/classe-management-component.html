@@ -20,6 +20,14 @@
     </button>
     <button
       class="tab"
+      [class.active]="activeTab() === 'cahier-texte'"
+      (click)="changerOnglet('cahier-texte')"
+    >
+      <i class="fas fa-book-open"></i>
+      <span>Cahier de texte</span>
+    </button>
+    <button
+      class="tab"
       [class.active]="activeTab() === 'exercices'"
       (click)="changerOnglet('exercices')"
     >
@@ -349,6 +357,33 @@
           <!--      <app-list-absence-component></app-list-absence-component> -->
         }
       }
+    </div>
+  }
+
+  @if (activeTab() === 'cahier-texte') {
+    <div class="tab-content">
+     <!--  <div class="tab-header">
+        <div>
+          <h2>
+            <i class="fas fa-book-open"></i>
+            Cahier de texte
+          </h2>
+
+          <span class="date-jour">
+            {{ contexteClasse()?.matiere }}
+            -
+            {{ contexteClasse()?.classe }}
+          </span>
+        </div>
+
+      </div> -->
+
+      <app-cahier-texte-enseignant-component
+        [classeUuid]="contexteClasse()?.classeUuid"
+        [anneeScolaireUuid]="contexteClasse()?.anneeScolaireUuid"
+        [courseUuid]="contexteClasse()?.courseUuid"
+        [enseignementId]="contexteClasse()?.enseignementId"
+      />
     </div>
   }
 
