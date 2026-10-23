@@ -498,7 +498,11 @@
                             }
                             <td class="icon-container options-column">
                               <div class="icon-position left">
-                                @if (isEditIcon && row.isEditIcone !== false) {
+                                @if (
+                                  isEditIcon &&
+                                  row.isEditIcone !== false &&
+                                  row.etat === 'Brouillon'
+                                ) {
                                   <button
                                     class="icon-button"
                                     aria-label="Edit"
@@ -510,28 +514,19 @@
                                 }
                               </div>
 
-                              <div class="icon-position center">
-                                @if (isLockableIcon && row.isLocakableIcone !== false) {
+                              <div>
+                                @if (showSubmitIcon && row.etat === 'Brouillon') {
                                   <button
+                                    type="button"
                                     class="icon-button"
-                                    aria-label="Toggle Lock"
-                                    [title]="
-                                      row.actif === 1 || row.est_valide || row.recordStatus === 'ACTIVE' ? 'Desactiver' : 'Activer'
-                                    "
-                                    (click)="
-                                      row.actif === 1 || row.est_valide || row.recordStatus === 'ACTIVE'
-                                        ? openConfirmationDialog('desactiver', deleteEndPoint, row)
-                                        : openConfirmationDialog('activer', deleteEndPoint, row)
-                                    "
+                                    title="Soumettre la demande"
+                                    (click)="soumettreDemande(row)"
                                   >
                                     <img
-                                      [src]="
-                                        row.actif === 1 || row.est_valide || row.recordStatus === 'ACTIVE'
-                                          ? 'assets/img/lock.png'
-                                          : 'assets/img/unlock.png'
-                                      "
+                                      src="assets/img/soumettre.png"
                                       class="icon"
                                       style="width: 14px; height: 15px"
+                                      alt="Soumettre"
                                     />
                                   </button>
                                 }
@@ -591,6 +586,45 @@
                                     (click)="generateLink(iconTableLink, row)"
                                   >
                                     <i class="fa fa-table"></i>
+                                  </button>
+                                }
+                              </div>
+
+                              <div class="icon-position center">
+                                @if (
+                                  isLockableIcon &&
+                                  row.isLocakableIcone !== false &&
+                                  row.etat === 'Brouillon'
+                                ) {
+                                  <button
+                                    class="icon-button"
+                                    aria-label="Toggle Lock"
+                                    [title]="
+                                      row.actif === 1 ||
+                                      row.est_valide ||
+                                      row.recordStatus === 'ACTIVE'
+                                        ? 'Desactiver'
+                                        : 'Activer'
+                                    "
+                                    (click)="
+                                      row.actif === 1 ||
+                                      row.est_valide ||
+                                      row.recordStatus === 'ACTIVE'
+                                        ? openConfirmationDialog('desactiver', deleteEndPoint, row)
+                                        : openConfirmationDialog('activer', deleteEndPoint, row)
+                                    "
+                                  >
+                                    <img
+                                      [src]="
+                                        row.actif === 1 ||
+                                        row.est_valide ||
+                                        row.recordStatus === 'ACTIVE'
+                                          ? 'assets/img/lock.png'
+                                          : 'assets/img/unlock.png'
+                                      "
+                                      class="icon"
+                                      style="width: 14px; height: 15px"
+                                    />
                                   </button>
                                 }
                               </div>

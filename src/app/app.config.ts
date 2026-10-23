@@ -1,10 +1,14 @@
-import { ApplicationConfig, provideBrowserGlobalErrorListeners, provideZoneChangeDetection } from '@angular/core';
+import { ApplicationConfig, LOCALE_ID, provideBrowserGlobalErrorListeners, provideZoneChangeDetection } from '@angular/core';
 import { provideRouter } from '@angular/router';
 
+import { registerLocaleData } from '@angular/common';
 import { HTTP_INTERCEPTORS, provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
+import localeFr from '@angular/common/locales/fr';
 import { provideToastr } from 'ngx-toastr';
 import { routes } from './app.routes';
 import { InterceptorService } from './core/inerceptors/interceptor.service';
+
+registerLocaleData(localeFr);
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -30,6 +34,11 @@ export const appConfig: ApplicationConfig = {
       preventDuplicates: true,
       closeButton: true,
       progressBar: true
-    })
+    }),
+
+    {
+      provide: LOCALE_ID,
+      useValue: 'fr-FR'
+    }
   ]
 };

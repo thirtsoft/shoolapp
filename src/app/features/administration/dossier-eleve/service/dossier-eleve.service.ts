@@ -18,6 +18,7 @@ import { Inscription } from '../../../../core/models/dossiereleve/request/inscri
 import { ListeInscription } from '../../../../core/models/dossiereleve/request/liste-inscription';
 import { PaiementAdd } from '../../../../core/models/dossiereleve/request/paiement-add';
 import { CreateEleveResponse, ResponseEleve, ResponseMessage } from '../../../../core/models/message/response/response-message';
+import { EleveInscritClasse } from '../../../../core/models/dossiereleve/eleve-inscrit-classe-response';
 
 @Injectable({
   providedIn: 'root'
@@ -75,11 +76,8 @@ export class DossierEleveService {
   }
 
   modifierPhotoEleve(eleveUuid: string, file: File): Observable<ApiResponse<UpdateElevePhotoResponse>> {
-
     const formData = new FormData();
-
     formData.append('file', file);
-
     return this.http.put<ApiResponse<UpdateElevePhotoResponse>>(
       `${this.baseUrl}/eleve/${eleveUuid}/photo`,
       formData
@@ -128,6 +126,10 @@ export class DossierEleveService {
   /************     Inscription          ************ */
   getAllInscriptions(): Observable<ListeInscription[]> {
     return this.http.get<ListeInscription[]>(`${this.baseUrl}/inscription`, this.httpOptions);
+  }
+
+  getElevesInscritsByClasseAndAnneeScolaire(classeId: number, anneeScolaireId: number): Observable<EleveInscritClasse[]> {
+    return this.http.get<EleveInscritClasse[]>(`${this.baseUrl}/inscription/classe/${classeId}/annee-scolaire/${anneeScolaireId}`, this.httpOptions);
   }
 
   getListInscriptionsByEleve(eleveId: number): Observable<ListeInscription[]> {

@@ -23,12 +23,7 @@ declare const pdfMake: any;
 @Component({
   selector: 'app-generic-table-dossier',
   standalone: true,
-  imports: [
-    RouterModule,
-    FormsModule,
-    RouterLink
-  ],
-
+  imports: [RouterModule, FormsModule, RouterLink],
   templateUrl: './generic-table-dossier.component.html',
   styleUrls: ['./generic-table-dossier.component.css']
 })
@@ -57,6 +52,8 @@ export class GenericTableDossierComponent implements OnInit {
   @Input() isAffecterIcon: boolean = false;
   @Input() isReinscrireIcon: boolean = false;
 
+  @Input() showSubmitIcon: boolean = false;
+
   @Input() showEditOrDeleteCondition: (item: any) => boolean = () => true;
 
   @Input() isLockIcon: boolean = false;
@@ -71,6 +68,7 @@ export class GenericTableDossierComponent implements OnInit {
 
 
   @Output() rowAction = new EventEmitter<{ action: string; row: any }>();
+  @Output() submitAction = new EventEmitter<any>();
 
   @Input() reinscriptionButtonLink: string = '';
 
@@ -103,10 +101,9 @@ export class GenericTableDossierComponent implements OnInit {
     }[];
     disabled?: boolean;
   }[] = [];
+
   @Input() showSearch: boolean = false;
-  montantTotalXof: number = 0;
-  @Output() totalMontantXof = new EventEmitter<number>();
-  @Input() colonneDateFiltrage: string = 'dateEngagement';
+
   @Output() filtreApplique = new EventEmitter<{ colonne: string; valeur: string }>();
 
   /*****************************************************************************************************/
@@ -117,7 +114,6 @@ export class GenericTableDossierComponent implements OnInit {
 
   protected readonly Object = Object;
 
-  //
   @Input() currentPage: number = 0;
   @Input() pageSize: number = 5;
   @Input() tableSizes: number[] = [5, 10, 20, 50, 100];
@@ -126,12 +122,8 @@ export class GenericTableDossierComponent implements OnInit {
   @Output() pageChange = new EventEmitter<number>();
   @Output() sizeChange = new EventEmitter<number>();
 
-  @Output() onPageChange = new EventEmitter<number>();
-  @Output() onSizeChange = new EventEmitter<number>();
-
   currentFilters: any = {};
 
-  //  @Input() showFilters: boolean = false;
   @Input() filteres: any[] = [];
 
   @Input() tableColumns: any[] = [];
@@ -211,23 +203,17 @@ export class GenericTableDossierComponent implements OnInit {
     if (this.isPopup) {
       const param = this.selectedItem.id ?? this.selectedItem.uuid;
       console.log('Param', param);
-      this.router.navigate([baseLink, param], {
-        state: { data: this.selectedItem }
-      });
+      void this.router.navigate([baseLink, param], { state: { data: this.selectedItem } });
     } else {
       const rowParam = row.id ?? row.uuid;
       console.log('rowParam 22', rowParam);
-      this.router.navigate([baseLink, rowParam], {
-        state: { data: row }
-      });
+      void this.router.navigate([baseLink, rowParam], { state: { data: row } });
     }
   }
 
   generateReinscriptionLink(baseLink: string, row: any): void {
     localStorage.setItem('eleve', row.id)
-    this.router.navigate([baseLink, row.id], {
-      state: { data: row }
-    });
+    void this.router.navigate([baseLink, row.id], { state: { data: row } });
   }
 
   imprimer(row: any) {
@@ -289,9 +275,7 @@ export class GenericTableDossierComponent implements OnInit {
   desactiverElement(endpoint: string, row: any): void {
     const param = row.id ?? row.uuid;
     this.serviceCommun.desactiverResource(endpoint, param).subscribe(
-      //  this.serviceCommun.desactiverResource(endpoint, row.id).subscribe(
       (response) => {
-
         this.toast.success('success', `L'élément "${row.libelle}" a été ${this.lockAction} avec succès.`);
         setTimeout(() => window.location.reload(), 500)
       },
@@ -305,9 +289,7 @@ export class GenericTableDossierComponent implements OnInit {
   activerElement(endpoint: string, row: any): void {
     const param = row.id ?? row.uuid;
     this.serviceCommun.activeResource(endpoint, param).subscribe(
-      //  this.serviceCommun.activeResource(endpoint, row.id).subscribe(
       (response) => {
-
         this.toast.success('success', `L'élément "${row.libelle}" a été ${this.lockAction} avec succès.`);
         setTimeout(() => window.location.reload(), 500)
       },
@@ -318,11 +300,7 @@ export class GenericTableDossierComponent implements OnInit {
     );
   }
 
-  openConfirmationDialog(
-    action: 'desactiver' | 'activer',
-    endpoint: string,
-    row: any
-  ): void {
+  openConfirmationDialog(action: 'desactiver' | 'activer', endpoint: string, row: any): void {
     const modalRef = this.modalService.open(ConfirmationDialogModalComponent, {
       centered: true,
       backdrop: 'static'
@@ -335,7 +313,6 @@ export class GenericTableDossierComponent implements OnInit {
     modalRef.componentInstance.btnOkText = 'Oui';
     modalRef.componentInstance.btnCancelText = 'Non';
 
-
     modalRef.result
       .then((result) => {
         if (result) {
@@ -344,7 +321,6 @@ export class GenericTableDossierComponent implements OnInit {
           } else if (action === 'activer') {
             this.activerElement(endpoint, row);
           }
-
         }
       })
       .catch(() => {
@@ -359,7 +335,6 @@ export class GenericTableDossierComponent implements OnInit {
     if ('actif' in row || 'est_valide' in row) {
       return (row.actif === 1 || row.est_valide === true);
     }
-
     return true;
   }
 
@@ -377,37 +352,23 @@ export class GenericTableDossierComponent implements OnInit {
   }
 
   exportToPDF() {
-    this.exportService.exportToPDF(
-      this.tableColumns,
-      this.filteredData,
-      this.title,
-      `${this.title}_data`
-    );
+    this.exportService.exportToPDF(this.tableColumns, this.filteredData, this.title, `${this.title}_data`);
 
   }
 
   exportToExcel() {
-    this.exportService.exportToExcel(
-      this.tableColumns,
-      this.filteredData,
-      `${this.title}_data`
-    );
+    this.exportService.exportToExcel(this.tableColumns, this.filteredData, `${this.title}_data`);
   }
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['tableData'] && this.tableData) {
       this.filteredData = [...this.tableData];
-      this.montantTotalXof = this.filteredData.reduce((total, item) => {
-        const montant = item.montantXof ?? item.montantXOF ?? 0;
-        return total + montant;
-      }, 0);
-      this.totalMontantXof.emit(this.montantTotalXof);
       this.applyFilters();
       this.sortTable('dateEngagement');
     }
     this.sortTable('dateEngagement');
     if (changes['p']) {
-      this.onPageChange.emit(this.p);
+      this.pageChange.emit(this.p);
     }
   }
 
@@ -471,16 +432,6 @@ export class GenericTableDossierComponent implements OnInit {
 
   applyFilters(): void {
     this.filteredData = this.tableData.filter((row) => {
-      let dateValue: Date | null = null;
-
-      const dateKey = this.colonneDateFiltrage;
-      if (dateKey && row[dateKey]) {
-        dateValue = new Date(row[dateKey]);
-      }
-
-      const anneeFiltrage = dateValue ? dateValue.getFullYear().toString() : '';
-      const moisFiltrage = dateValue ? (dateValue.getMonth() + 1).toString().padStart(2, '0') : '';
-
       const globalSearchMatch = this.globalSearchText
         ? Object.values(row).some(value => value?.toString().toLowerCase().includes(this.globalSearchText.toLowerCase()))
         : true;
@@ -508,12 +459,6 @@ export class GenericTableDossierComponent implements OnInit {
     });
 
     this.p = 1;
-
-    this.montantTotalXof = this.filteredData.reduce((total, item) =>
-      total + (item.montantXof ? item.montantXof : 0), 0
-    );
-
-    this.totalMontantXof.emit(this.montantTotalXof);
   }
 
 
@@ -524,21 +469,8 @@ export class GenericTableDossierComponent implements OnInit {
     this.filtreApplique.emit({ colonne: key, valeur: selectedValue });
     this.filters[key] = selectedValue;
     this.applyFilters();
-    this.toggleOtherMovementFilter(selectedValue);
   }
 
-
-  toggleOtherMovementFilter(selectedValue: string): void {
-    const otherMovementFilter = this.additionalFilters.find(
-      filter => filter.key === 'autreMouvement' && filter.label === 'Autre type de mouvement'
-    );
-    if (otherMovementFilter) {
-      if (this.keySelected === 'libelleTypeMouvement' && !selectedValue || selectedValue === 'Autre mouvements de trésorerie') {
-        otherMovementFilter.disabled = false;
-      }
-      this.cdr.detectChanges();
-    }
-  }
 
   handleGlobalSearch(event: Event): void {
     this.globalSearchText = (event.target as HTMLInputElement).value;
@@ -547,7 +479,7 @@ export class GenericTableDossierComponent implements OnInit {
 
   handlePageChange(newPage: number): void {
     this.p = newPage;
-    this.onPageChange.emit(newPage);
+    this.pageChange.emit(newPage);
   }
 
   handleSizeChange(event: Event): void {
@@ -555,13 +487,12 @@ export class GenericTableDossierComponent implements OnInit {
     const newSize = Number(selectElement.value);
     this.itemsPerPage = newSize;
     this.p = 1;
-    this.onSizeChange.emit(newSize);
+    this.sizeChange.emit(newSize);
   }
 
   /*********************************** fin search test ************************************************/
   sortTable(columnKey: string): void {
     if (this.sortColumn === columnKey) {
-      // Cycle entre les trois états : asc -> desc -> null -> asc
       if (this.sortDirection === 'asc') {
         this.sortDirection = 'desc';
       } else if (this.sortDirection === 'desc') {
@@ -632,12 +563,6 @@ export class GenericTableDossierComponent implements OnInit {
     this.splitKeys = [];
   }
 
-  /*   sendDepense(baseLink: any, row: any) {
-      this.router.navigate([baseLink, row.id], {
-        state: { data: row }
-      });
-    }
-   */
   toggleAllRows(event: any): void {
     const isChecked = event.target.checked;
     this.filteredData.forEach(row => {
@@ -722,7 +647,6 @@ export class GenericTableDossierComponent implements OnInit {
     this.sharedResourceService.afficherUneResource('inscription', inscriptionId).subscribe({
       next: (data: any) => {
         this.inscriptionEleve = data;
-        console.log('details inscription', this.inscriptionEleve)
         this.imprimerRecu();
       }
     });
@@ -731,6 +655,10 @@ export class GenericTableDossierComponent implements OnInit {
   async imprimerRecu(): Promise<void> {
     const document = await this.getDocumentRecuInscription();
     pdfMake.createPdf(document).open();
+  }
+
+  soumettreDemande(row: any): void {
+    this.submitAction.emit(row);
   }
 
   async DownloadPdfRecu(): Promise<void> {
@@ -911,10 +839,7 @@ export class GenericTableDossierComponent implements OnInit {
     ];
 
     const informationsEleveBody: any[] = [
-
-      // Ligne 1
       [
-
         {
           text: [
             {
@@ -943,7 +868,6 @@ export class GenericTableDossierComponent implements OnInit {
 
       ],
 
-      // Ligne 2
       [
 
         {
@@ -973,8 +897,6 @@ export class GenericTableDossierComponent implements OnInit {
         }
 
       ],
-
-      // Ligne 3
       [
 
         {
@@ -1007,7 +929,6 @@ export class GenericTableDossierComponent implements OnInit {
 
       ],
 
-      // Ligne 4
       [
 
         {
@@ -1035,7 +956,6 @@ export class GenericTableDossierComponent implements OnInit {
 
       ],
 
-      // Ligne 5
       [
 
         {
@@ -1060,23 +980,11 @@ export class GenericTableDossierComponent implements OnInit {
     ];
 
     return {
-
       pageSize: 'A4',
-
-      // Marges légèrement réduites pour garantir une seule page
-      pageMargins: [
-        40,
-        35,
-        40,
-        65
-      ],
-
+      pageMargins: [40, 35, 40, 65],
       content: [
-
-
         {
           columns: [
-
             {
               width: '*',
               stack: headerLeft
@@ -1091,39 +999,24 @@ export class GenericTableDossierComponent implements OnInit {
 
           columnGap: 20,
 
-          margin: [
-            0,
-            0,
-            0,
-            10
-          ]
+          margin: [0, 0, 0, 10]
         },
 
         {
           canvas: [
-
             {
               type: 'line',
-
               x1: 0,
               y1: 0,
-
               x2: 515,
               y2: 0,
-
               lineWidth: 1,
-
               lineColor: '#2F80C0'
             }
 
           ],
 
-          margin: [
-            0,
-            0,
-            0,
-            9
-          ]
+          margin: [0, 0, 0, 9]
         },
 
         {
@@ -1146,64 +1039,32 @@ export class GenericTableDossierComponent implements OnInit {
 
           ],
 
-          margin: [
-            0,
-            0,
-            0,
-            0
-          ]
+          margin: [0, 0, 0, 0]
         },
 
 
         {
           text: 'REÇU D’INSCRIPTION',
-
           fontSize: 15,
-
           alignment: 'center',
-
           bold: true,
-
           color: '#1A5276',
-
-          margin: [
-            0,
-            12,
-            0,
-            3
-          ],
-
+          margin: [0, 12, 0, 3],
           characterSpacing: 1
         },
 
 
         {
           text: `N° ${codeDossier}`,
-
           fontSize: 9.5,
-
           alignment: 'center',
-
           bold: true,
-
           color: '#7F8C8D',
-
-          margin: [
-            0,
-            0,
-            0,
-            13
-          ]
+          margin: [0, 0, 0, 13]
         },
-
         {
           table: {
-
-            widths: [
-              '*',
-              '*'
-            ],
-
+            widths: ['*', '*'],
             body: informationsEleveBody
 
           },
@@ -1231,10 +1092,8 @@ export class GenericTableDossierComponent implements OnInit {
           },
 
           margin: [
-            0,
-            0,
-            0,
-            17
+            0, 0,
+            0, 17
           ]
         },
 
@@ -1809,8 +1668,7 @@ export class GenericTableDossierComponent implements OnInit {
     }
 
     try {
-      const blob = await firstValueFrom(
-        this.organizationConfigService.getLogoContent(logoUuid));
+      const blob = await firstValueFrom(this.organizationConfigService.getLogoContent(logoUuid));
 
       return await new Promise<string>((resolve, reject) => {
         const reader = new FileReader();
@@ -2674,6 +2532,7 @@ export class GenericTableDossierComponent implements OnInit {
 
   }
 
+
   generatePdfDuBulletin(row: any) {
     if (row.id) {
       this.getDetailsBulletinEleve(row.id);
@@ -2684,7 +2543,6 @@ export class GenericTableDossierComponent implements OnInit {
     this.sharedResourceService.afficherDetailsResource('bulletin', bulletinId).subscribe({
       next: (data) => {
         this.detailsBulletinEleve = data;
-        console.log('Details bulletin', this.detailsBulletinEleve)
         this.imprimerBulletin();
       }
     });
@@ -4921,6 +4779,9 @@ export class GenericTableDossierComponent implements OnInit {
     };
   }
 
+  onRowAction(action: string, row: any): void {
+    this.rowAction.emit({ action, row });
+  }
 
 
 

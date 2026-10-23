@@ -1,1 +1,503 @@
-<p>details-demande-avance-salaire-component works!</p>
+<div class="page-wrapper">
+  <div class="content container-fluid">
+    <div class="page-header">
+      <div class="header-main">
+        <button class="btn-back" (click)="goBack()">
+          <i class="fas fa-arrow-left"></i>
+          <span>Retour</span>
+        </button>
+
+        <div class="header-title">
+          <div class="title-icon">
+            <i class="fas fa-calendar-alt"></i>
+          </div>
+
+          <div>
+            <h3 class="page-title">Détails bon de salaire</h3>
+            <p class="page-subtitle">
+              Demande bon de salaire
+              <span class="separator">•</span>
+              créée le {{ detailsDemande?.dateDemande }}
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <div class="header-status">
+        <span class="status-badge" [class]="getStatusClass()">
+          <span class="status-dot"></span>
+          {{ detailsDemande?.etat || 'Brouillon' }}
+        </span>
+      </div>
+    </div>
+
+    <div class="action-bar">
+      <div class="action-context">
+        <i class="fas fa-file-signature"></i>
+        <span>Gestion de la demande</span>
+      </div>
+
+      <div class="action-group-buttons">
+        <!-- BROUILLON -->
+        @if (detailsDemande?.etat === 'Brouillon') {
+          <button
+            type="button"
+            class="action-btn action-btn-primary"
+            (click)="openEtatModal(etatModal, 'envoyer')"
+          >
+            <i class="fas fa-paper-plane"></i>
+            <span>Soumettre la demande</span>
+          </button>
+        }
+
+        <!-- EN ATTENTE -->
+        @if (detailsDemande?.etat === 'En Attente') {
+          <button
+            type="button"
+            class="action-btn action-btn-success"
+            (click)="openEtatModal(etatModal, 'approuver')"
+          >
+            <i class="fas fa-check"></i>
+            <span>Approuver</span>
+          </button>
+
+          <button
+            type="button"
+            class="action-btn action-btn-danger"
+            (click)="openEtatModal(etatModal, 'rejeter')"
+          >
+            <i class="fas fa-times"></i>
+            <span>Rejeter</span>
+          </button>
+        }
+      </div>
+    </div>
+
+    <!-- =========================================================
+         HERO : PERSONNE + PÉRIODE
+    ========================================================== -->
+    <div class="leave-hero">
+      <!-- Bénéficiaire -->
+      <div class="hero-person">
+        <div class="person-avatar">
+          {{ getInitials(detailsDemande?.beneficiaire) }}
+        </div>
+
+        <div class="person-info">
+          <span class="eyebrow">Bénéficiaire</span>
+
+          <h2>
+            {{ detailsDemande?.beneficiaire || '-' }}
+          </h2>
+
+          <div class="person-meta">
+            <span>
+              <i class="fas fa-user-edit"></i>
+              Créé par {{ detailsDemande?.creePar }}
+            </span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Période -->
+      <div class="hero-period">
+        <div class="period-label">
+          <i class="fas fa-calendar-week"></i>
+          Période du congé
+        </div>
+
+        <div class="period-dates">
+          <div class="date-block">
+            <span class="date-label">Début</span>
+            <strong>{{ detailsDemande?.dateDemande }}</strong>
+          </div>
+
+          <div class="date-arrow">
+            <i class="fas fa-arrow-right"></i>
+          </div>
+
+          <div class="date-block">
+            <span class="date-label">Fin</span>
+            <strong>{{ detailsDemande?.dateDemande }}</strong>
+          </div>
+        </div>
+
+        <div class="duration-badge">
+          <i class="fas fa-hourglass-half"></i>
+        </div>
+      </div>
+    </div>
+
+    <!-- =========================================================
+         CONTENU PRINCIPAL
+    ========================================================== -->
+    <div class="details-grid">
+      <!-- =======================================================
+           COLONNE GAUCHE
+      ======================================================== -->
+      <div class="details-main">
+        <!-- Période -->
+        <div class="details-card">
+          <div class="card-heading">
+            <div class="heading-icon heading-icon-blue">
+              <i class="fas fa-calendar-alt"></i>
+            </div>
+
+            <div>
+              <h4>Période du congé</h4>
+              <p>Dates prévues pour l'absence</p>
+            </div>
+          </div>
+
+          <div class="period-timeline">
+            <div class="timeline-date">
+              <div class="timeline-dot"></div>
+
+              <div>
+                <span class="timeline-label">Début du congé</span>
+                <strong>{{ detailsDemande?.dateDemande }}</strong>
+              </div>
+            </div>
+
+            <div class="timeline-line"></div>
+
+            <div class="timeline-date">
+              <div class="timeline-dot timeline-dot-end"></div>
+
+              <div>
+                <span class="timeline-label">Fin du congé</span>
+                <strong>{{ detailsDemande?.dateDemande }}</strong>
+              </div>
+            </div>
+          </div>
+
+          <div class="duration-panel">
+            <div class="duration-icon">
+              <i class="fas fa-clock"></i>
+            </div>
+
+            <div>
+              <span>Durée totale</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Motif -->
+        <div class="details-card">
+          <div class="card-heading">
+            <div class="heading-icon heading-icon-orange">
+              <i class="fas fa-comment-alt"></i>
+            </div>
+
+            <div>
+              <h4>Motif de la demande</h4>
+              <p>Raison communiquée par le bénéficiaire</p>
+            </div>
+          </div>
+
+          <div class="reason-box">
+            <div class="reason-title">
+              <i class="fas fa-quote-left"></i>
+              {{ detailsDemande?.motif || 'Aucun motif renseigné' }}
+            </div>
+
+            @if (detailsDemande?.commentaireValidation) {
+              <div
+                class="description-content"
+                [innerHTML]="detailsDemande?.commentaireValidation"
+              ></div>
+            }
+          </div>
+        </div>
+
+        <!-- Motif de rejet -->
+        @if (detailsDemande?.motifRejet) {
+          <div class="details-card rejection-card">
+            <div class="card-heading">
+              <div class="heading-icon heading-icon-red">
+                <i class="fas fa-exclamation-circle"></i>
+              </div>
+
+              <div>
+                <h4>Motif du rejet</h4>
+                <p>Justification fournie lors du rejet</p>
+              </div>
+            </div>
+
+            <div class="rejection-message">
+              {{ detailsDemande?.motifRejet }}
+            </div>
+          </div>
+        }
+      </div>
+
+      <!-- =======================================================
+           COLONNE DROITE
+      ======================================================== -->
+      <div class="details-sidebar">
+        <!-- Informations -->
+        <div class="details-card">
+          <div class="card-heading">
+            <div class="heading-icon heading-icon-purple">
+              <i class="fas fa-info-circle"></i>
+            </div>
+
+            <div>
+              <h4>Informations</h4>
+              <p>Informations générales</p>
+            </div>
+          </div>
+
+          <div class="information-list">
+            <div class="information-item">
+              <div class="information-icon">
+                <i class="fas fa-user"></i>
+              </div>
+
+              <div class="information-content">
+                <span>Bénéficiaire</span>
+                <strong>{{ detailsDemande?.beneficiaire || '-' }}</strong>
+              </div>
+            </div>
+
+            <div class="information-item">
+              <div class="information-icon">
+                <i class="fas fa-user-edit"></i>
+              </div>
+
+              <div class="information-content">
+                <span>Créateur</span>
+                <strong>{{ detailsDemande?.creePar || '-' }}</strong>
+              </div>
+            </div>
+
+            <div class="information-item">
+              <div class="information-icon">
+                <i class="fas fa-calendar-plus"></i>
+              </div>
+
+              <div class="information-content">
+                <span>Date de création</span>
+                <strong>{{ detailsDemande?.dateDemande || '-' }}</strong>
+              </div>
+            </div>
+
+            <div class="information-item">
+              <div class="information-icon">
+                <i class="fas fa-check-circle"></i>
+              </div>
+
+              <div class="information-content">
+                <span>Date d'approbation</span>
+                <strong>
+                  {{ detailsDemande?.dateApprobation || 'Non approuvé' }}
+                </strong>
+              </div>
+            </div>
+
+            <div class="information-item">
+              <div class="information-icon">
+                <i class="fas fa-user-check"></i>
+              </div>
+
+              <div class="information-content">
+                <span>Approuvé par</span>
+                <strong>
+                  {{ detailsDemande?.approuverPar || 'En attente' }}
+                </strong>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Statut -->
+        <div class="details-card status-card">
+          <div class="card-heading">
+            <div class="heading-icon heading-icon-green">
+              <i class="fas fa-route"></i>
+            </div>
+
+            <div>
+              <h4>Suivi de la demande</h4>
+              <p>Évolution du traitement</p>
+            </div>
+          </div>
+
+          <div class="request-timeline">
+            <div class="request-step completed">
+              <div class="step-marker">
+                <i class="fas fa-check"></i>
+              </div>
+
+              <div class="step-content">
+                <strong>Demande créée</strong>
+                <span>
+                  {{ detailsDemande?.dateDemande }}
+                </span>
+              </div>
+            </div>
+
+            <div
+              class="request-step"
+              [class.completed]="['Envoyée', 'Accepte', 'Rejete'].includes(detailsDemande?.etat!)"
+              [class.active]="detailsDemande?.etat === 'En Attente'"
+            >
+              <div class="step-marker">
+                @if (['Envoyée', 'Accepte', 'Rejete'].includes(detailsDemande?.etat!)) {
+                  <i class="fas fa-check"></i>
+                } @else {
+                  <i class="fas fa-hourglass-half"></i>
+                }
+              </div>
+
+              <div class="step-content">
+                <strong>En attente de traitement</strong>
+                <span>{{ detailsDemande?.etat }}</span>
+              </div>
+            </div>
+
+            @if (detailsDemande?.dateApprobation) {
+              <div class="request-step completed">
+                <div class="step-marker">
+                  <i class="fas fa-check"></i>
+                </div>
+
+                <div class="step-content">
+                  <strong>Demande traitée</strong>
+                  <span>
+                    {{ detailsDemande?.dateApprobation }}
+                  </span>
+                </div>
+              </div>
+            }
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<ng-template #etatModal let-modal>
+  <div class="modal-custom-overlay" (click)="modal.dismiss()">
+    <div class="modal-custom-container" (click)="$event.stopPropagation()">
+      <!-- HEADER -->
+      <div class="modal-header-custom">
+        <h5 class="modal-title-custom">
+          @if (modalActionLabel === 'envoyer') {
+            <i class="fas fa-paper-plane me-2"></i>
+            Soumettre la demande
+          }
+
+          @if (modalActionLabel === 'approuver') {
+            <i class="fas fa-check-circle me-2"></i>
+            Approuver la demande
+          }
+
+          @if (modalActionLabel === 'rejeter') {
+            <i class="fas fa-times-circle me-2"></i>
+            Rejeter la demande
+          }
+        </h5>
+
+        <button type="button" class="btn-close-custom" (click)="modal.dismiss()">
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
+
+      <!-- BODY -->
+      <div class="modal-body-custom">
+        <p class="modal-message">
+          @if (modalActionLabel === 'envoyer') {
+            Êtes-vous sûr de vouloir
+            <strong class="action-highlight"> soumettre </strong>
+            cette demande de congé ?
+          }
+
+          @if (modalActionLabel === 'approuver') {
+            Êtes-vous sûr de vouloir
+            <strong class="action-highlight"> approuver </strong>
+            cette demande de congé ?
+          }
+
+          @if (modalActionLabel === 'rejeter') {
+            Êtes-vous sûr de vouloir
+            <strong class="action-highlight"> rejeter </strong>
+            cette demande de congé ?
+          }
+        </p>
+
+        <!-- MOTIF DE REJET -->
+        <form [formGroup]="actionForm">
+          @if (isMotifRequired) {
+            <div class="form-group-motif">
+              <label for="motifRejet" class="motif-label">
+                <i class="fas fa-exclamation-triangle text-danger me-1"></i>
+                Motif du rejet
+                <span class="text-danger">*</span>
+              </label>
+
+              <textarea
+                id="motifRejet"
+                class="form-control-motif"
+                rows="3"
+                formControlName="motifRejet"
+                placeholder="Veuillez saisir le motif du rejet..."
+                [class.is-invalid]="
+                  actionForm.get('motifRejet')?.invalid && actionForm.get('motifRejet')?.touched
+                "
+              ></textarea>
+
+              @if (actionForm.get('motifRejet')?.invalid && actionForm.get('motifRejet')?.touched) {
+                <small class="error-message">
+                  <i class="fas fa-info-circle me-1"></i>
+
+                  @if (actionForm.get('motifRejet')?.errors?.['required']) {
+                    Le motif du rejet est obligatoire.
+                  }
+
+                  @if (actionForm.get('motifRejet')?.errors?.['minlength']) {
+                    Le motif du rejet doit contenir au moins 5 caractères.
+                  }
+                </small>
+              }
+            </div>
+          }
+        </form>
+      </div>
+
+      <!-- FOOTER -->
+      <div class="modal-footer-custom">
+        <button type="button" class="btn-cancel" (click)="modal.dismiss()">
+          <i class="fas fa-times me-2"></i>
+          Annuler
+        </button>
+
+        <button
+          type="button"
+          class="btn-confirm"
+          [class.btn-confirm-danger]="modalActionLabel === 'rejeter'"
+          [class.btn-confirm-primary]="
+            modalActionLabel === 'envoyer' || modalActionLabel === 'approuver'
+          "
+          [disabled]="isMotifRequired && actionForm.get('motifRejet')?.invalid"
+          (click)="modal.close('confirm')"
+        >
+          @if (modalActionLabel === 'envoyer') {
+            <i class="fas fa-paper-plane me-2"></i>
+            Soumettre
+          }
+
+          @if (modalActionLabel === 'approuver') {
+            <i class="fas fa-check me-2"></i>
+            Approuver
+          }
+
+          @if (modalActionLabel === 'rejeter') {
+            <i class="fas fa-times me-2"></i>
+            Rejeter
+          }
+        </button>
+      </div>
+    </div>
+  </div>
+</ng-template>

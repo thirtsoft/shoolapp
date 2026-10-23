@@ -21,34 +21,39 @@
           <span></span>
           <span></span>
         </button>
-        <div class="breadcrumb">
-          <span class="breadcrumb-matiere">{{ matiereActive() }}</span>
-          <span class="breadcrumb-sep">/</span>
-          @if (classeContext.mesClasses().length > 0) {
-            <div class="topbar-context-container">
-              <select 
-                [value]="classeContext.activeClasseId()" 
-                (change)="onClasseChange($event)"
-                class="topbar-classe-select"
-              >
-                @for (ens of classeContext.mesClasses(); track ens.id) {
-                  <option [value]="ens.classId">
-                    {{ ens.classe }} ({{ ens.anneeScolaire }})
-                  </option>
-                }
-              </select>
-            </div>
-          } @else {
-            <h1 class="page-title">{{ sectionLabel }}</h1>
-          }
-        </div>
       </div>
 
       <div class="topbar-right">
         <span class="current-date">{{ todayStr }}</span>
-        <div class="user-info">
-          <div class="user-avatar">{{ professeur.avatar }}</div>
-          <span class="user-name">{{ professeur.nom }}</span>
+
+        <div class="lt-user" (click)="toggleDropdown($event)">
+          <div class="lt-ava">{{ userInitial || 'U' }}</div>
+          <span class="lt-uname">{{ userLastName || 'Utilisateur' }}</span>
+          <span class="lt-chevron">{{ dropdownOpen() ? '▲' : '▼' }}</span>
+
+          @if (dropdownOpen()) {
+            <div class="dropdown-menu">
+              <div class="dropdown-header">
+                <div class="dropdown-avatar">{{ userInitial || 'U' }}</div>
+                <div class="dropdown-user-info">
+                  <span class="dropdown-name">{{ userFullName || 'Utilisateur' }}</span>
+                  <span class="dropdown-email">{{ userMobile || '+221776532145' }}</span>
+                </div>
+              </div>
+
+              <div class="dropdown-divider"></div>
+
+              @for (item of dropdownItems; track item.action) {
+                <button class="dropdown-item" (click)="handleDropdownAction(item.action)">
+                  <span class="dropdown-item-icon">{{ item.icon }}</span>
+                  <div class="dropdown-item-content">
+                    <span class="dropdown-item-label">{{ item.label }}</span>
+                    <span class="dropdown-item-desc">{{ item.description }}</span>
+                  </div>
+                </button>
+              }
+            </div>
+          }
         </div>
       </div>
     </header>

@@ -1,0 +1,367 @@
+<div class="page-wrapper">
+  <div class="content container-fluid">
+    <div class="page-header">
+      <div class="row align-items-center">
+        <div class="col-sm-12">
+          <h3 class="page-title">👤 Mon profil</h3>
+          <p class="text-muted mt-1 mb-0">
+            <i class="fas fa-user me-1"></i>
+            Gérez les informations associées à votre compte
+          </p>
+        </div>
+      </div>
+    </div>
+
+    @if (user) {
+      <div class="cards-grid">
+        <div class="card profile-card">
+          <div class="card-body">
+            <div class="card-section-header">
+              <div class="section-title-wrapper">
+                <span class="section-icon">👤</span>
+                <h5 class="section-title">Identité de l'utilisateur</h5>
+              </div>
+
+              @if (!editingIdentity) {
+                <button
+                  type="button"
+                  class="btn btn-edit"
+                  (click)="commencerModificationIdentite()"
+                >
+                  <i class="fas fa-pen me-1"></i>
+                  Modifier
+                </button>
+              }
+            </div>
+
+            <div class="geo-grid geo-grid-2">
+              <div class="form-group">
+                <label for="firstName">
+                  Prénom
+                  <span class="required">*</span>
+                </label>
+
+                @if (editingIdentity) {
+                  <input
+                    id="firstName"
+                    type="text"
+                    class="form-control"
+                    [(ngModel)]="editedUser.firstName"
+                    placeholder="Prénom"
+                  />
+                } @else {
+                  <input
+                    id="firstName"
+                    type="text"
+                    class="form-control"
+                    [value]="user.firstName || ''"
+                    readonly
+                  />
+                }
+              </div>
+
+              <div class="form-group">
+                <label for="lastName">
+                  Nom
+                  <span class="required">*</span>
+                </label>
+
+                @if (editingIdentity) {
+                  <input
+                    id="lastName"
+                    type="text"
+                    class="form-control"
+                    [(ngModel)]="editedUser.lastName"
+                    placeholder="Nom"
+                  />
+                } @else {
+                  <input
+                    id="lastName"
+                    type="text"
+                    class="form-control"
+                    [value]="user.lastName || ''"
+                    readonly
+                  />
+                }
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label for="userEmail">
+                Adresse email
+                <span class="required">*</span>
+                <i class="fas fa-envelope ms-1 text-muted"></i>
+              </label>
+
+              @if (editingIdentity) {
+                <input
+                  id="userEmail"
+                  type="email"
+                  class="form-control"
+                  [(ngModel)]="editedUser.email"
+                  placeholder="exemple@email.com"
+                />
+              } @else {
+                <input
+                  id="userEmail"
+                  type="email"
+                  class="form-control"
+                  [value]="user.email || ''"
+                  readonly
+                />
+              }
+            </div>
+
+            <div class="form-group">
+              <label for="userMobile">
+                Téléphone mobile
+                <i class="fas fa-mobile-alt ms-1 text-muted"></i>
+              </label>
+
+              @if (editingIdentity) {
+                <input
+                  id="userMobile"
+                  type="text"
+                  class="form-control"
+                  [(ngModel)]="editedUser.mobile"
+                  placeholder="+221 77 000 00 00"
+                />
+              } @else {
+                <input
+                  id="userMobile"
+                  type="text"
+                  class="form-control"
+                  [value]="user.mobile || ''"
+                  readonly
+                />
+              }
+            </div>
+
+            <div class="form-group">
+              <label>
+                Nom complet
+                <i class="fas fa-user ms-1 text-muted"></i>
+              </label>
+
+              <input
+                type="text"
+                class="form-control"
+                [value]="user.firstName + ' ' + user.lastName"
+                readonly
+              />
+            </div>
+
+            <div class="form-group">
+              <label>
+                État du compte
+                <i class="fas fa-user-check ms-1 text-muted"></i>
+              </label>
+
+              <input
+                type="text"
+                class="form-control"
+                [value]="isAccountActive ? 'Actif' : 'Inactif'"
+                readonly
+              />
+            </div>
+
+            @if (editingIdentity) {
+              <div class="form-actions">
+                <button
+                  type="button"
+                  class="btn btn-secondary"
+                  (click)="annulerModificationIdentite()"
+                  [disabled]="savingIdentity"
+                >
+                  <i class="fas fa-times me-2"></i>
+                  Annuler
+                </button>
+
+                <button
+                  type="button"
+                  class="btn btn-primary"
+                  (click)="enregistrerIdentite()"
+                  [disabled]="savingIdentity"
+                >
+                  @if (savingIdentity) {
+                    <span class="spinner-border spinner-border-sm me-1"></span>
+
+                    Enregistrement...
+                  } @else {
+                    <i class="fas fa-save me-1"></i>
+                    Enregistrer
+                  }
+                </button>
+              </div>
+            }
+          </div>
+        </div>
+
+        <div class="card profile-card">
+          <div class="card-body">
+            <div class="card-section-header">
+              <div class="section-title-wrapper">
+                <span class="section-icon">🔐</span>
+
+                <h5 class="section-title">Informations de connexion</h5>
+              </div>
+
+              @if (!editingConnection) {
+                <button
+                  type="button"
+                  class="btn btn-edit"
+                  (click)="commencerModificationConnexion()"
+                  [disabled]="loadingConnection || !securityCredential"
+                >
+                  <i class="fas fa-pen me-1"></i>
+                  Modifier
+                </button>
+              }
+            </div>
+
+            @if (loadingConnection) {
+              <div class="text-center py-4">
+                <div class="spinner-border text-primary" role="status">
+                  <span class="visually-hidden"> Chargement... </span>
+                </div>
+
+                <p class="text-muted mt-2 mb-0">Chargement des informations de connexion...</p>
+              </div>
+            } @else if (securityCredential) {
+              <div class="form-group">
+                <label for="identifier">
+                  Identifiant de connexion
+                  <span class="required">*</span>
+                  <i class="fas fa-user-lock ms-1 text-muted"></i>
+                </label>
+
+                @if (editingConnection) {
+                  <input
+                    id="identifier"
+                    type="text"
+                    class="form-control"
+                    [(ngModel)]="editedIdentifier"
+                    placeholder="Identifiant de connexion"
+                    autocomplete="username"
+                  />
+                } @else {
+                  <input
+                    id="identifier"
+                    type="text"
+                    class="form-control"
+                    [value]="securityCredential.identifier || ''"
+                    readonly
+                  />
+                }
+              </div>
+
+              <div class="form-group">
+                <label>
+                  Type d'identifiant
+                  <i class="fas fa-tag ms-1 text-muted"></i>
+                </label>
+
+                <input
+                  type="text"
+                  class="form-control"
+                  [value]="securityCredential.credentialType || ''"
+                  readonly
+                />
+              </div>
+
+              <div class="form-group">
+                <label>
+                  Mot de passe
+                  <i class="fas fa-lock ms-1 text-muted"></i>
+                </label>
+
+                <div class="input-group">
+                  <input type="password" class="form-control" value="************" readonly />
+
+                  <button type="button" class="btn btn-edit" (click)="modifierMotDePasse()">
+                    <i class="fas fa-key me-1"></i>
+                    Modifier
+                  </button>
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label>
+                  État de l'identifiant
+                  <i class="fas fa-user-check ms-1 text-muted"></i>
+                </label>
+
+                <input
+                  type="text"
+                  class="form-control"
+                  [value]="isConnectionActive ? 'Actif' : 'Inactif'"
+                  readonly
+                />
+              </div>
+
+              @if (securityCredential.locked) {
+                <div class="alert alert-warning mt-3" role="alert">
+                  <i class="fas fa-lock me-2"></i>
+
+                  L'identifiant de connexion est actuellement verrouillé.
+                </div>
+              }
+
+              @if (securityCredential.mustChangePassword) {
+                <div class="alert alert-info mt-3" role="alert">
+                  <i class="fas fa-info-circle me-2"></i>
+
+                  Vous devez modifier votre mot de passe.
+                </div>
+              }
+
+              @if (editingConnection) {
+                <div class="form-actions">
+                  <button
+                    type="button"
+                    class="btn btn-secondary"
+                    (click)="annulerModificationConnexion()"
+                    [disabled]="savingConnection"
+                  >
+                    <i class="fas fa-times me-2"></i>
+                    Annuler
+                  </button>
+
+                  <button
+                    type="button"
+                    class="btn btn-primary"
+                    (click)="enregistrerIdentifiantConnexion()"
+                    [disabled]="savingConnection"
+                  >
+                    @if (savingConnection) {
+                      <span class="spinner-border spinner-border-sm me-1"></span>
+
+                      Enregistrement...
+                    } @else {
+                      <i class="fas fa-save me-1"></i>
+                      Enregistrer
+                    }
+                  </button>
+                </div>
+              }
+            } @else {
+              <div class="text-center py-4">
+                <i class="fas fa-user-lock fa-2x text-muted"></i>
+
+                <p class="text-muted mt-2 mb-0">
+                  Impossible de récupérer les informations de connexion.
+                </p>
+              </div>
+            }
+          </div>
+        </div>
+      </div>
+    } @else {
+      <div class="text-center py-5">
+        <i class="fas fa-user-slash fa-2x text-muted"></i>
+
+        <p class="mt-2 text-muted">Aucune information utilisateur disponible.</p>
+      </div>
+    }
+  </div>
+</div>

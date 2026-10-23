@@ -1,14 +1,13 @@
-import { CommonModule } from '@angular/common';
 import { Component, inject, signal } from '@angular/core';
 import { AbstractControl, FormBuilder, FormGroup, ReactiveFormsModule, ValidationErrors, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
-import { AuthenticationV2Service } from '../../../../auth/services/multitenantV2/authentication-v2.service';
 import { ToastrService } from 'ngx-toastr';
+import { AuthenticationV2Service } from '../../../../auth/services/multitenantV2/authentication-v2.service';
 
 @Component({
   selector: 'app-changer-password-utilisateur-component',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule],
+  imports: [ReactiveFormsModule],
   templateUrl: './changer-password-utilisateur-component.html',
   styleUrl: './changer-password-utilisateur-component.css',
 })
@@ -108,12 +107,8 @@ export class ChangerPasswordUtilisateurComponent {
       confirmPassword: this.confirmPassword!.value
     };
 
-    console.log('✅ send userUuid', userUuid);
-    console.log('✅ send request', request);
-
     this.authService.changePassword(userUuid, request).subscribe({
       next: () => {
-        console.log('✅ Mot de passe changé avec succès');
         this.toastService.success('success', 'Votre Mot de passe a été modifié succès avec succès.');
         this.loading.set(false);
         this.success.set(true);
@@ -121,7 +116,7 @@ export class ChangerPasswordUtilisateurComponent {
 
         setTimeout(() => {
           this.success.set(false);
-          this.router.navigate(['/auth/login/v2']);
+          void this.router.navigate(['/auth/login/v2']);
         }, 2000);
       },
       error: (error) => {
@@ -158,6 +153,6 @@ export class ChangerPasswordUtilisateurComponent {
   }
 
   onCancel(): void {
-    this.router.navigate(['/admin/dashboard']);
+    void this.router.navigate(['/admin/dashboard']);
   }
 }

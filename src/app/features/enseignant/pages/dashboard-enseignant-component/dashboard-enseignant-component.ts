@@ -4,7 +4,6 @@ import { CoursEnseignantCalendrier } from '../../../../core/models/enseignant/co
 import { DetailsEnseignantUtilisateur } from '../../../../core/models/enseignant/details-enseignant-utilisateur';
 import { AgendaSemaine } from '../../../../core/models/planification/agenda-semaine';
 import { ListeCours } from '../../../../core/models/planification/liste-cours';
-import { ActiviteAvenirEnseignant } from '../../../../core/models/statistique/enseignant/activite-a-venir-enseignant';
 import { CoursJourEnseignant } from '../../../../core/models/statistique/enseignant/cours-jour-enseignant';
 import { EnseignantDashboardKpis } from '../../../../core/models/statistique/enseignant/enseignant-dashboard-kpis';
 import { EnseignantDashboardListData } from '../../../../core/models/statistique/enseignant/enseignant-dashboard-list-data';
@@ -12,7 +11,6 @@ import { NoteASaisirEnseignant } from '../../../../core/models/statistique/ensei
 import { ResponsabiliteClasseEnseignant } from '../../../../core/models/statistique/enseignant/responsabilite-classe-enseignant';
 import { LocalStorageService } from '../../../../core/services/local-storage.service';
 import { PlanificationResourceService } from '../../../administration/planification/services/planification-resource.service';
-import { EnseigantResourceService } from '../../service/enseigant-resource.service';
 
 import { SlicePipe } from '@angular/common';
 import { CalendarOptions, EventInput, FullCalendarModule } from '@fullcalendar/angular';
@@ -21,9 +19,9 @@ import interactionPlugin from '@fullcalendar/angular/interaction';
 import listPlugin from '@fullcalendar/angular/list';
 import classicThemePlugin from '@fullcalendar/angular/themes/classic';
 import timeGridPlugin from '@fullcalendar/angular/timegrid';
-import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { ActiviteEnseignant } from '../../../../core/models/planification/activite-enseignant';
 import { ListeEnseignement } from '../../../../core/models/planification/liste-enseignement';
-import { EnseignementContextService, EnseignementItem } from '../../service/enseignement-contexte.service';
+import { EnseignementContextService, GestionClasseContext } from '../../service/enseignement-contexte.service';
 interface ClasseProfesseur {
   id: number;
   nom: string;
@@ -68,13 +66,6 @@ interface MessageProfesseur {
   nonLu: boolean;
 }
 
-interface AbsenceClasse {
-  classe: string;
-  nbAbsents: number;
-  nbEleves: number;
-  date: string;
-}
-
 @Component({
   selector: 'app-dashboard-enseignant-component',
   standalone: true,
@@ -93,15 +84,15 @@ export class DashboardEnseignantComponent implements OnInit {
 
   coursJournes = signal<CoursJourEnseignant[]>([]);
   mesResponsabilites = signal<ResponsabiliteClasseEnseignant[]>([]);
-  activitesAvenir = signal<ActiviteAvenirEnseignant[]>([]);
   notesARemplir = signal<NoteASaisirEnseignant[]>([]);
 
   coursEnseignant = signal<CoursEnseignantCalendrier[]>([]);
 
   mesEnseignements = signal<ListeEnseignement[]>([]);
 
-  coursDuJour = computed(() => {
+  activitesAvenir = signal<ActiviteEnseignant[]>([]);
 
+  coursDuJour = computed(() => {
     const jours: Record<number, string> = {
       0: 'DIMANCHE',
       1: 'LUNDI',
@@ -116,8 +107,7 @@ export class DashboardEnseignantComponent implements OnInit {
 
     return this.coursEnseignant()
       .filter(cours => cours.jourSemaine === jourActuel)
-      .sort((a, b) =>
-        a.heureDebut.localeCompare(b.heureDebut)
+      .sort((a, b) => a.heureDebut.localeCompare(b.heureDebut)
       );
   });
 
@@ -128,8 +118,6 @@ export class DashboardEnseignantComponent implements OnInit {
 
   calendarOptions: CalendarOptions = {
     initialView: 'timeGridDay',
-    initialDate: '2026-06-15',
-
     plugins: [
       classicThemePlugin,
       dayGridPlugin,
@@ -140,7 +128,6 @@ export class DashboardEnseignantComponent implements OnInit {
 
     firstDay: 1,
     weekends: true,
-
     allDaySlot: false,
 
     slotMinTime: '07:00:00',
@@ -180,97 +167,55 @@ export class DashboardEnseignantComponent implements OnInit {
     eventClick: (info) => this.onCoursCalendarClick(info)
   };
 
+  userFirstName: string = '';
+  userLastName: string = '';
+  userInitial: string = '';
+  userFullName: string = '';
+  userMobile: string = '';
 
   private readonly router = inject(Router);
   private readonly planificationService = inject(PlanificationResourceService);
-  private readonly enseigantResourceService = inject(EnseigantResourceService);
-  private readonly localStorage = inject(LocalStorageService);
-  private readonly modalService = inject(NgbModal);
-
   private readonly enseignementContextService = inject(EnseignementContextService);
+  readonly localStorage = inject(LocalStorageService);
 
   constructor() {
-    //  this.userId = this.localStorage.getItem('id');
+    this.loadUserInfo();
   }
 
-  // ── Informations professeur ────────────────────────
-  professeur = signal({
-    nom: 'M. Sall',
-    matiere: 'Mathématiques',
-    avatar: '👨‍🏫'
-  });
+  loadUserInfo(): void {
+    try {
+      const userData = this.localStorage.getItem('v2_user');
 
-  // ── KPIs principaux ────────────────────────────────
+      console.log('User data', userData);
 
-  kpis = signal([
-    {
-      label: 'Cours aujourd\'hui',
-      val: '3 cours',
-      ico: '🕐',
-      detail: '6 heures de face-à-face',
-      couleur: 'bleu'
-    },
-    {
-      label: 'Notes en attente',
-      val: '3 évals',
-      ico: '📝',
-      detail: '28 copies restant à saisir',
-      couleur: 'rouge'
-    },
-    {
-      label: 'Élèves à soutenir',
-      val: '5 élèves',
-      ico: '⚠️',
-      detail: 'En difficulté ce trimestre',
-      couleur: 'or'
-    },
-    {
-      label: 'Suivi des appels',
-      val: '1 manquant',
-      ico: '📌',
-      detail: 'Classe de Première S1',
-      couleur: 'vert'
+      if (userData) {
+        const user = JSON.parse(userData);
+        this.userFirstName = user.firstName || user.firstname || user.prenom || '';
+        this.userLastName = user.lastName || user.lastname || user.nom || '';
+        this.userInitial = this.userFirstName.charAt(0).toUpperCase();
+        this.userFullName = `${this.userFirstName} ${this.userLastName}`.trim();
+        this.userMobile = user.mobile || user.mobile || user.mobile || '';
+      } else {
+        this.userFirstName = 'Utilisateur';
+        this.userLastName = '';
+        this.userInitial = 'U';
+        this.userFullName = 'Utilisateur';
+        this.userMobile = '+221776532145';
+      }
+    } catch (error) {
+      console.error('Erreur lors du chargement des données utilisateur:', error);
+      this.userFirstName = 'Utilisateur';
+      this.userLastName = '';
+      this.userInitial = 'U';
+      this.userFullName = 'Utilisateur';
+      this.userMobile = '+221776532145';
     }
-  ]);
+  }
 
-  // ── Emploi du temps du jour ────────────────────────
+  refreshUserInfo(): void {
+    this.loadUserInfo();
+  }
 
-  edtJour = signal<CoursJour[]>([
-    { heure: '08:00 - 10:00', classe: 'Terminale S2', matiere: 'Mathématiques', salle: 'Salle 12', duree: '2h', statut: 'termine' },
-    { heure: '10:15 - 12:15', classe: 'Première S1', matiere: 'Mathématiques', salle: 'Salle 8', duree: '2h', statut: 'en_cours' },
-    { heure: '14:00 - 16:00', classe: 'Seconde S2', matiere: 'Mathématiques', salle: 'Salle 5', duree: '2h', statut: 'a_venir' },
-    { heure: '16:00 - 18:00', classe: 'Terminale S2', matiere: 'Soutien', salle: 'Salle 12', duree: '2h', statut: 'a_venir' },
-  ]);
-
-  // ── Mes classes ────────────────────────────────────
-  classes = signal<ClasseProfesseur[]>([
-    { id: 1, nom: 'Terminale S2', niveau: 'Terminale', effectif: 38, moyenne: 14.5, prochainCours: 'Auj. 16:00', nbElevesRetard: 3 },
-    { id: 2, nom: 'Première S1', niveau: 'Première', effectif: 42, moyenne: 12.8, prochainCours: 'Demain 08:00', nbElevesRetard: 5 },
-    { id: 3, nom: 'Seconde S2', niveau: 'Seconde', effectif: 40, moyenne: 13.2, prochainCours: 'Auj. 14:00', nbElevesRetard: 2 },
-  ]);
-
-  // ── Notes à remplir ────────────────────────────────
-  /*
-  notesARemplir = signal<NoteARemplir[]>([
-    { classe: 'Terminale S2', evaluation: 'DS n°4 - Fonctions', date: '15 Mars', nbNotes: 12, nbEleves: 38, progression: 32 },
-    { classe: 'Première S1', evaluation: 'Interro - Dérivées', date: '12 Mars', nbNotes: 8, nbEleves: 42, progression: 19 },
-    { classe: 'Seconde S2', evaluation: 'DM - Géométrie', date: '10 Mars', nbNotes: 8, nbEleves: 40, progression: 20 },
-  ])*/
-
-  // ── Élèves remarquables ────────────────────────────
-  elevesRemarquables = signal<EleveRemarquable[]>([
-    { nom: 'Moussa Diop', classe: 'Tle S2', note: 18.5, type: 'excellent' },
-    { nom: 'Fatou Sow', classe: '1ère S1', note: 7.5, type: 'difficulte' },
-    { nom: 'Ibrahima Fall', classe: '2nde S2', note: 14, type: 'progres' },
-    { nom: 'Aïssatou Bah', classe: 'Tle S2', note: 17, type: 'excellent' },
-  ]);
-
-  // ── Absences du jour ───────────────────────────────
-  absencesJour = signal<AbsenceClasse[]>([
-    { classe: 'Terminale S2', nbAbsents: 2, nbEleves: 38, date: 'Aujourd\'hui' },
-    { classe: 'Première S1', nbAbsents: 4, nbEleves: 42, date: 'Aujourd\'hui' },
-    { classe: 'Seconde S2', nbAbsents: 1, nbEleves: 40, date: 'Aujourd\'hui' },
-  ]);
 
   // ── Messages récents ───────────────────────────────
   messages = signal<MessageProfesseur[]>([
@@ -284,6 +229,7 @@ export class DashboardEnseignantComponent implements OnInit {
   ngOnInit(): void {
     this.chargerMesCours();
     this.chargerMesEnseignements();
+    this.chargerActivitesAvenir();
   }
 
   chargerMesCours(): void {
@@ -292,8 +238,6 @@ export class DashboardEnseignantComponent implements OnInit {
         const cours = data ?? [];
 
         this.coursEnseignant.set(cours);
-
-        console.log('Mes cours enseignant :', this.coursEnseignant());
 
         const events = this.convertirCoursEnEvenements(cours);
 
@@ -304,10 +248,7 @@ export class DashboardEnseignantComponent implements OnInit {
       },
 
       error: (err) => {
-        console.error(
-          'Erreur lors du chargement des cours de l’enseignant',
-          err
-        );
+        console.error('Erreur lors du chargement des cours de l’enseignant', err);
 
         this.coursEnseignant.set([]);
 
@@ -319,46 +260,110 @@ export class DashboardEnseignantComponent implements OnInit {
     });
   }
 
+  private trouverCoursDuContexte(enseignement: ListeEnseignement): CoursEnseignantCalendrier | undefined {
+    const coursCompatibles = this.coursEnseignant().filter(cours => {
+      const memeEnseignement = Number(cours.enseignementId) === Number(enseignement.id);
+      const memeClasse = Number(cours.classe?.id) === Number(enseignement.classId);
+      const memeAnneeScolaire = Number(cours.anneeScolaire?.id) === Number(enseignement.anneeScolaireId);
+
+      return (
+        memeEnseignement &&
+        memeClasse &&
+        memeAnneeScolaire
+      );
+    });
+
+    if (coursCompatibles.length === 0) {
+      console.warn('Aucun cours compatible trouvé.', enseignement);
+      return undefined;
+    }
+
+    const maintenant = new Date();
+    const minutesActuelles = maintenant.getHours() * 60 + maintenant.getMinutes();
+    const convertirEnMinutes = (heure?: string): number => {
+      if (!heure) {
+        return 0;
+      }
+
+      const [heures, minutes] = heure.substring(0, 5).split(':').map(Number);
+
+      return heures * 60 + minutes;
+    };
+
+    const joursSemaine: Record<number, string> = {
+      0: 'DIMANCHE',
+      1: 'LUNDI',
+      2: 'MARDI',
+      3: 'MERCREDI',
+      4: 'JEUDI',
+      5: 'VENDREDI',
+      6: 'SAMEDI'
+    };
+
+    const jourActuel = joursSemaine[maintenant.getDay()];
+
+    const coursDuJour = coursCompatibles.filter(cours => cours.jourSemaine?.trim().toUpperCase() === jourActuel)
+      .sort((a, b) => convertirEnMinutes(a.heureDebut) - convertirEnMinutes(b.heureDebut));
+
+    const coursEnCours = coursDuJour.find(cours => {
+      const debut = convertirEnMinutes(cours.heureDebut);
+      const fin = convertirEnMinutes(cours.heureFin);
+
+      return (minutesActuelles >= debut && minutesActuelles < fin);
+    });
+
+    if (coursEnCours) {
+      return coursEnCours;
+    }
+
+    if (coursDuJour.length > 0) {
+      const coursDuJourSelectionne = coursDuJour[coursDuJour.length - 1];
+      return coursDuJourSelectionne;
+    }
+
+    const coursFallback = coursCompatibles.sort((a, b) => convertirEnMinutes(a.heureDebut) - convertirEnMinutes(b.heureDebut))[0];
+
+    return coursFallback;
+  }
+
   chargerMesEnseignements(): void {
     this.planificationService.getMesEnseignements().subscribe({
       next: (data) => {
         const enseignements = data ?? [];
 
         this.mesEnseignements.set(enseignements);
-
-        console.log('Mes cours enseignant :', this.mesEnseignements());
       },
 
       error: (err) => {
-        console.error(
-          'Erreur lors du chargement des enseignements de l’enseignant',
-          err
-        );
-
+        console.error('Erreur lors du chargement des enseignements de l’enseignant', err);
         this.mesEnseignements.set([]);
       }
     });
   }
 
   gererClasse(enseignement: ListeEnseignement): void {
-
-    this.enseignementContextService.setGestionClasseContext({
+    const cours = this.trouverCoursDuContexte(enseignement);
+    const contexte: GestionClasseContext = {
       classId: enseignement.classId,
       classe: enseignement.classe,
+      classeUuid: enseignement.classeUuid,
       matiere: enseignement.matiere,
       anneeScolaire: enseignement.anneeScolaire,
-      enseignementId: enseignement.id
-    });
-
+      anneeScolaireId: enseignement.anneeScolaireId,
+      anneeScolaireUuid: enseignement.anneeScolaireUuid,
+      enseignementId: enseignement.id,
+      courseId: cours?.coursId,
+      courseUuid: cours?.courseUuid,
+      heureDebut: cours?.heureDebut,
+      heureFin: cours?.heureFin
+    };
+    this.enseignementContextService.setGestionClasseContext(contexte);
     void this.router.navigate(['/enseignant/gestion-classe', enseignement.classId]);
   }
 
   private convertirCoursEnEvenements(cours: CoursEnseignantCalendrier[]): EventInput[] {
-
     return cours.map(c => {
-
       const couleur = this.getCouleurClasse(c.classe?.id);
-
       return {
         id: String(c.coursId),
         title: c.libelle,
@@ -374,6 +379,7 @@ export class DashboardEnseignantComponent implements OnInit {
 
         extendedProps: {
           coursId: c.coursId,
+          courseUuid: c.courseUuid,
           enseignementId: c.enseignementId,
           classe: c.classe?.libelle,
           matiere: c.matiere?.libelle,
@@ -388,6 +394,21 @@ export class DashboardEnseignantComponent implements OnInit {
       };
     });
   }
+
+  chargerActivitesAvenir(): void {
+    this.planificationService.getActivitesAvenirEnseignant().subscribe({
+      next: (data) => {
+        this.activitesAvenir.set(data ?? []);
+      },
+
+      error: (err) => {
+        console.error('Erreur lors du chargement des activités à venir', err);
+
+        this.activitesAvenir.set([]);
+      }
+    });
+  }
+
 
   private convertirJourSemaine(jour: string): number {
     const jours: Record<string, number> = {
@@ -429,13 +450,7 @@ export class DashboardEnseignantComponent implements OnInit {
 
   onCoursCalendarClick(info: any): void {
     const coursId = Number(info.event.extendedProps?.coursId);
-
-    console.log('Cours info', info);
-
-    const cours = this.coursEnseignant().find(
-      c => c.coursId === coursId
-    );
-
+    const cours = this.coursEnseignant().find(c => c.coursId === coursId);
     if (!cours) {
       return;
     }
@@ -447,20 +462,6 @@ export class DashboardEnseignantComponent implements OnInit {
   closeDetailsCoursModal(): void {
     this.showDetailsCoursModal = false;
     this.coursSelectionne.set(null);
-  }
-
-  private getLibelleJour(jour: number | undefined): string {
-    const jours: Record<number, string> = {
-      0: 'DIMANCHE',
-      1: 'LUNDI',
-      2: 'MARDI',
-      3: 'MERCREDI',
-      4: 'JEUDI',
-      5: 'VENDREDI',
-      6: 'SAMEDI'
-    };
-
-    return jours[jour ?? 0] ?? '';
   }
 
   formaterDate(date: string | undefined): string {
@@ -491,27 +492,20 @@ export class DashboardEnseignantComponent implements OnInit {
     container.appendChild(titre);
     container.appendChild(horaire);
 
-    return {
-      domNodes: [container]
-    };
+    return { domNodes: [container] };
   }
 
   getStatutCours(cours: CoursEnseignantCalendrier): 'termine' | 'en_cours' | 'a_venir' {
     const maintenant = new Date();
     const [heureDebut, minuteDebut] = cours.heureDebut.substring(0, 5).split(':').map(Number);
-
     const [heureFin, minuteFin] = cours.heureFin.substring(0, 5).split(':').map(Number);
-
     const debut = new Date();
     debut.setHours(heureDebut, minuteDebut, 0, 0);
-
     const fin = new Date();
     fin.setHours(heureFin, minuteFin, 0, 0);
-
     if (maintenant < debut) {
       return 'a_venir';
     }
-
     if (maintenant >= debut && maintenant <= fin) {
       return 'en_cours';
     }
@@ -521,227 +515,24 @@ export class DashboardEnseignantComponent implements OnInit {
 
   getStatutCoursLabel(cours: CoursEnseignantCalendrier): string {
     const statut = this.getStatutCours(cours);
-    const labels = {
-      termine: 'Terminé',
-      en_cours: 'En cours',
-      a_venir: 'À venir'
-    };
+    const labels = { termine: 'Terminé', en_cours: 'En cours', a_venir: 'À venir' };
     return labels[statut];
   }
 
   getDureeCours(cours: CoursEnseignantCalendrier): string {
     const [h1, m1] = cours.heureDebut.substring(0, 5).split(':').map(Number);
-
     const [h2, m2] = cours.heureFin.substring(0, 5).split(':').map(Number);
-
     const minutes = (h2 * 60 + m2) - (h1 * 60 + m1);
-
     const heures = Math.floor(minutes / 60);
     const reste = minutes % 60;
-
     if (reste === 0) {
       return `${heures}h`;
     }
-
     return `${heures}h${reste.toString().padStart(2, '0')}`;
   }
 
-  // ── Méthodes ───────────────────────────────────────
-  getStatutCoursCls(statut: string): string {
-    const classes: Record<string, string> = {
-      termine: 'termine',
-      en_cours: 'en-cours',
-      a_venir: 'a-venir'
-    };
-    return classes[statut] || '';
-  }
-
-  /*   getEnseignantByUtilisateurId(userId: number): Promise<[DetailsEnseignantUtilisateur]> {
-      return new Promise((resolve, reject) => {
-        this.enseigantResourceService.getSingleResource('enseignant/utilisateur', userId).subscribe({
-          next: (data: any) => {
-            this.enseignantDetails = data;
-            console.log('enseignantDetails', this.enseignantDetails);
-            this.getEnseignantDashboardKpis(this.enseignantDetails.id!);
-            this.getEnseignantDashboardListData(this.enseignantDetails.id!)
-            resolve(data);
-          },
-          error: (err) => reject(err)
-        });
-      });
-    } */
-
-  getEnseignantDashboardKpis(ensId: number): Promise<EnseignantDashboardKpis> {
-    return new Promise((resolve, reject) => {
-      this.enseigantResourceService.getSingleResource('statistique/enseignant', ensId).subscribe({
-        next: (data: any) => {
-          this.enseignantDashboardKpis = data;
-          console.log('enseignantDashboardKpis', this.enseignantDashboardKpis);
-
-          if (data && typeof data === 'object') {
-            this.mapApiDataToSignals(data);
-          }
-
-          resolve(data);
-        },
-        error: (err) => {
-          console.error('Erreur API KPIs, conservation des données mockées.', err);
-          reject(err);
-        }
-      });
-    });
-  }
-
-  private mapApiDataToSignals(data: EnseignantDashboardKpis): void {
-    this.kpis.set([
-      {
-        label: 'Cours aujourd\'hui',
-        val: '3 cours',
-        ico: '🕐',
-        detail: '6 heures de face-à-face',
-        couleur: 'bleu'
-      },
-      {
-        label: 'Notes en attente',
-        val: '3 évals',
-        ico: '📝',
-        detail: '28 copies restant à saisir',
-        couleur: 'rouge'
-      },
-      {
-        label: 'Élèves à soutenir',
-        val: '5 élèves',
-        ico: '⚠️',
-        detail: 'En difficulté ce trimestre',
-        couleur: 'or'
-      },
-      {
-        label: 'Suivi des appels',
-        val: '1 manquant',
-        ico: '📌',
-        detail: 'Classe de Première S1',
-        couleur: 'vert'
-      }
-    ]);
-  }
-
-  getEnseignantDashboardListData(ensId: number): Promise<EnseignantDashboardListData> {
-    return new Promise((resolve, reject) => {
-      this.enseigantResourceService.getSingleResource('statistique/list/enseignant', ensId).subscribe({
-        next: (data: any) => {
-          this.enseignantDashboardListData = data;
-          console.log('enseignantDashboardListData', this.enseignantDashboardListData);
-
-          if (data) {
-            if (data.coursDuJour) this.coursJournes.set(data.coursDuJour);
-            if (data.mesResponsabilites) this.mesResponsabilites.set(data.mesResponsabilites);
-            if (data.activitesAvenir) this.activitesAvenir.set(data.activitesAvenir);
-            if (data.notesASaisir) this.notesARemplir.set(data.notesASaisir);
-          }
-
-          resolve(data);
-        },
-        error: (err) => {
-          console.error('Erreur API KPIs, conservation des données.', err);
-          reject(err);
-        }
-      });
-    });
-  }
-
-  /* 
-    getAgendatSemaineEnseignant(userId: number): Promise<[AgendaSemaine]> {
-      return new Promise((resolve, reject) => {
-        this.planificationService.getResources('enseignant/agenda/semaine', this.userId).subscribe({
-          next: (data: any) => {
-            this.agendaSemaineList = data;
-            console.log('Cours list', this.agendaSemaineList);
-            resolve(data);
-          },
-          error: (err) => reject(err)
-        });
-      });
-    }
-   */
-  getCoursSemaineEnseignant(enseiId: number): Promise<ListeCours[]> {
-    return new Promise((resolve, reject) => {
-      this.planificationService.getListeCoursSemaineByEnseignant(enseiId).subscribe({
-        next: (data: any) => {
-          this.coursList = data;
-          console.log('Cours list', this.coursList);
-          if (!data || data.length === 0) {
-            console.log('Aucun cours cette semaine, basculement vers tous les cours');
-            this.planificationService.getAllCourses().subscribe({
-              next: (allCourses) => {
-                this.coursList = allCourses;
-                console.log('Cours list', this.coursList);
-              },
-              error: (err) => {
-                console.error('Erreur lors du chargement de tous les cours', err);
-                reject(err);
-              }
-            });
-          } else {
-            resolve(data);
-          }
-        },
-        error: (err) => {
-          console.error('Erreur lors du chargement des cours de la semaine', err);
-          // En cas d'erreur, essayer le fallback
-          this.planificationService.getAllCourses().subscribe({
-            next: (allCourses) => {
-              this.coursList = allCourses;
-              resolve(allCourses);
-            },
-            error: (err2) => reject(err2)
-          });
-        }
-      });
-    });
-  }
-
-  /*   getStatutCoursLabel(statut: string): string {
-      const labels: Record<string, string> = {
-        termine: 'Terminé',
-        en_cours: 'En cours',
-        a_venir: 'À venir'
-      };
-      return labels[statut] || statut;
-    } */
-
-  getTypeEleveCls(type: string): string {
-    const classes: Record<string, string> = {
-      excellent: 'excellent',
-      difficulte: 'difficulte',
-      progres: 'progres'
-    };
-    return classes[type] || '';
-  }
-
-  getTypeEleveLabel(type: string): string {
-    const labels: Record<string, string> = {
-      excellent: '🌟 Excellent',
-      difficulte: '⚠️ Difficulté',
-      progres: '📈 Progrès'
-    };
-    return labels[type] || type;
-  }
-
-  getTypeEleveIcone(type: string): string {
-    const icones: Record<string, string> = {
-      excellent: '🌟',
-      difficulte: '⚠️',
-      progres: '📈'
-    };
-    return icones[type] || '📌';
-  }
-
-  formatPourcentage(nb: number, total: number): number {
-    return Math.round((nb / total) * 100);
-  }
-
   naviguer(route: string): void {
-    this.router.navigate([route]);
+    void this.router.navigate([route]);
   }
 }
 

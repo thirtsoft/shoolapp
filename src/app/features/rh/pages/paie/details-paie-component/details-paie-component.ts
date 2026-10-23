@@ -119,7 +119,6 @@ export class DetailsPaieComponent implements OnInit {
       });
   }
 
-
   private async getOrganizationLogoBase64(): Promise<string | null> {
     const logoUuid = this.organizationData?.logo?.logoUuid;
     if (!this.organizationData?.logo?.available || !logoUuid) {
@@ -196,7 +195,7 @@ export class DetailsPaieComponent implements OnInit {
   }
 
   goBack(): void {
-    this.router.navigate(['/admin/rh/paies']);
+    void this.router.navigate(['/admin/rh/paies']);
   }
 
   getNumeroPaie(): string {
@@ -346,14 +345,7 @@ export class DetailsPaieComponent implements OnInit {
       (etat === 'EN_COURS' || etat === 'PAYEE_PARTIELLE') &&
       this.getMontantRestantPaie() > 0;
   }
-
-
-  /*   isMontantValide(): boolean {
-      const montant = Number(this.paiementForm?.get('montant')?.value || 0);
-      const restant = this.getMontantRestantPaie();
-      return (montant > 0 && montant <= restant);
-    } */
-
+  
   isMontantValide(): boolean {
     const montant = Number(
       this.paiementForm?.get('montant')?.value || 0

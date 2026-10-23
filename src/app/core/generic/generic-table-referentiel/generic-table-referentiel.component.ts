@@ -44,6 +44,7 @@ export class GenericTableReferentielComponent implements OnInit {
   @Input() isTableIcon: boolean = false;
   @Input() isAffecterIcon: boolean = false;
   @Input() isReinscrireIcon: boolean = false;
+  @Input() showSubmitIcon: boolean = false;
 
   // Configuration du tableau
   @Input() tableColumns: any[] = [];
@@ -91,6 +92,8 @@ export class GenericTableReferentielComponent implements OnInit {
   @Output() selectionChange = new EventEmitter<any[]>();
   @Output() totalMontantXof = new EventEmitter<number>();
   @Output() filtreApplique = new EventEmitter<{ colonne: string; valeur: string }>();
+
+  @Output() submitAction = new EventEmitter<any>();
 
   // État interne
   sortColumn: string | null = null;
@@ -252,7 +255,6 @@ export class GenericTableReferentielComponent implements OnInit {
     this.applyFilters();
   }
 
-  // Tri
   sortTable(columnKey: string): void {
     if (this.sortColumn === columnKey) {
       if (this.sortDirection === 'asc') {
@@ -296,7 +298,6 @@ export class GenericTableReferentielComponent implements OnInit {
     }
   }
 
-  // Pagination
   changePage(page: number) {
     if (page >= 0 && page < this.totalPages) {
       this.pageChange.emit(page);
@@ -334,25 +335,22 @@ export class GenericTableReferentielComponent implements OnInit {
   generateLink(baseLink: string, row: any): void {
     if (this.isPopup) {
       const param = this.selectedItem.id ?? this.selectedItem.uuid;
-      this.router.navigate([baseLink, param], {
-        state: { data: this.selectedItem }
-      });
+      void this.router.navigate([baseLink, param], { state: { data: this.selectedItem } });
     } else {
       const rowParam = row.id ?? row.uuid;
-      this.router.navigate([baseLink, rowParam], {
-        state: { data: row }
-      });
+      void this.router.navigate([baseLink, rowParam], { state: { data: row } });
     }
   }
 
   generateReinscriptionLink(baseLink: string, row: any): void {
     localStorage.setItem('eleve', row.id)
-    this.router.navigate([baseLink, row.id], {
-      state: { data: row }
-    });
+    void this.router.navigate([baseLink, row.id], { state: { data: row } });
   }
 
-  // Utilitaires
+  soumettreDemande(row: any): void {
+    this.submitAction.emit(row);
+  }
+
   isNumber(value: any): boolean {
     return !isNaN(parseFloat(value)) && isFinite(value);
   }
@@ -481,12 +479,12 @@ export class GenericTableReferentielComponent implements OnInit {
   }
 
   imprimerPaiement() {
-    pdfMake.createPdf(this.getDocumentFichePaiement()).open();
+    void pdfMake.createPdf(this.getDocumentFichePaiement()).open();
   }
 
   DownloadPdf() {
     const document: any = this.getDocumentFichePaiement();
-    pdfMake.createPdf(document).download('"BULLETIN_"' + this.detailsBulletinEleve.classe + '.pdf');
+    void pdfMake.createPdf(document).download('"BULLETIN_"' + this.detailsBulletinEleve.classe + '.pdf');
   }
 
   getDocumentFichePaiement(): any {

@@ -1,11 +1,11 @@
 import { Component, inject, OnInit } from '@angular/core';
-import { DetailsEnseignantUtilisateur } from '../../../../../core/models/enseignant/details-enseignant-utilisateur';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { ToastrService } from 'ngx-toastr';
 import { IFilterConfig } from '../../../../../core/filtered-config/FiltreConfiguration';
-import { PlanificationResourceService } from '../../../../administration/planification/services/planification-resource.service';
-import { ReferentielService } from '../../../../administration/referentiel/service/referentiel.service';
-import { EnseignantService } from '../../../service/enseignant.service';
-import { CommonService } from '../../../../../core/services/common.service';
 import { GenericTableDossierComponent } from '../../../../../core/generic/generic-table-dossier/generic-table-dossier.component';
+import { CommonService } from '../../../../../core/services/common.service';
+import { PlanificationResourceService } from '../../../../administration/planification/services/planification-resource.service';
+import { RhResourceService } from '../../../../rh/services/rh-resource-service';
 
 @Component({
   selector: 'app-mes-conges-component',
@@ -34,37 +34,27 @@ export class MesCongesComponent implements OnInit {
   tableSizes = [5, 10, 20, 50, 100];
 
   moisList: any[] = [];
-  anneeScolaireList: any[] = [];
-  detailsEnseignant: DetailsEnseignantUtilisateur = {};
 
   tableFilters: IFilterConfig[] = [];
   activeFilters: any = {};
   hasActiveFilters: boolean = false;
 
-  userId: number;
-  enseignantId?: number;
+  congeAConfirmer: any = null;
+  showConfirmationModal = false;
 
   private readonly planificationResource = inject(PlanificationResourceService);
+  private readonly rhResource = inject(RhResourceService);
   private readonly commonService = inject(CommonService);
-  private readonly referentielService = inject(ReferentielService)
-  private readonly enseignantSerivce = inject(EnseignantService);
+  private readonly toast = inject(ToastrService);
 
-  constructor(
-  ) {
-    this.userId = Number(localStorage.getItem('id'));
-    if (this.userId && this.userId != undefined) {
-
-    }
-  }
+  constructor() { }
 
   ngOnInit(): void {
-    if (this.userId && this.userId != undefined) {
-      this.chargerLesCongesEnseignant();
-    }
+    this.chargerMesConges();
   }
 
 
-  async chargerLesCongesEnseignant() {
+  async chargerMesConges() {
     try {
       await Promise.all([
         this.getMoisList(),
@@ -119,15 +109,14 @@ export class MesCongesComponent implements OnInit {
 
       const filtreParam = this.construireParametreFiltre();
 
-      apiCall = this.planificationResource.fetchFilterByElementDataTable(
+      apiCall = this.planificationResource.fetchFilterDataTable(
         'conges/demandeur',
-        this.userId,
         this.currentPage,
         this.pageSize,
         filtreParam)
 
     } else {
-      apiCall = this.planificationResource.getResourceByIdPaged('conges/demandeur', this.userId, this.currentPage, this.pageSize);
+      apiCall = this.planificationResource.getResourcePaged('conges/demandeur', this.currentPage, this.pageSize);
     } apiCall.subscribe({
       next: (response) => {
         this.congesData = response.data?.content || [];
@@ -135,14 +124,13 @@ export class MesCongesComponent implements OnInit {
 
         this.columns = [
           { key: 'objet', header: 'Objet' },
-          { key: 'motif', header: 'Motif rejét' },
+          { key: 'periode', header: 'Période' },
+          { key: 'motif', header: 'Motif' },
           { key: 'etat', header: 'Etat' },
-          { key: 'dateDebut', header: 'Date début' },
-          { key: 'dateFin', header: 'Date Fin' },
-
         ];
         this.congesData = this.congesData.map((item: any) => ({
           ...item,
+          periode: this.formaterPeriode(item.dateDebut, item.dateFin)
         }));
         this.isLoading = false;
       },
@@ -151,6 +139,34 @@ export class MesCongesComponent implements OnInit {
         this.isLoading = false;
       }
     });
+  }
+
+  formaterPeriode(dateDebut: string, dateFin: string): string {
+    if (!dateDebut || !dateFin) {
+      return '-';
+    }
+    const debut = new Date(dateDebut + 'T00:00:00');
+    const fin = new Date(dateFin + 'T00:00:00');
+    const mois = ['janv.', 'févr.', 'mars', 'avr.', 'mai', 'juin', 'juil.', 'août', 'sept.', 'oct.', 'nov.', 'déc.'];
+
+    const jourDebut = debut.getDate();
+    const jourFin = fin.getDate();
+
+    const moisDebut = mois[debut.getMonth()];
+    const moisFin = mois[fin.getMonth()];
+
+    if (
+      debut.getMonth() === fin.getMonth() &&
+      debut.getFullYear() === fin.getFullYear()
+    ) {
+      return `${jourDebut} → ${jourFin} ${moisDebut}`;
+    }
+
+    if (debut.getFullYear() === fin.getFullYear()) {
+      return `${jourDebut} ${moisDebut} → ${jourFin} ${moisFin}`;
+    }
+
+    return `${jourDebut} ${moisDebut} ${debut.getFullYear()} → ${jourFin} ${moisFin} ${fin.getFullYear()}`;
   }
 
   construireParametreFiltre(): any {
@@ -188,6 +204,42 @@ export class MesCongesComponent implements OnInit {
     this.initialisationDesFiltres();
     this.currentPage = 0;
     this.chargerLesDonnees(false);
+  }
+
+  confirmerSoumission(conge: any): void {
+    this.congeAConfirmer = conge;
+    this.showConfirmationModal = true;
+  }
+
+  annulerSoumission(): void {
+    this.showConfirmationModal = false;
+    this.congeAConfirmer = null;
+  }
+
+  soumettreConge(): void {
+    if (!this.congeAConfirmer?.id) {
+      return;
+    }
+
+    const congeId = this.congeAConfirmer.id;
+
+    this.rhResource.soumettreConges(congeId)
+      .subscribe({
+        next: () => {
+          this.showConfirmationModal = false;
+          this.congeAConfirmer = null;
+
+          this.toast.success('success', `La demande "${this.congeAConfirmer.motif}" a été envoyée avec succès.`);
+
+          this.chargerLesDonnees(this.hasActiveFilters);
+        },
+        error: (error) => {
+          console.error(
+            'Erreur lors de la soumission du congé:',
+            error
+          );
+        }
+      });
   }
 
 

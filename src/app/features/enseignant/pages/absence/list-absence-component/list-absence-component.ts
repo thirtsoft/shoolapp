@@ -1,13 +1,11 @@
-import { Component, computed, DestroyRef, effect, inject, OnInit, signal } from '@angular/core';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { Component, inject, OnInit, signal } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
 import { IFilterConfig } from '../../../../../core/filtered-config/FiltreConfiguration';
 import { GenericTableDossierComponent } from '../../../../../core/generic/generic-table-dossier/generic-table-dossier.component';
+import { SessionSemestre } from '../../../../../core/models/referentiels/session-semestre';
 import { CommonService } from '../../../../../core/services/common.service';
-import { LocalStorageService } from '../../../../../core/services/local-storage.service';
-import { DossierResourceService } from '../../../../administration/dossier-eleve/service/dossier-resource.service';
-import { ReferentielResourceService } from '../../../../administration/referentiel/service/referentiel-resource.service';
-import { ReferentielService } from '../../../../administration/referentiel/service/referentiel.service';
-import { EnseignementContextService } from '../../../service/enseignement-contexte.service';
+import { PlanificationResourceService } from '../../../../administration/planification/services/planification-resource.service';
+import { EnseignementContextService, GestionClasseContext } from '../../../service/enseignement-contexte.service';
 
 @Component({
   selector: 'app-list-absence-component',
@@ -18,199 +16,249 @@ import { EnseignementContextService } from '../../../service/enseignement-contex
 })
 export class ListAbsenceComponent implements OnInit {
 
+  isEdit: boolean = true;
   isLoading: boolean = false;
   isLockable: boolean = true;
   isTable: boolean = true;
-  columns: any = [];
-  attendRecordData: any = [];
-  isEdit: boolean = true;
 
-  userId?: number;
-  eleveId?: number;
-  classeId?: number;
-  deleteEndpoint = "attendRecord";
+  columns: any = [];
+
+  deleteEndpoint = 'attendance';
+  attendanceData: any = [];
+
+  sessionSemestreList: any[] = [];
+
+  public readonly String = String;
 
   currentPage = 0;
-  pageSize = 5;
+  pageSize = 10;
   totalElements = 0;
-  tableSizes = [5, 10, 20, 50, 100];
 
-  anneesScolairesList: any[] = [];
-  semestreList: any[] = [];
-  sessionSemestreList: any[] = [];
-  classeList: any[] = [];
+  tableSizes = [10, 20, 50, 100];
+
   moisList: any[] = [];
-  anneeList: any[] = [];
 
   tableFilters: IFilterConfig[] = [];
   activeFilters: any = {};
   hasActiveFilters: boolean = false;
-  eleves = signal<any[]>([]);
 
-  private readonly dossierEleveService = inject(DossierResourceService);
-  private readonly referentielService = inject(ReferentielService);
+  classeId?: number;
+
+  contexteClasse = signal<GestionClasseContext | null>(null);
+
+  private readonly planification = inject(PlanificationResourceService);
+  private readonly activeRoute = inject(ActivatedRoute);
   private readonly commonService = inject(CommonService);
-  private readonly referentielResourceService = inject(ReferentielResourceService);
-  private readonly localStorage = inject(LocalStorageService);
-  private readonly destroyRef = inject(DestroyRef);
-  private readonly classeContext = inject(EnseignementContextService);
+  private readonly enseignementContextService = inject(EnseignementContextService);
 
-  readonly libelleClasse = computed(() => {
-    const classes = this.classeContext.mesClasses();
-    const activeId = this.classeContext.activeClasseId();
-    const enseignementActif = classes.find(ens => String(ens.classId) === String(activeId));
-    return enseignementActif?.classe || '5ème A';
-  });
+  constructor() {
+    this.classeId = Number(this.activeRoute.snapshot.params['id']);
+    console.log('ClassID', this.classeId);
 
-  constructor(
-  ) {
-    this.userId = this.localStorage.getItem('id');
-    this.eleveId = this.localStorage.getItem('eleveId');
-    effect(() => {
-      const activeClasseId = this.classeContext.activeClasseId();
-      console.log('active classe is', this.classeId);
-      if (activeClasseId) {
-        this.classeId = Number(activeClasseId);
-        this.chargerLesAttendRecordsEleve();
-      }
-    });
+    const contexte = this.enseignementContextService.getGestionClasseContext();
+
+    console.log('contexteClasse', contexte?.classe);
+    console.log('contexteMatiere', contexte?.matiere);
+
+    console.log('contexteAnneeScolaire', contexte?.anneeScolaire);
+
+    console.log('contexteCours', contexte?.courseId);
+
+
+    if (contexte) {
+      this.contexteClasse.set(contexte);
+      console.log('Contexte chargé :', this.contexteClasse());
+    }
   }
 
   ngOnInit(): void {
+    void this.chargerLesAttendances();
   }
 
-  async chargerLesAttendRecordsEleve() {
+  async chargerLesAttendances() {
     try {
-      await Promise.all([
-        this.chargerLesDonneesFiltre(),
-      ]);
-      this.initialisationDesFiltres();
-      this.chargerLesDonnees(false);
+      this.chargerLesDonneesAttendances(false);
+
     } catch (error) {
+
       console.error('Erreur chargement données:', error);
     }
   }
 
-  private chargerLesDonneesFiltre() {
-    this.referentielResourceService.getResourceList('sessionsemestre').pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
-      next: (data: any) => {
-        this.sessionSemestreList = data;
+  getSessionSemestreList(): Promise<SessionSemestre[]> {
+    return new Promise(
+      (resolve, reject) => {
+
+        this.planification.getResourceListe('referentiel/sessionsemestre')
+          .subscribe({
+
+            next: (data: any) => {
+              this.sessionSemestreList = data;
+              resolve(data);
+            },
+
+            error: (err: any) => reject(err)
+
+          });
       }
-    });
-    this.commonService.getAllMois().pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
-      next: (data: any) => this.moisList = data
-    });
+    );
   }
-
-  chargerLesDonnees(useFilterApi: boolean) {
-    this.isLoading = true;
-    let resultatAPI;
-
-    if (useFilterApi) {
-
-      const filtreParam = this.construireLesParametreDeFiltre();
-
-      resultatAPI = this.dossierEleveService.fetchFilterDataTable(
-        'attendancerecord/classe',
-        this.currentPage,
-        this.pageSize,
-        filtreParam)
-
-    } else {
-      resultatAPI = this.dossierEleveService.getResourcesByIdPaged('attendancerecord/classe', this.classeId!, this.currentPage, this.pageSize);
-    }
-    resultatAPI.subscribe({
-      next: (response) => {
-        this.attendRecordData = response.data?.content || [];
-        this.totalElements = response.data?.totalElements || 0;
-
-        this.columns = [
-          { key: 'nomCompletEleve', header: 'Elève' },
-          { key: 'sessionSemestre', header: 'Semestre' },
-          { key: 'anneeScolare', header: 'Année scolaire' },
-          { key: 'attendanceStatus', header: 'Type absence' },
-          {
-            key: 'course',
-            header: 'Cours',
-            valueGetter: (record: any) => record.courseLibelle || '-'
-          },
-
-          { key: 'attendanceDate', header: 'Date absence' },
-        ];
-
-        this.attendRecordData = this.attendRecordData.map((item: any) => ({
-          ...item,
-        }));
-        this.isLoading = false;
-      },
-      error: (error) => {
-        console.error("Erreur:", error);
-        this.isLoading = false;
-      }
-    });
-  }
-
 
   initialisationDesFiltres() {
+
     this.tableFilters = [
+
       {
-        key: 'nomPrenom',
-        label: 'Nom/Prénom',
-        type: 'text',
-        placeholder: 'Rechercher un élève...'
-      },
-      {
-        key: 'semestre',
+        key: 'sessionSemestre',
         label: 'Semestre',
         type: 'select',
-        options: this.semestreList.map(c => ({
-          value: c.id,
-          label: c.libelle
-        })),
+        options: this.sessionSemestreList.map(
+          s => ({
+            value: s.id,
+            label: `${s.semestre}`
+          })
+        )
       },
+
       {
         key: 'mois',
         label: 'Mois',
         type: 'select',
-        options: this.moisList.map(m => ({
-          value: m.id,
-          label: m.mois
-        }))
-      },
+        options: this.moisList.map(
+          m => ({
+            value: m.id,
+            label: m.mois
+          })
+        )
+      }
+
     ];
   }
 
-  onFilterChange(filter: IFilterConfig, value: any) {
-    this.activeFilters[filter.key] = value;
-
-    this.hasActiveFilters = Object.values(this.activeFilters).some(val =>
-      val !== null && val !== undefined && val !== ''
-    );
-    this.currentPage = 0;
-    this.chargerLesDonnees(this.hasActiveFilters);
-  }
-
-  construireLesParametreDeFiltre(): any {
+  construireParametreDeFiltre(): any {
     const filtreObj: any = {};
 
-    if (this.activeFilters.nomPrenom) {
-      filtreObj.nomPrenom = this.activeFilters.nomPrenom;
+    if (this.activeFilters?.sessionSemestre) {
+      filtreObj.sessionSemestre = this.activeFilters.sessionSemestre;
     }
-
-    if (this.activeFilters.semestre) {
-      filtreObj.semestre = this.activeFilters.semestre;
-    }
-
-    if (this.activeFilters?.anneeScolaire) {
-      filtreObj.anneeScolaire = this.activeFilters.anneeScolaire;
+    if (this.activeFilters.etat) {
+      filtreObj.etat = this.activeFilters.etat;
     }
     if (this.activeFilters.mois) {
       filtreObj.mois = this.activeFilters.mois;
     }
-    if (this.activeFilters.annee) {
-      filtreObj.annee = this.activeFilters.annee;
-    }
     return Object.keys(filtreObj).length > 0 ? filtreObj : null;
+  }
+
+  chargerLesDonneesAttendances(useFilterApi: boolean) {
+    this.isLoading = true;
+    let apiCall;
+
+    if (useFilterApi) {
+      const filtreParam = this.construireParametreDeFiltre();
+
+      apiCall = this.planification.fetchFilterDataTable(
+        'evaluation/classe',
+        this.currentPage,
+        this.pageSize,
+        filtreParam
+      );
+
+    } else {
+
+      apiCall = this.planification.getResourceByIdPaged(
+        'attendancerecord/cours',
+        Number(this.courseId),
+        this.currentPage,
+        this.pageSize
+      );
+    }
+
+    apiCall.subscribe({
+
+      next: (response) => {
+        this.attendanceData = response.data?.content || [];
+        this.totalElements = response.data?.totalElements || 0;
+
+        this.attendanceData = this.attendanceData?.map(
+          (item: any) => ({
+            ...item
+          })
+        );
+
+        this.columns = [
+          {
+            key: 'nomCompletEleve',
+            header: 'Elève'
+          },
+          {
+            key: 'attendanceDate',
+            header: 'Date'
+          },
+          {
+            key: 'sessionSemestre',
+            header: 'Semestre'
+          },
+          {
+            key: 'attendanceStatus',
+            header: 'Status'
+          },
+          {
+            key: 'lateMinutes',
+            header: 'Laste minute'
+          },
+          {
+            key: 'justified',
+            header: 'Etat'
+          },
+          {
+            key: 'course',
+            header: 'Cours'
+          }
+        ];
+        this.isLoading = false;
+      },
+
+      error: (error) => {
+        console.error('Erreur:', error);
+        this.isLoading = false;
+      }
+
+    });
+  }
+
+  canEditOrDeleteEvaluation(item: any): boolean {
+    return item.etat !== 'Validée';
+  }
+
+  getMoisList(): Promise<any[]> {
+    return new Promise(
+      (resolve, reject) => {
+
+        this.commonService.getAllMois().subscribe({
+
+          next: (data) => {
+            this.moisList = data;
+            resolve(data);
+          },
+          error: (err) => reject(err)
+        });
+      }
+    );
+  }
+
+
+  onFilterChange(filter: IFilterConfig, value: any) {
+    this.activeFilters[filter.key] = value;
+    this.hasActiveFilters = Object.values(this.activeFilters).some(
+      val =>
+        val !== null &&
+        val !== undefined &&
+        val !== ''
+    );
+
+    this.currentPage = 0;
+    this.chargerLesDonneesAttendances(this.hasActiveFilters);
   }
 
   get totalPages(): number {
@@ -220,17 +268,17 @@ export class ListAbsenceComponent implements OnInit {
   changePage(pageNumber: number) {
     if (pageNumber >= 0 && pageNumber < this.totalPages) {
       this.currentPage = pageNumber;
-      this.chargerLesDonnees(this.hasActiveFilters);
+      this.chargerLesDonneesAttendances(this.hasActiveFilters);
     }
   }
 
-
   changeSize(size: number | string) {
     const newSize = typeof size === 'string' ? parseInt(size, 10) : size;
+
     if (this.pageSize !== newSize) {
       this.pageSize = newSize;
       this.currentPage = 0;
-      this.chargerLesDonnees(this.hasActiveFilters);
+      this.chargerLesDonneesAttendances(this.hasActiveFilters);
     }
   }
 
@@ -239,14 +287,17 @@ export class ListAbsenceComponent implements OnInit {
     this.hasActiveFilters = false;
     this.initialisationDesFiltres();
     this.currentPage = 0;
-    this.chargerLesDonnees(false);
+    this.chargerLesDonneesAttendances(false);
   }
 
-  formatDate(dateString: string): string {
-    if (!dateString) return '';
-    return dateString.split('T')[0];
+  get courseId(): number | undefined {
+    return this.contexteClasse()?.courseId;
   }
 
+  get heureDebutCours(): string | undefined {
+    return this.contexteClasse()?.heureDebut;
+  }
 
 
 }
+

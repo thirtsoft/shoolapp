@@ -206,6 +206,7 @@ textarea.form-control {
 /* Colonnes */
 .col-lg-3,
 .col-lg-4,
+.col-lg-6,
 .col-3,
 .col-12 {
   padding-right: 0.75rem;
@@ -222,6 +223,11 @@ textarea.form-control {
   width: 33.333333%;
 }
 
+.col-lg-6 {
+  flex: 0 0 auto;
+  width: 50%;
+}
+
 .col-3 {
   flex: 0 0 auto;
   width: 25%;
@@ -236,6 +242,7 @@ textarea.form-control {
 
   .col-lg-3,
   .col-lg-4,
+  .col-lg-6,
   .col-3 {
     width: 100%;
     margin-bottom: 1rem;
@@ -429,4 +436,3 @@ textarea.form-control {
 .mb-4 {
   margin-bottom: 1.5rem;
 }
-

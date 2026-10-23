@@ -546,6 +546,15 @@
                                 >
                                   <i class="fas fa-file-pdf fa-lg" style="color: #dc3545"></i>
                                 </button>
+                              } @else if (column.key === 'paie') {
+                                <button
+                                  type="button"
+                                  class="icon-button"
+                                  (click)="onRowAction('generer-paie-pdf', row)"
+                                  title="Générer le reçu de paie"
+                                >
+                                  <i class="fas fa-file-pdf fa-lg" style="color: #dc3545"></i>
+                                </button>
                               } @else {
                                 @if (isNumber(row[column.key])) {
                                   <span>{{ row[column.key] }}</span>
@@ -557,7 +566,11 @@
                           }
                           <td class="icon-container options-column">
                             <div class="icon-position left">
-                              @if (isEditIcon && showEditOrDeleteCondition(row)) {
+                              @if (
+                                isEditIcon &&
+                                showEditOrDeleteCondition(row) &&
+                                row.etat === 'Brouillon'
+                              ) {
                                 <button
                                   class="icon-button"
                                   aria-label="Edit"
@@ -664,8 +677,30 @@
                               }
                             </div>
 
+                            <div>
+                              @if (showSubmitIcon && row.etat === 'Brouillon') {
+                                <button
+                                  type="button"
+                                  class="icon-button"
+                                  title="Soumettre la demande"
+                                  (click)="soumettreDemande(row)"
+                                >
+                                  <img
+                                    src="assets/img/soumettre.png"
+                                    class="icon"
+                                    style="width: 14px; height: 15px"
+                                    alt="Soumettre"
+                                  />
+                                </button>
+                              }
+                            </div>
+
                             <div class="icon-position right">
-                              @if (isLockableIcon && showEditOrDeleteCondition(row)) {
+                              @if (
+                                isLockableIcon &&
+                                showEditOrDeleteCondition(row) &&
+                                row.etat === 'Brouillon'
+                              ) {
                                 <button
                                   class="icon-button"
                                   aria-label="Toggle Lock"

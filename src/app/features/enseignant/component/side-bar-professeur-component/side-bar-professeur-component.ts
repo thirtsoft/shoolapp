@@ -1,6 +1,8 @@
 import { CommonModule } from '@angular/common';
 import { Component, inject, input, output, signal } from '@angular/core';
 import { Router } from '@angular/router';
+import { LocalStorageService } from '../../../../core/services/local-storage.service';
+import { EnseignementContextService } from '../../service/enseignement-contexte.service';
 
 export interface NavItem {
   route?: string;
@@ -29,79 +31,30 @@ export class SideBarProfesseurComponent {
   close = output<void>();
 
   readonly router = inject(Router);
+  private readonly context = inject(EnseignementContextService);
+  readonly localStorage = inject(LocalStorageService);
 
-  /*
-  nav: NavItem[] = [
-    // ═══════════ ACCUEIL ═══════════
-    { route: '/enseignant/dashboard', ico: '📊', label: 'Tableau de bord' },
-
-    // ═══════════ MES CLASSES (prof principal) ═══════════
-    { route: '/enseignant/mes-eleves', ico: '👨‍🎓', label: 'Mes élèves', section: 'MES CLASSES' },
-    { route: '/enseignant/absences', ico: '✅', label: 'Appel & Absences', badge: '' },
-
-    // ═══════════ MES ENSEIGNEMENTS ═══════════
-    { route: '/enseignant/mes-enseignements', ico: '📚', label: 'Mes enseignements', section: 'ENSEIGNEMENTS' },
-    { route: '/enseignant/notes', ico: '📝', label: 'Saisie des notes', badge: '' },
-    { route: '/enseignant/evaluations', ico: '🎯', label: 'Évaluations' },
-    { route: '/enseignant/mes-cours', ico: '📖', label: 'Cours & Ressources' },
-    { route: '/enseignant/exercices', ico: '✏️', label: 'Exercices' },
-
-    // ═══════════ VIE SCOLAIRE ═══════════
-    { route: '/enseignant/mes-reunions', ico: '👥', label: 'Réunions', section: 'VIE SCOLAIRE' },
-    { route: '/enseignant/demande-conge', ico: '📋', label: 'Demande de congé' },
-    { route: '/enseignant/mes-conges', ico: '📅', label: 'Mes congés' },
-
-    // ═══════════ COMPTE ═══════════
-    {
-      ico: '⚙️',
-      label: 'Paramètres',
-      section: 'COMPTE',
-      children: [
-        { route: '/enseignant/mon-compte', ico: '👤', label: 'Mon compte' },
-      ]
-    },
-  ];*/
+  nbClasses = 3;
+  nbEleves = 120;
 
   nav: NavItem[] = [
     { route: '/enseignant/dashboard', ico: '📊', label: 'Tableau de bord' },
-    { route: '/enseignant/agenda', ico: '📖', label: 'Mon agenda', section: 'QUOTIDIEN' },
+    //  { route: '/enseignant/agenda', ico: '📖', label: 'Mes classes', section: 'QUOTIDIEN' },
 
-    // enseignements & classes
-  //  { route: '/enseignant/mes-classes', ico: '🏫', label: 'Mes classes', section: 'CLASSES et ENSEIGNEMENTS' },
-    //  { route: '/enseignant/notes', ico: '📝', label: 'Notes' },
-
-    { route: '/enseignant/appel', ico: '✅', label: 'Faire l\'appel', section: 'GESTION DE CLASSE' },
-    { route: '/enseignant/exercices', ico: '✏️', label: 'Exercices' },
-    { route: '/enseignant/evaluations', ico: '🎯', label: 'Évaluations' },
-    { route: '/enseignant/saisir-notes', ico: '✍️', label: 'Saisie des notes' },
-    { route: '/enseignant/absences', ico: '❌', label: 'Absences', section: '', badge: '7' },
-    { route: '/enseignant/notes', ico: '📝', label: 'Notes' },
-
-    /*
-    {
-      ico: '📝',
-      label: 'Notes et Évaluations',
-      section: '',
-      children: [
-        { route: '/enseignant/mes-enseignements', ico: '🎯', label: 'Évaluations' },
-        { route: '/enseignant/notes', ico: '✍️', label: 'Liste notes' },
-        { route: '/enseignant/notes', ico: '✍️', label: 'Saisie des notes' },
-      ]
-    },
-    { route: '/enseignant/absences', ico: '✅', label: 'Appel' }, */
+    //
+    { route: '/enseignant/contrats', ico: '📄', label: 'Contrats', section: 'FINANCES' },
+    { route: '/enseignant/paies', ico: '💵', label: 'Paie' },
+    { route: '/enseignant/bon-salaires', ico: '💰', label: 'Bon salaire' },
 
 
     // vie scolaire
-    { route: '/enseignant/mes-reunions', ico: '🗓️', label: 'Activités & Réunions', section: 'VIE SCOLAIRE' },
+    { route: '/enseignant/activites', ico: '🗓️', label: 'Activités & Réunions', section: 'VIE SCOLAIRE' },
     { route: '/enseignant/mes-conges', ico: '🌴', label: 'Mes congés' },
 
     // compte
     { route: '/enseignant/mon-compte', ico: '👤', label: 'Mon compte', section: 'COMPTE', },
   ];
 
-  nbClasses = 3;
-  nbEleves = 120;
-  prochainCours = '08:00 - Maths Tle S2';
 
   hasChildren(item: NavItem): boolean {
     return !!item.children && item.children.length > 0;
@@ -138,14 +91,17 @@ export class SideBarProfesseurComponent {
 
   naviguer(route: string | undefined): void {
     if (route) {
-      this.router.navigate([route]);
+      void this.router.navigate([route]);
       this.close.emit();
     }
   }
 
   deconnecter(): void {
     localStorage.clear();
-    this.router.navigate(['/auth/login']);
+    localStorage.removeItem('v2_user');
+    localStorage.removeItem('v2_token');
+    this.context.clearGestionClasseContext();
+    void this.router.navigate(['/auth/login/v2']);
   }
 
 }

@@ -6,6 +6,8 @@ import { ToastrService } from 'ngx-toastr';
 import { CongesAddEdit } from '../../../../../core/models/planification/conge-add-edit';
 import { Utilisateur } from '../../../../../core/models/utilisateur/utilisateur';
 import { PlanificationResourceService } from '../../../../administration/planification/services/planification-resource.service';
+import { RhResourceService } from '../../../../rh/services/rh-resource-service';
+import { CongesRequest } from '../../../../../core/models/rh/conges-request.model';
 
 @Component({
   selector: 'app-demander-un-conge-component',
@@ -17,16 +19,20 @@ import { PlanificationResourceService } from '../../../../administration/planifi
 export class DemanderUnCongeComponent implements OnInit, OnDestroy {
 
   errorMessage?: string;
-  congeId?: number;
-  conge: any;
-  congeFormGroup!: FormGroup;
-  editor!: Editor;
-  isEdit: boolean = false;
-  ecoleId: any;
-  userId: number;
-  utilisateur: Utilisateur = {};
 
-  title = "Enregistrer une demande de congé";
+  congeId?: number;
+
+  conge: any;
+
+  congeFormGroup!: FormGroup;
+
+  editor!: Editor;
+
+  isEdit = false;
+
+  personnelUuid?: string;
+
+  title = 'Enregistrer une demande de congé';
 
   toolbar: Toolbar = [
     ['bold', 'italic', 'underline', 'strike'],
@@ -37,103 +43,173 @@ export class DemanderUnCongeComponent implements OnInit, OnDestroy {
     ['align_left', 'align_center', 'align_right', 'align_justify'],
   ];
 
-
-  private readonly planificationResouce = inject(PlanificationResourceService);
+  private readonly rhResouce = inject(RhResourceService);
   private readonly _formBuilder = inject(FormBuilder);
   private readonly toastService = inject(ToastrService);
   private readonly activeRoute = inject(ActivatedRoute);
   private readonly router = inject(Router);
 
-  constructor(
-  ) {
+  constructor() {
     this.congeId = this.activeRoute.snapshot.params['id'];
-    this.userId = Number(localStorage.getItem('id'));
   }
 
   ngOnInit(): void {
     this.editor = new Editor();
     this.initializeForm(null);
-    if (this.congeId != null && this.congeId != undefined) {
+
+    if (this.congeId != null && this.congeId !== undefined) {
+
       this.getCongeById(this.congeId);
-      this.title = 'Modifier une demande de congè';
+
+      this.title = 'Modifier une demande de congé';
+
       this.isEdit = true;
     }
   }
 
   ngOnDestroy(): void {
-    this.editor.destroy();
+    this.editor?.destroy();
   }
 
-  getCongeById(congeId: number) {
-    this.planificationResouce.getSingleResource('conges', congeId).subscribe({
+  getCongeById(congeId: number): void {
+    this.rhResouce.getCongesById(congeId).subscribe({
+
       next: (data) => {
+
         this.conge = data;
-       
+
         this.congeFormGroup.patchValue({
-        id: this.conge?.id ?? '',
-        objet: this.conge?.objet ?? '',
-        description: this.conge?.description ?? '',
-        dateDebut: this.conge?.dateDebut ?? '',
-        dateFin: this.conge?.dateFin ?? ''
-      });
+          id: this.conge?.id ?? '',
+          objet: this.conge?.objet ?? '',
+          motif: this.conge?.motif ?? '',
+          description: this.conge?.description ?? '',
+          dateDebut: this.conge?.dateDebut ?? '',
+          dateFin: this.conge?.dateFin ?? ''
+        });
+        if (this.conge?.personnelUuid) {
+          this.personnelUuid = this.conge.personnelUuid;
+        }
+      },
+
+      error: (error) => {
+        console.error('Erreur lors du chargement du congé', error);
+
+        this.toastService.error(
+          'Erreur',
+          'Impossible de récupérer la demande de congé.'
+        );
+
+        this.goBack();
       }
     });
   }
 
-  initializeForm(conges: CongesAddEdit | null) {
+  initializeForm(conges: CongesRequest | null): void {
     this.congeFormGroup = this._formBuilder.group({
-      id: [conges?.id ?? ''],
       objet: [conges?.objet ?? '', Validators.required],
-      description: [conges?.description ?? ''],
+      motif: [conges?.motif ?? '', Validators.required],
+      description: [conges?.description ?? '', Validators.required],
       dateDebut: [conges?.dateDebut ?? '', Validators.required],
-      dateFin: [conges?.dateFin ?? '', Validators.required],
+      dateFin: [conges?.dateFin ?? '', Validators.required]
     });
   }
 
-  ajouterEditUneDemandeConge() {
-    const payload = this.congeFormGroup.value;
-    payload.ecole = this.ecoleId;
-    payload.userId = this.userId;
-    if (!this.isEdit) {
-      this.planificationResouce.createRessource('conges', payload).subscribe({
-        next: (data) => {
-          if (data.statut === 'OK') {
-            this.toastService.success('succès', 'La demande de congés a été enregistrées avec succès !!! ');
-            this.goBack();
-          } else if (data.statut === 'FAILED') {
-            this.toastService.error('error', 'Erreur lors de la création : ' + data.message);
-          }
-        },
-        error: (data) => {
-          console.log('error', 'Erreur lors de la création : ' + data.error);
-          this.toastService.error('error', 'Erreur lors de la création : ' + data.error);
-        }
-      });
+  ajouterEditUneDemandeConge(): void {
 
-    } else {
-      this.planificationResouce.updateResource('conges', Number(this.congeId), payload).subscribe({
-        next: (data) => {
-          if (data.statut === 'OK') {
-            this.toastService.success('succès', 'La note d\'information a été modifiées avec succès !!! ');
-            this.goBack();
-          } else if (data.statut === 'FAILED') {
-            this.toastService.error('error', 'Erreur lors de la mofication : ' + data.message);
-          }
-        },
-        error: (data) => {
-          console.log('error', 'Erreur lors de la création : ' + data.error);
-          this.toastService.error('error', 'Erreur lors de la mofication : ' + data.error);
-        }
-      });
-
+    if (this.congeFormGroup.invalid) {
+      this.congeFormGroup.markAllAsTouched();
+      return;
     }
 
+    const formValue = this.congeFormGroup.getRawValue();
+
+    const payload: CongesRequest = {
+      objet: formValue.objet,
+      motif: formValue.motif,
+      description: formValue.description,
+      dateDebut: formValue.dateDebut,
+      dateFin: formValue.dateFin
+    };
+
+    if (!this.isEdit) {
+
+      this.creerDemande(payload);
+
+    } else {
+
+      this.modifierDemande(payload);
+    }
   }
 
-  goBack() {
-    this.router.navigate(['enseignant/mes-conges'])
+  private creerDemande(payload: CongesRequest): void {
+
+    this.rhResouce.createConges(payload).subscribe({
+      next: (data) => {
+
+        if (data.id != null) {
+          this.toastService.success('Succès', 'La demande de congés a été enregistrée avec succès.');
+
+          this.goBack();
+
+        } else {
+
+          this.toastService.error(
+            'Erreur',
+            'Erreur lors de la création : ' +
+            'Error lors de l\'ajout de demande de congés'
+          );
+        }
+      },
+
+      error: (error) => {
+
+        console.error(
+          'Erreur création congé',
+          error
+        );
+
+        this.toastService.error(
+          'Erreur',
+          error?.error?.message || 'Erreur lors de la création de la demande.'
+        );
+      }
+    });
   }
 
+  private modifierDemande(payload: CongesRequest): void {
 
+    this.rhResouce.updateConges(Number(this.congeId), payload).subscribe({
+      next: (data) => {
+
+        if (data.personnelUuid != null) {
+
+          this.toastService.success('Succès', 'La demande de congés a été modifiée avec succès.');
+
+          this.goBack();
+
+        } else {
+
+          this.toastService.error(
+            'Erreur',
+            'Erreur lors de la modification : ' +
+            'error modification'
+          );
+        }
+      },
+
+      error: (error) => {
+
+        console.error('Erreur modification congé', error);
+
+        this.toastService.error(
+          'Erreur',
+          error?.error?.message || 'Erreur lors de la modification de la demande.'
+        );
+      }
+    });
+  }
+
+  goBack(): void {
+    void this.router.navigate(['enseignant/mes-conges']);
+  }
 }
-

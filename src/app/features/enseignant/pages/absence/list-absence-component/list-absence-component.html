@@ -1,11 +1,11 @@
 <app-generic-table-dossier
-  [title]="'Liste des absence de ' + libelleClasse()"
   titleFitre="Absence"
   [tableColumns]="columns"
-  [tableData]="attendRecordData"
+  [tableData]="attendanceData"
   [isLoading]="isLoading"
-  [isEditIcon]="true"
-  [isLockableIcon]="isLockable"
+  [isNoAjout]="true"
+  [isEditIcon]="false"
+  [isLockableIcon]="false"
   [tableSizes]="tableSizes"
   [totalElements]="totalElements"
   [currentPage]="currentPage"
@@ -17,8 +17,6 @@
   [showFilters]="true"
   (resetFilters)="resetFilters()"
   (sizeChange)="changeSize($event)"
-  addButtonLink="/admin/dossier-eleve/absence/create"
-  modifierButtonLink="/admin/dossier-eleve/absence/edit"
   [deleteEndPoint]="deleteEndpoint"
 >
 </app-generic-table-dossier>

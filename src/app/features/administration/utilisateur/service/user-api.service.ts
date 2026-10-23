@@ -2,16 +2,13 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { environment } from '../../../../../environments/environment';
-import { Utilisateur } from '../../../../core/models/utilisateur/utilisateur';
-import { UtilisateurCredentials } from '../../../../core/models/utilisateur/utilisateur-credential';
-import { UtilisateurList } from '../../../../core/models/utilisateur/utilisateur-list';
-import { ResponseMessage } from '../../../../core/response/response-message';
 import { ApiResponse } from '../../../../core/datamodel/api-response.model';
 import { UserResponse } from '../../../../core/models/utilisateur/user-response.model';
 import { UserUpdateRequest } from '../../../../core/models/utilisateur/update-user-request.model';
 import { ForgotPassword } from '../../../../core/models/utilisateur/forgot-password.model';
 import { UserCreateResponse } from '../../../../core/models/utilisateur/user-creation-response.model';
 import { UserCreationRequest } from '../../../../core/models/utilisateur/user-creation-request.model';
+import { UserInfoUpdateRequest } from '../../../../core/models/utilisateur/update-user-info-request.model';
 
 @Injectable({
   providedIn: 'root'
@@ -43,6 +40,11 @@ export class UserApiService {
   updateUser(userUuid: string, value: UserUpdateRequest): Observable<UserResponse> {
     return this.http.put<UserResponse>(`${this.userUrl}/${userUuid}`, value);
   }
+
+  updateUserInfo(userUuid: string, value: UserInfoUpdateRequest): Observable<UserResponse> {
+    return this.http.patch<UserResponse>(`${this.userUrl}/${userUuid}`, value);
+  }
+
 
   getUserProfil(userUuid: string): Observable<ApiResponse<UserResponse>> {
     return this.http.get<ApiResponse<UserResponse>>(this.userUrl + `/${userUuid}`, this.httpOptions);

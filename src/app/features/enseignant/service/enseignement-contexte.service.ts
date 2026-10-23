@@ -20,8 +20,18 @@ export interface GestionClasseContext {
   classe?: string;
   matiere?: string;
   anneeScolaire?: string;
+  anneeScolaireId?: number;
   enseignementId?: number;
+
+  courseId?: number;
+  heureDebut?: string;
+  heureFin?: string;
+
+  classeUuid?: string;
+  anneeScolaireUuid?: string;
+  courseUuid?: string | null;
 }
+
 
 @Injectable({
   providedIn: 'root'

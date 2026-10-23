@@ -11,147 +11,382 @@
       </h1>
       <span class="annee-scolaire">{{ this.contexteClasse()?.anneeScolaire }}</span>
     </div>
-
-    <!-- Bloc stats rapide -->
-    <div class="header-stats">
-      <div class="stat-card">
-        <span class="stat-icon">👨‍🎓</span>
-        <span class="stat-value">{{ eleves().length }}</span>
-        <span class="stat-label">Élèves</span>
-      </div>
-      <div class="stat-card">
-        <span class="stat-icon">📊</span>
-        <span class="stat-value">{{ moyenneClasse }}/20</span>
-        <span class="stat-label">Moyenne</span>
-      </div>
-      <div class="stat-card">
-        <span class="stat-icon">📋</span>
-        <span class="stat-value">{{ evaluations().length }}</span>
-        <span class="stat-label">Évaluations</span>
-      </div>
-      <div class="stat-card warning">
-        <span class="stat-icon">⚠️</span>
-        <span class="stat-value">{{ totalAbsents }}</span>
-        <span class="stat-label">Absents</span>
-      </div>
-    </div>
   </header>
 
-  <!-- ═══════════ NAVIGATION PAR ONGLETS ═══════════ -->
   <div class="tabs">
     <button class="tab" [class.active]="activeTab() === 'appel'" (click)="changerOnglet('appel')">
-      📋 Faire l'appel
-      @if (totalAbsents > 0) {
-        <span class="tab-badge">{{ totalAbsents }}</span>
-      }
+      <i class="fas fa-clipboard-check"></i>
+      <span>Appel</span>
+    </button>
+    <button
+      class="tab"
+      [class.active]="activeTab() === 'cahier-texte'"
+      (click)="changerOnglet('cahier-texte')"
+    >
+      <i class="fas fa-book-open"></i>
+      <span>Cahier de texte</span>
     </button>
     <button
       class="tab"
       [class.active]="activeTab() === 'exercices'"
       (click)="changerOnglet('exercices')"
     >
-      ✏️ Exercices
+      <i class="fas fa-pencil-alt"></i>
+      <span>Exercices</span>
     </button>
     <button
       class="tab"
       [class.active]="activeTab() === 'evaluation'"
       (click)="changerOnglet('evaluation')"
     >
-      📝 Évaluations
-      @if (evaluationsEnAttente > 0) {
-        <span class="tab-badge">{{ evaluationsEnAttente }}</span>
-      }
+      <i class="fas fa-clipboard-list"></i>
+      <span>Évaluations</span>
+
+      <span class="tab-badge">1</span>
     </button>
     <button class="tab" [class.active]="activeTab() === 'notes'" (click)="changerOnglet('notes')">
-      ✏️ Saisie des notes
-    </button>
-    <button
-      class="tab"
-      [class.active]="activeTab() === 'bulletin'"
-      (click)="changerOnglet('bulletin')"
-    >
-      📄 Bulletins
-    </button>
-    <button
-      class="tab"
-      [class.active]="activeTab() === 'progression'"
-      (click)="changerOnglet('progression')"
-    >
-      📈 Progression
+      <i class="fas fa-chart-bar"></i>
+      <span>Notes</span>
     </button>
   </div>
 
-  <!-- ═══════════ CONTENU DES ONGLETS ═══════════ -->
-
-  <!-- Onglet 1 : APPEL DES ABSENCES -->
   @if (activeTab() === 'appel') {
     <div class="tab-content">
-      <div class="tab-header">
-        <h2>📋 Faire l'appel</h2>
-        <span class="date-jour">{{ today() }}</span>
-        <button class="btn btn-primary" (click)="sauvegarderAppel()">💾 Sauvegarder l'appel</button>
+      <div class="appel-navigation">
+        <button
+          type="button"
+          class="appel-nav-link"
+          [class.active]="activeAppelView() === 'faire-appel'"
+          (click)="changerVueAppel('faire-appel')"
+        >
+          <i class="fas fa-clipboard-check"></i>
+          <span>Faire l'appel</span>
+        </button>
+
+        <button
+          type="button"
+          class="appel-nav-link"
+          [class.active]="activeAppelView() === 'historique'"
+          (click)="changerVueAppel('historique')"
+        >
+          <i class="fas fa-history"></i>
+          <span>Historique des appels</span>
+        </button>
       </div>
 
-      <div class="appel-summary">
-        <span class="summary-item present">✅ {{ totalPresents }} Présents</span>
-        <span class="summary-item absent">❌ {{ totalAbsents }} Absents</span>
-      </div>
+      @if (activeAppelView() === 'faire-appel') {
+        @if (isLoadingAppel()) {
+          <div class="loading-state">
+            <i class="fas fa-spinner fa-spin"></i>
 
-      <div class="table-responsive">
-        <table class="data-table">
-          <thead>
-            <tr>
-              <th>N°</th>
-              <th>Élève</th>
-              <th>Statut</th>
-              <th>Motif</th>
-              <th>Action</th>
-            </tr>
-          </thead>
-          <tbody>
-            @for (eleve of eleves(); track eleve.id; let i = $index) {
-              <tr [class.absent-row]="eleve.absent">
-                <td class="text-center">{{ i + 1 }}</td>
-                <td>
-                  <strong>{{ eleve.prenom }} - {{ eleve.nom }}</strong>
-                </td>
-                <td>
-                  <span
-                    class="status-badge"
-                    [class.status-present]="!eleve.absent"
-                    [class.status-absent]="eleve.absent"
-                  >
-                    {{ eleve.absent ? 'Absent' : 'Présent' }}
-                  </span>
-                </td>
-                <td>
-                  @if (eleve.motif) {
-                    {{ eleve.motif }}
-                  } @else {
-                    <span class="no-motif">—</span>
+            Vérification de l'appel du jour...
+          </div>
+        } @else {
+          @if (attendancesDuJour().length === 0) {
+            <div class="tab-header">
+              <div>
+                <span> Aucun appel n'a encore été effectué pour ce cours aujourd'hui. </span>
+              </div>
+
+              <button
+                type="button"
+                class="btn btn-primary"
+                [disabled]="isSavingAppel()"
+                (click)="sauvegarderAppel()"
+              >
+                @if (isSavingAppel()) {
+                  <i class="fas fa-spinner fa-spin"></i>
+                  Enregistrement...
+                } @else {
+                  💾 Sauvegarder l'appel
+                }
+              </button>
+            </div>
+
+            <div class="appel-summary">
+              <span class="summary-item present"> ✅ {{ totalPresents }} Présents </span>
+
+              <span class="summary-item absent"> ❌ {{ totalAbsents }} Absents </span>
+
+              @if (totalRetards > 0) {
+                <span class="summary-item warning"> ⏰ {{ totalRetards }} Retards </span>
+              }
+            </div>
+
+            <div class="table-responsive">
+              <table class="data-table">
+                <thead>
+                  <tr>
+                    <th>N°</th>
+                    <th>Élève</th>
+                    <th>Statut</th>
+                    <th>Motif / Informations</th>
+                  </tr>
+                </thead>
+
+                <tbody>
+                  @for (eleve of eleves(); track eleve.id; let i = $index) {
+                    <tr [class.absent-row]="eleve.attendanceStatus === 'ABSENCE'">
+                      <td class="text-center">
+                        {{ i + 1 }}
+                      </td>
+
+                      <td>
+                        <strong> {{ eleve.prenom }} - {{ eleve.nom }} </strong>
+                      </td>
+
+                      <td>
+                        <select
+                          class="form-control attendance-select"
+                          [ngModel]="eleve.attendanceStatus"
+                          [disabled]="isSavingAppel()"
+                          (ngModelChange)="changerStatutEleve(eleve, $event)"
+                        >
+                          <option value="PRESENCE">Présent</option>
+
+                          <option value="ABSENCE">Absent</option>
+
+                          <option value="RETARD">Retard</option>
+                        </select>
+                      </td>
+
+                      <td>
+                        @if (eleve.attendanceStatus === 'ABSENCE') {
+                          <input
+                            type="text"
+                            class="form-control"
+                            placeholder="Motif de l'absence..."
+                            [ngModel]="eleve.motif ?? ''"
+                            [disabled]="isSavingAppel()"
+                            (ngModelChange)="modifierMotif(eleve, $event)"
+                          />
+                        } @else if (eleve.attendanceStatus === 'RETARD') {
+                          <div class="retard-fields">
+                            <div class="retard-time">
+                              <label> Heure d'arrivée </label>
+
+                              <input
+                                type="time"
+                                class="form-control"
+                                [ngModel]="eleve.arrivalTime ?? ''"
+                                [disabled]="isSavingAppel()"
+                                (ngModelChange)="modifierHeureArrivee(eleve, $event)"
+                              />
+                            </div>
+
+                            @if (eleve.lateMinutes !== undefined) {
+                              <div class="retard-result">
+                                ⏰
+                                {{ eleve.lateMinutes }}
+                                min de retard
+                              </div>
+                            }
+
+                            <input
+                              type="text"
+                              class="form-control"
+                              placeholder="Motif du retard (facultatif)"
+                              [ngModel]="eleve.motif ?? ''"
+                              [disabled]="isSavingAppel()"
+                              (ngModelChange)="modifierMotif(eleve, $event)"
+                            />
+                          </div>
+                        } @else {
+                          <span class="no-motif"> — </span>
+                        }
+                      </td>
+                    </tr>
                   }
-                </td>
-                <td>
-                  <button class="btn-absence" (click)="ouvrirFormulaireAbsence(eleve)">
-                    📝 Signaler absence
-                  </button>
-                  <!--  <button
-                    class="btn-action"
-                    [class.btn-justify]="eleve.absent"
-                    [class.btn-mark]="!eleve.absent"
-                  >
-                    {{ eleve.absent ? '✅ Justifier' : '❌ Marquer absent' }}
-                  </button> -->
-                </td>
-              </tr>
-            }
-          </tbody>
-        </table>
-      </div>
+                </tbody>
+              </table>
+            </div>
+          } @else {
+            <div class="appel-lock-message">
+              <div class="appel-lock-icon">🔒</div>
+
+              <div>
+                <strong> Appel déjà effectué </strong>
+
+                <p>
+                  L'appel a déjà été enregistré pour ce cours aujourd'hui. Les données sont
+                  consultables mais ne peuvent plus être modifiées.
+                </p>
+              </div>
+            </div>
+
+            <div class="appel-summary">
+              <span class="summary-item present"> ✅ {{ totalPresents }} Présents </span>
+
+              <span class="summary-item absent"> ❌ {{ totalAbsents }} Absents </span>
+
+              @if (totalRetards > 0) {
+                <span class="summary-item warning"> ⏰ {{ totalRetards }} Retards </span>
+              }
+            </div>
+
+            <div class="table-responsive">
+              <table class="data-table">
+                <thead>
+                  <tr>
+                    <th>N°</th>
+                    <th>Élève</th>
+                    <th>Statut</th>
+                    <th>Motif / Informations</th>
+                  </tr>
+                </thead>
+
+                <tbody>
+                  @for (eleve of eleves(); track eleve.id; let i = $index) {
+                    <tr [class.absent-row]="eleve.attendanceStatus === 'ABSENCE'">
+                      <td class="text-center">
+                        {{ i + 1 }}
+                      </td>
+
+                      <td>
+                        <strong> {{ eleve.prenom }} - {{ eleve.nom }} </strong>
+                      </td>
+
+                      <td>
+                        @if (eleve.attendanceStatus === 'PRESENCE') {
+                          <span class="attendance-badge presence"> ✅ Présent </span>
+                        } @else if (eleve.attendanceStatus === 'ABSENCE') {
+                          <span class="attendance-badge absence"> ❌ Absent </span>
+                        } @else if (eleve.attendanceStatus === 'RETARD') {
+                          <span class="attendance-badge retard"> ⏰ Retard </span>
+                        }
+                      </td>
+
+                      <td>
+                        @if (eleve.attendanceStatus === 'ABSENCE') {
+                          @if (eleve.motif) {
+                            <span class="attendance-info">
+                              {{ eleve.motif }}
+                            </span>
+                          } @else {
+                            <span class="no-motif"> Aucun motif </span>
+                          }
+                        } @else if (eleve.attendanceStatus === 'RETARD') {
+                          <div class="retard-info">
+                            @if (eleve.arrivalTime) {
+                              <div>
+                                <strong> Heure d'arrivée : </strong>
+
+                                {{ eleve.arrivalTime.substring(0, 5) }}
+                              </div>
+                            }
+
+                            @if (eleve.lateMinutes !== undefined && eleve.lateMinutes !== null) {
+                              <div class="retard-result">
+                                ⏰
+                                {{ eleve.lateMinutes }}
+                                min de retard
+                              </div>
+                            }
+
+                            @if (eleve.motif) {
+                              <div>
+                                <strong> Motif : </strong>
+
+                                {{ eleve.motif }}
+                              </div>
+                            }
+                          </div>
+                        } @else {
+                          <span class="no-motif"> — </span>
+                        }
+                      </td>
+                    </tr>
+                  }
+                </tbody>
+              </table>
+            </div>
+          }
+        }
+      }
+
+      @if (activeAppelView() === 'historique') {
+        <div class="tab-header">
+          <div>
+            <h2>🕘 Historique des appels</h2>
+
+            <span class="date-jour">
+              {{ contexteClasse()?.matiere }}
+
+              -
+
+              {{ contexteClasse()?.classe }}
+            </span>
+          </div>
+        </div>
+
+        @if (isLoadingHistorique()) {
+          <div class="loading-state">
+            <i class="fas fa-spinner fa-spin"></i>
+            Chargement de l'historique...
+          </div>
+        } @else if (attendanceData.length === 0) {
+          <div class="empty-state">
+            <div class="empty-state-icon">📋</div>
+
+            <h3>Aucun appel enregistré</h3>
+
+            <p>Aucun appel n'est disponible pour ce cours.</p>
+          </div>
+        } @else {
+          <app-generic-table-dossier
+            [tableColumns]="columns"
+            [tableData]="attendanceData"
+            [isLoading]="isLoading"
+            [isNoAjout]="true"
+            [isEditIcon]="false"
+            [isLockableIcon]="false"
+            [tableSizes]="tableSizes"
+            [totalElements]="totalElements"
+            [currentPage]="currentPage"
+            [pageSize]="pageSize"
+            (pageChange)="changePage($event)"
+            [showSearch]="false"
+            [filtered]="tableFilters"
+            (filterChange)="onFilterChange($event.filter, $event.value)"
+            [showFilters]="true"
+            (resetFilters)="resetFilters()"
+            (sizeChange)="changeSize($event)"
+          >
+          </app-generic-table-dossier>
+
+          <!--      <app-list-absence-component></app-list-absence-component> -->
+        }
+      }
     </div>
   }
 
-  <!-- Onglet 2 : EXERCICES -->
+  @if (activeTab() === 'cahier-texte') {
+    <div class="tab-content">
+     <!--  <div class="tab-header">
+        <div>
+          <h2>
+            <i class="fas fa-book-open"></i>
+            Cahier de texte
+          </h2>
+
+          <span class="date-jour">
+            {{ contexteClasse()?.matiere }}
+            -
+            {{ contexteClasse()?.classe }}
+          </span>
+        </div>
+
+      </div> -->
+
+      <app-cahier-texte-enseignant-component
+        [classeUuid]="contexteClasse()?.classeUuid"
+        [anneeScolaireUuid]="contexteClasse()?.anneeScolaireUuid"
+        [courseUuid]="contexteClasse()?.courseUuid"
+        [enseignementId]="contexteClasse()?.enseignementId"
+      />
+    </div>
+  }
+
   @if (activeTab() === 'exercices') {
     <div class="tab-content">
       <div class="tab-header">
@@ -159,79 +394,10 @@
         <button class="btn btn-primary" (click)="creerExercice()">➕ Créer un exercice</button>
       </div>
 
-      <!--  <div class="table-responsive">
-        <table class="data-table">
-          <thead>
-            <tr>
-              <th>Titre</th>
-              <th>Type</th>
-              <th>Date</th>
-              <th>Coefficient</th>
-              <th>Note max</th>
-              <th>Statut</th>
-              <th>Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            @for (evaluation of exercices(); track evaluation.id) {
-              <tr>
-                <td>
-                  <strong>{{ evaluation.titre }}</strong>
-                </td>
-                <td>
-                  <span class="eval-type" [class]="evaluation.type.toLowerCase()">
-                    {{ evaluation.type }}
-                  </span>
-                </td>
-                <td>{{ evaluation.date | date: 'dd/MM/yyyy' }}</td>
-                <td class="text-center">×{{ evaluation.coefficient }}</td>
-                <td class="text-center">/{{ evaluation.noteMax }}</td>
-                <td>
-                  <span
-                    class="status-badge"
-                    [class.status-present]="evaluation.statut === 'Publiée'"
-                    [class.status-absent]="evaluation.statut === 'En attente'"
-                  >
-                    {{ evaluation.statut }}
-                  </span>
-                </td>
-                <td>
-                  <button class="btn-icon" title="Modifier">✏️</button>
-                  <button class="btn-icon btn-danger" title="Supprimer">🗑️</button>
-                </td>
-              </tr>
-            }
-          </tbody>
-        </table>
-      </div> -->
-      <app-generic-table-dossier
-        titleFitre="Exercice"
-        [tableColumns]="columns"
-        [tableData]="exerciceData"
-        [isLoading]="isLoading"
-        [isNoAjout]="true"
-        [isEditIcon]="true"
-        [isLockableIcon]="isLockable"
-        [tableSizes]="tableSizes"
-        [totalElements]="totalElements"
-        [currentPage]="currentPage"
-        [pageSize]="pageSize"
-        (pageChange)="changePage($event)"
-        addButtonLink="/admin/planification/exercice/create"
-        modifierButtonLink="/admin/planification/exercice/edit"
-        [deleteEndPoint]="deleteExerciceEndpoint"
-        [showSearch]="false"
-        [filtered]="tableFilters"
-        (filterChange)="onFilterChange($event.filter, $event.value)"
-        [showFilters]="true"
-        (resetFilters)="resetFilters()"
-        (sizeChange)="changeSize($event)"
-      >
-      </app-generic-table-dossier>
+      <app-list-exercice></app-list-exercice>
     </div>
   }
 
-  <!-- Onglet 3 : ÉVALUATIONS -->
   @if (activeTab() === 'evaluation') {
     <div class="tab-content">
       <div class="tab-header">
@@ -239,36 +405,10 @@
         <button class="btn btn-primary" (click)="creerEvaluation()">➕ Créer une évaluation</button>
       </div>
 
-      <app-generic-table-dossier
-        titleFitre="Evaluation"
-        [tableColumns]="columns"
-        [tableData]="evaluationData"
-        [isLoading]="isLoading"
-        [isNoAjout]="true"
-        [isEditIcon]="isEdit"
-        [showEditOrDeleteCondition]="canEditOrDeleteEvaluation.bind(this)"
-        [isEyesIcon]="true"
-        [isLockableIcon]="isLockable"
-        [tableSizes]="tableSizes"
-        [totalElements]="totalElements"
-        [currentPage]="currentPage"
-        [pageSize]="pageSize"
-        (pageChange)="changePage($event)"
-        [deleteEndPoint]="deleteEvaluationEndpoint"
-        [showSearch]="false"
-        [filtered]="tableFilters"
-        (filterChange)="onFilterChange($event.filter, $event.value)"
-        [showFilters]="true"
-        (resetFilters)="resetFilters()"
-        (sizeChange)="changeSize($event)"
-        modifierButtonLink="/enseignant/evaluation/edit"
-        detailButtonLink="/enseignant/evaluation/details"
-      >
-      </app-generic-table-dossier>
+      <app-list-evaluation-enseignant></app-list-evaluation-enseignant>
     </div>
   }
 
-  <!-- Onglet 4 : SAISIE DES NOTES -->
   @if (activeTab() === 'notes') {
     <div class="tab-content">
       <div class="tab-header">
@@ -286,7 +426,6 @@
         </div>
       </div>
 
-      <!-- Sélecteur d'évaluation -->
       <div class="evaluation-selector">
         <div class="selector-group">
           <label class="selector-label">
@@ -373,402 +512,4 @@
       }
     </div>
   }
-
-  <!-- Onglet 5 : BULLETINS -->
-  @if (activeTab() === 'bulletin') {
-    <div class="tab-content">
-      <div class="tab-header">
-        <h2>📄 Bulletins - 2ème Trimestre</h2>
-        <button class="btn btn-primary" (click)="genererBulletins()">
-          🖨️ Générer les bulletins
-        </button>
-      </div>
-
-      <div class="table-responsive">
-        <table class="data-table">
-          <thead>
-            <tr>
-              <th>N°</th>
-              <th>Élève</th>
-              <th>Moyenne</th>
-              <th>Rang</th>
-              <th>Appréciation</th>
-              <th>Décision</th>
-            </tr>
-          </thead>
-          <tbody>
-            @for (bulletin of bulletins(); track bulletin.eleveId; let i = $index) {
-              <tr>
-                <td class="text-center">{{ i + 1 }}</td>
-                <td>{{ bulletin.nom }} {{ bulletin.prenom }}</td>
-                <td class="text-center">
-                  <span
-                    [class.bonne-note]="bulletin.moyenne >= 15"
-                    [class.mauvaise-note]="bulletin.moyenne < 10"
-                  >
-                    {{ bulletin.moyenne.toFixed(1) }}/20
-                  </span>
-                </td>
-                <td class="text-center">
-                  {{ bulletin.rang }}<sup>e</sup> / {{ bulletins().length }}
-                </td>
-                <td class="appreciation-col">{{ bulletin.appreciation }}</td>
-                <td>
-                  <span class="decision-badge" [class]="bulletin.decision.toLowerCase()">
-                    {{ bulletin.decision }}
-                  </span>
-                </td>
-              </tr>
-            }
-          </tbody>
-        </table>
-      </div>
-    </div>
-  }
-
-  <!-- Onglet 6 : PROGRESSION -->
-  @if (activeTab() === 'progression') {
-    <div class="tab-content">
-      <div class="tab-header">
-        <h2>📈 Progression de la classe</h2>
-      </div>
-
-      <div class="progression-grid">
-        <div class="progression-card">
-          <h3>📊 Évolution des moyennes</h3>
-          <div class="chart-placeholder">[ Graphique d'évolution des moyennes ]</div>
-        </div>
-        <div class="progression-card">
-          <h3>🎯 Taux de réussite par évaluation</h3>
-          <div class="chart-placeholder">[ Graphique en barres des taux de réussite ]</div>
-        </div>
-        <div class="progression-card">
-          <h3>📋 Chapitres complétés</h3>
-          <ul class="chapitres-list">
-            <li>✅ Chapitre 1 : Nombres relatifs</li>
-            <li>✅ Chapitre 2 : Fractions</li>
-            <li>✅ Chapitre 3 : Théorème de Pythagore</li>
-            <li>🔄 Chapitre 4 : Proportionnalité (en cours)</li>
-            <li>⏳ Chapitre 5 : Statistiques</li>
-          </ul>
-        </div>
-      </div>
-    </div>
-  }
 </div>
-
-<!-- Formulaire popup pour l'absence -->
-@if (showAbsenceFormModal()) {
-  <div class="modal-overlay" (click)="fermerFormulaireAbsence()">
-    <div class="modal-container" (click)="$event.stopPropagation()">
-      <div class="modal-header">
-        <h3>📝 Signaler une absence</h3>
-        <button class="close-btn" (click)="fermerFormulaireAbsence()">✕</button>
-      </div>
-
-      <div class="modal-body">
-        <!-- Informations élève -->
-        <div class="info-card">
-          <div class="info-label">Élève :</div>
-          <div class="info-value">
-            {{ currentEleveForAbsence?.prenom }} {{ currentEleveForAbsence?.nom }}
-          </div>
-        </div>
-
-        <!-- Date absence -->
-        <div class="form-group">
-          <label>Date de l'absence <span class="required">*</span></label>
-          <input type="date" class="form-control" [(ngModel)]="absenceForm.dateAbsence" />
-        </div>
-
-        <!-- Semestre -->
-        <div class="form-group">
-          <label>Semestre <span class="required">*</span></label>
-          <select class="form-control" [(ngModel)]="absenceForm.semestre">
-            <option value="1">1er Semestre</option>
-            <option value="2">2ème Semestre</option>
-          </select>
-        </div>
-
-        <!-- Année scolaire -->
-        <div class="form-group">
-          <label>Année scolaire <span class="required">*</span></label>
-          <input
-            type="text"
-            class="form-control"
-            [(ngModel)]="absenceForm.anneeScolaire"
-            readonly
-            disabled
-          />
-        </div>
-
-        <!-- Statut absence (justifiée / non justifiée) -->
-        <div class="form-group">
-          <label>Statut <span class="required">*</span></label>
-          <div class="radio-group">
-            <label class="radio-label">
-              <input type="radio" [value]="true" [(ngModel)]="absenceForm.justifiee" />
-              <span>✅ Justifiée</span>
-            </label>
-            <label class="radio-label">
-              <input type="radio" [value]="false" [(ngModel)]="absenceForm.justifiee" />
-              <span>❌ Non justifiée</span>
-            </label>
-          </div>
-        </div>
-
-        <!-- Motif -->
-        <div class="form-group">
-          <label>Motif de l'absence <span class="required">*</span></label>
-          <textarea
-            class="form-control"
-            rows="3"
-            [(ngModel)]="absenceForm.motif"
-            placeholder="Ex: Maladie, Rendez-vous médical, Convocation familiale, Retard..."
-          ></textarea>
-        </div>
-      </div>
-
-      <div class="modal-footer">
-        <button class="btn-secondary" (click)="fermerFormulaireAbsence()">Annuler</button>
-        <button class="btn-primary" (click)="sauvegarderAbsence()">💾 Enregistrer l'absence</button>
-      </div>
-    </div>
-  </div>
-}
-
-<!-- Popup Création Évaluation -->
-@if (showEvaluationModal()) {
-  <div class="modal-overlay" (click)="fermerEvaluationModal()">
-    <div class="modal-container modal-evaluation" (click)="$event.stopPropagation()">
-      <div class="modal-header">
-        <h3>
-          <i class="fas fa-plus-circle"></i>
-          ➕ Créer une évaluation
-        </h3>
-        <button class="modal-close" (click)="fermerEvaluationModal()">✕</button>
-      </div>
-
-      <div class="modal-body">
-        <!-- Ligne 1: Titre -->
-        <div class="form-group">
-          <label class="form-label"> Titre de l'évaluation <span class="required">*</span> </label>
-          <input
-            type="text"
-            class="form-control"
-            [(ngModel)]="evaluationForm.titre"
-            placeholder="Ex: Devoir sur le théorème de Pythagore"
-          />
-        </div>
-
-        <!-- Ligne 2: Type + Mode (2 colonnes) -->
-        <div class="row-2cols">
-          <div class="form-group">
-            <label class="form-label"> Type d'évaluation <span class="required">*</span> </label>
-            <select class="form-select" [(ngModel)]="evaluationForm.type">
-              <option value="" disabled selected>— Sélectionnez un type —</option>
-              @for (type of typesEvaluation; track type) {
-                <option [value]="type">{{ type }}</option>
-              }
-            </select>
-          </div>
-
-          <div class="form-group">
-            <label class="form-label"> Mode évaluation <span class="required">*</span> </label>
-            <select class="form-select" [(ngModel)]="evaluationForm.mode">
-              <option value="" disabled selected>— Sélectionnez un mode —</option>
-              @for (mode of modesEvaluation; track mode) {
-                <option [value]="mode">{{ mode }}</option>
-              }
-            </select>
-          </div>
-        </div>
-
-        <!-- Ligne 3: Date + Heure début + Heure fin (3 colonnes) -->
-        <div class="row-3cols">
-          <div class="form-group">
-            <label class="form-label"> Date <span class="required">*</span> </label>
-            <input type="date" class="form-control" [(ngModel)]="evaluationForm.date" />
-          </div>
-
-          <div class="form-group">
-            <label class="form-label"> Heure début <span class="required">*</span> </label>
-            <input type="time" class="form-control" [(ngModel)]="evaluationForm.heureDebut" />
-          </div>
-
-          <div class="form-group">
-            <label class="form-label"> Heure fin <span class="required">*</span> </label>
-            <input type="time" class="form-control" [(ngModel)]="evaluationForm.heureFin" />
-          </div>
-        </div>
-
-        <!-- Ligne 5: Description -->
-        <div class="form-group">
-          <label class="form-label">Description</label>
-          <textarea
-            class="form-control"
-            rows="3"
-            [(ngModel)]="evaluationForm.description"
-            placeholder="Décrivez l'évaluation (chapitres couverts, durée, consignes...)"
-          ></textarea>
-        </div>
-
-        <!-- Ligne 6: Upload fichier -->
-        <div class="form-group">
-          <label class="form-label"> Fichier joint (PDF, Image, Document) </label>
-          <div class="file-upload-area">
-            <div class="file-upload" (click)="fileInput.click()">
-              <i class="fas fa-cloud-upload-alt"></i>
-              <span>Cliquez pour uploader un fichier</span>
-              <span class="file-hint">PDF, JPG, PNG, DOC - Max 5MB</span>
-            </div>
-            <input
-              type="file"
-              #fileInput
-              id="fichierEvaluation"
-              (change)="onFileSelected($event)"
-              accept=".pdf,.jpg,.jpeg,.png,.doc,.docx"
-              hidden
-            />
-
-            @if (evaluationForm.fichier) {
-              <div class="file-info">
-                <i class="fas fa-file-alt"></i>
-                <span>{{ evaluationForm.fichier.name }}</span>
-                <button class="remove-file" (click)="supprimerFichier()">✕</button>
-              </div>
-            }
-          </div>
-        </div>
-      </div>
-
-      <div class="modal-footer">
-        <button class="btn-secondary" (click)="fermerEvaluationModal()">Annuler</button>
-        <button class="btn-primary" (click)="sauvegarderEvaluation()">
-          <i class="fas fa-save"></i> Créer l'évaluation
-        </button>
-      </div>
-    </div>
-  </div>
-}
-
-<!-- Popup Création Exercice -->
-@if (showExerciceModal()) {
-  <div class="modal-overlay" (click)="fermerExerciceModal()">
-    <div class="modal-container modal-exercice" (click)="$event.stopPropagation()">
-      <div class="modal-header">
-        <h3>
-          <i class="fas fa-tasks"></i>
-          ✏️ Créer un exercice
-        </h3>
-        <button class="modal-close" (click)="fermerExerciceModal()">✕</button>
-      </div>
-
-      <div class="modal-body">
-        <!-- Ligne 1: Titre -->
-        <div class="form-group">
-          <label class="form-label"> Titre de l'exercice <span class="required">*</span> </label>
-          <input
-            type="text"
-            class="form-control"
-            [(ngModel)]="exerciceForm.titre"
-            placeholder="Ex: Exercices sur les équations"
-          />
-        </div>
-
-        <!-- Ligne 2: Livre au programme -->
-        <!--   <div class="form-group">
-          <label class="form-label"> Livre au programme </label>
-          <select class="form-select" [(ngModel)]="exerciceForm.livreChoisi">
-            <option value="" selected>— Aucun livre —</option>
-            @for (livre of livresProgramme; track livre) {
-              <option [value]="livre">{{ livre }}</option>
-            }
-          </select>
-        </div> -->
-
-        <!-- Ligne 3: Numéro exercice + Lien (2 colonnes) -->
-        <div class="row-2cols">
-          <div class="form-group">
-            <label class="form-label"> Numéro de l'exercice </label>
-            <input
-              type="text"
-              class="form-control"
-              [(ngModel)]="exerciceForm.numeroExercice"
-              placeholder="Ex: 12, 15a, 23-27"
-            />
-          </div>
-
-          <div class="form-group">
-            <label class="form-label"> Lien (URL) </label>
-            <input
-              type="url"
-              class="form-control"
-              [(ngModel)]="exerciceForm.lien"
-              placeholder="https://..."
-            />
-          </div>
-        </div>
-
-        <!-- Ligne 4: Date début + Date fin (2 colonnes) -->
-        <div class="row-2cols">
-          <div class="form-group">
-            <label class="form-label"> Date de début <span class="required">*</span> </label>
-            <input type="date" class="form-control" [(ngModel)]="exerciceForm.dateDebut" />
-          </div>
-
-          <div class="form-group">
-            <label class="form-label"> Date de fin <span class="required">*</span> </label>
-            <input type="date" class="form-control" [(ngModel)]="exerciceForm.dateFin" />
-          </div>
-        </div>
-
-        <!-- Ligne 5: Description -->
-        <div class="form-group">
-          <label class="form-label">Description</label>
-          <textarea
-            class="form-control"
-            rows="3"
-            [(ngModel)]="exerciceForm.description"
-            placeholder="Décrivez l'exercice (objectifs, consignes, compétences travaillées...)"
-          ></textarea>
-        </div>
-
-        <!-- Ligne 6: Pièce jointe -->
-        <div class="form-group">
-          <label class="form-label"> Pièce jointe (PDF, Image, Document) </label>
-          <div class="file-upload-area">
-            <div class="file-upload" (click)="pieceJointeInput.click()">
-              <i class="fas fa-paperclip"></i>
-              <span>Cliquez pour joindre un fichier</span>
-              <span class="file-hint">PDF, JPG, PNG, DOC - Max 5MB</span>
-            </div>
-            <input
-              type="file"
-              #pieceJointeInput
-              id="pieceJointeExercice"
-              (change)="onPieceJointeSelected($event)"
-              accept=".pdf,.jpg,.jpeg,.png,.doc,.docx"
-              hidden
-            />
-
-            @if (exerciceForm.pieceJointe) {
-              <div class="file-info">
-                <i class="fas fa-file-alt"></i>
-                <span>{{ exerciceForm.pieceJointe.name }}</span>
-                <button class="remove-file" (click)="supprimerPieceJointe()">✕</button>
-              </div>
-            }
-          </div>
-        </div>
-      </div>
-
-      <div class="modal-footer">
-        <button class="btn-secondary" (click)="fermerExerciceModal()">Annuler</button>
-        <button class="btn-primary" (click)="sauvegarderExercice()">
-          <i class="fas fa-save"></i> Créer l'exercice
-        </button>
-      </div>
-    </div>
-  </div>
-}
