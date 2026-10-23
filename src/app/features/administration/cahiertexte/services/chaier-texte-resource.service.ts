@@ -10,6 +10,8 @@ import { EntreeCahierTextePageResponse } from '../../../../core/models/cahier-te
 import { EntreeCahierTexteResponse } from '../../../../core/models/cahier-texte/entrees-cahiers-textes-responses.model';
 import { FaireAppelRequest } from '../../../../core/models/dossiereleve/absence/faire-appel-request';
 import { ResponseMessage } from '../../../../core/response/response-message';
+import { CahierDeTexteDetailsResponse } from '../../../../core/models/cahier-texte/cahier-texte-details-response.model';
+import { CahierDeTexteResponse } from '../../../../core/models/cahier-texte/cahier-texte-response.model';
 
 @Injectable({
   providedIn: 'root'
@@ -33,17 +35,37 @@ export class CahierTexteResourceService {
     );
   }
 
+  getDetailsCahierTexte(cahierTexteId: number, dateDebut: string, dateFin: string, page: number = 0, size: number = 100): Observable<CahierDeTexteDetailsResponse> {
+    const params = new HttpParams()
+      .set('dateDebut', dateDebut)
+      .set('dateFin', dateFin)
+      .set('page', page.toString())
+      .set('size', size.toString());
+    return this.http.get<CahierDeTexteDetailsResponse>(`${this.baseUrl_1}/cahier-texte/${cahierTexteId}/details`, { params });
+  }
+
   getEntreeCahierTexteByCahierText(cahierTexteId: number, dateDebut: string, dateFin: string, page: number = 0, size: number = 20): Observable<EntreeCahierTextePageResponse> {
     let params = new HttpParams()
       .set('dateDebut', dateDebut)
       .set('dateFin', dateFin)
       .set('page', page.toString())
       .set('size', size.toString());
-
     return this.http.get<EntreeCahierTextePageResponse>(
       `${this.baseUrl_1}/cahier-texte/${cahierTexteId}/entrees`,
       { params }
     );
+  }
+
+  publierCahierDeTexte(cahierTexteId: number): Observable<CahierDeTexteResponse> {
+    return this.http.patch<any>(`${this.baseUrl_1}/cahier-texte/${cahierTexteId}/publier`, {});
+  }
+
+  dePublierCahierDeTexte(cahierTexteId: number): Observable<CahierDeTexteResponse> {
+    return this.http.patch<any>(`${this.baseUrl_1}/cahier-texte/${cahierTexteId}/depublier`, {});
+  }
+
+  cloturerCahierDeTexte(cahierTexteId: number): Observable<CahierDeTexteResponse> {
+    return this.http.patch<any>(`${this.baseUrl_1}/cahier-texte/${cahierTexteId}/cloturer`, {});
   }
 
   createEntree(request: EntreeCahierTexteRequest): Observable<EntreeCahierTexteResponse> {
