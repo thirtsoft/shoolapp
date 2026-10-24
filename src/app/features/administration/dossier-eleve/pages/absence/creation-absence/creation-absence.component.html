@@ -11,37 +11,45 @@
       </div>
     </div>
 
-    <div class="row mb-3">
-      <div class="col-sm-12">
+    <div class="absence-badge-row">
+      <div class="absence-badge-left">
         <div class="badge-container">
           <span class="badge badge-primary">
             @if (!attendanceRecordId) {
-              <i class="fas fa-plus-circle me-1"></i> Nouvelle absence
+              <i class="fas fa-plus-circle me-1"></i>
+              Nouvelle absence
             } @else {
-              <i class="fas fa-edit me-1"></i> Modification absence
+              <i class="fas fa-edit me-1"></i>
+              Modification absence
             }
           </span>
         </div>
       </div>
-    </div>
 
+      <div class="absence-badge-right">
+        <button type="button" class="btn-back" (click)="goBack()">
+          <i class="fas fa-arrow-left me-1"></i>
+          Retour
+        </button>
+      </div>
+    </div>
     <div class="row">
       <div class="col-12">
         <div class="card">
           <div class="card-body p-4 p-md-5">
-            <div class="step-indicator">
-              <button type="button" class="btn btn-outline-secondary btn-back" (click)="goBack()">
-                <i class="fas fa-arrow-left"></i>
-                Retour
-              </button>
-              <div class="step active">
-                <span class="step-number">1</span>
-                <span class="step-label">Information</span>
-              </div>
-              <div class="step-line"></div>
-              <div class="step">
-                <span class="step-number">2</span>
-                <span class="step-label">Confirmation</span>
+            <div class="step-indicator-wrapper">
+              <div class="step-indicator">
+                <div class="step active">
+                  <span class="step-number">1</span>
+                  <span class="step-label">Information</span>
+                </div>
+
+                <div class="step-line"></div>
+
+                <div class="step">
+                  <span class="step-number">2</span>
+                  <span class="step-label">Confirmation</span>
+                </div>
               </div>
             </div>
 
@@ -104,19 +112,23 @@
                     </div>
 
                     <div class="retard-fields">
-                      <div class="form-group">
+                      <!-- Cours -->
+                      <div class="form-group retard-course">
                         <label class="form-label">
                           Cours <span class="text-danger">*</span>
                           <i class="fas fa-book ms-1 text-muted"></i>
                         </label>
+
                         <select class="form-select" formControlName="courseId" required>
                           <option value="" disabled selected>— Sélectionnez un cours —</option>
+
                           @for (item of coursList; track item.id) {
                             <option [ngValue]="item.id">
                               {{ item.libelle }}
                             </option>
                           }
                         </select>
+
                         @if (
                           attendanceRecordFormGroup.get('courseId')?.invalid &&
                           attendanceRecordFormGroup.get('courseId')?.touched
@@ -127,48 +139,61 @@
                         }
                       </div>
 
-                      <div class="form-group">
-                        <label class="form-label">
-                          Heure prévue (début du cours) <span class="text-danger">*</span>
-                          <i class="fas fa-clock ms-1 text-muted"></i>
-                        </label>
-                        <input
-                          type="time"
-                          class="form-control"
-                          formControlName="expectedTime"
-                          (change)="calculateLateMinutes()"
-                        />
-                      </div>
+                      <!-- Bloc des horaires -->
+                      <div class="retard-times">
+                        <!-- Heure prévue -->
+                        <div class="form-group">
+                          <label class="form-label">
+                            Heure prévue
+                            <span class="text-danger">*</span>
+                            <i class="fas fa-clock ms-1 text-muted"></i>
+                          </label>
 
-                      <div class="form-group">
-                        <label class="form-label">
-                          Heure d'arrivée réelle <span class="text-danger">*</span>
-                          <i class="fas fa-clock ms-1 text-muted"></i>
-                        </label>
-                        <input
-                          type="time"
-                          class="form-control"
-                          formControlName="arrivalTime"
-                          (change)="calculateLateMinutes()"
-                        />
-                      </div>
+                          <input
+                            type="time"
+                            class="form-control"
+                            formControlName="expectedTime"
+                            (change)="calculateLateMinutes()"
+                          />
 
-                      <div class="form-group">
-                        <label class="form-label">
-                          Minutes de retard
-                          <i class="fas fa-hourglass-half ms-1 text-muted"></i>
-                        </label>
-                        <input
-                          type="number"
-                          class="form-control"
-                          formControlName="lateMinutes"
-                          readonly
-                          [class.is-invalid]="lateMinutes > 0 && !isRetardJustifie()"
-                        />
-                        <small class="text-muted">Calculé automatiquement</small>
+                          <small class="text-muted"> Début du cours </small>
+                        </div>
+
+                        <!-- Heure d'arrivée -->
+                        <div class="form-group">
+                          <label class="form-label">
+                            Heure d'arrivée réelle
+                            <span class="text-danger">*</span>
+                            <i class="fas fa-clock ms-1 text-muted"></i>
+                          </label>
+
+                          <input
+                            type="time"
+                            class="form-control"
+                            formControlName="arrivalTime"
+                            (change)="calculateLateMinutes()"
+                          />
+                        </div>
+
+                        <!-- Minutes de retard -->
+                        <div class="form-group">
+                          <label class="form-label">
+                            Minutes de retard
+                            <i class="fas fa-hourglass-half ms-1 text-muted"></i>
+                          </label>
+
+                          <input
+                            type="number"
+                            class="form-control"
+                            formControlName="lateMinutes"
+                            readonly
+                            [class.is-invalid]="lateMinutes > 0 && !isRetardJustifie()"
+                          />
+
+                          <small class="text-muted"> Calculé automatiquement </small>
+                        </div>
                       </div>
                     </div>
-
                     <div class="form-group">
                       <label class="form-label">
                         Motif <span class="text-danger">*</span>
@@ -230,9 +255,11 @@
                         <i class="fas fa-check-circle ms-1 text-muted"></i>
                       </label>
                       <select class="form-select" formControlName="justified" required>
-                        <option value="" disabled selected>— Sélectionnez —</option>
-                        <option value="true">Justifiée</option>
-                        <option value="false">Non justifiée</option>
+                        <option [ngValue]="null" disabled>— Sélectionnez —</option>
+
+                        <option [ngValue]="true">Justifiée</option>
+
+                        <option [ngValue]="false">Non justifiée</option>
                       </select>
                     </div>
 
