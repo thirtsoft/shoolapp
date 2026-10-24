@@ -500,7 +500,7 @@
                               <div class="icon-position left">
                                 @if (
                                   isEditIcon &&
-                                  row.isEditIcone !== false &&
+                                  row.isEditIcone !== false ||
                                   row.etat === 'Brouillon'
                                 ) {
                                   <button
@@ -593,7 +593,7 @@
                               <div class="icon-position center">
                                 @if (
                                   isLockableIcon &&
-                                  row.isLocakableIcone !== false &&
+                                  row.isLocakableIcone !== false ||
                                   row.etat === 'Brouillon'
                                 ) {
                                   <button

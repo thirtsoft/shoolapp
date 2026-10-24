@@ -568,7 +568,7 @@
                             <div class="icon-position left">
                               @if (
                                 isEditIcon &&
-                                showEditOrDeleteCondition(row) &&
+                                showEditOrDeleteCondition(row) || 
                                 row.etat === 'Brouillon'
                               ) {
                                 <button
@@ -698,7 +698,7 @@
                             <div class="icon-position right">
                               @if (
                                 isLockableIcon &&
-                                showEditOrDeleteCondition(row) &&
+                                showEditOrDeleteCondition(row) ||
                                 row.etat === 'Brouillon'
                               ) {
                                 <button

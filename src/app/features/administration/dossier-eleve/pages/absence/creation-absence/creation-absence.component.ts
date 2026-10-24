@@ -1,21 +1,20 @@
 import { Component, DestroyRef, inject, OnInit } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
-import { AttendanceSource } from '../../../../../../core/enumeration/type-signalement';
 import { AttendanceRecord } from '../../../../../../core/models/dossiereleve/absence/attendanceRecordedit';
 import { ListeEleve } from '../../../../../../core/models/dossiereleve/liste-eleve';
 import { ListeCours } from '../../../../../../core/models/planification/liste-cours';
 import { AnneeScolaire } from '../../../../../../core/models/referentiels/annee-scolaire';
 import { ListeClasse } from '../../../../../../core/models/referentiels/classe';
-import { Utilisateur } from '../../../../../../core/models/utilisateur/utilisateur';
+import { SessionSemestre } from '../../../../../../core/models/referentiels/session-semestre';
 import { LocalStorageService } from '../../../../../../core/services/local-storage.service';
 import { PlanificationResourceService } from '../../../../planification/services/planification-resource.service';
+import { ReferentielResourceService } from '../../../../referentiel/service/referentiel-resource.service';
 import { UtilisateurService } from '../../../../utilisateur/service/utilisateur.service';
 import { DossierResourceService } from '../../../service/dossier-resource.service';
-import { SessionSemestre } from '../../../../../../core/models/referentiels/session-semestre';
-import { ReferentielResourceService } from '../../../../referentiel/service/referentiel-resource.service';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+
 
 @Component({
   selector: 'app-creation-absence',
@@ -27,210 +26,289 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 export class CreationAbsenceComponent implements OnInit {
 
   errorMessage?: string;
+
   attendanceRecordFormGroup!: FormGroup;
+
   attendanceRecord?: any;
   attendanceRecordId?: number;
-  eleveId?: number;
+
   anneeScolaireList: AnneeScolaire[] = [];
   sessionSemestreList: SessionSemestre[] = [];
   eleveList: ListeEleve[] = [];
   classeList: ListeClasse[] = [];
-  coursList: ListeCours[] = [];
   allClassesList: ListeClasse[] = [];
-  selectedClass: any;
+  coursList: ListeCours[] = [];
 
-  attendanceStatusList: string[] = ['ABSENCE', 'RETARD', 'EXCLUSION', 'JUSTIFICATION', 'MALADIE'];
+  attendanceStatusList: string[] = ['PRESENCE', 'ABSENCE', 'RETARD', 'EXCLUSION',];
 
-  lateMinutes?: any;
+  lateMinutes = 0;
 
-  ecoleId: any;
-
-  userId?: number;
-
-  utilisateur: Utilisateur = {};
-
-  title = "Ajouter une absence";
+  title = 'Ajouter une absence';
 
   private readonly dossierResource = inject(DossierResourceService);
   private readonly coursService = inject(PlanificationResourceService);
-  private readonly utilisateurService = inject(UtilisateurService);
   private readonly router = inject(Router);
   private readonly toastService = inject(ToastrService);
-  private readonly _formBuilder = inject(FormBuilder);
+  private readonly formBuilder = inject(FormBuilder);
   private readonly activeRoute = inject(ActivatedRoute);
-  private readonly localStorage = inject(LocalStorageService);
   private readonly destroyRef = inject(DestroyRef);
   private readonly referentielResourceService = inject(ReferentielResourceService);
 
   ngOnInit(): void {
-    this.attendanceRecordId = this.activeRoute.snapshot.params['id'];
-    this.userId = this.localStorage.getItem('id');
-    this.eleveId = this.localStorage.getItem('eleveId')!;
-
-    this.chargerLesDonnees();
+    const id = this.activeRoute.snapshot.params['id'];
+    this.attendanceRecordId = id ? Number(id) : undefined;
     this.initializeForm(null);
-
     this.setupAttendanceStatusListener();
-
-    if (this.attendanceRecordId != null && this.attendanceRecordId != undefined) {
-      this.getAttendanceRecordById(this.attendanceRecordId, AttendanceSource.ADMIN);
+    this.chargerLesDonnees();
+    if (this.attendanceRecordId != null) {
       this.title = 'Modifier la déclaration absence';
+      this.getAttendanceRecordById(this.attendanceRecordId);
     }
   }
 
-  private chargerLesDonnees() {
-    this.utilisateurService.getUtilisateur(this.userId!).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
-      next: (data: any) => {
-        this.utilisateur = data;
-      }
-    });
-
-    this.referentielResourceService.getResourceList('sessionsemestre').pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
-      next: (data: any) => {
-        this.sessionSemestreList = data;
-      }
-    });
-
-    this.referentielResourceService.getResourceList('classe').pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
-      next: (data: any) => this.classeList = data
-    });
-
-    this.referentielResourceService.getResourceList('anneescolaire').pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
-      next: (data: any) => this.anneeScolaireList = data
-    });
-  }
-
-  getCoursList(classId: number) {
-    this.coursService.getListeCoursByClasse(classId).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
-      next: (data: any) => this.coursList = data
-    });
-  }
-
-  onClasseSelected() {
-    const classId = this.attendanceRecordFormGroup.get('classId')?.value;
-    if (classId) {
-      this.getEleveList(classId);
-      this.getCoursList(classId);
-    }
-  }
-
-  getEleveList(classId: number) {
-    this.dossierResource.getResourceListByElement('inscription/classe', classId).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
-      next: (data: any) => this.eleveList = data
-    });
-  }
-
-
-  setupAttendanceStatusListener() {
-    this.attendanceRecordFormGroup.get('attendanceStatus')?.valueChanges.subscribe((status) => {
-      if (status === 'RETARD') {
-        this.attendanceRecordFormGroup.get('courseId')?.setValidators([Validators.required]);
-        this.attendanceRecordFormGroup.get('expectedTime')?.setValidators([Validators.required]);
-        this.attendanceRecordFormGroup.get('arrivalTime')?.setValidators([Validators.required]);
-      } else {
-        this.attendanceRecordFormGroup.get('courseId')?.clearValidators();
-        this.attendanceRecordFormGroup.get('expectedTime')?.clearValidators();
-        this.attendanceRecordFormGroup.get('arrivalTime')?.clearValidators();
-
-        if (status !== 'RETARD') {
-          this.attendanceRecordFormGroup.patchValue({
-            courseId: null,
-            expectedTime: null,
-            arrivalTime: null,
-            lateMinutes: null
-          });
+  private chargerLesDonnees(): void {
+    this.referentielResourceService
+      .getResourceList('sessionsemestre')
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: (data: any[]) => {
+          this.sessionSemestreList = data;
         }
-      }
-      this.attendanceRecordFormGroup.get('courseId')?.updateValueAndValidity();
-      this.attendanceRecordFormGroup.get('expectedTime')?.updateValueAndValidity();
-      this.attendanceRecordFormGroup.get('arrivalTime')?.updateValueAndValidity();
+      });
+
+    this.referentielResourceService
+      .getResourceList('classe')
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: (data: any[]) => {
+          this.classeList = data;
+        }
+      });
+
+    this.referentielResourceService
+      .getResourceList('anneescolaire')
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: (data: any[]) => {
+          this.anneeScolaireList = data;
+        }
+      });
+  }
+
+  onClasseSelected(): void {
+    const classId = this.attendanceRecordFormGroup.get('classId')?.value;
+    if (!classId) {
+      this.eleveList = [];
+      this.coursList = [];
+
+      this.attendanceRecordFormGroup.patchValue({
+        eleveId: null,
+        courseId: null
+      });
+
+      return;
+    }
+
+    this.getEleveList(Number(classId));
+    this.getCoursList(Number(classId));
+  }
+
+  private getEleveList(classId: number): void {
+
+    this.dossierResource.getResourceListByElement('inscription/classe', classId)
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: (data: any[]) => {
+          this.eleveList = data;
+        },
+        error: () => {
+          this.eleveList = [];
+          this.toastService.error(
+            'Erreur',
+            'Impossible de charger les élèves de la classe.'
+          );
+        }
+      });
+  }
+
+  private getCoursList(classId: number): void {
+    this.coursService
+      .getListeCoursByClasse(classId)
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: (data: ListeCours[]) => {
+          this.coursList = data;
+        },
+        error: () => {
+          this.coursList = [];
+          this.toastService.error(
+            'Erreur',
+            'Impossible de charger les cours de la classe.'
+          );
+        }
+      });
+  }
+
+  private initializeForm(absence: AttendanceRecord | null): void {
+    this.attendanceRecordFormGroup = this.formBuilder.group({
+      id: [absence?.id ?? null],
+      eleveId: [absence?.eleveId ?? null, Validators.required],
+      sessionSemestre: [absence?.sessionSemestre ?? null, Validators.required],
+      anneeScolaireId: [absence?.anneeScolaireId ?? null, Validators.required],
+      courseId: [absence?.courseId ?? null],
+      justificationReason: [absence?.justificationReason ?? ''],
+      attendanceDate: [absence?.attendanceDate ?? null, Validators.required],
+      classId: [absence?.classId ?? null, Validators.required],
+      attendanceStatus: [absence?.attendanceStatus ?? null, Validators.required],
+      justified: [absence?.justified ?? null, Validators.required],
+      expectedTime: [absence?.expectedTime ?? null],
+      arrivalTime: [absence?.arrivalTime ?? null],
+      lateMinutes: [absence?.lateMinutes ?? null]
     });
   }
 
-  calculateLateMinutes() {
+  private setupAttendanceStatusListener(): void {
+    this.attendanceRecordFormGroup
+      .get('attendanceStatus')
+      ?.valueChanges
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe((status: string) => {
+
+        const courseControl = this.attendanceRecordFormGroup.get('courseId');
+        const expectedTimeControl = this.attendanceRecordFormGroup.get('expectedTime');
+        const arrivalTimeControl = this.attendanceRecordFormGroup.get('arrivalTime');
+
+        if (status === 'RETARD') {
+          courseControl?.setValidators([Validators.required]);
+          expectedTimeControl?.setValidators([Validators.required]);
+          arrivalTimeControl?.setValidators([Validators.required]);
+
+        } else {
+          courseControl?.clearValidators();
+          expectedTimeControl?.clearValidators();
+          arrivalTimeControl?.clearValidators();
+          this.attendanceRecordFormGroup.patchValue(
+            {
+              courseId: null,
+              expectedTime: null,
+              arrivalTime: null,
+              lateMinutes: null
+            },
+            {
+              emitEvent: false
+            }
+          );
+
+          this.lateMinutes = 0;
+        }
+
+        courseControl?.updateValueAndValidity();
+        expectedTimeControl?.updateValueAndValidity();
+        arrivalTimeControl?.updateValueAndValidity();
+      });
+  }
+
+  calculateLateMinutes(): void {
     const expectedTime = this.attendanceRecordFormGroup.get('expectedTime')?.value;
     const arrivalTime = this.attendanceRecordFormGroup.get('arrivalTime')?.value;
 
-    if (expectedTime && arrivalTime) {
-      const [expectedHour, expectedMinute] = expectedTime.split(':').map(Number);
-      const [arrivalHour, arrivalMinute] = arrivalTime.split(':').map(Number);
+    if (!expectedTime || !arrivalTime) {
+      this.lateMinutes = 0;
+      return;
+    }
 
-      const expectedTotalMinutes = expectedHour * 60 + expectedMinute;
-      const arrivalTotalMinutes = arrivalHour * 60 + arrivalMinute;
+    const [expectedHour, expectedMinute] = expectedTime.split(':').map(Number);
+    const [arrivalHour, arrivalMinute] = arrivalTime.split(':').map(Number);
+    const expectedTotalMinutes = expectedHour * 60 + expectedMinute;
+    const arrivalTotalMinutes = arrivalHour * 60 + arrivalMinute;
+    const difference = arrivalTotalMinutes - expectedTotalMinutes;
 
-      this.lateMinutes = arrivalTotalMinutes - expectedTotalMinutes;
-
-      if (this.lateMinutes < 0) {
-        this.lateMinutes += 24 * 60;
+    if (difference < 0) {
+      this.lateMinutes = 0;
+      this.attendanceRecordFormGroup.patchValue(
+        {
+          lateMinutes: 0
+        },
+        {
+          emitEvent: false
+        }
+      );
+      this.toastService.warning(
+        'Attention',
+        "L'heure d'arrivée ne peut pas être avant l'heure prévue."
+      );
+      return;
+    }
+    this.lateMinutes = difference;
+    this.attendanceRecordFormGroup.patchValue(
+      {
+        lateMinutes: difference
+      },
+      {
+        emitEvent: false
       }
-
-      if (this.lateMinutes < 0) {
-        this.lateMinutes = 0;
-        this.toastService.warning('Attention', "L'heure d'arrivée ne peut pas être avant l'heure prévue");
-      }
-
-      this.attendanceRecordFormGroup.patchValue({
-        lateMinutes: this.lateMinutes
-      });
-
-      if (this.lateMinutes > 60) {
-        this.toastService.info('Information', `Retard de ${this.lateMinutes} minutes, considéré comme demi-absence`);
-      }
+    );
+    if (difference > 60) {
+      this.toastService.info(
+        'Information',
+        `Retard de ${difference} minutes, considéré comme demi-absence.`
+      );
     }
   }
 
   isRetardJustifie(): boolean {
-    const lateMinutes = this.attendanceRecordFormGroup.get('lateMinutes')?.value;
+    const lateMinutes = Number(this.attendanceRecordFormGroup.get('lateMinutes')?.value ?? 0);
     const justified = this.attendanceRecordFormGroup.get('justified')?.value;
-    if (lateMinutes > 30 && !justified) {
-      return false;
-    }
-    return true;
+    return !(lateMinutes > 30 && !justified);
   }
 
-  initializeForm(absence: AttendanceRecord | null) {
-    this.attendanceRecordFormGroup = this._formBuilder.group({
-      id: [absence?.id ? absence.id : ''],
-      eleveId: [absence?.eleveId ?? '', Validators.required],
-      sessionSemestre: [absence?.sessionSemestre ?? '', Validators.required],
-      anneeScolaireId: [absence?.anneeScolaireId ?? '', Validators.required],
-      courseId: [absence?.courseId ?? ''],
-      justificationReason: [absence?.justificationReason ??''],
-      attendanceDate: [absence?.attendanceDate ?? ''],
-      classId: [absence?.classId ??'', Validators.required],
-      attendanceStatus: [absence?.attendanceStatus ?? '', Validators.required],
-      justified: [absence?.justified ?? '', Validators.required],
-      expectedTime: [absence?.expectedTime ?? ''],
-      arrivalTime: [absence?.arrivalTime ?? ''],
-      lateMinutes: [absence?.lateMinutes ?? ''],
-    })
-  }
+  private getAttendanceRecordById(absenceId: number): void {
+    this.coursService
+      .getSingleResource(
+        'attendancerecord',
+        absenceId
+      )
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
 
-  getAttendanceRecordById(absenceId: number, source: string) {
-    this.coursService.getSingleResourceAttendRecordByMultiplesParameters('attendancerecord', absenceId, source).subscribe({
-      next: (data: any) => {
-        this.attendanceRecord = data;
-        let recordData;
-        if (this.attendanceRecord.source === 'ADMINISTRATION') {
-          recordData = this.attendanceRecord.attendanceRecordEditAdminDTO;
-        } else {
-          recordData = this.attendanceRecord.attendanceRecordAddEditDTO;
-        }
+        next: (data: any) => {
 
-        if (recordData) {
+          this.attendanceRecord = data;
+
+          const recordData =
+            data.attendanceRecordEditAdminDTO ??
+            data.attendanceRecordAddEditDTO ??
+            data;
+
+          if (!recordData) {
+            this.toastService.error(
+              'Erreur',
+              'Les données de l’absence sont introuvables.'
+            );
+            return;
+          }
+
           this.fillFormWithData(recordData);
 
           this.loadRequiredLists(recordData);
+        },
+
+        error: (error: any) => {
+
+          console.error(
+            'Erreur lors du chargement de l’absence :',
+            error
+          );
+
+          this.toastService.error(
+            'Erreur',
+            "Impossible de charger les données de l'absence."
+          );
         }
-      },
-      error: (error: any) => {
-        console.error('Erreur lors du chargement:', error);
-        this.toastService.error('Erreur', 'Impossible de charger les données de l\'absence');
-      }
-    });
+      });
   }
 
-  fillFormWithData(recordData: any) {
+  private fillFormWithData(recordData: any): void {
     this.attendanceRecordFormGroup.patchValue({
       id: recordData.id,
       eleveId: recordData.eleveId,
@@ -238,82 +316,137 @@ export class CreationAbsenceComponent implements OnInit {
       anneeScolaireId: recordData.anneeScolaireId,
       sessionSemestre: recordData.sessionSemestre,
       attendanceStatus: recordData.status,
-      justificationReason: recordData.justificationReason || '',
-      justified: recordData.justified ? 'true' : 'false',
+      justificationReason: recordData.justificationReason ?? '',
+      justified: recordData.justified ?? null,
       attendanceDate: recordData.attendanceDate,
-      courseId: recordData.courseId || null,
-      expectedTime: recordData.expectedTime || null,
-      arrivalTime: recordData.arrivalTime || null,
-      lateMinutes: recordData.lateMinutes || null
+      courseId: recordData.courseId ?? null,
+      expectedTime: recordData.expectedTime ?? null,
+      arrivalTime: recordData.arrivalTime ?? null,
+      lateMinutes: recordData.lateMinutes ?? null
     });
-
-    if (recordData.status === 'RETARD' && recordData.expectedTime && recordData.arrivalTime) {
-      setTimeout(() => {
-        this.calculateLateMinutes();
-      }, 100);
+    if (recordData.classeId) {
+      this.getEleveList(recordData.classeId);
+      this.getCoursList(recordData.classeId);
+    }
+    if (
+      recordData.status === 'RETARD' &&
+      recordData.expectedTime &&
+      recordData.arrivalTime
+    ) {
+      setTimeout(() => { this.calculateLateMinutes(); });
     }
   }
 
-  loadRequiredLists(recordData: any) {
+  private loadRequiredLists(recordData: any): void {
     if (recordData.toutesLesClasses && recordData.toutesLesClasses.length > 0) {
       this.allClassesList = recordData.toutesLesClasses;
       this.classeList = recordData.toutesLesClasses;
     }
-
     if (recordData.classeId && recordData.elevesDeLaClasse) {
-      this.eleveList = recordData.elevesDeLaClasse.map((eleve: any) => ({
-        id: eleve.id,
-        eleve: eleve.id,
-        nomEleve: eleve.nom,
-        prenomEleve: eleve.prenom,
-        matricule: eleve.matricule
-      }));
+      this.eleveList = recordData.elevesDeLaClasse.map(
+        (eleve: any) => ({
+          id: eleve.id,
+          eleve: eleve.id,
+          nomEleve: eleve.nom,
+          prenomEleve: eleve.prenom,
+          matricule: eleve.matricule
+        })
+      );
     }
-
     if (recordData.classeId && recordData.coursDeLaClasse) {
       this.coursList = recordData.coursDeLaClasse;
     }
-
-    if (recordData.eleveId) {
-      this.attendanceRecordFormGroup.patchValue({
-        eleveId: recordData.eleveId
-      });
-    }
   }
 
+  ajouterEditAbsence(): void {
+    if (this.attendanceRecordFormGroup.invalid) {
+      this.attendanceRecordFormGroup.markAllAsTouched();
+      this.toastService.warning(
+        'Attention',
+        'Veuillez renseigner tous les champs obligatoires.'
+      );
+      return;
+    }
 
-  ajouterEditAbsence() {
-    const payload: AttendanceRecord = this.attendanceRecordFormGroup.value;
-    payload.declaredByUserId = this.userId;
-    payload.attendanceSource = AttendanceSource.ADMIN;
-    if (this.attendanceRecordId === null || this.attendanceRecordId === undefined) {
-      this.coursService.createRessource('attendancerecord', payload).subscribe({
-        next: (data) => {
-          this.toastService.success('success', 'Absence ajoutée avec succès.');
-          this.goBack();
-        },
-        error: (data) => {
-          console.log('error', 'Erreur lors de la création : ' + data.error);
-          this.toastService.warning('error', 'Erreur lors de la création : ' + data.error);
-        }
-      });
+    const payload = this.attendanceRecordFormGroup.getRawValue();
+
+    if (this.attendanceRecordId == null) {
+      this.creerAbsence(payload);
+
     } else {
-      this.coursService.updateResource('attendancerecord', Number(this.attendanceRecordId), payload).subscribe({
-        next: (data: any) => {
-          this.toastService.success('success', 'Absence modifiée avec succès.');
-          this.goBack();
-        },
-        error: (data: any) => {
-          console.log('error', 'Erreur lors de la création : ' + data.error);
-          this.toastService.warning('error', 'Erreur lors de la modification : ' + data.error);
-        }
-      });
+      this.modifierAbsence(this.attendanceRecordId, payload);
     }
-
   }
 
-  goBack() {
-    this.router.navigate(['/admin/dossier-eleve/absences']);
+  private creerAbsence(payload: any): void {
+    this.coursService.createRessource('attendancerecord', payload)
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: () => {
+          this.toastService.success('Succès', 'Absence ajoutée avec succès.');
+          this.goBack();
+        },
+
+        error: (error: any) => {
+
+          console.error(
+            'Erreur lors de la création :',
+            error
+          );
+
+          this.toastService.error(
+            'Erreur',
+            this.extractErrorMessage(
+              error,
+              "Erreur lors de la création de l'absence."
+            )
+          );
+        }
+      });
+  }
+
+  private modifierAbsence(absenceId: number, payload: any): void {
+    this.coursService.updateResource('attendancerecord', absenceId, payload)
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: () => {
+          this.toastService.success('Succès', 'Absence modifiée avec succès.');
+          this.goBack();
+        },
+
+        error: (error: any) => {
+          console.error('Erreur lors de la modification :', error);
+
+          this.toastService.error(
+            'Erreur',
+            this.extractErrorMessage(
+              error,
+              "Erreur lors de la modification de l'absence."
+            )
+          );
+        }
+      });
+  }
+
+  private extractErrorMessage(error: any, defaultMessage: string): string {
+    if (Array.isArray(error?.error)) {
+      return error.error.join(', ');
+    }
+    if (typeof error?.error === 'string') {
+      return error.error;
+    }
+    if (error?.error?.message) {
+      return error.error.message;
+    }
+    if (error?.message) {
+      return error.message;
+    }
+    return defaultMessage;
+  }
+
+
+  goBack(): void {
+    void this.router.navigate(['/admin/dossier-eleve/absences']);
   }
 
 }

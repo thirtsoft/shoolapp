@@ -6,6 +6,7 @@ import { DetailsEntreeCahierTexteResponse } from '../../../../../core/models/cah
 import { EntreeCahierTexteRequest } from '../../../../../core/models/cahier-texte/entrees-cahier-texte-request.model';
 import { EntreeCahierTextePageResponse } from '../../../../../core/models/cahier-texte/entrees-cahiers-texte-page-response.model';
 import { EntreeCahierTexteResponse } from '../../../../../core/models/cahier-texte/entrees-cahiers-textes-responses.model';
+
 import { CahierTexteResourceService } from '../../../../administration/cahiertexte/services/chaier-texte-resource.service';
 
 @Component({
@@ -30,52 +31,79 @@ export class CahierTexteEnseignantComponent implements OnChanges {
   private readonly cahierTexteService = inject(CahierTexteResourceService);
 
   cahierTexte = signal<CahiersDeTexteseResponse | null>(null);
-
   entrees = signal<DetailsEntreeCahierTexteResponse[]>([]);
-
   pagination = signal<EntreeCahierTextePageResponse | null>(null);
 
   isLoading = signal(false);
-
   isSaving = signal(false);
-
   showForm = signal(false);
 
   entreeEnEdition = signal<EntreeCahierTexteResponse | null>(null);
 
   dateSeance = signal('');
+
   contenu = signal<string[]>(['']);
+
   observation = signal('');
 
   semaineCourante = signal<Date>(this.getDebutSemaine(new Date()));
 
   private readonly pageSize = 20;
 
+  dateAujourdhui = this.getDateString(new Date());
+
   ngOnChanges(changes: SimpleChanges): void {
+
     if (changes['classeUuid'] || changes['anneeScolaireUuid']) {
       if (this.classeUuid && this.anneeScolaireUuid) {
         this.chargerCahierTexte();
+      } else {
+        this.resetEtat();
       }
     }
 
     if (changes['ouvrirCreation'] && this.ouvrirCreation === true) {
-      this.ouvrirFormulaire();
+      if (this.cahierTexte()) {
+        this.ouvrirFormulaire();
+      }
     }
   }
 
+  private resetEtat(): void {
+    this.cahierTexte.set(null);
+    this.entrees.set([]);
+    this.pagination.set(null);
+
+    this.showForm.set(false);
+    this.entreeEnEdition.set(null);
+
+    this.dateSeance.set('');
+    this.contenu.set(['']);
+    this.observation.set(false as never);
+  }
+
   private chargerCahierTexte(): void {
+
     if (!this.classeUuid || !this.anneeScolaireUuid) {
+      this.resetEtat();
       return;
     }
 
+    this.cahierTexte.set(null);
+    this.entrees.set([]);
+    this.pagination.set(null);
+    this.showForm.set(false);
+    this.entreeEnEdition.set(null);
+
     this.isLoading.set(true);
 
-    this.cahierTexteService
-      .getCahierTexteByClasseAndAnneeScolaire(this.classeUuid, this.anneeScolaireUuid)
+    this.cahierTexteService.getCahierTexteByClasseAndAnneeScolaire(
+      this.classeUuid,
+      this.anneeScolaireUuid
+    )
       .subscribe({
-        next: cahier => {
 
-          console.log('Cahier de texte est', cahier);
+        next: cahier => {
 
           this.cahierTexte.set(cahier);
 
@@ -89,6 +117,13 @@ export class CahierTexteEnseignantComponent implements OnChanges {
             error
           );
 
+          this.cahierTexte.set(null);
+          this.entrees.set([]);
+          this.pagination.set(null);
+
+          this.showForm.set(false);
+          this.entreeEnEdition.set(null);
+
           this.isLoading.set(false);
         }
       });
@@ -98,42 +133,22 @@ export class CahierTexteEnseignantComponent implements OnChanges {
 
     const debut = this.getDebutSemaine(this.semaineCourante());
     const fin = this.getFinSemaine(debut);
-
     const dateDebut = this.formatDate(debut);
     const dateFin = this.formatDate(fin);
-
-    console.log(
-      'Chargement des entrées :',
-      dateDebut,
-      '→',
-      dateFin
-    );
 
     this.isLoading.set(true);
 
     this.cahierTexteService.getEntreeCahierTexteByCahierText(
       cahierTexteId,
-      dateDebut,
-      dateFin,
-      0,
-      this.pageSize
+      dateDebut, dateFin,
+      0, this.pageSize
     )
       .subscribe({
 
         next: response => {
 
-          console.log('Réponse entrées cahier de texte :', response);
-
           this.pagination.set(response);
-
           this.entrees.set(response.content);
-
-          console.log('CONTENU SIGNAL :', this.entrees());
-          console.log(
-            'DATES API :',
-            this.entrees().map(e => e.dateSeance)
-          );
-
           this.isLoading.set(false);
         },
 
@@ -153,26 +168,20 @@ export class CahierTexteEnseignantComponent implements OnChanges {
       });
   }
 
-  dateAujourdhui = this.getDateString(new Date());
-
   estAujourdHui(date: Date): boolean {
-    return this.getDateString(date) === this.dateAujourdhui;
+    return (this.getDateString(date) === this.dateAujourdhui);
   }
 
-  getEntreesDuJour(date: Date): any[] {
+  getEntreesDuJour(date: Date): DetailsEntreeCahierTexteResponse[] {
     const dateString = this.getDateString(date);
-
-    console.log(
-      'Recherche entrées',
-      dateString,
-      this.entrees()
-    );
-
     return this.entrees()
-      .filter(entree => entree.dateSeance!.substring(0, 10) === dateString)
+      .filter(
+        entree => entree.dateSeance && entree.dateSeance.substring(0, 10) === dateString
+      )
       .sort((a, b) => {
+
         if (!a.heureDebut && !b.heureDebut) {
-          return a.id! - b.id!;
+          return (a.id ?? 0) - (b.id ?? 0);
         }
 
         if (!a.heureDebut) {
@@ -198,29 +207,18 @@ export class CahierTexteEnseignantComponent implements OnChanges {
   public formatDate(date: Date): string {
     return this.getDateString(date);
   }
-
-
   getJoursSemaine(): Date[] {
-
     const debut = this.getDebutSemaine(this.semaineCourante());
-
-    return Array.from(
-      { length: 7 },
-      (_, index) => {
-
-        const date = new Date(debut);
-
-        date.setDate(
-          debut.getDate() + index
-        );
-
-        return date;
-      }
+    return Array.from({ length: 6 }, (_, index) => {
+      const date = new Date(debut);
+      date.setDate(debut.getDate() + index);
+      return date;
+    }
     );
   }
 
   aDesEntrees(date: Date): boolean {
-    return this.getEntreesDuJour(date).length > 0;
+    return (this.getEntreesDuJour(date).length > 0);
   }
 
   getLibelleSemaine(): string {
@@ -240,47 +238,26 @@ export class CahierTexteEnseignantComponent implements OnChanges {
   }
 
   estSemaineActuelle(): boolean {
-    const debutActuel = this.getDateString(
-      this.getDebutSemaine(new Date())
-    );
-
-    const debutAffiche = this.getDateString(
-      this.semaineCourante()
-    );
-
-    console.log('Semaine actuelle :', debutActuel);
-    console.log('Semaine affichée :', debutAffiche);
-
-    return debutActuel === debutAffiche;
+    const debutActuel = this.getDateString(this.getDebutSemaine(new Date()));
+    const debutAffiche = this.getDateString(this.semaineCourante());
+    return (debutActuel === debutAffiche);
   }
 
   semainePrecedente(): void {
-
     const nouvelleSemaine = new Date(this.semaineCourante());
-
     nouvelleSemaine.setDate(nouvelleSemaine.getDate() - 7);
-
-    this.semaineCourante.set(this.getDebutSemaine(nouvelleSemaine));
-
+    this.semaineCourante.set(this.getDebutSemaine(nouvelleSemaine)
+    );
     const cahier = this.cahierTexte();
-
     if (cahier) {
       this.chargerEntrees(cahier.id);
     }
   }
 
   semaineSuivante(): void {
-
-    const nouvelleSemaine = new Date(
-      this.semaineCourante()
-    );
-
-    nouvelleSemaine.setDate(
-      nouvelleSemaine.getDate() + 7
-    );
-
-    this.semaineCourante.set(
-      this.getDebutSemaine(nouvelleSemaine)
+    const nouvelleSemaine = new Date(this.semaineCourante());
+    nouvelleSemaine.setDate(nouvelleSemaine.getDate() + 7);
+    this.semaineCourante.set(this.getDebutSemaine(nouvelleSemaine)
     );
 
     const cahier = this.cahierTexte();
@@ -291,13 +268,8 @@ export class CahierTexteEnseignantComponent implements OnChanges {
   }
 
   semaineActuelle(): void {
-
-    this.semaineCourante.set(
-      this.getDebutSemaine(new Date())
-    );
-
+    this.semaineCourante.set(this.getDebutSemaine(new Date()));
     const cahier = this.cahierTexte();
-
     if (cahier) {
       this.chargerEntrees(cahier.id);
     }
@@ -305,15 +277,9 @@ export class CahierTexteEnseignantComponent implements OnChanges {
 
   private getDebutSemaine(date: Date): Date {
     const resultat = new Date(date);
-
     resultat.setHours(0, 0, 0, 0);
-
     const jour = resultat.getDay();
-
-    const difference = jour === 0
-      ? -6
-      : 1 - jour;
-
+    const difference = jour === 0 ? -6 : 1 - jour;
     resultat.setDate(resultat.getDate() + difference);
 
     return resultat;
@@ -321,19 +287,16 @@ export class CahierTexteEnseignantComponent implements OnChanges {
 
   private getFinSemaine(debut: Date): Date {
     const fin = new Date(debut);
-    fin.setDate(fin.getDate() + 6);
+    fin.setDate(fin.getDate() + 5);
     return fin;
   }
 
   validerLigneEtAjouter(index: number, event: Event): void {
     event.preventDefault();
-
     if (this.isSaving()) {
       return;
     }
-
     const ligne = this.contenu()[index]?.trim();
-
     if (!ligne) {
       return;
     }
@@ -341,18 +304,25 @@ export class CahierTexteEnseignantComponent implements OnChanges {
     this.ajouterLigneContenu();
 
     setTimeout(() => {
+
       const inputs = this.contenuInputs.toArray();
       const nouvelInput = inputs[index + 1];
 
       if (nouvelInput) {
         nouvelInput.nativeElement.focus();
       }
+
     });
   }
 
   ouvrirFormulaire(): void {
+    if (!this.cahierTexte()) {
+      return;
+    }
+
     const aujourdHui = new Date().toISOString().substring(0, 10);
     this.entreeEnEdition.set(null);
+
     this.dateSeance.set(aujourdHui);
     this.contenu.set(['']);
     this.observation.set('');
@@ -360,20 +330,21 @@ export class CahierTexteEnseignantComponent implements OnChanges {
   }
 
   modifierEntree(entree: any): void {
+    if (!this.cahierTexte()) {
+      return;
+    }
     this.entreeEnEdition.set(entree);
 
-    this.dateSeance.set(
-      typeof entree.dateSeance === 'string'
-        ? entree.dateSeance.substring(0, 10)
-        : new Date(entree.dateSeance).toISOString().substring(0, 10)
+    this.dateSeance.set(typeof entree.dateSeance === 'string'
+      ? entree.dateSeance.substring(0, 10)
+      : new Date(
+        entree.dateSeance
+      )
+        .toISOString()
+        .substring(0, 10)
     );
 
-    this.contenu.set(
-      entree.contenu?.length
-        ? [...entree.contenu]
-        : ['']
-    );
-
+    this.contenu.set(entree.contenu?.length ? [...entree.contenu] : ['']);
     this.observation.set(entree.observation ?? '');
 
     this.showForm.set(true);
@@ -389,120 +360,35 @@ export class CahierTexteEnseignantComponent implements OnChanges {
   }
 
   supprimerLigneContenu(index: number): void {
-    this.contenu.update(
-      lignes => {
-
-        if (lignes.length === 1) {
-          return [''];
-        }
-
-        return lignes.filter(
-          (_, i) => i !== index
-        );
+    this.contenu.update(lignes => {
+      if (lignes.length === 1) {
+        return [''];
       }
+      return lignes.filter((_, i) => i !== index);
+    }
     );
   }
 
   modifierLigneContenu(index: number, value: string): void {
-    this.contenu.update(
-      lignes => {
-        const copie = [...lignes];
-        copie[index] = value;
-        return copie;
-      }
+    this.contenu.update(lignes => {
+      const copie = [...lignes];
+      copie[index] = value;
+      return copie;
+    }
     );
   }
 
-  /*  sauvegarderV1(): void {
-     const cahier = this.cahierTexte();
- 
-     if (!cahier) {
-       return;
-     }
- 
-     const contenu = this.contenu()
-       .map(ligne => ligne.trim())
-       .filter(ligne => ligne.length > 0);
- 
-     if (!this.dateSeance()) {
-       return;
-     }
- 
-     if (contenu.length === 0) {
-       return;
-     }
- 
-     const request: EntreeCahierTexteRequest = {
-       cahierTexteId: cahier.id,
-       coursUuid: this.courseUuid ?? null,
-       dateSeance: new Date(this.dateSeance()),
-       contenu,
-       observation: this.observation().trim() || undefined
-     };
- 
-     console.log('Entrée cahier texte payload', request);
- 
-     this.isSaving.set(true);
- 
-     const entree = this.entreeEnEdition();
- 
-     const operation = entree
-       ? this.cahierTexteService.updateEntree(entree.id, request)
-       : this.cahierTexteService.createEntree(request);
- 
-     operation.subscribe({
-       next: resultat => {
- 
-         if (entree) {
- 
-           this.entrees.update(
-             liste =>
-               liste.map(item =>
-                 item.id === resultat.id
-                   ? resultat
-                   : item
-               )
-           );
- 
-         } else {
- 
-           this.entrees.update(
-             liste => [
-               resultat,
-               ...liste
-             ]
-           );
- 
-         }
- 
-         this.isSaving.set(false);
-         this.fermerFormulaire();
-       },
- 
-       error: error => {
- 
-         console.error(
-           'Erreur lors de l\'enregistrement',
-           error
-         );
- 
-         this.isSaving.set(false);
-       }
-     });
-   } */
-
-
   sauvegarder(): void {
-
     const cahier = this.cahierTexte();
-
     if (!cahier) {
       return;
     }
 
     const contenu = this.contenu()
       .map(ligne => ligne.trim())
-      .filter(ligne => ligne.length > 0);
+      .filter(
+        ligne => ligne.length > 0
+      );
 
     if (!this.dateSeance()) {
       return;
@@ -520,15 +406,9 @@ export class CahierTexteEnseignantComponent implements OnChanges {
       observation: this.observation().trim() || undefined
     };
 
-    console.log(
-      'Entrée cahier texte payload',
-      request
-    );
-
     this.isSaving.set(true);
 
     const entree = this.entreeEnEdition();
-
     const operation = entree
       ? this.cahierTexteService.updateEntree(
         entree.id,
@@ -546,27 +426,18 @@ export class CahierTexteEnseignantComponent implements OnChanges {
 
           this.entrees.update(
             liste =>
-              liste.map(item =>
-                item.id === resultat.id
-                  ? resultat
-                  : item
+              liste.map(
+                item => item.id === resultat.id ? resultat : item
               )
           );
 
         } else {
 
-          /**
-           * On ne fait pas simplement [resultat, ...liste]
-           * si la séance créée n'appartient pas à la semaine
-           * actuellement affichée.
-           *
-           * Pour garder la vue parfaitement cohérente avec
-           * le backend, on recharge la semaine.
-           */
           const cahier = this.cahierTexte();
-
           if (cahier) {
-            this.chargerEntrees(cahier.id);
+            this.chargerEntrees(
+              cahier.id
+            );
           }
         }
 
@@ -589,25 +460,30 @@ export class CahierTexteEnseignantComponent implements OnChanges {
 
   supprimer(entree: any): void {
     const confirmer = window.confirm('Voulez-vous supprimer cette séance ?');
+
     if (!confirmer) {
       return;
     }
-    this.cahierTexteService.deleteEntree(entree.id).subscribe({
-      next: () => {
-        this.entrees.update(
-          liste =>
-            liste.filter(
-              item => item.id !== entree.id
-            )
-        );
-      },
 
-      error: error => {
-        console.error(
-          'Erreur lors de la suppression',
-          error
-        );
-      }
-    });
+    this.cahierTexteService.deleteEntree(entree.id)
+      .subscribe({
+        next: () => {
+
+          this.entrees.update(
+            liste =>
+              liste.filter(
+                item =>
+                  item.id !== entree.id
+              )
+          );
+        },
+
+        error: error => {
+          console.error(
+            'Erreur lors de la suppression',
+            error
+          );
+        }
+      });
   }
 }

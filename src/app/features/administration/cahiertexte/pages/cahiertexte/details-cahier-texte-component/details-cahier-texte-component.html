@@ -1,732 +1,762 @@
-<!-- <div class="page-wrapper">
-  <div class="content container-fluid">
-    <div class="page-header">
-      <div class="row">
-        <div class="col-sm-12">
-          <h3 class="page-title">Détails inscription</h3>
-          <p class="text-muted mt-1 mb-0">
-            <i class="fas fa-clipboard-list me-1"></i> Visualisation des informations de
-            l'inscription
-          </p>
-        </div>
-      </div>
-    </div>
-
-    <div class="action-bar">
-      <div class="action-left">
-        <button class="btn-back" (click)="goBack()">
-          <i class="fas fa-arrow-left me-2"></i>Retour
-        </button>
-
-        <div class="action-group-buttons">
-          @if ([libelleEtat.LIBELLE_ETAT_EN_ATTENTE].includes(detailsInscription.etat!)) {
-            <button class="btn-validate" (click)="openEtatModal(etatModal, 'confirmer', 'E18')">
-              <i class="fas fa-check-circle me-2"></i>Confirmer
-            </button>
-            <button class="btn-success" (click)="openEtatModal(etatModal, 'valider', 'E4')">
-              <i class="fas fa-check-circle me-2"></i>Valider
-            </button>
-            <button class="btn-danger" (click)="openEtatModal(etatModal, 'annuler', 'E11')">
-              <i class="fas fa-ban me-2"></i>Annuler
-            </button>
-          }
-
-          @if (
-            [libelleEtat.LIBELLE_ETAT_ENCOURS, libelleEtat.LIBELLE_ETAT_A_CONFIRMEE].includes(
-              detailsInscription.etat!
-            )
-          ) {
-            <button class="btn-success" (click)="openEtatModal(etatModal, 'valider', 'E4')">
-              <i class="fas fa-check-circle me-2"></i>Valider
-            </button>
-            <button class="btn-danger" (click)="openEtatModal(etatModal, 'annuler', 'E11')">
-              <i class="fas fa-ban me-2"></i>Annuler
-            </button>
-          }
-
-          <button class="btn-secondary" (click)="imprimerUneInscription()">
-            <i class="fas fa-print me-2"></i>Imprimer
-          </button>
-
-          <button class="btn-danger" (click)="DownloadPdfRecu()">
-            <i class="fas fa-file-pdf me-2"></i>Téléchager
-          </button>
-        </div>
-      </div>
-      <div class="action-right">
-        <span class="status-badge" [class]="getStatusClass()">
-          <i class="fas fa-info-circle me-1"></i>
-          État : {{ detailsInscription.etat || 'Brouillon' }}
-        </span>
-      </div>
-    </div>
-
-    <div class="two-cards-grid">
-      <div class="info-card">
-        <div class="card-header-custom">
-          <i class="fas fa-clipboard-list"></i>
-          <h4>Informations élève</h4>
-        </div>
-        <div class="info-list">
-          <div class="info-row">
-            <div class="info-label">Matricule</div>
-            <div class="info-value">{{ eleve?.matricule }}</div>
-          </div>
-          <div class="info-row">
-            <div class="info-label">Nom complet</div>
-            <div class="info-value">{{ eleve?.prenom }} - {{ eleve?.nom }}</div>
-          </div>
-          <div class="info-row">
-            <div class="info-label">Sexe</div>
-            <div class="info-value">{{ eleve?.sexe }}</div>
-          </div>
-          <div class="info-row">
-            <div class="info-label">Date naissance</div>
-            <div class="info-value">
-              {{ eleve?.dateNaissance | date: 'dd/MM/yyyy' }}
-            </div>
-          </div>
-
-          <div class="info-row">
-            <div class="info-label">Adresse</div>
-            <div class="info-value">{{ eleve?.address }}</div>
-          </div>
-
-          <div class="info-row">
-            <div class="info-label">Nationalité</div>
-            <div class="info-value">{{ eleve?.nationalite }}</div>
-          </div>
-
-          <div class="info-row">
-            <div class="info-label">État</div>
-            <div class="info-value">
-              <span class="status-inline" [class]="getStatusClass()">
-                {{ detailsInscription.etat || 'Brouillon' }}
-              </span>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div class="info-card">
-        <div class="card-header-custom">
-          <i class="fas fa-school"></i>
-          <h4>Information inscription</h4>
-        </div>
-        <div class="info-list">
-          <div class="info-row">
-            <div class="info-label">Dossier inscription</div>
-            <div class="info-value">{{ detailsInscription.code || '-' }}</div>
-          </div>
-          <div class="info-row">
-            <div class="info-label">Frais inscription</div>
-            <div class="info-value">{{ detailsInscription.montantInscription }}</div>
-          </div>
-          <div class="info-row">
-            <div class="info-label">Montant reçu</div>
-            <div class="info-value">{{ detailsInscription.montantInscription }}</div>
-          </div>
-          @if (detailsInscription.resteAPaye) {
-            <div class="info-row">
-              <div class="info-label">Reste à payé</div>
-              <div class="info-value">{{ detailsInscription.resteAPaye }}</div>
-            </div>
-          }
-          <div class="info-row">
-            <div class="info-label">Mode de paiement</div>
-            <div class="info-value">{{ detailsInscription.moyenPaiement || 'Espèce' }}</div>
-          </div>
-          @if (detailsInscription.motifAnnulation) {
-            <div class="info-row">
-              <div class="info-label">Motif annulation inscription</div>
-              <div class="info-value">{{ detailsInscription.motifAnnulation }}</div>
-            </div>
-          }
-          <div class="info-row">
-            <div class="info-label">Classe</div>
-            <div class="info-value">{{ classe?.libelle }}</div>
-          </div>
-          <div class="info-row">
-            <div class="info-label">Niveau</div>
-            <div class="info-value">{{ detailsInscription.niveau }}</div>
-          </div>
-          @if (detailsInscription.serie) {
-            <div class="info-row">
-              <div class="info-label">Série</div>
-              <div class="info-value">{{ detailsInscription.serie }}</div>
-            </div>
-          }
-          <div class="info-row">
-            <div class="info-label">Année scolaire</div>
-            <div class="info-value">{{ anneeScolaire?.libelle }}</div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
-
-<ng-template #etatModal let-modal>
-  <div class="modal-custom-overlay" (click)="modal.dismiss()">
-    <div class="modal-custom-container" (click)="$event.stopPropagation()">
-      <div class="modal-header-custom">
-        <h5 class="modal-title-custom">
-          <i class="fas fa-question-circle me-2"></i>
-          Confirmer l'action : {{ modalActionLabel | titlecase }}
-        </h5>
-        <button type="button" class="btn-close-custom" (click)="modal.dismiss()">
-          <i class="fas fa-times"></i>
-        </button>
-      </div>
-
-      <div class="modal-body-custom">
-        <p class="modal-message">
-          Êtes-vous sûr de vouloir
-          <strong class="action-highlight">{{ modalActionLabel }}</strong> cette réunion ?
-        </p>
-
-        <form [formGroup]="actionForm">
-          @if (isMotifRequired) {
-            <div class="form-group-motif">
-              <label for="motifAnnulation" class="motif-label">
-                <i class="fas fa-exclamation-triangle text-danger me-1"></i>
-                Motif requis pour l'action :
-              </label>
-              <textarea
-                id="motifAnnulation"
-                class="form-control-motif"
-                rows="3"
-                formControlName="motifAnnulation"
-                placeholder="Veuillez saisir la raison précise ici..."
-                [class.is-invalid]="
-                  actionForm.get('motifAnnulation')?.invalid &&
-                  actionForm.get('motifAnnulation')?.touched
-                "
-              ></textarea>
-              @if (
-                actionForm.get('motifAnnulation')?.invalid &&
-                actionForm.get('motifAnnulation')?.touched
-              ) {
-                <small class="error-message">
-                  <i class="fas fa-info-circle me-1"></i>
-                  Le motif est obligatoire pour effectuer cette action.
-                </small>
-              }
-            </div>
-          }
-        </form>
-      </div>
-
-      <div class="modal-footer-custom">
-        <button type="button" class="btn-cancel" (click)="modal.dismiss()">
-          <i class="fas fa-times me-2"></i>Annuler
-        </button>
-        <button
-          type="button"
-          class="btn-confirm"
-          [class.btn-confirm-publish]="modalActionLabel === 'confirmer'"
-          [class.btn-confirm-terminer]="modalActionLabel === 'valider'"
-          [class.btn-confirm-danger]="modalActionLabel === 'annuler'"
-          [class.btn-confirm-primary]="
-            modalActionLabel !== 'confirmer' &&
-            modalActionLabel !== 'valider' &&
-            modalActionLabel !== 'annuler'
-          "
-          [disabled]="actionForm.invalid"
-          (click)="modal.close('confirm')"
-        >
-          <i class="fas fa-check-circle me-2"></i>Confirmer
-        </button>
-      </div>
-    </div>
-  </div>
-</ng-template>
- -->
-
 <div class="page-wrapper">
-  <div class="content container-fluid">
-    <!-- ===================================================== -->
-    <!-- EN-TÊTE -->
-    <!-- ===================================================== -->
-
-    <div class="page-header-custom">
+  <div class="content">
+    <div class="page-header">
       <div class="header-main">
-        <button type="button" class="back-link" (click)="goBack()">
+        <button type="button" class="btn-back" (click)="retourListe()">
           <i class="fas fa-arrow-left"></i>
-          <span>Retour aux inscriptions</span>
+          <span>Retour</span>
         </button>
 
-        <div class="header-title-block">
-          <div class="title-line">
-            <h3>Dossier d'inscription</h3>
-
-            <span class="status-badge" [class]="getStatusClass()">
-              <i class="fas" [class]="getStatusIcon()"></i>
-
-              {{ detailsInscription.etat || 'État inconnu' }}
-            </span>
+        <div class="header-title">
+          <div class="title-icon">
+            <i class="fas fa-book-open"></i>
           </div>
 
-          <div class="header-meta">
-            <span>
-              <i class="fas fa-folder-open"></i>
-              {{ detailsInscription.code || '-' }}
-            </span>
+          <div>
+            <h3 class="page-title">Détails cahier de texte</h3>
 
-            <span class="meta-separator"></span>
+            <p class="page-subtitle">
+              {{ details()?.numero || 'Cahier de texte' }}
 
-            <span>
-              <i class="fas fa-calendar-alt"></i>
-              {{ anneeScolaireLabel }}
-            </span>
+              <span class="separator">•</span>
+
+              créé le
+              {{ details()?.dateCreation | date: 'dd/MM/yyyy' }}
+            </p>
           </div>
         </div>
       </div>
-    </div>
 
-    <!-- ===================================================== -->
-    <!-- BARRE ACTIONS -->
-    <!-- ===================================================== -->
+      @if (details()) {
+        <div class="header-status">
+          <span class="status-badge" [class]="getEtatClass()">
+            <span class="status-dot"></span>
 
-    <div class="action-bar">
-      <div class="action-section">
-        <div class="action-section-title">
-          <i class="fas fa-file-alt"></i>
-          Documents
-        </div>
-
-        <div class="action-buttons">
-          <button
-            type="button"
-            class="action-btn action-btn-neutral"
-            (click)="imprimerUneInscription()"
-          >
-            <i class="fas fa-print"></i>
-            <span>Imprimer</span>
-          </button>
-
-          <button type="button" class="action-btn action-btn-primary" (click)="DownloadPdfRecu()">
-            <i class="fas fa-file-pdf"></i>
-            <span>Télécharger</span>
-          </button>
-
-          <button
-            type="button"
-            class="action-btn action-btn-school"
-            (click)="imprimerCarteScolaire()"
-          >
-            <i class="fas fa-id-card"></i>
-            <span>Carte scolaire</span>
-          </button>
-        </div>
-      </div>
-
-      <!-- ACTIONS WORKFLOW UNIQUEMENT A_CONFIRMEE -->
-
-      @if (isAConfirmee) {
-        <div class="action-divider"></div>
-
-        <div class="action-section workflow-section">
-          <div class="action-section-title">
-            <i class="fas fa-tasks"></i>
-            Traitement de l'inscription
-          </div>
-
-          <div class="action-buttons">
-            <button
-              type="button"
-              class="action-btn action-btn-confirm"
-              (click)="openEtatModal(etatModal, 'confirmer')"
-            >
-              <i class="fas fa-check-circle"></i>
-              <span>Confirmer</span>
-            </button>
-
-            <button
-              type="button"
-              class="action-btn action-btn-reject"
-              (click)="openEtatModal(etatModal, 'rejeter')"
-            >
-              <i class="fas fa-times-circle"></i>
-              <span>Rejeter</span>
-            </button>
-          </div>
+            {{ getEtatLabel() }}
+          </span>
         </div>
       }
     </div>
 
-    <!-- ===================================================== -->
-    <!-- PROFIL ÉLÈVE + INSCRIPTION -->
-    <!-- ===================================================== -->
+    @if (details()) {
+      <div class="action-bar">
+        <div class="action-context">
+          <i class="fas fa-sliders-h"></i>
 
-    <div class="main-grid">
-      <!-- ================================================= -->
-      <!-- PROFIL ÉLÈVE -->
-      <!-- ================================================= -->
-
-      <div class="card-custom student-card">
-        <div class="card-header-custom">
-          <div class="card-title-wrapper">
-            <div class="card-icon student-icon">
-              <i class="fas fa-user-graduate"></i>
-            </div>
-
-            <div>
-              <h4>Élève</h4>
-              <span>Informations personnelles</span>
-            </div>
-          </div>
+          <span> Gestion du cahier </span>
         </div>
 
-        <div class="student-profile">
-          <div class="student-photo-wrapper">
-            <img
-              [src]="photoPreview || getPhotoFallback()"
-              alt="Photo de l'élève"
-              class="student-photo"
-            />
-          </div>
+        <div class="action-group-buttons">
+          @if (!cahierPublie() && !cahierCloture()) {
+            <button
+              type="button"
+              class="action-btn action-btn-success"
+              (click)="ouvrirAction('publier')"
+            >
+              <i class="fas fa-eye"></i>
 
-          <div class="student-main-info">
-            <h2>{{ fullName }}</h2>
-
-            <div class="student-matricule">
-              <i class="fas fa-id-badge"></i>
-              {{ eleve?.matricule || '-' }}
-            </div>
-
-            <div class="student-info-grid">
-              <div class="profile-info">
-                <span class="profile-label">Sexe</span>
-                <span class="profile-value">
-                  {{ eleve?.sexe || '-' }}
-                </span>
-              </div>
-
-              <div class="profile-info">
-                <span class="profile-label">Nationalité</span>
-                <span class="profile-value">
-                  {{ eleve?.nationalite || '-' }}
-                </span>
-              </div>
-
-              <div class="profile-info">
-                <span class="profile-label">Date de naissance</span>
-                <span class="profile-value">
-                  {{ eleve?.dateNaissance ? (eleve?.dateNaissance | date: 'dd/MM/yyyy') : '-' }}
-                </span>
-              </div>
-
-              <div class="profile-info">
-                <span class="profile-label">Lieu de naissance</span>
-                <span class="profile-value">
-                  {{ eleve?.lieuNaissance || '-' }}
-                </span>
-              </div>
-
-              <div class="profile-info profile-info-full">
-                <span class="profile-label">Adresse</span>
-                <span class="profile-value">
-                  {{ eleve?.address || '-' }}
-                </span>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- ================================================= -->
-      <!-- INSCRIPTION -->
-      <!-- ================================================= -->
-
-      <div class="card-custom">
-        <div class="card-header-custom">
-          <div class="card-title-wrapper">
-            <div class="card-icon school-icon">
-              <i class="fas fa-school"></i>
-            </div>
-
-            <div>
-              <h4>Inscription</h4>
-              <span>Informations scolaires</span>
-            </div>
-          </div>
-        </div>
-
-        <div class="details-list">
-          <div class="detail-item">
-            <span class="detail-label"> Dossier </span>
-
-            <span class="detail-value strong">
-              {{ detailsInscription.code || '-' }}
-            </span>
-          </div>
-
-          <div class="detail-item">
-            <span class="detail-label"> Classe </span>
-
-            <span class="detail-value">
-              {{ classLabel }}
-            </span>
-          </div>
-
-          <div class="detail-item">
-            <span class="detail-label"> Niveau </span>
-
-            <span class="detail-value">
-              {{ niveauLabel }}
-            </span>
-          </div>
-
-          @if (serieLabel !== '-') {
-            <div class="detail-item">
-              <span class="detail-label"> Série </span>
-
-              <span class="detail-value">
-                {{ serieLabel }}
-              </span>
-            </div>
+              <span> Publier </span>
+            </button>
           }
 
-          <div class="detail-item">
-            <span class="detail-label"> Année scolaire </span>
+          @if (cahierPublie() && !cahierCloture()) {
+            <button
+              type="button"
+              class="action-btn action-btn-warning"
+              (click)="ouvrirAction('depublier')"
+            >
+              <i class="fas fa-eye-slash"></i>
 
-            <span class="detail-value">
-              {{ anneeScolaireLabel }}
-            </span>
-          </div>
+              <span> Dépublier </span>
+            </button>
+          }
 
-          <div class="detail-item">
-            <span class="detail-label"> Date d'inscription </span>
+          @if (!cahierCloture()) {
+            <button
+              type="button"
+              class="action-btn action-btn-danger"
+              (click)="ouvrirAction('cloturer')"
+            >
+              <i class="fas fa-lock"></i>
 
-            <span class="detail-value">
-              {{ dateInscriptionParsed | date: 'dd/MM/yyyy' }}
-            </span>
-          </div>
+              <span> Clôturer </span>
+            </button>
+          }
         </div>
       </div>
-    </div>
+    }
 
-    <!-- ===================================================== -->
-    <!-- SITUATION FINANCIÈRE -->
-    <!-- ===================================================== -->
+    @if (loading()) {
+      <div class="loading-card">
+        <div class="spinner"></div>
 
-    <div class="card-custom financial-card">
-      <div class="card-header-custom">
-        <div class="card-title-wrapper">
-          <div class="card-icon financial-icon">
-            <i class="fas fa-wallet"></i>
-          </div>
-
-          <div>
-            <h4>Situation financière</h4>
-            <span>État du règlement des frais d'inscription</span>
-          </div>
-        </div>
-
-        <div
-          class="payment-status"
-          [class.payment-status-paid]="isPaid"
-          [class.payment-status-pending]="!isPaid"
-        >
-          <i class="fas" [class.fa-check-circle]="isPaid" [class.fa-clock]="!isPaid"></i>
-
-          {{ isPaid ? 'Soldé' : 'Paiement partiel' }}
-        </div>
+        <span> Chargement du cahier de texte... </span>
       </div>
+    }
 
-      <div class="financial-grid">
-        <!-- FRAIS -->
-
-        <div class="financial-item">
-          <span class="financial-label"> Frais d'inscription </span>
-
-          <div class="financial-amount">
-            {{ montantInscription | number: '1.0-0' }}
-            <small>F CFA</small>
-          </div>
-        </div>
-
-        <!-- REÇU -->
-
-        <div class="financial-item">
-          <span class="financial-label"> Montant reçu </span>
-
-          <div class="financial-amount amount-success">
-            {{ montantRecu | number: '1.0-0' }}
-            <small>F CFA</small>
-          </div>
-        </div>
-
-        <!-- RESTE -->
-
-        <div class="financial-item">
-          <span class="financial-label"> Reste à payer </span>
-
-          <div
-            class="financial-amount"
-            [class.amount-success]="isPaid"
-            [class.amount-danger]="!isPaid"
-          >
-            {{ resteAPaye | number: '1.0-0' }}
-            <small>F CFA</small>
-          </div>
-        </div>
-
-        <!-- MOYEN -->
-
-        <div class="financial-item">
-          <span class="financial-label"> Moyen de paiement </span>
-
-          <div class="payment-method">
-            <span class="payment-method-icon">
-              <i class="fas fa-money-bill-wave"></i>
-            </span>
-
-            {{ paymentMethod }}
-          </div>
-        </div>
-      </div>
-
-      <!-- PROGRESSION PAIEMENT -->
-
-      <div class="payment-progress-section">
-        <div class="progress-header">
-          <span> Paiement effectué </span>
-
-          <strong>
-            {{
-              montantInscription > 0
-                ? ((montantRecu / montantInscription) * 100 | number: '1.0-0')
-                : 0
-            }}
-            %
-          </strong>
-        </div>
-
-        <div class="progress-track">
-          <div class="progress-bar-fill" [style.width.%]="paymentProgress"></div>
-        </div>
-      </div>
-    </div>
-
-    <!-- ===================================================== -->
-    <!-- MOTIF DE REJET -->
-    <!-- ===================================================== -->
-
-    @if (detailsInscription.motifAnnulation) {
-      <div class="rejection-card">
-        <div class="rejection-icon">
-          <i class="fas fa-exclamation-circle"></i>
+    @if (!loading() && error()) {
+      <div class="error-card">
+        <div class="error-icon">
+          <i class="fas fa-exclamation-triangle"></i>
         </div>
 
         <div>
-          <div class="rejection-title">Motif du rejet</div>
+          <strong> Impossible de charger le cahier </strong>
 
-          <div class="rejection-text">
-            {{ detailsInscription.motifAnnulation }}
+          <p>
+            {{ error() }}
+          </p>
+        </div>
+
+        <button type="button" class="btn-retry" (click)="chargerDetails()">Réessayer</button>
+      </div>
+    }
+
+    @if (!loading() && !error() && details(); as cahier) {
+      <div class="cahier-hero">
+        <div class="hero-identity">
+          <div class="hero-icon">
+            <i class="fas fa-book-open"></i>
           </div>
+
+          <div>
+            <span class="hero-eyebrow"> Cahier de texte </span>
+
+            <h2>
+              {{ cahier.numero }}
+            </h2>
+
+            <div class="hero-meta">
+              <span>
+                <i class="fas fa-users"></i>
+                {{ cahier.classe || 'Classe non renseignée' }}
+              </span>
+
+              <span>
+                <i class="fas fa-calendar-alt"></i>
+                {{ cahier.anneeScolaire || 'Année non renseignée' }}
+              </span>
+            </div>
+          </div>
+        </div>
+
+        <div class="hero-stats">
+          <div class="hero-stat">
+            <span class="stat-icon">
+              <i class="fas fa-book"></i>
+            </span>
+
+            <div>
+              <strong>
+                {{ totalEntrees() }}
+              </strong>
+
+              <span> Séances enregistrées </span>
+            </div>
+          </div>
+
+          <div class="hero-divider"></div>
+
+          <div class="hero-stat">
+            <span class="stat-icon">
+              <i class="fas fa-eye"></i>
+            </span>
+
+            <div>
+              <strong>
+                {{ getEtatLabel() }}
+              </strong>
+
+              <span> Visibilité du cahier </span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="details-grid">
+        <div class="details-main">
+          <div class="details-card">
+            <div class="card-heading">
+              <div class="heading-icon heading-icon-blue">
+                <i class="fas fa-calendar-week"></i>
+              </div>
+
+              <div>
+                <h4>Contenu du cahier</h4>
+
+                <p>Consultez les séances enregistrées</p>
+              </div>
+            </div>
+
+            <div class="period-toolbar">
+              <div class="view-switch">
+                <button
+                  type="button"
+                  [class.active]="vue() === 'semaine'"
+                  (click)="changerVue('semaine')"
+                >
+                  <i class="fas fa-calendar-week"></i>
+                  Semaine
+                </button>
+
+                <button
+                  type="button"
+                  [class.active]="vue() === 'mois'"
+                  (click)="changerVue('mois')"
+                >
+                  <i class="fas fa-calendar-alt"></i>
+                  Mois
+                </button>
+              </div>
+
+              <div class="period-navigation">
+                <button type="button" class="period-btn" (click)="periodePrecedente()">
+                  <i class="fas fa-chevron-left"></i>
+                </button>
+
+                <strong>
+                  {{ titrePeriode() }}
+                </strong>
+
+                <button type="button" class="period-btn" (click)="periodeSuivante()">
+                  <i class="fas fa-chevron-right"></i>
+                </button>
+
+                @if (!estPeriodeActuelle()) {
+                  <button type="button" class="today-btn" (click)="revenirAujourdHui()">
+                    Aujourd'hui
+                  </button>
+                }
+              </div>
+            </div>
+
+            @if (vue() === 'semaine') {
+              <div class="week-list">
+                @for (jour of joursSemaine(); track jour.date) {
+                  <div class="day-block" [class.today]="jour.estAujourdHui">
+                    <div class="day-heading">
+                      <div class="day-date">
+                        <span>
+                          {{ jour.libelle }}
+                        </span>
+
+                        <strong>
+                          {{ jour.numero }}
+                        </strong>
+                      </div>
+
+                      <span class="day-count">
+                        {{ jour.entrees.length }}
+
+                        {{ jour.entrees.length > 1 ? 'séances' : 'séance' }}
+                      </span>
+                    </div>
+
+                    @if (jour.entrees.length > 0) {
+                      <div class="session-list">
+                        @for (entree of jour.entrees; track entree.id) {
+                          <article class="session-item">
+                            <div class="session-hour">
+                              <strong>
+                                {{ formatHeure(entree.heureDebut) || '--:--' }}
+                              </strong>
+
+                              @if (entree.heureFin) {
+                                <span>
+                                  {{ formatHeure(entree.heureFin) }}
+                                </span>
+                              }
+                            </div>
+
+                            <div class="session-line"></div>
+
+                            <div class="session-body">
+                              <div class="session-title">
+                                <div class="course-badge">
+                                  <i class="fas fa-book"></i>
+                                </div>
+
+                                <div>
+                                  <h5>
+                                    {{ entree.libelleCours || entree.matiere || 'Séance de cours' }}
+                                  </h5>
+
+                                  @if (entree.enseignant) {
+                                    <span>
+                                      <i class="fas fa-user"></i>
+                                      {{ entree.enseignant }}
+                                    </span>
+                                  }
+                                </div>
+                              </div>
+
+                              <div class="lesson-content">
+                                <span class="lesson-label"> Contenu enseigné </span>
+
+                                <div class="content-tags">
+                                  @for (item of entree.contenu; track $index) {
+                                    <span class="content-tag">
+                                      {{ item }}
+                                    </span>
+                                  }
+                                </div>
+                              </div>
+
+                              @if (entree.observation) {
+                                <div class="observation">
+                                  <i class="fas fa-comment-alt"></i>
+
+                                  <span>
+                                    {{ entree.observation }}
+                                  </span>
+                                </div>
+                              }
+                            </div>
+                          </article>
+                        }
+                      </div>
+                    } @else {
+                      <div class="day-empty">
+                        <i class="far fa-calendar"></i>
+
+                        <span> Aucune séance enregistrée </span>
+                      </div>
+                    }
+                  </div>
+                }
+              </div>
+            }
+
+            @if (vue() === 'mois') {
+              <div class="month-list">
+                @for (jour of getJoursDuMois(); track jour.date) {
+                  <div class="month-day" [class.today]="jour.estAujourdHui">
+                    <div class="month-day-date">
+                      <strong>
+                        {{ jour.numero }}
+                      </strong>
+
+                      <span>
+                        {{ jour.libelle }}
+                      </span>
+                    </div>
+
+                    @if (jour.entrees.length > 0) {
+                      <div class="month-session-list">
+                        @for (entree of jour.entrees; track entree.id) {
+                          <div
+                            class="month-session month-session-clickable"
+                            role="button"
+                            tabindex="0"
+                            (click)="ouvrirDetailsEntree(entree)"
+                            (keydown.enter)="ouvrirDetailsEntree(entree)"
+                            (keydown.space)="ouvrirDetailsEntree(entree); $event.preventDefault()"
+                          >
+                            <span class="month-time">
+                              {{ formatHeure(entree.heureDebut) || '--:--' }}
+                            </span>
+
+                            <div class="month-session-info">
+                              <strong>
+                                {{ entree.libelleCours || entree.matiere || 'Séance de cours' }}
+                              </strong>
+
+                              <span>
+                                {{ entree.enseignant || 'Enseignant non renseigné' }}
+                              </span>
+                            </div>
+
+                            <span class="month-session-arrow"> → </span>
+                          </div>
+                        }
+                      </div>
+                    } @else {
+                      <span class="month-empty"> Aucune séance </span>
+                    }
+                  </div>
+                }
+              </div>
+            }
+          </div>
+        </div>
+
+        <div class="details-sidebar">
+          <div class="details-card">
+            <div class="card-heading">
+              <div class="heading-icon heading-icon-purple">
+                <i class="fas fa-info-circle"></i>
+              </div>
+
+              <div>
+                <h4>Informations</h4>
+
+                <p>Informations générales</p>
+              </div>
+            </div>
+
+            <div class="information-list">
+              <div class="information-item">
+                <div class="information-icon">
+                  <i class="fas fa-book"></i>
+                </div>
+
+                <div>
+                  <span>Numéro</span>
+
+                  <strong>
+                    {{ cahier.numero }}
+                  </strong>
+                </div>
+              </div>
+
+              <div class="information-item">
+                <div class="information-icon">
+                  <i class="fas fa-users"></i>
+                </div>
+
+                <div>
+                  <span>Classe</span>
+
+                  <strong>
+                    {{ cahier.classe || '-' }}
+                  </strong>
+                </div>
+              </div>
+
+              <div class="information-item">
+                <div class="information-icon">
+                  <i class="fas fa-calendar-alt"></i>
+                </div>
+
+                <div>
+                  <span>Année scolaire</span>
+
+                  <strong>
+                    {{ cahier.anneeScolaire || '-' }}
+                  </strong>
+                </div>
+              </div>
+
+              <div class="information-item">
+                <div class="information-icon">
+                  <i class="fas fa-calendar-plus"></i>
+                </div>
+
+                <div>
+                  <span>Date de création</span>
+
+                  <strong>
+                    {{ cahier.dateCreation | date: 'dd/MM/yyyy' }}
+                  </strong>
+                </div>
+              </div>
+
+              <div class="information-item">
+                <div class="information-icon">
+                  <i class="fas fa-list"></i>
+                </div>
+
+                <div>
+                  <span>Nombre de séances</span>
+
+                  <strong>
+                    {{ cahier.totalEntrees }}
+                  </strong>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="details-card">
+            <div class="card-heading">
+              <div class="heading-icon heading-icon-green">
+                <i class="fas fa-eye"></i>
+              </div>
+
+              <div>
+                <h4>Visibilité</h4>
+
+                <p>Accès des enseignants</p>
+              </div>
+            </div>
+
+            <div class="visibility-box">
+              @if (cahierPublie()) {
+                <div class="visibility-icon visible">
+                  <i class="fas fa-eye"></i>
+                </div>
+
+                <div>
+                  <strong> Cahier publié </strong>
+
+                  <span> Visible par les enseignants </span>
+                </div>
+              } @else if (cahierDepublie()) {
+                <div class="visibility-icon hidden">
+                  <i class="fas fa-eye-slash"></i>
+                </div>
+
+                <div>
+                  <strong> Cahier dépublié </strong>
+
+                  <span> Invisible pour les enseignants </span>
+                </div>
+              } @else if (cahierCloture()) {
+                <div class="visibility-icon locked">
+                  <i class="fas fa-lock"></i>
+                </div>
+
+                <div>
+                  <strong> Cahier clôturé </strong>
+
+                  <span> Modification impossible </span>
+                </div>
+              }
+            </div>
+          </div>
+
+          @if (!cahierCloture()) {
+            <div class="warning-card">
+              <div class="warning-icon">
+                <i class="fas fa-lock"></i>
+              </div>
+
+              <div>
+                <strong> Clôture du cahier </strong>
+
+                <p>
+                  Une fois clôturé, le cahier ne pourra plus être modifié par les enseignants ou les
+                  administrateurs.
+                </p>
+              </div>
+            </div>
+          }
         </div>
       </div>
     }
   </div>
-</div>
 
-<!-- ========================================================= -->
-<!-- MODAL CONFIRMATION / REJET                                -->
-<!-- ========================================================= -->
+  @if (actionEnCours(); as action) {
+    <div class="modal-overlay" (click)="fermerAction()">
+      <div class="action-modal" (click)="$event.stopPropagation()">
+        <div
+          class="modal-icon"
+          [class.publish]="action === 'publier'"
+          [class.unpublish]="action === 'depublier'"
+          [class.close]="action === 'cloturer'"
+        >
+          @if (action === 'publier') {
+            <i class="fas fa-eye"></i>
+          }
 
-<ng-template #etatModal>
-  <div class="workflow-modal">
-    <div class="modal-header-custom">
-      <div
-        class="modal-icon"
-        [class.modal-icon-confirm]="modalActionLabel === 'confirmer'"
-        [class.modal-icon-reject]="modalActionLabel === 'rejeter'"
-      >
-        <i
-          class="fas"
-          [class.fa-check-circle]="modalActionLabel === 'confirmer'"
-          [class.fa-times-circle]="modalActionLabel === 'rejeter'"
-        ></i>
-      </div>
+          @if (action === 'depublier') {
+            <i class="fas fa-eye-slash"></i>
+          }
 
-      <div>
-        <h4>
-          {{
-            modalActionLabel === 'confirmer' ? 'Confirmer l’inscription' : 'Rejeter l’inscription'
-          }}
-        </h4>
-
-        <p>
-          {{
-            modalActionLabel === 'confirmer'
-              ? 'Vous êtes sur le point de confirmer cette inscription.'
-              : 'Vous êtes sur le point de rejeter cette inscription.'
-          }}
-        </p>
-      </div>
-    </div>
-
-    <div class="modal-body-custom">
-      @if (modalActionLabel === 'confirmer') {
-        <div class="confirmation-message">
-          <i class="fas fa-info-circle"></i>
-
-          <span>
-            Après confirmation, l’inscription sera considérée comme
-            <strong>validée</strong>.
-          </span>
-        </div>
-      }
-
-      @if (modalActionLabel === 'rejeter') {
-        <div class="form-group-custom">
-          <label for="motifAnnulation">
-            Motif du rejet
-            <span>*</span>
-          </label>
-
-          <textarea
-            id="motifAnnulation"
-            class="form-control"
-            rows="4"
-            placeholder="Saisissez le motif du rejet..."
-            formControlName="motifAnnulation"
-          ></textarea>
-
-          @if (
-            actionForm.get('motifAnnulation')?.touched && actionForm.get('motifAnnulation')?.invalid
-          ) {
-            <div class="field-error">
-              Le motif du rejet est obligatoire et doit contenir au moins 5 caractères.
-            </div>
+          @if (action === 'cloturer') {
+            <i class="fas fa-lock"></i>
           }
         </div>
-      }
+
+        <h3>
+          {{ getActionTitle() }}
+        </h3>
+
+        <p>
+          {{ getActionMessage() }}
+        </p>
+
+        @if (action === 'cloturer') {
+          <div class="modal-warning">
+            <i class="fas fa-exclamation-triangle"></i>
+
+            <span>
+              Cette action est définitive. Vérifiez que toutes les séances ont été correctement
+              renseignées avant de continuer.
+            </span>
+          </div>
+        }
+
+        <div class="modal-actions">
+          <button
+            type="button"
+            class="modal-cancel"
+            [disabled]="traitementAction()"
+            (click)="fermerAction()"
+          >
+            Annuler
+          </button>
+
+          <button
+            type="button"
+            class="modal-confirm"
+            [class.confirm-danger]="action === 'cloturer'"
+            [disabled]="traitementAction()"
+            (click)="confirmerAction()"
+          >
+            @if (traitementAction()) {
+              <span class="mini-spinner"></span>
+
+              Traitement...
+            } @else {
+              @if (action === 'publier') {
+                <i class="fas fa-eye"></i>
+                Publier
+              }
+
+              @if (action === 'depublier') {
+                <i class="fas fa-eye-slash"></i>
+                Dépublier
+              }
+
+              @if (action === 'cloturer') {
+                <i class="fas fa-lock"></i>
+                Clôturer
+              }
+            }
+          </button>
+        </div>
+      </div>
     </div>
+  }
+</div>
 
-    <div class="modal-footer-custom">
-      <button type="button" class="modal-btn modal-btn-cancel" (click)="modalService.dismissAll()">
-        Annuler
-      </button>
 
-      <button
-        type="button"
-        class="modal-btn"
-        [class.modal-btn-confirm]="modalActionLabel === 'confirmer'"
-        [class.modal-btn-reject]="modalActionLabel === 'rejeter'"
-        [disabled]="modalActionLabel === 'rejeter' && actionForm.get('motifAnnulation')?.invalid"
-        (click)="modalService.dismissAll('confirm')"
-      >
-        <i
-          class="fas"
-          [class.fa-check]="modalActionLabel === 'confirmer'"
-          [class.fa-times]="modalActionLabel === 'rejeter'"
-        ></i>
+@if (afficherDetailsEntree()) {
+  <div
+    class="session-detail-overlay"
+    (click)="fermerDetailsEntree()"
+  >
+    <div
+      class="session-detail-modal"
+      (click)="$event.stopPropagation()"
+    >
 
-        {{ modalActionLabel === 'confirmer' ? 'Confirmer' : 'Rejeter' }}
-      </button>
+      <!-- HEADER -->
+      <div class="session-detail-header">
+
+        <div>
+          <span class="session-detail-eyebrow">
+            DÉTAIL DE LA SÉANCE
+          </span>
+
+          <h2>
+            {{
+              entreeSelectionnee()?.libelleCours
+              || entreeSelectionnee()?.matiere
+              || 'Séance de cours'
+            }}
+          </h2>
+        </div>
+
+        <button
+          type="button"
+          class="session-detail-close"
+          (click)="fermerDetailsEntree()"
+          aria-label="Fermer"
+        >
+          ×
+        </button>
+
+      </div>
+
+      <div class="session-detail-meta">
+
+        <div class="session-meta-item">
+          <span class="meta-label">Date</span>
+          <strong>
+            {{ entreeSelectionnee()?.dateSeance | date:'EEEE d MMMM yyyy':'':'fr-FR' }}
+          </strong>
+        </div>
+
+        <div class="session-meta-item">
+          <span class="meta-label">Horaire</span>
+          <strong>
+            {{ formatHeure(entreeSelectionnee()?.heureDebut) || '--:--' }}
+            -
+            {{ formatHeure(entreeSelectionnee()?.heureFin) || '--:--' }}
+          </strong>
+        </div>
+
+        <div class="session-meta-item">
+          <span class="meta-label">Enseignant</span>
+          <strong>
+            {{ entreeSelectionnee()?.enseignant || 'Non renseigné' }}
+          </strong>
+        </div>
+
+      </div>
+
+      <div class="session-detail-section">
+
+        <div class="section-title">
+          <span class="section-icon">📖</span>
+          <h3>Contenu de la séance</h3>
+        </div>
+
+        @if ((entreeSelectionnee()?.contenu?.length ?? 0) > 0) {
+
+          <div class="contenu-list">
+
+            @for (
+              contenu of entreeSelectionnee()?.contenu ?? [];
+              track $index
+            ) {
+              <div class="contenu-item">
+
+                <span class="contenu-number">
+                  {{ $index + 1 }}
+                </span>
+
+                <span class="contenu-text">
+                  {{ contenu }}
+                </span>
+
+              </div>
+            }
+
+          </div>
+
+        } @else {
+
+          <div class="empty-detail">
+            Aucun contenu n'a été renseigné pour cette séance.
+          </div>
+
+        }
+
+      </div>
+
+      @if (entreeSelectionnee()?.observation) {
+
+        <div class="session-detail-section">
+
+          <div class="section-title">
+            <span class="section-icon">💬</span>
+            <h3>Observation</h3>
+          </div>
+
+          <div class="observation-box">
+            {{ entreeSelectionnee()?.observation }}
+          </div>
+
+        </div>
+
+      }
+
+      <!-- FOOTER -->
+      <div class="session-detail-footer">
+
+        <button
+          type="button"
+          class="btn-close-detail"
+          (click)="fermerDetailsEntree()"
+        >
+          Fermer
+        </button>
+
+      </div>
+
     </div>
   </div>
-</ng-template>
+}

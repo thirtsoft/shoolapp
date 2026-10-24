@@ -403,14 +403,46 @@ textarea.form-control {
   margin-bottom: 1rem;
 }
 
+.badge-container {
+  display: flex;
+  align-items: center;
+  margin: 0;
+  padding: 0;
+}
+
+.badge-primary {
+  display: inline-flex;
+  align-items: center;
+  height: 36px;
+  padding: 0 0.9rem;
+  margin: 0;
+
+  line-height: 1;
+}
+
 .btn-back {
-  position: absolute;
-  left: 18% !important;
-  top: 30%;
-  z-index: 10 !important;
-  margin: 0 !important;
-  color: white;
+  position: static !important;
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  height: 36px;
+  padding: 0 1rem;
+  margin: 0;
+
+  color: #fff;
   background: linear-gradient(135deg, #2c5282, #1e3a5f);
+
+  border: none;
+  border-radius: 8px;
+
+  font-size: 0.875rem;
+  font-weight: 600;
+  line-height: 1;
+
+  white-space: nowrap;
+  cursor: pointer;
 }
 
 @media (max-width: 768px) {
@@ -447,5 +479,138 @@ textarea.form-control {
   .step-line {
     width: 20px;
     margin: 0 3px;
+  }
+}
+
+/* ============================================
+   BADGE ABSENCE + BOUTON RETOUR
+   ============================================ */
+
+.absence-badge-row {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1rem;
+}
+
+.absence-badge-left {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+}
+
+.absence-badge-right {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  margin-left: auto;
+}
+
+.absence-badge-row .badge-container {
+  display: flex;
+  align-items: center;
+  margin: 0;
+  padding: 0;
+}
+
+.absence-badge-row .badge-primary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  height: 36px;
+  padding: 0 0.9rem;
+  margin: 0;
+
+  line-height: 1;
+}
+
+.absence-badge-row .btn-back {
+  position: static !important;
+
+  display: inline-flex !important;
+  align-items: center;
+  justify-content: center;
+
+  width: auto !important;
+  height: 36px;
+
+  padding: 0 1rem;
+  margin: 0 !important;
+
+  flex: none !important;
+
+  color: #fff;
+  background: linear-gradient(135deg, #2c5282, #1e3a5f);
+
+  border: none;
+  border-radius: 8px;
+
+  font-size: 0.875rem;
+  font-weight: 600;
+  line-height: 1;
+
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+/* ============================================
+   CHAMPS RETARD
+   ============================================ */
+
+.retard-fields {
+  width: 100%;
+}
+
+.retard-course {
+  width: 100%;
+}
+
+/* Les 3 champs horaires sur la même ligne */
+.retard-times {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 1rem;
+  width: 100%;
+}
+
+/* Évite que les form-group hérités créent des espacements incohérents */
+.retard-times .form-group {
+  min-width: 0;
+  margin-bottom: 1.25rem;
+}
+
+.retard-times .form-control {
+  width: 100%;
+}
+
+/* Texte secondaire sous les champs */
+.retard-times small {
+  display: block;
+  margin-top: 0.35rem;
+  font-size: 0.75rem;
+}
+
+/* Tablette */
+@media (max-width: 768px) {
+  .retard-times {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .retard-times .form-group:last-child {
+    grid-column: 1 / -1;
+  }
+}
+
+/* Mobile */
+@media (max-width: 480px) {
+  .retard-times {
+    grid-template-columns: 1fr;
+    gap: 0;
+  }
+
+  .retard-times .form-group:last-child {
+    grid-column: auto;
   }
 }

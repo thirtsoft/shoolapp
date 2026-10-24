@@ -5,307 +5,320 @@
       Chargement du cahier de texte...
     </div>
   } @else {
-    @if (showForm()) {
-      <div class="cahier-form">
-        <div class="form-header">
-          <div class="form-title">
-            <span class="cahier-reference">
-              <i class="fas fa-book-open"></i>
-              Cahier de texte - {{ cahierTexte()?.numero }}
-            </span>
-            <h3>
-              @if (entreeEnEdition()) {
-                Modifier la séance
-              } @else {
-                Nouvelle séance
-              }
-            </h3>
-          </div>
-
-          <button
-            type="button"
-            class="btn-close-form"
-            title="Fermer"
-            (click)="fermerFormulaire()"
-            [disabled]="isSaving()"
-          >
-            ×
-          </button>
+    @if (!cahierTexte()) {
+      <div class="no-cahier-state">
+        <div class="no-cahier-icon">
+          <i class="fas fa-book-open"></i>
         </div>
 
-        <div class="form-body">
-          <div class="form-group">
-            <label for="dateSeance"> Date de la séance </label>
+        <h3>Aucun cahier de texte disponible</h3>
 
-            <input
-              id="dateSeance"
-              type="date"
-              class="form-control"
-              [ngModel]="dateSeance()"
-              (ngModelChange)="dateSeance.set($event)"
-              [disabled]="isSaving()"
-            />
-          </div>
-
-          <div class="form-group">
-            <div class="form-group-header">
-              <label> Contenu de la séance </label>
-
-              <span class="form-help"> Appuyez sur Entrée pour ajouter une ligne </span>
-            </div>
-
-            <div class="contenu-list">
-              @for (ligne of contenu(); track $index; let i = $index) {
-                <div class="contenu-row">
-                  <span class="contenu-number">
-                    {{ i + 1 }}
-                  </span>
-
-                  <input
-                    #contenuInput
-                    type="text"
-                    class="form-control contenu-input"
-                    [placeholder]="
-                      i === 0
-                        ? 'Ex. Fractions : définition et propriétés'
-                        : 'Ajouter un élément du contenu...'
-                    "
-                    [ngModel]="ligne"
-                    (ngModelChange)="modifierLigneContenu(i, $event)"
-                    (keydown.enter)="validerLigneEtAjouter(i, $event)"
-                    [disabled]="isSaving()"
-                  />
-
-                  @if (contenu().length > 1) {
-                    <button
-                      type="button"
-                      class="btn-delete-line"
-                      title="Supprimer cette ligne"
-                      (click)="supprimerLigneContenu(i)"
-                      [disabled]="isSaving()"
-                    >
-                      <i class="fas fa-trash"></i>
-                    </button>
-                  }
-                </div>
-              }
-            </div>
-
-            <div class="contenu-hint">
-              <i class="fas fa-keyboard"></i>
-              Saisissez un élément puis appuyez sur
-              <strong>Entrée</strong> pour passer directement à la ligne suivante.
-            </div>
-          </div>
-
-          <div class="form-group">
-            <label for="observation">
-              Observation
-              <span>(facultatif)</span>
-            </label>
-
-            <textarea
-              id="observation"
-              class="form-control"
-              rows="4"
-              placeholder="Observation sur la séance..."
-              [ngModel]="observation()"
-              (ngModelChange)="observation.set($event)"
-              [disabled]="isSaving()"
-            ></textarea>
-          </div>
-        </div>
-
-        <div class="form-footer">
-          <button
-            type="button"
-            class="btn btn-secondary"
-            (click)="fermerFormulaire()"
-            [disabled]="isSaving()"
-          >
-            <i class="fas fa-arrow-left"></i>
-            Retour
-          </button>
-
-          <button
-            type="button"
-            class="btn btn-primary"
-            (click)="sauvegarder()"
-            [disabled]="isSaving()"
-          >
-            @if (isSaving()) {
-              <i class="fas fa-spinner fa-spin"></i>
-              Enregistrement...
-            } @else {
-              <i class="fas fa-save"></i>
-
-              @if (entreeEnEdition()) {
-                Enregistrer les modifications
-              } @else {
-                Enregistrer
-              }
-            }
-          </button>
-        </div>
+        <p>Aucun cahier de texte n'a été créé pour cette classe et cette année scolaire.</p>
       </div>
     } @else {
-
-      <div class="cahier-week-header">
-        <div class="cahier-week-title">
-          <div class="cahier-title-main">
-            <i class="fas fa-book-open"></i>
-
-            <div>
-              <h3>Cahier de texte</h3>
-
+      @if (showForm()) {
+        <div class="cahier-form">
+          <div class="form-header">
+            <div class="form-title">
               <span class="cahier-reference">
+                <i class="fas fa-book-open"></i>
+                Cahier de texte -
                 {{ cahierTexte()?.numero }}
               </span>
+
+              <h3>
+                @if (entreeEnEdition()) {
+                  Modifier la séance
+                } @else {
+                  Nouvelle séance
+                }
+              </h3>
             </div>
-          </div>
-        </div>
 
-        <button type="button" class="btn btn-primary" (click)="ouvrirFormulaire()">
-          <i class="fas fa-plus"></i>
-          Ajouter une séance
-        </button>
-      </div>
-
-      <div class="week-navigation">
-        <button
-          type="button"
-          class="week-nav-button"
-          title="Semaine précédente"
-          (click)="semainePrecedente()"
-        >
-          <i class="fas fa-chevron-left"></i>
-        </button>
-
-        <div class="week-current">
-          <div class="week-label">Semaine du {{ getLibelleSemaine() }}</div>
-
-          @if (!estSemaineActuelle()) {
-            <button type="button" class="btn-current-week" (click)="semaineActuelle()">
-              <i class="fas fa-calendar-day"></i>
-              Aujourd'hui
+            <button
+              type="button"
+              class="btn-close-form"
+              title="Fermer"
+              (click)="fermerFormulaire()"
+              [disabled]="isSaving()"
+            >
+              ×
             </button>
-          }
-        </div>
+          </div>
 
-        <button
-          type="button"
-          class="week-nav-button"
-          title="Semaine suivante"
-          (click)="semaineSuivante()"
-        >
-          <i class="fas fa-chevron-right"></i>
-        </button>
-      </div>
+          <div class="form-body">
+            <div class="form-group">
+              <label for="dateSeance"> Date de la séance </label>
 
-      <div class="week-view">
-        @for (jour of getJoursSemaine(); track formatDate(jour)) {
-          <section class="week-day" [class.today]="estAujourdHui(jour)">
-
-            <div class="week-day-header">
-              <div class="week-day-name">
-                {{ jour | date: 'EEEE' : '' : 'fr-FR' }}
-              </div>
-
-              <div class="week-day-date">
-                {{ jour | date: 'dd MMMM' : '' : 'fr-FR' }}
-              </div>
+              <input
+                id="dateSeance"
+                type="date"
+                class="form-control"
+                [ngModel]="dateSeance()"
+                (ngModelChange)="dateSeance.set($event)"
+                [disabled]="isSaving()"
+              />
             </div>
 
-            @if (aDesEntrees(jour)) {
-              <div class="day-entries">
-                @for (entree of getEntreesDuJour(jour); track entree.id) {
-                  <article class="entree-card">
-  
-                    <div class="entree-header">
-                      <div class="entree-time">
-                        @if (entree.heureDebut && entree.heureFin) {
-                          <i class="fas fa-clock"></i>
+            <div class="form-group">
+              <div class="form-group-header">
+                <label> Contenu de la séance </label>
 
-                          <span>
-                            {{ entree.heureDebut.substring(0, 5) }}
-                            -
-                            {{ entree.heureFin.substring(0, 5) }}
-                          </span>
-                        } @else {
-                          <i class="fas fa-book"></i>
+                <span class="form-help"> Appuyez sur Entrée pour ajouter une ligne </span>
+              </div>
 
-                          <span>Séance</span>
-                        }
-                      </div>
+              <div class="contenu-list">
+                @for (ligne of contenu(); track $index; let i = $index) {
+                  <div class="contenu-row">
+                    <span class="contenu-number">
+                      {{ i + 1 }}
+                    </span>
 
-                      <div class="entree-actions">
-                        <button
-                          type="button"
-                          class="btn-icon"
-                          title="Modifier"
-                          (click)="modifierEntree(entree)"
-                        >
-                          <i class="fas fa-edit"></i>
-                        </button>
+                    <input
+                      #contenuInput
+                      type="text"
+                      class="form-control contenu-input"
+                      [placeholder]="
+                        i === 0
+                          ? 'Ex. Fractions : définition et propriétés'
+                          : 'Ajouter un élément du contenu...'
+                      "
+                      [ngModel]="ligne"
+                      (ngModelChange)="modifierLigneContenu(i, $event)"
+                      (keydown.enter)="validerLigneEtAjouter(i, $event)"
+                      [disabled]="isSaving()"
+                    />
 
-                        <button
-                          type="button"
-                          class="btn-icon danger"
-                          title="Supprimer"
-                          (click)="supprimer(entree)"
-                        >
-                          <i class="fas fa-trash"></i>
-                        </button>
-                      </div>
-                    </div>
-
-                    @if (entree.libelleCours || entree.matiere) {
-                      <div class="entree-course">
-                        @if (entree.matiere) {
-                          <span class="matiere-badge">
-                            {{ entree.matiere }}
-                          </span>
-                        }
-
-                        @if (entree.libelleCours) {
-                          <span class="cours-libelle">
-                            {{ entree.libelleCours }}
-                          </span>
-                        }
-                      </div>
+                    @if (contenu().length > 1) {
+                      <button
+                        type="button"
+                        class="btn-delete-line"
+                        title="Supprimer cette ligne"
+                        (click)="supprimerLigneContenu(i)"
+                        [disabled]="isSaving()"
+                      >
+                        <i class="fas fa-trash"></i>
+                      </button>
                     }
-
-                    <div class="entree-content">
-                      <ul>
-                        @for (ligne of entree.contenu; track $index) {
-                          <li>
-                            {{ ligne }}
-                          </li>
-                        }
-                      </ul>
-
-                      @if (entree.observation) {
-                        <div class="entree-observation">
-                          <strong> Observation : </strong>
-
-                          {{ entree.observation }}
-                        </div>
-                      }
-                    </div>
-                  </article>
+                  </div>
                 }
               </div>
-            } @else {
-  
-              <div class="day-empty">
-                <i class="fas fa-calendar-check"></i>
 
-                <span> Aucune séance </span>
+              <div class="contenu-hint">
+                <i class="fas fa-keyboard"></i>
+
+                Saisissez un élément puis appuyez sur
+                <strong>Entrée</strong>
+                pour passer directement à la ligne suivante.
               </div>
+            </div>
+
+            <div class="form-group">
+              <label for="observation">
+                Observation
+
+                <span> (facultatif) </span>
+              </label>
+
+              <textarea
+                id="observation"
+                class="form-control"
+                rows="4"
+                placeholder="Observation sur la séance..."
+                [ngModel]="observation()"
+                (ngModelChange)="observation.set($event)"
+                [disabled]="isSaving()"
+              ></textarea>
+            </div>
+          </div>
+
+          <div class="form-footer">
+            <button
+              type="button"
+              class="btn btn-secondary"
+              (click)="fermerFormulaire()"
+              [disabled]="isSaving()"
+            >
+              <i class="fas fa-arrow-left"></i>
+              Retour
+            </button>
+
+            <button
+              type="button"
+              class="btn btn-primary"
+              (click)="sauvegarder()"
+              [disabled]="isSaving()"
+            >
+              @if (isSaving()) {
+                <i class="fas fa-spinner fa-spin"></i>
+                Enregistrement...
+              } @else {
+                <i class="fas fa-save"></i>
+
+                @if (entreeEnEdition()) {
+                  Enregistrer les modifications
+                } @else {
+                  Enregistrer
+                }
+              }
+            </button>
+          </div>
+        </div>
+      } @else {
+        <div class="cahier-week-header">
+          <div class="cahier-week-title">
+            <div class="cahier-title-main">
+              <i class="fas fa-book-open"></i>
+
+              <div>
+                <h3>Cahier de texte</h3>
+
+                <span class="cahier-reference">
+                  {{ cahierTexte()?.numero }}
+                </span>
+              </div>
+            </div>
+          </div>
+
+          <button type="button" class="btn btn-primary" (click)="ouvrirFormulaire()">
+            <i class="fas fa-plus"></i>
+            Ajouter une séance
+          </button>
+        </div>
+
+        <div class="week-navigation">
+          <button
+            type="button"
+            class="week-nav-button"
+            title="Semaine précédente"
+            (click)="semainePrecedente()"
+          >
+            <i class="fas fa-chevron-left"></i>
+          </button>
+
+          <div class="week-current">
+            <div class="week-label">Semaine du {{ getLibelleSemaine() }}</div>
+
+            @if (!estSemaineActuelle()) {
+              <button type="button" class="btn-current-week" (click)="semaineActuelle()">
+                <i class="fas fa-calendar-day"></i>
+                Aujourd'hui
+              </button>
             }
-          </section>
-        }
-      </div>
+          </div>
+
+          <button
+            type="button"
+            class="week-nav-button"
+            title="Semaine suivante"
+            (click)="semaineSuivante()"
+          >
+            <i class="fas fa-chevron-right"></i>
+          </button>
+        </div>
+
+        <div class="week-view">
+          @for (jour of getJoursSemaine(); track formatDate(jour)) {
+            <section class="week-day" [class.today]="estAujourdHui(jour)">
+              <div class="week-day-header">
+                <div class="week-day-name">
+                  {{ jour | date: 'EEEE' : '' : 'fr-FR' }}
+                </div>
+
+                <div class="week-day-date">
+                  {{ jour | date: 'dd MMMM' : '' : 'fr-FR' }}
+                </div>
+              </div>
+
+              @if (aDesEntrees(jour)) {
+                <div class="day-entries">
+                  @for (entree of getEntreesDuJour(jour); track entree.id) {
+                    <article class="entree-card">
+                      <div class="entree-header">
+                        <div class="entree-time">
+                          @if (entree.heureDebut && entree.heureFin) {
+                            <i class="fas fa-clock"></i>
+
+                            <span>
+                              {{ entree.heureDebut.substring(0, 5) }}
+                              -
+                              {{ entree.heureFin.substring(0, 5) }}
+                            </span>
+                          } @else {
+                            <i class="fas fa-book"></i>
+
+                            <span> Séance </span>
+                          }
+                        </div>
+
+                        <div class="entree-actions">
+                          <button
+                            type="button"
+                            class="btn-icon"
+                            title="Modifier"
+                            (click)="modifierEntree(entree)"
+                          >
+                            <i class="fas fa-edit"></i>
+                          </button>
+
+                          <button
+                            type="button"
+                            class="btn-icon danger"
+                            title="Supprimer"
+                            (click)="supprimer(entree)"
+                          >
+                            <i class="fas fa-trash"></i>
+                          </button>
+                        </div>
+                      </div>
+
+                      @if (entree.libelleCours || entree.matiere) {
+                        <div class="entree-course">
+                          @if (entree.matiere) {
+                            <span class="matiere-badge">
+                              {{ entree.matiere }}
+                            </span>
+                          }
+
+                          @if (entree.libelleCours) {
+                            <span class="cours-libelle">
+                              {{ entree.libelleCours }}
+                            </span>
+                          }
+                        </div>
+                      }
+
+                      <div class="entree-content">
+                        <ul>
+                          @for (ligne of entree.contenu; track $index) {
+                            <li>
+                              {{ ligne }}
+                            </li>
+                          }
+                        </ul>
+
+                        @if (entree.observation) {
+                          <div class="entree-observation">
+                            <strong> Observation : </strong>
+
+                            {{ entree.observation }}
+                          </div>
+                        }
+                      </div>
+                    </article>
+                  }
+                </div>
+              } @else {
+                <div class="day-empty">
+                  <i class="fas fa-calendar-check"></i>
+
+                  <span> Aucune séance </span>
+                </div>
+              }
+            </section>
+          }
+        </div>
+      }
     }
   }
 </div>

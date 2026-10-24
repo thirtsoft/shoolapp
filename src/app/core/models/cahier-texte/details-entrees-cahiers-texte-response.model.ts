@@ -10,6 +10,8 @@ export interface DetailsEntreeCahierTexteResponse {
 
   enseignantUuid?: string;
 
+  enseignant?: string;
+
   dateSeance?: string;
 
   heureDebut?: string;
