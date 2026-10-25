@@ -1,128 +1,392 @@
-<div class="dashboard-content">
-  <div class="content-header">
-    <div>
-      <h2>📊 Tableau de bord</h2>
+<div class="dashboard-direction">
+  <header class="dashboard-header">
+    <div class="header-main">
+      <div class="header-title-zone">
+        <div class="header-icon">📊</div>
+
+        <div>
+          <h1>Tableau de bord de l'établissement</h1>
+
+          <p>
+            {{ etablissement }}
+            <span class="header-separator">•</span>
+            Année scolaire {{ anneeScolaire }}
+          </p>
+        </div>
+      </div>
+
+      <div class="header-date">
+        <span class="date-label">Situation au</span>
+        <strong>{{ dateDashboard }}</strong>
+      </div>
+    </div>
+
+    <div class="quick-actions">
+      <button type="button" class="btn btn-primary" (click)="nouvelleInscription()">
+        <span>＋</span>
+        Nouvelle inscription
+      </button>
+
+      <button type="button" class="btn btn-secondary" (click)="voirToutesLesReinscriptions()">
+        Réinscriptions
+        <span class="counter">
+          {{ nombreReinscriptionsAtraiter() }}
+        </span>
+      </button>
+    </div>
+  </header>
+
+  <section class="kpi-grid">
+    @for (kpi of kpis; track kpi.label) {
+      <button type="button" class="kpi-card" [class]="'kpi-' + kpi.classe" (click)="kpi.action?.()">
+        <div class="kpi-top">
+          <div class="kpi-icon">
+            {{ kpi.icon }}
+          </div>
+
+          <span class="kpi-arrow"> → </span>
+        </div>
+
+        <div class="kpi-value">
+          {{ kpi.valeur }}
+        </div>
+
+        <div class="kpi-label">
+          {{ kpi.label }}
+        </div>
+
+        <div class="kpi-detail">
+          {{ kpi.detail }}
+        </div>
+      </button>
+    }
+  </section>
+
+  <section class="section-block">
+    <div class="section-heading">
+      <div>
+        <span class="section-eyebrow"> SITUATION DU JOUR </span>
+
+        <h2>Ce qui mérite votre attention</h2>
+      </div>
+
+      <span class="status-live"> ● Données de démonstration </span>
+    </div>
+
+    <div class="attention-grid">
+      <div class="attention-card attention-danger">
+        <div class="attention-card-header">
+          <div class="attention-icon">⚠️</div>
+
+          <div>
+            <h3>Élèves nécessitant un suivi</h3>
+            <p>Assiduité et retards à surveiller</p>
+          </div>
+        </div>
+
+        <div class="student-list">
+          @for (eleve of elevesSuivi(); track eleve.nom) {
+            <div class="student-row">
+              <div class="student-avatar">
+                {{ eleve.nom.charAt(0) }}
+              </div>
+
+              <div class="student-main">
+                <strong>
+                  {{ eleve.nom }}
+                </strong>
+
+                <span>
+                  {{ eleve.classe }}
+                </span>
+              </div>
+
+              <div class="student-indicators">
+                @if (eleve.absences > 0) {
+                  <span class="indicator absence"> {{ eleve.absences }} abs. </span>
+                }
+
+                @if (eleve.retards > 0) {
+                  <span class="indicator retard"> {{ eleve.retards }} ret. </span>
+                }
+              </div>
+
+              <span class="followup-label" [class.followup-alert]="eleve.niveau === 'alerte'">
+                {{ eleve.motif }}
+              </span>
+            </div>
+          }
+        </div>
+
+        <button type="button" class="link-button" (click)="ouvrirAbsences()">
+          Voir le suivi des absences
+          <span>→</span>
+        </button>
+      </div>
+
+      <div class="attention-card">
+        <div class="attention-card-header">
+          <div class="attention-icon blue">👥</div>
+
+          <div>
+            <h3>Effectifs par cycle</h3>
+            <p>{{ formatNombre(totalEleves()) }} élèves · {{ totalClasses }} classes</p>
+          </div>
+        </div>
+
+        <div class="cycle-list">
+          @for (cycle of effectifsParCycle; track cycle.cycle) {
+            <div class="cycle-row">
+              <div class="cycle-top">
+                <div>
+                  <strong>
+                    {{ cycle.cycle }}
+                  </strong>
+
+                  <span> {{ cycle.classes }} classes </span>
+                </div>
+
+                <strong>
+                  {{ cycle.effectif }}
+                </strong>
+              </div>
+
+              <div class="progress-track">
+                <div class="progress-fill" [style.width]="getBarWidth(cycle.effectif)"></div>
+              </div>
+
+              <div class="cycle-percentage">{{ cycle.pourcentage }}% de l'effectif total</div>
+            </div>
+          }
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="content-grid">
+    <div class="panel">
+      <div class="panel-header">
+        <div>
+          <span class="panel-eyebrow"> SCOLARITÉ </span>
+
+          <h2>Suivi des encaissements</h2>
+        </div>
+
+        <button type="button" class="panel-link" (click)="ouvrirFactures()">
+          Voir la scolarité →
+        </button>
+      </div>
+
+      <div class="finance-summary">
+        <div class="finance-main">
+          <span class="finance-label"> Montant à encaisser </span>
+
+          <strong class="finance-amount">
+            {{ formatMontant(montantAencaisser()) }}
+          </strong>
+
+          <span class="finance-subtitle"> sur {{ formatMontant(montantAttendu()) }} attendus </span>
+        </div>
+
+        <div class="finance-rate">
+          <div class="circular-value">{{ tauxRecouvrement() }}%</div>
+
+          <span> recouvrement </span>
+        </div>
+      </div>
+
+      <div class="finance-progress">
+        <div class="finance-progress-top">
+          <span> {{ formatMontant(montantEncaisse()) }} encaissés </span>
+
+          <span> {{ tauxRecouvrement() }}% </span>
+        </div>
+
+        <div class="progress-track large">
+          <div class="progress-fill finance" [style.width.%]="tauxRecouvrement()"></div>
+        </div>
+      </div>
+
+      <div class="finance-alert">
+        <div class="finance-alert-icon">🚨</div>
+
+        <div>
+          <strong> {{ formatMontant(montantEnRetard()) }} en retard </strong>
+
+          <span> Les dossiers les plus importants sont affichés ci-dessous. </span>
+        </div>
+      </div>
+
+      <div class="payment-list">
+        @for (paiement of paiementsPrioritaires(); track paiement.eleve) {
+          <div class="payment-row">
+            <div class="payment-person">
+              <strong>
+                {{ paiement.eleve }}
+              </strong>
+
+              <span>
+                {{ paiement.classe }}
+              </span>
+            </div>
+
+            <div class="payment-amount">
+              {{ formatMontant(paiement.montant) }}
+            </div>
+
+            <div class="payment-date">
+              {{ paiement.echeance }}
+            </div>
+
+            <span
+              class="payment-status"
+              [class.overdue]="paiement.statut === 'EN RETARD'"
+              [class.upcoming]="paiement.statut === 'À VENIR'"
+            >
+              {{ paiement.statut }}
+            </span>
+          </div>
+        }
+      </div>
+    </div>
+
+    <div class="panel">
+      <div class="panel-header">
+        <div>
+          <span class="panel-eyebrow"> PÉDAGOGIE </span>
+
+          <h2>Suivi de l'activité pédagogique</h2>
+        </div>
+
+        <span class="panel-icon"> 📚 </span>
+      </div>
+
+      <div class="pedagogy-score">
+        <div>
+          <span class="pedagogy-label"> Cahier de texte renseigné </span>
+
+          <strong> {{ tauxCahierTexte() }}% </strong>
+        </div>
+
+        <div class="progress-track large">
+          <div class="progress-fill pedagogy" [style.width.%]="tauxCahierTexte()"></div>
+        </div>
+
+        <span class="pedagogy-caption"> Niveau de renseignement des séances récentes </span>
+      </div>
+
+      <div class="pedagogy-list">
+        @for (item of suiviPedagogique; track item.indicateur) {
+          <div class="pedagogy-row">
+            <div
+              class="pedagogy-status"
+              [class.normal]="item.niveau === 'normal'"
+              [class.attention]="item.niveau === 'attention'"
+              [class.alert]="item.niveau === 'alerte'"
+            >
+              @if (item.niveau === 'normal') {
+                ✓
+              } @else if (item.niveau === 'attention') {
+                !
+              } @else {
+                ⚠
+              }
+            </div>
+
+            <div class="pedagogy-content">
+              <strong>
+                {{ item.indicateur }}
+              </strong>
+
+              <span>
+                {{ item.detail }}
+              </span>
+            </div>
+
+            <strong class="pedagogy-value">
+              {{ item.valeur }}
+            </strong>
+          </div>
+        }
+      </div>
+
+      <div class="pedagogy-footer">
+        <div class="classes-warning">
+          <span class="warning-icon"> ⚠️ </span>
+
+          <div>
+            <strong> {{ classesPedagogiquesAverifier() }} classes à vérifier </strong>
+
+            <span> Dernières séances non renseignées récemment </span>
+          </div>
+        </div>
+
+        <button type="button" class="link-button" (click)="ouvrirSuiviPedagogique()">
+          Voir le suivi
+          <span>→</span>
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <section class="panel agenda-panel">
+    <div class="panel-header">
+      <div>
+        <span class="panel-eyebrow"> AGENDA </span>
+
+        <h2>Prochaines échéances</h2>
+      </div>
+
+      <button type="button" class="panel-link" (click)="ouvrirEvenements()">Voir l'agenda →</button>
+    </div>
+
+    <div class="event-list">
+      @for (evenement of evenements; track evenement.titre) {
+        <div class="event-row">
+          <div class="event-date">
+            <strong>
+              {{ evenement.jour }}
+            </strong>
+
+            <span>
+              {{ evenement.mois }}
+            </span>
+          </div>
+
+          <div class="event-content">
+            <strong>
+              {{ evenement.titre }}
+            </strong>
+
+            <span>
+              {{ evenement.type }}
+            </span>
+          </div>
+
+          <div class="event-time">
+            {{ evenement.heure }}
+          </div>
+        </div>
+      }
+    </div>
+  </section>
+
+  <section class="director-summary">
+    <div class="summary-icon">🎯</div>
+
+    <div class="summary-content">
+      <span> À RETENIR </span>
+
+      <strong>
+        L'établissement fonctionne correctement, avec quelques points nécessitant une attention.
+      </strong>
+
       <p>
-        Vue d'ensemble de l'établissement — {{ nombreTotalEleve }} élèves,
-        {{ nombreTotalEnseignant }} enseignants
+        {{ nombreReinscriptionsAtraiter() }} réinscriptions à traiter,
+        {{ formatMontant(montantEnRetard()) }} de scolarité en retard,
+        {{ evaluationsACorriger() }} évaluations à corriger et
+        {{ classesPedagogiquesAverifier() }} classes à vérifier.
       </p>
     </div>
-    <div class="header-actions">
-      <button class="btn-action" (click)="reInscription()">
-        📝 RéInscriptions ({{ nombreTotalEleveNonInscrits }})
-      </button>
-
-      <button class="btn-pay" (click)="nouvelleInscription()">
-        <i class="fas fa-plus-circle me-2"></i>
-        Nouvelle Inscriptions
-      </button>
-    </div>
-  </div>
-
-  <div class="kpis-4">
-    @for (k of kpis; track k.label) {
-      <div class="kpi-card" [class]="'kc-' + k.cls">
-        <div class="kc-top">
-          <span class="kc-ico">{{ k.ico }}</span>
-          <span class="kc-var" [class.pos]="k.var > 0" [class.neg]="k.var < 0">
-            {{ k.var > 0 ? '↑ +' + k.var : k.var < 0 ? '↓ ' + k.var : '—' }}%
-          </span>
-        </div>
-        <div class="kc-val">{{ k.val }}</div>
-        <div class="kc-lbl">{{ k.label }}</div>
-        <div class="kc-detail">{{ k.detail }}</div>
-      </div>
-    }
-  </div>
-
-  <div class="duo-grid">
-    <div class="card">
-      <div class="card-head">
-        <h3>⚠️ Élèves à risque</h3>
-        <button class="card-link" (click)="voirAbsenceEleves()">Voir tout →</button>
-      </div>
-      <div class="table-mini">
-        <div class="tm-header">
-          <span>Élève</span>
-          <span>Classe</span>
-          <span>Retards</span>
-          <span>Absences</span>
-        </div>
-        @for (e of elevesRetards; track e.nom) {
-          <div class="tm-row">
-            <span class="tm-nom">{{ e.nom }}</span>
-            <span class="tm-classe">{{ e.classe }}</span>
-            <span class="badge-count warning">{{ e.retards }}</span>
-            <span class="badge-count danger">{{ e.absences }}</span>
-          </div>
-        }
-      </div>
-    </div>
-
-    <div class="card">
-      <div class="card-head">
-        <h3>🏫 Répartition des élèves</h3>
-        <span class="text-muted">{{ nombreTotalClasse }} classes</span>
-      </div>
-      <div class="repartition-bars">
-        @for (n of repartitionSexe; track n.label) {
-          <div class="rb-item">
-            <div class="rb-info">
-              <span class="rb-label">{{ n.label }}</span>
-              <span class="rb-val">{{ n.effectif }} élèves</span>
-            </div>
-            <div class="rb-bar-outer">
-              <div
-                class="rb-bar-inner"
-                [style.width.%]="(n.effectif / nombreTotalEleve!) * 100"
-                [style.background]="n.couleur"
-              ></div>
-            </div>
-          </div>
-        }
-      </div>
-    </div>
-  </div>
-
-  <div class="duo-grid">
-    <div class="card">
-      <div class="card-head">
-        <h3>💰 Paiements en attente</h3>
-        <button class="card-link" (click)="voirFactures()">Voir tout →</button>
-      </div>
-      <div class="paiements-scroll">
-        @for (p of paiementsEnAttente; track p.eleve) {
-          <div class="paiement-row">
-            <div class="paiement-info">
-              <span class="paiement-eleve">{{ p.eleve }}</span>
-              <span class="paiement-parent">{{ p.parent }}</span>
-            </div>
-            <div class="paiement-montant">
-              <span class="paiement-fcfa">{{ formatFCFA(p.montant) }}</span>
-              <span class="paiement-date">Échéance : {{ p.echeance }}</span>
-            </div>
-            <span class="badge" [class]="getStatutClasse(p.statut)">{{ p.statut }}</span>
-          </div>
-        }
-      </div>
-    </div>
-
-    <div class="card">
-      <div class="card-head">
-        <h3>📅 Événements à venir</h3>
-        <button class="card-link" (click)="voirEvenements()">Voir tout →</button>
-      </div>
-      <div class="events-scroll">
-        @for (ev of evenements; track ev.libelle) {
-          <div class="event-row">
-            <span class="event-ico">{{ getEvenementIcone(ev.type) }}</span>
-            <div class="event-info">
-              <span class="event-titre">{{ ev.libelle }}</span>
-              <span class="event-date">{{ ev.date }}</span>
-            </div>
-          </div>
-        }
-      </div>
-    </div>
-  </div>
+  </section>
 </div>
