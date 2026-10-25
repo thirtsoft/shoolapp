@@ -8,6 +8,7 @@ import { QuatreDernierEvenement } from '../../../../core/models/statistique/quat
 import { SexeRepartition } from '../../../../core/models/statistique/sexe-repartition';
 import { DashboardStats } from '../../../../core/models/statistique/stats-globales';
 import { DashboardStatsList } from '../../../../core/models/statistique/stats-globales-list';
+import { DashboardEleveSuivi, DashboardKpiElevesInscrits, DashboardKpiEvaluations, DashboardKpiPedagogie, DashboardKpiPresence, DashboardKpiRecouvrement } from '../../../../core/models/dashboard/dashboard-direction.model';
 
 @Injectable({
   providedIn: 'root'
@@ -20,6 +21,8 @@ export class DashboardService {
   enseignantUrl = this.baseUrl + "/enseignant";
   comptabiliteUrl = this.baseUrl + "/comptabilite";
   planificationUrl = this.baseUrl + "/planification";
+  dashboardDirectionUrl = this.baseUrl + "/dashboard/direction";
+
 
   httpOptions = {
     headers: new HttpHeaders({
@@ -86,8 +89,6 @@ export class DashboardService {
     return this.http.get<DashboardStatsList>(url, this.httpOptions);
   }
 
-
-
   afficherLeTop5EleveAbsents(): Observable<EleveRetard[]> {
     return this.http.get<EleveRetard[]>(`${this.statistiqueUrl}/top5eleveabsent`);
   }
@@ -103,5 +104,53 @@ export class DashboardService {
   afficherLes4DerniersEvenementsProgramme(): Observable<QuatreDernierEvenement[]> {
     return this.http.get<QuatreDernierEvenement[]>(`${this.statistiqueUrl}/quatrederniersevenement`);
   }
+
+  //
+
+  obtenirKpiElevesInscrits(): Observable<DashboardKpiElevesInscrits> {
+    return this.http.get<DashboardKpiElevesInscrits>(
+      `${this.dashboardDirectionUrl}/kpis/eleves-inscrits`
+    );
+  }
+
+  obtenirKpiPresence(date: string) {
+    return this.http.get<DashboardKpiPresence>(
+      `${this.dashboardDirectionUrl}/kpis/presence`,
+      {
+        params: { date }
+      }
+    );
+  }
+
+  obtenirKpiRecouvrement(): Observable<DashboardKpiRecouvrement> {
+    return this.http.get<DashboardKpiRecouvrement>(
+      `${this.dashboardDirectionUrl}/kpis/recouvrement`
+    );
+  }
+
+  obtenirKpiEvaluations(): Observable<DashboardKpiEvaluations> {
+    return this.http.get<DashboardKpiEvaluations>(
+      `${this.dashboardDirectionUrl}/kpis/evaluations`
+    );
+  }
+
+  rechercherElevesNecessitantSuivi(): Observable<DashboardEleveSuivi[]> {
+    return this.http.get<DashboardEleveSuivi[]>(
+      `${this.dashboardDirectionUrl}/eleves-necessitant-suivi`
+    );
+  }
+
+  rechercherKpiEncaissement(): Observable<DashboardKpiRecouvrement> {
+    return this.http.get<DashboardKpiRecouvrement>(
+      `${this.dashboardDirectionUrl}/kpis/encaissement`
+    );
+  }
+
+  rechercherKpiPedagogie(): Observable<DashboardKpiPedagogie> {
+    return this.http.get<DashboardKpiPedagogie>(
+      `${this.dashboardDirectionUrl}/kpis/pedagogie`
+    );
+  }
+
 
 }

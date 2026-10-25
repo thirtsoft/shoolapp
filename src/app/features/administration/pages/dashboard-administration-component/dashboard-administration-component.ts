@@ -1,15 +1,101 @@
 import { CommonModule } from '@angular/common';
-import { Component, DestroyRef, inject, OnInit } from '@angular/core';
+import { Component, DestroyRef, inject, OnInit, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Router } from '@angular/router';
-import { EleveRetard } from '../../../../core/models/statistique/eleve-retard';
-import { FactureStatut } from '../../../../core/models/statistique/facture-statut';
-import { QuatreDernierEvenement } from '../../../../core/models/statistique/quatre-derniers-evenement';
-import { SexeRepartition } from '../../../../core/models/statistique/sexe-repartition';
-import { DashboardStats } from '../../../../core/models/statistique/stats-globales';
-import { DashboardStatsList } from '../../../../core/models/statistique/stats-globales-list';
-import { DataService } from '../../../../shared/data.service';
+import { ToastrService } from 'ngx-toastr';
+import { forkJoin } from 'rxjs';
+
+import { OrganizationMiniResponse } from '../../../../core/models/onboarding/organization/organization-mini-response';
+import { ConfigOrganizationService } from '../../configorganization/services/configorganization.service';
 import { DashboardService } from '../../dossier-eleve/service/dashboard.service';
+
+interface KpiDirection {
+  label: string;
+  valeur: string;
+  detail: string;
+  icon: string;
+  classe: string;
+  action?: () => void;
+}
+
+interface EleveSuivi {
+  nom: string;
+  classe: string;
+  absences: number;
+  retards: number;
+  motif: string;
+  niveau: 'attention' | 'alerte';
+}
+
+interface EffectifCycle {
+  cycle: string;
+  effectif: number;
+  pourcentage: number;
+  classes: number;
+}
+
+interface PaiementPrioritaire {
+  eleve: string;
+  classe: string;
+  montant: number;
+  echeance: string;
+  statut: 'EN RETARD' | 'À VENIR';
+}
+
+interface SuiviPedagogique {
+  indicateur: string;
+  valeur: string;
+  detail: string;
+  niveau: 'normal' | 'attention' | 'alerte';
+}
+
+interface EvenementDirection {
+  jour: string;
+  mois: string;
+  titre: string;
+  type: string;
+  heure: string;
+}
+
+interface DashboardKpiElevesInscrits {
+  nombreElevesInscrits: number;
+  nombreReinscriptionsATraiter: number;
+}
+
+interface DashboardKpiPresence {
+  nombreElevesInscrits: number;
+  nombreElevesAppeles: number;
+  nombreElevesPresents: number;
+  nombreElevesAbsents: number;
+  tauxPresence: number;
+}
+
+interface DashboardKpiEncaissement {
+  montantAttendu: number;
+  montantEncaisse: number;
+  montantAEncaisser: number;
+  montantEnRetard: number;
+  tauxRecouvrement: number;
+  paiementsPrioritaires: PaiementPrioritaire[];
+}
+
+interface DashboardKpiEvaluations {
+  evaluationsACorriger: number;
+  classesNecessitantSuivi: number;
+}
+
+interface DashboardEleveSuiviResponse {
+  eleveId: number;
+  nom: string;
+  prenom: string;
+  nombreAbsences: number;
+  nombreRetards: number;
+}
+
+interface DashboardKpiPedagogie {
+  tauxCahierTexte: number;
+  classesPedagogiquesAverifier: number;
+}
 
 @Component({
   selector: 'app-dashboard-administration-component',
@@ -20,206 +106,304 @@ import { DashboardService } from '../../dossier-eleve/service/dashboard.service'
 })
 export class DashboardAdministrationComponent implements OnInit {
 
-  ds = inject(DataService);
-
-  nombreTotalEleve?: number = 0;
-  nombreTotalEnseignant?: number = 0;
-  nombreTotalEleveInscrits?: number = 0;
-  nombreTotalEleveNonInscrits?: number = 0;
-  nombreTotalClasse?: number = 0;
-  nombreTotalFactureImpayees: number = 0;
-  montantTotalimpaye: number = 0;
-  montantTotalEnAttent: number = 0;
-  montantTotalEnRetard: number = 0;
-
-  elevesRetards?: EleveRetard[] = [];
-  paiementsEnAttente?: FactureStatut[] = [];
-  evenements?: QuatreDernierEvenement[] = [];
-  repartitionSexe?: SexeRepartition[] = [];
-  dashboardStats: DashboardStats = {};
-
-  kpis: any[] = [];
-  dashboardStatsList: DashboardStatsList = {};
-  private fallbackEleveEnRetards: any[] = [];
-  private fallbackRepartitionsParSexe: any[] = [];
-  private fallbackPaiements: any[] = [];
-  private fallbackEvenements: any[] = [];
-
-  private readonly dashboardService = inject(DashboardService);
   private readonly router = inject(Router);
+  private readonly dashboardService = inject(DashboardService);
+  private readonly organizationConfigService = inject(ConfigOrganizationService);
+  private readonly toastService = inject(ToastrService);
   private readonly destroyRef = inject(DestroyRef);
 
+  loading = signal(false);
+  organizationData: OrganizationMiniResponse = {};
+  error = signal('');
+
+  etablissement = '';
+
+  readonly anneeScolaire = '2026–2027';
+  readonly dateDashboard = '24 octobre 2026';
+  readonly dateSituation = '2026-10-24';
+
+  readonly totalEleves = signal(0);
+  readonly nombreReinscriptionsAtraiter = signal(0);
+
+  readonly tauxPresence = signal(0);
+  readonly absencesAujourdHui = signal(0);
+  readonly retardsAujourdHui = signal(0);
+
+  readonly tauxRecouvrement = signal(0);
+  readonly montantAttendu = signal(0);
+  readonly montantEncaisse = signal(0);
+  readonly montantAencaisser = signal(0);
+  readonly montantEnRetard = signal(0);
+
+  readonly evaluationsACorriger = signal(0);
+
+  readonly classesPedagogiquesAverifier = signal(0);
+  readonly tauxCahierTexte = signal(0);
+
+  readonly paiementsPrioritaires = signal<PaiementPrioritaire[]>([]);
+  readonly elevesSuivi = signal<EleveSuivi[]>([]);
+
+  readonly totalEnseignants = 38;
+  readonly totalClasses = 18;
+
+  readonly effectifsParCycle: EffectifCycle[] = [
+    {
+      cycle: 'Primaire',
+      effectif: 230,
+      pourcentage: 43.9,
+      classes: 8,
+    },
+    {
+      cycle: 'Collège',
+      effectif: 174,
+      pourcentage: 33.2,
+      classes: 6,
+    },
+    {
+      cycle: 'Lycée',
+      effectif: 120,
+      pourcentage: 22.9,
+      classes: 4,
+    },
+  ];
+
+  readonly evenements: EvenementDirection[] = [
+    {
+      jour: '27',
+      mois: 'OCT',
+      titre: 'Conseil pédagogique',
+      type: 'Pédagogie',
+      heure: '16:00',
+    },
+    {
+      jour: '29',
+      mois: 'OCT',
+      titre: 'Réunion parents-professeurs',
+      type: 'Vie scolaire',
+      heure: '17:30',
+    },
+    {
+      jour: '31',
+      mois: 'OCT',
+      titre: 'Évaluations du 1er trimestre',
+      type: 'Évaluation',
+      heure: '08:00',
+    },
+  ];
+
   ngOnInit(): void {
-    this.chargerLesDonnees();
-    this.initKpisParDefaut();
-    this.initLesListeDashboardParDefaut();
+    this.loadOrganizationInfos();
+    this.loadDashboardData();
   }
 
-  private initKpisParDefaut() {
-    this.kpis = [
-      { label: 'Élèves inscrits', val: '-', ico: '🎒', var: 0, detail: '- en attente', cls: 'bleu' },
-      { label: 'Paiements en attente', val: '-', ico: '⏳', var: 0, detail: 'Délais non dépassés', cls: 'vert' },
-      { label: 'Paiements en retard', val: '-', ico: '🚨', var: 0, detail: 'Échéances dépassées', cls: 'or' },
-      { label: 'Factures impayées', val: '-', ico: '💰', var: 0, detail: '- factures au total', cls: 'rouge' }
-    ];
+  private loadOrganizationInfos(): void {
+    const organizationUuid = localStorage.getItem('v2_organization_uuid');
+    if (!organizationUuid) {
+      this.error.set('Organisation non trouvée');
+      this.toastService.warning('Attention', 'Organisation non trouvée');
+      return;
+    }
+    this.organizationConfigService
+      .getOrganizationConfigInfos(organizationUuid)
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: (response: any) => {
+          this.organizationData = response;
+          this.etablissement = response?.libelle ?? 'Non renseigné';
+        },
+        error: (error) => {
+          console.error('Erreur chargement organisation:', error);
+          this.toastService.error('Erreur', 'Impossible de charger les informations');
+        },
+      });
   }
 
-  private initLesListeDashboardParDefaut() {
-    this.fallbackEleveEnRetards = [
-      { nom: 'Moussa Diop', classe: 'Terminale S2', retards: 8, absences: 3 },
-      { nom: 'Fatou Sow', classe: 'Première L1', retards: 6, absences: 5 },
-      { nom: 'Ibrahima Fall', classe: 'Troisième A', retards: 12, absences: 2 },
-      { nom: 'Aïssatou Bah', classe: 'Seconde S1', retards: 4, absences: 7 },
-      { nom: 'Omar Ndiaye', classe: 'CM2 B', retards: 9, absences: 1 },
-    ];
+  private loadDashboardData(): void {
+    this.loading.set(true);
+    this.error.set('');
+    forkJoin({
+      eleves: this.dashboardService.obtenirKpiElevesInscrits(),
+      presence: this.dashboardService.obtenirKpiPresence(this.dateSituation),
+      encaissement: this.dashboardService.rechercherKpiEncaissement(),
+      evaluations: this.dashboardService.obtenirKpiEvaluations(),
+      elevesSuivi: this.dashboardService.rechercherElevesNecessitantSuivi(),
+      pedagogie: this.dashboardService.rechercherKpiPedagogie(),
+    })
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: (data) => {
+          this.totalEleves.set(data.eleves.nombreElevesInscrits);
+          console.log('Elevec total', this.totalEleves());
+          this.nombreReinscriptionsAtraiter.set(data.eleves.nombreReinscriptionsATraiter);
+          this.tauxPresence.set(data.presence.tauxPresence);
+          this.absencesAujourdHui.set(data.presence.nombreElevesAbsents);
+          this.retardsAujourdHui.set(0);
+          this.tauxRecouvrement.set(data.encaissement.tauxRecouvrement);
+          this.montantAttendu.set(data.encaissement.montantAttendu);
+          this.montantEncaisse.set(data.encaissement.montantEncaisse);
+          this.montantAencaisser.set(data.encaissement.montantAEncaisser);
+          this.montantEnRetard.set(data.encaissement.montantEnRetard);
+          this.paiementsPrioritaires.set(data.encaissement.paiementsPrioritaires);
+          this.evaluationsACorriger.set(data.evaluations.evaluationsACorriger);
 
-    this.fallbackPaiements = [
-      { eleve: 'Moussa Diop', parent: 'M. Diop', montant: 250000, echeance: '15/03/2026', statut: 'En retard' },
-      { eleve: 'Fatou Sow', parent: 'Mme Sow', montant: 180000, echeance: '20/03/2026', statut: 'En attente' },
-      { eleve: 'Ibrahima Fall', parent: 'M. Fall', montant: 320000, echeance: '05/03/2026', statut: 'En retard' },
-      { eleve: 'Aïssatou Bah', parent: 'Mme Bah', montant: 150000, echeance: '25/03/2026', statut: 'En attente' },
-    ];
+          this.elevesSuivi.set(
+            data.elevesSuivi.map((eleve) => ({
+              nom: `${eleve.prenom} ${eleve.nom}`.trim(),
+              classe: '',
+              absences: eleve.nombreAbsences,
+              retards: eleve.nombreRetards,
+              motif:
+                eleve.nombreAbsences >= 2
+                  ? 'Absences répétées'
+                  : eleve.nombreRetards >= 2
+                    ? 'Retards répétés'
+                    : 'À surveiller',
+              niveau:
+                eleve.nombreAbsences >= 2 || eleve.nombreRetards >= 2
+                  ? 'alerte'
+                  : 'attention',
+            }))
+          );
+          this.tauxCahierTexte.set(data.pedagogie.tauxCahierTexte);
+          this.classesPedagogiquesAverifier.set(data.pedagogie.classesPedagogiquesAverifier);
+          this.loading.set(false);
+        },
 
-    this.fallbackEvenements = [
-      { libelle: 'Conseil de classe - Terminale', date: '10 Mars 2026', description: 'conseil' },
-      { libelle: 'Réunion parents-professeurs', date: '15 Mars 2026', description: 'reunion' },
-      { libelle: 'Épreuves du BAC blanc', date: '20-24 Mars 2026', description: 'examen' },
-      { libelle: 'Journée sportive', date: '28 Mars 2026', description: 'sport' },
-    ];
-
-    this.fallbackRepartitionsParSexe = [
-      { label: 'Primaire', effectif: 450, couleur: '#4299e1' },
-      { label: 'Collège', effectif: 380, couleur: '#2c5282' },
-      { label: 'Lycée', effectif: 370, couleur: '#1e3a5f' },
-    ];
-    this.elevesRetards = this.fallbackEleveEnRetards;
-    this.repartitionSexe = this.fallbackRepartitionsParSexe;
-    this.paiementsEnAttente = this.fallbackPaiements;
-    this.evenements = this.fallbackEvenements;
+        error: (error) => {
+          console.error('Erreur chargement dashboard Direction:', error);
+          this.error.set('Impossible de charger les données du dashboard');
+          this.loading.set(false);
+          this.toastService.error(
+            'Erreur',
+            'Impossible de charger les données du dashboard'
+          );
+        },
+      });
   }
 
-  private chargerLesDonnees() {
-    this.dashboardService.afficherLesStatsGlobales().pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
-      next: data => {
-        this.dashboardStats = data;
-        this.nombreTotalEleve = this.dashboardStats.nombreEleves;
-        this.nombreTotalEnseignant = this.dashboardStats.nombreEnseignant;
-        this.nombreTotalEleveNonInscrits = this.dashboardStats.nombreEleveNonInscrits;
-        this.nombreTotalClasse = this.dashboardStats.nombreClasse;
+  get kpis(): KpiDirection[] {
 
-        this.mettreAJourKpis(data);
-      }
-    });
-
-    this.dashboardService.afficherLesListDeStatsGlobales().pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
-      next: data => {
-        this.dashboardStatsList = data;
-        this.mettreAJourLesListe(data);
-      }
-    });
-  }
-
-  private mettreAJourKpis(stats: DashboardStats) {
-    this.kpis = [
+    return [
       {
         label: 'Élèves inscrits',
-        val: this.formatNombre(stats.nombreEleveInscrits ?? 0),
-        ico: '🎒',
-        var: +8,
-        detail: `${this.formatNombre(stats.nombreEleveNonInscrits ?? 0)} en attente`,
-        cls: 'bleu'
+        valeur: this.formatNombre(this.totalEleves()),
+        detail: `${this.nombreReinscriptionsAtraiter()} réinscriptions à traiter`,
+        icon: '🎒',
+        classe: 'bleu',
+        action: () => this.ouvrirInscriptions(),
       },
       {
-        label: 'Paiements en attente',
-        val: this.formatFCFA(stats.montantTotalEnAttante ?? 0),
-        ico: '⏳',
-        var: 0,
-        detail: 'À encaisser prochainement',
-        cls: 'vert'
+        label: 'Présence aujourd’hui',
+        valeur: `${this.tauxPresence()}%`,
+        detail: `${this.absencesAujourdHui()} absences · ` + `${this.retardsAujourdHui()} retards`,
+
+        icon: '🟢',
+        classe: 'vert',
+        action: () => this.ouvrirAbsences(),
       },
+
       {
-        label: 'Paiements en retard',
-        val: this.formatFCFA(stats.montantTotalEnRetard ?? 0),
-        ico: '🚨',
-        var: +4.2,
-        detail: 'Créances à relancer',
-        cls: 'or'
+        label: 'Recouvrement scolarité',
+        valeur: `${this.tauxRecouvrement()}%`,
+        detail: `${this.formatMontant(this.montantAencaisser())} à encaisser`,
+        icon: '💰',
+        classe: 'orange',
+        action: () => this.ouvrirFactures(),
       },
+
       {
-        label: 'Factures impayées',
-        val: this.formatFCFA(stats.montantTotalImpaye ?? 0),
-        ico: '💰',
-        var: -5,
-        detail: `${stats.nombreTotalFactureImpaye ?? 0} factures non soldées`,
-        cls: 'rouge'
-      }
+        label: 'Évaluations à corriger',
+        valeur: `${this.evaluationsACorriger()}`,
+        detail: `${this.classesPedagogiquesAverifier()} classes nécessitent un suivi`,
+        icon: '📚',
+        classe: 'violet',
+        action: () => this.ouvrirSuiviPedagogique(),
+      },
     ];
   }
 
-  private mettreAJourLesListe(stats: DashboardStatsList) {
-    this.paiementsEnAttente = (stats.factureStatutDTOList && stats.factureStatutDTOList.length > 0)
-      ? stats.factureStatutDTOList
-      : this.fallbackPaiements;
+  get suiviPedagogique(): SuiviPedagogique[] {
+    const taux = this.tauxCahierTexte();
+    const evaluations = this.evaluationsACorriger();
+    const classes = this.classesPedagogiquesAverifier();
+    return [
+      {
+        indicateur: 'Cahier de texte renseigné',
+        valeur: `${taux}%`,
+        detail: 'des séances récentes sont renseignées',
+        niveau:
+          taux >= 80
+            ? 'normal'
+            : taux >= 60
+              ? 'attention'
+              : 'alerte',
+      },
 
-    this.evenements = (stats.quatreDernierEvenementDTOList && stats.quatreDernierEvenementDTOList.length > 0)
-      ? stats.quatreDernierEvenementDTOList
-      : this.fallbackEvenements;
+      {
+        indicateur: 'Évaluations à corriger',
+        valeur: `${evaluations}`,
+        detail: 'évaluations attendent une correction',
+        niveau: evaluations === 0 ? 'normal' : 'attention',
+      },
 
-    this.elevesRetards = (stats.eleveRetardDTOList && stats.eleveRetardDTOList.length > 0)
-      ? stats.eleveRetardDTOList
-      : this.fallbackEleveEnRetards;
-
-    this.repartitionSexe = (stats.sexeRepartitionDTOList && stats.sexeRepartitionDTOList.length > 0)
-      ? stats.sexeRepartitionDTOList
-      : this.fallbackRepartitionsParSexe;
+      {
+        indicateur: 'Classes à vérifier',
+        valeur: `${classes}`,
+        detail: 'absence de saisie récente du cahier de texte',
+        niveau: classes === 0 ? 'normal' : 'alerte',
+      },
+    ];
   }
 
-  // ── Méthodes utilitaires ─────────────────────────────
-  getStatutClasse(cls: string): string {
-    if (cls.includes('En retard')) return 'danger';
-    if (cls.includes('En attente')) return 'warning';
-    return 'success';
+  ouvrirInscriptions(): void {
+    void this.router.navigate(['/admin/dossier-eleve/inscription']);
   }
 
-  getEvenementIcone(type: string): string {
-    const icones: Record<string, string> = {
-      conseil: '👥',
-      reunion: '👪',
-      examen: '📝',
-      sport: '⚽',
-    };
-    return icones[type] ?? '📅';
+  ouvrirAbsences(): void {
+    void this.router.navigate(['/admin/dossier-eleve/absences']);
+  }
+
+  ouvrirFactures(): void {
+    void this.router.navigate(['/admin/comptabilite/facture']);
+  }
+
+  ouvrirSuiviPedagogique(): void {
+    console.log('Ouverture du suivi pédagogique');
+  }
+
+  ouvrirEvenements(): void {
+    void this.router.navigate(['/admin/planification/evenement']);
   }
 
   nouvelleInscription(): void {
-    this.router.navigate(['/admin/dossier-eleve/inscrire-eleve']);
+    void this.router.navigate(['/admin/dossier-eleve/inscrire-eleve']);
   }
 
-  reInscription(): void {
-    this.router.navigate(['/admin/dossier-eleve/inscription']);
+  voirToutesLesReinscriptions(): void {
+    void this.router.navigate(['/admin/dossier-eleve/inscription']);
   }
 
-
-  voirAbsenceEleves(): void {
-    this.router.navigate(['/admin/dossier-eleve/absences']);
+  formatNombre(valeur: number): string {
+    return new Intl.NumberFormat('fr-FR').format(valeur);
   }
 
-  voirFactures(): void {
-    this.router.navigate(['/admin/comptabilite/facture']);
+  formatMontant(valeur: number): string {
+    return `${new Intl.NumberFormat('fr-FR').format(valeur)} FCFA`;
   }
 
-  voirEvenements(): void {
-    this.router.navigate(['/admin/planification/evenement']);
+  get largeurCycleMax(): number {
+    return Math.max(...this.effectifsParCycle.map(cycle => cycle.effectif));
   }
 
-  formatNombre(n: number): string {
-    return new Intl.NumberFormat('fr-FR').format(n);
+  get largeurCycle(): number {
+    return 0;
   }
 
-  formatFCFA(n: number): string {
-    return new Intl.NumberFormat('fr-FR').format(n) + ' FCFA';
+  getBarWidth(effectif: number): string {
+    const pourcentage =
+      this.largeurCycleMax > 0
+        ? (effectif / this.largeurCycleMax) * 100
+        : 0;
+    return `${pourcentage}%`;
   }
-
 }
-
-
