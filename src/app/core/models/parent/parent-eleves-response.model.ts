@@ -15,3 +15,18 @@ export interface ParentElevesResponse {
 
     eleves: EleveResume[];
 }
+
+
+export interface ParentResponse {
+    id?: number;
+
+    parentUuid?: string;
+
+    nom?: string;
+    prenom?: string;
+    telephone?: string;
+    email?: string;
+    profession?: string;
+    civility?: string;
+
+}

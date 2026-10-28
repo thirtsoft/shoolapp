@@ -46,7 +46,7 @@ export class ComptabiliteResourceService {
     });
   }
 
-  getResourceByIdPaged<T>(endpoint: string, id: number, page: number, size: number): Observable<DataResult<T>> {
+  getResourceByIdPaged<T>(endpoint: string, id: any, page: number, size: number): Observable<DataResult<T>> {
     const url = `${this.comptabiliteUrl}/${endpoint}/${id}/page`;
     const params = new HttpParams()
       .set('page', page.toString())
@@ -58,7 +58,7 @@ export class ComptabiliteResourceService {
     });
   }
 
-  fetchFilterByElementDataTable<T>(endpoint: string, id: number, page: number, size: number, filters?: any): Observable<DataResult<T>> {
+  fetchFilterByElementDataTable<T>(endpoint: string, id: any, page: number, size: number, filters?: any): Observable<DataResult<T>> {
     let url = `${this.baseUrl_1}/${endpoint}/${id}`;
 
     if (filters) {

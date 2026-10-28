@@ -7,7 +7,6 @@
         <h2>Aucun enfant inscrit</h2>
         <p>Vous n'avez aucun enfant inscrit dans cet établissement.</p>
         <p class="choisir-empty-contact">Contactez l'administration pour plus d'informations.</p>
-        <!-- ✅ Bouton déconnexion -->
         <button class="choisir-deconnexion" (click)="deconnecter()">
           <span>🚪</span> Déconnexion
         </button>
@@ -30,7 +29,6 @@
               <span class="choisir-avatar-ico">{{ getAvatar(eleve) }}</span>
             </div>
 
-            <!-- Infos -->
             <div class="choisir-card-body">
               <h3 class="choisir-card-nom">{{ eleve?.prenom }} {{ eleve?.nom }}</h3>
               <div class="choisir-card-tags">
@@ -46,7 +44,6 @@
           </div>
         }
       </div>
-      <!-- ✅ Bouton déconnexion en bas -->
       <div class="choisir-footer">
         <button class="choisir-deconnexion" (click)="deconnecter()">
           <span>🚪</span> Déconnexion

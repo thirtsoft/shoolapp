@@ -39,8 +39,6 @@ export class EditEvaluationComponent implements OnInit {
   elevesList?: ListeEleve[] = [];
   enseignement?: Enseignement = {};
   classeList: ListeClasse[] = [];
-  userId?: number;
-  ecoleId: any;
 
   private readonly dossierResource = inject(DossierResourceService);
   private readonly planification = inject(PlanificationResourceService);
@@ -54,7 +52,6 @@ export class EditEvaluationComponent implements OnInit {
 
   ngOnInit(): void {
     this.evaluationId = this.activeRoute.snapshot.params['id'];
-    this.userId = Number(localStorage.getItem('id'));
     this.initialiserFormGroup();
     this.chargerLesDonnees();
     //  this.getEnseignementList();
@@ -144,7 +141,6 @@ export class EditEvaluationComponent implements OnInit {
     this.dossierResource.getSingleResource('evaluation', evaluationId).subscribe({
       next: (data: any) => {
         this.addEditEvaluation = data;
-        this.ecoleId = this.addEditEvaluation.ecole;
 
         if (this.addEditEvaluation?.classeId) {
           this.getEnseignementByClass(this.addEditEvaluation.classeId);
@@ -170,7 +166,7 @@ export class EditEvaluationComponent implements OnInit {
             id: [n.id],
             eleve: [n.eleve, Validators.required],
             nomCompletEleve: [n.nomCompletEleve],
-            note: [n.note],
+            note: [n.note ?? 0],
             type: [n.type],
             dateCreation: [n.dateCreation],
             appreciation: [n.appreciation]
@@ -199,7 +195,6 @@ export class EditEvaluationComponent implements OnInit {
     const payload = this.evaluationFormGroup?.value;
     payload.etatId = this.addEditEvaluation.etatId;
     payload.dateCreation = this.addEditEvaluation.dateCreation;
-    payload.dateRemise = this.addEditEvaluation.dateRemise;
 
     this.dossierResource.updateNotesEvaluationsReource('evaluation', this.evaluationId, payload).subscribe({
       next: (data) => {

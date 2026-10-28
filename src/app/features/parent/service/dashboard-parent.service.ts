@@ -1,9 +1,8 @@
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
 import { environment } from '../../../../environments/environment';
-import { DashboardStatsEleve } from '../../../core/models/statistique/eleve/dashboard-stats-eleve';
-import { DashboardStatsEleveList } from '../../../core/models/statistique/eleve/dashboard-stats-eleve-list';
+import { AssiduiteEleveParentResponse, DashboardFinancierParentResponse, DerniereAbsenceParentResponse, DerniereNoteParentResponse, EmploiDuTempsJourParentResponse, ProchaineActiviteParentResponse, ProchaineEvaluationParentResponse, ProchainExerciceParentResponse } from '../../../core/models/dashboard/dashboard-parent.model';
+import { Observable } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
@@ -11,7 +10,7 @@ import { DashboardStatsEleveList } from '../../../core/models/statistique/eleve/
 export class DashboardParentService {
 
   baseUrl = environment.apiBaseUrl;
-  statistiqueUrl = this.baseUrl + "/statistique";
+  dashboardParentUrl = this.baseUrl + "/dashboard/parent";
 
   httpOptions = {
     headers: new HttpHeaders({
@@ -22,17 +21,81 @@ export class DashboardParentService {
 
   private readonly http = inject(HttpClient);
 
-
-  afficherLesStatsGlobaleEleve(eleveId: number): Observable<DashboardStatsEleve> {
-    const url = `${this.statistiqueUrl}/eleve/${eleveId}`;
-    return this.http.get<DashboardStatsEleve>(url, this.httpOptions);
+  getEmploiDuTempsDuJour(classeId: number): Observable<EmploiDuTempsJourParentResponse[]> {
+    const params = new HttpParams()
+      .set('classeId', classeId);
+    return this.http.get<EmploiDuTempsJourParentResponse[]>(
+      `${this.dashboardParentUrl}/emploi-du-temps`, { params });
   }
 
-  afficherLesListDeStatsGlobaleEleve(eleveId: number): Observable<DashboardStatsEleveList> {
-    const url = `${this.statistiqueUrl}/list/eleve/${eleveId}`;
-    return this.http.get<DashboardStatsEleveList>(url, this.httpOptions);
+  getAssiduiteEleve(eleveId: number): Observable<AssiduiteEleveParentResponse> {
+
+    const params = new HttpParams()
+      .set('eleveId', eleveId);
+
+    return this.http.get<AssiduiteEleveParentResponse>(
+      `${this.dashboardParentUrl}/assiduite-eleve`,
+      { params }
+    );
   }
 
+  getSituationFinanciere(eleveUuid: string): Observable<DashboardFinancierParentResponse> {
+    const params = new HttpParams()
+      .set('eleveUuid', eleveUuid);
+    return this.http.get<DashboardFinancierParentResponse>(
+      `${this.dashboardParentUrl}/situation-financiere`,
+      { params }
+    );
+  }
+
+  getDernieresNotesEleve(eleveId: number): Observable<DerniereNoteParentResponse[]> {
+    const params = new HttpParams()
+      .set('eleveId', eleveId);
+
+    return this.http.get<DerniereNoteParentResponse[]>(
+      `${this.dashboardParentUrl}/dernieres-notes-eleve`,
+      { params }
+    );
+  }
+
+  getDernieresAbsencesEleve(eleveId: number): Observable<DerniereAbsenceParentResponse[]> {
+
+    const params = new HttpParams()
+      .set('eleveId', eleveId);
+
+    return this.http.get<DerniereAbsenceParentResponse[]>(
+      `${this.dashboardParentUrl}/dernieres-absences-eleve`,
+      { params }
+    );
+  }
+
+  getProchainesEvaluations(eleveId: number): Observable<ProchaineEvaluationParentResponse[]> {
+
+    const params = new HttpParams()
+      .set('eleveId', eleveId);
+
+    return this.http.get<ProchaineEvaluationParentResponse[]>(
+      `${this.dashboardParentUrl}/prochaines-evaluations`,
+      { params }
+    );
+  }
+
+  getProchainsExercices(eleveId: number): Observable<ProchainExerciceParentResponse[]> {
+
+    const params = new HttpParams()
+      .set('eleveId', eleveId);
+
+    return this.http.get<ProchainExerciceParentResponse[]>(
+      `${this.dashboardParentUrl}/prochains-exercices`,
+      { params }
+    );
+  }
+
+  getProchainesActivites(): Observable<ProchaineActiviteParentResponse[]> {
+    return this.http.get<ProchaineActiviteParentResponse[]>(
+      `${this.dashboardParentUrl}/prochaines-activites`
+    );
+  }
 
 
 }

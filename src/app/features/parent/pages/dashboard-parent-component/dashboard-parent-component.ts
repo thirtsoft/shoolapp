@@ -1,337 +1,435 @@
 import { CommonModule } from '@angular/common';
-import { Component, computed, DestroyRef, inject, OnInit, signal } from '@angular/core';
+import { Component, DestroyRef, inject, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
-import { ParentDetails } from '../../../../core/models/parent/parent-details';
-import { DashboardStatsEleve } from '../../../../core/models/statistique/eleve/dashboard-stats-eleve';
-import { DashboardStatsEleveList } from '../../../../core/models/statistique/eleve/dashboard-stats-eleve-list';
-import { LocalStorageService } from '../../../../core/services/local-storage.service';
-import { DataService } from '../../../../shared/data.service';
+
 import { DashboardParentService } from '../../service/dashboard-parent.service';
-import { ParentService } from '../../service/parent.service';
-import { DossierResourceService } from '../../../administration/dossier-eleve/service/dossier-resource.service';
-import { Inscription } from '../../../../core/models/dossiereleve/request/inscription';
+import { ParentSessionService } from '../../service/parent-session.service';
+import { AssiduiteEleveParentResponse, DashboardFinancierParentResponse, DerniereAbsenceParentResponse, DerniereNoteParentResponse, EmploiDuTempsJourParentResponse, ProchaineActiviteParentResponse, ProchaineEvaluationParentResponse, ProchainExerciceParentResponse } from '../../../../core/models/dashboard/dashboard-parent.model';
 
-interface FactureLocal {
-  id: string;
-  libelle: string;
-  montant: number;
-  dateEmission: string;
-  echeance: string;
-  statut: 'payé' | 'en_attente' | 'en_retard';
-}
-
-interface EvenementLocal {
-  titre: string;
-  date: string;
-  type: 'examen' | 'reunion' | 'conseil' | 'sortie' | 'sport';
-  description: string;
-}
-
-interface MessageLocal {
-  id: string;
-  expediteur: string;
-  role: string;
-  sujet: string;
-  date: string;
-  nonLu: boolean;
-  contenu: string;
-}
 
 @Component({
-  selector: 'app-dashboard-parent-component',
+  selector: 'app-parent-dashboard',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule],
   templateUrl: './dashboard-parent-component.html',
-  styleUrl: './dashboard-parent-component.css',
+  styleUrl: './dashboard-parent-component.css'
 })
-export class DashboardParentComponent implements OnInit {
+export class DashboardParentComponent {
 
-  protected readonly Math = Math;
-  private readonly ds = inject(DataService);
   private readonly router = inject(Router);
-  private readonly localStorage = inject(LocalStorageService);
-  private readonly parentService = inject(ParentService);
   private readonly dashboardService = inject(DashboardParentService);
-  private readonly dossierResourceService = inject(DossierResourceService);
+  private readonly sessionService = inject(ParentSessionService);
   private readonly destroyRef = inject(DestroyRef);
 
-  eleveId?: number;
-  moyenneGeneraleEleve: number = 0;
-  classementGeneralEleve: number = 0;
-  nombreAbsenceEleve: number = 0;
-  nombreAbsenceJustifieEleve: number = 0;
-  nombreRetardEleve: number = 0;
-  montantTotalEnAttanteEleve: number = 0;
-  montantTotalEnRetardEleve: number = 0;
-  montantTotalImpayeEleve: number = 0;
-  inscription: Inscription = {};
+  readonly listeEleves = this.sessionService.listeEleves;
+  readonly eleveActif = this.sessionService.eleveActif;
+  readonly parentDetails = this.sessionService.parentDetails;
 
-  coursEleveDTOList: any[] = [];
-  semaine: string = "Cette semaine";
+  readonly parent = signal({ nomComplet: '', civility: '' });
 
-  private fallbackNotesEleve: any[] = [];
-  private fallbackListFacture: FactureLocal[] = [];
-  private fallbackCousEleve: any[] = [];
-  private fallbackEvenements: EvenementLocal[] = [];
+  loading = signal(false);
 
-  parentDetails = signal<any>({});
-  //  parent = signal({ nom: '', prenom: '', email: '', telephone: '', profession: '' });
-  parent = signal({ nom: '', prenom: '', email: '', telephone: '' });
+  emploiDuTemps: EmploiDuTempsJourParentResponse[] = [];
 
-  enfants = signal([
-    { id: 1, nom: 'Moussa Diop', classe: 'Terminale S2', anneeScolaire: '2025-2026', photo: '👦', moyenne: 14.5, absences: 3, retards: 2 },
-    { id: 2, nom: 'Fatima Diop', classe: 'Quatrième B', anneeScolaire: '2025-2026', photo: '👧', moyenne: 16.2, absences: 1, retards: 0 },
-    { id: 3, nom: 'Ibrahim Diop', classe: 'CP', anneeScolaire: '2025-2026', photo: '🧒', moyenne: 17.8, absences: 0, retards: 1 }
-  ]);
+  assiduite: AssiduiteEleveParentResponse = {    nombreAbsences: 0,    nombreRetards: 0};
 
-  enfantActifId = signal(1);
-  enfantActif = computed(() => this.enfants().find(e => e.id === this.enfantActifId()) ?? this.enfants()[0]);
+  situationFinanciere: DashboardFinancierParentResponse = {
+    situationFinanciere: {
+      resteAPayer: 0,
+      devise: 'FCFA',
+      statut: 'A_JOUR',
+      nombreFactures: 0,
+      nombreFacturesEnRetard: 0
+    },
+    derniereFacture: null
+  };
 
-  private readonly bulletinsParEnfant: Record<number, any> = {};
-  dernierBulletin = computed(() => this.bulletinsParEnfant[this.enfantActifId()] || { trimestre: 'En attente', notes: [] });
+  dernieresNotes: DerniereNoteParentResponse[] = [];
+  dernieresAbsences: DerniereAbsenceParentResponse[] = [];
+  prochainesEvaluations: ProchaineEvaluationParentResponse[] = [];
+  prochainsExercices: ProchainExerciceParentResponse[] = [];
+  prochainesActivites: ProchaineActiviteParentResponse[] = [];
 
-  factures = signal<FactureLocal[]>([]);
-  totalFactures = computed(() => this.factures().reduce((s, f) => s + f.montant, 0));
-  facturesEnRetard = computed(() => this.factures().filter(f => f.statut === 'en_retard').length);
+  messages = [
+    {
+      auteur: 'M. Ndiaye',
+      fonction: 'Professeur de Mathématiques',
+      message: 'Note de mathématiques',
+      date: 'Il y a 2 heures',
+      nonLu: true,
+      compteur: 1
+    },
+    {
+      auteur: 'Direction',
+      fonction: '',
+      message: 'Informations importantes',
+      date: 'Il y a 5 heures',
+      nonLu: true,
+      compteur: 2
+    },
+    {
+      auteur: 'Mme Fall',
+      fonction: 'CPE',
+      message: 'Absence justifiée',
+      date: 'Hier',
+      nonLu: false,
+      compteur: 0
+    }
+  ];
 
-  evenements = signal<EvenementLocal[]>([]);
-  messages = signal<MessageLocal[]>([]);
-  messagesNonLus = computed(() => this.messages().filter(m => m.nonLu).length);
+  informations = [
+    'Les bulletins du 1er trimestre sont disponibles.',
+    'Pensez à régler la mensualité avant la date d’échéance.',
+    'Une réunion parents-professeurs est prévue prochainement.'
+  ];
 
-  ngOnInit() {
-    this.chargerParentEtEleves();
-    this.initLesListeDashboardParDefaut();
-    this.chargerLesStatistiqueEleves();
-  }
+  accesRapides = [
+    {
+      libelle: 'Notes et bulletins',
+      icon: '▤',
+      couleur: 'blue'
+    },
+    {
+      libelle: 'Absences',
+      icon: '▣',
+      couleur: 'red'
+    },
+    {
+      libelle: 'Paiements',
+      icon: '▱',
+      couleur: 'green'
+    },
+    {
+      libelle: 'Emploi du temps',
+      icon: '▦',
+      couleur: 'purple'
+    },
+    {
+      libelle: 'Exercices',
+      icon: '▥',
+      couleur: 'orange'
+    },
+    {
+      libelle: 'Cantine',
+      icon: '♜',
+      couleur: 'cyan'
+    }
+  ];
 
-  private initLesListeDashboardParDefaut() {
-    this.fallbackNotesEleve = [
-      {
-        trimestre: '2ème Trimestre',
-        moyenne: 14.5,
-        notes: [
-          { matiere: 'Mathématiques', note: 16, coefficient: 5, moyenneClasse: 12, appreciation: 'Excellent travail', professeur: 'M. Sall' },
-          { matiere: 'Physique-Chimie', note: 14, coefficient: 4, moyenneClasse: 11.5, appreciation: 'Bon niveau', professeur: 'Mme Diouf' },
-          { matiere: 'SVT', note: 15.5, coefficient: 3, moyenneClasse: 13, appreciation: 'Très bien', professeur: 'M. Ndiaye' },
-          { matiere: 'Français', note: 13, coefficient: 3, moyenneClasse: 10.5, appreciation: 'Progrès constants', professeur: 'Mme Fall' }
-        ],
-      },
-      {
-        trimestre: '2ème Trimestre',
-        moyenne: 16.2,
-        notes: [
-          { matiere: 'Mathématiques', note: 17, coefficient: 4, moyenneClasse: 12, appreciation: 'Excellent', professeur: 'Mme Sow' },
-          { matiere: 'Français', note: 16, coefficient: 4, moyenneClasse: 11, appreciation: 'Très bon travail', professeur: 'M. Dieng' }
-        ]
-      },
-      {
-        trimestre: '2ème Trimestre',
-        moyenne: 17.8,
-        notes: [
-          { matiere: 'Mathématiques', note: 18, coefficient: 3, moyenneClasse: 14, appreciation: 'Excellent !', professeur: 'Mme Thiam' }
-        ]
-      }
-    ];
+  constructor() {
+    this.chargerParent();
 
-    this.fallbackListFacture = [
-      { id: 'FAC-2026-001', libelle: 'Frais de scolarité - 2ème trimestre', montant: 250000, dateEmission: '2026-01-15', echeance: '2026-03-15', statut: 'en_retard' },
-      { id: 'FAC-2026-002', libelle: 'Demi-pension - Mars 2026', montant: 50000, dateEmission: '2026-03-01', echeance: '2026-03-30', statut: 'en_attente' },
-    ];
-
-    this.fallbackCousEleve = [
-      {
-        jour: 'Mardi',
-        creneaux: [
-          { heure: '08:00 - 10:00', matiere: 'Mathématiques', professeur: 'M. Sall', salle: 'Salle 12' },
-          { heure: '10:00 - 10:15', matiere: 'Récréation', professeur: '-', salle: 'Cour' },
-          { heure: '10:15 - 12:15', matiere: 'Physique-Chimie', professeur: 'Mme Diouf', salle: 'Labo 3' }
-        ]
-      }
-    ];
-
-    this.fallbackEvenements = [
-      { titre: 'Conseil de classe 2ème trimestre', date: '25 Mars 2026', type: 'conseil', description: 'Décision d\'orientation' },
-      { titre: 'Réunion parents-professeurs', date: '28 Mars 2026 à 17h', type: 'reunion', description: 'Bilan du trimestre' }
-    ];
-
-    this.messages.set([
-      { id: 'MSG-001', expediteur: 'M. Sall', role: 'Prof. Maths', sujet: 'Progrès en mathématiques', date: '15 Mars 2026', nonLu: true, contenu: 'Votre enfant montre de réels progrès...' },
-      { id: 'MSG-002', expediteur: 'Administration', role: 'Admin', sujet: 'Rappel paiement frais scolarité', date: '14 Mars 2026', nonLu: true, contenu: 'Nous vous rappelons que...' }
-    ]);
-
-    this.factures.set(this.fallbackListFacture);
-    this.evenements.set(this.fallbackEvenements);
-    this.bulletinsParEnfant[1] = this.fallbackNotesEleve[0];
-    this.bulletinsParEnfant[2] = this.fallbackNotesEleve[1];
-    this.bulletinsParEnfant[3] = this.fallbackNotesEleve[2];
-  }
-  /* 
-    private chargerParentEtEleves() {
-      const userId = this.localStorage.getItem('id');
-      if (!userId) {
-        this.router.navigate(['/auth/login']);
-        return;
-      }
-  
-      this.parentService.getDetailsParent(Number(userId)).subscribe({
-        next: (res) => {
-          this.parentDetails.set(res);
-          this.parent.set({
-            nom: res.nom || '',
-            prenom: res.prenom || '',
-            email: res.email || '',
-            telephone: res.telephone || '',
-            profession: res.profession || '',
-          });
-        },
-        error: () => this.router.navigate(['/auth/login'])
+    this.sessionService.changement$
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe(() => {
+        this.chargerDashboard();
       });
-    } */
 
-  private chargerParentEtEleves() {
-    this.parentService.getMesElevest().subscribe({
-      next: (res) => {
-        this.parentDetails.set(res);
-        this.parent.set({
-          nom: res.nom || '',
-          prenom: res.prenom || '',
-          email: res.email || '',
-          telephone: res.telephone || '',
-        });
-      }
+    if (this.eleveActif()) {
+      this.chargerDashboard();
+    }
+  }
+
+  private chargerParent(): void {
+    const details = this.sessionService.getParentDetails();
+    if (!details) {
+      return;
+    }
+    this.parent.set({
+      nomComplet: `${details.prenom || ''} ${details.nom || ''}`.trim(),
+      civility: details.civility || ''
     });
   }
 
-  private chargerLesStatistiqueEleves() {
-    const eleveId = this.localStorage.getItem('eleveId');
-    if (!eleveId) return;
+  private chargerDashboard(): void {
+    const eleve = this.eleveActif();
+    if (!eleve || eleve.id == null) {
+      this.viderDonneesEleve();
+      return;
+    }
 
-    this.dashboardService.afficherLesStatsGlobaleEleve(eleveId)
+    this.loading.set(true);
+
+    this.chargerEmploiDuTemps(eleve.classeId);
+    this.chargerAssiduite(eleve.id);
+    this.chargerSituationFinanciere(eleve.uuid);
+    this.chargerDernieresNotes(eleve.id);
+    this.chargerDernieresAbsences(eleve.id);
+    this.chargerProchainesEvaluations(eleve.id);
+    this.chargerProchainsExercices(eleve.id);
+
+    this.chargerProchainesActivites();
+
+    this.loading.set(false);
+  }
+
+  private chargerEmploiDuTemps(classeId?: number | null): void {
+    if (classeId == null) {
+      this.emploiDuTemps = [];
+      return;
+    }
+
+    this.dashboardService
+      .getEmploiDuTempsDuJour(classeId)
       .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe({ next: data => this.mettreAJourDataStatsEleve(data) });
+      .subscribe({
+        next: response => {
+          this.emploiDuTemps = response ?? [];
+        },
+        error: error => {
+          console.error(
+            'Erreur lors du chargement de l’emploi du temps',
+            error
+          );
 
-    this.dashboardService.afficherLesListDeStatsGlobaleEleve(eleveId)
+          this.emploiDuTemps = [];
+        }
+      });
+  }
+
+  private chargerAssiduite(eleveId: number): void {
+    this.dashboardService
+      .getAssiduiteEleve(eleveId)
       .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe({ next: data => this.mettreAJourLesListe(data) });
-    /* 
-        this.dossierResourceService.getSingleResource('inscription/eleve', eleveId).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
-          next: (data: any) => {
-            this.inscription = data;
-            console.log('Inscription', this.inscription);
-          }
-        }); */
+      .subscribe({
+        next: response => {
+          this.assiduite = response ?? {
+            nombreAbsences: 0,
+            nombreRetards: 0
+          };
+        },
+        error: error => {
+          console.error(
+            'Erreur lors du chargement de l’assiduité',
+            error
+          );
+
+          this.assiduite = {
+            nombreAbsences: 0,
+            nombreRetards: 0
+          };
+        }
+      });
   }
 
-  private mettreAJourDataStatsEleve(stats: DashboardStatsEleve) {
-    this.moyenneGeneraleEleve = stats.moyenneGeneraleEleve || 14.5;
-    this.classementGeneralEleve = stats.classementGeneralEleve || 5;
-    this.nombreAbsenceEleve = stats.nombreAbsenceEleve || 2;
-    this.nombreAbsenceJustifieEleve = stats.nombreAbsenceJustifieEleve || 2;
-    this.nombreRetardEleve = stats.nombreRetardEleve || 2;
-    this.montantTotalEnAttanteEleve = stats.montantTotalEnAttanteEleve || 20000;
-    this.montantTotalEnRetardEleve = stats.montantTotalEnRetardEleve || 20000;
-    this.montantTotalImpayeEleve = stats.montantTotalImpayeEleve || 40000;
-  }
-
-  private mettreAJourLesListe(data: DashboardStatsEleveList) {
-    // 1. Événements
-    if (data.quatreDernierEvenementDTOList && data.quatreDernierEvenementDTOList.length > 0) {
-      this.evenements.set(data.quatreDernierEvenementDTOList.map(e => ({
-        titre: e.libelle || '',
-        date: e.date || '',
-        type: (e.type as any) || 'conseil',
-        description: e.libelle || ''
-      })));
-    } else {
-      this.evenements.set(this.fallbackEvenements);
+  private chargerSituationFinanciere(eleveUuid?: string | null): void {
+    if (!eleveUuid) {
+      this.situationFinanciere = this.getSituationFinanciereVide();
+      return;
     }
+    this.dashboardService
+      .getSituationFinanciere(eleveUuid)
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: response => {
+          this.situationFinanciere =            response ?? this.getSituationFinanciereVide();
+        },
+        error: error => {
+          console.error(
+            'Erreur lors du chargement de la situation financière',
+            error
+          );
 
-    // 2. Emploi du temps
-    const premierSemaine = data.coursEleveDashboardDTOList?.[0];
-    const coursApi = premierSemaine?.coursEleveDTOList;
-    this.semaine = premierSemaine?.semaine || "Cette semaine";
+          this.situationFinanciere = this.getSituationFinanciereVide();
+        }
+      });
+  }
 
-    if (coursApi && coursApi.length > 0) {
-      this.coursEleveDTOList = coursApi.map(c => ({
-        heure: c.heure,
-        matiere: c.matiere,
-        professeur: c.professeur,
-        salle: c.salle
-      }));
-    } else {
-      this.semaine = "Mardi (Données Démo)";
-      this.coursEleveDTOList = this.fallbackCousEleve[0]?.creneaux || [];
+  private chargerDernieresNotes(eleveId: number): void {
+    this.dashboardService
+      .getDernieresNotesEleve(eleveId)
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: response => {
+          this.dernieresNotes = response ?? [];
+        },
+        error: error => {
+          console.error(
+            'Erreur lors du chargement des dernières notes',
+            error
+          );
+
+          this.dernieresNotes = [];
+        }
+      });
+  }
+
+  private chargerDernieresAbsences(eleveId: number): void {
+    this.dashboardService
+      .getDernieresAbsencesEleve(eleveId)
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: response => {
+          this.dernieresAbsences = response ?? [];
+        },
+        error: error => {
+          console.error(
+            'Erreur lors du chargement des dernières absences',
+            error
+          );
+
+          this.dernieresAbsences = [];
+        }
+      });
+  }
+
+  private chargerProchainesEvaluations(eleveId: number): void {
+    this.dashboardService
+      .getProchainesEvaluations(eleveId)
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: response => {
+          this.prochainesEvaluations = response ?? [];
+        },
+        error: error => {
+          console.error(
+            'Erreur lors du chargement des prochaines évaluations',
+            error
+          );
+
+          this.prochainesEvaluations = [];
+        }
+      });
+  }
+
+  private chargerProchainsExercices(eleveId: number): void {
+    this.dashboardService
+      .getProchainsExercices(eleveId)
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: response => {
+          this.prochainsExercices = response ?? [];
+        },
+        error: error => {
+          console.error(
+            'Erreur lors du chargement des prochains exercices',
+            error
+          );
+
+          this.prochainsExercices = [];
+        }
+      });
+  }
+
+  private chargerProchainesActivites(): void {
+    this.dashboardService
+      .getProchainesActivites()
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: response => {
+          this.prochainesActivites = response ?? [];
+        },
+        error: error => {
+          console.error(
+            'Erreur lors du chargement des prochaines activités',
+            error
+          );
+
+          this.prochainesActivites = [];
+        }
+      });
+  }
+
+  private getSituationFinanciereVide(): DashboardFinancierParentResponse {
+    return {
+      situationFinanciere: {
+        resteAPayer: 0,
+        devise: 'FCFA',
+        statut: 'A_JOUR',
+        nombreFactures: 0,
+        nombreFacturesEnRetard: 0
+      },
+      derniereFacture: null
+    };
+  }
+
+  private viderDonneesEleve(): void {
+
+    this.emploiDuTemps = [];
+
+    this.assiduite = {
+      nombreAbsences: 0,
+      nombreRetards: 0
+    };
+
+    this.situationFinanciere = this.getSituationFinanciereVide();
+
+    this.dernieresNotes = [];
+    this.dernieresAbsences = [];
+    this.prochainesEvaluations = [];
+    this.prochainsExercices = [];
+  }
+
+  accederALaPage(libellePage: string): void {
+
+    switch (libellePage) {
+
+      case 'Notes et bulletins':
+        this.voirNotes();
+        break;
+
+      case 'Absences':
+        this.voirAbsences();
+        break;
+
+      case 'Paiements':
+        this.voirPaiements();
+        break;
+
+      case 'Emploi du temps':
+        this.voirEmploiDuTemps();
+        break;
+
+      case 'Exercices':
+        this.voirExercices();
+        break;
+
+      case 'Cantine':
+        this.voirInformations();
+        break;
+
+      default:
+        console.warn(
+          `Aucune route définie pour l'accès rapide : ${libellePage}`
+        );
+        break;
     }
-
-    // 3. Factures
-    const factureGroup = data.listFactureEleveStatutDTOList?.[0];
-    const facturesApi = factureGroup?.factureEleveStatutDTOList;
-
-    if (facturesApi && facturesApi.length > 0) {
-      this.factures.set(facturesApi.map((f, index) => ({
-        id: f.numeroFacture || `FAC-${index}`,
-        libelle: `Frais de scolarité - ${f.mois} ${f.annee}`,
-        montant: f.montant || 0,
-        dateEmission: '',
-        echeance: f.echeance || '',
-        statut: f.statut === 'Payé' ? 'payé' : f.statut === 'En attente' ? 'en_attente' : 'en_retard'
-      })));
-    } else {
-      this.factures.set(this.fallbackListFacture);
-    }
-
-    // 4. Bulletins
-    if (data.noteEleveDashboardDTOList && data.noteEleveDashboardDTOList.length > 0) {
-      const bulletinApi = data.noteEleveDashboardDTOList[0];
-      this.bulletinsParEnfant[this.enfantActifId()] = {
-        trimestre: bulletinApi.trimestre || 'Trimestre Actuel',
-        moyenne: bulletinApi.moyenne || 0,
-        rang: bulletinApi.rang || 0,
-        effectif: (bulletinApi as any).effectif || 0,
-        decision: bulletinApi.decision || '',
-        notes: (bulletinApi.noteEleveDTOList || []).map(n => ({
-          matiere: n.matiere || '',
-          note: n.note || 0,
-          coefficient: n.coefficient || 1,
-          moyenneClasse: 12,
-          appreciation: n.appreciation || '',
-          professeur: n.professeur || '-'
-        }))
-      };
-    } else {
-      this.bulletinsParEnfant[1] = this.fallbackNotesEleve[0];
-      this.bulletinsParEnfant[2] = this.fallbackNotesEleve[1];
-      this.bulletinsParEnfant[3] = this.fallbackNotesEleve[2];
-    }
   }
 
-  changerEnfant(id: number) {
-    this.enfantActifId.set(id);
+  voirEmploiDuTemps(): void {
+    void this.router.navigate(['/parent/cours']);
   }
 
-  getNoteColor(note: number): string {
-    if (note >= 16) return 'vert';
-    if (note >= 12) return 'bleu';
-    if (note >= 10) return 'or';
-    return 'rouge';
+  voirNotes(): void {
+    void this.router.navigate(['/parent/notes']);
   }
 
-  getStatusClass(statut: string): string {
-    return statut === 'payé' ? 'succes' : statut === 'en_attente' ? 'attente' : 'retard';
+  voirAbsences(): void {
+    void this.router.navigate(['/parent/absences']);
   }
 
-  getEventIcon(type: string): string {
-    const icones: Record<string, string> = { examen: '📝', reunion: '👥', conseil: '📋', sortie: '🎒', sport: '⚽' };
-    return icones[type] ?? '📅';
+  voirPaiements(): void {
+    void this.router.navigate(['/parent/factures']);
   }
 
-  formatFCFA(n: number): string {
-    return new Intl.NumberFormat('fr-FR').format(n) + ' FCFA';
+  voirEvaluations(): void {
+    void this.router.navigate(['/parent/evaluations']);
   }
 
-  toutVoir(url: string): void {
-    this.router.navigate([url]);
+  voirExercices(): void {
+    void this.router.navigate(['/parent/exercices']);
+  }
+
+  voirEvenements(): void {
+    void this.router.navigate(['/parent/evenements']);
+  }
+
+  voirMessages(): void {
+    console.log('Navigation vers messages');
+  }
+
+  voirInformations(): void {
+    void this.router.navigate(['/parent/informations']);
   }
 }

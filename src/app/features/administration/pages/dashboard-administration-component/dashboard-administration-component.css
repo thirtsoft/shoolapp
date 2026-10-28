@@ -1242,3 +1242,41 @@
     align-items: flex-start;
   }
 }
+
+.empty-state {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 24px 20px;
+  border: 1px dashed #d9dee7;
+  border-radius: 10px;
+  background: #fafbfc;
+}
+
+.empty-state-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  background: #f0f2f5;
+  font-size: 20px;
+  flex-shrink: 0;
+}
+
+.empty-state-content {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.empty-state-content strong {
+  font-size: 14px;
+  color: #374151;
+}
+
+.empty-state-content span {
+  font-size: 13px;
+  color: #6b7280;
+}

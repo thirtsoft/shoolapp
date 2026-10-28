@@ -1,5 +1,5 @@
 <app-generic-table-dossier
-  title="Liste des absence de l'élève"
+  [title]="'Absences de : ' + nomEleveConcerne"
   titleFitre="Absence"
   [tableColumns]="columns"
   [tableData]="absenceData"

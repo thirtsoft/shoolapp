@@ -8,6 +8,7 @@ import { EntreeCahierTextePageResponse } from '../../../../../core/models/cahier
 import { EntreeCahierTexteResponse } from '../../../../../core/models/cahier-texte/entrees-cahiers-textes-responses.model';
 
 import { CahierTexteResourceService } from '../../../../administration/cahiertexte/services/chaier-texte-resource.service';
+import { ToastrService } from 'ngx-toastr';
 
 @Component({
   selector: 'app-cahier-texte-enseignant-component',
@@ -29,6 +30,7 @@ export class CahierTexteEnseignantComponent implements OnChanges {
   contenuInputs!: QueryList<ElementRef<HTMLInputElement>>;
 
   private readonly cahierTexteService = inject(CahierTexteResourceService);
+  private readonly toastService = inject(ToastrService);
 
   cahierTexte = signal<CahiersDeTexteseResponse | null>(null);
   entrees = signal<DetailsEntreeCahierTexteResponse[]>([]);
@@ -378,7 +380,7 @@ export class CahierTexteEnseignantComponent implements OnChanges {
     );
   }
 
-  sauvegarder(): void {
+  sauvegarderV1(): void {
     const cahier = this.cahierTexte();
     if (!cahier) {
       return;
@@ -454,6 +456,98 @@ export class CahierTexteEnseignantComponent implements OnChanges {
         );
 
         this.isSaving.set(false);
+      }
+    });
+  }
+
+  sauvegarder(): void {
+    const cahier = this.cahierTexte();
+
+    if (!cahier) {
+      return;
+    }
+
+    const contenu = this.contenu()
+      .map(ligne => ligne.trim())
+      .filter(ligne => ligne.length > 0);
+
+    if (!this.dateSeance()) {
+      return;
+    }
+
+    if (contenu.length === 0) {
+      return;
+    }
+
+    const request: EntreeCahierTexteRequest = {
+      cahierTexteId: cahier.id,
+      coursUuid: this.courseUuid ?? null,
+      dateSeance: new Date(this.dateSeance()),
+      contenu,
+      observation: this.observation().trim() || undefined
+    };
+
+    this.isSaving.set(true);
+
+    const entree = this.entreeEnEdition();
+
+    const operation = entree
+      ? this.cahierTexteService.updateEntree(
+        entree.id,
+        request
+      )
+      : this.cahierTexteService.createEntree(
+        request
+      );
+
+    operation.subscribe({
+
+      next: resultat => {
+
+        if (entree) {
+
+          this.entrees.update(
+            liste =>
+              liste.map(
+                item =>
+                  item.id === resultat.id
+                    ? resultat
+                    : item
+              )
+          );
+
+        } else {
+
+          const cahierActuel = this.cahierTexte();
+
+          if (cahierActuel) {
+            this.chargerEntrees(cahierActuel.id);
+          }
+        }
+
+        this.isSaving.set(false);
+
+        this.toastService.success(
+          entree
+            ? 'La séance a été modifiée avec succès.'
+            : 'La séance a été enregistrée avec succès.'
+        );
+
+        this.fermerFormulaire();
+      },
+
+      error: error => {
+
+        console.error(
+          'Erreur lors de l\'enregistrement',
+          error
+        );
+
+        this.isSaving.set(false);
+
+        this.toastService.error(
+          'Impossible d’enregistrer la séance. Veuillez réessayer.'
+        );
       }
     });
   }

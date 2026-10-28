@@ -1,4 +1,4 @@
-import { Component, inject, OnInit, signal } from '@angular/core';
+import { Component, inject, Input, OnInit, signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
@@ -70,39 +70,15 @@ export class ListEvaluationEnseignantComponent implements OnInit {
   activeFilters: any = {};
   hasActiveFilters: boolean = false;
 
-  classeId?: number;
-
   contexteClasse = signal<GestionClasseContext | null>(null);
 
+  @Input() classeId?: number;
 
-  private readonly route = inject(ActivatedRoute);
+
   private readonly planification = inject(PlanificationResourceService);
-  private readonly toastService = inject(ToastrService);
-  private readonly activeRoute = inject(ActivatedRoute);
-  private readonly router = inject(Router);
-  private readonly _formBuilder = inject(FormBuilder);
   private readonly commonService = inject(CommonService);
-  private readonly enseignementContextService = inject(EnseignementContextService);
-  private readonly dossierResource = inject(DossierResourceService);
 
   constructor() {
-    this.classeId = Number(this.activeRoute.snapshot.params['id']);
-    console.log('ClassID', this.classeId);
-
-    const contexte = this.enseignementContextService.getGestionClasseContext();
-
-    console.log('contexteClasse', contexte?.classe);
-    console.log('contexteMatiere', contexte?.matiere);
-
-    console.log('contexteAnneeScolaire', contexte?.anneeScolaire);
-
-    console.log('contexteCours', contexte?.courseId);
-
-
-    if (contexte) {
-      this.contexteClasse.set(contexte);
-      console.log('Contexte chargé :', this.contexteClasse());
-    }
   }
 
   ngOnInit(): void {

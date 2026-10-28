@@ -1,10 +1,8 @@
-import { Component, inject, OnInit, signal } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
-import { ToastrService } from 'ngx-toastr';
+import { Component, inject, Input, OnInit, signal } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
 import { IFilterConfig } from '../../../../../core/filtered-config/FiltreConfiguration';
 import { GenericTableDossierComponent } from '../../../../../core/generic/generic-table-dossier/generic-table-dossier.component';
 import { CommonService } from '../../../../../core/services/common.service';
-import { DossierResourceService } from '../../../../administration/dossier-eleve/service/dossier-resource.service';
 import { PlanificationResourceService } from '../../../../administration/planification/services/planification-resource.service';
 import { EnseignementContextService, GestionClasseContext } from '../../../service/enseignement-contexte.service';
 
@@ -43,37 +41,15 @@ export class ListExerciceComponent implements OnInit {
   activeFilters: any = {};
   hasActiveFilters: boolean = false;
 
-  classeId: number;
-
-  contexteClasse = signal<GestionClasseContext | null>(null);
+  @Input() classeId?: number;
 
   private readonly route = inject(ActivatedRoute);
   private readonly planification = inject(PlanificationResourceService);
-  private readonly toastService = inject(ToastrService);
   private readonly activeRoute = inject(ActivatedRoute);
-  private readonly router = inject(Router);
   private readonly commonService = inject(CommonService);
   private readonly enseignementContextService = inject(EnseignementContextService);
-  private readonly dossierResource = inject(DossierResourceService);
 
   constructor() {
-    this.classeId = Number(this.activeRoute.snapshot.params['id']);
-    console.log('ClassID', this.classeId);
-
-    const contexte = this.enseignementContextService.getGestionClasseContext();
-
-    console.log('contexteClasse', contexte?.classe);
-    console.log('contexteMatiere', contexte?.matiere);
-
-    console.log('contexteAnneeScolaire', contexte?.anneeScolaire);
-
-    console.log('contexteCours', contexte?.courseId);
-
-
-    if (contexte) {
-      this.contexteClasse.set(contexte);
-      console.log('Contexte chargé :', this.contexteClasse());
-    }
   }
 
   ngOnInit(): void {

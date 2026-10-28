@@ -8,12 +8,7 @@ import { ExerciceAddEdit } from '../../../../../core/models/planification/exerci
 import { CreationExerciceRequest } from '../../../../../core/models/planification/exercice/creation-exercice-request.model';
 import { GetExerciceResponse } from '../../../../../core/models/planification/exercice/get-exercice-response.model';
 import { UpdateExerciceDTO } from '../../../../../core/models/planification/exercice/update-exercice-dto.model';
-import { ListeEnseignement } from '../../../../../core/models/planification/liste-enseignement';
-import { ListeClasse } from '../../../../../core/models/referentiels/classe';
-import { Utilisateur } from '../../../../../core/models/utilisateur/utilisateur';
 import { PlanificationResourceService } from '../../../../administration/planification/services/planification-resource.service';
-import { ReferentielResourceService } from '../../../../administration/referentiel/service/referentiel-resource.service';
-import { UtilisateurService } from '../../../../administration/utilisateur/service/utilisateur.service';
 import { EnseignementContextService } from '../../../service/enseignement-contexte.service';
 
 
@@ -46,8 +41,6 @@ export class CreationExerciceComponent implements OnInit {
   enseignementActif: number;
 
   private readonly planification = inject(PlanificationResourceService);
-  private readonly utilisateurService = inject(UtilisateurService);
-  private readonly referentielService = inject(ReferentielResourceService);
   private readonly formBuilder = inject(FormBuilder);
   private readonly toastService = inject(ToastrService);
   private readonly activeRoute = inject(ActivatedRoute);
@@ -378,7 +371,7 @@ export class CreationExerciceComponent implements OnInit {
 
 
   goBack(): void {
-    this.router.navigate(['admin/planification/exercice']);
+    void this.router.navigate(['/enseignant/gestion-classe', this.classeId]);
   }
 
 }

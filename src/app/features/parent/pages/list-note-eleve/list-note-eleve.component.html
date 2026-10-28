@@ -1,5 +1,5 @@
 <app-generic-table-dossier
-  title="Liste des notes de l'élève"
+  [title]="'Notes de : ' + nomEleveConcerne"
   titleFitre="Note"
   [tableColumns]="columns"
   [tableData]="noteData"

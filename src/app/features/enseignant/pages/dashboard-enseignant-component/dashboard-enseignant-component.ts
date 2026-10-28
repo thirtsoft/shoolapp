@@ -19,43 +19,9 @@ import interactionPlugin from '@fullcalendar/angular/interaction';
 import listPlugin from '@fullcalendar/angular/list';
 import classicThemePlugin from '@fullcalendar/angular/themes/classic';
 import timeGridPlugin from '@fullcalendar/angular/timegrid';
-import { ActiviteEnseignant } from '../../../../core/models/planification/activite-enseignant';
+import { ActiviteAVenir } from '../../../../core/models/planification/activite-a-venir';
 import { ListeEnseignement } from '../../../../core/models/planification/liste-enseignement';
 import { EnseignementContextService, GestionClasseContext } from '../../service/enseignement-contexte.service';
-interface ClasseProfesseur {
-  id: number;
-  nom: string;
-  niveau: string;
-  effectif: number;
-  moyenne: number;
-  prochainCours: string;
-  nbElevesRetard: number;
-}
-
-interface CoursJour {
-  heure: string;
-  classe: string;
-  matiere: string;
-  salle: string;
-  duree: string;
-  statut: 'termine' | 'en_cours' | 'a_venir';
-}
-
-interface NoteARemplir {
-  classe: string;
-  evaluation: string;
-  date: string;
-  nbNotes: number;
-  nbEleves: number;
-  progression: number;
-}
-
-interface EleveRemarquable {
-  nom: string;
-  classe: string;
-  note: number;
-  type: 'excellent' | 'difficulte' | 'progres';
-}
 
 interface MessageProfesseur {
   id: string;
@@ -90,7 +56,7 @@ export class DashboardEnseignantComponent implements OnInit {
 
   mesEnseignements = signal<ListeEnseignement[]>([]);
 
-  activitesAvenir = signal<ActiviteEnseignant[]>([]);
+  activitesAvenir = signal<ActiviteAVenir[]>([]);
 
   coursDuJour = computed(() => {
     const jours: Record<number, string> = {
@@ -186,8 +152,6 @@ export class DashboardEnseignantComponent implements OnInit {
     try {
       const userData = this.localStorage.getItem('v2_user');
 
-      console.log('User data', userData);
-
       if (userData) {
         const user = JSON.parse(userData);
         this.userFirstName = user.firstName || user.firstname || user.prenom || '';
@@ -216,8 +180,6 @@ export class DashboardEnseignantComponent implements OnInit {
     this.loadUserInfo();
   }
 
-
-  // ── Messages récents ───────────────────────────────
   messages = signal<MessageProfesseur[]>([
     { id: '1', expediteur: 'Mme Diop', role: 'Administration', sujet: 'Conseil de classe - Planning', date: '15 Mars', nonLu: true },
     { id: '2', expediteur: 'M. Ndiaye', role: 'Prof. SVT', sujet: 'Projet interdisciplinaire', date: '14 Mars', nonLu: true },

@@ -341,7 +341,8 @@
     </div>
 
     <div class="event-list">
-      @for (evenement of evenements; track evenement.titre) {
+        @if (evenements().length > 0) {
+      @for (evenement of evenements(); track evenement.titre) {
         <div class="event-row">
           <div class="event-date">
             <strong>
@@ -368,6 +369,18 @@
           </div>
         </div>
       }
+    }@else {
+
+    <div class="empty-state">
+      <div class="empty-state-icon">📅</div>
+
+      <div class="empty-state-content">
+        <strong>Aucune échéance à venir</strong>
+        <span>Aucune réunion ou événement n'est prévu prochainement.</span>
+      </div>
+    </div>
+
+  }
     </div>
   </section>
 

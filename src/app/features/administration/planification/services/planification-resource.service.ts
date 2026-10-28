@@ -6,6 +6,7 @@ import { environment } from '../../../../../environments/environment';
 import { ApiResponse } from '../../../../core/datamodel/api-response.model';
 import { DataResult } from '../../../../core/datamodel/data-model';
 import { CoursEnseignantCalendrier } from '../../../../core/models/enseignant/cours-enseignant-calendrier.model';
+import { ActiviteAVenir } from '../../../../core/models/planification/activite-a-venir';
 import { Cours } from '../../../../core/models/planification/cours';
 import { EmploiDuTemps } from '../../../../core/models/planification/emploi-du-temp';
 import { Enseignement } from '../../../../core/models/planification/enseignement';
@@ -22,7 +23,6 @@ import { ListeEnseignement } from '../../../../core/models/planification/liste-e
 import { ListeExercie } from '../../../../core/models/planification/liste-exercice';
 import { Meeting } from '../../../../core/models/planification/meeting';
 import { ResponseMessage } from '../../../../core/response/response-message';
-import { ActiviteEnseignant } from '../../../../core/models/planification/activite-enseignant';
 
 @Injectable({
   providedIn: 'root'
@@ -314,8 +314,8 @@ export class PlanificationResourceService {
     return this.http.delete<ResponseMessage>(`${this.planificationUrl}/planification/evenement/delete/${id}`);
   }
 
-  getActivitesAvenirEnseignant(): Observable<ActiviteEnseignant[]> {
-    return this.http.get<ActiviteEnseignant[]>(`${this.planificationUrl}/planification/activites`);
+  getActivitesAvenirEnseignant(): Observable<ActiviteAVenir[]> {
+    return this.http.get<ActiviteAVenir[]>(`${this.planificationUrl}/planification/activites`);
   }
 
 
@@ -429,7 +429,7 @@ export class PlanificationResourceService {
   }
 
   getCourseDeLaSemaine(): Observable<ListeCours[]> {
-    return this.http.get<ListeCours[]>(`${this.planificationUrl}//planificationcours/semaine`, this.httpOptions);
+    return this.http.get<ListeCours[]>(`${this.planificationUrl}/planificationcours/semaine`, this.httpOptions);
   }
 
   getListeCoursByClasse(classeId: number): Observable<ListeCours[]> {

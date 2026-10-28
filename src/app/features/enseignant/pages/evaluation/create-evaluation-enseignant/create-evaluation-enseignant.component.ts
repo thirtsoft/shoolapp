@@ -33,7 +33,7 @@ export class CreateEvaluationEnseignantComponent implements OnInit {
 
   enseignementList: ListeEnseignement[] = [];
 
-  typeEvaluations: string[] = ['DEVOIR', 'COMPOSITION'];
+  typeEvaluations: string[] = ['DEVOIR'];
 
   modeEvaluations: string[] = ['NORMAL', 'RATTRAPAGE'];
 
@@ -133,44 +133,24 @@ export class CreateEvaluationEnseignantComponent implements OnInit {
   }
 
   private chargerEvaluation(evaluationId: number): void {
-
     this.disableAddButton = true;
-
-    this.dossierResource
-      .afficherDetailsResource<Evaluation>(
-        'evaluation',
-        evaluationId
-      )
+    this.dossierResource.afficherDetailsResource<Evaluation>('evaluation', evaluationId)
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
 
         next: (data: Evaluation) => {
-
-          console.log(
-            'Évaluation récupérée pour édition :',
-            data
-          );
-
           this.evaluation = data;
-
           this.remplirFormulaire(data);
-
           this.disableAddButton = false;
         },
 
         error: (error) => {
 
-          console.error(
-            'Erreur lors du chargement de l’évaluation :',
-            error
-          );
+          console.error('Erreur lors du chargement de l’évaluation :', error);
 
           this.disableAddButton = false;
 
-          this.toastService.error(
-            'Erreur',
-            'Impossible de charger l’évaluation.'
-          );
+          this.toastService.error('Erreur', 'Impossible de charger l’évaluation.');
 
           this.goBack();
         }
@@ -179,7 +159,6 @@ export class CreateEvaluationEnseignantComponent implements OnInit {
   }
 
   private remplirFormulaire(evaluation: Evaluation): void {
-
     this.evaluationFormGroup.patchValue({
       titre: evaluation.titre ?? '',
       description: evaluation.description ?? '',
@@ -193,13 +172,10 @@ export class CreateEvaluationEnseignantComponent implements OnInit {
     });
     this.evaluationFormGroup.get('enseignementId')?.disable();
   }
-
   private formaterHeure(heure: any): string {
-
     if (!heure) {
       return '';
     }
-
     const valeur = String(heure);
 
     if (valeur.length >= 5) {
@@ -211,24 +187,18 @@ export class CreateEvaluationEnseignantComponent implements OnInit {
 
 
   ajouterEditEvaluation(): void {
-
     if (this.disableAddButton) {
       return;
     }
-
     if (!this.isEdit && !this.enseignementActif) {
       this.toastService.error(
         'Enseignement introuvable',
         'Impossible d’enregistrer l’évaluation : aucun enseignement n’est associé à la classe sélectionnée.'
       );
-
       return;
     }
-
     if (this.evaluationFormGroup.invalid) {
-
       this.evaluationFormGroup.markAllAsTouched();
-
       this.toastService.warning(
         'Formulaire incomplet',
         'Veuillez renseigner tous les champs obligatoires.'
@@ -253,7 +223,7 @@ export class CreateEvaluationEnseignantComponent implements OnInit {
     const payload: any = {
       titre: this.evaluationFormGroup.get('titre')?.value,
       description: this.evaluationFormGroup.get('description')?.value,
-      enseignementId: this.evaluationFormGroup.get('enseignementId')?.value,
+      enseignementId: this.enseignementActif,
       sessionSemestre: this.evaluationFormGroup.get('sessionSemestre')?.value,
       dateEvaluation: this.evaluationFormGroup.get('dateEvaluation')?.value,
       evaluationType: this.evaluationFormGroup.get('evaluationType')?.value,
@@ -263,7 +233,6 @@ export class CreateEvaluationEnseignantComponent implements OnInit {
     };
 
     console.log('send payload', payload);
-    return;
 
     this.dossierResource.createUneEvaluationRessource('evaluation', payload)
       .pipe(takeUntilDestroyed(this.destroyRef))
@@ -280,9 +249,7 @@ export class CreateEvaluationEnseignantComponent implements OnInit {
               'L’évaluation a été enregistrée avec succès.'
             );
 
-            this.router.navigate([
-              '/enseignant/evaluations'
-            ]);
+            this.goBack();
 
           } else {
 
@@ -313,53 +280,22 @@ export class CreateEvaluationEnseignantComponent implements OnInit {
       });
   }
 
-  /**
-   * Modification d'une évaluation existante.
-   *
-   * IMPORTANT :
-   * On envoie uniquement les champs présents
-   * dans EvaluationUpdateRequestDTO.
-   */
   private modifierEvaluation(): void {
-
     if (!this.evaluationId) {
-
       this.disableAddButton = false;
-
-      this.toastService.error(
-        'Erreur',
-        'Identifiant de l’évaluation introuvable.'
-      );
-
+      this.toastService.error('Erreur', 'Identifiant de l’évaluation introuvable.');
       return;
     }
 
     const payload = {
-
-      titre:
-        this.evaluationFormGroup.get('titre')?.value,
-
-      description:
-        this.evaluationFormGroup.get('description')?.value,
-
-      dateEvaluation:
-        this.evaluationFormGroup.get('dateEvaluation')?.value,
-
-      sessionSemestre:
-        this.evaluationFormGroup.get('sessionSemestre')?.value,
-
-      evaluationType:
-        this.evaluationFormGroup.get('evaluationType')?.value,
-
-      evaluationMode:
-        this.evaluationFormGroup.get('evaluationMode')?.value,
-
-      heureDebut:
-        this.evaluationFormGroup.get('heureDebut')?.value,
-
-      heureFin:
-        this.evaluationFormGroup.get('heureFin')?.value
-
+      titre: this.evaluationFormGroup.get('titre')?.value,
+      description: this.evaluationFormGroup.get('description')?.value,
+      dateEvaluation: this.evaluationFormGroup.get('dateEvaluation')?.value,
+      sessionSemestre: this.evaluationFormGroup.get('sessionSemestre')?.value,
+      evaluationType: this.evaluationFormGroup.get('evaluationType')?.value,
+      evaluationMode: this.evaluationFormGroup.get('evaluationMode')?.value,
+      heureDebut: this.evaluationFormGroup.get('heureDebut')?.value,
+      heureFin: this.evaluationFormGroup.get('heureFin')?.value
     };
 
     this.dossierResource.updateUneReource(`evaluation`, this.evaluationId, payload)
@@ -372,10 +308,7 @@ export class CreateEvaluationEnseignantComponent implements OnInit {
 
           if (data?.statut === 'OK') {
 
-            this.toastService.success(
-              'Succès',
-              'L’évaluation a été modifiée avec succès.'
-            );
+            this.toastService.success('Succès', 'L’évaluation a été modifiée avec succès.');
 
             this.goBack();
 
@@ -383,25 +316,20 @@ export class CreateEvaluationEnseignantComponent implements OnInit {
 
             this.toastService.error(
               'Erreur',
-              data?.message ??
-              'Erreur lors de la modification de l’évaluation.'
+              data?.message ?? 'Erreur lors de la modification de l’évaluation.'
             );
           }
         },
 
         error: (error) => {
 
-          console.error(
-            'Erreur modification évaluation :',
-            error
-          );
+          console.error('Erreur modification évaluation :', error);
 
           this.disableAddButton = false;
 
           this.toastService.error(
             'Erreur',
-            error?.error?.message ??
-            'Erreur lors de la modification de l’évaluation.'
+            error?.error?.message ?? 'Erreur lors de la modification de l’évaluation.'
           );
         }
 

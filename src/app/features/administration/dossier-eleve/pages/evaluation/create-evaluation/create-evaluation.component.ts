@@ -107,7 +107,6 @@ export class CreateEvaluationComponent implements OnInit {
       heureDebut: this.evaluationFormGroup.get("heureDebut")!.value,
       heureFin: this.evaluationFormGroup.get("heureFin")!.value,
     }
-    console.log('Log', payload);
     this.dossierResource.createUneEvaluationRessource('evaluation', payload).subscribe({
       next: (data) => {
         if (data.statut === 'OK') {
