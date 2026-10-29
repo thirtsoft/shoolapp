@@ -1,5 +1,5 @@
 <app-generic-table-dossier
-  title="Liste des factures de l'élève"
+  [title]="'Factures de : ' + nomEleveConcerne"
   titleFitre="Facture"
   [tableColumns]="columns"
   [tableData]="factureData"

@@ -182,7 +182,7 @@
 
                 <!-- Date / heure -->
                 <span class="absence-date">
-                  📅 {{ formaterDate(act.date) }} · {{ act.heureDebut.substring(0, 5) }}
+                  📅 {{ formaterDate(act.date) }} · {{ act.heureDebut?.substring(0, 5) }}
 
                   @if (act.heureFin) {
                     - {{ act.heureFin.substring(0, 5) }}

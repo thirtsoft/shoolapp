@@ -1,9 +1,12 @@
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, DestroyRef, inject, OnInit } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { forkJoin } from 'rxjs';
 import { IFilterConfig } from '../../../../../core/filtered-config/FiltreConfiguration';
 import { GenericTableDossierComponent } from '../../../../../core/generic/generic-table-dossier/generic-table-dossier.component';
 import { CommonService } from '../../../../../core/services/common.service';
-import { LocalStorageService } from '../../../../../core/services/local-storage.service';
+import { ReferentielResourceService } from '../../../../administration/referentiel/service/referentiel-resource.service';
 import { ComptabiliteResourceService } from '../../../../comptabilite/services/comptabilite-resource.service';
+import { ParentSessionService } from '../../../service/parent-session.service';
 
 @Component({
   selector: 'app-list-invoice-eleve',
@@ -21,8 +24,7 @@ export class ListInvoiceEleveComponent implements OnInit {
   columns: any = [];
   factureData: any = [];
 
-  userId?: number;
-  eleveId?: number;
+  eleveUuId?: string;
   classeId?: number;
   isNonAdministration: boolean = false;
 
@@ -38,15 +40,22 @@ export class ListInvoiceEleveComponent implements OnInit {
   activeFilters: any = {};
   hasActiveFilters: boolean = false;
 
+  nomEleveConcerne = '';
+
+  private readonly parentSession = inject(ParentSessionService);
+  private readonly referentielResourceService = inject(ReferentielResourceService);
+  private readonly destroyRef = inject(DestroyRef);
   private readonly comptabiliteResource = inject(ComptabiliteResourceService);
   private readonly commonService = inject(CommonService);
-  private readonly localStorage = inject(LocalStorageService);
 
-  constructor(
-  ) {
-    this.userId = this.localStorage.getItem('id');
-    this.eleveId = this.localStorage.getItem('eleveId');
-    this.classeId = this.localStorage.getItem('classeId');
+
+  constructor() {
+    const eleve = this.parentSession.getEleveResume();
+
+    if (eleve) {
+      this.eleveUuId = eleve.uuid;
+      this.nomEleveConcerne = `${eleve.prenom ?? ''} ${eleve.nom ?? ''}`.trim();
+    }
   }
 
   ngOnInit(): void {
@@ -54,43 +63,32 @@ export class ListInvoiceEleveComponent implements OnInit {
 
   }
 
-  async chargerLesFacturesEleve() {
-    try {
-      await Promise.all([
-        this.getStatusFactureList(),
-        this.getMoisList()
-      ]);
-      this.initialisationDesFiltres();
-      this.chargerLesDonnees(false);
+  private chargerLesFacturesEleve(): void {
+    this.isLoading = true;
 
-    } catch (error) {
-      console.error('Erreur chargement données:', error);
-    }
-  }
+    forkJoin({
+      semestres: this.referentielResourceService.getResourceList('sessionsemestre'),
+      mois: this.commonService.getAllMois(),
+      etat: this.commonService.getAllStatusFactures()
+    })
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: (result: any) => {
+          this.moisList = result.mois || [];
+          this.etatfactureOptions = result.etat || [];
 
-  getStatusFactureList(): Promise<any[]> {
-    return new Promise((resolve, reject) => {
-      this.commonService.getAllStatusFactures().subscribe({
-        next: (data) => {
-          this.etatfactureOptions = data;
-          resolve(data);
+          this.initialisationDesFiltres();
+
+          this.chargerLesDonnees(false);
         },
-        error: (err) => reject(err)
+
+        error: (error) => {
+          console.error('Erreur chargement des filtres:', error);
+          this.isLoading = false;
+        }
       });
-    });
   }
 
-  getMoisList(): Promise<any[]> {
-    return new Promise((resolve, reject) => {
-      this.commonService.getAllMois().subscribe({
-        next: (data) => {
-          this.moisList = data;
-          resolve(data);
-        },
-        error: (err) => reject(err)
-      });
-    });
-  }
 
   initialisationDesFiltres() {
     this.tableFilters = [
@@ -140,29 +138,42 @@ export class ListInvoiceEleveComponent implements OnInit {
 
       apiCall = this.comptabiliteResource.fetchFilterByElementDataTable(
         'facture/eleve',
-        this.eleveId!,
+        this.eleveUuId,
         this.currentPage,
         this.pageSize,
         filtreParam)
 
     } else {
-      apiCall = this.comptabiliteResource.getResourceByIdPaged('facture/eleve', this.eleveId!, this.currentPage, this.pageSize);
+      apiCall = this.comptabiliteResource.getResourceByIdPaged('facture/eleve', this.eleveUuId, this.currentPage, this.pageSize);
     }
     apiCall.subscribe({
       next: (response) => {
         this.factureData = response.data?.content || [];
         this.totalElements = response.data?.totalElements || 0;
 
+
         this.columns = [
           { key: 'numeroFacture', header: 'N° facture' },
           { key: 'montant', header: 'Montant' },
-          { key: 'etat', header: 'Etat' },
+          { key: 'etat', header: 'État' },
           { key: 'dateFacture', header: 'Date' },
+          { key: 'echeanceDateFormatee', header: 'Date échéance' },
+          { key: 'alerte', header: 'Alerte' }
         ];
 
-        this.factureData = this.factureData.map((item: any) => ({
-          ...item,
-        }));
+        this.factureData = this.factureData.map((item: any) => {
+          const alerte = this.genererAlerteFacture(
+            item.etat,
+            item.echeanceDate
+          );
+
+          return {
+            ...item,
+            echeanceDateFormatee: this.formaterDate(item.echeanceDate),
+            alerte: alerte.message,
+            alerteClass: alerte.class
+          };
+        });
 
         this.isLoading = false;
       },
@@ -171,6 +182,73 @@ export class ListInvoiceEleveComponent implements OnInit {
         this.isLoading = false;
       }
     });
+  }
+
+  genererAlerteFacture(etat: string | null | undefined, echeanceDate: string | null | undefined): { message: string; class: string; } {
+
+    if (etat?.toLowerCase() === 'payée') {
+      return {
+        message: '🟢 Payée',
+        class: 'alerte-success'
+      };
+    }
+
+    if (!echeanceDate) {
+      return {
+        message: '',
+        class: ''
+      };
+    }
+
+    const aujourdHui = new Date();
+    aujourdHui.setHours(0, 0, 0, 0);
+
+    const echeance = new Date(echeanceDate);
+    echeance.setHours(0, 0, 0, 0);
+
+    if (echeance < aujourdHui) {
+      return {
+        message: '🔴 Échéance dépassée',
+        class: 'alerte-warning'
+      };
+    }
+    return {
+      message: '🟠 À régler avant l’échéance',
+      class: 'alerte-warning'
+    };
+  }
+
+
+  formaterDate(date: string | null | undefined): string {
+    if (!date) {
+      return '';
+    }
+    const dateObj = new Date(date);
+
+    return new Intl.DateTimeFormat('fr-FR', {
+      day: '2-digit',
+      month: 'long',
+      year: 'numeric'
+    }).format(dateObj);
+  }
+
+  genererAlerteEcheance(echeanceDate: string | null | undefined): string {
+
+    if (!echeanceDate) {
+      return '';
+    }
+
+    const aujourdHui = new Date();
+    aujourdHui.setHours(0, 0, 0, 0);
+
+    const echeance = new Date(echeanceDate);
+    echeance.setHours(0, 0, 0, 0);
+
+    if (echeance < aujourdHui) {
+      return '⚠️ Échéance dépassée';
+    }
+
+    return '✅ Échéance à venir';
   }
 
   construireLesParamereDeFiltre(): any {

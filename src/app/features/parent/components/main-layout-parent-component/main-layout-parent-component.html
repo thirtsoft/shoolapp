@@ -5,7 +5,6 @@
     </button>
     <div class="pt-brand">👪 <span>Espace Parent</span></div>
 
-    <!-- ✅ SÉLECTEUR (juste le déclencheur) -->
     @if (eleveActif()) {
       <div class="pt-eleve-selector" (click)="toggleEleveDropdown()">
         <span class="pt-eleve-ava">{{ getAvatar(eleveActif()!) }}</span>
@@ -19,8 +18,7 @@
 
     <div class="pt-time">{{ heure }}</div>
   </header>
-
-  <!-- ✅ DROPDOWN SÉPARÉ (hors du sélecteur, hors du header) -->
+  
   @if (eleveDropdownOpen()) {
     <div class="eleve-dropdown-wrapper">
       <div class="eleve-dropdown-backdrop" (click)="eleveDropdownOpen.set(false)"></div>

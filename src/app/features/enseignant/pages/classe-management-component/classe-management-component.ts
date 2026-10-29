@@ -899,6 +899,7 @@ export class ClasseManagementComponent implements OnInit {
 
     console.log('Payload Faire appel :', JSON.stringify(request, null, 2));
 
+
     this.isSavingAppel.set(true);
 
     this.dossierResource.faireAppel(request).subscribe({
@@ -1057,7 +1058,7 @@ export class ClasseManagementComponent implements OnInit {
           id: note.id,
           eleve: Number(note.eleve),
           nomCompletEleve: noteOriginale?.nomCompletEleve ?? note.nomComplet,
-          note: note.note !== null ? Number(note.note) : null,
+          note: note.note !== null ? Number(note.note) : 0,
           type: evaluation.evaluationType,
           dateCreation: noteOriginale?.dateCreation ?? null,
           appreciation: note.appreciation ?? '',
@@ -1086,15 +1087,6 @@ export class ClasseManagementComponent implements OnInit {
       noteEditRequestDTOList,
       actif: evaluation.actif
     };
-
-    console.log(
-      'Payload UPDATE évaluation + notes :',
-      JSON.stringify(
-        payload,
-        null,
-        2
-      )
-    );
 
     this.isSavingNotes = true;
 

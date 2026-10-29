@@ -6,6 +6,7 @@ import { ToastrService } from 'ngx-toastr';
 import { forkJoin } from 'rxjs';
 
 import { OrganizationMiniResponse } from '../../../../core/models/onboarding/organization/organization-mini-response';
+import { ActiviteAVenir } from '../../../../core/models/planification/activite-a-venir';
 import { ConfigOrganizationService } from '../../configorganization/services/configorganization.service';
 import { DashboardService } from '../../dossier-eleve/service/dashboard.service';
 
@@ -97,6 +98,13 @@ interface DashboardKpiPedagogie {
   classesPedagogiquesAverifier: number;
 }
 
+export interface ActiviteAdministrationResponse {
+  date?: string;
+  heureDebut?: string;
+  titre?: string;
+  type?: string;
+}
+
 @Component({
   selector: 'app-dashboard-administration-component',
   standalone: true,
@@ -120,7 +128,7 @@ export class DashboardAdministrationComponent implements OnInit {
 
   readonly anneeScolaire = '2026–2027';
   readonly dateDashboard = '24 octobre 2026';
-  readonly dateSituation = '2026-10-24';
+  readonly dateSituation = this.getDateDuJour();
 
   readonly totalEleves = signal(0);
   readonly nombreReinscriptionsAtraiter = signal(0);
@@ -142,9 +150,19 @@ export class DashboardAdministrationComponent implements OnInit {
 
   readonly paiementsPrioritaires = signal<PaiementPrioritaire[]>([]);
   readonly elevesSuivi = signal<EleveSuivi[]>([]);
+  readonly evenements = signal<ActiviteAVenir[]>([]);
 
   readonly totalEnseignants = 38;
   readonly totalClasses = 18;
+
+  private getDateDuJour(): string {
+    const date = new Date();
+    return [
+      date.getFullYear(),
+      String(date.getMonth() + 1).padStart(2, '0'),
+      String(date.getDate()).padStart(2, '0')
+    ].join('-');
+  }
 
   readonly effectifsParCycle: EffectifCycle[] = [
     {
@@ -167,6 +185,7 @@ export class DashboardAdministrationComponent implements OnInit {
     },
   ];
 
+  /*
   readonly evenements: EvenementDirection[] = [
     {
       jour: '27',
@@ -190,6 +209,7 @@ export class DashboardAdministrationComponent implements OnInit {
       heure: '08:00',
     },
   ];
+  */
 
   ngOnInit(): void {
     this.loadOrganizationInfos();
@@ -228,12 +248,12 @@ export class DashboardAdministrationComponent implements OnInit {
       evaluations: this.dashboardService.obtenirKpiEvaluations(),
       elevesSuivi: this.dashboardService.rechercherElevesNecessitantSuivi(),
       pedagogie: this.dashboardService.rechercherKpiPedagogie(),
+      activites: this.dashboardService.afficherActiviteAVenirAdministration(),
     })
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: (data) => {
           this.totalEleves.set(data.eleves.nombreElevesInscrits);
-          console.log('Elevec total', this.totalEleves());
           this.nombreReinscriptionsAtraiter.set(data.eleves.nombreReinscriptionsATraiter);
           this.tauxPresence.set(data.presence.tauxPresence);
           this.absencesAujourdHui.set(data.presence.nombreElevesAbsents);
@@ -245,6 +265,7 @@ export class DashboardAdministrationComponent implements OnInit {
           this.montantEnRetard.set(data.encaissement.montantEnRetard);
           this.paiementsPrioritaires.set(data.encaissement.paiementsPrioritaires);
           this.evaluationsACorriger.set(data.evaluations.evaluationsACorriger);
+          this.evenements.set(data.activites.map((activite) => this.mapperActiviteVersEvenement(activite)));
 
           this.elevesSuivi.set(
             data.elevesSuivi.map((eleve) => ({
@@ -279,6 +300,22 @@ export class DashboardAdministrationComponent implements OnInit {
           );
         },
       });
+  }
+
+  private mapperActiviteVersEvenement(activite: ActiviteAdministrationResponse): ActiviteAVenir {
+
+    const date = new Date(`${activite.date}T00:00:00`);
+
+    return {
+      jour: String(date.getDate()).padStart(2, '0'),
+      mois: date
+        .toLocaleDateString('fr-FR', { month: 'short' })
+        .replace('.', '')
+        .toUpperCase(),
+      titre: activite.titre,
+      type: activite.type,
+      heure: activite.heureDebut?.substring(0, 5) ?? '',
+    };
   }
 
   get kpis(): KpiDirection[] {
@@ -368,7 +405,7 @@ export class DashboardAdministrationComponent implements OnInit {
   }
 
   ouvrirSuiviPedagogique(): void {
-    console.log('Ouverture du suivi pédagogique');
+    void this.router.navigate(['/admin/dossier-eleve/evaluations']);
   }
 
   ouvrirEvenements(): void {

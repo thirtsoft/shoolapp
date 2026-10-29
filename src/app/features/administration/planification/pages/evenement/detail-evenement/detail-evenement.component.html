@@ -9,7 +9,7 @@
           <b style="margin-left: 5px">Retour</b>
         </button>
         <div class="action-group-buttons">
-          @if (['Programmé'].includes(detailsEvenement?.etat!)) {
+          @if ([libelleEtat.LIBELLE_ETAT_BROUILLON].includes(detailsEvenement?.etat!)) {
             <button class="btn-validate" (click)="openEtatModal(etatModal, 'publier', 'E5')">
               <i class="fas fa-check-circle me-2"></i>Publier
             </button>
@@ -18,7 +18,7 @@
             </button>
           }
 
-          @if (['Publié'].includes(detailsEvenement?.etat!)) {
+          @if ([libelleEtat.LIBELLE_ETAT_PUBLIE].includes(detailsEvenement?.etat!)) {
             <button class="btn-secondary" (click)="openEtatModal(etatModal, 'dépublier', 'E6')">
               <i class="fas fa-eye-slash me-2"></i>Dépublier
             </button>
@@ -27,7 +27,7 @@
             </button>
           }
 
-          @if (['Dépublié'].includes(detailsEvenement?.etat!)) {
+          @if ([libelleEtat.LIBELLE_ETAT_DEPUBLIE].includes(detailsEvenement?.etat!)) {
             <button class="btn-validate" (click)="openEtatModal(etatModal, 'publier', 'E5')">
               <i class="fas fa-check-circle me-2"></i>Publier
             </button>

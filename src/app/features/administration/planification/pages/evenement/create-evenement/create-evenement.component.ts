@@ -21,9 +21,6 @@ export class CreateEvenementComponent implements OnInit {
   evenement: any;
   evenementFormGroup!: FormGroup;
   isEdit: boolean = false;
-  ecoleId: any;
-  userId: number;
-  utilisateur: Utilisateur = {};
 
 
   title = "Programmer un évenement";
@@ -39,11 +36,9 @@ export class CreateEvenementComponent implements OnInit {
   constructor(
   ) {
     this.evenementId = this.activeRoute.snapshot.params['id'];
-    this.userId = Number(localStorage.getItem('id'));
   }
 
   ngOnInit(): void {
-    this.getConnectedUserInfos();
     this.initializeForm(null);
     if (this.evenementId != null && this.evenementId != undefined) {
       this.getEvenement(this.evenementId);
@@ -51,18 +46,6 @@ export class CreateEvenementComponent implements OnInit {
       this.isEdit = true;
     }
   }
-
-
-  getConnectedUserInfos() {
-    this.utilisateurService.getUtilisateur(this.userId).subscribe({
-      next: data => {
-        this.utilisateur = data;
-      },
-      error: error => { console.log(error) },
-    });
-
-  }
-
 
   getEvenement(evenementId: number) {
     this.planificationService.getEvenementById(evenementId).subscribe({
@@ -86,7 +69,6 @@ export class CreateEvenementComponent implements OnInit {
 
   ajoutereditEvenement() {
     const payload = this.evenementFormGroup.value;
-    payload.ecole = this.ecoleId;
     if (!this.isEdit) {
       this.planificationService.createEvenement(payload).subscribe({
         next: (data) => {

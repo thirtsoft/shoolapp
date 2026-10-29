@@ -1,12 +1,11 @@
-import { Component, inject, OnDestroy, OnInit } from '@angular/core';
-import { Subject, takeUntil } from 'rxjs';
+import { Component, DestroyRef, inject, OnInit } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { forkJoin, Subject } from 'rxjs';
 import { IFilterConfig } from '../../../../core/filtered-config/FiltreConfiguration';
 import { GenericTableDossierComponent } from '../../../../core/generic/generic-table-dossier/generic-table-dossier.component';
-import { ListeClasse } from '../../../../core/models/referentiels/classe';
-import { Matiere } from '../../../../core/models/referentiels/matiere';
-import { Semestre } from '../../../../core/models/referentiels/semestre';
-import { LocalStorageService } from '../../../../core/services/local-storage.service';
+import { CommonService } from '../../../../core/services/common.service';
 import { PlanificationResourceService } from '../../../administration/planification/services/planification-resource.service';
+import { ReferentielResourceService } from '../../../administration/referentiel/service/referentiel-resource.service';
 import { ReferentielService } from '../../../administration/referentiel/service/referentiel.service';
 import { ParentSessionService } from '../../service/parent-session.service';
 
@@ -17,7 +16,7 @@ import { ParentSessionService } from '../../service/parent-session.service';
   templateUrl: './list-note-eleve.component.html',
   styleUrls: ['./list-note-eleve.component.css']
 })
-export class ListNoteEleveComponent implements OnInit, OnDestroy {
+export class ListNoteEleveComponent implements OnInit {
   noteId?: number | null;
   isEdit: boolean = true;
   isLoading: boolean = false;
@@ -40,8 +39,9 @@ export class ListNoteEleveComponent implements OnInit, OnDestroy {
   tableSizes = [5, 10, 20, 50, 100];
 
   matieresList: any[] = [];
-  semestreList: any[] = [];
-  typesNoteOptions: string[] = ['devoir', 'composition'];
+  sessionSemestreList: any[] = [];
+  moisList: any[] = [];
+  typesNoteOptions: string[] = ['DEVOIR', 'COMPOSITION'];
 
   tableFilters: IFilterConfig[] = [];
   activeFilters: any = {};
@@ -49,100 +49,74 @@ export class ListNoteEleveComponent implements OnInit, OnDestroy {
 
   isSelected = false;
 
+
+  nomEleveConcerne = '';
+
+  private readonly parentSession = inject(ParentSessionService);
+  private readonly referentielResourceService = inject(ReferentielResourceService);
+  private readonly commonService = inject(CommonService);
+  private readonly destroyRef = inject(DestroyRef);
   private readonly coursService = inject(PlanificationResourceService);
   private readonly referentielService = inject(ReferentielService);
-  private readonly localStorage = inject(LocalStorageService);
-  private readonly sessionService = inject(ParentSessionService);
 
   constructor(
   ) {
-    this.userId = this.localStorage.getItem('id');
-    this.eleveId = this.localStorage.getItem('eleveId');
-    this.classeId = this.localStorage.getItem('classeId');
+
+    const eleve = this.parentSession.getEleveResume();
+
+    if (eleve) {
+      this.eleveId = eleve.id;
+      this.classeId = eleve.classeId;
+      this.nomEleveConcerne = `${eleve.prenom ?? ''} ${eleve.nom ?? ''}`.trim();
+    }
+
   }
 
   ngOnInit(): void {
     this.chargerLesNotesEleve();
-    this.sessionService.changement$
-      .pipe(takeUntil(this.destroy$))
-      .subscribe((changement) => {
-        console.log('📩 Notification reçue dans ListNote:', changement);
-        if (changement && changement.eleveId !== this.eleveId) {
-          console.log('🔄 Rechargement pour eleveId:', changement.eleveId);
-          this.eleveId = changement.eleveId;
-          this.classeId = changement.classeId!;
+  }
 
-          this.currentPage = 0;
-          this.activeFilters = {};
-          this.hasActiveFilters = false;
-          this.chargerLesNotesEleve();
+  private chargerLesNotesEleve(): void {
+    this.isLoading = true;
+
+    forkJoin({
+      semestres: this.referentielResourceService.getResourceList('sessionsemestre'),
+      mois: this.commonService.getAllMois(),
+      matiere: this.referentielService.getAllMatieres()
+    })
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: (result: any) => {
+
+          this.sessionSemestreList = result.semestres || [];
+          this.moisList = result.mois || [];
+          this.matieresList = result.matiere || []
+
+          this.initialisationDesFiltres();
+
+          this.chargerLesDonnees(false);
+        },
+
+        error: (error) => {
+          console.error('Erreur chargement des filtres:', error);
+          this.isLoading = false;
         }
       });
   }
 
-  ngOnDestroy(): void {
-    this.destroy$.next();
-    this.destroy$.complete();
-  }
+  initialisationDesFiltres() {
 
-  async chargerLesNotesEleve() {
-    try {
-      const [matiere, semestre] = await Promise.all([
-        this.getMatiereList(),
-        this.getSemestreList()
-      ]);
-
-      this.initialisationDesFiltres(matiere, semestre);
-      this.chargerLesDonnees(false);
-    } catch (error) {
-      console.error('Erreur chargement données:', error);
-    }
-  }
-
-  getMatiereList(): Promise<Matiere[]> {
-    return new Promise((resolve, reject) => {
-      this.referentielService.getAllMatieres().subscribe({
-        next: (data) => {
-          this.matieresList = data;
-          resolve(data);
-        },
-        error: (err) => reject(err)
-      });
-    });
-  }
-
-  getSemestreList(): Promise<Semestre[]> {
-    return new Promise((resolve, reject) => {
-      this.referentielService.getAllSemestres().subscribe({
-        next: (data) => {
-          this.semestreList = data;
-          resolve(data);
-        },
-        error: (err) => reject(err)
-      });
-    });
-  }
-
-  initialisationDesFiltres(matieres: any[], semestre: any[]) {
     this.tableFilters = [
-      {
-        key: 'matiere',
-        label: 'Matière',
-        type: 'select',
-        options: matieres.map(c => ({
-          value: c.id,
-          label: c.libelle
-        })),
-      },
       {
         key: 'semestre',
         label: 'Semestre',
         type: 'select',
-        options: semestre.map(a => ({
-          value: a.id,
-          label: `${a.libelle}`
+        options: this.sessionSemestreList.map(c => ({
+          value: c.id,
+          label: c.semestre
         }))
       },
+
       {
         key: 'type',
         label: 'Type de note',
@@ -153,8 +127,19 @@ export class ListNoteEleveComponent implements OnInit, OnDestroy {
         }))
       },
 
+      {
+        key: 'mois',
+        label: 'Mois',
+        type: 'select',
+        options: this.moisList.map(m => ({
+          value: m.id,
+          label: m.mois
+        }))
+      }
+
     ];
   }
+
 
   onFilterChange(filter: IFilterConfig, value: any) {
     this.activeFilters[filter.key] = value;
@@ -192,13 +177,15 @@ export class ListNoteEleveComponent implements OnInit, OnDestroy {
 
         this.columns = [
           { key: 'matiere', header: 'Matière' },
-          { key: 'semestre', header: 'Semestre' },
+          { key: 'sessionSemestre', header: 'Semestre' },
           { key: 'note', header: 'Note' },
           { key: 'type', header: 'Type' },
-
+          { key: 'dateCreationFormatee', header: 'Date' }
         ];
-        this.noteData = this.noteData?.map((item: any) => ({
+
+        this.noteData = this.noteData.map((item: any) => ({
           ...item,
+          dateCreationFormatee: this.formaterDate(item.dateCreation)
         }));
 
         this.isLoading = false;
@@ -210,20 +197,34 @@ export class ListNoteEleveComponent implements OnInit, OnDestroy {
     });
   }
 
+  formaterDate(date: string | null | undefined): string {
+    if (!date) {
+      return '';
+    }
+
+    const dateObj = new Date(date);
+
+    return new Intl.DateTimeFormat('fr-FR', {
+      day: '2-digit',
+      month: 'long',
+      year: 'numeric'
+    }).format(dateObj);
+  }
+
   construireParametreDeFiltre(): any {
     const filtreObj: any = {};
-    if (this.activeFilters.classe) {
-      filtreObj.classe = this.activeFilters.classe;
-    }
-    if (this.activeFilters.matiere) {
-      filtreObj.matiere = this.activeFilters.matiere;
-    }
+
     if (this.activeFilters?.semestre) {
       filtreObj.semestre = this.activeFilters.semestre;
     }
     if (this.activeFilters.type) {
       filtreObj.type = this.activeFilters.type;
     }
+
+    if (this.activeFilters.mois) {
+      filtreObj.mois = this.activeFilters.mois;
+    }
+
     return Object.keys(filtreObj).length > 0 ? filtreObj : null;
   }
 
@@ -250,7 +251,7 @@ export class ListNoteEleveComponent implements OnInit, OnDestroy {
   resetFilters() {
     this.activeFilters = {};
     this.hasActiveFilters = false;
-    this.initialisationDesFiltres(this.matieresList, this.semestreList);
+    this.initialisationDesFiltres();
     this.currentPage = 0;
     this.chargerLesDonnees(false);
   }

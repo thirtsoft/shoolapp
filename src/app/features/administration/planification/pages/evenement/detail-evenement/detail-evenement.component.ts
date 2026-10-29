@@ -6,6 +6,7 @@ import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ToastrService } from 'ngx-toastr';
 import { Evenement } from '../../../../../../core/models/planification/evenement';
 import { PlanificationResourceService } from '../../../services/planification-resource.service';
+import { EtatLibelle } from '../../../../../../core/constants/etat-libelle';
 
 @Component({
   selector: 'app-detail-evenement',
@@ -29,9 +30,10 @@ export class DetailEvenementComponent implements OnInit {
   targetEtatCode: string = '';
   isMotifRequired: boolean = false;
 
+    libelleEtat = EtatLibelle;
+
   private readonly planification = inject(PlanificationResourceService);
   private readonly modalService = inject(NgbModal);
-  private readonly _formBuilder = inject(FormBuilder);
   private readonly toastService = inject(ToastrService);
   private readonly activeRoute = inject(ActivatedRoute);
   private readonly router = inject(Router);

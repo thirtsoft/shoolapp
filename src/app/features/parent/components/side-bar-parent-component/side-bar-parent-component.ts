@@ -1,23 +1,13 @@
-import { CommonModule } from '@angular/common';
 import { Component, inject, input, output, signal } from '@angular/core';
 import { Router } from '@angular/router';
 import { DetailsEleveParent } from '../../../../core/models/dossiereleve/details-eleve-parent';
-import { ParentElevesResponse } from '../../../../core/models/parent/parent-eleves-response.model';
 import { LocalStorageService } from '../../../../core/services/local-storage.service';
+import { NavItem } from '../../../enseignant/component/side-bar-professeur-component/side-bar-professeur-component';
 
-
-export interface NavItem {
-  route?: string;
-  ico: string;
-  label: string;
-  badge?: string;
-  section?: string;
-  children?: NavItem[];
-}
 @Component({
   selector: 'app-side-bar-parent-component',
   standalone: true,
-  imports: [CommonModule],
+  imports: [],
   templateUrl: './side-bar-parent-component.html',
   styleUrl: './side-bar-parent-component.css',
 })
@@ -52,42 +42,27 @@ export class SideBarParentComponent {
   nav: NavItem[] = [
     { route: '/parent/dashboard', ico: '📊', label: 'Tableau de bord', section: '', badge: '' },
 
-    { route: '/parent/absences', ico: '❌', label: 'Absences', section: 'Suivi quotidien', badge: '18' },
+    { route: '/parent/cours', ico: '🕐', label: ' Emploi du temps', section: '🎓 Suivi scolaire' },
+    { route: '/parent/absences', ico: '❌', label: 'Absences', section: '', badge: '' },
     { route: '/parent/evaluations', ico: '🎯', label: 'Évaluations', section: '', badge: '' },
     { route: '/parent/notes', ico: '📝', label: 'Notes', section: '', badge: '' },
     { route: '/parent/bulletins', ico: '📋', label: 'Bulletins', section: '', badge: '' },
-    { route: '/parent/exercices', ico: '✏️', label: 'Exercice', section: '', badge: '' },
+    { route: '/parent/exercices', ico: '✏️', label: 'Exercices', section: '', badge: '' },
+    //    { route: '/parent/cours', ico: '📚', label: 'Cours & Ressources', section: '', badge: '' },
 
-    { route: '/parent/factures', ico: '💰', label: 'Factures', section: 'Finances', badge: '18' },
-    { route: '/parent/services', ico: '📋', label: 'Inscriptions services', section: '', badge: '' },
+    { route: '/parent/factures', ico: '💰', label: 'Factures', section: '💳 Finances & services', badge: '' },
+    { route: '/parent/services', ico: '📋', label: 'Services scolaires', section: '', badge: '' },
 
-
-    //  { route: '/parent/emploi-temps', ico: '🕐', label: 'Emploi du temps', section: 'Ressources', badge: '18' },
-    { route: '/parent/cours', ico: '📚', label: 'Cours & Ressources', section: 'Ressources', badge: '18' },
-
-    // VIE SCOLAIRE
-    { route: '/parent/inscriptions', ico: '📝', label: 'Inscriptions', section: 'Vie scolaire', badge: '7' },
+    { route: '/parent/inscriptions', ico: '📝', label: 'Inscriptions', section: '🏫 Vie scolaire', badge: '' },
     { route: '/parent/menu-cantine', ico: '🍽️', label: 'Menu cantine', section: '', badge: '' },
     { route: '/parent/evenements', ico: '🎉', label: 'Événements', section: '', badge: '' },
 
+    { route: '/parent/informations', ico: '📢', label: 'Informations', section: '💬 Communication', badge: '' },
+    { route: '/parent/messages', ico: '✉️', label: 'Messages', section: '', badge: '' },
 
-    // COMMUNICATION
-    { route: '/parent/informations', ico: '📢', label: 'Informations', section: 'Communication', badge: '5' },
+    { route: '/parent/monprofil', ico: '👤', label: 'Mon profil', section: '⚙️ Mon compte', badge: '' },
+    { route: '/parent/changer-mot-passe', ico: '🔑', label: 'Modifier le mot de passe' },
 
-    // ═══════════ PARAMÉTRAGE DE BASE (DROPDOWN) ═══════════
-    {
-      ico: '🔧',
-      label: 'Paramétrage',
-      section: 'Configuration',
-      badge: '',
-      children: [
-        // Système
-        { route: '/parent/monprofil', ico: '👤', label: 'Mon profil', section: '', badge: '' },
-        { route: '/parent/changer-mot-passe', ico: '🔑', label: 'Modifier password' },
-
-
-      ]
-    },
   ];
 
   getElevePrenom(): string {

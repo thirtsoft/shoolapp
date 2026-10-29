@@ -1,20 +1,15 @@
-<app-generic-table-dossier
-  title="Liste des cours de la classe"
-  titleFitre="cours"
-  [tableColumns]="columns"
-  [tableData]="coursData"
-  [isLoading]="isLoading"
-  [isNoAjout]="true"
-  [tableSizes]="tableSizes"
-  [totalElements]="totalElements"
-  [currentPage]="currentPage"
-  [pageSize]="pageSize"
-  (pageChange)="changePage($event)"
-  [showSearch]="false"
-  [filtered]="tableFilters"
-  (filterChange)="onFilterChange($event.filter, $event.value)"
-  [showFilters]="true"
-  (resetFilters)="resetFilters()"
-  (sizeChange)="changeSize($event)"
->
-</app-generic-table-dossier>
+<div class="calendar-card">
+  <div class="card-head">
+    <div>
+      @if (eleveActif(); as eleve) {
+        <h2>🗓️ Emploi du temps - {{ eleve.prenom }} {{ eleve.nom }} ({{ eleve.classeEleve }})</h2>
+      } @else {
+        <h2>🗓️ Emploi du temps</h2>
+      }
+    </div>
+  </div>
+
+  <div class="calendar-container">
+    <full-calendar [options]="calendarOptions"></full-calendar>
+  </div>
+</div>

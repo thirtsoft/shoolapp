@@ -1,111 +1,180 @@
-import { CommonModule } from '@angular/common';
 import { Component, inject, OnInit } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
-import { ParentElevesResponse } from '../../../../core/models/parent/parent-eleves-response.model';
+import { EleveResume } from '../../../../core/models/dossiereleve/eleve/eleve-resume.model';
+import { ParentResponse } from '../../../../core/models/parent/parent-eleves-response.model';
 import { LocalStorageService } from '../../../../core/services/local-storage.service';
+
+import { ParentSessionService } from '../../service/parent-session.service';
 import { ParentService } from '../../service/parent.service';
 
 @Component({
   selector: 'app-choisir-eleve',
   standalone: true,
-  imports: [ReactiveFormsModule, CommonModule],
+  imports: [ReactiveFormsModule],
   templateUrl: './choisir-eleve.component.html',
   styleUrls: ['./choisir-eleve.component.css']
 })
 export class ChoisirEleveComponent implements OnInit {
 
-  userId?: number;
-  useUuId?: string;
-  parentDetails?: ParentElevesResponse;
-  eleveList: any;
-  TotalElevesLength: any;
+  parentDetails?: ParentResponse;
+  eleveList: EleveResume[] = [];
 
   private readonly parentService = inject(ParentService);
+  private readonly sessionService = inject(ParentSessionService);
   private readonly router = inject(Router);
   private readonly localStorage = inject(LocalStorageService);
 
-  constructor() {
-    this.userId = this.localStorage.getItem('id');
-  }
-
   ngOnInit(): void {
-    /*     const userData = this.localStorage.getItem('v2_user');
-        this.useUuId = userData.uuid
-        if (this.useUuId) {
-          
-        } */
-
     this.getDetailsParent();
   }
 
-  getDetailsParent() {
+  getDetailsParent(): void {
     this.parentService.getMesElevest().subscribe({
       next: (res) => {
-        console.log('✅ Parent / élèves :', res);
-
         this.parentDetails = res;
         this.eleveList = res?.eleves ?? [];
+        const parentData = {
+          id: res.id,
+          parentUuid: res.parentUuid,
+          nom: res.nom,
+          prenom: res.prenom,
+          telephone: res.telephone,
+          email: res.email,
+          profession: res.profession,
+          civility: res.civility,
+        }
+
+        this.sessionService.initialiserEleves(this.eleveList);
+        this.sessionService.setParentDetails(parentData);
       },
+
       error: (error) => {
-        console.error('❌ Erreur récupération élèves parent :', error);
+        console.error(
+          '❌ Erreur récupération élèves parent :',
+          error
+        );
+
       }
+
     });
   }
 
-  afficherLesEleves(): any[] {
+  afficherLesEleves(): EleveResume[] {
     return this.eleveList;
   }
 
-  getAvatar(eleve: any): string {
+
+  getAvatar(eleve: EleveResume): string {
     const prenom = (eleve?.prenom || '').toLowerCase();
     const prenomsFeminins = [
-      'fatima', 'aminata', 'aïcha', 'mariama', 'khady', 'ndeye', 'fatou',
-      'aida', 'codou', 'rama', 'awa', 'mata', 'nazi', 'astou', 'maimouna',
-      'sokhna', 'coumba', 'dieynaba', 'bineta', 'adja', 'nabou', 'yacine',
-      'amy', 'sophie', 'marie', 'anna', 'léa', 'chloé', 'emma', 'sarah',
-      'inès', 'lina', 'julie', 'laura', 'lucie', 'clara', 'manon'
+      'fatima',
+      'aminata',
+      'aïcha',
+      'mariama',
+      'khady',
+      'ndeye',
+      'fatou',
+      'aida',
+      'codou',
+      'rama',
+      'awa',
+      'mata',
+      'nazi',
+      'astou',
+      'maimouna',
+      'sokhna',
+      'coumba',
+      'dieynaba',
+      'bineta',
+      'adja',
+      'nabou',
+      'yacine',
+      'amy',
+      'sophie',
+      'marie',
+      'anna',
+      'léa',
+      'chloé',
+      'emma',
+      'sarah',
+      'inès',
+      'lina',
+      'julie',
+      'laura',
+      'lucie',
+      'clara',
+      'manon'
     ];
 
-    if (prenomsFeminins.includes(prenom)) {
-      return '👧';
-    }
-    return '👦';
+    return prenomsFeminins.includes(prenom)
+      ? '👧'
+      : '👦';
   }
 
-  getAvatarBg(eleve: any): string {
+  getAvatarBg(eleve: EleveResume): string {
     const prenom = (eleve?.prenom || '').toLowerCase();
     const prenomsFeminins = [
-      'fatima', 'aminata', 'aïcha', 'mariama', 'khady', 'ndeye', 'fatou',
-      'aida', 'codou', 'rama', 'awa', 'mata', 'nazi', 'astou', 'maimouna',
-      'sokhna', 'coumba', 'dieynaba', 'bineta', 'adja', 'nabou', 'yacine',
-      'amy', 'sophie', 'marie', 'anna', 'léa', 'chloé', 'emma', 'sarah',
-      'inès', 'lina', 'julie', 'laura', 'lucie', 'clara', 'manon'
+      'fatima',
+      'aminata',
+      'aïcha',
+      'mariama',
+      'khady',
+      'ndeye',
+      'fatou',
+      'aida',
+      'codou',
+      'rama',
+      'awa',
+      'mata',
+      'nazi',
+      'astou',
+      'maimouna',
+      'sokhna',
+      'coumba',
+      'dieynaba',
+      'bineta',
+      'adja',
+      'nabou',
+      'yacine',
+      'amy',
+      'sophie',
+      'marie',
+      'anna',
+      'léa',
+      'chloé',
+      'emma',
+      'sarah',
+      'inès',
+      'lina',
+      'julie',
+      'laura',
+      'lucie',
+      'clara',
+      'manon'
     ];
+
     return prenomsFeminins.includes(prenom) ? 'avatar-fille' : 'avatar-garcon';
   }
 
-  afficherDossier(eleve: any) {
+  afficherDossier(eleve: EleveResume): void {
     console.log('📚 Élève sélectionné :', eleve);
-
-    if (!eleve?.id) {
+    if (eleve?.id == null) {
       console.error('❌ Aucun ID élève trouvé', eleve);
       return;
     }
+    this.sessionService.setEleveActif(eleve);
 
-    this.localStorage.setItem('eleveId', eleve.id);
+    this.goToDashboard();
+  }
 
-    if (eleve?.classeId) {
-      this.localStorage.setItem('classeId', eleve.classeId);
-    }
-
-    console.log('➡️ Navigation vers /parent/dashboard');
-
-    this.router.navigate(['/parent/dashboard']);
+  goToDashboard(): void {
+    void this.router.navigate(['/parent/dashboard']);
   }
 
   deconnecter(): void {
+    this.sessionService.clear();
     this.localStorage.clear();
-    this.router.navigate(['/auth/login/v2']);
+    void this.router.navigate(['/auth/login/v2']);
   }
 }

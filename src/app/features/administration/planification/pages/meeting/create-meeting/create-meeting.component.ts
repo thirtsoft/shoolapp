@@ -26,9 +26,6 @@ export class CreateMeetingComponent implements OnInit {
   meetingFormGroup!: FormGroup;
 
   isEdit?: boolean = false;
-  ecoleId: any;
-  userId?: number;
-  utilisateur: Utilisateur = {};
   salleList: Salle[] = [];
   typeReunionList: TypeReunion[] = [];
 
@@ -47,7 +44,6 @@ export class CreateMeetingComponent implements OnInit {
   constructor(
   ) {
     this.meetingId = this.activeRoute.snapshot.params['id'];
-    this.userId = Number(localStorage.getItem('id'));
   }
 
   ngOnInit(): void {
@@ -61,9 +57,6 @@ export class CreateMeetingComponent implements OnInit {
   }
 
   private chargerLesDonnees() {
-    this.utilisateurService.getUtilisateur(this.userId!).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
-      next: data => this.utilisateur = data
-    });
     this.referentielService.getResourceList('typereunion').pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
       next: (data: any) => this.typeReunionList = data
     });
@@ -109,10 +102,6 @@ export class CreateMeetingComponent implements OnInit {
 
   ajoutereditMeeting() {
     const payload = this.meetingFormGroup.value;
-    payload.createurId = this.userId;
-    payload.ecole = this.ecoleId;
-    console.log('payload', payload);
-
     if (!this.isEdit) {
       this.planificationService.createMeeting(payload).subscribe({
         next: (data) => {

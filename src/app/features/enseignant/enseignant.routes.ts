@@ -77,7 +77,7 @@ export const ENSEIGNANTS_ROUTES: Routes = [
       },
 
       {
-        path: 'exercice/detail/:id',
+        path: 'exercice/details/:id',
         component: DetailsExerciceComponent
       },
       {

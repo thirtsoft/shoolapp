@@ -1,189 +1,551 @@
-<div class="dashboard-parent">
-  <div class="dp-header">
-    <div>
-      <h1>👋 Bonjour, {{ parent().nom }} - {{ parent().prenom }}</h1>
-    </div>
+<div class="parent-dashboard">
+  <div class="top-row">
+    <section class="success-banner">
+      <div class="success-banner-icon">🎓</div>
 
-    <div class="dp-actions">
-      <button class="btn-messages" (click)="toutVoir('/parent/messagerie')">
-        ✉️ Messages
-        @if (messagesNonLus() > 0) {
-          <span class="msg-badge">{{ messagesNonLus() }}</span>
-        }
-      </button>
-    </div>
-  </div>
+      <div class="success-banner-content">
+        <h3>Bonjour, {{ parent().civility }} {{ parent().nomComplet }} 👋</h3>
 
-  <div class="dp-stats">
-    <div class="stat-card bleu">
-      <span class="stat-ico">📊</span>
-      <span class="stat-val">{{ formatFCFA(montantTotalImpayeEleve) }}</span>
-      <span class="stat-lbl">Total impayé</span>
-    </div>
-    <div class="stat-card vert">
-      <span class="stat-ico">🏆</span>
-      <span class="stat-val">{{ formatFCFA(montantTotalEnRetardEleve) }}</span>
-      <span class="stat-lbl">Paiement en retard</span>
-    </div>
-    <div class="stat-card warning">
-      <span class="stat-ico">⚠️</span>
-      <span class="stat-val">{{ nombreAbsenceEleve }} </span>
-      <span class="stat-lbl">Absences</span>
-      <span class="stat-detail">{{ nombreAbsenceJustifieEleve }} justifiées</span>
-    </div>
-    <div class="stat-card warning">
-      <span class="stat-ico">⏰</span>
-      <span class="stat-val">{{ nombreRetardEleve }} </span>
-      <span class="stat-lbl">Retards</span>
-    </div>
-  </div>
+        <p class="welcome-message">
+          Voici les informations importantes concernant votre enfant aujourd'hui.
+        </p>
 
-  <div class="dp-main-layout">
-    <div class="dp-col-left">
-      <div class="card" style="flex: 1; min-height: 0">
-        <div class="card-head">
-          <h2>📋 Dernières notes</h2>
-          <span class="card-badge">{{ dernierBulletin().trimestre }}</span>
-        </div>
-        <div class="notes-list">
-          @for (note of dernierBulletin().notes; track note.matiere) {
-            <div class="note-item">
-              <div class="note-info">
-                <span class="note-matiere">{{ note.matiere }}</span>
-                <span class="note-prof">{{ note.professeur }}</span>
-              </div>
-              <div class="note-vals">
-                <span class="note-score" [class]="getNoteColor(note.note)">{{ note.note }}/20</span>
-                <span class="note-moyenne">Moy. classe : {{ note.moyenneClasse }}/20</span>
-              </div>
-              <span class="note-appreciation">{{ note.appreciation }}</span>
-            </div>
-          }
-        </div>
-        <button class="card-link" (click)="toutVoir('/parent/bulletins')">
-          Voir le bulletin complet →
-        </button>
+        <p class="welcome-highlight">Ensemble pour la réussite de votre enfant !</p>
+
+        <p class="welcome-description">
+          Suivez ses progrès, restez informée et accompagnez-le dans son parcours scolaire.
+        </p>
       </div>
 
-      <div class="card" style="flex: 1; min-height: 0">
-        <div class="card-head">
-          <h2>🕐 Aujourd'hui</h2>
-          <span class="card-badge">{{ semaine }}</span>
-        </div>
+      <div class="success-banner-illustration">
+        <div class="parent-illustration">👨‍👩‍👦</div>
+      </div>
+    </section>
 
-        <div class="edt-list">
-          @for (c of coursEleveDTOList; track c.heure) {
-            <div
-              class="edt-item"
-              [class.pause]="c.matiere === 'Récréation' || c.matiere === 'Pause déjeuner'"
-            >
-              <span class="edt-heure">{{ c.heure }}</span>
-              <div class="edt-info">
-                <span class="edt-matiere">{{ c.matiere }}</span>
-                <span class="edt-detail">
-                  {{ c.professeur !== '-' ? c.professeur + ' · ' + c.salle : c.salle }}
-                </span>
-              </div>
-            </div>
-          }
-        </div>
+    <section class="success-banner">
+      <div class="scoolli-banner-icon">💙</div>
 
-        @if (!coursEleveDTOList || coursEleveDTOList.length === 0) {
-          <div class="edt-list">
-            <div class="danger" style="padding: 15px; text-align: center; color: #dc3545">
-              Pas de cours disponible cette semaine
+      <div class="success-banner-content">
+        <h3>Scoolli, le lien entre l'école et la famille.</h3>
+
+        <p>
+          Toutes les informations essentielles de la scolarité
+          <br />
+          de votre enfant, simplement et au même endroit.
+        </p>
+      </div>
+
+      <div class="success-banner-illustration">
+        <div class="scoolli-banner-illustration">✨</div>
+      </div>
+    </section>
+  </div>
+
+  <div class="dashboard-grid">
+    <main class="main-column">
+      <div class="first-content-row">
+        <section class="dashboard-card schedule-card">
+          <div class="card-header">
+            <div class="card-title-wrapper">
+              <div class="card-icon blue">▣</div>
+
+              <h3>Emploi du temps</h3>
+
+              <span class="today-label"> • Aujourd'hui </span>
             </div>
+
+            <button class="card-link" type="button" (click)="voirEmploiDuTemps()">
+              Voir la semaine
+              <span>→</span>
+            </button>
           </div>
-        }
 
-        <button class="card-link" (click)="toutVoir('/parent/cours')">
-          Voir la semaine complète →
-        </button>
+          <div class="schedule-list">
+            @for (cours of emploiDuTemps; track cours.coursId) {
+              <div class="schedule-row">
+                <div class="schedule-time">
+                  <span class="schedule-dot blue"></span>
+
+                  {{ cours.heureDebut }} - {{ cours.heureFin }}
+                </div>
+
+                <div class="schedule-subject">
+                  <span class="subject-dot blue"></span>
+
+                  <strong>
+                    {{ cours.matiere }}
+                  </strong>
+                </div>
+
+                <div class="schedule-teacher">
+                  {{ cours.professeur }}
+                </div>
+
+                <div class="schedule-room">
+                  {{ cours.salle || '—' }}
+                </div>
+              </div>
+            } @empty {
+              <div class="empty-state">Aucun cours prévu aujourd'hui.</div>
+            }
+          </div>
+        </section>
+
+        <section class="dashboard-card attendance-summary">
+          <div class="summary-icon red">▣</div>
+
+          <h3>Assiduité</h3>
+
+          <div class="attendance-number">
+            {{ assiduite.nombreAbsences }}
+
+            <span> absences </span>
+          </div>
+
+          <p class="attendance-details">Consultez le détail des absences</p>
+
+          <div class="attendance-number retards">
+            {{ assiduite.nombreRetards }}
+
+            <span> retards </span>
+          </div>
+
+          <button class="summary-link" type="button" (click)="voirAbsences()">
+            Voir le détail
+            <span>→</span>
+          </button>
+        </section>
+
+        <section class="dashboard-card payment-summary">
+          <div class="summary-icon orange">▱</div>
+
+          <h3>Situation des paiements</h3>
+
+          <div class="payment-amount">
+            {{ situationFinanciere.situationFinanciere.resteAPayer | number: '1.0-0' }}
+
+            <span>
+              {{ situationFinanciere.situationFinanciere.devise }}
+            </span>
+          </div>
+
+          <div
+            class="payment-status"
+            [class.danger]="situationFinanciere.situationFinanciere.statut === 'RETARD_PAIEMENT'"
+            [class.warning]="situationFinanciere.situationFinanciere.statut === 'A_PAYER'"
+            [class.success]="situationFinanciere.situationFinanciere.statut === 'A_JOUR'"
+          >
+            {{ situationFinanciere.situationFinanciere.statut }}
+          </div>
+
+          @if (situationFinanciere.derniereFacture) {
+            <p class="payment-deadline">
+              Échéance :
+              {{ situationFinanciere.derniereFacture.echeanceDate | date: 'dd/MM/yyyy' }}
+            </p>
+          } @else {
+            <p class="payment-deadline">Aucune facture récente</p>
+          }
+
+          <button class="summary-link" type="button" (click)="voirPaiements()">
+            Voir les factures
+            <span>→</span>
+          </button>
+        </section>
       </div>
-    </div>
 
-    <div class="dp-col-right">
-      <div class="card" style="flex: 1; min-height: 0">
-        <div class="card-head">
-          <h2>💰 Factures</h2>
-          @if (facturesEnRetard() > 0) {
-            <span class="card-badge alerte">{{ facturesEnRetard() }} en retard</span>
+      <div class="two-column-row">
+
+        <section class="dashboard-card">
+          <div class="card-header">
+            <div class="card-title-wrapper">
+              <div class="card-icon purple">▤</div>
+
+              <h3>Dernières notes</h3>
+            </div>
+
+            <button class="card-link" type="button" (click)="voirNotes()">
+              Voir toutes
+              <span>→</span>
+            </button>
+          </div>
+
+          <div class="table-container">
+            <div class="table-head notes-grid">
+              <span> Matière </span>
+
+              <span> Évaluation </span>
+
+              <span> Note </span>
+
+              <span> Date </span>
+            </div>
+
+            @for (note of dernieresNotes; track note.noteId) {
+              <div class="table-row notes-grid">
+                <span class="subject-name">
+                  {{ note.matiere }}
+                </span>
+
+                <span>
+                  {{ note.evaluation }}
+                </span>
+
+                <span>
+                  <span class="note-badge" [class.note-medium]="note.note <= 12">
+                    {{ note.note }}/20
+                  </span>
+                </span>
+
+                <span>
+                  {{ note.date | date: 'dd/MM/yyyy' }}
+                </span>
+              </div>
+            } @empty {
+              <div class="empty-state">Aucune note récente.</div>
+            }
+          </div>
+        </section>
+
+        <section class="dashboard-card">
+          <div class="card-header">
+            <div class="card-title-wrapper">
+              <div class="card-icon blue">▣</div>
+
+              <h3>Dernières absences</h3>
+            </div>
+
+            <button class="card-link" type="button" (click)="voirAbsences()">
+              Voir toutes
+              <span>→</span>
+            </button>
+          </div>
+
+          <div class="table-container">
+            <div class="table-head absence-grid">
+              <span> Date </span>
+
+              <span> Matière </span>
+
+              <span> Statut </span>
+            </div>
+
+            @for (absence of dernieresAbsences; track absence.absenceId) {
+              <div class="table-row absence-grid">
+                <span>
+                  {{ absence.date | date: 'dd/MM/yyyy' }}
+                </span>
+
+                <span class="subject-name">
+                  {{ absence.matiere }}
+                </span>
+
+                <span>
+                  <span
+                    class="status-pill"
+                    [class.success]="absence.type === 'success'"
+                    [class.danger]="absence.type === 'danger'"
+                  >
+                    {{ absence.statut }}
+                  </span>
+                </span>
+              </div>
+            } @empty {
+              <div class="empty-state">Aucune absence récente.</div>
+            }
+          </div>
+        </section>
+      </div>
+
+      <div class="two-column-row">
+        <section class="dashboard-card">
+          <div class="card-header">
+            <div class="card-title-wrapper">
+              <div class="card-icon purple">▣</div>
+
+              <h3>Prochaines évaluations</h3>
+            </div>
+
+            <button class="card-link" type="button" (click)="voirEvaluations()">
+              Voir toutes
+              <span>→</span>
+            </button>
+          </div>
+
+          <div class="upcoming-list">
+            @for (evaluation of prochainesEvaluations; track evaluation.evaluationId) {
+              <div class="upcoming-row">
+                <div class="upcoming-information">
+                  <strong>
+                    {{ evaluation.matiere }}
+                  </strong>
+
+                  <span>
+                    {{ evaluation.libelle }}
+                  </span>
+                </div>
+
+                <span class="upcoming-date">
+                  {{ evaluation.date | date: 'dd/MM/yyyy' }}
+                </span>
+
+                <span class="delay-badge danger">
+                  {{ evaluation.delai }}
+                </span>
+              </div>
+            } @empty {
+              <div class="empty-state">Aucune évaluation prévue prochainement.</div>
+            }
+          </div>
+        </section>
+
+        <section class="dashboard-card">
+          <div class="card-header">
+            <div class="card-title-wrapper">
+              <div class="card-icon orange">▥</div>
+
+              <h3>Prochains exercices</h3>
+            </div>
+
+            <button class="card-link" type="button" (click)="voirExercices()">
+              Voir tous
+              <span>→</span>
+            </button>
+          </div>
+
+          <div class="upcoming-list">
+            @for (exercice of prochainsExercices; track exercice.exerciceId) {
+              <div class="upcoming-row">
+                <div class="upcoming-information">
+                  <strong>
+                    {{ exercice.matiere }}
+                  </strong>
+
+                  <span>
+                    {{ exercice.libelle }}
+                  </span>
+                </div>
+
+                <span class="upcoming-date">
+                  {{ exercice.date | date: 'dd/MM/yyyy' }}
+                </span>
+
+                <span class="delay-badge orange">
+                  {{ exercice.delai }}
+                </span>
+              </div>
+            } @empty {
+              <div class="empty-state">Aucun exercice prévu prochainement.</div>
+            }
+          </div>
+        </section>
+      </div>
+
+      <div class="two-column-row bottom-row">
+        <section class="dashboard-card payment-detail-card">
+          <div class="card-header">
+            <div class="card-title-wrapper">
+              <div class="card-icon blue">▱</div>
+
+              <h3>Situation des paiements</h3>
+            </div>
+
+            <button class="card-link" type="button" (click)="voirPaiements()">
+              Voir le détail
+              <span>→</span>
+            </button>
+          </div>
+
+          <div class="payment-detail-content">
+            <div class="payment-total">
+              <strong>
+                {{ situationFinanciere.situationFinanciere.resteAPayer | number: '1.0-0' }}
+
+                <small>
+                  {{ situationFinanciere.situationFinanciere.devise }}
+                </small>
+              </strong>
+
+              <span>
+                {{ situationFinanciere.situationFinanciere.statut }}
+              </span>
+            </div>
+
+            @if (situationFinanciere.derniereFacture) {
+              <div class="payment-invoice">
+                <span class="invoice-label"> Dernière facture </span>
+
+                <strong>
+                  {{ situationFinanciere.derniereFacture.numeroFacture }}
+                </strong>
+
+                <span>
+                  {{ situationFinanciere.derniereFacture.montant | number: '1.0-0' }}
+
+                  {{ situationFinanciere.situationFinanciere.devise }}
+                </span>
+
+                <small>
+                  Échéance :
+                  {{ situationFinanciere.derniereFacture.echeanceDate | date: 'dd/MM/yyyy' }}
+                </small>
+              </div>
+            } @else {
+              <div class="payment-invoice">
+                <span class="invoice-label"> Dernière facture </span>
+
+                <strong> Aucune facture </strong>
+              </div>
+            }
+          </div>
+        </section>
+
+        <section class="dashboard-card information-card">
+          <div class="information-icon">💡</div>
+
+          <div class="information-content">
+            <h3>À savoir</h3>
+
+            <ul>
+              @for (information of informations; track information) {
+                <li>
+                  <span class="check-icon"> ✓ </span>
+
+                  {{ information }}
+                </li>
+              }
+            </ul>
+
+            <button type="button" class="information-link" (click)="voirInformations()">
+              Voir toutes les informations
+              <span>→</span>
+            </button>
+          </div>
+        </section>
+      </div>
+    </main>
+
+    <aside class="right-column">
+      <section class="dashboard-card quick-access-card">
+        <div class="card-header no-border">
+          <div class="card-title-wrapper">
+            <h3>Accès rapides</h3>
+          </div>
+        </div>
+
+        <div class="quick-access-grid">
+          @for (access of accesRapides; track access.libelle) {
+            <button
+              type="button"
+              class="quick-access-item"
+              [class]="access.couleur"
+              (click)="accederALaPage(access.libelle)"
+            >
+              <span class="quick-access-icon">
+                {{ access.icon }}
+              </span>
+
+              <span>
+                {{ access.libelle }}
+              </span>
+            </button>
           }
         </div>
-        <div class="factures-container">
-          @for (f of factures(); track f.id) {
-            <div class="facture-item">
-              <div class="facture-info">
-                <span class="facture-libelle">{{ f.libelle }}</span>
-                <span class="facture-dates">Échéance : {{ f.echeance }}</span>
+      </section>
+
+      <section class="dashboard-card events-card">
+        <div class="card-header">
+          <div class="card-title-wrapper">
+            <div class="card-icon blue">▣</div>
+
+            <h3>Événements à venir</h3>
+          </div>
+
+          <button class="card-link" type="button" (click)="voirEvenements()">
+            Voir tous
+            <span>→</span>
+          </button>
+        </div>
+
+        <div class="events-list">
+          @for (activite of prochainesActivites; track activite.activiteId) {
+            <div class="event-row">
+              <div class="event-date" [class]="activite.couleur">
+                <strong>
+                  {{ activite.jour }}
+                </strong>
+
+                <span>
+                  {{ activite.mois }}
+                </span>
               </div>
-              <div class="facture-montant">
-                <span class="facture-prix">{{ formatFCFA(f.montant) }}</span>
-                <span class="badge-statut" [class]="getStatusClass(f.statut)">
-                  {{
-                    f.statut === 'payé'
-                      ? 'Payé'
-                      : f.statut === 'en_attente'
-                        ? 'En attente'
-                        : 'En retard'
-                  }}
+
+              <div class="event-information">
+                <strong>
+                  {{ activite.titre }}
+                </strong>
+
+                <span>
+                  {{ activite.horaire }}
                 </span>
               </div>
             </div>
+          } @empty {
+            <div class="empty-state">Aucune activité à venir.</div>
           }
         </div>
-        <div class="facture-total">
-          <span>Total dû</span>
-          <span class="total-montant">{{ formatFCFA(totalFactures()) }}</span>
-        </div>
-        <button class="card-link" (click)="toutVoir('/parent/factures')">
-          Gérer les paiements →
-        </button>
-      </div>
+      </section>
 
-      <div class="card" style="flex: 1; min-height: 0">
-        <div class="card-head">
-          <h2>📬 Derniers messages</h2>
+      <section class="dashboard-card messages-card">
+        <div class="card-header">
+          <div class="card-title-wrapper">
+            <div class="card-icon blue message-icon">●</div>
+
+            <h3>Messages récents</h3>
+          </div>
+
+          <button class="card-link" type="button" (click)="voirMessages()">
+            Voir tous
+            <span>→</span>
+          </button>
         </div>
-        <div class="messages-container">
-          @for (m of messages(); track m.id) {
-            <div class="message-item" [class.non-lu]="m.nonLu">
-              <div class="message-exp">
-                <span>{{ m.expediteur }}</span>
-                <small>{{ m.role }}</small>
-              </div>
+
+        <div class="messages-list">
+          @for (message of messages; track message.auteur) {
+            <div class="message-row">
+              <div class="message-avatar">👤</div>
+
               <div class="message-content">
-                <span class="message-sujet">{{ m.sujet }}</span>
-                <span class="message-date">{{ m.date }}</span>
+                <div class="message-author">
+                  <strong>
+                    {{ message.auteur }}
+                  </strong>
+
+                  @if (message.fonction) {
+                    <span> ({{ message.fonction }}) </span>
+                  }
+                </div>
+
+                <p>
+                  {{ message.message }}
+                </p>
+
+                <small>
+                  {{ message.date }}
+                </small>
               </div>
-              @if (m.nonLu) {
-                <span class="message-dot"></span>
+
+              @if (message.nonLu) {
+                <div class="message-counter">
+                  {{ message.compteur }}
+                </div>
+              } @else {
+                <div class="message-arrow">›</div>
               }
             </div>
           }
         </div>
-        <button class="card-link" (click)="toutVoir('/parent/informations')">
-          Voir tous les messages →
-        </button>
-      </div>
-    </div>
-  </div>
-
-  <div class="card events-section">
-    <div class="card-head">
-      <h2>📅 Événements à venir</h2>
-    </div>
-    <div class="events-grid">
-      @for (ev of evenements(); track ev.titre) {
-        <div class="event-card">
-          <span class="event-ico">{{ getEventIcon(ev.type) }}</span>
-          <div class="event-info">
-            <span class="event-titre">{{ ev.titre }}</span>
-            <span class="event-date">{{ ev.date }}</span>
-            <span class="event-desc">{{ ev.description }}</span>
-          </div>
-        </div>
-      }
-    </div>
+      </section>
+    </aside>
   </div>
 </div>

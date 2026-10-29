@@ -56,7 +56,6 @@ export class DetailsMeetingComponent implements OnInit {
     this.planification.getDetailsResource('planification/meeting', devoirId).subscribe({
       next: (data: any) => {
         this.detailsMeeting = data;
-        console.log('Details meeting', this.detailsMeeting);
       },
       error: (data: any) => {
         console.log('error', 'Erreur lors de la récupération des information de la réunion : ' + data.error);
@@ -113,7 +112,7 @@ export class DetailsMeetingComponent implements OnInit {
           dépublier: `La réunion a été dépubliée.`,
           annuler: `La réunion a été annulée.`,
           terminer: `La réunion est désormais marquée comme terminée.`,
-          reprogrammer: `La réunion a été remise en planification.`
+          reprogrammer: `La réunion a été republiée.`
         };
         this.toastService.success('Succès', successMessages[action] || 'Action effectuée.');
         this.getDetailsMeeting(this.meetId!);
@@ -126,7 +125,7 @@ export class DetailsMeetingComponent implements OnInit {
 
   getStatusClass(): string {
     const etat = this.detailsMeeting.etat;
-    if (['Publié', 'Validée'].includes(etat!)) return 'status-validated';
+    if (['Publié', 'Terminé'].includes(etat!)) return 'status-validated';
     if (['Programmé', 'Envoyée'].includes(etat!)) return 'status-sent';
     if (['Annulé', 'Dépublié'].includes(etat!)) return 'status-remise';
     return '';

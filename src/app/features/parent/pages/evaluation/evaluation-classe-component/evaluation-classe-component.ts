@@ -1,11 +1,12 @@
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, DestroyRef, inject, OnInit } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { forkJoin } from 'rxjs';
 import { IFilterConfig } from '../../../../../core/filtered-config/FiltreConfiguration';
 import { GenericTableDossierComponent } from '../../../../../core/generic/generic-table-dossier/generic-table-dossier.component';
-import { SessionSemestre } from '../../../../../core/models/referentiels/session-semestre';
 import { CommonService } from '../../../../../core/services/common.service';
-import { LocalStorageService } from '../../../../../core/services/local-storage.service';
 import { DossierResourceService } from '../../../../administration/dossier-eleve/service/dossier-resource.service';
 import { ReferentielResourceService } from '../../../../administration/referentiel/service/referentiel-resource.service';
+import { ParentSessionService } from '../../../service/parent-session.service';
 
 @Component({
   selector: 'app-evaluation-classe-component',
@@ -47,18 +48,25 @@ export class EvaluationClasseComponent implements OnInit {
   activeFilters: any = {};
   hasActiveFilters: boolean = false;
 
+  nomClasseConcerne = '';
+
   isSelected = false;
 
   private readonly dossierResource = inject(DossierResourceService);
   private readonly referentielResourceService = inject(ReferentielResourceService);
   private readonly commonService = inject(CommonService);
-  private readonly localStorage = inject(LocalStorageService);
+  private readonly parentSession = inject(ParentSessionService);
+  private readonly destroyRef = inject(DestroyRef);
 
   constructor(
   ) {
-    this.userId = this.localStorage.getItem('id');
-    this.eleveId = this.localStorage.getItem('eleveId');
-    this.classeId = this.localStorage.getItem('classeId');
+
+    const eleve = this.parentSession.getEleveResume();
+
+    if (eleve) {
+      this.classeId = eleve.classeId;
+      this.nomClasseConcerne = `${eleve.classeEleve ?? ''}`.trim();
+    }
   }
 
   ngOnInit(): void {
@@ -66,55 +74,33 @@ export class EvaluationClasseComponent implements OnInit {
 
   }
 
-  async chargerLesEvaluationsEleve() {
-    try {
-      await Promise.all([
-        this.getSessionSemestreList(),
-        this.getEtatEvaluationList(),
-        this.getMoisList()
-      ]);
-      this.initialisationDesFiltres();
-      this.chargerLesDonnees(false);
+  private chargerLesEvaluationsEleve(): void {
+    this.isLoading = true;
 
-    } catch (error) {
-      console.error('Erreur chargement données:', error);
-    }
-  }
+    forkJoin({
+      semestres: this.referentielResourceService.getResourceList('sessionsemestre'),
+      mois: this.commonService.getAllMois(),
+      etat: this.commonService.getEtatEvaluations()
+    })
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: (result: any) => {
 
-  getSessionSemestreList(): Promise<SessionSemestre[]> {
-    return new Promise((resolve, reject) => {
-      this.referentielResourceService.getResourceList('sessionsemestre').subscribe({
-        next: (data: any) => {
-          this.sessionSemestreList = data;
-          resolve(data);
+          this.sessionSemestreList = result.semestres || [];
+          this.moisList = result.mois || [];
+
+          this.etatEvaluationOptions = result.etat || [];
+
+          this.initialisationDesFiltres();
+
+          this.chargerLesDonnees(false);
         },
-        error: (err: any) => reject(err)
-      });
-    });
-  }
 
-  getEtatEvaluationList(): Promise<any[]> {
-    return new Promise((resolve, reject) => {
-      this.commonService.getEtatEvaluations().subscribe({
-        next: (data: any) => {
-          this.etatEvaluationOptions = data;
-          resolve(data);
-        },
-        error: (err: any) => reject(err)
+        error: (error) => {
+          console.error('Erreur chargement des filtres:', error);
+          this.isLoading = false;
+        }
       });
-    });
-  }
-
-  getMoisList(): Promise<any[]> {
-    return new Promise((resolve, reject) => {
-      this.commonService.getAllMois().subscribe({
-        next: (data) => {
-          this.moisList = data;
-          resolve(data);
-        },
-        error: (err) => reject(err)
-      });
-    });
   }
 
   initialisationDesFiltres() {
@@ -125,7 +111,7 @@ export class EvaluationClasseComponent implements OnInit {
         type: 'select',
         options: this.sessionSemestreList.map(a => ({
           value: a.id,
-          label: `${a.libelle}`
+          label: `${a.semestre}`
         }))
       },
 
@@ -187,12 +173,14 @@ export class EvaluationClasseComponent implements OnInit {
           { key: 'matiere', header: 'Matière' },
           { key: 'sessionSemestre', header: 'Semestre' },
           { key: 'evaluationType', header: 'Type' },
-          { key: 'etat', header: 'Etat' },
           { key: 'dateEvaluation', header: 'Date' },
+          { key: 'horaire', header: 'Horaire' },
+          { key: 'etat', header: 'État' },
         ];
 
         this.evaluationData = this.evaluationData.map((item: any) => ({
           ...item,
+          horaire: this.formaterHoraire(item.heureDebut, item.heureFin)
         }));
 
         this.isLoading = false;
@@ -202,6 +190,22 @@ export class EvaluationClasseComponent implements OnInit {
         this.isLoading = false;
       }
     });
+  }
+
+  formaterHoraire(heureDebut: string | null, heureFin: string | null): string {
+    if (!heureDebut && !heureFin) {
+      return '';
+    }
+
+    const debut = heureDebut ? heureDebut.substring(0, 5) : '';
+
+    const fin = heureFin ? heureFin.substring(0, 5) : '';
+
+    if (debut && fin) {
+      return `${debut} - ${fin}`;
+    }
+
+    return debut || fin;
   }
 
   construireLesParamereDeFiltre(): any {
