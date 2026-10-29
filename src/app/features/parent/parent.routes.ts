@@ -18,6 +18,7 @@ import { NoteInformationComponent } from './pages/noteinformation/note-informati
 import { ChangerPasswordParentComponent } from './pages/settings/changer-password-parent/changer-password-parent.component';
 import { ParentProfileComponent } from './pages/settings/parent-profile/parent-profile.component';
 import { DetailsNoteInformationComponenent } from './pages/noteinformation/details-note-information-componenent/details-note-information-componenent';
+import { ListServiceOffertComponent } from './pages/inscriptionservice/list-service-offert-component/list-service-offert-component';
 
 export const PARENT_ROUTES: Routes = [
 
@@ -73,11 +74,16 @@ export const PARENT_ROUTES: Routes = [
         component: ExerciceAFaireComponent
       },
       {
+        path: 'tarifs-services',
+        component: ListServiceOffertComponent
+      },
+
+      {
         path: 'menu-cantine',
         component: ListeMenuComponent
       },
       {
-        path: 'evenements',
+        path: 'activites-scolaire',
         component: ListeEvenementComponent
       },
       {
@@ -92,7 +98,7 @@ export const PARENT_ROUTES: Routes = [
         path: 'informations',
         component: NoteInformationComponent
       },
-       {
+      {
         path: 'information/details/:id',
         component: DetailsNoteInformationComponenent
       },

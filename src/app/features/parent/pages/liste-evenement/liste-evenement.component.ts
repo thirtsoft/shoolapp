@@ -1,6 +1,8 @@
-import { Component, inject, OnInit } from '@angular/core';
-import { GenericTableReferentielComponent } from '../../../../core/generic/generic-table-referentiel/generic-table-referentiel.component';
+import { Component, DestroyRef, inject, OnInit } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { forkJoin } from 'rxjs';
 import { IFilterConfig } from '../../../../core/filtered-config/FiltreConfiguration';
+import { GenericTableReferentielComponent } from '../../../../core/generic/generic-table-referentiel/generic-table-referentiel.component';
 import { CommonService } from '../../../../core/services/common.service';
 import { PlanificationResourceService } from '../../../administration/planification/services/planification-resource.service';
 
@@ -26,9 +28,7 @@ export class ListeEvenementComponent implements OnInit {
   totalElements = 0;
   tableSizes = [5, 10, 20, 50, 100];
 
-  statusEvenementOptions: any[] = [];
   moisList: any[] = [];
-  anneeList: any[] = [];
 
   tableFilters: IFilterConfig[] = [];
   activeFilters: any = {};
@@ -36,35 +36,48 @@ export class ListeEvenementComponent implements OnInit {
 
   private readonly refentielResourceService = inject(PlanificationResourceService);
   private readonly commonService = inject(CommonService);
+  private readonly destroyRef = inject(DestroyRef);
 
   ngOnInit(): void {
-    this.chargerLesEvenements();
+    this.chargerLesActivitesScolaire();
   }
 
-  async chargerLesEvenements() {
-    try {
-      await Promise.all([
-        this.getMoisList(),
-      ]);
-      this.initialisationDesFiltres();
-      this.chargerLesDonnees(false);
+  private chargerLesActivitesScolaire(): void {
+    this.isLoading = true;
 
-    } catch (error) {
-      console.error('Erreur chargement données:', error);
-    }
-  }
+    forkJoin({
+      mois: this.commonService.getAllMois(),
+    })
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: (result: any) => {
 
-  getMoisList(): Promise<any[]> {
-    return new Promise((resolve, reject) => {
-      this.commonService.getAllMois().subscribe({
-        next: (data) => {
-          this.moisList = data;
-          resolve(data);
+          this.moisList = result.mois || [];
+
+          this.initialisationDesFiltres();
+
+          this.chargerLesDonnees(false);
         },
-        error: (err) => reject(err)
+
+        error: (error) => {
+          console.error('Erreur chargement des filtres:', error);
+          this.isLoading = false;
+        }
       });
-    });
   }
+
+  /*   async chargerLesActivitesScolaire() {
+      try {
+        await Promise.all([
+          this.getMoisList(),
+        ]);
+        this.initialisationDesFiltres();
+        this.chargerLesDonnees(false);
+  
+      } catch (error) {
+        console.error('Erreur chargement données:', error);
+      }
+    } */
 
   initialisationDesFiltres() {
     this.tableFilters = [
@@ -105,31 +118,43 @@ export class ListeEvenementComponent implements OnInit {
       const filtreParam = this.construireLesParamereDeFiltre();
 
       apiCall = this.refentielResourceService.fetchFilterDataTable(
-        'planification/activitespubliees',
+        'planification/activites/parent',
         this.currentPage,
         this.pageSize,
         filtreParam)
 
     } else {
-      apiCall = this.refentielResourceService.getResourcePaged('planification/activitespubliees', this.currentPage, this.pageSize);
+      apiCall = this.refentielResourceService.getResourcePaged('planification/activites/parent', this.currentPage, this.pageSize);
     }
     apiCall.subscribe({
       next: (response) => {
-        this.evenementData = response.data?.content || [];
+        const content = response.data?.content || [];
+
+        this.evenementData = content.map((item: any) => ({
+          ...item,
+
+          typeFormate: this.formaterTypeActivite(item.type),
+
+          dateFormatee: this.formaterDate(item.date),
+
+          horaireFormate: item.horaire || this.formaterHoraire(
+            item.heureDebut,
+            item.heureFin
+          ),
+          typeClass: this.getTypeActiviteClass(item.type),
+
+          couleurClass: `activite-${item.couleur || 'blue'}`
+        }));
+
         this.totalElements = response.data?.totalElements || 0;
 
         this.columns = [
-          { key: 'libelle', header: 'Libellé' },
-          { key: 'type', header: 'Type événement' },
-          { key: 'typeActivite', header: 'Type activité' },
-          { key: 'date', header: 'Date' },
-          { key: 'heure', header: 'Heure' },
-        ]
+          { key: 'titre', header: 'Activité' },
+          { key: 'typeFormate', header: 'Type' },
+          { key: 'dateFormatee', header: 'Date' },
+          { key: 'horaireFormate', header: 'Horaire' }
+        ];
 
-        this.evenementData = this.evenementData.map((item: any) => ({
-          ...item,
-
-        }));
         this.isLoading = false;
       },
       error: (error) => {
@@ -137,6 +162,62 @@ export class ListeEvenementComponent implements OnInit {
         this.isLoading = false;
       }
     });
+  }
+
+  formaterTypeActivite(type: string): string {
+    switch (type) {
+      case 'EVENEMENT':
+        return 'Événement';
+
+      case 'REUNION':
+        return 'Réunion';
+
+      default:
+        return type || '-';
+    }
+  }
+
+  formaterDate(date: string): string {
+    if (!date) {
+      return '-';
+    }
+
+    const d = new Date(date + 'T00:00:00');
+
+    return d.toLocaleDateString('fr-FR', {
+      day: '2-digit',
+      month: 'long',
+      year: 'numeric'
+    });
+  }
+
+  formaterHoraire(heureDebut?: string, heureFin?: string): string {
+
+    if (!heureDebut && !heureFin) {
+      return '-';
+    }
+
+    const debut = heureDebut?.substring(0, 5) || '';
+    const fin = heureFin?.substring(0, 5) || '';
+
+    if (debut && fin) {
+      return `${debut} - ${fin}`;
+    }
+
+    return debut || fin || '-';
+  }
+
+  getTypeActiviteClass(type: string): string {
+    switch (type) {
+      case 'EVENEMENT':
+        return 'badge-evenement';
+
+      case 'REUNION':
+        return 'badge-reunion';
+
+      default:
+        return 'badge-activite';
+    }
   }
 
   construireLesParamereDeFiltre(): any {

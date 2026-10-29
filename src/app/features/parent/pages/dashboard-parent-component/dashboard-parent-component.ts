@@ -3,9 +3,9 @@ import { Component, DestroyRef, inject, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Router } from '@angular/router';
 
+import { AssiduiteEleveParentResponse, DashboardFinancierParentResponse, DerniereAbsenceParentResponse, DerniereNoteParentResponse, EmploiDuTempsJourParentResponse, ProchaineActiviteParentResponse, ProchaineEvaluationParentResponse, ProchainExerciceParentResponse } from '../../../../core/models/dashboard/dashboard-parent.model';
 import { DashboardParentService } from '../../service/dashboard-parent.service';
 import { ParentSessionService } from '../../service/parent-session.service';
-import { AssiduiteEleveParentResponse, DashboardFinancierParentResponse, DerniereAbsenceParentResponse, DerniereNoteParentResponse, EmploiDuTempsJourParentResponse, ProchaineActiviteParentResponse, ProchaineEvaluationParentResponse, ProchainExerciceParentResponse } from '../../../../core/models/dashboard/dashboard-parent.model';
 
 
 @Component({
@@ -32,7 +32,7 @@ export class DashboardParentComponent {
 
   emploiDuTemps: EmploiDuTempsJourParentResponse[] = [];
 
-  assiduite: AssiduiteEleveParentResponse = {    nombreAbsences: 0,    nombreRetards: 0};
+  assiduite: AssiduiteEleveParentResponse = { nombreAbsences: 0, nombreRetards: 0 };
 
   situationFinanciere: DashboardFinancierParentResponse = {
     situationFinanciere: {
@@ -156,8 +156,8 @@ export class DashboardParentComponent {
     this.chargerSituationFinanciere(eleve.uuid);
     this.chargerDernieresNotes(eleve.id);
     this.chargerDernieresAbsences(eleve.id);
-    this.chargerProchainesEvaluations(eleve.id);
-    this.chargerProchainsExercices(eleve.id);
+    this.chargerProchainesEvaluations(eleve.classeId!);
+    this.chargerProchainsExercices(eleve?.classeId!);
 
     this.chargerProchainesActivites();
 
@@ -223,7 +223,7 @@ export class DashboardParentComponent {
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: response => {
-          this.situationFinanciere =            response ?? this.getSituationFinanciereVide();
+          this.situationFinanciere = response ?? this.getSituationFinanciereVide();
         },
         error: error => {
           console.error(
@@ -274,9 +274,9 @@ export class DashboardParentComponent {
       });
   }
 
-  private chargerProchainesEvaluations(eleveId: number): void {
+  private chargerProchainesEvaluations(classeId: number): void {
     this.dashboardService
-      .getProchainesEvaluations(eleveId)
+      .getProchainesEvaluations(classeId)
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: response => {

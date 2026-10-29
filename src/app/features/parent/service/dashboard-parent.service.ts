@@ -69,10 +69,10 @@ export class DashboardParentService {
     );
   }
 
-  getProchainesEvaluations(eleveId: number): Observable<ProchaineEvaluationParentResponse[]> {
+  getProchainesEvaluations(classeId: number): Observable<ProchaineEvaluationParentResponse[]> {
 
     const params = new HttpParams()
-      .set('eleveId', eleveId);
+      .set('classeId', classeId);
 
     return this.http.get<ProchaineEvaluationParentResponse[]>(
       `${this.dashboardParentUrl}/prochaines-evaluations`,
@@ -80,10 +80,10 @@ export class DashboardParentService {
     );
   }
 
-  getProchainsExercices(eleveId: number): Observable<ProchainExerciceParentResponse[]> {
+  getProchainsExercices(classeId: number): Observable<ProchainExerciceParentResponse[]> {
 
     const params = new HttpParams()
-      .set('eleveId', eleveId);
+      .set('classeId', classeId);
 
     return this.http.get<ProchainExerciceParentResponse[]>(
       `${this.dashboardParentUrl}/prochains-exercices`,

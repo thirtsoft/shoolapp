@@ -51,11 +51,12 @@ export class SideBarParentComponent {
     //    { route: '/parent/cours', ico: '📚', label: 'Cours & Ressources', section: '', badge: '' },
 
     { route: '/parent/factures', ico: '💰', label: 'Factures', section: '💳 Finances & services', badge: '' },
-    { route: '/parent/services', ico: '📋', label: 'Services scolaires', section: '', badge: '' },
+     { route: '/parent/tarifs-services', ico: '📋', label: 'Services scolaires', section: '', badge: '' },
+   // { route: '/parent/services', ico: '📋', label: 'Services scolaires', section: '', badge: '' },
 
     { route: '/parent/inscriptions', ico: '📝', label: 'Inscriptions', section: '🏫 Vie scolaire', badge: '' },
-    { route: '/parent/menu-cantine', ico: '🍽️', label: 'Menu cantine', section: '', badge: '' },
-    { route: '/parent/evenements', ico: '🎉', label: 'Événements', section: '', badge: '' },
+  //  { route: '/parent/menu-cantine', ico: '🍽️', label: 'Menu cantine', section: '', badge: '' },
+    { route: '/parent/activites-scolaire', ico: '🎉', label: 'Événements', section: '', badge: '' },
 
     { route: '/parent/informations', ico: '📢', label: 'Informations', section: '💬 Communication', badge: '' },
     { route: '/parent/messages', ico: '✉️', label: 'Messages', section: '', badge: '' },

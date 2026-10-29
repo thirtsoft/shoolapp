@@ -58,8 +58,7 @@ export class EvaluationClasseComponent implements OnInit {
   private readonly parentSession = inject(ParentSessionService);
   private readonly destroyRef = inject(DestroyRef);
 
-  constructor(
-  ) {
+  constructor() {
 
     const eleve = this.parentSession.getEleveResume();
 

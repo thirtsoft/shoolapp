@@ -1,5 +1,5 @@
 <app-generic-table-dossier
-  title="Liste des exercices de la classe"
+  [title]="'Liste des exercices : ' + nomClasseConcerne"
   titleFitre="Exercice"
   [tableColumns]="columns"
   [tableData]="exerciceData"
