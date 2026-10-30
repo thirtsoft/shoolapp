@@ -1,0 +1,994 @@
+/* =========================================================
+   SCOOLLI — SCOLARITÉ ÉLÈVE
+   Inscription + Bulletins
+   ========================================================= */
+
+.scolarite-page {
+  min-height: 100vh;
+  width: 100%;
+
+  padding: 1.5rem;
+
+  box-sizing: border-box;
+
+  background: linear-gradient(135deg,
+      #f8fafc 0%,
+      #ebf4ff 100%);
+
+  color: #2d3748;
+}
+
+
+/* =========================================================
+   HEADER
+   ========================================================= */
+
+.page-header {
+  max-width: 1400px;
+  margin: 0 auto 1.5rem;
+}
+
+.header-left {
+  display: flex;
+  align-items: flex-start;
+  gap: 1rem;
+}
+
+.btn-back {
+  width: 42px;
+  height: 42px;
+  min-width: 42px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border: 1px solid #dbe4ee;
+  border-radius: 12px;
+
+  background: #ffffff;
+  color: #2c5282;
+
+  cursor: pointer;
+
+  box-shadow: 0 2px 8px rgba(30, 58, 95, 0.06);
+
+  transition: all 0.2s ease;
+}
+
+.btn-back:hover {
+  background: #f7fafc;
+  border-color: #4299e1;
+
+  transform: translateX(-2px);
+
+  box-shadow: 0 4px 12px rgba(30, 58, 95, 0.12);
+}
+
+.title-line {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.page-header h1 {
+  margin: 0;
+
+  font-family: 'Playfair Display', serif;
+
+  color: #1e3a5f;
+
+  font-size: 1.75rem;
+  font-weight: 700;
+}
+
+.page-header p {
+  margin: 0.3rem 0 0;
+
+  color: #718096;
+
+  font-size: 0.875rem;
+}
+
+
+/* =========================================================
+   STATUS
+   ========================================================= */
+
+.student-status,
+.status-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+
+  white-space: nowrap;
+
+  border-radius: 999px;
+
+  font-size: 0.72rem;
+  font-weight: 600;
+}
+
+.student-status {
+  padding: 0.35rem 0.7rem;
+
+  background: #edfdf5;
+  color: #23855a;
+}
+
+.status-badge {
+  padding: 0.4rem 0.7rem;
+}
+
+.status-success {
+  background: #edfdf5;
+  color: #23855a;
+}
+
+.status-info {
+  background: #ebf4ff;
+  color: #2c5282;
+}
+
+.status-neutral {
+  background: #edf2f7;
+  color: #718096;
+}
+
+.status-dot {
+  width: 7px;
+  height: 7px;
+
+  border-radius: 50%;
+
+  background: currentColor;
+}
+
+
+/* =========================================================
+   BANDEAU ÉLÈVE
+   ========================================================= */
+
+.student-banner {
+  max-width: 1400px;
+
+  margin: 0 auto 1.5rem;
+
+  display: flex;
+  align-items: center;
+
+  gap: 1rem;
+
+  padding: 1.15rem 1.35rem;
+
+  background: #ffffff;
+
+  border: 1px solid #e2e8f0;
+  border-radius: 18px;
+
+  box-shadow: 0 6px 24px rgba(30, 58, 95, 0.07);
+}
+
+.student-avatar {
+  width: 62px;
+  height: 62px;
+  min-width: 62px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 50%;
+
+  background: linear-gradient(135deg,
+      #2c5282,
+      #1e3a5f);
+
+  color: #ffffff;
+
+  font-size: 1.2rem;
+  font-weight: 700;
+
+  box-shadow: 0 5px 15px rgba(30, 58, 95, 0.18);
+
+  overflow: hidden;
+}
+
+.student-avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.student-main-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.student-name {
+  color: #1e3a5f;
+
+  font-size: 1.1rem;
+  font-weight: 700;
+}
+
+.student-meta {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+
+  gap: 0.45rem;
+
+  margin-top: 0.45rem;
+}
+
+.student-meta span {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+
+  color: #718096;
+
+  font-size: 0.75rem;
+}
+
+.student-meta i {
+  color: #4299e1;
+}
+
+.student-year {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+
+  padding-left: 1.5rem;
+
+  border-left: 1px solid #e2e8f0;
+}
+
+.year-label {
+  color: #718096;
+  font-size: 0.7rem;
+}
+
+.student-year strong {
+  margin-top: 0.2rem;
+
+  color: #2c5282;
+
+  font-size: 0.95rem;
+}
+
+
+/* =========================================================
+   GRILLE PRINCIPALE
+   ========================================================= */
+
+.scolarite-grid {
+  max-width: 1400px;
+
+  margin: 0 auto;
+
+  display: grid;
+
+  grid-template-columns:
+    minmax(340px, 0.85fr) minmax(500px, 1.15fr);
+
+  gap: 1.5rem;
+
+  align-items: start;
+}
+
+
+/* =========================================================
+   CARDS
+   ========================================================= */
+
+.scolarite-card {
+  background: #ffffff;
+
+  border: 1px solid #e2e8f0;
+
+  border-radius: 18px;
+
+  box-shadow: 0 6px 24px rgba(30, 58, 95, 0.07);
+
+  overflow: hidden;
+}
+
+.inscription-card {
+  min-height: 100%;
+}
+
+.bulletins-card {
+  min-width: 0;
+}
+
+
+/* =========================================================
+   CARD HEADER
+   ========================================================= */
+
+.card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  gap: 1rem;
+
+  padding: 1.25rem 1.35rem;
+
+  border-bottom: 1px solid #edf2f7;
+
+  background: linear-gradient(180deg,
+      #ffffff 0%,
+      #f8fafc 100%);
+}
+
+.card-header-left {
+  display: flex;
+  align-items: center;
+
+  gap: 0.75rem;
+
+  min-width: 0;
+}
+
+.card-icon {
+  width: 42px;
+  height: 42px;
+  min-width: 42px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 12px;
+}
+
+.card-icon.blue {
+  background: #ebf4ff;
+  color: #2c5282;
+}
+
+.card-icon.green {
+  background: #edfdf5;
+  color: #23855a;
+}
+
+.card-header h2 {
+  margin: 0;
+
+  color: #1e3a5f;
+
+  font-size: 1rem;
+  font-weight: 700;
+}
+
+.card-header p {
+  margin: 0.2rem 0 0;
+
+  color: #718096;
+
+  font-size: 0.72rem;
+}
+
+.bulletins-count {
+  color: #2c5282;
+
+  font-size: 1rem;
+  font-weight: 700;
+
+  white-space: nowrap;
+}
+
+.bulletins-count span {
+  color: #718096;
+
+  font-size: 0.68rem;
+  font-weight: 500;
+}
+
+
+/* =========================================================
+   INSCRIPTION
+   ========================================================= */
+
+.inscription-content {
+  display: grid;
+
+  grid-template-columns: 1fr 1fr;
+
+  gap: 0;
+
+  padding: 1rem 1.35rem;
+}
+
+.info-block {
+  display: flex;
+  align-items: center;
+
+  gap: 0.75rem;
+
+  min-height: 72px;
+
+  padding: 0.8rem 0.5rem;
+
+  border-bottom: 1px solid #edf2f7;
+}
+
+.info-block:nth-child(odd) {
+  padding-right: 1rem;
+
+  border-right: 1px solid #edf2f7;
+}
+
+.info-block:nth-child(even) {
+  padding-left: 1rem;
+}
+
+.info-block:nth-last-child(-n + 2) {
+  border-bottom: none;
+}
+
+.info-block.highlight {
+  background: #f8fbff;
+}
+
+.info-icon {
+  width: 34px;
+  height: 34px;
+  min-width: 34px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 9px;
+
+  background: #ebf4ff;
+  color: #4299e1;
+
+  font-size: 0.8rem;
+}
+
+.info-label {
+  display: block;
+
+  margin-bottom: 0.2rem;
+
+  color: #718096;
+
+  font-size: 0.68rem;
+}
+
+.info-block strong {
+  display: block;
+
+  color: #2d3748;
+
+  font-size: 0.82rem;
+}
+
+.card-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  gap: 1rem;
+
+  padding: 0.9rem 1.35rem;
+
+  border-top: 1px solid #edf2f7;
+
+  background: #fafcff;
+}
+
+.footer-info {
+  display: flex;
+  align-items: center;
+
+  gap: 0.45rem;
+
+  color: #718096;
+
+  font-size: 0.7rem;
+}
+
+.footer-info i {
+  color: #4299e1;
+}
+
+.footer-info strong {
+  color: #4a5568;
+}
+
+.btn-outline {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+
+  padding: 0.5rem 0.75rem;
+
+  border: 1px solid #cbd5e0;
+  border-radius: 9px;
+
+  background: #ffffff;
+  color: #2c5282;
+
+  font-size: 0.7rem;
+  font-weight: 600;
+
+  cursor: pointer;
+
+  transition: all 0.2s ease;
+}
+
+.btn-outline:hover {
+  border-color: #4299e1;
+  background: #ebf4ff;
+}
+
+
+/* =========================================================
+   BULLETINS
+   ========================================================= */
+
+.bulletins-list {
+  padding: 1rem 1.15rem;
+}
+
+.bulletin-item {
+  position: relative;
+
+  display: grid;
+
+  grid-template-columns:
+    minmax(120px, 1.1fr) minmax(115px, 0.8fr) minmax(75px, 0.6fr) auto auto;
+
+  align-items: center;
+
+  gap: 1rem;
+
+  padding: 1rem;
+
+  margin-bottom: 0.75rem;
+
+  border: 1px solid #e2e8f0;
+  border-radius: 14px;
+
+  background: #ffffff;
+
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease,
+    transform 0.2s ease;
+}
+
+.bulletin-item:last-child {
+  margin-bottom: 0;
+}
+
+.bulletin-item:hover {
+  border-color: #90cdf4;
+
+  box-shadow: 0 5px 16px rgba(30, 58, 95, 0.08);
+
+  transform: translateY(-1px);
+}
+
+
+/* Période */
+
+.bulletin-period {
+  display: flex;
+  align-items: center;
+
+  gap: 0.65rem;
+
+  min-width: 0;
+}
+
+.period-icon {
+  width: 38px;
+  height: 38px;
+  min-width: 38px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 10px;
+
+  background: #edfdf5;
+  color: #23855a;
+}
+
+.period-label {
+  display: block;
+
+  margin-bottom: 0.15rem;
+
+  color: #a0aec0;
+
+  font-size: 0.6rem;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.bulletin-period strong {
+  color: #2d3748;
+
+  font-size: 0.8rem;
+}
+
+
+/* Moyenne */
+
+.bulletin-average {
+  display: flex;
+  flex-direction: column;
+}
+
+.average-label {
+  color: #718096;
+
+  font-size: 0.62rem;
+}
+
+.bulletin-average strong {
+  color: #2c5282;
+
+  font-size: 1.15rem;
+}
+
+.bulletin-average small {
+  color: #718096;
+
+  font-size: 0.65rem;
+  font-weight: 500;
+}
+
+
+/* Rang */
+
+.bulletin-rank {
+  display: flex;
+  flex-direction: column;
+}
+
+.bulletin-rank span {
+  color: #718096;
+
+  font-size: 0.62rem;
+}
+
+.bulletin-rank span i {
+  color: #d69e2e;
+}
+
+.bulletin-rank strong {
+  color: #2d3748;
+
+  font-size: 0.85rem;
+}
+
+.bulletin-rank small {
+  color: #a0aec0;
+
+  font-size: 0.6rem;
+}
+
+
+/* Statut */
+
+.bulletin-status {
+  justify-self: center;
+}
+
+
+/* Actions */
+
+.bulletin-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+.btn-icon {
+  width: 34px;
+  height: 34px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border: 1px solid #dbe4ee;
+  border-radius: 9px;
+
+  background: #ffffff;
+  color: #2c5282;
+
+  cursor: pointer;
+
+  transition: all 0.2s ease;
+}
+
+.btn-icon:hover {
+  border-color: #4299e1;
+  background: #ebf4ff;
+
+  transform: translateY(-1px);
+}
+
+.btn-icon.download {
+  color: #23855a;
+}
+
+.btn-icon.download:hover {
+  border-color: #68d391;
+  background: #edfdf5;
+}
+
+
+/* Appréciation */
+
+.bulletin-appreciation {
+  grid-column: 1 / -1;
+
+  display: flex;
+  align-items: flex-start;
+
+  gap: 0.5rem;
+
+  padding: 0.65rem 0.75rem;
+
+  margin-top: 0.15rem;
+
+  border-radius: 9px;
+
+  background: #f8fafc;
+
+  color: #718096;
+
+  font-size: 0.68rem;
+  line-height: 1.5;
+}
+
+.bulletin-appreciation i {
+  margin-top: 0.15rem;
+
+  color: #90cdf4;
+}
+
+
+/* =========================================================
+   EMPTY STATE
+   ========================================================= */
+
+.empty-state {
+  padding: 3rem 1.5rem;
+
+  text-align: center;
+}
+
+.empty-icon {
+  width: 52px;
+  height: 52px;
+
+  margin: 0 auto 0.8rem;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 50%;
+
+  background: #edf2f7;
+  color: #718096;
+}
+
+.empty-state h3 {
+  margin: 0 0 0.35rem;
+
+  color: #2d3748;
+
+  font-size: 0.95rem;
+}
+
+.empty-state p {
+  max-width: 350px;
+
+  margin: 0 auto;
+
+  color: #718096;
+
+  font-size: 0.75rem;
+  line-height: 1.5;
+}
+
+
+/* =========================================================
+   RESPONSIVE — TABLETTE
+   ========================================================= */
+
+@media (max-width: 1100px) {
+
+  .scolarite-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .bulletin-item {
+    grid-template-columns:
+      minmax(150px, 1fr) minmax(120px, 0.8fr) minmax(80px, 0.6fr) auto auto;
+  }
+}
+
+
+/* =========================================================
+   RESPONSIVE — MOBILE
+   ========================================================= */
+
+@media (max-width: 768px) {
+
+  .scolarite-page {
+    padding: 1rem;
+  }
+
+  .page-header h1 {
+    font-size: 1.35rem;
+  }
+
+  .student-banner {
+    align-items: flex-start;
+
+    padding: 1rem;
+
+    flex-wrap: wrap;
+  }
+
+  .student-avatar {
+    width: 52px;
+    height: 52px;
+    min-width: 52px;
+  }
+
+  .student-name {
+    font-size: 0.95rem;
+  }
+
+  .student-year {
+    width: 100%;
+
+    align-items: flex-start;
+
+    padding: 0.75rem 0 0;
+
+    border-left: none;
+    border-top: 1px solid #e2e8f0;
+  }
+
+  .inscription-content {
+    grid-template-columns: 1fr;
+  }
+
+  .info-block,
+  .info-block:nth-child(odd),
+  .info-block:nth-child(even) {
+    padding: 0.75rem 0;
+
+    border-right: none;
+  }
+
+  .info-block:nth-last-child(-n + 2) {
+    border-bottom: 1px solid #edf2f7;
+  }
+
+  .info-block:last-child {
+    border-bottom: none;
+  }
+
+  .card-header {
+    padding: 1rem;
+  }
+
+  .bulletins-list {
+    padding: 0.75rem;
+  }
+
+  .bulletin-item {
+    grid-template-columns: 1fr 1fr;
+
+    gap: 0.85rem;
+  }
+
+  .bulletin-period {
+    grid-column: 1 / -1;
+  }
+
+  .bulletin-status {
+    justify-self: start;
+  }
+
+  .bulletin-actions {
+    justify-self: end;
+  }
+
+  .bulletin-appreciation {
+    grid-column: 1 / -1;
+  }
+
+  .card-footer {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .btn-outline {
+    justify-content: center;
+  }
+}
+
+
+/* =========================================================
+   RESPONSIVE — PETIT MOBILE
+   ========================================================= */
+
+@media (max-width: 480px) {
+
+  .scolarite-page {
+    padding: 0.75rem;
+  }
+
+  .page-header {
+    margin-bottom: 1rem;
+  }
+
+  .header-left {
+    gap: 0.65rem;
+  }
+
+  .btn-back {
+    width: 38px;
+    height: 38px;
+    min-width: 38px;
+  }
+
+  .student-meta {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.25rem;
+  }
+
+  .scolarite-card {
+    border-radius: 14px;
+  }
+
+  .card-header {
+    align-items: flex-start;
+  }
+
+  .bulletins-count {
+    font-size: 0.85rem;
+  }
+
+  .bulletin-item {
+    grid-template-columns: 1fr;
+  }
+
+  .bulletin-period,
+  .bulletin-status,
+  .bulletin-actions,
+  .bulletin-appreciation {
+    grid-column: auto;
+    justify-self: start;
+  }
+
+  .bulletin-actions {
+    width: 100%;
+  }
+
+  .btn-icon {
+    flex: 1;
+  }
+}

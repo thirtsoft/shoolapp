@@ -34,7 +34,7 @@
             <div class="pt-dropdown-text">
               <span class="pt-dropdown-name">{{ enfant.prenom }} {{ enfant.nom }}</span>
               <span class="pt-dropdown-sub"
-                >{{ enfant.classeEleve }} · {{ enfant.niveauEleve }}</span
+                >{{ enfant.classeEleve }} · {{ enfant?.niveauEleve }}</span
               >
             </div>
             @if (enfant.id === eleveActif()?.id) {

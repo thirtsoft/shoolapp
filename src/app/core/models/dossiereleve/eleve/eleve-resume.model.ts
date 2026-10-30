@@ -8,5 +8,6 @@ export interface EleveResume {
   classeEleve?: string;
   niveauEleve?: string;
   anneeScolaire?: string;
+  niveauId: number;
 
 }

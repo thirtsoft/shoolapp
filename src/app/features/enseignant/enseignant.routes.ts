@@ -166,8 +166,6 @@ export const ENSEIGNANTS_ROUTES: Routes = [
         component: MyAccountComponent
       },
 
-
-
       {
         path: '',
         redirectTo: 'dashboard',

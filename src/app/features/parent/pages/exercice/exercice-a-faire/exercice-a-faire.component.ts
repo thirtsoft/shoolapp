@@ -1,17 +1,12 @@
-import { Component, DestroyRef, inject, OnDestroy, OnInit } from '@angular/core';
+import { Component, DestroyRef, inject, OnInit } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ReactiveFormsModule } from '@angular/forms';
-import { forkJoin, Subject, takeUntil } from 'rxjs';
+import { forkJoin } from 'rxjs';
 import { IFilterConfig } from '../../../../../core/filtered-config/FiltreConfiguration';
 import { GenericTableDossierComponent } from '../../../../../core/generic/generic-table-dossier/generic-table-dossier.component';
-import { EnseigantList } from '../../../../../core/models/enseignant/enseignant-list';
 import { CommonService } from '../../../../../core/services/common.service';
-import { LocalStorageService } from '../../../../../core/services/local-storage.service';
 import { PlanificationResourceService } from '../../../../administration/planification/services/planification-resource.service';
-import { EnseignantService } from '../../../../enseignant/service/enseignant.service';
 import { ParentSessionService } from '../../../service/parent-session.service';
-import { ReferentielResourceService } from '../../../../administration/referentiel/service/referentiel-resource.service';
-import { DossierResourceService } from '../../../../administration/dossier-eleve/service/dossier-resource.service';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 @Component({
   selector: 'app-exercice-a-faire',
@@ -28,10 +23,6 @@ export class ExerciceAFaireComponent implements OnInit {
   columns: any = [];
   exerciceData: any = [];
 
-  private readonly destroy$ = new Subject<void>();
-
-  userId?: number;
-  eleveId?: number;
   classeId?: number;
   isNonAdministration: boolean = false;
 
@@ -51,21 +42,13 @@ export class ExerciceAFaireComponent implements OnInit {
 
   nomClasseConcerne = '';
 
-  private readonly dossierResource = inject(DossierResourceService);
-  private readonly referentielResourceService = inject(ReferentielResourceService);
   private readonly parentSession = inject(ParentSessionService);
   private readonly destroyRef = inject(DestroyRef);
   private readonly planificationResource = inject(PlanificationResourceService);
-  private readonly enseigantService = inject(EnseignantService);
   private readonly commonService = inject(CommonService);
-  private readonly localStorage = inject(LocalStorageService);
-  private readonly sessionService = inject(ParentSessionService);
 
-  constructor(
-  ) {
-
+  constructor() {
     const eleve = this.parentSession.getEleveResume();
-
     if (eleve) {
       this.classeId = eleve.classeId;
       this.nomClasseConcerne = `${eleve.classeEleve ?? ''}`.trim();
@@ -74,7 +57,6 @@ export class ExerciceAFaireComponent implements OnInit {
 
   ngOnInit(): void {
     this.chargerLesExercices();
-
   }
 
   private chargerLesExercices(): void {
@@ -100,8 +82,6 @@ export class ExerciceAFaireComponent implements OnInit {
         }
       });
   }
-
-
 
   initialisationDesFiltres() {
     this.tableFilters = [
@@ -165,13 +145,10 @@ export class ExerciceAFaireComponent implements OnInit {
         this.totalElements = response.data?.totalElements || 0;
 
         this.columns = [
-          { key: 'titre', header: 'Titre' },
-          { key: 'livre', header: 'Livre' },
-          { key: 'enseignant', header: 'Enseignant' },
-          { key: 'page', header: 'Page' },
-          { key: 'numeroExercice', header: 'N°' },
-          { key: 'description', header: 'Description' },
-          { key: 'dateDebut', header: 'Date' },
+          { key: 'libelle', header: 'Libellé' },
+          { key: 'matiere', header: 'Matiere' },
+          { key: 'date', header: 'Date' },
+          { key: 'delai', header: 'Délai' },
         ];
         this.exerciceData = this.exerciceData.map((item: any) => ({
           ...item,

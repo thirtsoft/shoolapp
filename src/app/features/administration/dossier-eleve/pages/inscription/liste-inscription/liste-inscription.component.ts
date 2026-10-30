@@ -63,7 +63,6 @@ export class ListeInscriptionComponent implements OnInit {
     niveaux: []
   };
 
-  private readonly router = inject(Router);
   private readonly dossierResource = inject(DossierResourceService);
   private readonly referentielService = inject(ReferentielService);
 

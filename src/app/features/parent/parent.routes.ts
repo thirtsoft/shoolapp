@@ -10,15 +10,15 @@ import { DetailsFactureParentComponent } from './pages/facture/details-facture-p
 import { ListInvoiceEleveComponent } from './pages/facture/list-invoice-eleve/list-invoice-eleve.component';
 import { ListInscriptionEleveParentComponent } from './pages/inscription/list-inscription-eleve-parent/list-inscription-eleve-parent.component';
 import { InscriptionServiceEleveComponent } from './pages/inscriptionservice/inscription-service-eleve-component/inscription-service-eleve-component';
+import { ListServiceOffertComponent } from './pages/inscriptionservice/list-service-offert-component/list-service-offert-component';
 import { ListNoteEleveComponent } from './pages/list-note-eleve/list-note-eleve.component';
 import { ListeBulletinEleveComponent } from './pages/liste-bulletin-eleve/liste-bulletin-eleve.component';
 import { ListeEvenementComponent } from './pages/liste-evenement/liste-evenement.component';
 import { ListeMenuComponent } from './pages/liste-menu/liste-menu.component';
 import { NoteInformationComponent } from './pages/noteinformation/note-information/note-information.component';
+import { ScolariteEleveComponent } from './pages/scolarite-eleve-component/scolarite-eleve-component';
 import { ChangerPasswordParentComponent } from './pages/settings/changer-password-parent/changer-password-parent.component';
 import { ParentProfileComponent } from './pages/settings/parent-profile/parent-profile.component';
-import { DetailsNoteInformationComponenent } from './pages/noteinformation/details-note-information-componenent/details-note-information-componenent';
-import { ListServiceOffertComponent } from './pages/inscriptionservice/list-service-offert-component/list-service-offert-component';
 
 export const PARENT_ROUTES: Routes = [
 
@@ -69,6 +69,11 @@ export const PARENT_ROUTES: Routes = [
         path: 'bulletins',
         component: ListeBulletinEleveComponent
       },
+
+      {
+        path: 'scolarite',
+        component: ScolariteEleveComponent
+      },
       {
         path: 'exercices',
         component: ExerciceAFaireComponent
@@ -83,7 +88,7 @@ export const PARENT_ROUTES: Routes = [
         component: ListeMenuComponent
       },
       {
-        path: 'activites-scolaire',
+        path: 'activites',
         component: ListeEvenementComponent
       },
       {
@@ -99,11 +104,7 @@ export const PARENT_ROUTES: Routes = [
         component: NoteInformationComponent
       },
       {
-        path: 'information/details/:id',
-        component: DetailsNoteInformationComponenent
-      },
-      {
-        path: 'monprofil/:id',
+        path: 'monprofil',
         component: ParentProfileComponent
       },
       {

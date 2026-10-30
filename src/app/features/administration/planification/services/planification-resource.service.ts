@@ -23,6 +23,7 @@ import { ListeEnseignement } from '../../../../core/models/planification/liste-e
 import { ListeExercie } from '../../../../core/models/planification/liste-exercice';
 import { Meeting } from '../../../../core/models/planification/meeting';
 import { ResponseMessage } from '../../../../core/response/response-message';
+import { CoursParentAbsenceResponse } from '../../../../core/models/parent/cours-parent-absence-response.model';
 
 @Injectable({
   providedIn: 'root'
@@ -415,6 +416,19 @@ export class PlanificationResourceService {
   }
 
   // *****************  Cours **********************//
+
+  getCoursPourAbsenceParent(eleveId: number, classeId: number, date: string): Observable<CoursParentAbsenceResponse[]> {
+    return this.http.get<CoursParentAbsenceResponse[]>(
+      `${this.planificationUrl}/planification/parent/me/cours-absence`,
+      {
+        params: {
+          eleveId: eleveId.toString(),
+          classeId: classeId.toString(),
+          date
+        }
+      }
+    );
+  }
 
   getMesCoursEnseignant(): Observable<CoursEnseignantCalendrier[]> {
     return this.http.get<CoursEnseignantCalendrier[]>(`${this.planificationUrl}/planification/enseignant/me/cours`);
