@@ -37,17 +37,8 @@ export class NoteInformationComponent implements OnInit {
     this.chargerLesNoteInformations();
   }
 
-  async chargerLesNoteInformations() {
-    try {
-      await Promise.all([
-        this.getMoisList()
-      ]);
-      this.initialisationDesFiltres();
-      this.chargerLesDonnees(false);
-
-    } catch (error) {
-      console.error('Erreur chargement données:', error);
-    }
+  private chargerLesNoteInformations() {
+    this.chargerLesDonnees(false);
   }
 
   getMoisList(): Promise<any[]> {
@@ -60,20 +51,6 @@ export class NoteInformationComponent implements OnInit {
         error: (err) => reject(err)
       });
     });
-  }
-
-  initialisationDesFiltres() {
-    this.tableFilters = [
-      {
-        key: 'mois',
-        label: 'Mois',
-        type: 'select',
-        options: this.moisList.map(m => ({
-          value: m.id,
-          label: m.mois
-        }))
-      }
-    ];
   }
 
   onFilterChange(filter: IFilterConfig, value: any) {
@@ -94,13 +71,13 @@ export class NoteInformationComponent implements OnInit {
       const filtreParam = this.construireLesParamereDeFiltre();
 
       apiCall = this.planificationResource.fetchFilterDataTable(
-        'planification/noteinformation',
+        'planification/noteinformation-publie',
         this.currentPage,
         this.pageSize,
         filtreParam)
 
     } else {
-      apiCall = this.planificationResource.getResourcePaged('planification/noteinformation', this.currentPage, this.pageSize);
+      apiCall = this.planificationResource.getResourcePaged('planification/noteinformation-publie', this.currentPage, this.pageSize);
     }
     apiCall.subscribe({
       next: (response) => {
@@ -158,13 +135,11 @@ export class NoteInformationComponent implements OnInit {
   resetFilters() {
     this.activeFilters = {};
     this.hasActiveFilters = false;
-    this.initialisationDesFiltres();
     this.currentPage = 0;
     this.chargerLesDonnees(false);
   }
 
-  // Dans votre composant (.ts)
   formatLocalDate(utcDate: string): string {
-    return new Date(utcDate).toLocaleString('fr-FR'); // Adaptez la locale
+    return new Date(utcDate).toLocaleString('fr-FR');
   }
 }

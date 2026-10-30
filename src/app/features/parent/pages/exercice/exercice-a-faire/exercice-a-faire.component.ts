@@ -1,13 +1,11 @@
-import { Component, inject, OnDestroy, OnInit } from '@angular/core';
+import { Component, DestroyRef, inject, OnInit } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ReactiveFormsModule } from '@angular/forms';
-import { Subject, takeUntil } from 'rxjs';
+import { forkJoin } from 'rxjs';
 import { IFilterConfig } from '../../../../../core/filtered-config/FiltreConfiguration';
 import { GenericTableDossierComponent } from '../../../../../core/generic/generic-table-dossier/generic-table-dossier.component';
-import { EnseigantList } from '../../../../../core/models/enseignant/enseignant-list';
 import { CommonService } from '../../../../../core/services/common.service';
-import { LocalStorageService } from '../../../../../core/services/local-storage.service';
 import { PlanificationResourceService } from '../../../../administration/planification/services/planification-resource.service';
-import { EnseignantService } from '../../../../enseignant/service/enseignant.service';
 import { ParentSessionService } from '../../../service/parent-session.service';
 
 @Component({
@@ -17,7 +15,7 @@ import { ParentSessionService } from '../../../service/parent-session.service';
   templateUrl: './exercice-a-faire.component.html',
   styleUrls: ['./exercice-a-faire.component.css']
 })
-export class ExerciceAFaireComponent implements OnInit, OnDestroy {
+export class ExerciceAFaireComponent implements OnInit {
 
   isLoading: boolean = false;
   isLockable: boolean = true;
@@ -25,10 +23,6 @@ export class ExerciceAFaireComponent implements OnInit, OnDestroy {
   columns: any = [];
   exerciceData: any = [];
 
-  private readonly destroy$ = new Subject<void>();
-
-  userId?: number;
-  eleveId?: number;
   classeId?: number;
   isNonAdministration: boolean = false;
 
@@ -46,91 +40,47 @@ export class ExerciceAFaireComponent implements OnInit, OnDestroy {
   activeFilters: any = {};
   hasActiveFilters: boolean = false;
 
+  nomClasseConcerne = '';
+
+  private readonly parentSession = inject(ParentSessionService);
+  private readonly destroyRef = inject(DestroyRef);
   private readonly planificationResource = inject(PlanificationResourceService);
-  private readonly enseigantService = inject(EnseignantService);
   private readonly commonService = inject(CommonService);
-  private readonly localStorage = inject(LocalStorageService);
-  private readonly sessionService = inject(ParentSessionService);
 
-  constructor(
-
-  ) {
-    this.userId = this.localStorage.getItem('id');
-    this.eleveId = this.localStorage.getItem('eleveId');
-    this.classeId = this.localStorage.getItem('classeId');
+  constructor() {
+    const eleve = this.parentSession.getEleveResume();
+    if (eleve) {
+      this.classeId = eleve.classeId;
+      this.nomClasseConcerne = `${eleve.classeEleve ?? ''}`.trim();
+    }
   }
 
   ngOnInit(): void {
     this.chargerLesExercices();
-    this.sessionService.changement$
-      .pipe(takeUntil(this.destroy$))
-      .subscribe((changement) => {
-        if (changement && changement.classeId !== this.classeId) {
-          console.log('🔄 Nouvelle classe :', changement.classeId);
-          this.classeId = changement.classeId!;
+  }
 
-          this.currentPage = 0;
-          this.activeFilters = {};
-          this.hasActiveFilters = false;
-          this.chargerLesExercices();
+  private chargerLesExercices(): void {
+    this.isLoading = true;
+    forkJoin({
+      livre: this.planificationResource.getResourceList('livre'),
+      mois: this.commonService.getAllMois(),
+    })
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: (result: any) => {
+          this.moisList = result.mois || [];
+          this.livreList = result.livre || [];
+
+          this.initialisationDesFiltres();
+
+          this.chargerLesDonnees(false);
+        },
+
+        error: (error) => {
+          console.error('Erreur chargement des filtres:', error);
+          this.isLoading = false;
         }
       });
-  }
-
-  ngOnDestroy(): void {
-    this.destroy$.next();
-    this.destroy$.complete();
-  }
-
-  async chargerLesExercices() {
-    try {
-      await Promise.all([
-        this.getLivreList(),
-        this.getEnseignantList(),
-        this.getMoisList(),
-      ]);
-
-      this.initialisationDesFiltres();
-      this.chargerLesDonnees(false);
-    } catch (error) {
-      console.error('Erreur chargement données:', error);
-    }
-  }
-
-  getLivreList(): Promise<any> {
-    return new Promise((resolve, reject) => {
-      this.planificationResource.getResourceList('livre').subscribe({
-        next: (data) => {
-          this.livreList = data;
-          resolve(data);
-        },
-        error: (err) => reject(err)
-      });
-    });
-  }
-
-  getEnseignantList(): Promise<EnseigantList[]> {
-    return new Promise((resolve, reject) => {
-      this.enseigantService.getAllEnseignants().subscribe({
-        next: (data) => {
-          this.enseignantList = data;
-          resolve(data);
-        },
-        error: (err) => reject(err)
-      });
-    });
-  }
-
-  getMoisList(): Promise<any[]> {
-    return new Promise((resolve, reject) => {
-      this.commonService.getAllMois().subscribe({
-        next: (data) => {
-          this.moisList = data;
-          resolve(data);
-        },
-        error: (err) => reject(err)
-      });
-    });
   }
 
   initialisationDesFiltres() {
@@ -151,15 +101,6 @@ export class ExerciceAFaireComponent implements OnInit, OnDestroy {
         })),
       },
       {
-        key: 'enseignant',
-        label: 'Enseignant',
-        type: 'select',
-        options: this.enseignantList.map(a => ({
-          value: a.id,
-          label: `${a.nomComplet}`
-        }))
-      },
-      {
         key: 'mois',
         label: 'Mois',
         type: 'select',
@@ -173,7 +114,6 @@ export class ExerciceAFaireComponent implements OnInit, OnDestroy {
 
   onFilterChange(filter: IFilterConfig, value: any) {
     this.activeFilters[filter.key] = value;
-
     this.hasActiveFilters = Object.values(this.activeFilters).some(val =>
       val !== null && val !== undefined && val !== ''
     );
@@ -205,13 +145,10 @@ export class ExerciceAFaireComponent implements OnInit, OnDestroy {
         this.totalElements = response.data?.totalElements || 0;
 
         this.columns = [
-          { key: 'titre', header: 'Titre' },
-          { key: 'livre', header: 'Livre' },
-          { key: 'enseignant', header: 'Enseignant' },
-          { key: 'page', header: 'Page' },
-          { key: 'numeroExercice', header: 'N°' },
-          { key: 'description', header: 'Description' },
-          { key: 'dateDebut', header: 'Date' },
+          { key: 'libelle', header: 'Libellé' },
+          { key: 'matiere', header: 'Matiere' },
+          { key: 'date', header: 'Date' },
+          { key: 'delai', header: 'Délai' },
         ];
         this.exerciceData = this.exerciceData.map((item: any) => ({
           ...item,

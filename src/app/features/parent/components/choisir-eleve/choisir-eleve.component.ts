@@ -158,7 +158,6 @@ export class ChoisirEleveComponent implements OnInit {
   }
 
   afficherDossier(eleve: EleveResume): void {
-    console.log('📚 Élève sélectionné :', eleve);
     if (eleve?.id == null) {
       console.error('❌ Aucun ID élève trouvé', eleve);
       return;

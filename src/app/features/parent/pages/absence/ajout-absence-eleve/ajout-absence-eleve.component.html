@@ -1,243 +1,349 @@
-<div class="page-wrapper">
-  <div class="content container-fluid">
-    <div class="page-header">
-      <div class="row align-items-center">
-        <div class="col-sm-12">
-          <h3 class="page-title">{{ title }}</h3>
-          <p class="text-muted mt-1 mb-0">
-            <i class="fas fa-calendar-times me-1"></i> Gestion des absences des élèves
-          </p>
-        </div>
+<div class="absence-page">
+  <!-- ========================================================= -->
+  <!-- HEADER -->
+  <!-- ========================================================= -->
+  <div class="page-header">
+    <div class="page-header-left">
+      <button type="button" class="btn-back" (click)="goBack()" title="Retour">
+        <i class="fas fa-arrow-left"></i>
+      </button>
+
+      <div>
+        <h2 class="page-title">
+          {{ attendanceRecordId ? 'Modifier l’absence' : 'Déclarer une absence' }}
+        </h2>
+
+        <p class="page-subtitle">
+          {{
+            attendanceRecordId
+              ? 'Modifiez les informations d’assiduité de votre enfant.'
+              : 'Déclarez une absence ou un retard de votre enfant.'
+          }}
+        </p>
       </div>
     </div>
+  </div>
 
-    <div class="row mb-3">
-      <div class="col-sm-12">
-        <div class="badge-container">
-          <span class="badge badge-primary">
-            @if (!attendanceRecordId) {
-              <i class="fas fa-plus-circle me-1"></i> Nouvelle absence
-            } @else {
-              <i class="fas fa-edit me-1"></i> Modification absence
+  <!-- ========================================================= -->
+  <!-- FORMULAIRE -->
+  <!-- ========================================================= -->
+  <form
+    [formGroup]="attendanceRecordFormGroup"
+    (ngSubmit)="ajouterEditAbsence()"
+    class="absence-form"
+  >
+    <!-- ======================================================= -->
+    <!-- ÉLÈVE CONCERNÉ -->
+    <!-- ======================================================= -->
+    <div class="form-card">
+      <div class="card-header">
+        <div class="card-header-icon">
+          <i class="fas fa-user-graduate"></i>
+        </div>
+
+        <div>
+          <h3>Élève concerné</h3>
+          <p>Informations concernant votre enfant</p>
+        </div>
+      </div>
+
+      <div class="student-summary">
+        <div class="student-avatar">
+          <i class="fas fa-user"></i>
+        </div>
+
+        <div class="student-info">
+          <div class="student-name">
+            {{ eleveResume?.prenom }}
+            {{ eleveResume?.nom }}
+          </div>
+
+          <div class="student-details">
+            @if (eleveResume?.classeEleve) {
+              <span>
+                <i class="fas fa-school"></i>
+                {{ eleveResume.classeEleve }}
+              </span>
             }
-          </span>
-        </div>
-      </div>
-    </div>
 
-    <div class="row">
-      <div class="col-12">
-        <div class="card">
-          <div class="card-body p-4 p-md-5">
-            <div class="step-indicator">
-              <div class="step active">
-                <span class="step-number">1</span>
-                <span class="step-label">Information</span>
-              </div>
-              <div class="step-line"></div>
-              <div class="step">
-                <span class="step-number">2</span>
-                <span class="step-label">Confirmation</span>
-              </div>
-            </div>
-
-            <form [formGroup]="attendanceRecordFormGroup" (ngSubmit)="ajouterEditAbsence()">
-              <input type="hidden" formControlName="id" />
-
-              <div class="two-columns-layout">
-                <div class="info-column">
-                  <div class="info-section">
-                    <h4 class="section-title">
-                      <i class="fas fa-info-circle me-2"></i>Informations
-                    </h4>
-
-                    <div class="form-group">
-                      <label class="form-label">
-                        type absence <span class="text-danger">*</span>
-                        <i class="fas fa-check-circle ms-1 text-muted"></i>
-                      </label>
-                      <select class="form-select" formControlName="attendanceStatus" required>
-                        <option value="" disabled selected>— Sélectionnez —</option>
-                        @for (item of attendanceStatusList; track item) {
-                          <option [value]="item">
-                            {{ item }}
-                          </option>
-                        }
-                      </select>
-                    </div>
-
-                    <!-- Champs spécifiques au RETARD (affichés uniquement si RETARD est sélectionné) -->
-                    @if (attendanceRecordFormGroup.get('attendanceStatus')?.value === 'RETARD') {
-                      <div class="retard-fields">
-                        <div class="form-group">
-                          <label class="form-label">
-                            Cours <span class="text-danger">*</span>
-                            <i class="fas fa-book ms-1 text-muted"></i>
-                          </label>
-                          <select class="form-select" formControlName="courseId" required>
-                            <option value="" disabled selected>— Sélectionnez un cours —</option>
-                            @for (item of coursList; track item.id) {
-                              <option [value]="item.id">
-                                {{ item.libelle }}
-                              </option>
-                            }
-                          </select>
-                          @if (
-                            attendanceRecordFormGroup.get('courseId')?.invalid &&
-                            attendanceRecordFormGroup.get('courseId')?.touched
-                          ) {
-                            <div class="text-danger small">
-                              Le cours est obligatoire pour un retard
-                            </div>
-                          }
-                        </div>
-
-                        <div class="form-group">
-                          <label class="form-label">
-                            Heure prévue (début du cours) <span class="text-danger">*</span>
-                            <i class="fas fa-clock ms-1 text-muted"></i>
-                          </label>
-                          <input
-                            type="time"
-                            class="form-control"
-                            formControlName="expectedTime"
-                            (change)="calculateLateMinutes()"
-                          />
-                        </div>
-
-                        <div class="form-group">
-                          <label class="form-label">
-                            Heure d'arrivée réelle <span class="text-danger">*</span>
-                            <i class="fas fa-clock ms-1 text-muted"></i>
-                          </label>
-                          <input
-                            type="time"
-                            class="form-control"
-                            formControlName="arrivalTime"
-                            (change)="calculateLateMinutes()"
-                          />
-                        </div>
-
-                        <div class="form-group">
-                          <label class="form-label">
-                            Minutes de retard
-                            <i class="fas fa-hourglass-half ms-1 text-muted"></i>
-                          </label>
-                          <input
-                            type="number"
-                            class="form-control"
-                            formControlName="lateMinutes"
-                            readonly
-                            [class.is-invalid]="lateMinutes > 0 && !isRetardJustifie()"
-                          />
-                          <small class="text-muted">Calculé automatiquement</small>
-                        </div>
-                      </div>
-                    }
-
-                    <div class="form-group">
-                      <label class="form-label">
-                        Motif <span class="text-danger">*</span>
-                        <i class="fas fa-pen ms-1 text-muted"></i>
-                      </label>
-                      <textarea
-                        class="form-control"
-                        formControlName="justificationReason"
-                        rows="4"
-                        placeholder="Décrivez le motif de l'absence..."
-                      ></textarea>
-                    </div>
-                  </div>
-                </div>
-
-                <div class="confirmation-column">
-                  <div class="info-section">
-                    <h4 class="section-title">
-                      <i class="fas fa-check-circle me-2"></i>Confirmation
-                    </h4>
-
-                    <div class="form-group">
-                      <label class="form-label">
-                        Année scolaire <span class="text-danger">*</span>
-                        <i class="fas fa-calendar-alt ms-1 text-muted"></i>
-                      </label>
-                      <select class="form-select" formControlName="anneeScolaireId" required>
-                        <option value="" disabled selected>— Sélectionnez une année —</option>
-                        @for (item of anneeScolaireList; track item.id) {
-                          <option [value]="item.id">{{ item.libelle }}</option>
-                        }
-                      </select>
-                    </div>
-
-                    <div class="form-group">
-                      <label class="form-label">
-                        Semestre <span class="text-danger">*</span>
-                        <i class="fas fa-book-open ms-1 text-muted"></i>
-                      </label>
-                      <select class="form-select" formControlName="sessionSemestre" required>
-                        <option value="" disabled selected>— Sélectionnez un semestre —</option>
-                        @for (item of sessionSemestreList; track item.id) {
-                          <option [value]="item.id">
-                            {{ item.semestre }} - {{ item.anneeScolaire }}
-                          </option>
-                        }
-                      </select>
-                      @if (
-                        attendanceRecordFormGroup!.get('sessionSemestre')?.invalid &&
-                        attendanceRecordFormGroup!.get('sessionSemestre')?.touched
-                      ) {
-                        <div class="invalid-feedback">Le semestre est requis</div>
-                      }
-                    </div>
-
-                    <div class="form-group">
-                      <label class="form-label">
-                        Date absence <span class="text-danger">*</span>
-                        <i class="fas fa-calendar-day ms-1 text-muted"></i>
-                      </label>
-                      <input
-                        type="date"
-                        class="form-control"
-                        formControlName="attendanceDate"
-                        required
-                      />
-                    </div>
-
-                    <div class="form-group placeholder-field"></div>
-                    <div class="form-group placeholder-field"></div>
-                  </div>
-                </div>
-              </div>
-
-              <div class="form-actions">
-                <button type="button" class="btn btn-secondary" (click)="goBack()">
-                  <i class="fas fa-times me-2"></i>Annuler
-                </button>
-                <button
-                  type="submit"
-                  class="btn btn-primary"
-                  [disabled]="!attendanceRecordFormGroup.valid"
-                >
-                  <i class="fas fa-save me-2"></i>
-                  @if (!attendanceRecordId) {
-                    Enregistrer l'absence
-                  } @else {
-                    Modifier l'absence
-                  }
-                </button>
-              </div>
-
-              <div class="alert-help mt-4" role="alert">
-                <i class="fas fa-info-circle me-2"></i>
-                <span
-                  >Les absences permettent de suivre l'assiduité des élèves tout au long de l'année
-                  scolaire.</span
-                >
-              </div>
-            </form>
+            @if (eleveResume?.niveauEleve) {
+              <span>
+                <i class="fas fa-layer-group"></i>
+                {{ eleveResume.niveauEleve }}
+              </span>
+            }
           </div>
         </div>
       </div>
     </div>
-  </div>
+
+    <!-- ======================================================= -->
+    <!-- INFORMATIONS ASSIDUITÉ -->
+    <!-- ======================================================= -->
+    <div class="form-card">
+      <div class="card-header">
+        <div class="card-header-icon">
+          <i class="fas fa-calendar-check"></i>
+        </div>
+
+        <div>
+          <h3>Informations de l'assiduité</h3>
+          <p>Indiquez la date, la situation et le cours concerné</p>
+        </div>
+      </div>
+
+      <div class="form-grid">
+        <!-- =================================================== -->
+        <!-- DATE -->
+        <!-- =================================================== -->
+        <div class="form-group">
+          <label class="form-label" for="attendanceDate">
+            Date
+            <span class="text-danger">*</span>
+          </label>
+
+          <div class="input-icon-wrapper">
+            <i class="fas fa-calendar-day"></i>
+
+            <input
+              id="attendanceDate"
+              type="date"
+              class="form-control"
+              formControlName="attendanceDate"
+            />
+          </div>
+
+          @if (
+            attendanceRecordFormGroup.get('attendanceDate')?.invalid &&
+            attendanceRecordFormGroup.get('attendanceDate')?.touched
+          ) {
+            <div class="text-danger small mt-1">La date est obligatoire.</div>
+          }
+        </div>
+
+        <!-- =================================================== -->
+        <!-- SITUATION -->
+        <!-- =================================================== -->
+        <div class="form-group">
+          <label class="form-label" for="attendanceStatus">
+            Situation
+            <span class="text-danger">*</span>
+          </label>
+
+          <div class="input-icon-wrapper">
+            <i class="fas fa-clipboard-check"></i>
+
+            <select id="attendanceStatus" class="form-select" formControlName="attendanceStatus">
+              <option [ngValue]="null">— Sélectionnez une situation —</option>
+
+              @for (status of attendanceStatusList; track status) {
+                <option [ngValue]="status">
+                  {{ status }}
+                </option>
+              }
+            </select>
+          </div>
+
+          @if (
+            attendanceRecordFormGroup.get('attendanceStatus')?.invalid &&
+            attendanceRecordFormGroup.get('attendanceStatus')?.touched
+          ) {
+            <div class="text-danger small mt-1">La situation est obligatoire.</div>
+          }
+        </div>
+      </div>
+
+      <!-- ===================================================== -->
+      <!-- COURS -->
+      <!-- TOUJOURS AFFICHÉ -->
+      <!-- ===================================================== -->
+      <div class="form-group course-field">
+        <label class="form-label" for="courseId">
+          Cours concerné
+          <span class="text-danger">*</span>
+
+          <i
+            class="fas fa-book-open ms-1 text-muted"
+            title="Cours concerné par l'absence ou le retard"
+          ></i>
+        </label>
+
+        <div class="input-icon-wrapper">
+          <i class="fas fa-book"></i>
+
+          <select id="courseId" class="form-select" formControlName="courseId">
+            <option [ngValue]="null">— Sélectionnez un cours —</option>
+
+            @for (cours of coursList; track cours.coursId) {
+              <option [ngValue]="cours.coursId">
+                {{ cours.heureDebut | slice: 0 : 5 }}
+                -
+                {{ cours.heureFin | slice: 0 : 5 }}
+
+                ·
+
+                {{ cours.matiereLibelle }}
+
+                @if (cours.libelle) {
+                  — {{ cours.libelle }}
+                }
+              </option>
+            }
+          </select>
+        </div>
+
+        <!-- Aucun cours -->
+        @if (attendanceRecordFormGroup.get('attendanceDate')?.value && coursList.length === 0) {
+          <div class="text-muted small mt-2">
+            <i class="fas fa-info-circle me-1"></i>
+
+            Aucun cours prévu pour cette date.
+          </div>
+        }
+
+        <!-- Validation -->
+        @if (
+          attendanceRecordFormGroup.get('courseId')?.invalid &&
+          attendanceRecordFormGroup.get('courseId')?.touched
+        ) {
+          <div class="text-danger small mt-1">Le cours est obligatoire.</div>
+        }
+      </div>
+    </div>
+
+    <!-- ========================================================= -->
+    <!-- INFORMATIONS RETARD -->
+    <!-- ========================================================= -->
+    @if (attendanceRecordFormGroup.get('attendanceStatus')?.value === 'RETARD') {
+      <div class="form-card retard-card">
+        <div class="card-header">
+          <div class="card-header-icon warning">
+            <i class="fas fa-clock"></i>
+          </div>
+
+          <div>
+            <h3>Informations sur le retard</h3>
+            <p>Précisez l'heure d'arrivée de votre enfant</p>
+          </div>
+        </div>
+
+        <!-- =================================================== -->
+        <!-- 3 CHAMPS SUR LA MÊME LIGNE -->
+        <!-- =================================================== -->
+        <div class="form-grid retard-fields">
+          <!-- ================================================ -->
+          <!-- HEURE PRÉVUE -->
+          <!-- ================================================ -->
+          <div class="form-group">
+            <label class="form-label" for="expectedTime"> Heure prévue </label>
+
+            <div class="input-icon-wrapper">
+              <i class="fas fa-clock"></i>
+
+              <input
+                id="expectedTime"
+                type="time"
+                class="form-control"
+                formControlName="expectedTime"
+                readonly
+              />
+            </div>
+          </div>
+
+          <!-- ================================================ -->
+          <!-- HEURE D'ARRIVÉE -->
+          <!-- ================================================ -->
+          <div class="form-group">
+            <label class="form-label" for="arrivalTime">
+              Heure d'arrivée
+              <span class="text-danger">*</span>
+            </label>
+
+            <div class="input-icon-wrapper">
+              <i class="fas fa-person-walking"></i>
+
+              <input
+                id="arrivalTime"
+                type="time"
+                class="form-control"
+                formControlName="arrivalTime"
+                (change)="calculateLateMinutes()"
+              />
+            </div>
+
+            @if (
+              attendanceRecordFormGroup.get('arrivalTime')?.invalid &&
+              attendanceRecordFormGroup.get('arrivalTime')?.touched
+            ) {
+              <div class="text-danger small mt-1">L'heure d'arrivée est obligatoire.</div>
+            }
+          </div>
+
+          <!-- ================================================ -->
+          <!-- MINUTES DE RETARD -->
+          <!-- ================================================ -->
+          <div class="form-group">
+            <label class="form-label" for="lateMinutes"> Minutes de retard </label>
+
+            <div class="input-icon-wrapper">
+              <i class="fas fa-stopwatch"></i>
+
+              <input
+                id="lateMinutes"
+                type="number"
+                min="0"
+                class="form-control"
+                formControlName="lateMinutes"
+                readonly
+              />
+            </div>
+          </div>
+        </div>
+      </div>
+    }
+
+    <!-- ========================================================= -->
+    <!-- JUSTIFICATION -->
+    <!-- ========================================================= -->
+    <div class="form-card">
+      <div class="card-header">
+        <div class="card-header-icon">
+          <i class="fas fa-file-circle-check"></i>
+        </div>
+
+        <div>
+          <h3>Justification</h3>
+          <p>Ajoutez une précision concernant cette déclaration</p>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label" for="justificationReason"> Motif / commentaire </label>
+
+        <textarea
+          id="justificationReason"
+          class="form-control textarea"
+          rows="4"
+          formControlName="justificationReason"
+          placeholder="Ex. : Rendez-vous médical, maladie, raison familiale..."
+        ></textarea>
+      </div>
+    </div>
+
+    <!-- ========================================================= -->
+    <!-- ACTIONS -->
+    <!-- ========================================================= -->
+    <div class="form-actions">
+      <button type="button" class="btn btn-secondary" (click)="goBack()">
+        <i class="fas fa-times me-1"></i>
+        Annuler
+      </button>
+
+      <button type="submit" class="btn btn-primary" [disabled]="attendanceRecordFormGroup.invalid">
+        <i class="fas fa-check me-1"></i>
+
+        {{ attendanceRecordId ? 'Enregistrer les modifications' : 'Déclarer l’absence' }}
+      </button>
+    </div>
+  </form>
 </div>

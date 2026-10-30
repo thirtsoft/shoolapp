@@ -58,13 +58,12 @@ export class MonProfilComponent implements OnInit {
       return;
     }
     const userUuid = JSON.parse(userData).uuid;
-    console.log('UserUuid is ', userUuid);
     this.loading.set(true);
     this.userApiService.getUserProfil(userUuid)
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: (response: any) => {
-          this.user = response.data;
+          this.user = response;
           this.populateForms(this.user);
           this.loading.set(false);
         },
@@ -77,7 +76,6 @@ export class MonProfilComponent implements OnInit {
   }
 
   private populateForms(user: UserResponse): void {
-    // Remplir formulaire identité
     this.identityForm.patchValue({
       firstName: user.firstName || '',
       lastName: user.lastName || '',
@@ -87,10 +85,7 @@ export class MonProfilComponent implements OnInit {
       photo: user.photo || ''
     });
 
-    // Remplir formulaire sécurité (SEULEMENT l'identifier)
-    this.securityForm.patchValue({
-      identifier: user.identifier || ''
-    });
+    this.securityForm.patchValue({ identifier: user.identifier || '' });
   }
 
   enableEditing(section: 'identity' | 'security'): void {
@@ -104,9 +99,6 @@ export class MonProfilComponent implements OnInit {
     this.populateForms(this.user);
   }
 
-  /**
-   * Sauvegarder les modifications d'identité
-   */
   saveIdentity(): void {
     if (this.identityForm.invalid) {
       this.identityForm.markAllAsTouched();
@@ -149,11 +141,6 @@ export class MonProfilComponent implements OnInit {
       });
   }
 
-  /**
-   * Sauvegarder les modifications de sécurité
-   * UNIQUEMENT l'identifiant est modifiable
-   * Le rôle, enabled et accountLocked sont gérés par l'administrateur
-   */
   saveSecurity(): void {
     if (this.securityForm.invalid) {
       this.securityForm.markAllAsTouched();
@@ -169,13 +156,7 @@ export class MonProfilComponent implements OnInit {
     }
 
     this.loading.set(true);
-
-    // Payload avec UNIQUEMENT l'identifier
-    // Le rôle, enabled et accountLocked ne sont PAS envoyés
-    const payload = {
-      identifier: this.securityForm.get('identifier')?.value
-    };
-
+    const payload = { identifier: this.securityForm.get('identifier')?.value };
     const userUuid = JSON.parse(userData).uuid;
     this.userApiService.updateUtilisateurTenant(userUuid, payload)
       .pipe(takeUntilDestroyed(this.destroyRef))
@@ -210,11 +191,11 @@ export class MonProfilComponent implements OnInit {
   }
 
   goToChangePassword(): void {
-    this.router.navigate(['/admin/utilisateur/change-password']);
+    void this.router.navigate(['/admin/utilisateur/change-password']);
   }
 
   goBack(): void {
-    this.router.navigate(['/admin/dashboard']);
+    void this.router.navigate(['/admin/dashboard']);
   }
 
   formatDate(date: Date | string): string {
@@ -227,9 +208,6 @@ export class MonProfilComponent implements OnInit {
     });
   }
 
-  /**
-   * Obtenir le libellé du rôle à partir du code
-   */
   getRoleLabel(role: string): string {
     const labels: Record<string, string> = {
       ADMIN: 'Administrateur',

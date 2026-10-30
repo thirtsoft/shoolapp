@@ -29,9 +29,7 @@ export class ListAbsenceEleveComponent implements OnInit {
   absenceData: any[] = [];
   isEdit = true;
 
-  userId?: number;
   eleveId?: number;
-  classeId?: number;
   isNonAdministration = false;
 
   currentPage = 0;

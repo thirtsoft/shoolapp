@@ -43,22 +43,21 @@ export class SideBarParentComponent {
     { route: '/parent/dashboard', ico: '📊', label: 'Tableau de bord', section: '', badge: '' },
 
     { route: '/parent/cours', ico: '🕐', label: ' Emploi du temps', section: '🎓 Suivi scolaire' },
-    { route: '/parent/absences', ico: '❌', label: 'Absences', section: '', badge: '' },
+    { route: '/parent/absences', ico: '🕐', label: 'Absences & retards' },
     { route: '/parent/evaluations', ico: '🎯', label: 'Évaluations', section: '', badge: '' },
     { route: '/parent/notes', ico: '📝', label: 'Notes', section: '', badge: '' },
-    { route: '/parent/bulletins', ico: '📋', label: 'Bulletins', section: '', badge: '' },
     { route: '/parent/exercices', ico: '✏️', label: 'Exercices', section: '', badge: '' },
-    //    { route: '/parent/cours', ico: '📚', label: 'Cours & Ressources', section: '', badge: '' },
+    { route: '/parent/scolarite', ico: '📋', label: 'Scolarité', section: '', badge: '' },
 
     { route: '/parent/factures', ico: '💰', label: 'Factures', section: '💳 Finances & services', badge: '' },
-    { route: '/parent/services', ico: '📋', label: 'Services scolaires', section: '', badge: '' },
 
-    { route: '/parent/inscriptions', ico: '📝', label: 'Inscriptions', section: '🏫 Vie scolaire', badge: '' },
-    { route: '/parent/menu-cantine', ico: '🍽️', label: 'Menu cantine', section: '', badge: '' },
-    { route: '/parent/evenements', ico: '🎉', label: 'Événements', section: '', badge: '' },
+
+    { route: '/parent/activites', ico: '🎉', label: 'Activités scolaire', section: '🏫 Vie scolaire', badge: '' },
+    { route: '/parent/tarifs-services', ico: '📋', label: 'Services scolaires', section: '', badge: '' },
+
 
     { route: '/parent/informations', ico: '📢', label: 'Informations', section: '💬 Communication', badge: '' },
-    { route: '/parent/messages', ico: '✉️', label: 'Messages', section: '', badge: '' },
+    //  { route: '/parent/messages', ico: '✉️', label: 'Messages', section: '', badge: '' },
 
     { route: '/parent/monprofil', ico: '👤', label: 'Mon profil', section: '⚙️ Mon compte', badge: '' },
     { route: '/parent/changer-mot-passe', ico: '🔑', label: 'Modifier le mot de passe' },
@@ -112,7 +111,7 @@ export class SideBarParentComponent {
 
   naviguer(route: string | undefined): void {
     if (route) {
-      this.router.navigate([route]);
+      void this.router.navigate([route]);
       this.close.emit();
     }
   }
@@ -123,7 +122,7 @@ export class SideBarParentComponent {
 
   deconnecter(): void {
     this.localStorage.clear();
-    this.router.navigate(['/auth/']);
+    void this.router.navigate(['/auth/']);
   }
 
 }

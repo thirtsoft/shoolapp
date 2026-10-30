@@ -120,8 +120,6 @@ export class DetailsInscriptionComponent implements OnInit, OnDestroy {
       });
   }
 
-
-
   ngOnDestroy(): void {
     if (this.photoPreview) {
       URL.revokeObjectURL(this.photoPreview);
@@ -1376,10 +1374,7 @@ export class DetailsInscriptionComponent implements OnInit, OnDestroy {
     }
   }
 
-  private async getAssetBase64(
-    assetPath: string
-  ): Promise<string | null> {
-
+  private async getAssetBase64(assetPath: string): Promise<string | null> {
     try {
       const response = await fetch(assetPath);
 
@@ -1406,12 +1401,8 @@ export class DetailsInscriptionComponent implements OnInit, OnDestroy {
     }
   }
 
-  private async convertBlobToPngBase64(
-    blob: Blob
-  ): Promise<string | null> {
-
+  private async convertBlobToPngBase64(blob: Blob): Promise<string | null> {
     try {
-
       const objectUrl = URL.createObjectURL(blob);
 
       try {

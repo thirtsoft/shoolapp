@@ -19,6 +19,8 @@ import { ListeInscription } from '../../../../core/models/dossiereleve/request/l
 import { PaiementAdd } from '../../../../core/models/dossiereleve/request/paiement-add';
 import { CreateEleveResponse, ResponseEleve, ResponseMessage } from '../../../../core/models/message/response/response-message';
 import { EleveInscritClasse } from '../../../../core/models/dossiereleve/eleve-inscrit-classe-response';
+import { InscriptionEleveAnneeCouranteResponse } from '../../../../core/models/dossiereleve/inscription-eleve-annee-courante-response';
+import { BulletinEleveResponse } from '../../../../core/models/dossiereleve/bulletin/bulletin-eleve-response';
 
 @Injectable({
   providedIn: 'root'
@@ -132,6 +134,12 @@ export class DossierEleveService {
     return this.http.get<EleveInscritClasse[]>(`${this.baseUrl}/inscription/classe/${classeId}/annee-scolaire/${anneeScolaireId}`, this.httpOptions);
   }
 
+  getInscriptionAnneeCourante(eleveId: number) {
+    return this.http.get<InscriptionEleveAnneeCouranteResponse>(
+      `${this.baseUrl}/inscription/eleve/${eleveId}/inscription-annee-courante`
+    );
+  }
+
   getListInscriptionsByEleve(eleveId: number): Observable<ListeInscription[]> {
     return this.http.get<ListeInscription[]>(`${this.baseUrl}/inscription/by-eleve/${eleveId}`, this.httpOptions);
   }
@@ -202,20 +210,23 @@ export class DossierEleveService {
     if (!query || query.trim().length < 3) {
       return of([]);
     }
-
     return this.http.get<ParentSearchToCreateEleve[]>(
       `${this.baseUrl}/parent/search`,
       {
         ...this.httpOptions,
-        params: {
-          query: query.trim()
-        }
+        params: { query: query.trim() }
       }
     ).pipe(
       catchError(error => {
         console.error('Erreur lors de la recherche des parents :', error);
         return of([]);
       })
+    );
+  }
+
+  getBulletinsAnneeCourante(eleveId: number) {
+    return this.http.get<BulletinEleveResponse[]>(
+      `${this.baseUrl}/bulletin/eleve/${eleveId}/bulletins-annee-courante`
     );
   }
 }

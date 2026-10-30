@@ -1,16 +1,15 @@
-<app-generic-table-dossier
-  title="Liste des notes de la semaine"
-  titleFitre="Note"
+<app-generic-table-referentiel
+  [title]="'Liste des services : ' + nomNiveauConcerne"
+  titleFitre="Tarif"
   [tableColumns]="columns"
-  [tableData]="noteData"
-  [isLoading]="isLoading"
-  [isEyesIcon]="true"
+  [tableData]="tarifData"
+  [isNoAjout]="true"
   [tableSizes]="tableSizes"
   [totalElements]="totalElements"
   [currentPage]="currentPage"
-  [isNoAjout]="true"
   [pageSize]="pageSize"
   (pageChange)="changePage($event)"
+  [deleteEndPoint]="deleteEndpoint"
   [showSearch]="false"
   [filtered]="tableFilters"
   (filterChange)="onFilterChange($event.filter, $event.value)"
@@ -18,4 +17,4 @@
   (resetFilters)="resetFilters()"
   (sizeChange)="changeSize($event)"
 >
-</app-generic-table-dossier>
+</app-generic-table-referentiel>
