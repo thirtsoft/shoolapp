@@ -1,1 +1,464 @@
-<p>details-exercice works!</p>
+<div class="exercice-page">
+  <header class="page-header">
+    <button type="button" class="back-button" (click)="goBack()">
+      <i class="fas fa-arrow-left"></i>
+
+      <span>Retour aux exercices</span>
+    </button>
+
+    <div class="header-content">
+      <div>
+        <div class="eyebrow">
+          <i class="fas fa-book-open"></i>
+          Planification scolaire
+        </div>
+
+        <h1>Détails de l'exercice</h1>
+
+        <p>Consultez les informations et la pièce jointe associée à cet exercice.</p>
+      </div>
+
+      @if (!isLoading && detailsExercice.libelleEtat) {
+        <div class="status-badge" [ngClass]="getEtatClass()">
+          @if (isPublie()) {
+            <i class="fas fa-circle-check"></i>
+          } @else {
+            <i class="fas fa-file-pen"></i>
+          }
+
+          <span>
+            {{ detailsExercice.libelleEtat }}
+          </span>
+        </div>
+      }
+    </div>
+  </header>
+
+  @if (isLoading) {
+    <div class="loading-card">
+      <div class="spinner"></div>
+
+      <div>
+        <strong>Chargement de l'exercice...</strong>
+
+        <p>Récupération des informations.</p>
+      </div>
+    </div>
+  }
+
+  @if (!isLoading && errorMessage) {
+    <div class="error-card">
+      <div class="error-icon">
+        <i class="fas fa-circle-exclamation"></i>
+      </div>
+
+      <div>
+        <strong>Impossible de charger l'exercice</strong>
+
+        <p>{{ errorMessage }}</p>
+
+        <button type="button" class="btn-secondary" (click)="getDetailsExercice(exerciceId)">
+          <i class="fas fa-rotate-right"></i>
+          Réessayer
+        </button>
+      </div>
+    </div>
+  }
+
+  @if (!isLoading && !errorMessage && detailsExercice.id) {
+    <div class="actions-bar">
+      <div class="actions-description">
+        <div class="action-icon">
+          <i class="fas fa-sliders"></i>
+        </div>
+
+        <div>
+          <strong>Gestion de l'exercice</strong>
+
+          <span>
+            {{ detailsExercice.numeroExercice || 'Exercice' }}
+          </span>
+        </div>
+      </div>
+
+      <div class="actions-buttons">
+        @if (isBrouillon()) {
+          <button type="button" class="btn-publish" [disabled]="isActionLoading">
+            @if (isActionLoading) {
+              <span class="button-spinner"></span>
+            } @else {
+              <i class="fas fa-cloud-arrow-up"></i>
+            }
+
+            <span>Publier</span>
+          </button>
+        }
+
+        @if (isPublie()) {
+          <button type="button" class="btn-unpublish" [disabled]="isActionLoading">
+            @if (isActionLoading) {
+              <span class="button-spinner"></span>
+            } @else {
+              <i class="fas fa-cloud-arrow-down"></i>
+            }
+
+            <span>Dépublier</span>
+          </button>
+        }
+      </div>
+    </div>
+
+    <section class="main-card">
+      <div class="card-header">
+        <div class="card-title">
+          <div class="card-icon blue">
+            <i class="fas fa-file-lines"></i>
+          </div>
+
+          <div>
+            <h2>{{ detailsExercice.titre || 'Exercice sans titre' }}</h2>
+
+            <span>
+              {{ detailsExercice.numeroExercice || '-' }}
+            </span>
+          </div>
+        </div>
+      </div>
+
+      <div class="card-body">
+        <!-- DESCRIPTION -->
+
+        <div class="description-block">
+          <div class="field-label">
+            <i class="fas fa-align-left"></i>
+            Description
+          </div>
+
+          <div class="description-content">
+            @if (detailsExercice.description) {
+              {{ detailsExercice.description }}
+            } @else {
+              <span class="empty-value"> Aucune description renseignée. </span>
+            }
+          </div>
+        </div>
+
+        <!-- INFORMATIONS -->
+
+        <div class="info-grid">
+          <div class="info-item">
+            <span class="info-label">
+              <i class="fas fa-chalkboard"></i>
+              Classe
+            </span>
+
+            <strong>
+              {{ detailsExercice.classe || '-' }}
+            </strong>
+          </div>
+
+          <div class="info-item">
+            <span class="info-label">
+              <i class="fas fa-book"></i>
+              Matière
+            </span>
+
+            <strong>
+              {{ detailsExercice.matiere || '-' }}
+            </strong>
+          </div>
+
+          <div class="info-item">
+            <span class="info-label">
+              <i class="fas fa-user-tie"></i>
+              Enseignant
+            </span>
+
+            <strong>
+              {{ detailsExercice.enseignant || '-' }}
+            </strong>
+          </div>
+
+          <div class="info-item">
+            <span class="info-label">
+              <i class="fas fa-book-open"></i>
+              Livre
+            </span>
+
+            <strong>
+              {{ detailsExercice.livre || '-' }}
+            </strong>
+          </div>
+
+          <div class="info-item">
+            <span class="info-label">
+              <i class="fas fa-file-lines"></i>
+              Page
+            </span>
+
+            <strong>
+              {{ detailsExercice.page || '-' }}
+            </strong>
+          </div>
+
+          <div class="info-item">
+            <span class="info-label">
+              <i class="fas fa-link"></i>
+              URL
+            </span>
+
+            @if (detailsExercice.url && detailsExercice.url !== 'RAS') {
+              <a
+                [href]="detailsExercice.url"
+                target="_blank"
+                rel="noopener noreferrer"
+                class="external-link"
+              >
+                Ouvrir le lien
+                <i class="fas fa-arrow-up-right-from-square"></i>
+              </a>
+            } @else {
+              <strong>-</strong>
+            }
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ======================================================= -->
+    <!-- PÉRIODE -->
+    <!-- ======================================================= -->
+
+    <section class="secondary-grid">
+      <div class="detail-card">
+        <div class="detail-card-header">
+          <div class="small-icon calendar">
+            <i class="fas fa-calendar-days"></i>
+          </div>
+
+          <div>
+            <h3>Période de l'exercice</h3>
+            <span>Dates de disponibilité</span>
+          </div>
+        </div>
+
+        <div class="date-range">
+          <div class="date-box">
+            <span>Début</span>
+
+            <strong>
+              {{ formatDate(detailsExercice.dateDebut) }}
+            </strong>
+          </div>
+
+          <div class="date-arrow">
+            <i class="fas fa-arrow-right"></i>
+          </div>
+
+          <div class="date-box">
+            <span>Fin</span>
+
+            <strong>
+              {{ formatDate(detailsExercice.dateFin) }}
+            </strong>
+          </div>
+        </div>
+      </div>
+
+      <div class="detail-card">
+        <div class="detail-card-header">
+          <div class="small-icon history">
+            <i class="fas fa-clock-rotate-left"></i>
+          </div>
+
+          <div>
+            <h3>Informations système</h3>
+            <span>Suivi de l'exercice</span>
+          </div>
+        </div>
+
+        <div class="system-info">
+          <div>
+            <span>Créé le</span>
+            <strong>
+              {{ formatDateTime(detailsExercice.dateCreation) }}
+            </strong>
+          </div>
+
+          <div>
+            <span>Publié le</span>
+            <strong>
+              {{ formatDate(detailsExercice.datePublication!) }}
+            </strong>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ======================================================= -->
+    <!-- DOCUMENT -->
+    <!-- ======================================================= -->
+
+    <section class="document-card">
+      <div class="document-header">
+        <div class="document-title">
+          <div class="document-icon">
+            <i class="fas fa-paperclip"></i>
+          </div>
+
+          <div>
+            <h2>Pièce jointe</h2>
+
+            <p>Document associé à l'exercice</p>
+          </div>
+        </div>
+      </div>
+
+      @if (hasDocument()) {
+        <div class="document-content">
+          <div class="file-preview">
+            <div class="file-icon">
+              <i class="fas fa-file-pdf"></i>
+            </div>
+
+            <div class="file-information">
+              <strong>
+                {{ getDocumentName() }}
+              </strong>
+
+              <span> Fiche d'exercice </span>
+            </div>
+          </div>
+
+          <div class="document-actions">
+            <button
+              type="button"
+              class="btn-document-outline"
+              (click)="openPreviewModal()"
+              [disabled]="isDocumentLoading"
+            >
+              <i class="fas fa-eye"></i>
+
+              <span>Visualiser</span>
+            </button>
+
+            <button
+              type="button"
+              class="btn-document-primary"
+              (click)="downloadFile()"
+              [disabled]="isDocumentLoading"
+            >
+              <i class="fas fa-download"></i>
+
+              <span>Télécharger</span>
+            </button>
+          </div>
+        </div>
+      } @else {
+        <div class="no-document">
+          <div class="no-document-icon">
+            <i class="fas fa-file-circle-xmark"></i>
+          </div>
+
+          <div>
+            <strong>Aucune pièce jointe</strong>
+
+            <p>Aucun document n'est associé à cet exercice.</p>
+          </div>
+        </div>
+      }
+    </section>
+
+    <div class="page-footer">
+      <span>
+        Exercice
+        <strong>{{ detailsExercice.numeroExercice || '-' }}</strong>
+      </span>
+
+      <span class="separator">•</span>
+
+      <span>
+        État :
+        <strong>{{ detailsExercice.libelleEtat || '-' }}</strong>
+      </span>
+    </div>
+  }
+</div>
+
+@if (showPreviewModal) {
+  <div class="modal-overlay" (click)="closePreviewModal()">
+    <div class="modal-container" (click)="$event.stopPropagation()">
+      <!-- Header du modal avec les infos clés -->
+      <div class="modal-header">
+        <div class="modal-header-info">
+          <h5 class="modal-title">
+            <i class="fas fa-file-alt me-2"></i>
+            {{ getDocumentName() || 'Aperçu du fichier' }}
+          </h5>
+          <div class="modal-header-summary">
+            <span class="modal-header-item">
+              <i class="fas fa-hashtag me-1"></i>
+              <strong>N°</strong> {{ detailsExercice.numeroExercice }}
+            </span>
+            <span class="modal-header-separator">•</span>
+            <span class="modal-header-item">
+              <strong>Titre :</strong> {{ detailsExercice.titre }}
+            </span>
+            <span class="modal-header-separator">•</span>
+            <span class="modal-header-item highlight">
+              <strong>Pour :</strong> {{ detailsExercice.classe }} - {{ detailsExercice.matiere }}
+            </span>
+          </div>
+        </div>
+        <div class="modal-header-actions">
+          <button
+            class="btn btn-sm btn-modal-download"
+            (click)="downloadFile()"
+            [disabled]="isDocumentLoading"
+          >
+            @if (isDocumentLoading) {
+              <i class="fas fa-spinner fa-spin me-2"></i>
+            } @else {
+              <i class="fas fa-download me-2"></i>
+            }
+            Télécharger
+          </button>
+          <button class="btn-close" (click)="closePreviewModal()">
+            <i class="fas fa-times"></i>
+          </button>
+        </div>
+      </div>
+
+      <div class="modal-body">
+        @if (isDocumentLoading) {
+          <div class="d-flex flex-column align-items-center justify-content-center h-100">
+            <i class="fas fa-spinner fa-spin fa-2x mb-3"></i>
+
+            <p class="mb-0">Chargement du document...</p>
+          </div>
+        } @else if (documentPreviewUrl) {
+          @if (isImageFile()) {
+            <img [src]="documentPreviewUrl" [alt]="getDocumentName()" class="modal-preview-image" />
+          } @else {
+            <iframe
+              [src]="documentPreviewUrl"
+              class="modal-preview-iframe"
+              frameborder="0"
+            ></iframe>
+          }
+        } @else {
+          <div class="d-flex flex-column align-items-center justify-content-center h-100">
+            <i class="fas fa-file-excel fa-2x mb-3"></i>
+
+            <p>Impossible d'afficher le document.</p>
+
+            <button type="button" class="btn btn-primary" (click)="loadDocumentContent()">
+              <i class="fas fa-sync-alt me-2"></i>
+              Réessayer
+            </button>
+          </div>
+        }
+      </div>
+    </div>
+  </div>
+}

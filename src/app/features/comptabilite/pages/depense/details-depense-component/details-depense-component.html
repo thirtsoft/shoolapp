@@ -122,11 +122,6 @@
               <div class="attachment-file">
                 <div class="file-preview-card">
                   <div class="file-icon-wrapper">
-                    <!--  <img
-                      [src]="getFileIcon(depense?.piecesJointesDTO?.nomTechnique || '')"
-                      [alt]="depense?.piecesJointesDTO?.nomFichier"
-                      class="file-type-icon"
-                    /> -->
                     <img
                       [src]="getFileIcon(getDocumentName())"
                       [alt]="getDocumentName()"
@@ -138,11 +133,6 @@
                       {{ getDocumentName() || 'Fichier sans nom' }}
                     </h5>
                     <p class="file-meta">
-                      <!--  @if (depense?.piecesJointesDTO?.content) {
-                        <span class="file-size">
-                          {{ getFileSize() }}
-                        </span>
-                      } -->
                       @if (depense?.documentResponse?.dateCreation) {
                         <span class="file-date">
                           Ajouté le

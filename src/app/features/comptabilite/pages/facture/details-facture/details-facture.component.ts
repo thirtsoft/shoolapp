@@ -3722,6 +3722,6 @@ export class DetailsFactureComponent implements OnInit {
 
 
   goBack(): void {
-    this.router.navigate(['admin/comptabilite/facture']);
+    void this.router.navigate(['admin/comptabilite/facture']);
   }
 }

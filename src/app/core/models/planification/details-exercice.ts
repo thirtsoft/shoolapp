@@ -1,30 +1,40 @@
-import { PieceJointe } from "../piecejointe/piece-jointe";
+import { DocumentResponse } from "../../piecejointe/document-response.model";
 
 export interface DetailsExercice {
     id?: number;
+
+    numeroExercice?: string;
 
     titre?: string;
 
     page?: string;
 
-    numeroExercice?: string;
-
     description?: string;
 
     url?: string;
 
-    piece_jointe?: string;
-
     enseignant?: string;
+
+    matiere?: string;
 
     classe?: string;
 
     livre?: string;
 
+    anneeScolaire?: string;
+
+    libelleEtat?: string;
+
     dateDebut?: Date;
 
     dateFin?: Date;
 
-    piecesJointesDTO?: PieceJointe;
+    dateCreation?: Date;
+
+    datePublication?: Date;
+
+    documentResponse?: DocumentResponse;
+
+    recordStatus?: string;
 
 }
