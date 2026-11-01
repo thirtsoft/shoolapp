@@ -37,8 +37,6 @@ export class DetailsExerciceComponent implements OnInit, OnDestroy {
 
   errorMessage = '';
 
-  profil: 'PARENT' | 'ENSEIGNANT' | 'ADMINISTRATION' = 'PARENT';
-
   showPreviewModal = false;
   isDocumentLoading = false;
   documentPreviewUrl: SafeResourceUrl | null = null;
@@ -49,7 +47,6 @@ export class DetailsExerciceComponent implements OnInit, OnDestroy {
   private readonly activeRoute = inject(ActivatedRoute);
   private readonly router = inject(Router);
   private readonly dateFormat = inject(DateformatService);
-  private readonly referentielResource = inject(ReferentielResourceService);
   private readonly destroyRef = inject(DestroyRef);
   private readonly sanitizer = inject(DomSanitizer);
   private readonly toastService = inject(ToastrService);
