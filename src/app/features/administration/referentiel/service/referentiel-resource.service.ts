@@ -72,6 +72,11 @@ export class ReferentielResourceService {
     return this.http.get<T>(url, this.httpOptions);
   }
 
+  recupererUneResourceUuId<T>(endpoint: string, uuid: string): Observable<T> {
+    const url = `${this.referentielUrl}/${endpoint}/${uuid}`;
+    return this.http.get<T>(url, this.httpOptions);
+  }
+
   recupererDetailsUneResource<T>(endpoint: string, id: number): Observable<T> {
     const url = `${this.referentielUrl}/${endpoint}/${id}/details`;
     return this.http.get<T>(url, this.httpOptions);
@@ -84,6 +89,11 @@ export class ReferentielResourceService {
 
   modifierUneRessource<T>(endpoint: string, id: number, resource: T) {
     const url = `${this.referentielUrl}/${endpoint}/update/${id}`;
+    return this.http.put<ResponseMessage>(url, resource, this.httpOptions);
+  }
+
+  modifierUneRessourceUuid<T>(endpoint: string, uuid: string, resource: T) {
+    const url = `${this.referentielUrl}/${endpoint}/update/${uuid}`;
     return this.http.put<ResponseMessage>(url, resource, this.httpOptions);
   }
 

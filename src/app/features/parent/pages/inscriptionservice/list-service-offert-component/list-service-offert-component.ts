@@ -1,14 +1,8 @@
-import { Component, DestroyRef, inject, OnInit } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { IFilterConfig } from '../../../../../core/filtered-config/FiltreConfiguration';
 import { GenericTableReferentielComponent } from '../../../../../core/generic/generic-table-referentiel/generic-table-referentiel.component';
-import { ListeClasse } from '../../../../../core/models/referentiels/classe';
-import { TypeServiceOffert } from '../../../../../core/models/referentiels/type-service-offert';
-import { CommonService } from '../../../../../core/services/common.service';
 import { PlanificationResourceService } from '../../../../administration/planification/services/planification-resource.service';
-import { ReferentielResourceService } from '../../../../administration/referentiel/service/referentiel-resource.service';
 import { ParentSessionService } from '../../../service/parent-session.service';
-import { forkJoin } from 'rxjs';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 @Component({
   selector: 'app-list-service-offert-component',
@@ -41,8 +35,6 @@ export class ListServiceOffertComponent implements OnInit {
   nomNiveauConcerne = '';
 
   private readonly parentSession = inject(ParentSessionService);
-  private readonly destroyRef = inject(DestroyRef);
-  private readonly commonService = inject(CommonService);
   private readonly planificationResource = inject(PlanificationResourceService);
 
   constructor() {

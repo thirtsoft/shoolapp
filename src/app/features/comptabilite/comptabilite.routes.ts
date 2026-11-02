@@ -1,6 +1,14 @@
 
 import { Routes } from '@angular/router';
 import { ComptabiliteComponent } from './comptabilite.component';
+import { CreateEditCompteBancaireComponent } from './pages/comptebancaire/create-edit-compte-bancaire-component/create-edit-compte-bancaire-component';
+import { CreateEditDepotBancaireComponent } from './pages/comptebancaire/create-edit-depot-bancaire-component/create-edit-depot-bancaire-component';
+import { DetailsDepotBancaireComponent } from './pages/comptebancaire/details-depot-bancaire-component/details-depot-bancaire-component';
+import { ListCompteBancaireComponent } from './pages/comptebancaire/list-compte-bancaire-component/list-compte-bancaire-component';
+import { ListDepotBancaireComponent } from './pages/comptebancaire/list-depot-bancaire-component/list-depot-bancaire-component';
+import { CreateEditDepenseComponent } from './pages/depense/create-edit-depense-component/create-edit-depense-component';
+import { DepenseComponent } from './pages/depense/depense-component/depense-component';
+import { DetailsDepenseComponent } from './pages/depense/details-depense-component/details-depense-component';
 import { InscrireEleveServiceComponent } from './pages/eleveservice/inscrire-eleve-service/inscrire-eleve-service.component';
 import { ListInscrireEleveServiceComponent } from './pages/eleveservice/list-inscrire-eleve-service/list-inscrire-eleve-service.component';
 import { CreateFactureComponent } from './pages/facture/create-facture/create-facture.component';
@@ -9,9 +17,6 @@ import { GenererFactureClasseComponent } from './pages/facture/generer-facture-c
 import { ListFactureComponent } from './pages/facture/list-facture/list-facture.component';
 import { CreatePaiementComponent } from './pages/paiement/create-paiement/create-paiement.component';
 import { ListPaiementComponent } from './pages/paiement/list-paiement/list-paiement.component';
-import { DepenseComponent } from './pages/depense/depense-component/depense-component';
-import { CreateEditDepenseComponent } from './pages/depense/create-edit-depense-component/create-edit-depense-component';
-import { DetailsDepenseComponent } from './pages/depense/details-depense-component/details-depense-component';
 
 export const COMPTA_ROUTES: Routes = [
   {
@@ -62,7 +67,7 @@ export const COMPTA_ROUTES: Routes = [
         path: 'service/edit/:id',
         component: InscrireEleveServiceComponent
       },
-       {
+      {
         path: 'depenses',
         component: DepenseComponent
       },
@@ -75,11 +80,43 @@ export const COMPTA_ROUTES: Routes = [
         component: CreateEditDepenseComponent
       },
 
-        {
+      {
         path: 'depense/details/:id',
         component: DetailsDepenseComponent
-      }
-      
+      },
+
+      //
+      {
+        path: 'compte-bancaires',
+        component: ListCompteBancaireComponent
+      },
+      {
+        path: 'compte-bancaire/create',
+        component: CreateEditCompteBancaireComponent
+      },
+      {
+        path: 'compte-bancaire/edit/:id',
+        component: CreateEditCompteBancaireComponent
+      },
+
+      {
+        path: 'depots-bancaires',
+        component: ListDepotBancaireComponent
+      },
+      {
+        path: 'depot-bancaire/create',
+        component: CreateEditDepotBancaireComponent
+      },
+      {
+        path: 'depot-bancaire/edit/:id',
+        component: CreateEditDepotBancaireComponent
+      },
+
+      {
+        path: 'depot-bancaire/details/:id',
+        component: DetailsDepotBancaireComponent
+      },
+
     ],
   },
 ];

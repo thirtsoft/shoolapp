@@ -1,0 +1,295 @@
+<div class="page-container">
+  <div class="page-header">
+    <div class="header-left">
+      <button type="button" class="back-button" (click)="annuler()">←</button>
+
+      <div>
+        <div class="breadcrumb">
+          Finances
+          <span>/</span>
+          Trésorerie
+          <span>/</span>
+          Dépôts bancaires
+        </div>
+
+        <h1>
+          {{ isEditMode ? 'Modifier le dépôt bancaire' : 'Nouveau dépôt bancaire' }}
+        </h1>
+
+        <p>
+          {{
+            isEditMode
+              ? 'Modifiez les informations du dépôt ou remplacez sa pièce justificative.'
+              : 'Enregistrez un dépôt effectué sur le compte bancaire de l’établissement.'
+          }}
+        </p>
+      </div>
+    </div>
+  </div>
+
+  @if (errorMessage()) {
+    <div class="alert alert-error">
+      <span class="alert-icon">⚠️</span>
+
+      <span>
+        {{ errorMessage() }}
+      </span>
+    </div>
+  }
+
+  @if (successMessage()) {
+    <div class="alert alert-success">
+      <span class="alert-icon">✓</span>
+
+      <span>
+        {{ successMessage() }}
+      </span>
+    </div>
+  }
+
+  <form class="form-card" [formGroup]="form" (ngSubmit)="enregistrer()">
+    <div class="card-title">
+      <div class="title-icon">🏦</div>
+
+      <div>
+        <h2>Informations du dépôt</h2>
+
+        <p>Les dépôts validés alimentent le solde théorique du compte bancaire.</p>
+      </div>
+    </div>
+
+    <div class="form-grid">
+
+      <div class="form-group">
+        <label for="dateDepot">
+          Date du dépôt
+
+          <span class="required">*</span>
+        </label>
+
+        <input
+          id="dateDepot"
+          type="datetime-local"
+          formControlName="dateDepot"
+          [class.invalid]="hasError('dateDepot', 'required')"
+        />
+
+        @if (hasError('dateDepot', 'required')) {
+          <small class="field-error"> La date du dépôt est obligatoire. </small>
+        }
+      </div>
+
+      <div class="form-group">
+        <label for="compteBancaireId">
+          Compte bancaire
+
+          <span class="required">*</span>
+        </label>
+
+        <select
+          id="compteBancaireId"
+          formControlName="compteBancaireId"
+          [class.invalid]="
+            hasError('compteBancaireId', 'required') || hasError('compteBancaireId', 'min')
+          "
+        >
+          <option [value]="0">Sélectionner un compte bancaire</option>
+
+          @for (compte of comptes(); track compte.id) {
+            <option [value]="compte.id">
+              {{ compte.libelle }}
+              —
+              {{ compte.banqueLibelle || compte.banqueCode }}
+            </option>
+          }
+        </select>
+
+        @if (hasError('compteBancaireId', 'required') || hasError('compteBancaireId', 'min')) {
+          <small class="field-error"> Le compte bancaire est obligatoire. </small>
+        }
+      </div>
+
+      <div class="form-group">
+        <label for="montant" class="form-label">
+          Montant (FCFA) <span class="text-danger">*</span>
+          <i class="fas fa-money-bill-wave ms-1 text-muted"></i>
+        </label>
+
+        <div class="input-group">
+          <input
+            id="montant"
+            type="text"
+            inputmode="decimal"
+            appMontantFormat
+            class="form-control"
+            formControlName="montant"
+            [class.is-invalid]="hasError('montant', 'required') || hasError('montant', 'min')"
+            placeholder="Ex : 2 000 000"
+            autocomplete="off"
+          />
+
+          <span class="input-group-text">FCFA</span>
+        </div>
+
+        @if (hasError('montant', 'required') || hasError('montant', 'min')) {
+          <div class="invalid-feedback d-block">
+            <i class="fas fa-exclamation-circle me-1"></i>
+            Le montant doit être supérieur à zéro.
+          </div>
+        }
+      </div>
+
+      <div class="form-group">
+        <label for="reference"> Référence </label>
+
+        <input
+          id="reference"
+          type="text"
+          formControlName="reference"
+          maxlength="100"
+          placeholder="Ex. Bordereau BD-2026-001"
+        />
+      </div>
+
+      <div class="form-group full-width">
+        <label for="observation"> Observation </label>
+
+        <textarea
+          id="observation"
+          rows="4"
+          maxlength="500"
+          formControlName="observation"
+          placeholder="Observation éventuelle sur le dépôt..."
+        ></textarea>
+
+        <div class="character-info">{{ form.controls.observation.value.length }}/500</div>
+      </div>
+    </div>
+
+    <div class="attachment-section">
+      <div class="attachment-header">
+        <div>
+          <h3>
+            Pièce justificative
+            <span class="required">*</span>
+          </h3>
+
+          <p>Le bordereau ou justificatif du dépôt est obligatoire.</p>
+        </div>
+
+        <div class="attachment-icon">📎</div>
+      </div>
+
+      @if (selectedFile()) {
+        <div class="selected-file">
+          <div class="file-icon">📄</div>
+
+          <div class="file-info">
+            <strong>{{ selectedFileName }}</strong>
+            <span>{{ selectedFileSize }}</span>
+          </div>
+
+          <button
+            type="button"
+            class="remove-file"
+            (click)="supprimerFichierSelectionne()"
+            [disabled]="saving()"
+            title="Supprimer le fichier sélectionné"
+          >
+            ×
+          </button>
+        </div>
+      } @else if (isEditMode && hasExistingFile()) {
+        <div class="existing-file">
+          <div class="file-icon">📄</div>
+
+          <div class="file-info">
+            <strong>{{ getExistingFileName() }}</strong>
+
+            <span>
+              {{ depotBancaire?.documentResponse?.typeDocument || 'Pièce justificative' }}
+            </span>
+
+            <span> Sélectionnez un nouveau fichier ci-dessous pour remplacer celui-ci. </span>
+          </div>
+
+          <span class="file-status">✓ Présente</span>
+        </div>
+      }
+
+      <label class="upload-zone" [class.has-file]="selectedFile()">
+        <input
+          #fileInput
+          type="file"
+          accept=".pdf,.jpg,.jpeg,.png"
+          (change)="onFileSelected($event)"
+          [disabled]="saving()"
+        />
+
+        <span class="upload-icon">⬆️</span>
+
+        <strong>
+          {{ selectedFile() ? 'Changer le fichier' : 'Ajouter une pièce justificative' }}
+        </strong>
+
+        <small> Cliquez pour parcourir vos fichiers </small>
+      </label>
+
+      <div class="attachment-guidelines">
+        <div class="guideline-icon">ℹ️</div>
+
+        <div>
+          <strong>Formats et taille autorisés</strong>
+
+          <p>Formats acceptés : <b>PDF, JPG, JPEG et PNG</b></p>
+
+          <p>
+            Taille maximale : <b>{{ maxFileSizeLabel }}</b> par fichier.
+          </p>
+
+          <small> Veuillez sélectionner un document lisible et de bonne qualité. </small>
+        </div>
+      </div>
+    </div>
+
+    <div class="workflow-info">
+      <div class="workflow-icon">ℹ️</div>
+
+      <div>
+        <strong>Cycle du dépôt</strong>
+
+        <p>
+          Le dépôt est d'abord enregistré en
+          <b>BROUILLON</b>. Il pourra ensuite être envoyé pour validation puis passer à l'état
+          <b>VALIDEE</b>.
+        </p>
+
+        <p>
+          Seuls les dépôts <b>VALIDEE</b> sont pris en compte dans le solde théorique du compte
+          bancaire.
+        </p>
+      </div>
+    </div>
+
+    <div class="form-actions mt-4">
+      <button
+        type="button"
+        class="btn btn-secondary btn-lg"
+        (click)="annuler()"
+        [disabled]="saving()"
+      >
+        Annuler
+      </button>
+
+      <button type="submit" class="btn btn-primary btn-lg" [disabled]="saving()">
+        @if (saving()) {
+          <span class="spinner"></span>
+
+          {{ uploading() ? 'Envoi de la pièce...' : 'Enregistrement...' }}
+        } @else {
+          {{ isEditMode ? 'Enregistrer les modifications' : 'Créer le dépôt' }}
+        }
+      </button>
+    </div>
+  </form>
+</div>

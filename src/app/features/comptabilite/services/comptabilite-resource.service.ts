@@ -133,6 +133,13 @@ export class ComptabiliteResourceService {
     return this.http.put<ResponseMessage>(url, resource, this.httpOptions);
   }
 
+  modifierPieceJointeRessource(endpoint: string, id: number, file: File) {
+    const url = `${this.comptabiliteUrl}/${endpoint}/${id}/piece-jointe`;
+    const formData = new FormData();
+    formData.append('file', file, file.name);
+    return this.http.put<ResponseMessage>(url, formData);
+  }
+
   supprimerUneResource<T>(endpoint: string, id: number) {
     const url = `${this.comptabiliteUrl}/${endpoint}/'delete'/${id}`;
     return this.http.delete<ResponseMessage>(url, this.httpOptions);
@@ -142,6 +149,13 @@ export class ComptabiliteResourceService {
   changeEtatResource<T>(endpoint: string, id: number, resource: Partial<T>): Observable<any> {
     const url = `${this.comptabiliteUrl}/${endpoint}/${id}/changeretat`;
     return this.http.patch<ResponseMessage>(url, resource, this.httpOptions);
+  }
+
+  executerActionResource(endpoint: string, id: number, action: string): Observable<string> {
+    const url = `${this.comptabiliteUrl}/${endpoint}/${id}/${action}`;
+    return this.http.patch(url, {}, {
+      ...this.httpOptions, responseType: 'text'
+    });
   }
 
   confirmerPaiement(id: number): Observable<ResponseMessage> {
@@ -161,6 +175,11 @@ export class ComptabiliteResourceService {
   }
 
   enregistrerExercicetWithFiles<T>(endpoint: string, formData: FormData) {
+    const url = `${this.comptabiliteUrl}/${endpoint}/enregistrerwithfiles`;
+    return this.http.post<ResponseMessage>(url, formData);
+  }
+
+  enregistrerResourcetWithFiles<T>(endpoint: string, formData: FormData) {
     const url = `${this.comptabiliteUrl}/${endpoint}/enregistrerwithfiles`;
     return this.http.post<ResponseMessage>(url, formData);
   }

@@ -1,0 +1,191 @@
+<div class="page-container">
+  <div class="page-header">
+    <div class="header-left">
+      <button type="button" class="back-button" (click)="annuler()">←</button>
+
+      <div>
+        <div class="breadcrumb">
+          Finances
+          <span>/</span>
+          Trésorerie
+          <span>/</span>
+          Comptes bancaires
+        </div>
+
+        <h1>
+          {{ isEditMode ? 'Modifier le compte bancaire' : 'Nouveau compte bancaire' }}
+        </h1>
+
+        <p>
+          {{
+            isEditMode
+              ? 'Modifiez les informations administratives du compte.'
+              : 'Ajoutez un compte bancaire de l’établissement.'
+          }}
+        </p>
+      </div>
+    </div>
+  </div>
+
+  @if (errorMessage()) {
+    <div class="alert alert-error">
+      <span class="alert-icon">⚠️</span>
+      <span>{{ errorMessage() }}</span>
+    </div>
+  }
+
+  @if (successMessage()) {
+    <div class="alert alert-success">
+      <span class="alert-icon">✓</span>
+      <span>{{ successMessage() }}</span>
+    </div>
+  }
+
+  <form class="form-card" [formGroup]="form" (ngSubmit)="enregistrer()">
+    <div class="card-title">
+      <div class="title-icon">🏦</div>
+
+      <div>
+        <h2>Informations du compte</h2>
+        <p>Renseignez les informations du compte bancaire de l’établissement.</p>
+      </div>
+    </div>
+
+    <div class="form-grid">
+      <!-- BANQUE -->
+
+      <div class="form-group full-width">
+        <label for="banque">
+          Banque
+          <span class="required">*</span>
+        </label>
+
+        <select
+          id="banque"
+          formControlName="banqueUuId"
+          [class.invalid]="hasError('banqueUuId', 'required')"
+        >
+          <option value="">Sélectionner une banque</option>
+
+          @for (banque of banques(); track banque.uuid) {
+            <option [value]="banque.uuid">{{ banque.code }} — {{ banque.libelle }}</option>
+          }
+        </select>
+
+        @if (hasError('banqueUuId', 'required')) {
+          <small class="field-error"> La banque est obligatoire. </small>
+        }
+      </div>
+
+      <div class="form-group">
+        <label for="libelle">
+          Libellé du compte
+          <span class="required">*</span>
+        </label>
+
+        <input
+          id="libelle"
+          type="text"
+          formControlName="libelle"
+          maxlength="100"
+          placeholder="Ex. Compte principal de l'établissement"
+          [class.invalid]="hasError('libelle', 'required')"
+        />
+
+        @if (hasError('libelle', 'required')) {
+          <small class="field-error"> Le libellé est obligatoire. </small>
+        }
+      </div>
+
+      <div class="form-group">
+        <label for="numeroCompte">
+          Numéro de compte
+          <span class="required">*</span>
+        </label>
+
+        <input
+          id="numeroCompte"
+          type="text"
+          formControlName="numeroCompte"
+          maxlength="100"
+          placeholder="Ex. 00123456789"
+          [class.invalid]="hasError('numeroCompte', 'required')"
+        />
+
+        @if (hasError('numeroCompte', 'required')) {
+          <small class="field-error"> Le numéro de compte est obligatoire. </small>
+        }
+      </div>
+
+      <div class="form-group">
+        <label for="soldeInitial">
+          Solde initial
+          <span class="required">*</span>
+        </label>
+
+        <div class="input-money">
+          <input
+            id="soldeInitial"
+            type="number"
+            min="0"
+            step="0.01"
+            formControlName="soldeInitial"
+            [class.invalid]="hasError('soldeInitial', 'required')"
+          />
+
+          <span>FCFA</span>
+        </div>
+
+        <small class="field-hint"> Montant disponible sur le compte à la date de départ. </small>
+
+        @if (hasError('soldeInitial', 'required')) {
+          <small class="field-error"> Le solde initial est obligatoire. </small>
+        }
+      </div>
+
+      <div class="form-group">
+        <label for="dateSoldeInitial">
+          Date du solde initial
+          <span class="required">*</span>
+        </label>
+
+        <input
+          id="dateSoldeInitial"
+          type="date"
+          formControlName="dateSoldeInitial"
+          [class.invalid]="hasError('dateSoldeInitial', 'required')"
+        />
+
+        @if (hasError('dateSoldeInitial', 'required')) {
+          <small class="field-error"> La date du solde initial est obligatoire. </small>
+        }
+      </div>
+    </div>
+
+    <div class="info-box">
+      <span class="info-icon">ℹ️</span>
+
+      <div>
+        <strong>À propos du solde</strong>
+
+        <p>
+          Le solde initial constitue le point de départ du compte. Les mouvements bancaires validés
+          viendront ensuite alimenter automatiquement le solde du compte.
+        </p>
+      </div>
+    </div>
+
+    <div class="form-actions mt-4">
+      <button type="button" class="btn btn-secondary btn-lg" (click)="annuler()">Annuler</button>
+
+      <button type="submit" class="btn btn-primary btn-lg" [disabled]="saving()">
+        @if (saving()) {
+          <span class="spinner"></span>
+          Enregistrement...
+        } @else {
+          {{ isEditMode ? 'Enregistrer les modifications' : 'Créer le compte' }}
+        }
+      </button>
+    </div>
+  </form>
+</div>
