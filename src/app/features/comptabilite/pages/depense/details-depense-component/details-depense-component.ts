@@ -117,6 +117,7 @@ export class DetailsDepenseComponent implements OnInit, OnDestroy {
     const filename = this.getDocumentName();
     return filename.split('.').pop()?.toLowerCase() || '';
   }
+
   isImageFile(): boolean {
     const extension = this.getFileExtension();
     const imageExtensions = ['jpg', 'jpeg', 'png', 'gif', 'bmp', 'svg', 'webp',];
@@ -290,8 +291,9 @@ export class DetailsDepenseComponent implements OnInit, OnDestroy {
     this.revokeDocumentUrl();
     document.body.style.overflow = '';
   }
+  
   goBack(): void {
-    this.router.navigate([this.REDIRECT_PATH,]);
+    void this.router.navigate([this.REDIRECT_PATH,]);
   }
 
 }

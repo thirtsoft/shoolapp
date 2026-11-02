@@ -1,0 +1,507 @@
+<div class="page-container">
+  <div class="page-header">
+    <div class="header-left">
+      <button type="button" class="back-button" (click)="retourListe()">←</button>
+
+      <div>
+        <div class="breadcrumb">
+          Finances
+          <span>/</span>
+          Trésorerie
+          <span>/</span>
+          <a (click)="retourListe()">Dépôts bancaires</a>
+          <span>/</span>
+          Détails
+        </div>
+
+        <h1>Détails du dépôt bancaire</h1>
+
+        <p>Consultez les informations et le suivi du dépôt bancaire.</p>
+      </div>
+    </div>
+
+    <div class="header-actions">
+      <button type="button" class="btn btn-outline" (click)="retourListe()">
+        <span>←</span>
+        Retour à la liste
+      </button>
+    </div>
+  </div>
+
+  @if (loading()) {
+    <div class="loading-container">
+      <div class="spinner"></div>
+      <p>Chargement des détails du dépôt...</p>
+    </div>
+  } @else if (detailsDepotBancaire) {
+    <div class="detail-hero">
+      <div class="hero-left">
+        <div class="hero-icon">🏦</div>
+
+        <div>
+          <span class="hero-label">Dépôt bancaire</span>
+
+          <h2>{{ detailsDepotBancaire.codeDepot }}</h2>
+
+          <p>
+            Enregistré le {{ formatDate(detailsDepotBancaire.dateCreation) }} par
+            {{ detailsDepotBancaire.enregistrePar || 'Non renseigné' }}
+          </p>
+        </div>
+      </div>
+
+      <div class="hero-right">
+        <span class="status-badge" [ngClass]="getEtatClass()">
+          <span class="status-dot"></span>
+          {{ detailsDepotBancaire.etatLibelle }}
+        </span>
+      </div>
+    </div>
+
+    <div class="amount-card">
+      <div class="amount-icon">💰</div>
+
+      <div class="amount-content">
+        <span>Montant du dépôt</span>
+
+        <strong>{{ formatMontant(detailsDepotBancaire.montant) }}</strong>
+
+        <small>FCFA</small>
+      </div>
+
+      <div class="amount-reference">
+        <span>Référence du dépôt</span>
+        <strong>{{ detailsDepotBancaire.reference || 'Non renseignée' }}</strong>
+      </div>
+    </div>
+
+    <div class="details-grid">
+      <section class="detail-card">
+        <div class="card-heading">
+          <div class="heading-icon">📋</div>
+
+          <div>
+            <h3>Informations du dépôt</h3>
+            <p>Informations générales sur l'opération.</p>
+          </div>
+        </div>
+
+        <div class="information-list">
+          <div class="information-item">
+            <span>Date du dépôt</span>
+            <strong>{{ formatDateTime(detailsDepotBancaire.dateDepot!) }}</strong>
+          </div>
+
+          <div class="information-item">
+            <span>Code du dépôt</span>
+            <strong>{{ detailsDepotBancaire.codeDepot }}</strong>
+          </div>
+
+          <div class="information-item">
+            <span>Référence</span>
+            <strong>{{ detailsDepotBancaire.reference || '—' }}</strong>
+          </div>
+
+          <div class="information-item">
+            <span>Enregistré par</span>
+            <strong>{{ detailsDepotBancaire.enregistrePar || '—' }}</strong>
+          </div>
+
+          <div class="information-item">
+            <span>Date de création</span>
+            <strong>{{ formatDate(detailsDepotBancaire.dateCreation) }}</strong>
+          </div>
+
+          <div class="information-item">
+            <span>Statut de l'enregistrement</span>
+            <strong>{{ detailsDepotBancaire.recordStatus || '—' }}</strong>
+          </div>
+        </div>
+      </section>
+
+      <section class="detail-card">
+        <div class="card-heading">
+          <div class="heading-icon">🏛️</div>
+
+          <div>
+            <h3>Compte bancaire destinataire</h3>
+            <p>Compte sur lequel le dépôt a été effectué.</p>
+          </div>
+        </div>
+
+        <div class="bank-account-card">
+          <div class="bank-logo">🏦</div>
+
+          <div class="bank-account-info">
+            <strong>{{ detailsDepotBancaire.compteBancaireLibelle }}</strong>
+            <span>{{ detailsDepotBancaire.banqueLibelle }}</span>
+          </div>
+        </div>
+
+        <div class="information-list">
+          <div class="information-item">
+            <span>Banque</span>
+            <strong>{{ detailsDepotBancaire.banqueLibelle || '—' }}</strong>
+          </div>
+
+          <div class="information-item">
+            <span>Numéro de compte</span>
+            <strong>{{ detailsDepotBancaire.numeroCompteBancaire || '—' }}</strong>
+          </div>
+
+          <div class="information-item">
+            <span>Intitulé du compte</span>
+            <strong>{{ detailsDepotBancaire.compteBancaireLibelle || '—' }}</strong>
+          </div>
+        </div>
+      </section>
+      <section class="detail-card">
+        <div class="card-heading">
+          <div class="heading-icon">📝</div>
+
+          <div>
+            <h3>Observation</h3>
+            <p>Informations complémentaires sur le dépôt.</p>
+          </div>
+        </div>
+
+        <div class="observation-content">
+          @if (detailsDepotBancaire.observation) {
+            {{ detailsDepotBancaire.observation }}
+          } @else {
+            <span class="empty-value"> Aucune observation renseignée pour ce dépôt. </span>
+          }
+        </div>
+      </section>
+
+      <section class="detail-card">
+        <div class="card-heading">
+          <div class="heading-icon">📎</div>
+
+          <div>
+            <h3>Pièce justificative</h3>
+            <p>Document associé au dépôt bancaire.</p>
+          </div>
+        </div>
+
+        @if (hasExistingFile()) {
+          <div class="document-card">
+            <!-- Icône du fichier -->
+            <div class="document-icon">
+              <img
+                [src]="getFileIcon(getDocumentName())"
+                [alt]="'Fichier ' + getFileExtension()"
+                class="document-file-icon"
+              />
+            </div>
+
+            <!-- Informations du fichier -->
+            <div class="document-info">
+              <strong>{{ getDocumentName() }}</strong>
+
+              <span class="document-extension"> Format : {{ getFileExtension() }} </span>
+            </div>
+
+            <div class="document-actions">
+              <button
+                type="button"
+                class="btn-document-preview"
+                (click)="openPreviewModal()"
+                [disabled]="isDocumentLoading"
+                title="Visualiser le document"
+              >
+                <i class="bi bi-eye"></i>
+                <span>Visualiser</span>
+              </button>
+
+              <button
+                type="button"
+                class="btn-document-download"
+                (click)="downloadFile()"
+                [disabled]="isDocumentLoading"
+                title="Télécharger le document"
+              >
+                <i class="bi bi-download"></i>
+                <span>Télécharger</span>
+              </button>
+            </div>
+          </div>
+        } @else {
+          <div class="empty-document">
+            <span>📂</span>
+            <p>Aucune pièce justificative disponible.</p>
+          </div>
+        }
+      </section>
+    </div>
+
+    <section class="workflow-card">
+      <div class="workflow-icon">ℹ️</div>
+
+      <div class="workflow-content">
+        <h3>Cycle de validation du dépôt</h3>
+
+        <div class="workflow-steps">
+          <div
+            class="workflow-step"
+            [class.completed]="isEtatAtLeast('BROUILLON')"
+            [class.current]="isEtat('BROUILLON')"
+          >
+            <span class="step-number">1</span>
+            <div>
+              <strong>Brouillon</strong>
+              <small>Dépôt enregistré</small>
+            </div>
+          </div>
+
+          <div class="step-connector"></div>
+
+          <div
+            class="workflow-step"
+            [class.completed]="isEtatAtLeast('ENVOYEE')"
+            [class.current]="isEtat('ENVOYEE')"
+          >
+            <span class="step-number">2</span>
+            <div>
+              <strong>Envoyé</strong>
+              <small>En attente de validation</small>
+            </div>
+          </div>
+
+          <div class="step-connector"></div>
+
+          <div
+            class="workflow-step"
+            [class.completed]="isEtat('VALIDEE')"
+            [class.current]="isEtat('VALIDEE')"
+          >
+            <span class="step-number">3</span>
+            <div>
+              <strong>Validé</strong>
+              <small>Dépôt confirmé</small>
+            </div>
+          </div>
+        </div>
+
+        <p class="workflow-description">
+          Seuls les dépôts validés sont pris en compte dans le solde théorique du compte bancaire.
+        </p>
+      </div>
+    </section>
+
+    <div class="detail-actions mt-4">
+      <button type="button" class="btn btn-secondary btn-lg" (click)="retourListe()">
+        <span>←</span>
+
+        Retour
+      </button>
+
+      <div class="primary-actions">
+        @if (isEtat('BROUILLON')) {
+          <button
+            type="button"
+            class="btn btn-primary btn-lg"
+            (click)="ouvrirConfirmationSoumission()"
+          >
+            <span>↗</span>
+            Soumettre le dépôt
+          </button>
+        }
+
+        @if (isEtat('ENVOYEE')) {
+          <button
+            type="button"
+            class="btn btn-validate btn-lg"
+            (click)="ouvrirConfirmationValidation()"
+          >
+            <span>✓</span>
+            Valider le dépôt
+          </button>
+        }
+
+        @if (isEtat('VALIDEE')) {
+          <span class="validated-message"> ✓ Dépôt définitivement validé </span>
+        }
+      </div>
+    </div>
+  } @else {
+    <div class="empty-state">
+      <div class="empty-state-icon">📂</div>
+      <h3>Dépôt bancaire introuvable</h3>
+      <p>Impossible de retrouver les informations de ce dépôt bancaire.</p>
+
+      <button type="button" class="btn btn-primary" (click)="retourListe()">
+        Retour à la liste
+      </button>
+    </div>
+  }
+</div>
+
+<ng-template #actionDepotModal let-modal>
+  <div class="modal-custom-overlay" (click)="modal.dismiss()">
+    <div class="modal-custom-container" (click)="$event.stopPropagation()">
+      <div class="modal-header-custom">
+        <h5 class="modal-title-custom">
+          <i class="fas fa-question-circle me-2"></i>
+          Confirmer l'action :
+          {{ modalActionLabel | titlecase }}
+        </h5>
+
+        <button type="button" class="btn-close-custom" (click)="modal.dismiss()">
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
+
+      <div class="modal-body-custom">
+        <p class="modal-message">
+          Êtes-vous sûr de vouloir
+          <strong class="action-highlight">
+            {{ modalActionLabel }}
+          </strong>
+          ce dépôt bancaire
+          <strong>{{ detailsDepotBancaire?.codeDepot }}</strong> ?
+        </p>
+
+        @if (modalAction === 'SOUMETTRE') {
+          <div class="alert-info-action">
+            <i class="fas fa-info-circle me-2"></i>
+            Le dépôt sera marqué comme envoyé et pourra ensuite être validé.
+          </div>
+        }
+
+        @if (modalAction === 'VALIDER') {
+          <div class="alert-warning-action">
+            <i class="fas fa-exclamation-triangle me-2"></i>
+            La validation rendra ce dépôt effectif dans le solde bancaire théorique. Cette action
+            doit être effectuée après vérification du dépôt.
+          </div>
+        }
+      </div>
+
+      <div class="modal-footer-custom">
+        <button type="button" class="btn-cancel" (click)="modal.dismiss()" [disabled]="saving()">
+          <i class="fas fa-times me-2"></i>
+          Annuler
+        </button>
+
+        <button
+          type="button"
+          class="btn-confirm"
+          [class.btn-confirm-danger]="modalAction === 'VALIDER'"
+          [class.btn-pay]="modalAction === 'SOUMETTRE'"
+          [disabled]="saving()"
+          (click)="modal.close('confirm')"
+        >
+          @if (saving()) {
+            <span class="spinner-border spinner-border-sm me-2"></span>
+            Traitement...
+          } @else {
+            <i class="fas fa-check-circle me-2"></i>
+            {{ modalAction === 'SOUMETTRE' ? 'Soumettre' : 'Valider' }}
+          }
+        </button>
+      </div>
+    </div>
+  </div>
+</ng-template>
+
+@if (showPreviewModal) {
+  <div class="document-preview-overlay" (click)="closePreviewModal()">
+    <div class="document-preview-modal" (click)="$event.stopPropagation()">
+      <!-- En-tête du modal -->
+      <div class="document-preview-header">
+        <div class="document-preview-header-info">
+         
+          <div class="document-preview-summary">
+            <span class="preview-info-item">
+              <i class="bi bi-hash"></i>
+              <strong>Réf :</strong>
+              {{ detailsDepotBancaire?.codeDepot || '—' }}
+            </span>
+
+            <span class="preview-info-item">
+              <i class="bi bi-calendar3"></i>
+              <strong>Date :</strong>
+              {{
+                detailsDepotBancaire?.dateDepot
+                  ? formatDateTime(detailsDepotBancaire!.dateDepot!)
+                  : '—'
+              }}
+            </span>
+
+            <span class="preview-info-item">
+              <i class="bi bi-person"></i>
+              <strong>Enregistré par :</strong>
+              {{ detailsDepotBancaire?.enregistrePar || 'Non renseigné' }}
+            </span>
+
+            <span class="preview-info-item highlight">
+              <i class="bi bi-cash-stack"></i>
+              <strong>Montant :</strong>
+              {{ formatMontant(detailsDepotBancaire?.montant) }} FCFA
+            </span>
+          </div>
+        </div>
+
+        <div class="document-preview-header-actions">
+          <button
+            type="button"
+            class="btn-preview-download"
+            (click)="downloadFile()"
+            [disabled]="isDocumentLoading"
+          >
+            @if (isDocumentLoading) {
+              <i class="bi bi-arrow-repeat"></i>
+            } @else {
+              <i class="bi bi-download"></i>
+            }
+            Télécharger
+          </button>
+
+          <button
+            type="button"
+            class="btn-close-preview"
+            (click)="closePreviewModal()"
+            title="Fermer"
+          >
+            <i class="bi bi-x-lg"></i>
+          </button>
+        </div>
+      </div>
+
+      <!-- Corps : aperçu du document -->
+      <div class="document-preview-body">
+        @if (isDocumentLoading) {
+          <div class="document-loading">
+            <div class="spinner"></div>
+            <span>Chargement du document...</span>
+          </div>
+        } @else if (documentPreviewUrl) {
+          @if (isImageFile()) {
+            <img
+              [src]="documentPreviewUrl"
+              [alt]="getDocumentName()"
+              class="document-image-preview"
+            />
+          } @else {
+            <iframe
+              [src]="documentPreviewUrl"
+              class="document-iframe-preview"
+              title="Prévisualisation de la pièce justificative"
+            ></iframe>
+          }
+        } @else {
+          <div class="document-loading">
+            <i class="bi bi-file-earmark-x"></i>
+            <span>Impossible d'afficher le document.</span>
+
+            <button type="button" class="btn btn-primary mt-3" (click)="loadDocumentContent()">
+              <i class="bi bi-arrow-clockwise me-2"></i>
+              Réessayer
+            </button>
+          </div>
+        }
+      </div>
+    </div>
+  </div>
+}

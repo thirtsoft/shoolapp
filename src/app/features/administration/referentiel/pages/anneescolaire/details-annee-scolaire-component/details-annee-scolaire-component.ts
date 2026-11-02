@@ -23,7 +23,7 @@ export class DetailsAnneeScolaireComponent implements OnInit {
   isEdit: boolean = false;
   detailsAnneeScolaire: DetailsAnneeScolaire = {};
   isEditMode = false;
-   etatLibelle = EtatLibelle;
+  etatLibelle = EtatLibelle;
   title = "Détails année scolaire";
 
   actionForm!: FormGroup;

@@ -46,6 +46,8 @@ import { TypePersonnelComponent } from './pages/typepersonnel/type-personnel-com
 import { AddEditTypePersonnelComponent } from './pages/typepersonnel/add-edit-type-personnel-component/add-edit-type-personnel-component';
 import { TypeContratComponent } from './pages/typecontrat/type-contrat-component/type-contrat-component';
 import { AddEditTypeContratComponent } from './pages/typecontrat/add-edit-type-contrat-component/add-edit-type-contrat-component';
+import { ListBanqueComponent } from './pages/banque/list-banque-component/list-banque-component';
+import { CreateEditBanqueComponent } from './pages/banque/create-edit-banque-component/create-edit-banque-component';
 
 export const REFERENTIELS_ROUTES: Routes = [
   {
@@ -207,12 +209,7 @@ export const REFERENTIELS_ROUTES: Routes = [
       {
         path: 'salle/create',
         component: AjoutEditSalleComponent
-      },
-      {
-        path: 'salle/edit/:id',
-        component: AjoutEditSalleComponent
-      },
-      {
+      }, {
         path: 'typeservices',
         component: ListTypeServiceOffertComponent
       },
@@ -224,6 +221,11 @@ export const REFERENTIELS_ROUTES: Routes = [
         path: 'typeservice/edit/:id',
         component: CreateTypeServiceOffertComponent
       },
+      {
+        path: 'salle/edit/:id',
+        component: AjoutEditSalleComponent
+      },
+
       {
         path: 'tarifs',
         component: ListTarifComponent
@@ -310,6 +312,19 @@ export const REFERENTIELS_ROUTES: Routes = [
       {
         path: 'type-contrat/edit/:uuid',
         component: AddEditTypeContratComponent
+      },
+
+      {
+        path: 'banques',
+        component: ListBanqueComponent
+      },
+      {
+        path: 'banque/create',
+        component: CreateEditBanqueComponent
+      },
+      {
+        path: 'banque/edit/:uuid',
+        component: CreateEditBanqueComponent
       },
 
       {

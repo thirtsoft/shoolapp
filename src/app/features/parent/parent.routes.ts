@@ -8,17 +8,15 @@ import { EvaluationClasseComponent } from './pages/evaluation/evaluation-classe-
 import { ExerciceAFaireComponent } from './pages/exercice/exercice-a-faire/exercice-a-faire.component';
 import { DetailsFactureParentComponent } from './pages/facture/details-facture-parent/details-facture-parent.component';
 import { ListInvoiceEleveComponent } from './pages/facture/list-invoice-eleve/list-invoice-eleve.component';
-import { ListInscriptionEleveParentComponent } from './pages/inscription/list-inscription-eleve-parent/list-inscription-eleve-parent.component';
 import { InscriptionServiceEleveComponent } from './pages/inscriptionservice/inscription-service-eleve-component/inscription-service-eleve-component';
 import { ListServiceOffertComponent } from './pages/inscriptionservice/list-service-offert-component/list-service-offert-component';
 import { ListNoteEleveComponent } from './pages/list-note-eleve/list-note-eleve.component';
-import { ListeBulletinEleveComponent } from './pages/liste-bulletin-eleve/liste-bulletin-eleve.component';
 import { ListeEvenementComponent } from './pages/liste-evenement/liste-evenement.component';
-import { ListeMenuComponent } from './pages/liste-menu/liste-menu.component';
 import { NoteInformationComponent } from './pages/noteinformation/note-information/note-information.component';
 import { ScolariteEleveComponent } from './pages/scolarite-eleve-component/scolarite-eleve-component';
 import { ChangerPasswordParentComponent } from './pages/settings/changer-password-parent/changer-password-parent.component';
 import { ParentProfileComponent } from './pages/settings/parent-profile/parent-profile.component';
+import { DetailsExerciceComponent } from './pages/exercice/details-exercice/details-exercice.component';
 
 export const PARENT_ROUTES: Routes = [
 
@@ -54,10 +52,6 @@ export const PARENT_ROUTES: Routes = [
         component: InscriptionServiceEleveComponent
       },
       {
-        path: 'inscriptions',
-        component: ListInscriptionEleveParentComponent
-      },
-      {
         path: 'cours',
         component: ListCourseEleveComponent
       },
@@ -65,11 +59,6 @@ export const PARENT_ROUTES: Routes = [
         path: 'notes',
         component: ListNoteEleveComponent
       },
-      {
-        path: 'bulletins',
-        component: ListeBulletinEleveComponent
-      },
-
       {
         path: 'scolarite',
         component: ScolariteEleveComponent
@@ -79,14 +68,14 @@ export const PARENT_ROUTES: Routes = [
         component: ExerciceAFaireComponent
       },
       {
+        path: 'exercice/details/:id',
+        component: DetailsExerciceComponent
+      },
+      {
         path: 'tarifs-services',
         component: ListServiceOffertComponent
       },
 
-      {
-        path: 'menu-cantine',
-        component: ListeMenuComponent
-      },
       {
         path: 'activites',
         component: ListeEvenementComponent

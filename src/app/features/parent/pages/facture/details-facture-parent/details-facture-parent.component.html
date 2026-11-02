@@ -4,11 +4,15 @@
       <div class="row">
         <div class="col-sm-7 col-auto">
           <h3 class="page-title">Facture</h3>
+
           <ul class="breadcrumb">
             <li class="breadcrumb-item">
-              <a [routerLink]="'/parent/dashboard'">Tableau de bord</a>
+              <a [routerLink]="'/parent/dashboard/'"> Tableau de bord </a>
             </li>
-            <li class="breadcrumb-item active">{{ title }}</li>
+
+            <li class="breadcrumb-item active">
+              {{ title }}
+            </li>
           </ul>
         </div>
       </div>
@@ -21,11 +25,8 @@
             <div class="invoice-header">
               <div class="invoice-header-left">
                 <div class="invoice-logo">
-                  @if (parametresEtablissement.logoBase64) {
-                    <img
-                      [src]="'data:image/png;base64,' + parametresEtablissement.logoBase64"
-                      alt="logo"
-                    />
+                  @if (logoPreview) {
+                    <img [src]="logoPreview" alt="Logo de l'établissement" />
                   } @else {
                     <i class="fas fa-school"></i>
                   }
@@ -33,12 +34,29 @@
               </div>
               <div class="invoice-header-right">
                 <p class="invoice-details">
-                  <strong>N°:</strong> {{ detailsFacture?.numeroFacture }}
+                  <strong>N° :</strong>
+                  {{ detailsFacture?.numeroFacture }}
+
                   <br />
-                  <strong>Date:</strong> {{ detailsFacture?.dateFacture | date: 'dd/MM/yyyy' }}
+
+                  <strong>Date d'émission :</strong>
+                  {{ detailsFacture?.dateFacture | date: 'dd/MM/yyyy' }}
+
                   <br />
-                  <strong>Statut:</strong>
-                  <span [class]="'status-badge ' + getStatusClass(detailsFacture?.etat!)">
+
+                  <strong>Année scolaire :</strong>
+                  {{ detailsFacture?.anneeScolaire }}
+
+                  <br />
+
+                  <strong>Date d'échéance :</strong>
+                  {{ detailsFacture?.echeanceDate | date: 'dd/MM/yyyy' }}
+
+                  <br />
+
+                  <strong>Statut :</strong>
+
+                  <span [class]="'status-badge ' + getStatusClass(detailsFacture?.etat)">
                     {{ detailsFacture?.etat }}
                   </span>
                 </p>
@@ -49,34 +67,65 @@
               <div class="info-col">
                 <div class="invoice-info">
                   <strong class="customer-text">
-                    <i class="fas fa-building me-2"></i>Informations école
+                    <i class="fas fa-building me-2"></i>
+                    Informations école
                   </strong>
+
                   <p class="invoice-details-left">
-                    <strong>{{ parametresEtablissement.nom || 'Établissement' }}</strong
-                    ><br />
-                    @if (parametresEtablissement.slogan) {
-                      {{ parametresEtablissement.slogan }}<br />
+                    @if (organizationData.libelle) {
+                      <strong>
+                        {{ organizationData.libelle || 'Établissement' }}
+                      </strong>
                     }
-                    {{ parametresEtablissement.adresse || 'Adresse non renseignée' }}<br />
-                    @if (parametresEtablissement.telephone) {
-                      <i class="fas fa-phone me-1"></i> {{ parametresEtablissement.telephone
-                      }}<br />
+
+                    <br />
+
+                    @if (organizationData.slogan) {
+                      {{ organizationData.slogan }}
+                      <br />
                     }
-                    @if (parametresEtablissement.email) {
-                      <i class="fas fa-envelope me-1"></i> {{ parametresEtablissement.email }}
+
+                    {{ organizationData.adresse || 'Adresse non renseignée' }}
+
+                    <br />
+
+                    @if (organizationData.telephone) {
+                      <i class="fas fa-phone me-1"></i>
+                      {{ organizationData.telephone }}
+                      <br />
+                    }
+
+                    @if (organizationData.email) {
+                      <i class="fas fa-envelope me-1"></i>
+                      {{ organizationData.email }}
                     }
                   </p>
                 </div>
               </div>
+
               <div class="info-col">
                 <div class="invoice-info invoice-info2">
                   <strong class="customer-text">
-                    <i class="fas fa-user-graduate me-2"></i>Facture de :
+                    <i class="fas fa-user-graduate me-2"></i>
+                    Facture de :
                   </strong>
+
                   <p class="invoice-details-left">
-                    <strong>{{ detailEleve?.prenom }} {{ detailEleve?.nom }}</strong
-                    ><br />
-                    {{ detailEleve?.lieuNaissance }}, {{ detailEleve?.nationalite }}<br />
+                    <strong>
+                      {{ detailEleve?.prenom }}
+                      {{ detailEleve?.nom }}
+                    </strong>
+
+                    <br />
+                    Né(e) le : {{ detailEleve.dateNaissance | date: 'dd/MM/yyyy' }}
+
+                    <br />
+                    A :
+
+                    {{ detailEleve?.lieuNaissance }},
+
+                    <br />
+
                     {{ detailEleve?.address }}
                   </p>
                 </div>
@@ -87,10 +136,13 @@
               <div class="invoice-info full-width">
                 <div class="payment-method-row">
                   <strong class="customer-text">
-                    <i class="fas fa-credit-card me-2"></i>Méthode paiement
+                    <i class="fas fa-calendar-alt me-2"></i>
+                    Période
                   </strong>
+
                   <p class="payment-value">
-                    {{ detailsFacture?.modePaiement || 'Virement bancaire' }}
+                    {{ detailsFacture?.mois }}
+                    {{ detailsFacture?.annee }}
                   </p>
                 </div>
               </div>
@@ -107,14 +159,23 @@
                       <th class="text-right">Montant après remise</th>
                     </tr>
                   </thead>
+
                   <tbody>
                     @for (tarif of detailsFacture?.detailsLigneFactureDTOS; track tarif.id) {
                       <tr>
-                        <td>{{ tarif?.numeroFacture }}</td>
-                        <td>{{ tarif?.typeServiceOffertDTO?.libelle }}</td>
-                        <td class="text-right">
-                          {{ tarif?.montantInitial | number: '1.0-0' }} FCFA
+                        <td>
+                          {{ tarif?.numeroFacture }}
                         </td>
+
+                        <td>
+                          {{ tarif?.typeServiceOffertDTO?.libelle }}
+                        </td>
+
+                        <td class="text-right">
+                          {{ tarif?.montantInitial | number: '1.0-0' }}
+                          FCFA
+                        </td>
+
                         <td class="text-right">
                           @if (
                             tarif?.typeServiceOffertDTO?.libelle === 'Mensualité' && remisePourcent
@@ -124,7 +185,8 @@
                             }}
                             FCFA
                           } @else {
-                            {{ tarif?.montantInitial | number: '1.0-0' }} FCFA
+                            {{ tarif?.montantInitial | number: '1.0-0' }}
+                            FCFA
                           }
                         </td>
                       </tr>
@@ -140,43 +202,169 @@
                   <tbody>
                     <tr>
                       <th>Sous total :</th>
-                      <td>{{ detailsFacture?.montant | number: '1.0-0' }} FCFA</td>
+
+                      <td>
+                        {{ detailsFacture?.montant | number: '1.0-0' }}
+                        FCFA
+                      </td>
                     </tr>
-                    @if (
-                      detailsFacture?.montantPayement && detailEleve.montantPayement != 'undefined'
-                    ) {
+
+                    @if (getMontantDejaPaye() > 0) {
                       <tr>
-                        <th>Somme avancée :</th>
-                        <td>{{ detailsFacture!.montantPayement | number: '1.0-0' }} FCFA</td>
+                        <th>Déjà payé :</th>
+
+                        <td class="text-success">
+                          {{ getMontantDejaPaye() | number: '1.0-0' }}
+                          FCFA
+                        </td>
                       </tr>
                     }
+
                     @if (remisePourcent) {
                       <tr>
                         <th>Remise :</th>
+
                         <td>{{ remisePourcent }}%</td>
                       </tr>
                     }
+
                     <tr class="total-row">
                       <th>Total facture :</th>
-                      <td>{{ getTotalFinal() | number: '1.0-0' }} FCFA</td>
+
+                      <td>
+                        {{ detailsFacture?.montant | number: '1.0-0' }}
+                        FCFA
+                      </td>
+                    </tr>
+
+                    <tr>
+                      <th>Reste à payer :</th>
+
+                      <td
+                        [class.text-success]="getMontantRestantFacture() === 0"
+                        [class.text-danger]="getMontantRestantFacture() > 0"
+                      >
+                        {{ getMontantRestantFacture() | number: '1.0-0' }}
+                        FCFA
+                      </td>
                     </tr>
                   </tbody>
                 </table>
               </div>
             </div>
 
+            @if (detailsFacture?.paiements?.length) {
+              <div class="invoice-item mt-4">
+                <div class="invoice-info full-width">
+                  <div class="payment-history-header">
+                    <strong class="customer-text">
+                      <i class="fas fa-money-bill-wave me-2"></i>
+                      Historique des paiements
+                    </strong>
+                  </div>
+
+                  <div class="payment-table-wrapper mt-3">
+                    <div class="table-responsive">
+                      <table class="invoice-table payment-history-table">
+                        <thead>
+                          <tr>
+                            <th>N° reçu</th>
+                            <th>Date</th>
+                            <th>Moyen de paiement</th>
+                            <th>Référence</th>
+                            <th>État</th>
+                            <th class="text-right">Montant</th>
+                          </tr>
+                        </thead>
+
+                        <tbody>
+                          @for (paiement of detailsFacture?.paiements; track paiement.id) {
+                            <tr>
+                              <td data-label="N° reçu">
+                                <strong>
+                                  {{ paiement.numeroRecu || '-' }}
+                                </strong>
+                              </td>
+
+                              <td data-label="Date">
+                                {{ paiement.datePaiement | date: 'dd/MM/yyyy' }}
+                              </td>
+
+                              <td data-label="Moyen de paiement">
+                                <span class="payment-method-value">
+                                  <i class="fas fa-credit-card me-1"></i>
+                                  {{ paiement.moyenPaiement || '-' }}
+                                </span>
+                              </td>
+
+                              <td data-label="Référence">
+                                {{ paiement.reference || '-' }}
+                              </td>
+
+                              <td data-label="État">
+                                <div class="payment-status-cell">
+                                  <span
+                                    [class]="
+                                      'status-badge ' + getPaiementStatusClass(paiement.etat)
+                                    "
+                                  >
+                                    {{ paiement.etat || '-' }}
+                                  </span>
+                                </div>
+                              </td>
+                              <td data-label="Montant" class="text-right payment-amount">
+                                <strong>
+                                  {{ paiement.montant | number: '1.0-0' }}
+                                  FCFA
+                                </strong>
+                              </td>
+                            </tr>
+                          }
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            } @else {
+              <div class="invoice-item mt-4">
+                <div class="invoice-info full-width">
+                  <strong class="customer-text">
+                    <i class="fas fa-money-bill-wave me-2"></i>
+                    Historique des paiements
+                  </strong>
+
+                  <div class="empty-payment-history mt-3">
+                    <i class="fas fa-receipt"></i>
+
+                    <div>
+                      <strong>Aucun paiement enregistré</strong>
+                      <p class="text-muted mb-0">
+                        Aucun paiement n'a encore été enregistré pour cette facture.
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            }
+
             <div class="action-buttons">
               <div class="action-buttons-left">
                 <button type="button" class="btn-back" routerLink="/parent/factures">
-                  <i class="fas fa-arrow-left me-2"></i>Retour
+                  <i class="fas fa-arrow-left me-2"></i>
+                  Retour
                 </button>
               </div>
+
               <div class="action-buttons-right">
                 <button type="button" class="btn-print" (click)="imprimerFacture()">
-                  <i class="fas fa-print me-2"></i>Imprimer
+                  <i class="fas fa-print me-2"></i>
+                  Imprimer
                 </button>
+
                 <button type="button" class="btn-download" (click)="DownloadPdf()">
-                  <i class="fas fa-download me-2"></i>Télécharger
+                  <i class="fas fa-download me-2"></i>
+                  Télécharger
                 </button>
               </div>
             </div>

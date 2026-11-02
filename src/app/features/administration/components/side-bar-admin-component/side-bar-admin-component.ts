@@ -34,12 +34,23 @@ export class SideBarAdminComponent {
     { route: '/admin/dashboard', ico: '📊', label: 'Tableau de bord', section: '', badge: '' },
 
     // FINANCES
-    { route: '/admin/comptabilite/facture', ico: '💰', label: 'Factures', section: 'FINANCES', badge: '18' },
+    { route: '/admin/comptabilite/facture', ico: '💰', label: 'Factures', section: 'FINANCES', badge: '' },
     { route: '/admin/comptabilite/paiement', ico: '💳', label: 'Paiements', section: '', badge: '' },
     { route: '/admin/comptabilite/services', ico: '📋', label: 'Inscriptions services', section: '', badge: '' },
     { route: '/admin/comptabilite/depenses', ico: '💸', label: 'Dépenses', section: '', badge: '' },
 
+
+    { route: '/admin/comptabilite/compte-bancaires', ico: '💳', label: 'Comptes bancaires', section: 'TRÉSORERIE', badge: '' },
+    { route: '/admin/comptabilite/depots-bancaires', ico: '🏦', label: 'Dépôts bancaires', section: '', badge: '' },
+
+
+
+    { route: '/admin/rh/personnels', ico: '👥', label: 'Personnel', section: 'RH', badge: '' },
+    { route: '/admin/rh/contrats', ico: '📄', label: 'Contrats' },
+    { route: '/admin/rh/paies', ico: '💵', label: 'Paie' },
+    { route: '/admin/rh/avances-salaires', ico: '💰', label: 'Demandes d’avance' },
     //
+    /*
     {
       ico: '👥',
       label: 'Ressources humaines',
@@ -51,16 +62,16 @@ export class SideBarAdminComponent {
         { route: '/admin/rh/paies', ico: '💵', label: 'Paie' },
         { route: '/admin/rh/avances-salaires', ico: '💰', label: 'Demandes d’avance' }
       ]
-    },
+    },*/
 
     // GESTION SCOLAIRE
-    { route: '/admin/dossier-eleve/eleves', ico: '🎒', label: 'Élèves', section: 'GESTION SCOLAIRE', badge: '1 200' },
-    { route: '/admin/dossier-eleve/inscriptions', ico: '📝', label: 'Inscriptions', section: '', badge: '24' },
+    { route: '/admin/dossier-eleve/eleves', ico: '🎒', label: 'Élèves', section: 'GESTION SCOLAIRE', badge: '' },
+    { route: '/admin/dossier-eleve/Réinscriptions', ico: '📝', label: 'Inscriptions', section: '', badge: '' },
     { route: '/admin/dossier-eleve/parent', ico: '👪', label: 'Parents', section: '', badge: '' },
     { route: '/admin/utilisateur/enseignants', ico: '👨‍🏫', label: 'Enseignants' },
 
     // VIE SCOLAIRE
-    { route: '/admin/dossier-eleve/absences', ico: '❌', label: 'Absences', section: 'VIE SCOLAIRE', badge: '7' },
+    { route: '/admin/dossier-eleve/absences', ico: '❌', label: 'Absences', section: 'VIE SCOLAIRE', badge: '' },
     { route: '/admin/dossier-eleve/evaluations', ico: '🎯', label: 'Évaluations', section: '', badge: '' },
     { route: '/admin/dossier-eleve/notes', ico: '📝', label: 'Notes', section: '', badge: '' },
     { route: '/admin/cahiers-textes', ico: '📖', label: 'Cahier de texte', section: '', badge: '' },
@@ -79,7 +90,7 @@ export class SideBarAdminComponent {
 
 
     // COMMUNICATION
-    { route: '/admin/planification/reunion', ico: '👥', label: 'Réunions', section: 'COMMUNICATION', badge: '5' },
+    { route: '/admin/planification/reunion', ico: '👥', label: 'Réunions', section: 'COMMUNICATION', badge: '' },
     { route: '/admin/planification/noteinformations', ico: '📢', label: 'Notes d\'info', section: '' },
     { route: '/admin/planification/evenement', ico: '🎪', label: 'Événements', section: '' },
     { route: '/admin/planification/conges', ico: '🌴', label: 'Congés' },
@@ -109,6 +120,7 @@ export class SideBarAdminComponent {
         { route: '/admin/referentiel/tarifs', ico: '💲', label: 'Tarifs' },
         { route: '/admin/referentiel/moyenpaiements', ico: '🏦', label: 'Modes de paiement' },
         { route: '/admin/referentiel/typedepense', ico: '💲', label: 'Type dépense' },
+        { route: '/admin/referentiel/banques', ico: '🏦', label: 'Banques', section: '', badge: '' },
         //  { route: '/admin/referentiel/menus', ico: '🍽️', label: 'Menus' },
         { route: '/admin/referentiel/category-menu', ico: '🍽️', label: 'Menus' },
 
@@ -151,8 +163,7 @@ export class SideBarAdminComponent {
 
   isActive(route: string | undefined): boolean {
     if (!route) return false;
-    const segment = route.split('/').pop() ?? '';
-    return this.router.url.includes(segment);
+    return this.router.url === route || this.router.url.startsWith(route + '/');
   }
 
   isParentActive(item: NavItemChildren): boolean {
