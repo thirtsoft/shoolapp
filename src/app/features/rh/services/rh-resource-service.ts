@@ -46,17 +46,17 @@ export class RhResourceService {
   constructor(private readonly http: HttpClient) { }
 
   getResourceList<T>(endpoint: string): Observable<T[]> {
-    const url = `${this.rhUrl}/${endpoint}`;
+    const url = `${this.baseUrl_1}/${endpoint}`;
     return this.http.get<T[]>(url, this.httpOptions);
   }
 
   getResourceListByElement<T>(endpoint: string, id: number): Observable<T[]> {
-    const url = `${this.rhUrl}/${endpoint}/${id}`;
+    const url = `${this.baseUrl_1}/${endpoint}/${id}`;
     return this.http.get<T[]>(url, this.httpOptions);
   }
 
   getResourcePaged<T>(endpoint: string, page: number, size: number): Observable<DataResult<T>> {
-    const url = `${this.rhUrl}/${endpoint}/page`;
+    const url = `${this.baseUrl_1}/${endpoint}/page`;
     const params = new HttpParams()
       .set('page', page.toString())
       .set('size', size.toString());
@@ -68,7 +68,7 @@ export class RhResourceService {
   }
 
   fetchFilterDataTable<T>(endpoint: string, page: number, size: number, filters?: any): Observable<DataResult<T>> {
-    let url = `${this.rhUrl}/${endpoint}`;
+    let url = `${this.baseUrl_1}/${endpoint}`;
 
     if (filters) {
       const encodedFilters = encodeURIComponent(JSON.stringify(filters));
@@ -240,6 +240,8 @@ export class RhResourceService {
     return this.http.get<CongesResponse>(`${this.congesUrl}/${id}`);
   }
 
+  //
+
   getFichesEmargement(mois: number, annee: number, anneeScolaireUuid: string, limite: number): Observable<FichesEmargementMensuellesResponse> {
 
     return this.http.get<FichesEmargementMensuellesResponse>(
@@ -267,7 +269,7 @@ export class RhResourceService {
   }
 
   modifierEntreeFicheEmargement(ficheUuid: string, entreeUuid: string, request: ModifierEntreeEmargementRequest): Observable<void> {
-    return this.http.put<void>(`${this.ficheEmargementUrl}/${ficheUuid}/entrees/${entreeUuid}`, request);
+    return this.http.patch<void>(`${this.ficheEmargementUrl}/${ficheUuid}/entrees/${entreeUuid}`, request);
   }
 
   soumettreFicheEmargement(ficheUuid: string): Observable<void> {

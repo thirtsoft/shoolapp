@@ -1,9 +1,4 @@
 <div class="emargement-detail-page">
-
-  <!-- ========================================================= -->
-  <!-- CHARGEMENT -->
-  <!-- ========================================================= -->
-
   @if (isLoading) {
     <div class="loading-state">
       <div class="loading-spinner"></div>
@@ -14,10 +9,6 @@
       </div>
     </div>
   }
-
-  <!-- ========================================================= -->
-  <!-- ERREUR -->
-  <!-- ========================================================= -->
 
   @if (!isLoading && errorMessage) {
     <div class="error-state">
@@ -46,16 +37,7 @@
     </div>
   }
 
-  <!-- ========================================================= -->
-  <!-- CONTENU DE LA FICHE -->
-  <!-- ========================================================= -->
-
   @if (!isLoading && !errorMessage && fiche) {
-
-    <!-- ========================================================= -->
-    <!-- HEADER -->
-    <!-- ========================================================= -->
-
     <section class="page-header">
 
       <div class="header-left">
@@ -93,8 +75,6 @@
 
       </div>
 
-      <!-- STATUT FICHE -->
-
       <div
         class="status-badge header-status"
         [class.validated]="getEtatClass() === 'validated'"
@@ -113,22 +93,13 @@
 
     </section>
 
-
-    <!-- ========================================================= -->
-    <!-- IDENTIFICATION DE LA FICHE -->
-    <!-- ========================================================= -->
-
     <section class="fiche-summary-card">
 
       <div class="fiche-summary-main">
 
-        <!-- AVATAR ENSEIGNANT -->
-
         <div class="enseignant-avatar">
           {{ getInitiales() }}
         </div>
-
-        <!-- INFORMATIONS ENSEIGNANT -->
 
         <div class="enseignant-block">
 
@@ -148,9 +119,6 @@
         </div>
 
       </div>
-
-
-      <!-- RÉFÉRENCE FICHE -->
 
       <div class="fiche-reference">
 
@@ -197,11 +165,6 @@
 
     </section>
 
-
-    <!-- ========================================================= -->
-    <!-- INFORMATIONS DE SUIVI -->
-    <!-- ========================================================= -->
-
     <section class="tracking-card">
 
       <div class="tracking-header">
@@ -232,9 +195,6 @@
         </div>
 
       </div>
-
-
-      <!-- BARRE DE PROGRESSION -->
 
       <div class="progress-container">
 
@@ -275,14 +235,7 @@
 
     </section>
 
-
-    <!-- ========================================================= -->
-    <!-- KPI -->
-    <!-- ========================================================= -->
-
     <section class="stats-grid">
-
-      <!-- SÉANCES PRÉVUES -->
 
       <div class="stat-card">
 
@@ -304,9 +257,6 @@
 
       </div>
 
-
-      <!-- EFFECTUÉES -->
-
       <div class="stat-card">
 
         <div class="stat-icon done">
@@ -327,9 +277,6 @@
 
       </div>
 
-
-      <!-- NON EFFECTUÉES -->
-
       <div class="stat-card">
 
         <div class="stat-icon warning">
@@ -349,9 +296,6 @@
         </div>
 
       </div>
-
-
-      <!-- ANNULÉES -->
 
       <div class="stat-card">
 
@@ -375,14 +319,7 @@
 
     </section>
 
-
-    <!-- ========================================================= -->
-    <!-- DÉTAIL DES SÉANCES -->
-    <!-- ========================================================= -->
-
     <section class="sessions-card">
-
-      <!-- HEADER SECTION -->
 
       <div class="section-header">
 
@@ -416,9 +353,6 @@
         </div>
 
       </div>
-
-
-      <!-- TABLE -->
 
       <div class="sessions-table-wrapper">
 
@@ -495,10 +429,6 @@
 
                 <tr>
 
-                  <!-- ================================================= -->
-                  <!-- DATE -->
-                  <!-- ================================================= -->
-
                   <td>
 
                     <div class="date-cell">
@@ -525,11 +455,6 @@
 
                   </td>
 
-
-                  <!-- ================================================= -->
-                  <!-- COURS -->
-                  <!-- ================================================= -->
-
                   <td>
 
                     <div class="course-cell">
@@ -554,11 +479,6 @@
 
                   </td>
 
-
-                  <!-- ================================================= -->
-                  <!-- HEURE PRÉVUE -->
-                  <!-- ================================================= -->
-
                   <td>
 
                     <div class="time-cell">
@@ -578,11 +498,6 @@
                     </div>
 
                   </td>
-
-
-                  <!-- ================================================= -->
-                  <!-- HEURE RÉELLE -->
-                  <!-- ================================================= -->
 
                   <td>
 
@@ -621,11 +536,6 @@
 
                   </td>
 
-
-                  <!-- ================================================= -->
-                  <!-- STATUT -->
-                  <!-- ================================================= -->
-
                   <td>
 
                     <span
@@ -662,11 +572,6 @@
 
                   </td>
 
-
-                  <!-- ================================================= -->
-                  <!-- OBSERVATION -->
-                  <!-- ================================================= -->
-
                   <td>
 
                     @if (entree.observation) {
@@ -701,11 +606,6 @@
 
     </section>
 
-
-    <!-- ========================================================= -->
-    <!-- INFORMATIONS DE VALIDATION -->
-    <!-- ========================================================= -->
-
     <section class="validation-card">
 
       <div class="validation-icon">
@@ -722,8 +622,6 @@
 
         <div class="validation-grid">
 
-          <!-- CRÉATION -->
-
           <div>
 
             <span>
@@ -736,9 +634,6 @@
 
           </div>
 
-
-          <!-- SOUMISSION -->
-
           <div>
 
             <span>
@@ -750,9 +645,6 @@
             </strong>
 
           </div>
-
-
-          <!-- VALIDATION -->
 
           <div>
 
@@ -772,11 +664,6 @@
 
     </section>
 
-
-    <!-- ========================================================= -->
-    <!-- FOOTER ACTIONS -->
-    <!-- ========================================================= -->
-
     <div class="page-actions">
 
       <button
@@ -792,14 +679,6 @@
         Retour aux fiches
 
       </button>
-
-
-      <!--
-        E3 = fiche soumise / à contrôler
-        E8 = en cours
-        E16 = retournée
-        E4 = validée
-      -->
 
       @if (fiche.etatCode === 'E3') {
 

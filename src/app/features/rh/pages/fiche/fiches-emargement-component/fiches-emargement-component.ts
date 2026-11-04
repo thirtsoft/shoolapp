@@ -150,6 +150,10 @@ export class FichesEmargementComponent implements OnInit {
     this.chargerLesDonnees();
   }
 
+  voirFiches() {
+    void this.router.navigate(['/admin/rh/tous-fiches-emargements'])
+  }
+
   genererFiches(): void {
 
     if (!this.anneeScolaireUuid) {

@@ -47,6 +47,9 @@ export class SideBarProfesseurComponent {
     { route: '/enseignant/bon-salaires', ico: '💰', label: 'Bon salaire' },
 
 
+    // MON ACTIVITÉ
+    { route: '/enseignant/fiches-emargement', ico: '📝', label: 'Fiches d’émargement', section: 'MON ACTIVITÉ' },
+
     // vie scolaire
     { route: '/enseignant/activites', ico: '🗓️', label: 'Activités & Réunions', section: 'VIE SCOLAIRE' },
     { route: '/enseignant/mes-conges', ico: '🌴', label: 'Mes congés' },

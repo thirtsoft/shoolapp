@@ -1,0 +1,648 @@
+<div class="emargement-content">
+  <!-- ========================================================= -->
+  <!-- CHARGEMENT -->
+  <!-- ========================================================= -->
+
+  @if (isLoading) {
+    <div class="loading-state">
+      <div class="button-spinner"></div>
+
+      <span> Chargement de la fiche d’émargement... </span>
+    </div>
+  } @else if (errorMessage) {
+    <!-- ======================================================= -->
+    <!-- ERREUR -->
+    <!-- ======================================================= -->
+
+    <div class="alert alert-error">
+      <div class="alert-icon">!</div>
+
+      <div>
+        <strong> Erreur </strong>
+
+        <p>
+          {{ errorMessage }}
+        </p>
+      </div>
+
+      <button type="button" class="alert-close" (click)="retour()" aria-label="Retour">×</button>
+    </div>
+  } @else if (ficheEmargement) {
+    <!-- ======================================================= -->
+    <!-- MESSAGE SUCCÈS -->
+    <!-- ======================================================= -->
+
+    @if (messageSucces) {
+      <div class="alert alert-success">
+        <div class="alert-icon">✓</div>
+
+        <div>
+          <strong> Enregistrement réussi </strong>
+
+          <p>
+            {{ messageSucces }}
+          </p>
+        </div>
+
+        <button type="button" class="alert-close" (click)="messageSucces = ''" aria-label="Fermer">
+          ×
+        </button>
+      </div>
+    }
+
+    <!-- ======================================================= -->
+    <!-- MESSAGE ERREUR -->
+    <!-- ======================================================= -->
+
+    @if (messageErreur) {
+      <div class="alert alert-error">
+        <div class="alert-icon">!</div>
+
+        <div>
+          <strong> Vérification nécessaire </strong>
+
+          <p>
+            {{ messageErreur }}
+          </p>
+        </div>
+
+        <button type="button" class="alert-close" (click)="messageErreur = ''" aria-label="Fermer">
+          ×
+        </button>
+      </div>
+    }
+
+    <!-- ========================================================= -->
+    <!-- HERO -->
+    <!-- ========================================================= -->
+
+    <section class="page-hero">
+      <!-- ===================================================== -->
+      <!-- GAUCHE : RETOUR + TITRE -->
+      <!-- ===================================================== -->
+
+      <div class="hero-left">
+        <button
+          type="button"
+          class="hero-back-button"
+          (click)="retour()"
+          aria-label="Retour aux fiches"
+          title="Retour aux fiches"
+        >
+          <span class="back-arrow"> ← </span>
+        </button>
+
+        <div class="hero-icon">▤</div>
+
+        <div class="hero-content">
+          <h1>Ma fiche d’émargement</h1>
+
+          <p>Renseignez vos séances d’enseignement</p>
+        </div>
+      </div>
+
+      <!-- ===================================================== -->
+      <!-- ANNÉE SCOLAIRE -->
+      <!-- ===================================================== -->
+
+      <div class="school-year-info">
+        <span class="school-year-icon"> ◆ </span>
+
+        <div class="school-year-content">
+          <span class="school-year-label"> Année scolaire </span>
+
+          <strong>
+            {{ ficheEmargement.anneeScolaireLibelle }}
+          </strong>
+        </div>
+      </div>
+
+      <!-- ===================================================== -->
+      <!-- MOIS -->
+      <!-- ===================================================== -->
+
+      <div class="period-badge">
+        <span class="period-icon"> ▣ </span>
+
+        <span>
+          {{ capitaliserPremiereLettre(ficheEmargement.moisLibelle) }}
+
+          {{ ficheEmargement.annee }}
+        </span>
+      </div>
+    </section>
+
+    <!-- ========================================================= -->
+    <!-- PROGRESSION -->
+    <!-- ========================================================= -->
+
+    <section class="progress-card">
+      <div class="progress-header">
+        <div>
+          <span class="progress-title"> Progression de votre fiche </span>
+
+          <strong> {{ pourcentageAvancement }}% </strong>
+        </div>
+
+        <span class="progress-status">
+          @if (ficheComplete) {
+            Fiche complète
+          } @else {
+            {{ nombreSeancesPlanifiees }}
+            séance(s) à renseigner
+          }
+        </span>
+      </div>
+
+      <div class="progress-bar">
+        <div class="progress-value" [style.width.%]="pourcentageAvancement"></div>
+      </div>
+    </section>
+
+    <!-- ========================================================= -->
+    <!-- SÉANCES -->
+    <!-- ========================================================= -->
+
+    <section class="card sessions-card">
+      <!-- ======================================================= -->
+      <!-- HEADER -->
+      <!-- ======================================================= -->
+
+      <div class="sessions-header">
+        <div class="card-title">
+          <div class="card-title-icon">▣</div>
+
+          <div>
+            <h2>Vos séances du mois</h2>
+
+            <p>Renseignez l’état réel de chaque séance</p>
+          </div>
+        </div>
+
+        <!-- ===================================================== -->
+        <!-- LÉGENDE -->
+        <!-- ===================================================== -->
+
+        <div class="status-legend">
+          <span>
+            <i class="legend-dot green"> ✓ </i>
+
+            Effectuée
+          </span>
+
+          <span>
+            <i class="legend-dot orange"> ! </i>
+
+            Non effectuée
+          </span>
+
+          <span>
+            <i class="legend-dot red"> × </i>
+
+            Annulée
+          </span>
+
+          <span>
+            <i class="legend-dot blue"> ◷ </i>
+
+            Planifiée
+          </span>
+        </div>
+      </div>
+
+      <!-- ========================================================= -->
+      <!-- TABLE -->
+      <!-- ========================================================= -->
+
+      <div class="table-container">
+        <table>
+          <thead>
+            <tr>
+              <!-- DATE PRÉVUE -->
+
+              <th class="date-column">Date prévue</th>
+
+              <!-- COURS -->
+
+              <th>Cours</th>
+
+              <!-- HEURE PRÉVUE -->
+
+              <th class="planned-time-column">Heure prévue</th>
+
+              <!-- DATE RÉELLE -->
+
+              <th class="real-date-column">Date réelle</th>
+
+              <!-- HEURE RÉELLE -->
+
+              <th class="real-time-column">Heure réelle</th>
+
+              <!-- STATUT -->
+
+              <th class="status-column">
+                Statut
+
+                <span> * </span>
+              </th>
+
+              <!-- OBSERVATION -->
+
+              <th class="observation-column">Observation</th>
+            </tr>
+          </thead>
+
+          <tbody>
+            @for (entree of entrees; track entree.uuid) {
+              <tr>
+                <!-- ================================================= -->
+                <!-- DATE PRÉVUE -->
+                <!-- ================================================= -->
+
+                <td>
+                  <div class="date-cell">
+                    <strong>
+                      {{ capitaliserPremiereLettre(getDateLibelle(entree.dateCours)) }}
+                    </strong>
+                  </div>
+                </td>
+
+                <!-- ================================================= -->
+                <!-- COURS -->
+                <!-- ================================================= -->
+
+                <td>
+                  <div class="course-cell">
+                    <span class="course-name">
+                      {{ entree.coursLibelle || 'Cours non renseigné' }}
+                    </span>
+                  </div>
+                </td>
+
+                <!-- ================================================= -->
+                <!-- HEURE PRÉVUE -->
+                <!-- ================================================= -->
+
+                <td>
+                  <span class="planned-time">
+                    {{ entree.heureDebutPrevue || '—' }}
+
+                    –
+
+                    {{ entree.heureFinPrevue || '—' }}
+                  </span>
+                </td>
+
+                <!-- ================================================= -->
+                <!-- DATE RÉELLE -->
+                <!-- ================================================= -->
+
+                <td>
+                  @if (entree.statutSeance === 'SEANCE_EFFECTUEE') {
+                    <input
+                      type="date"
+                      class="real-date-input"
+                      [(ngModel)]="entree.dateReelleEffectuee"
+                      aria-label="Date réelle de la séance"
+                    />
+                  } @else {
+                    <span class="not-applicable"> — </span>
+                  }
+                </td>
+
+                <!-- ================================================= -->
+                <!-- HEURE RÉELLE -->
+                <!-- ================================================= -->
+
+                <td>
+                  @if (entree.statutSeance === 'SEANCE_EFFECTUEE') {
+                    <div class="time-inputs">
+                      <input
+                        type="time"
+                        [(ngModel)]="entree.heureDebutReelle"
+                        (change)="validerHeures(entree)"
+                        aria-label="Heure réelle de début"
+                      />
+
+                      <span> – </span>
+
+                      <input
+                        type="time"
+                        [(ngModel)]="entree.heureFinReelle"
+                        (change)="validerHeures(entree)"
+                        aria-label="Heure réelle de fin"
+                      />
+                    </div>
+                  } @else {
+                    <span class="not-applicable"> — </span>
+                  }
+                </td>
+
+                <!-- ================================================= -->
+                <!-- STATUT -->
+                <!-- ================================================= -->
+
+                <td>
+                  <div class="status-select-wrapper" [class]="getStatutClass(entree.statutSeance)">
+                    <span class="status-icon">
+                      {{ getStatutIcon(entree.statutSeance) }}
+                    </span>
+
+                    <select
+                      [(ngModel)]="entree.statutSeance"
+                      (ngModelChange)="modifierStatut(entree)"
+                      aria-label="Statut de la séance"
+                    >
+                      <option value="SEANCE_PLANIFIEE">Planifiée</option>
+
+                      <option value="SEANCE_EFFECTUEE">Effectuée</option>
+
+                      <option value="SEANCE_NON_EFFECTUEE">Non effectuée</option>
+
+                      <option value="SEANCE_ANNULEE">Annulée</option>
+                    </select>
+                  </div>
+                </td>
+
+                <!-- ================================================= -->
+                <!-- OBSERVATION -->
+                <!-- ================================================= -->
+
+                <td>
+                  <div class="observation-wrapper">
+                    <input
+                      type="text"
+                      [value]="entree.observation ?? ''"
+                      (input)="modifierObservation(entree, $any($event.target).value)"
+                      [placeholder]="
+                        estObservationObligatoire(entree)
+                          ? 'Observation obligatoire'
+                          : 'Ex. : Retard de 10 min'
+                      "
+                      [class.required-input]="estObservationObligatoire(entree)"
+                      maxlength="150"
+                    />
+
+                    @if (estObservationObligatoire(entree)) {
+                      <span class="required-mark"> * </span>
+                    }
+                  </div>
+                </td>
+              </tr>
+            }
+
+            <!-- ===================================================== -->
+            <!-- AUCUNE SÉANCE -->
+            <!-- ===================================================== -->
+
+            @if (entrees.length === 0) {
+              <tr>
+                <td colspan="7" class="empty-state">Aucune séance planifiée pour cette fiche.</td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+
+      <!-- ========================================================= -->
+      <!-- NOTE -->
+      <!-- ========================================================= -->
+
+      <div class="information-note">
+        <div class="note-icon">i</div>
+
+        <div>
+          <strong> À retenir </strong>
+
+          <span>
+            Les champs marqués d'un
+            <b>*</b>
+            sont obligatoires. Pour une séance effectuée, la date réelle ainsi que les heures de
+            début et de fin sont obligatoires. Pour une séance non effectuée ou annulée, une
+            observation est obligatoire.
+          </span>
+        </div>
+      </div>
+    </section>
+
+    <!-- ========================================================= -->
+    <!-- VALIDATION -->
+    <!-- ========================================================= -->
+
+    <section class="validation-card">
+      <div class="validation-icon">✓</div>
+
+      <div class="validation-content">
+        <strong> Vérifiez vos informations avant de soumettre </strong>
+
+        <p>
+          Vous pouvez enregistrer votre saisie autant de fois que nécessaire. Lorsque toutes les
+          séances sont renseignées, vous pouvez soumettre définitivement votre fiche à
+          l'administration.
+        </p>
+      </div>
+    </section>
+
+    <!-- ========================================================= -->
+    <!-- ACTIONS -->
+    <!-- ========================================================= -->
+
+    <div class="page-actions">
+      <!-- ======================================================= -->
+      <!-- RETOUR -->
+      <!-- ======================================================= -->
+
+      <button type="button" class="btn-secondary" (click)="retour()">
+        <span class="button-icon"> ← </span>
+
+        Retour aux fiches
+      </button>
+
+      <!-- ======================================================= -->
+      <!-- ACTIONS DROITE -->
+      <!-- ======================================================= -->
+
+      <div class="right-actions">
+        <!-- ===================================================== -->
+        <!-- ÉTAT DE LA FICHE -->
+        <!-- ===================================================== -->
+
+        <span class="save-info">
+          @if (ficheComplete) {
+            Toutes les séances sont renseignées
+          } @else {
+            {{ nombreSeancesPlanifiees }}
+
+            séance(s) restent à renseigner
+          }
+        </span>
+
+        <span class="save-info">
+          @if (nombreSeancesEffectuees > 0) {
+            {{ nombreSeancesEffectuees }} séance(s) effectuée(s) prête(s) à être soumise(s)
+          } @else {
+            Renseignez au moins une séance effectuée
+          }
+        </span>
+
+        <!-- ===================================================== -->
+        <!-- ENREGISTRER -->
+        <!-- ===================================================== -->
+
+        <button
+          type="button"
+          class="btn-secondary"
+          [disabled]="isSaving"
+          (click)="enregistrerMaFiche()"
+        >
+          @if (isSaving) {
+            <span class="button-spinner"></span>
+
+            Enregistrement...
+          } @else {
+            <span class="button-icon"> 💾 </span>
+
+            Enregistrer
+          }
+        </button>
+
+        <!-- ===================================================== -->
+        <!-- SOUMETTRE -->
+        <!-- ===================================================== -->
+
+        <button
+          type="button"
+          class="btn-primary"
+          [disabled]="isSaving || !peutSoumettre"
+          (click)="soumettreMaFiche()"
+        >
+          @if (isSaving) {
+            <span class="button-spinner"></span>
+
+            Traitement...
+          } @else {
+            <span class="button-icon"> ✓ </span>
+
+            Soumettre
+          }
+        </button>
+      </div>
+    </div>
+  }
+</div>
+
+<!-- ========================================================= -->
+<!-- MODAL CONFIRMATION SOUMISSION -->
+<!-- ========================================================= -->
+
+<!-- ========================================================= -->
+<!-- MODAL CONFIRMATION SOUMISSION -->
+<!-- ========================================================= -->
+
+<ng-template #confirmationSoumissionModal let-modal>
+  <div class="modal-custom-overlay" (click)="modal.dismiss()">
+    <div class="modal-custom-container" (click)="$event.stopPropagation()">
+      <!-- ===================================================== -->
+      <!-- HEADER -->
+      <!-- ===================================================== -->
+
+      <div class="modal-header-custom">
+        <h5 class="modal-title-custom">
+          <i class="fas fa-question-circle me-2"></i>
+
+          Confirmer la soumission
+        </h5>
+
+        <button
+          type="button"
+          class="btn-close-custom"
+          aria-label="Fermer"
+          (click)="modal.dismiss()"
+        >
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
+
+      <!-- ===================================================== -->
+      <!-- BODY -->
+      <!-- ===================================================== -->
+
+      <div class="modal-body-custom">
+        <p class="modal-message">
+          Vous êtes sur le point de
+
+          <strong class="action-highlight"> soumettre </strong>
+
+          votre fiche d’émargement à l’administration.
+        </p>
+
+        <!-- =================================================== -->
+        <!-- INFORMATION -->
+        <!-- =================================================== -->
+
+        <div class="alert-info-action">
+          <i class="fas fa-info-circle me-2"></i>
+
+          <div>
+            <strong> {{ nombreSeancesEffectuees }} séance(s) effectuée(s) </strong>
+
+            <div>
+              Les séances déclarées comme effectuées seront transmises à l’administration pour
+              contrôle.
+            </div>
+          </div>
+        </div>
+
+        <!-- =================================================== -->
+        <!-- AVERTISSEMENT -->
+        <!-- =================================================== -->
+
+        @if (nombreSeancesPlanifiees > 0) {
+          <div class="alert-warning-action">
+            <i class="fas fa-exclamation-triangle me-2"></i>
+
+            <div>
+              {{ nombreSeancesPlanifiees }} séance(s) sont encore planifiée(s). Elles pourront être
+              renseignées ultérieurement selon le processus prévu.
+            </div>
+          </div>
+        }
+
+        <!-- =================================================== -->
+        <!-- QUESTION -->
+        <!-- =================================================== -->
+
+        <p class="confirmation-question">Voulez-vous continuer ?</p>
+      </div>
+
+      <!-- ===================================================== -->
+      <!-- FOOTER -->
+      <!-- ===================================================== -->
+
+      <div class="modal-footer-custom">
+        <button type="button" class="btn-cancel" (click)="modal.dismiss()" [disabled]="isSaving">
+          <i class="fas fa-times me-2"></i>
+
+          Annuler
+        </button>
+
+        <button
+          type="button"
+          class="btn-confirm btn-pay"
+          [disabled]="isSaving"
+          (click)="modal.close('confirm')"
+        >
+          @if (isSaving) {
+            <span class="spinner-border spinner-border-sm me-2"></span>
+
+            Traitement...
+          } @else {
+            <i class="fas fa-check-circle me-2"></i>
+
+            Confirmer la soumission
+          }
+        </button>
+      </div>
+    </div>
+  </div>
+</ng-template>

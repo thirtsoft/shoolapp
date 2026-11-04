@@ -99,13 +99,13 @@ export class MesPaiesComponent implements OnInit {
       const filtreParam = this.construireParametreDeFiltre();
 
       apiCall = this.rhResource.fetchFilterDataTable(
-        'paies/me',
+        'rh/paies/me',
         this.currentPage,
         this.pageSize,
         filtreParam)
 
     } else {
-      apiCall = this.rhResource.getResourcePaged('paies/me', this.currentPage, this.pageSize);
+      apiCall = this.rhResource.getResourcePaged('rh/paies/me', this.currentPage, this.pageSize);
     }
     apiCall.subscribe({
       next: (response) => {

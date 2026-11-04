@@ -8,6 +8,13 @@ export interface EntreeFicheEmargementResponse {
     heureFinPrevue?: string | null;
     heureDebutReelle?: string | null;
     heureFinReelle?: string | null;
-    statutSeance: string;
+    statutSeance: StatutSeanceEmargement;
     observation?: string | null;
 }
+
+
+export type StatutSeanceEmargement =
+    | 'SEANCE_PLANIFIEE'
+    | 'SEANCE_EFFECTUEE'
+    | 'SEANCE_NON_EFFECTUEE'
+    | 'SEANCE_ANNULEE';

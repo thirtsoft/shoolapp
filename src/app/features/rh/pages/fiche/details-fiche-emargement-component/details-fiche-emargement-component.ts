@@ -7,8 +7,6 @@ import { EntreeFicheEmargementResponse } from '../../../../../core/models/fichee
 import { FicheEmargementDetailResponseResponse } from '../../../../../core/models/ficheemargement/fiche-emargement-details-response.model';
 import { RhResourceService } from '../../../services/rh-resource-service';
 
-type StatutSeance = | 'SEANCE_PLANIFIEE' | 'SEANCE_EFFECTUEE' | 'SEANCE_NON_EFFECTUEE' | 'SEANCE_ANNULEE';
-
 @Component({
   selector: 'app-details-fiche-emargement-component',
   standalone: true,

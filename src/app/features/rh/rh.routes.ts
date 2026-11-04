@@ -19,6 +19,7 @@ import { GenererFichesEmargementComponent } from './pages/fiche/generer-fiches-e
 import { EditerFicheEmargementComponent } from './pages/fiche/editer-fiche-emargement-component/editer-fiche-emargement-component';
 import { DetailsFicheEmargementComponent } from './pages/fiche/details-fiche-emargement-component/details-fiche-emargement-component';
 import { EntresFicheEmargementComponent } from './pages/fiche/entres-fiche-emargement-component/entres-fiche-emargement-component';
+import { TousFichesEmargementComponent } from './pages/fiche/tous-fiches-emargement-component/tous-fiches-emargement-component';
 
 export const RH_ROUTES: Routes = [
   {
@@ -113,6 +114,11 @@ export const RH_ROUTES: Routes = [
       {
         path: 'fiche-emargement/entrees',
         component: EntresFicheEmargementComponent
+      },
+
+      {
+        path: 'tous-fiches-emargements',
+        component: TousFichesEmargementComponent
       },
 
     ],

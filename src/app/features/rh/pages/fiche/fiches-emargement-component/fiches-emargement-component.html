@@ -25,7 +25,6 @@
     </div>
   </section>
 
-  <!-- PERIODE + GENERATION -->
   <section class="period-card">
     <div class="period-header">
       <div>
@@ -37,7 +36,6 @@
 
     <div class="period-content">
       <div class="period-fields">
-        <!-- ANNEE SCOLAIRE -->
         <div class="form-group">
           <label> Année scolaire </label>
 
@@ -48,7 +46,6 @@
           </select>
         </div>
 
-        <!-- MOIS -->
         <div class="form-group">
           <label> Mois </label>
 
@@ -79,7 +76,6 @@
           </select>
         </div>
 
-        <!-- ANNEE -->
         <div class="form-group">
           <label> Année </label>
 
@@ -87,7 +83,6 @@
         </div>
       </div>
 
-      <!-- GENERATION -->
       <div class="generation-zone">
         <div class="generation-info">
           <div class="generation-icon">⚡</div>
@@ -122,7 +117,6 @@
     </div>
   </section>
 
-  <!-- MESSAGES -->
   @if (successMessage) {
     <div class="alert success">
       {{ successMessage }}
@@ -135,7 +129,6 @@
     </div>
   }
 
-  <!-- KPI -->
   <section class="stats-grid">
     <!-- ENSEIGNANTS -->
     <div class="stat-card">
@@ -150,7 +143,6 @@
       </div>
     </div>
 
-    <!-- VALIDÉES -->
     <div class="stat-card">
       <div class="stat-icon validated">✓</div>
 
@@ -163,7 +155,6 @@
       </div>
     </div>
 
-    <!-- EN COURS -->
     <div class="stat-card">
       <div class="stat-icon progress">◔</div>
 
@@ -176,7 +167,6 @@
       </div>
     </div>
 
-    <!-- A CONTROLER -->
     <div class="stat-card">
       <div class="stat-icon control">!</div>
 
@@ -190,7 +180,6 @@
     </div>
   </section>
 
-  <!-- LISTE DES FICHES -->
   <section class="fiches-section">
     <div class="section-header fiches-header">
       <div>
@@ -220,11 +209,11 @@
           <span> fiches </span>
         </div>
 
-        <button class="link-button" type="button">Voir toutes les fiches →</button>
+        <button class="link-button" type="button"
+            (click)="voirFiches()">Voir toutes les fiches →</button>
       </div>
     </div>
 
-    <!-- LOADING -->
     @if (isLoading) {
       <div class="empty-state">
         <div class="loading-spinner"></div>
@@ -233,7 +222,6 @@
       </div>
     }
 
-    <!-- AUCUNE FICHE -->
     @if (!isLoading && fiches.length === 0) {
       <div class="empty-state">
         <div class="empty-icon">📝</div>
@@ -244,12 +232,10 @@
       </div>
     }
 
-    <!-- FICHES -->
     @if (!isLoading && fiches.length > 0) {
       <div class="fiches-list">
         @for (fiche of fiches; track fiche.ficheUuid) {
           <div class="fiche-row">
-            <!-- ENSEIGNANT -->
             <div class="enseignant-info">
               <div class="avatar">
                 {{ getInitiales(fiche) }}
@@ -266,7 +252,6 @@
               </div>
             </div>
 
-            <!-- PROGRESSION -->
             <div class="fiche-progress">
               <div class="progress-label">
                 <span>
@@ -286,7 +271,6 @@
               </div>
             </div>
 
-            <!-- ETAT -->
             <span class="status-badge" [class]="getEtatClass(fiche)">
               <span>
                 {{ getEtatIcon(fiche) }}
@@ -295,7 +279,6 @@
               {{ getEtatLibelle(fiche) }}
             </span>
 
-            <!-- ACTION -->
             <button
               class="fiche-action"
               type="button"
