@@ -72,14 +72,21 @@ export class MesFichesEmargementsComponent implements OnInit {
         this.columns = [
           { key: 'numeroFiche', header: 'N°' },
           { key: 'mois', header: 'Mois' },
-          { key: 'annee', header: 'Année' },
+          { key: 'heuresPrevuesFormatees', header: 'Heures prévues' },
+          { key: 'heuresEffectueesFormatees', header: 'Heures effectuées' },
           { key: 'etatLibelle', header: 'Etat' },
-          { key: 'dateCreation', header: 'Date' },
+          { key: 'dateCreation', header: 'Date création' },
         ];
 
         this.fichesEmargementsData = this.fichesEmargementsData.map((item: any) => ({
           ...item,
+
+          heuresPrevuesFormatees: this.formaterHeures(item.nombreHeuresPrevu),
+
+          heuresEffectueesFormatees: this.formaterHeures(item.nombreHeuresEffectue),
+
         }));
+
         this.isLoading = false;
       },
       error: (error) => {
@@ -88,6 +95,15 @@ export class MesFichesEmargementsComponent implements OnInit {
       }
     });
   }
+
+  formaterHeures(valeur: number | null | undefined): string {
+    const heuresDecimales = Number(valeur ?? 0);
+    const totalMinutes = Math.round(heuresDecimales * 60);
+    const heures = Math.floor(totalMinutes / 60);
+    const minutes = totalMinutes % 60;
+    return `${heures}h${String(minutes).padStart(2, '0')}`;
+  }
+
 
   construireParametreDeFiltre(): any {
     const filtreObj: any = {};

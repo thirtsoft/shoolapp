@@ -1,8 +1,4 @@
 <div class="emargement-content">
-  <!-- ========================================================= -->
-  <!-- CHARGEMENT -->
-  <!-- ========================================================= -->
-
   @if (isLoading) {
     <div class="loading-state">
       <div class="button-spinner"></div>
@@ -10,10 +6,6 @@
       <span> Chargement de la fiche d’émargement... </span>
     </div>
   } @else if (errorMessage) {
-    <!-- ======================================================= -->
-    <!-- ERREUR -->
-    <!-- ======================================================= -->
-
     <div class="alert alert-error">
       <div class="alert-icon">!</div>
 
@@ -28,10 +20,6 @@
       <button type="button" class="alert-close" (click)="retour()" aria-label="Retour">×</button>
     </div>
   } @else if (ficheEmargement) {
-    <!-- ======================================================= -->
-    <!-- MESSAGE SUCCÈS -->
-    <!-- ======================================================= -->
-
     @if (messageSucces) {
       <div class="alert alert-success">
         <div class="alert-icon">✓</div>
@@ -49,10 +37,6 @@
         </button>
       </div>
     }
-
-    <!-- ======================================================= -->
-    <!-- MESSAGE ERREUR -->
-    <!-- ======================================================= -->
 
     @if (messageErreur) {
       <div class="alert alert-error">
@@ -72,15 +56,7 @@
       </div>
     }
 
-    <!-- ========================================================= -->
-    <!-- HERO -->
-    <!-- ========================================================= -->
-
     <section class="page-hero">
-      <!-- ===================================================== -->
-      <!-- GAUCHE : RETOUR + TITRE -->
-      <!-- ===================================================== -->
-
       <div class="hero-left">
         <button
           type="button"
@@ -101,10 +77,6 @@
         </div>
       </div>
 
-      <!-- ===================================================== -->
-      <!-- ANNÉE SCOLAIRE -->
-      <!-- ===================================================== -->
-
       <div class="school-year-info">
         <span class="school-year-icon"> ◆ </span>
 
@@ -117,10 +89,6 @@
         </div>
       </div>
 
-      <!-- ===================================================== -->
-      <!-- MOIS -->
-      <!-- ===================================================== -->
-
       <div class="period-badge">
         <span class="period-icon"> ▣ </span>
 
@@ -131,10 +99,6 @@
         </span>
       </div>
     </section>
-
-    <!-- ========================================================= -->
-    <!-- PROGRESSION -->
-    <!-- ========================================================= -->
 
     <section class="progress-card">
       <div class="progress-header">
@@ -159,14 +123,7 @@
       </div>
     </section>
 
-    <!-- ========================================================= -->
-    <!-- SÉANCES -->
-    <!-- ========================================================= -->
-
     <section class="card sessions-card">
-      <!-- ======================================================= -->
-      <!-- HEADER -->
-      <!-- ======================================================= -->
 
       <div class="sessions-header">
         <div class="card-title">
@@ -178,10 +135,6 @@
             <p>Renseignez l’état réel de chaque séance</p>
           </div>
         </div>
-
-        <!-- ===================================================== -->
-        <!-- LÉGENDE -->
-        <!-- ===================================================== -->
 
         <div class="status-legend">
           <span>
@@ -210,44 +163,20 @@
         </div>
       </div>
 
-      <!-- ========================================================= -->
-      <!-- TABLE -->
-      <!-- ========================================================= -->
-
       <div class="table-container">
         <table>
           <thead>
             <tr>
-              <!-- DATE PRÉVUE -->
 
               <th class="date-column">Date prévue</th>
-
-              <!-- COURS -->
-
               <th>Cours</th>
-
-              <!-- HEURE PRÉVUE -->
-
               <th class="planned-time-column">Heure prévue</th>
-
-              <!-- DATE RÉELLE -->
-
               <th class="real-date-column">Date réelle</th>
-
-              <!-- HEURE RÉELLE -->
-
               <th class="real-time-column">Heure réelle</th>
-
-              <!-- STATUT -->
-
               <th class="status-column">
                 Statut
-
                 <span> * </span>
               </th>
-
-              <!-- OBSERVATION -->
-
               <th class="observation-column">Observation</th>
             </tr>
           </thead>
@@ -255,10 +184,6 @@
           <tbody>
             @for (entree of entrees; track entree.uuid) {
               <tr>
-                <!-- ================================================= -->
-                <!-- DATE PRÉVUE -->
-                <!-- ================================================= -->
-
                 <td>
                   <div class="date-cell">
                     <strong>
@@ -267,10 +192,6 @@
                   </div>
                 </td>
 
-                <!-- ================================================= -->
-                <!-- COURS -->
-                <!-- ================================================= -->
-
                 <td>
                   <div class="course-cell">
                     <span class="course-name">
@@ -278,10 +199,6 @@
                     </span>
                   </div>
                 </td>
-
-                <!-- ================================================= -->
-                <!-- HEURE PRÉVUE -->
-                <!-- ================================================= -->
 
                 <td>
                   <span class="planned-time">
@@ -292,10 +209,6 @@
                     {{ entree.heureFinPrevue || '—' }}
                   </span>
                 </td>
-
-                <!-- ================================================= -->
-                <!-- DATE RÉELLE -->
-                <!-- ================================================= -->
 
                 <td>
                   @if (entree.statutSeance === 'SEANCE_EFFECTUEE') {
@@ -309,10 +222,6 @@
                     <span class="not-applicable"> — </span>
                   }
                 </td>
-
-                <!-- ================================================= -->
-                <!-- HEURE RÉELLE -->
-                <!-- ================================================= -->
 
                 <td>
                   @if (entree.statutSeance === 'SEANCE_EFFECTUEE') {
@@ -338,9 +247,6 @@
                   }
                 </td>
 
-                <!-- ================================================= -->
-                <!-- STATUT -->
-                <!-- ================================================= -->
 
                 <td>
                   <div class="status-select-wrapper" [class]="getStatutClass(entree.statutSeance)">
@@ -363,10 +269,6 @@
                     </select>
                   </div>
                 </td>
-
-                <!-- ================================================= -->
-                <!-- OBSERVATION -->
-                <!-- ================================================= -->
 
                 <td>
                   <div class="observation-wrapper">
@@ -391,10 +293,6 @@
               </tr>
             }
 
-            <!-- ===================================================== -->
-            <!-- AUCUNE SÉANCE -->
-            <!-- ===================================================== -->
-
             @if (entrees.length === 0) {
               <tr>
                 <td colspan="7" class="empty-state">Aucune séance planifiée pour cette fiche.</td>
@@ -403,10 +301,6 @@
           </tbody>
         </table>
       </div>
-
-      <!-- ========================================================= -->
-      <!-- NOTE -->
-      <!-- ========================================================= -->
 
       <div class="information-note">
         <div class="note-icon">i</div>
@@ -425,10 +319,6 @@
       </div>
     </section>
 
-    <!-- ========================================================= -->
-    <!-- VALIDATION -->
-    <!-- ========================================================= -->
-
     <section class="validation-card">
       <div class="validation-icon">✓</div>
 
@@ -443,14 +333,7 @@
       </div>
     </section>
 
-    <!-- ========================================================= -->
-    <!-- ACTIONS -->
-    <!-- ========================================================= -->
-
     <div class="page-actions">
-      <!-- ======================================================= -->
-      <!-- RETOUR -->
-      <!-- ======================================================= -->
 
       <button type="button" class="btn-secondary" (click)="retour()">
         <span class="button-icon"> ← </span>
@@ -458,15 +341,7 @@
         Retour aux fiches
       </button>
 
-      <!-- ======================================================= -->
-      <!-- ACTIONS DROITE -->
-      <!-- ======================================================= -->
-
       <div class="right-actions">
-        <!-- ===================================================== -->
-        <!-- ÉTAT DE LA FICHE -->
-        <!-- ===================================================== -->
-
         <span class="save-info">
           @if (ficheComplete) {
             Toutes les séances sont renseignées
@@ -485,10 +360,6 @@
           }
         </span>
 
-        <!-- ===================================================== -->
-        <!-- ENREGISTRER -->
-        <!-- ===================================================== -->
-
         <button
           type="button"
           class="btn-secondary"
@@ -505,10 +376,6 @@
             Enregistrer
           }
         </button>
-
-        <!-- ===================================================== -->
-        <!-- SOUMETTRE -->
-        <!-- ===================================================== -->
 
         <button
           type="button"
@@ -531,20 +398,9 @@
   }
 </div>
 
-<!-- ========================================================= -->
-<!-- MODAL CONFIRMATION SOUMISSION -->
-<!-- ========================================================= -->
-
-<!-- ========================================================= -->
-<!-- MODAL CONFIRMATION SOUMISSION -->
-<!-- ========================================================= -->
-
 <ng-template #confirmationSoumissionModal let-modal>
   <div class="modal-custom-overlay" (click)="modal.dismiss()">
     <div class="modal-custom-container" (click)="$event.stopPropagation()">
-      <!-- ===================================================== -->
-      <!-- HEADER -->
-      <!-- ===================================================== -->
 
       <div class="modal-header-custom">
         <h5 class="modal-title-custom">
@@ -563,10 +419,6 @@
         </button>
       </div>
 
-      <!-- ===================================================== -->
-      <!-- BODY -->
-      <!-- ===================================================== -->
-
       <div class="modal-body-custom">
         <p class="modal-message">
           Vous êtes sur le point de
@@ -575,10 +427,6 @@
 
           votre fiche d’émargement à l’administration.
         </p>
-
-        <!-- =================================================== -->
-        <!-- INFORMATION -->
-        <!-- =================================================== -->
 
         <div class="alert-info-action">
           <i class="fas fa-info-circle me-2"></i>
@@ -593,10 +441,6 @@
           </div>
         </div>
 
-        <!-- =================================================== -->
-        <!-- AVERTISSEMENT -->
-        <!-- =================================================== -->
-
         @if (nombreSeancesPlanifiees > 0) {
           <div class="alert-warning-action">
             <i class="fas fa-exclamation-triangle me-2"></i>
@@ -608,16 +452,8 @@
           </div>
         }
 
-        <!-- =================================================== -->
-        <!-- QUESTION -->
-        <!-- =================================================== -->
-
         <p class="confirmation-question">Voulez-vous continuer ?</p>
       </div>
-
-      <!-- ===================================================== -->
-      <!-- FOOTER -->
-      <!-- ===================================================== -->
 
       <div class="modal-footer-custom">
         <button type="button" class="btn-cancel" (click)="modal.dismiss()" [disabled]="isSaving">
