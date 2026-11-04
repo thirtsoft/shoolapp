@@ -53,7 +53,6 @@ export const ADMIN_ROUTES: Routes = [
             .then(m => m.CAHIER_TEXTE_ROUTES)
       },
 
-
       {
         path: 'referentiel',
         loadChildren: () =>

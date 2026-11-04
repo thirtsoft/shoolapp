@@ -1,0 +1,312 @@
+<div class="emargement-page">
+  <!-- HEADER -->
+  <section class="page-header">
+    <div class="header-left">
+      <div class="header-icon">
+        <span>📝</span>
+      </div>
+
+      <div>
+        <div class="breadcrumb">
+          RH
+          <span>/</span>
+          Fiches d'émargement
+        </div>
+
+        <h1>Fiches d'émargement</h1>
+
+        <p>Suivi mensuel des heures d'enseignement</p>
+      </div>
+    </div>
+
+    <div class="header-badge">
+      <span class="status-dot"></span>
+      RH
+    </div>
+  </section>
+
+  <!-- PERIODE + GENERATION -->
+  <section class="period-card">
+    <div class="period-header">
+      <div>
+        <h2>Période de suivi</h2>
+
+        <p>Sélectionnez la période pour consulter et générer les fiches d'émargement.</p>
+      </div>
+    </div>
+
+    <div class="period-content">
+      <div class="period-fields">
+        <!-- ANNEE SCOLAIRE -->
+        <div class="form-group">
+          <label> Année scolaire </label>
+
+          <select disabled>
+            <option>
+              {{ anneeScolaireLibelle ?? 'Chargement...' }}
+            </option>
+          </select>
+        </div>
+
+        <!-- MOIS -->
+        <div class="form-group">
+          <label> Mois </label>
+
+          <select [(ngModel)]="mois" (change)="changerMois()">
+            <option [value]="1">Janvier</option>
+
+            <option [value]="2">Février</option>
+
+            <option [value]="3">Mars</option>
+
+            <option [value]="4">Avril</option>
+
+            <option [value]="5">Mai</option>
+
+            <option [value]="6">Juin</option>
+
+            <option [value]="7">Juillet</option>
+
+            <option [value]="8">Août</option>
+
+            <option [value]="9">Septembre</option>
+
+            <option [value]="10">Octobre</option>
+
+            <option [value]="11">Novembre</option>
+
+            <option [value]="12">Décembre</option>
+          </select>
+        </div>
+
+        <!-- ANNEE -->
+        <div class="form-group">
+          <label> Année </label>
+
+          <input type="number" [(ngModel)]="annee" (change)="changerAnnee()" min="2020" />
+        </div>
+      </div>
+
+      <!-- GENERATION -->
+      <div class="generation-zone">
+        <div class="generation-info">
+          <div class="generation-icon">⚡</div>
+
+          <div>
+            <strong> Génération des fiches </strong>
+
+            <p>
+              Générer les fiches de tous les enseignants à partir des emplois du temps actifs de la
+              période.
+            </p>
+          </div>
+        </div>
+
+        <button
+          class="btn-primary"
+          type="button"
+          [disabled]="isGenerating || !anneeScolaireUuid"
+          (click)="genererFiches()"
+        >
+          @if (!isGenerating) {
+            <span>＋</span>
+          }
+
+          @if (isGenerating) {
+            <span>...</span>
+          }
+
+          {{ isGenerating ? 'Génération en cours...' : 'Générer les fiches du mois' }}
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- MESSAGES -->
+  @if (successMessage) {
+    <div class="alert success">
+      {{ successMessage }}
+    </div>
+  }
+
+  @if (errorMessage) {
+    <div class="alert error">
+      {{ errorMessage }}
+    </div>
+  }
+
+  <!-- KPI -->
+  <section class="stats-grid">
+    <!-- ENSEIGNANTS -->
+    <div class="stat-card">
+      <div class="stat-icon teachers">👥</div>
+
+      <div class="stat-content">
+        <span class="stat-label"> Enseignants </span>
+
+        <strong class="stat-value">
+          {{ fichesResponse?.nombreEnseignants ?? 0 }}
+        </strong>
+      </div>
+    </div>
+
+    <!-- VALIDÉES -->
+    <div class="stat-card">
+      <div class="stat-icon validated">✓</div>
+
+      <div class="stat-content">
+        <span class="stat-label"> Fiches validées </span>
+
+        <strong class="stat-value">
+          {{ fichesResponse?.nombreFichesValidees ?? 0 }}
+        </strong>
+      </div>
+    </div>
+
+    <!-- EN COURS -->
+    <div class="stat-card">
+      <div class="stat-icon progress">◔</div>
+
+      <div class="stat-content">
+        <span class="stat-label"> En cours </span>
+
+        <strong class="stat-value">
+          {{ fichesResponse?.nombreFichesEnCours ?? 0 }}
+        </strong>
+      </div>
+    </div>
+
+    <!-- A CONTROLER -->
+    <div class="stat-card">
+      <div class="stat-icon control">!</div>
+
+      <div class="stat-content">
+        <span class="stat-label"> À contrôler </span>
+
+        <strong class="stat-value">
+          {{ fichesResponse?.nombreFichesAControler ?? 0 }}
+        </strong>
+      </div>
+    </div>
+  </section>
+
+  <!-- LISTE DES FICHES -->
+  <section class="fiches-section">
+    <div class="section-header fiches-header">
+      <div>
+        <h2>Fiches du mois</h2>
+
+        <p>
+          {{ getMoisLibelle() }}
+          {{ annee }}
+          ·
+          {{ fichesResponse?.nombreFiches ?? 0 }}
+          fiche(s)
+        </p>
+      </div>
+
+      <div class="list-actions">
+        <div class="limit-selector">
+          <label> Afficher </label>
+
+          <select [(ngModel)]="limite" (change)="changerLimite()">
+            @for (nombre of limites; track nombre) {
+              <option [value]="nombre">
+                {{ nombre }}
+              </option>
+            }
+          </select>
+
+          <span> fiches </span>
+        </div>
+
+        <button class="link-button" type="button">Voir toutes les fiches →</button>
+      </div>
+    </div>
+
+    <!-- LOADING -->
+    @if (isLoading) {
+      <div class="empty-state">
+        <div class="loading-spinner"></div>
+
+        <span> Chargement des fiches... </span>
+      </div>
+    }
+
+    <!-- AUCUNE FICHE -->
+    @if (!isLoading && fiches.length === 0) {
+      <div class="empty-state">
+        <div class="empty-icon">📝</div>
+
+        <strong> Aucune fiche disponible </strong>
+
+        <span> Générez les fiches pour cette période. </span>
+      </div>
+    }
+
+    <!-- FICHES -->
+    @if (!isLoading && fiches.length > 0) {
+      <div class="fiches-list">
+        @for (fiche of fiches; track fiche.ficheUuid) {
+          <div class="fiche-row">
+            <!-- ENSEIGNANT -->
+            <div class="enseignant-info">
+              <div class="avatar">
+                {{ getInitiales(fiche) }}
+              </div>
+
+              <div>
+                <strong>
+                  {{ getNomEnseignant(fiche) }}
+                </strong>
+
+                <span>
+                  {{ fiche.enseignantMatricule || 'Matricule non renseigné' }}
+                </span>
+              </div>
+            </div>
+
+            <!-- PROGRESSION -->
+            <div class="fiche-progress">
+              <div class="progress-label">
+                <span>
+                  {{ fiche.nombreSeancesPrevues }}
+                  séances
+                </span>
+
+                <strong>
+                  {{ fiche.nombreSeancesEffectuees }}
+                  /
+                  {{ fiche.nombreSeancesPrevues }}
+                </strong>
+              </div>
+
+              <div class="progress-bar">
+                <span [style.width.%]="getProgression(fiche)"></span>
+              </div>
+            </div>
+
+            <!-- ETAT -->
+            <span class="status-badge" [class]="getEtatClass(fiche)">
+              <span>
+                {{ getEtatIcon(fiche) }}
+              </span>
+
+              {{ getEtatLibelle(fiche) }}
+            </span>
+
+            <!-- ACTION -->
+            <button
+              class="fiche-action"
+              type="button"
+              title="Consulter"
+              (click)="consulterFiche(fiche)"
+            >
+              →
+            </button>
+          </div>
+        }
+      </div>
+    }
+  </section>
+</div>
