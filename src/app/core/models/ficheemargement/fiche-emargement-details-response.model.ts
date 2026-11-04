@@ -21,6 +21,9 @@ export interface FicheEmargementDetailResponseResponse {
     nombreSeancesNonEffectuees: number;
     nombreSeancesAnnulees: number;
 
+    nombreHeuresPrevu: number;
+    nombreHeuresEffectue: number;
+
     dateCreation: string;
     dateSoumission?: string | null;
     dateValidation?: string | null;

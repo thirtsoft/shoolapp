@@ -12,10 +12,7 @@
 
   @if (!isLoading && errorMessage) {
     <div class="error-state">
-
-      <div class="error-icon">
-        !
-      </div>
+      <div class="error-icon">!</div>
 
       <div class="error-content">
         <strong>Impossible de charger la fiche</strong>
@@ -25,23 +22,16 @@
         </p>
       </div>
 
-      <button
-        type="button"
-        class="btn-secondary"
-        (click)="retour()"
-      >
+      <button type="button" class="btn-secondary" (click)="retour()">
         <span>←</span>
         Retour
       </button>
-
     </div>
   }
 
   @if (!isLoading && !errorMessage && fiche) {
     <section class="page-header">
-
       <div class="header-left">
-
         <button
           type="button"
           class="back-button"
@@ -56,7 +46,6 @@
         </div>
 
         <div>
-
           <div class="breadcrumb">
             <span>RH</span>
             <span>/</span>
@@ -67,12 +56,8 @@
 
           <h1>Fiche d'émargement</h1>
 
-          <p>
-            Consultation des séances déclarées par l'enseignant
-          </p>
-
+          <p>Consultation des séances déclarées par l'enseignant</p>
         </div>
-
       </div>
 
       <div
@@ -82,30 +67,22 @@
         [class.returned]="getEtatClass() === 'returned'"
         [class.progress]="getEtatClass() === 'progress'"
       >
-
         <span>
           {{ getEtatIcon() }}
         </span>
 
         {{ getEtatLibelle() }}
-
       </div>
-
     </section>
 
     <section class="fiche-summary-card">
-
       <div class="fiche-summary-main">
-
         <div class="enseignant-avatar">
           {{ getInitiales() }}
         </div>
 
         <div class="enseignant-block">
-
-          <div class="summary-label">
-            ENSEIGNANT
-          </div>
+          <div class="summary-label">ENSEIGNANT</div>
 
           <h2>
             {{ fiche.enseignantPrenom }}
@@ -115,324 +92,232 @@
           <span class="matricule">
             {{ fiche.enseignantMatricule }}
           </span>
-
         </div>
-
       </div>
 
       <div class="fiche-reference">
-
         <div class="reference-item">
-
-          <span class="reference-label">
-            N° Fiche
-          </span>
+          <span class="reference-label"> N° Fiche </span>
 
           <strong>
             {{ fiche.numeroFiche }}
           </strong>
-
         </div>
 
-
         <div class="reference-item">
-
-          <span class="reference-label">
-            Période
-          </span>
+          <span class="reference-label"> Période </span>
 
           <strong>
             {{ fiche.moisLibelle }}
             {{ fiche.annee }}
           </strong>
-
         </div>
 
-
         <div class="reference-item">
-
-          <span class="reference-label">
-            Année scolaire
-          </span>
+          <span class="reference-label"> Année scolaire </span>
 
           <strong>
             {{ fiche.anneeScolaireLibelle }}
           </strong>
-
         </div>
-
       </div>
-
     </section>
 
     <section class="tracking-card">
-
       <div class="tracking-header">
-
         <div>
+          <h2>Suivi de la fiche</h2>
 
-          <h2>
-            Suivi de la fiche
-          </h2>
-
-          <p>
-            Progression des séances d'enseignement du mois.
-          </p>
-
+          <p>Progression des séances d'enseignement du mois.</p>
         </div>
-
 
         <div class="tracking-percentage">
+          <strong> {{ progression }}% </strong>
 
-          <strong>
-            {{ progression }}%
-          </strong>
-
-          <span>
-            effectuées
-          </span>
-
+          <span> effectuées </span>
         </div>
-
       </div>
 
       <div class="progress-container">
-
         <div class="progress-track">
-
-          <span
-            class="progress-value"
-            [style.width.%]="progression"
-          ></span>
-
+          <span class="progress-value" [style.width.%]="progression"></span>
         </div>
 
-
         <div class="progress-caption">
-
           <span>
-
             {{ nombreSeancesEffectuees }}
 
             séance{{ nombreSeancesEffectuees > 1 ? 's' : '' }}
 
-            effectuée{{
-              nombreSeancesEffectuees > 1 ? 's' : ''
-            }}
-
+            effectuée{{ nombreSeancesEffectuees > 1 ? 's' : '' }}
           </span>
-
 
           <strong>
             {{ nombreSeancesEffectuees }}
             /
             {{ nombreSeancesPrevues }}
           </strong>
-
         </div>
-
       </div>
-
     </section>
 
     <section class="stats-grid">
-
+      <!-- KPI 1 : Séances prévues -->
       <div class="stat-card">
-
         <div class="stat-icon planned">
           <span>○</span>
         </div>
 
         <div class="stat-content">
+          <span class="stat-label">Séances prévues</span>
 
-          <span class="stat-label">
-            Séances prévues
-          </span>
+          <strong>{{ nombreSeancesPrevues }}</strong>
 
-          <strong>
-            {{ nombreSeancesPrevues }}
-          </strong>
-
+          <span class="stat-description"> Programmées ce mois </span>
         </div>
-
       </div>
 
+      <!-- KPI 2 : Séances effectuées -->
       <div class="stat-card">
-
         <div class="stat-icon done">
           <span>✓</span>
         </div>
 
         <div class="stat-content">
+          <span class="stat-label">Séances effectuées</span>
 
-          <span class="stat-label">
-            Effectuées
-          </span>
+          <strong>{{ nombreSeancesEffectuees }}</strong>
 
-          <strong>
-            {{ nombreSeancesEffectuees }}
-          </strong>
-
+          <span class="stat-description"> {{ progression }} % des séances prévues </span>
         </div>
-
       </div>
 
-      <div class="stat-card">
+      <!-- KPI 3 : Suivi des heures -->
+      <div class="stat-card hours-stat-card">
+        <div class="stat-icon hours">
+          <span>◷</span>
+        </div>
 
+        <div class="stat-content hours-stat-content">
+          <span class="stat-label"> Suivi des heures </span>
+
+          <div class="hours-comparison">
+            <div class="hours-value-group">
+              <strong class="hours-done">
+                {{ formaterHeures(nombreHeuresEffectue) }}
+              </strong>
+
+              <span>Effectuées</span>
+            </div>
+
+            <span class="hours-divider">/</span>
+
+            <div class="hours-value-group">
+              <strong class="hours-planned">
+                {{ formaterHeures(nombreHeuresPrevu) }}
+              </strong>
+
+              <span>Prévues</span>
+            </div>
+          </div>
+
+          <div class="hours-progress-track">
+            <span class="hours-progress-value" [style.width.%]="progressionHeures"> </span>
+          </div>
+
+          <span class="stat-description"> {{ progressionHeures }} % des heures prévues </span>
+        </div>
+      </div>
+
+      <!-- KPI 4 : Séances non réalisées -->
+      <div class="stat-card">
         <div class="stat-icon warning">
           <span>!</span>
         </div>
 
         <div class="stat-content">
+          <span class="stat-label"> Séances non réalisées </span>
 
-          <span class="stat-label">
-            Non effectuées
-          </span>
+          <div class="session-breakdown">
+            <div class="session-breakdown-item">
+              <strong class="non-effectuees-value">
+                {{ nombreSeancesNonEffectuees }}
+              </strong>
 
-          <strong>
-            {{ nombreSeancesNonEffectuees }}
-          </strong>
+              <span>Non effectuées</span>
+            </div>
 
+            <span class="breakdown-divider"></span>
+
+            <div class="session-breakdown-item">
+              <strong class="annulees-value">
+                {{ nombreSeancesAnnulees }}
+              </strong>
+
+              <span>Annulées</span>
+            </div>
+          </div>
         </div>
-
       </div>
-
-      <div class="stat-card">
-
-        <div class="stat-icon cancelled">
-          <span>×</span>
-        </div>
-
-        <div class="stat-content">
-
-          <span class="stat-label">
-            Annulées
-          </span>
-
-          <strong>
-            {{ nombreSeancesAnnulees }}
-          </strong>
-
-        </div>
-
-      </div>
-
     </section>
 
     <section class="sessions-card">
-
       <div class="section-header">
-
         <div>
-
-          <h2>
-            Détail des séances
-          </h2>
+          <h2>Détail des séances</h2>
 
           <p>
-
             {{ nombreSeancesEffectuees }}
             /
             {{ nombreSeancesPrevues }}
 
             séances effectuées
-
           </p>
-
         </div>
-
 
         <div class="session-counter">
-
           {{ nombreSeancesPrevues }}
 
-          séance{{
-            nombreSeancesPrevues > 1 ? 's' : ''
-          }}
-
+          séance{{ nombreSeancesPrevues > 1 ? 's' : '' }}
         </div>
-
       </div>
 
       <div class="sessions-table-wrapper">
-
         <table class="sessions-table">
-
           <thead>
-
             <tr>
+              <th>Date</th>
 
-              <th>
-                Date
-              </th>
+              <th>Cours</th>
 
-              <th>
-                Cours
-              </th>
+              <th>Heure prévue</th>
 
-              <th>
-                Heure prévue
-              </th>
+              <th>Heure réelle</th>
 
-              <th>
-                Heure réelle
-              </th>
+              <th>Statut</th>
 
-              <th>
-                Statut
-              </th>
-
-              <th>
-                Observation
-              </th>
-
+              <th>Observation</th>
             </tr>
-
           </thead>
 
-
           <tbody>
-
             @if (entrees.length === 0) {
-
               <tr>
-
-                <td
-                  colspan="6"
-                  class="empty-table"
-                >
-
+                <td colspan="6" class="empty-table">
                   <div class="empty-table-content">
+                    <span> 📋 </span>
 
-                    <span>
-                      📋
-                    </span>
+                    <strong> Aucune séance </strong>
 
-                    <strong>
-                      Aucune séance
-                    </strong>
-
-                    <p>
-                      Aucune séance n'est enregistrée
-                      dans cette fiche.
-                    </p>
-
+                    <p>Aucune séance n'est enregistrée dans cette fiche.</p>
                   </div>
-
                 </td>
-
               </tr>
-
             } @else {
-
               @for (entree of entrees; track entree.uuid) {
-
                 <tr>
-
                   <td>
-
                     <div class="date-cell">
-
                       <strong>
                         {{ formatDate(entree.dateCours) }}
                       </strong>
@@ -441,270 +326,271 @@
                         entree.dateReelleEffectuee &&
                         entree.dateReelleEffectuee !== entree.dateCours
                       ) {
-
                         <span class="real-date">
-
                           Réalisée le
                           {{ formatDate(entree.dateReelleEffectuee) }}
-
                         </span>
-
                       }
-
                     </div>
-
                   </td>
 
                   <td>
-
                     <div class="course-cell">
-
-                      <div class="course-icon">
-                        📚
-                      </div>
+                      <div class="course-icon">📚</div>
 
                       <div>
-
                         <strong>
                           {{ entree.coursLibelle }}
                         </strong>
 
-                        <span>
-                          Séance d'enseignement
-                        </span>
-
+                        <span> Séance d'enseignement </span>
                       </div>
-
                     </div>
-
                   </td>
 
                   <td>
-
                     <div class="time-cell">
-
                       <strong>
-
                         {{ entree.heureDebutPrevue }}
                         →
                         {{ entree.heureFinPrevue }}
-
                       </strong>
 
-                      <span>
-                        Prévue
-                      </span>
-
+                      <span> Prévue </span>
                     </div>
-
                   </td>
 
                   <td>
-
                     <div class="time-cell">
-
-                      @if (
-                        entree.heureDebutReelle &&
-                        entree.heureFinReelle
-                      ) {
-
+                      @if (entree.heureDebutReelle && entree.heureFinReelle) {
                         <strong class="real-time">
-
                           {{ entree.heureDebutReelle }}
                           →
                           {{ entree.heureFinReelle }}
-
                         </strong>
 
-                        <span>
-                          Réelle
-                        </span>
-
+                        <span> Réelle </span>
                       } @else {
+                        <strong class="empty-value"> — </strong>
 
-                        <strong class="empty-value">
-                          —
-                        </strong>
-
-                        <span>
-                          Non renseignée
-                        </span>
-
+                        <span> Non renseignée </span>
                       }
-
                     </div>
-
                   </td>
 
                   <td>
-
                     <span
                       class="session-status"
-
-                      [class.effectuee]="
-                        getStatutClass(entree.statutSeance)
-                        === 'effectuee'
-                      "
-
+                      [class.effectuee]="getStatutClass(entree.statutSeance) === 'effectuee'"
                       [class.non-effectuee]="
-                        getStatutClass(entree.statutSeance)
-                        === 'non-effectuee'
+                        getStatutClass(entree.statutSeance) === 'non-effectuee'
                       "
-
-                      [class.annulee]="
-                        getStatutClass(entree.statutSeance)
-                        === 'annulee'
-                      "
-
-                      [class.planifiee]="
-                        getStatutClass(entree.statutSeance)
-                        === 'planifiee'
-                      "
+                      [class.annulee]="getStatutClass(entree.statutSeance) === 'annulee'"
+                      [class.planifiee]="getStatutClass(entree.statutSeance) === 'planifiee'"
                     >
-
                       <span>
                         {{ getStatutIcon(entree.statutSeance) }}
                       </span>
 
                       {{ getStatutLibelle(entree.statutSeance) }}
-
                     </span>
-
                   </td>
 
                   <td>
-
                     @if (entree.observation) {
-
                       <div class="observation-cell">
-
                         {{ entree.observation }}
-
                       </div>
-
                     } @else {
-
-                      <span class="empty-value">
-                        —
-                      </span>
-
+                      <span class="empty-value"> — </span>
                     }
-
                   </td>
-
                 </tr>
-
               }
-
             }
-
           </tbody>
-
         </table>
-
       </div>
-
     </section>
 
     <section class="validation-card">
-
-      <div class="validation-icon">
-        ✓
-      </div>
-
+      <div class="validation-icon">✓</div>
 
       <div class="validation-content">
-
-        <h2>
-          Historique de la fiche
-        </h2>
-
+        <h2>Historique de la fiche</h2>
 
         <div class="validation-grid">
-
           <div>
-
-            <span>
-              Créée le
-            </span>
+            <span> Créée le </span>
 
             <strong>
               {{ formatDate(fiche.dateCreation) }}
             </strong>
-
           </div>
 
           <div>
-
-            <span>
-              Soumise le
-            </span>
+            <span> Soumise le </span>
 
             <strong>
               {{ formatDateTime(fiche.dateSoumission) }}
             </strong>
-
           </div>
 
           <div>
-
-            <span>
-              Validée le
-            </span>
+            <span> Validée le </span>
 
             <strong>
               {{ formatDateTime(fiche.dateValidation) }}
             </strong>
-
           </div>
-
         </div>
-
       </div>
-
     </section>
 
     <div class="page-actions">
-
-      <button
-        type="button"
-        class="btn-secondary"
-        (click)="retour()"
-      >
-
-        <span>
-          ←
-        </span>
-
+      <button type="button" class="btn-secondary" (click)="retour()">
+        <span>←</span>
         Retour aux fiches
-
       </button>
 
       @if (fiche.etatCode === 'E3') {
-
         <div class="action-group">
+          <button
+            type="button"
+            class="btn-reject"
+            (click)="ouvrirModalDecision(modalDecision, 'REJETER')"
+          >
+            <span>↶</span>
+            Rejeter la fiche
+          </button>
 
           <button
             type="button"
-            class="btn-return"
+            class="btn-validate"
+            (click)="ouvrirModalDecision(modalDecision, 'VALIDER')"
           >
-            ↻ Retourner la fiche
+            <span>✓</span>
+            Valider la fiche
           </button>
+        </div>
+      }
+    </div>
+  }
+</div>
 
-
-          <button
-            type="button"
-            class="btn-primary"
-          >
-            ✓ Valider la fiche
-          </button>
-
+<!-- Modal de validation / rejet -->
+<ng-template #modalDecision let-modal>
+  <div class="modal-custom-overlay" (click)="modal.dismiss('cancel')">
+    <div class="modal-custom-container" (click)="$event.stopPropagation()">
+      <div
+        class="modal-custom-header"
+        [class.modal-header-reject]="modalAction === 'REJETER'"
+        [class.modal-header-validate]="modalAction === 'VALIDER'"
+      >
+        <div class="modal-header-icon">
+          {{ modalAction === 'VALIDER' ? '✓' : '↶' }}
         </div>
 
-      }
+        <div class="modal-header-text">
+          <h2>
+            {{ modalAction === 'VALIDER' ? 'Valider la fiche' : 'Rejeter la fiche' }}
+          </h2>
 
+          <p>
+            {{
+              modalAction === 'VALIDER'
+                ? 'Confirmez-vous la validation de cette fiche d’émargement ?'
+                : 'Indiquez le motif pour retourner cette fiche à l’enseignant.'
+            }}
+          </p>
+        </div>
+
+        <button
+          type="button"
+          class="modal-close"
+          [disabled]="isProcessing"
+          (click)="modal.dismiss('cancel')"
+        >
+          ×
+        </button>
+      </div>
+
+      <div class="modal-custom-body">
+        <div class="modal-fiche-reference">
+          <span>Fiche concernée</span>
+          <strong>{{ fiche.numeroFiche }}</strong>
+          <small>
+            {{ fiche.enseignantPrenom }} {{ fiche.enseignantNom }} · {{ fiche.moisLibelle }}
+            {{ fiche.annee }}
+          </small>
+        </div>
+
+        @if (modalAction === 'VALIDER') {
+          <div class="confirmation-message validation-message">
+            <span>✓</span>
+            <p>
+              En confirmant, cette fiche sera déclarée validée. Les données validées pourront être
+              consultées pour le suivi RH et la préparation de la paie.
+            </p>
+          </div>
+        }
+
+        @if (modalAction === 'REJETER') {
+          <div class="motif-field">
+            <label for="motifRetour">
+              Motif du rejet
+              <span class="required">*</span>
+            </label>
+
+            <textarea
+              id="motifRetour"
+              rows="4"
+              maxlength="1000"
+              [(ngModel)]="motifRetour"
+              [ngModelOptions]="{ standalone: true }"
+              placeholder="Expliquez à l'enseignant les éléments à corriger..."
+              [disabled]="isProcessing"
+            ></textarea>
+
+            <div class="motif-footer">
+              <span> Le motif doit contenir au moins 5 caractères. </span>
+
+              <span>{{ motifRetour.trim().length }}/1000</span>
+            </div>
+
+            @if (motifRetour.trim().length > 0 && motifRetour.trim().length < 5) {
+              <div class="field-error">Le motif doit contenir au moins 5 caractères.</div>
+            }
+          </div>
+        }
+      </div>
+
+      <div class="modal-custom-footer">
+        <button
+          type="button"
+          class="modal-cancel-btn"
+          [disabled]="isProcessing"
+          (click)="modal.dismiss('cancel')"
+        >
+          Annuler
+        </button>
+
+        <button
+          type="button"
+          [class.modal-reject-btn]="modalAction === 'REJETER'"
+          [class.modal-validate-btn]="modalAction === 'VALIDER'"
+          [disabled]="isProcessing || (modalAction === 'REJETER' && motifRetour.trim().length < 5)"
+          (click)="confirmerDecision(modal)"
+        >
+          @if (isProcessing) {
+            <span class="button-spinner"></span>
+            Traitement...
+          } @else {
+            <span>{{ modalAction === 'VALIDER' ? '✓' : '↶' }}</span>
+            {{ modalAction === 'VALIDER' ? 'Confirmer la validation' : 'Confirmer le rejet' }}
+          }
+        </button>
+      </div>
     </div>
-
-  }
-
-</div>
+  </div>
+</ng-template>

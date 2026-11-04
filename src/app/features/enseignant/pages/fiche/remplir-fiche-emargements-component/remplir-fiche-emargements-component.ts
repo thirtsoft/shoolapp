@@ -2,12 +2,7 @@ import { Component, inject, OnInit, TemplateRef, ViewChild } from '@angular/core
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
-
-import {
-  EntreeFicheEmargementResponse,
-  StatutSeanceEmargement
-} from '../../../../../core/models/ficheemargement/entree-fiche-emargement-response.model';
-
+import { EntreeFicheEmargementResponse, StatutSeanceEmargement } from '../../../../../core/models/ficheemargement/entree-fiche-emargement-response.model';
 import { FicheEmargementDetailResponseResponse } from '../../../../../core/models/ficheemargement/fiche-emargement-details-response.model';
 
 import { forkJoin } from 'rxjs';
@@ -313,44 +308,31 @@ export class RemplirFicheEmargementsComponent implements OnInit {
 
   peutEnregistrerEntree(entree: EntreeFicheEmargementResponse): boolean {
 
-    // Une séance encore planifiée est valide pour un simple enregistrement.
     if (entree.statutSeance === 'SEANCE_PLANIFIEE') {
       return true;
     }
 
-    // Séance effectuée
     if (entree.statutSeance === 'SEANCE_EFFECTUEE') {
 
-      if (
-        !entree.dateReelleEffectuee ||
-        !entree.heureDebutReelle ||
-        !entree.heureFinReelle
-      ) {
+      if (!entree.dateReelleEffectuee || !entree.heureDebutReelle || !entree.heureFinReelle) {
         return false;
       }
 
       return entree.heureFinReelle > entree.heureDebutReelle;
     }
 
-    // Séance non effectuée ou annulée
-    if (
-      entree.statutSeance === 'SEANCE_NON_EFFECTUEE' ||
-      entree.statutSeance === 'SEANCE_ANNULEE'
-    ) {
+    if (entree.statutSeance === 'SEANCE_NON_EFFECTUEE' || entree.statutSeance === 'SEANCE_ANNULEE') {
       return !!entree.observation?.trim();
     }
-
     return false;
   }
 
   enregistrerMaFiche(): void {
-
     this.messageErreur = '';
     this.messageSucces = '';
 
     if (!this.ficheEmargement) {
-      this.messageErreur =
-        'La fiche d’émargement n’est pas encore chargée.';
+      this.messageErreur = 'La fiche d’émargement n’est pas encore chargée.';
       return;
     }
 
@@ -358,30 +340,17 @@ export class RemplirFicheEmargementsComponent implements OnInit {
       return;
     }
 
-    /*
-     * On vérifie uniquement les séances qui ont été renseignées.
-     *
-     * Une séance PLANIFIÉE est autorisée :
-     * elle signifie simplement que l'enseignant ne l'a
-     * pas encore renseignée.
-     */
     const entreeInvalide = this.entreesFiche.find(
       entree => !this.peutEnregistrerEntree(entree)
     );
 
     if (entreeInvalide) {
-
-      this.messageErreur =
-        'Veuillez compléter les informations de la séance avant de l’enregistrer.';
+      this.messageErreur = 'Veuillez compléter les informations de la séance avant de l’enregistrer.';
 
       return;
     }
 
-    /*
-     * Double vérification des heures réelles.
-     */
     for (const entree of this.entreesFiche) {
-
       if (
         entree.statutSeance === 'SEANCE_EFFECTUEE' &&
         entree.heureDebutReelle &&
@@ -391,37 +360,19 @@ export class RemplirFicheEmargementsComponent implements OnInit {
 
         this.messageErreur =
           `L'heure de fin doit être supérieure à l'heure de début pour la séance du ${this.getDateLibelle(entree.dateCours)}.`;
-
         return;
       }
     }
 
     this.isSaving = true;
-
-    /*
-     * Le backend accepte également SEANCE_PLANIFIEE.
-     *
-     * On peut donc envoyer toutes les entrées.
-     * Les entrées encore planifiées seront envoyées
-     * avec leurs valeurs réelles à null.
-     */
     const sauvegardes = this.entreesFiche.map(entree => {
 
       const request: ModifierEntreeEmargementRequest = {
-
         statutSeance: entree.statutSeance,
-
-        dateReelleEffectuee:
-          entree.dateReelleEffectuee ?? null,
-
-        heureDebutReelle:
-          entree.heureDebutReelle ?? null,
-
-        heureFinReelle:
-          entree.heureFinReelle ?? null,
-
-        observation:
-          entree.observation?.trim() || null
+        dateReelleEffectuee: entree.dateReelleEffectuee ?? null,
+        heureDebutReelle: entree.heureDebutReelle ?? null,
+        heureFinReelle: entree.heureFinReelle ?? null,
+        observation: entree.observation?.trim() || null
       };
 
       return this.rhService.modifierEntreeFicheEmargement(
@@ -437,8 +388,7 @@ export class RemplirFicheEmargementsComponent implements OnInit {
 
         this.isSaving = false;
 
-        this.messageSucces =
-          'Votre fiche d’émargement a été enregistrée avec succès.';
+        this.messageSucces = 'Votre fiche d’émargement a été enregistrée avec succès.';
 
         this.toastService.success(
           'Enregistrement réussi',
@@ -448,7 +398,6 @@ export class RemplirFicheEmargementsComponent implements OnInit {
       },
 
       error: error => {
-
         console.error(
           'Erreur lors de l’enregistrement de la fiche :',
           error
@@ -456,8 +405,7 @@ export class RemplirFicheEmargementsComponent implements OnInit {
 
         this.isSaving = false;
 
-        this.messageErreur =
-          'Une erreur est survenue lors de l’enregistrement de la fiche.';
+        this.messageErreur = 'Une erreur est survenue lors de l’enregistrement de la fiche.';
 
         this.toastService.error(
           'Erreur',
@@ -483,9 +431,8 @@ export class RemplirFicheEmargementsComponent implements OnInit {
       return;
     }
 
-    const nombreSeancesEffectuees = this.entreesFiche.filter(
-      entree => entree.statutSeance === 'SEANCE_EFFECTUEE'
-    ).length;
+    const nombreSeancesEffectuees = this.entreesFiche.filter(entree =>
+      entree.statutSeance === 'SEANCE_EFFECTUEE').length;
 
     if (nombreSeancesEffectuees === 0) {
       this.messageErreur =
@@ -493,20 +440,12 @@ export class RemplirFicheEmargementsComponent implements OnInit {
       return;
     }
 
-    /*
-     * On vérifie uniquement les séances déclarées comme effectuées.
-     */
     for (const entree of this.entreesFiche) {
-
       if (entree.statutSeance !== 'SEANCE_EFFECTUEE') {
         continue;
       }
 
-      if (
-        !entree.dateReelleEffectuee ||
-        !entree.heureDebutReelle ||
-        !entree.heureFinReelle
-      ) {
+      if (!entree.dateReelleEffectuee || !entree.heureDebutReelle || !entree.heureFinReelle) {
         this.messageErreur =
           `Veuillez renseigner la date réelle ainsi que les heures de début et de fin pour la séance du ${this.getDateLibelle(entree.dateCours)}.`;
         return;
@@ -518,85 +457,66 @@ export class RemplirFicheEmargementsComponent implements OnInit {
         return;
       }
     }
-
-    /*
-     * Toutes les vérifications sont OK :
-     * on ouvre maintenant le modal de confirmation.
-     */
     this.ouvrirConfirmationSoumission();
   }
 
-ouvrirConfirmationSoumission(): void {
-  const modalRef = this.modalService.open(
-    this.confirmationSoumissionModal,
-    {
-      centered: true,
-      backdrop: 'static',
-      keyboard: false
-    }
-  );
-
-  modalRef.result.then(
-    result => {
-      if (result === 'confirm') {
-        this.confirmerSoumission();
+  ouvrirConfirmationSoumission(): void {
+    const modalRef = this.modalService.open(
+      this.confirmationSoumissionModal,
+      {
+        centered: true,
+        backdrop: 'static',
+        keyboard: false
       }
-    },
-    () => {
-      // Fermeture sans confirmation
-    }
-  );
-}
+    );
 
-confirmerSoumission(): void {
-  if (!this.ficheEmargement || this.isSaving) {
-    return;
+    modalRef.result.then(
+      result => {
+        if (result === 'confirm') {
+          this.confirmerSoumission();
+        }
+      },
+      () => { }
+    );
   }
 
-  this.isSaving = true;
-  this.messageErreur = '';
-  this.messageSucces = '';
+  confirmerSoumission(): void {
+    if (!this.ficheEmargement || this.isSaving) {
+      return;
+    }
+    this.isSaving = true;
+    this.messageErreur = '';
+    this.messageSucces = '';
 
-  this.rhService
-    .soumettreFicheEmargement(this.ficheEmargement.ficheUuid)
-    .subscribe({
+    this.rhService
+      .soumettreFicheEmargement(this.ficheEmargement.ficheUuid)
+      .subscribe({
 
-      next: () => {
+        next: () => {
+          this.isSaving = false;
+          this.messageSucces = 'Votre fiche d’émargement a été soumise à l’administration.';
 
-        this.isSaving = false;
+          this.toastService.success(
+            'Fiche soumise', 'Votre fiche a été soumise à l’administration.'
+          );
 
-        this.messageSucces =
-          'Votre fiche d’émargement a été soumise à l’administration.';
+          this.chargerDetailsFicheEmargement(this.ficheEmargement!.ficheUuid);
+        },
 
-        this.toastService.success(
-          'Fiche soumise',
-          'Votre fiche a été soumise à l’administration.'
-        );
+        error: error => {
 
-        this.chargerDetailsFicheEmargement(
-          this.ficheEmargement!.ficheUuid
-        );
-      },
+          console.error('Erreur lors de la soumission de la fiche :', error);
 
-      error: error => {
+          this.isSaving = false;
 
-        console.error(
-          'Erreur lors de la soumission de la fiche :',
-          error
-        );
+          this.messageErreur = 'Impossible de soumettre la fiche d’émargement.';
 
-        this.isSaving = false;
-
-        this.messageErreur =
-          'Impossible de soumettre la fiche d’émargement.';
-
-        this.toastService.error(
-          'Erreur',
-          'La fiche n’a pas pu être soumise.'
-        );
-      }
-    });
-}
+          this.toastService.error(
+            'Erreur', 'La fiche n’a pas pu être soumise.'
+          );
+        }
+      });
+  }
 
   retour(): void {
     window.history.back();

@@ -59,7 +59,7 @@ export class TousFichesEmargementComponent implements OnInit {
     this.chargerLesDonnees(this.hasActiveFilters);
   }
 
-  chargerLesDonnees(useFilterApi: boolean) {
+  chargerLesDonneesV1(useFilterApi: boolean) {
     this.isLoading = true;
     let apiCall;
 
@@ -81,17 +81,19 @@ export class TousFichesEmargementComponent implements OnInit {
         this.fichesEmargementsData = response.data?.content || [];
         this.totalElements = response.data?.totalElements || 0;
         this.columns = [
-          { key: 'numeroFiche', header: 'N°' },
           { key: 'enseignantNomComplet', header: 'Enseinant' },
           { key: 'mois', header: 'Mois' },
-          { key: 'annee', header: 'Année' },
+          { key: 'nombreHeuresPrevu', header: 'Heures prévues' },
+          { key: 'nombreHeuresEffectue', header: 'Heures réelles' },
           { key: 'etatLibelle', header: 'Etat' },
-          { key: 'dateCreation', header: 'Date' },
+          { key: 'annee', header: 'Année' },
         ];
 
         this.fichesEmargementsData = this.fichesEmargementsData.map((item: any) => ({
           ...item,
         }));
+
+
         this.isLoading = false;
       },
       error: (error) => {
@@ -99,6 +101,143 @@ export class TousFichesEmargementComponent implements OnInit {
         this.isLoading = false;
       }
     });
+  }
+
+  chargerLesDonnees(useFilterApi: boolean): void {
+
+    this.isLoading = true;
+
+    let apiCall;
+
+    if (useFilterApi) {
+
+      const filtreParam = this.construireParametreDeFiltre();
+
+      apiCall = this.rhResource.fetchFilterDataTable(
+        'emargements',
+        this.currentPage,
+        this.pageSize,
+        filtreParam
+      );
+
+    } else {
+
+      apiCall = this.rhResource.getResourcePaged(
+        'emargements',
+        this.currentPage,
+        this.pageSize
+      );
+
+    }
+
+    apiCall.subscribe({
+
+      next: (response) => {
+
+        this.fichesEmargementsData = response.data?.content || [];
+
+        this.totalElements = response.data?.totalElements || 0;
+
+        this.columns = [
+          {
+            key: 'enseignantNomComplet',
+            header: 'Enseignant'
+          },
+          {
+            key: 'mois',
+            header: 'Mois'
+          },
+          {
+            key: 'heuresPrevuesFormatees',
+            header: 'Heures prévues'
+          },
+          {
+            key: 'heuresEffectueesFormatees',
+            header: 'Heures effectuées'
+          },
+          {
+            key: 'ecartHeures',
+            header: 'Écart'
+          },
+          {
+            key: 'etatLibelle',
+            header: 'État'
+          },
+          {
+            key: 'annee',
+            header: 'Année'
+          }
+        ];
+
+        this.fichesEmargementsData = this.fichesEmargementsData.map((item: any) => ({
+          ...item,
+
+          heuresPrevuesFormatees: this.formaterHeures(item.nombreHeuresPrevu),
+
+          heuresEffectueesFormatees: this.formaterHeures(item.nombreHeuresEffectue),
+
+          comparaisonHeures: this.getLibelleComparaisonHeures(item),
+
+          ecartHeures: this.getLibelleEcartHeures(item),
+
+          classeIndicateurHeures: this.getClasseIndicateurHeures(item)
+        }));
+
+        this.isLoading = false;
+      },
+
+      error: (error) => {
+
+        console.error('Erreur chargement des fiches :', error);
+
+        this.isLoading = false;
+
+      }
+
+    });
+  }
+
+
+  formaterHeures(valeur: number | null | undefined): string {
+    const heuresDecimales = Number(valeur ?? 0);
+    const totalMinutes = Math.round(heuresDecimales * 60);
+    const heures = Math.floor(totalMinutes / 60);
+    const minutes = totalMinutes % 60;
+    return `${heures}h${String(minutes).padStart(2, '0')}`;
+  }
+
+  calculerEcartHeures(item: any): number {
+    const prevues = Number(item.nombreHeuresPrevu ?? 0);
+    const effectuees = Number(item.nombreHeuresEffectue ?? 0);
+    return Math.round((effectuees - prevues) * 60) / 60;
+  }
+
+  getClasseIndicateurHeures(item: any): string {
+    const ecart = this.calculerEcartHeures(item);
+    if (ecart < 0) {
+      return 'hours-below';
+    }
+    if (ecart > 0) {
+      return 'hours-above';
+    }
+    return 'hours-compliant';
+  }
+
+  getLibelleEcartHeures(item: any): string {
+    const ecart = this.calculerEcartHeures(item);
+    if (ecart < 0) {
+      return `🔴-${this.formaterHeures(Math.abs(ecart))}`;
+    }
+    if (ecart > 0) {
+      return `🔵+${this.formaterHeures(ecart)}`;
+    }
+    return '🟢 Conforme';
+  }
+
+  getLibelleComparaisonHeures(item: any): string {
+    const effectuees = this.formaterHeures(item.nombreHeuresEffectue);
+    const prevues = this.formaterHeures(item.nombreHeuresPrevu);
+    return `${effectuees} / ${prevues}`;
   }
 
   construireParametreDeFiltre(): any {
