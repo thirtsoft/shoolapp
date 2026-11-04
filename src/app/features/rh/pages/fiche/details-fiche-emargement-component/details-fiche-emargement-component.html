@@ -1,0 +1,710 @@
+<div class="emargement-detail-page">
+  @if (isLoading) {
+    <div class="loading-state">
+      <div class="loading-spinner"></div>
+
+      <div>
+        <strong>Chargement de la fiche d'émargement...</strong>
+        <p>Veuillez patienter.</p>
+      </div>
+    </div>
+  }
+
+  @if (!isLoading && errorMessage) {
+    <div class="error-state">
+
+      <div class="error-icon">
+        !
+      </div>
+
+      <div class="error-content">
+        <strong>Impossible de charger la fiche</strong>
+
+        <p>
+          {{ errorMessage }}
+        </p>
+      </div>
+
+      <button
+        type="button"
+        class="btn-secondary"
+        (click)="retour()"
+      >
+        <span>←</span>
+        Retour
+      </button>
+
+    </div>
+  }
+
+  @if (!isLoading && !errorMessage && fiche) {
+    <section class="page-header">
+
+      <div class="header-left">
+
+        <button
+          type="button"
+          class="back-button"
+          (click)="retour()"
+          title="Retour aux fiches d'émargement"
+        >
+          <span>←</span>
+        </button>
+
+        <div class="header-icon">
+          <span>📝</span>
+        </div>
+
+        <div>
+
+          <div class="breadcrumb">
+            <span>RH</span>
+            <span>/</span>
+            <span>Fiches d'émargement</span>
+            <span>/</span>
+            <strong>Détail</strong>
+          </div>
+
+          <h1>Fiche d'émargement</h1>
+
+          <p>
+            Consultation des séances déclarées par l'enseignant
+          </p>
+
+        </div>
+
+      </div>
+
+      <div
+        class="status-badge header-status"
+        [class.validated]="getEtatClass() === 'validated'"
+        [class.submitted]="getEtatClass() === 'submitted'"
+        [class.returned]="getEtatClass() === 'returned'"
+        [class.progress]="getEtatClass() === 'progress'"
+      >
+
+        <span>
+          {{ getEtatIcon() }}
+        </span>
+
+        {{ getEtatLibelle() }}
+
+      </div>
+
+    </section>
+
+    <section class="fiche-summary-card">
+
+      <div class="fiche-summary-main">
+
+        <div class="enseignant-avatar">
+          {{ getInitiales() }}
+        </div>
+
+        <div class="enseignant-block">
+
+          <div class="summary-label">
+            ENSEIGNANT
+          </div>
+
+          <h2>
+            {{ fiche.enseignantPrenom }}
+            {{ fiche.enseignantNom }}
+          </h2>
+
+          <span class="matricule">
+            {{ fiche.enseignantMatricule }}
+          </span>
+
+        </div>
+
+      </div>
+
+      <div class="fiche-reference">
+
+        <div class="reference-item">
+
+          <span class="reference-label">
+            N° Fiche
+          </span>
+
+          <strong>
+            {{ fiche.numeroFiche }}
+          </strong>
+
+        </div>
+
+
+        <div class="reference-item">
+
+          <span class="reference-label">
+            Période
+          </span>
+
+          <strong>
+            {{ fiche.moisLibelle }}
+            {{ fiche.annee }}
+          </strong>
+
+        </div>
+
+
+        <div class="reference-item">
+
+          <span class="reference-label">
+            Année scolaire
+          </span>
+
+          <strong>
+            {{ fiche.anneeScolaireLibelle }}
+          </strong>
+
+        </div>
+
+      </div>
+
+    </section>
+
+    <section class="tracking-card">
+
+      <div class="tracking-header">
+
+        <div>
+
+          <h2>
+            Suivi de la fiche
+          </h2>
+
+          <p>
+            Progression des séances d'enseignement du mois.
+          </p>
+
+        </div>
+
+
+        <div class="tracking-percentage">
+
+          <strong>
+            {{ progression }}%
+          </strong>
+
+          <span>
+            effectuées
+          </span>
+
+        </div>
+
+      </div>
+
+      <div class="progress-container">
+
+        <div class="progress-track">
+
+          <span
+            class="progress-value"
+            [style.width.%]="progression"
+          ></span>
+
+        </div>
+
+
+        <div class="progress-caption">
+
+          <span>
+
+            {{ nombreSeancesEffectuees }}
+
+            séance{{ nombreSeancesEffectuees > 1 ? 's' : '' }}
+
+            effectuée{{
+              nombreSeancesEffectuees > 1 ? 's' : ''
+            }}
+
+          </span>
+
+
+          <strong>
+            {{ nombreSeancesEffectuees }}
+            /
+            {{ nombreSeancesPrevues }}
+          </strong>
+
+        </div>
+
+      </div>
+
+    </section>
+
+    <section class="stats-grid">
+
+      <div class="stat-card">
+
+        <div class="stat-icon planned">
+          <span>○</span>
+        </div>
+
+        <div class="stat-content">
+
+          <span class="stat-label">
+            Séances prévues
+          </span>
+
+          <strong>
+            {{ nombreSeancesPrevues }}
+          </strong>
+
+        </div>
+
+      </div>
+
+      <div class="stat-card">
+
+        <div class="stat-icon done">
+          <span>✓</span>
+        </div>
+
+        <div class="stat-content">
+
+          <span class="stat-label">
+            Effectuées
+          </span>
+
+          <strong>
+            {{ nombreSeancesEffectuees }}
+          </strong>
+
+        </div>
+
+      </div>
+
+      <div class="stat-card">
+
+        <div class="stat-icon warning">
+          <span>!</span>
+        </div>
+
+        <div class="stat-content">
+
+          <span class="stat-label">
+            Non effectuées
+          </span>
+
+          <strong>
+            {{ nombreSeancesNonEffectuees }}
+          </strong>
+
+        </div>
+
+      </div>
+
+      <div class="stat-card">
+
+        <div class="stat-icon cancelled">
+          <span>×</span>
+        </div>
+
+        <div class="stat-content">
+
+          <span class="stat-label">
+            Annulées
+          </span>
+
+          <strong>
+            {{ nombreSeancesAnnulees }}
+          </strong>
+
+        </div>
+
+      </div>
+
+    </section>
+
+    <section class="sessions-card">
+
+      <div class="section-header">
+
+        <div>
+
+          <h2>
+            Détail des séances
+          </h2>
+
+          <p>
+
+            {{ nombreSeancesEffectuees }}
+            /
+            {{ nombreSeancesPrevues }}
+
+            séances effectuées
+
+          </p>
+
+        </div>
+
+
+        <div class="session-counter">
+
+          {{ nombreSeancesPrevues }}
+
+          séance{{
+            nombreSeancesPrevues > 1 ? 's' : ''
+          }}
+
+        </div>
+
+      </div>
+
+      <div class="sessions-table-wrapper">
+
+        <table class="sessions-table">
+
+          <thead>
+
+            <tr>
+
+              <th>
+                Date
+              </th>
+
+              <th>
+                Cours
+              </th>
+
+              <th>
+                Heure prévue
+              </th>
+
+              <th>
+                Heure réelle
+              </th>
+
+              <th>
+                Statut
+              </th>
+
+              <th>
+                Observation
+              </th>
+
+            </tr>
+
+          </thead>
+
+
+          <tbody>
+
+            @if (entrees.length === 0) {
+
+              <tr>
+
+                <td
+                  colspan="6"
+                  class="empty-table"
+                >
+
+                  <div class="empty-table-content">
+
+                    <span>
+                      📋
+                    </span>
+
+                    <strong>
+                      Aucune séance
+                    </strong>
+
+                    <p>
+                      Aucune séance n'est enregistrée
+                      dans cette fiche.
+                    </p>
+
+                  </div>
+
+                </td>
+
+              </tr>
+
+            } @else {
+
+              @for (entree of entrees; track entree.uuid) {
+
+                <tr>
+
+                  <td>
+
+                    <div class="date-cell">
+
+                      <strong>
+                        {{ formatDate(entree.dateCours) }}
+                      </strong>
+
+                      @if (
+                        entree.dateReelleEffectuee &&
+                        entree.dateReelleEffectuee !== entree.dateCours
+                      ) {
+
+                        <span class="real-date">
+
+                          Réalisée le
+                          {{ formatDate(entree.dateReelleEffectuee) }}
+
+                        </span>
+
+                      }
+
+                    </div>
+
+                  </td>
+
+                  <td>
+
+                    <div class="course-cell">
+
+                      <div class="course-icon">
+                        📚
+                      </div>
+
+                      <div>
+
+                        <strong>
+                          {{ entree.coursLibelle }}
+                        </strong>
+
+                        <span>
+                          Séance d'enseignement
+                        </span>
+
+                      </div>
+
+                    </div>
+
+                  </td>
+
+                  <td>
+
+                    <div class="time-cell">
+
+                      <strong>
+
+                        {{ entree.heureDebutPrevue }}
+                        →
+                        {{ entree.heureFinPrevue }}
+
+                      </strong>
+
+                      <span>
+                        Prévue
+                      </span>
+
+                    </div>
+
+                  </td>
+
+                  <td>
+
+                    <div class="time-cell">
+
+                      @if (
+                        entree.heureDebutReelle &&
+                        entree.heureFinReelle
+                      ) {
+
+                        <strong class="real-time">
+
+                          {{ entree.heureDebutReelle }}
+                          →
+                          {{ entree.heureFinReelle }}
+
+                        </strong>
+
+                        <span>
+                          Réelle
+                        </span>
+
+                      } @else {
+
+                        <strong class="empty-value">
+                          —
+                        </strong>
+
+                        <span>
+                          Non renseignée
+                        </span>
+
+                      }
+
+                    </div>
+
+                  </td>
+
+                  <td>
+
+                    <span
+                      class="session-status"
+
+                      [class.effectuee]="
+                        getStatutClass(entree.statutSeance)
+                        === 'effectuee'
+                      "
+
+                      [class.non-effectuee]="
+                        getStatutClass(entree.statutSeance)
+                        === 'non-effectuee'
+                      "
+
+                      [class.annulee]="
+                        getStatutClass(entree.statutSeance)
+                        === 'annulee'
+                      "
+
+                      [class.planifiee]="
+                        getStatutClass(entree.statutSeance)
+                        === 'planifiee'
+                      "
+                    >
+
+                      <span>
+                        {{ getStatutIcon(entree.statutSeance) }}
+                      </span>
+
+                      {{ getStatutLibelle(entree.statutSeance) }}
+
+                    </span>
+
+                  </td>
+
+                  <td>
+
+                    @if (entree.observation) {
+
+                      <div class="observation-cell">
+
+                        {{ entree.observation }}
+
+                      </div>
+
+                    } @else {
+
+                      <span class="empty-value">
+                        —
+                      </span>
+
+                    }
+
+                  </td>
+
+                </tr>
+
+              }
+
+            }
+
+          </tbody>
+
+        </table>
+
+      </div>
+
+    </section>
+
+    <section class="validation-card">
+
+      <div class="validation-icon">
+        ✓
+      </div>
+
+
+      <div class="validation-content">
+
+        <h2>
+          Historique de la fiche
+        </h2>
+
+
+        <div class="validation-grid">
+
+          <div>
+
+            <span>
+              Créée le
+            </span>
+
+            <strong>
+              {{ formatDate(fiche.dateCreation) }}
+            </strong>
+
+          </div>
+
+          <div>
+
+            <span>
+              Soumise le
+            </span>
+
+            <strong>
+              {{ formatDateTime(fiche.dateSoumission) }}
+            </strong>
+
+          </div>
+
+          <div>
+
+            <span>
+              Validée le
+            </span>
+
+            <strong>
+              {{ formatDateTime(fiche.dateValidation) }}
+            </strong>
+
+          </div>
+
+        </div>
+
+      </div>
+
+    </section>
+
+    <div class="page-actions">
+
+      <button
+        type="button"
+        class="btn-secondary"
+        (click)="retour()"
+      >
+
+        <span>
+          ←
+        </span>
+
+        Retour aux fiches
+
+      </button>
+
+      @if (fiche.etatCode === 'E3') {
+
+        <div class="action-group">
+
+          <button
+            type="button"
+            class="btn-return"
+          >
+            ↻ Retourner la fiche
+          </button>
+
+
+          <button
+            type="button"
+            class="btn-primary"
+          >
+            ✓ Valider la fiche
+          </button>
+
+        </div>
+
+      }
+
+    </div>
+
+  }
+
+</div>

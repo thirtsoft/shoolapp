@@ -48,6 +48,7 @@ export class SideBarAdminComponent {
     { route: '/admin/rh/personnels', ico: '👥', label: 'Personnel', section: 'RH', badge: '' },
     { route: '/admin/rh/contrats', ico: '📄', label: 'Contrats' },
     { route: '/admin/rh/paies', ico: '💵', label: 'Paie' },
+    { route: '/admin/rh/fiches-emargement', ico: '📝', label: 'Fiches d’émargement' },
     { route: '/admin/rh/avances-salaires', ico: '💰', label: 'Demandes d’avance' },
     //
     /*

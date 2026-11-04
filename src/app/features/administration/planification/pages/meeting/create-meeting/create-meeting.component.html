@@ -1,6 +1,5 @@
 <div class="page-wrapper">
   <div class="content container-fluid">
-    <!-- Page Header -->
     <div class="page-header">
       <div class="row align-items-center">
         <div class="col-sm-12">
@@ -11,8 +10,6 @@
         </div>
       </div>
     </div>
-
-    <!-- Badge -->
     <div class="badge-container">
       <span class="badge badge-primary">
         <i class="fas fa-plus-circle me-1"></i>
@@ -26,7 +23,6 @@
 
     <div class="card">
       <div class="card-body p-4 p-md-5">
-        <!-- Step Indicator -->
         <div class="step-indicator">
           <div class="step active">
             <span class="step-number">1</span>
@@ -42,7 +38,7 @@
         <form [formGroup]="meetingFormGroup" (ngSubmit)="ajoutereditMeeting()">
           <input type="hidden" formControlName="id" />
           <div class="row form-row">
-            <div class="col-lg-4 col-sm-12">
+            <div class="col-lg-6 col-sm-12">
               <div class="form-group">
                 <label class="form-label">
                   Titre <span class="text-danger">*</span>
@@ -64,7 +60,7 @@
               </div>
             </div>
 
-            <div class="col-lg-4 col-sm-12">
+            <div class="col-lg-6 col-sm-12">
               <div class="form-group">
                 <label class="form-label">
                   Nature réunion <span class="text-danger">*</span>
@@ -84,8 +80,30 @@
                 }
               </div>
             </div>
+          </div>
 
-            <div class="col-lg-4 col-sm-12">
+          <div class="row form-row">
+            <div class="col-lg-6 col-sm-12">
+              <div class="form-group">
+                <label class="form-label">
+                  Cible <span class="text-danger">*</span>
+                  <i class="fas fa-users ms-1 text-muted"></i>
+                </label>
+                <select class="form-select" formControlName="cible" required>
+                  <option value="" disabled selected>— Sélectionnez une cible —</option>
+                  @for (item of ciblesReunion; track item) {
+                    <option [value]="item">{{ item }}</option>
+                  }
+                </select>
+                @if (
+                  meetingFormGroup.get('cible')?.invalid && meetingFormGroup.get('cible')?.touched
+                ) {
+                  <div class="invalid-feedback">La cible est requise</div>
+                }
+              </div>
+            </div>
+
+            <div class="col-lg-6 col-sm-12">
               <div class="form-group">
                 <label class="form-label">
                   Salle

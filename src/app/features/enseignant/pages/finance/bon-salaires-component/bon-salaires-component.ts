@@ -82,13 +82,13 @@ export class BonSalairesComponent implements OnInit {
       const filtreParam = this.construireParametreDeFiltre();
 
       apiCall = this.rhResource.fetchFilterDataTable(
-        'demandes-avance-salaire/me',
+        'rh/demandes-avance-salaire/me',
         this.currentPage,
         this.pageSize,
         filtreParam)
 
     } else {
-      apiCall = this.rhResource.getResourcePaged('demandes-avance-salaire/me', this.currentPage, this.pageSize);
+      apiCall = this.rhResource.getResourcePaged('rh/demandes-avance-salaire/me', this.currentPage, this.pageSize);
     }
     apiCall.subscribe({
       next: (response) => {

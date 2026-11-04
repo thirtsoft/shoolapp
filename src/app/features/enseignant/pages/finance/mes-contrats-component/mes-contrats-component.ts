@@ -76,13 +76,13 @@ export class MesContratsComponent implements OnInit {
       const filtreParam = this.construireParametreDeFiltre();
 
       apiCall = this.rhResource.fetchFilterDataTable(
-        'contrats/me',
+        'rh/contrats/me',
         this.currentPage,
         this.pageSize,
         filtreParam)
 
     } else {
-      apiCall = this.rhResource.getResourcePaged('contrats/me', this.currentPage, this.pageSize);
+      apiCall = this.rhResource.getResourcePaged('rh/contrats/me', this.currentPage, this.pageSize);
     }
     apiCall.subscribe({
       next: (response) => {

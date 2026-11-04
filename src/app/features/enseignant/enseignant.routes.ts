@@ -12,6 +12,8 @@ import { ListEvaluationEnseignantComponent } from './pages/evaluation/list-evalu
 import { CreationExerciceComponent } from './pages/exercice/creation-exercice/creation-exercice.component';
 import { DetailsExerciceComponent } from './pages/exercice/details-exercice/details-exercice.component';
 import { ListExerciceComponent } from './pages/exercice/list-exercice/list-exercice.component';
+import { MesFichesEmargementsComponent } from './pages/fiche/mes-fiches-emargements-component/mes-fiches-emargements-component';
+import { RemplirFicheEmargementsComponent } from './pages/fiche/remplir-fiche-emargements-component/remplir-fiche-emargements-component';
 import { AjoutEditBonSalaireComponent } from './pages/finance/ajout-edit-bon-salaire-component/ajout-edit-bon-salaire-component';
 import { BonSalairesComponent } from './pages/finance/bon-salaires-component/bon-salaires-component';
 import { MesContratsComponent } from './pages/finance/mes-contrats-component/mes-contrats-component';
@@ -154,6 +156,17 @@ export const ENSEIGNANTS_ROUTES: Routes = [
       {
         path: 'bon-salaire/edit/:uuid',
         component: AjoutEditBonSalaireComponent
+      },
+
+      //
+
+      {
+        path: 'fiches-emargement',
+        component: MesFichesEmargementsComponent
+      },
+      {
+        path: 'fiche-emargement/details/:uuid',
+        component: RemplirFicheEmargementsComponent
       },
 
       {

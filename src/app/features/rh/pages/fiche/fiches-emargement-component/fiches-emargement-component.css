@@ -1,0 +1,792 @@
+:host {
+  display: block;
+  width: 100%;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+.emargement-page {
+  width: 100%;
+  padding: 24px;
+  background: #f7f8fa;
+  color: #172033;
+}
+
+
+/* ============================================================
+   HEADER
+   ============================================================ */
+
+.page-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 24px;
+}
+
+.header-left {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.header-icon {
+  width: 48px;
+  height: 48px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #eef4ff;
+  font-size: 22px;
+}
+
+.breadcrumb {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #7b8497;
+  font-size: 12px;
+  margin-bottom: 4px;
+}
+
+.breadcrumb span {
+  color: #b5bac5;
+}
+
+.page-header h1 {
+  margin: 0;
+  font-size: 24px;
+  font-weight: 700;
+  color: #172033;
+}
+
+.page-header p {
+  margin: 5px 0 0;
+  font-size: 13px;
+  color: #7b8497;
+}
+
+.header-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 7px 12px;
+  border-radius: 20px;
+  background: #eef4ff;
+  color: #315fba;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.status-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #4275d8;
+}
+
+
+/* ============================================================
+   PERIOD CARD
+   ============================================================ */
+
+.period-card {
+  background: #ffffff;
+  border: 1px solid #e8ebf0;
+  border-radius: 14px;
+  margin-bottom: 20px;
+  overflow: hidden;
+}
+
+.period-header {
+  padding: 20px 22px 16px;
+  border-bottom: 1px solid #edf0f4;
+}
+
+.period-header h2,
+.section-header h2 {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 700;
+  color: #172033;
+}
+
+.period-header p,
+.section-header p {
+  margin: 5px 0 0;
+  color: #8991a1;
+  font-size: 12px;
+}
+
+.period-content {
+  padding: 20px 22px;
+}
+
+.period-fields {
+  display: grid;
+  grid-template-columns: 1.5fr 1fr 0.8fr;
+  gap: 16px;
+  margin-bottom: 20px;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+}
+
+.form-group label {
+  font-size: 12px;
+  font-weight: 600;
+  color: #4c566a;
+}
+
+.form-group select,
+.form-group input {
+  width: 100%;
+  height: 40px;
+  padding: 0 12px;
+  border: 1px solid #dfe3e9;
+  border-radius: 8px;
+  background: #ffffff;
+  color: #293246;
+  font-size: 13px;
+  outline: none;
+}
+
+.form-group select:focus,
+.form-group input:focus {
+  border-color: #5b7fcf;
+  box-shadow: 0 0 0 3px rgba(91, 127, 207, 0.1);
+}
+
+
+/* ============================================================
+   GENERATION
+   ============================================================ */
+
+.generation-zone {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  padding: 16px;
+  border-radius: 10px;
+  background: #f8faff;
+  border: 1px solid #e3eaf8;
+}
+
+.generation-info {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.generation-icon {
+  width: 38px;
+  height: 38px;
+  border-radius: 9px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #eaf1ff;
+  font-size: 17px;
+}
+
+.generation-info strong {
+  display: block;
+  font-size: 13px;
+  color: #263148;
+}
+
+.generation-info p {
+  margin: 4px 0 0;
+  max-width: 650px;
+  font-size: 12px;
+  line-height: 1.5;
+  color: #818a9d;
+}
+
+.btn-primary {
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  height: 40px;
+  padding: 0 16px;
+  border: 0;
+  border-radius: 8px;
+  background: #426fd1;
+  color: #ffffff;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.btn-primary:hover {
+  background: #365fbd;
+  transform: translateY(-1px);
+}
+
+
+/* ============================================================
+   STATS
+   ============================================================ */
+
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 14px;
+  margin-bottom: 20px;
+}
+
+.stat-card {
+  display: flex;
+  align-items: center;
+  gap: 13px;
+  min-height: 92px;
+  padding: 16px;
+  background: #ffffff;
+  border: 1px solid #e8ebf0;
+  border-radius: 12px;
+}
+
+.stat-icon {
+  width: 42px;
+  height: 42px;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 10px;
+  font-size: 17px;
+  font-weight: 700;
+}
+
+.stat-icon.teachers {
+  background: #edf3ff;
+  color: #4272ca;
+}
+
+.stat-icon.validated {
+  background: #eaf8f1;
+  color: #16845a;
+}
+
+.stat-icon.progress {
+  background: #fff6e7;
+  color: #c67b12;
+}
+
+.stat-icon.control {
+  background: #fff0f0;
+  color: #d04b4b;
+}
+
+.stat-content {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.stat-label {
+  font-size: 11px;
+  color: #8991a1;
+}
+
+.stat-value {
+  font-size: 24px;
+  line-height: 1;
+  color: #172033;
+}
+
+
+/* ============================================================
+   GENERIC SECTION HEADER
+   ============================================================ */
+
+.section-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.calendar-card,
+.fiches-section {
+  background: #ffffff;
+  border: 1px solid #e8ebf0;
+  border-radius: 14px;
+  padding: 20px;
+}
+
+.calendar-card {
+  margin-bottom: 20px;
+}
+
+
+/* ============================================================
+   CALENDAR NAVIGATION
+   ============================================================ */
+
+.calendar-navigation {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.calendar-nav,
+.today-button {
+  height: 34px;
+  border: 1px solid #e0e4ea;
+  background: #ffffff;
+  color: #4e596d;
+  cursor: pointer;
+}
+
+.calendar-nav {
+  width: 34px;
+  border-radius: 7px;
+  font-size: 18px;
+}
+
+.today-button {
+  padding: 0 12px;
+  border-radius: 7px;
+  font-size: 11px;
+  font-weight: 600;
+}
+
+.calendar-nav:hover,
+.today-button:hover {
+  background: #f7f9fc;
+}
+
+
+/* ============================================================
+   LEGEND
+   ============================================================ */
+
+.calendar-legend {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  margin: 18px 0 14px;
+  padding-bottom: 14px;
+  border-bottom: 1px solid #edf0f4;
+}
+
+.calendar-legend>div {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 11px;
+  color: #7d8799;
+}
+
+.legend-dot,
+.summary-dot {
+  display: inline-block;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+}
+
+.completed {
+  background: #28a36a;
+}
+
+.partial {
+  background: #e5a329;
+}
+
+.warning {
+  background: #dc5a5a;
+}
+
+
+/* ============================================================
+   CALENDAR
+   ============================================================ */
+
+.calendar-weekdays,
+.calendar-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+}
+
+.calendar-weekdays {
+  margin-bottom: 6px;
+}
+
+.calendar-weekdays div {
+  padding: 5px 8px;
+  color: #8b93a3;
+  font-size: 10px;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.calendar-grid {
+  gap: 5px;
+}
+
+.calendar-day {
+  position: relative;
+  min-height: 106px;
+  padding: 10px;
+  border: 1px solid #edf0f4;
+  border-radius: 8px;
+  background: #ffffff;
+  cursor: pointer;
+  transition: all 0.18s ease;
+}
+
+.calendar-day:hover {
+  border-color: #cbd7ed;
+  background: #fafcff;
+  transform: translateY(-1px);
+}
+
+.calendar-day.muted {
+  background: #fafbfc;
+  opacity: 0.45;
+}
+
+.calendar-day.weekend {
+  background: #fafbfc;
+}
+
+.calendar-day.today {
+  border: 1.5px solid #5b7fd1;
+  background: #f8faff;
+}
+
+.day-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.day-number {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  border-radius: 6px;
+  color: #3b4558;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.today .day-number {
+  background: #426fd1;
+  color: #ffffff;
+}
+
+.today-label {
+  font-size: 8px;
+  font-weight: 600;
+  color: #426fd1;
+}
+
+.day-summary {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  margin-top: 15px;
+  color: #8a93a3;
+  font-size: 10px;
+}
+
+.day-summary strong {
+  color: #303a4e;
+  font-size: 15px;
+}
+
+.day-progress {
+  position: absolute;
+  left: 10px;
+  right: 10px;
+  bottom: 12px;
+  height: 4px;
+  overflow: hidden;
+  border-radius: 10px;
+  background: #e8f3ed;
+}
+
+.day-progress span {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  background: #28a36a;
+}
+
+.day-progress.partial-progress {
+  background: #fbf0d9;
+}
+
+.day-progress.partial-progress span {
+  background: #e5a329;
+}
+
+.day-progress.warning-progress {
+  background: #f9e2e2;
+}
+
+.day-progress.warning-progress span {
+  background: #dc5a5a;
+}
+
+.no-session {
+  margin-top: 20px;
+  color: #a0a7b4;
+  font-size: 9px;
+}
+
+
+/* ============================================================
+   FICHES
+   ============================================================ */
+
+.fiches-header {
+  margin-bottom: 18px;
+}
+
+.link-button {
+  border: 0;
+  background: transparent;
+  color: #426fd1;
+  font-size: 11px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.fiches-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.fiche-row {
+  display: grid;
+  grid-template-columns: minmax(220px, 1.5fr) minmax(200px, 1fr) 120px 36px;
+  align-items: center;
+  gap: 18px;
+  min-height: 72px;
+  padding: 10px 12px;
+  border: 1px solid #edf0f4;
+  border-radius: 9px;
+  transition: background 0.18s ease;
+}
+
+.fiche-row:hover {
+  background: #fafbfc;
+}
+
+.enseignant-info {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.avatar {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #eef3fc;
+  color: #416dbb;
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.enseignant-info strong {
+  display: block;
+  font-size: 12px;
+  color: #30394c;
+}
+
+.enseignant-info span {
+  display: block;
+  margin-top: 3px;
+  font-size: 10px;
+  color: #929aaa;
+}
+
+.fiche-progress {
+  min-width: 0;
+}
+
+.progress-label {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 6px;
+  font-size: 10px;
+  color: #8992a3;
+}
+
+.progress-label strong {
+  color: #515b6d;
+}
+
+.progress-bar {
+  height: 5px;
+  overflow: hidden;
+  border-radius: 10px;
+  background: #e9edf2;
+}
+
+.progress-bar span {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  background: #426fd1;
+}
+
+.status-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  min-width: 90px;
+  padding: 6px 9px;
+  border-radius: 20px;
+  font-size: 10px;
+  font-weight: 600;
+}
+
+.status-badge.validated {
+  background: #eaf8f1;
+  color: #16845a;
+}
+
+.status-badge.progress {
+  background: #fff5df;
+  color: #b87510;
+}
+
+.status-badge.submitted {
+  background: #edf3ff;
+  color: #3869bd;
+}
+
+.status-badge.returned {
+  background: #fff0f0;
+  color: #c44b4b;
+}
+
+.fiche-action {
+  width: 32px;
+  height: 32px;
+  border: 1px solid #e1e5eb;
+  border-radius: 7px;
+  background: #ffffff;
+  color: #657084;
+  cursor: pointer;
+  font-size: 15px;
+}
+
+.fiche-action:hover {
+  background: #f4f7fb;
+  color: #426fd1;
+}
+
+
+/* ============================================================
+   RESPONSIVE
+   ============================================================ */
+
+@media (max-width: 1100px) {
+
+  .stats-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .period-fields {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  .fiche-row {
+    grid-template-columns: 1.3fr 1fr 110px 36px;
+  }
+}
+
+
+@media (max-width: 800px) {
+
+  .emargement-page {
+    padding: 16px;
+  }
+
+  .generation-zone {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .btn-primary {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .calendar-card {
+    overflow-x: auto;
+  }
+
+  .calendar-weekdays,
+  .calendar-grid {
+    min-width: 720px;
+  }
+
+  .fiches-section {
+    overflow-x: auto;
+  }
+
+  .fiche-row {
+    min-width: 700px;
+  }
+}
+
+
+@media (max-width: 600px) {
+
+  .page-header {
+    align-items: flex-start;
+  }
+
+  .header-badge {
+    display: none;
+  }
+
+  .page-header h1 {
+    font-size: 20px;
+  }
+
+  .stats-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .period-fields {
+    grid-template-columns: 1fr;
+  }
+
+  .calendar-navigation {
+    margin-top: 12px;
+  }
+
+  .section-header {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .calendar-legend {
+    flex-wrap: wrap;
+  }
+}

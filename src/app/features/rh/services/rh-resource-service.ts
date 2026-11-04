@@ -4,6 +4,13 @@ import { Observable, throwError } from 'rxjs';
 import { catchError, tap } from 'rxjs/operators';
 import { environment } from '../../../../environments/environment';
 import { DataResult } from '../../../core/datamodel/data-model';
+import { FicheEmargementDetailResponseResponse } from '../../../core/models/ficheemargement/fiche-emargement-details-response.model';
+import { FichesEmargementMensuellesResponse } from '../../../core/models/ficheemargement/fiche-emargement-mensuelle-response.model';
+import { FicheEmargementResponse } from '../../../core/models/ficheemargement/fiche-emargement-response.model';
+import { GenerationFichesEmargementResponse } from '../../../core/models/ficheemargement/generation-fiches-emargement-response.model';
+import { GenererFichesEmargementRequest } from '../../../core/models/ficheemargement/generer-fiches-emargement-request.model';
+import { ModifierEntreeEmargementRequest } from '../../../core/models/ficheemargement/modifier-entree-emargement-request.model';
+import { RetourFicheEmargementRequest } from '../../../core/models/ficheemargement/retour-fiche-emargement-request.model';
 import { CongesRequest } from '../../../core/models/rh/conges-request.model';
 import { CongesResponse } from '../../../core/models/rh/conges-response.model';
 import { ContratRequest } from '../../../core/models/rh/contrat-request.model';
@@ -12,7 +19,6 @@ import { DemandeAvanceSalaireResponse } from '../../../core/models/rh/demande-av
 import { DemandeBonSalaireRequest } from '../../../core/models/rh/demande-bon-salaire-request.model';
 import { DetailsContratResponse } from '../../../core/models/rh/details-contrat-response.model';
 import { DetailsPaieResponse } from '../../../core/models/rh/details-paie-response.model';
-import { MotifRejetConges } from '../../../core/models/rh/motif-rejet-conges-request.model';
 import { PaieRequest } from '../../../core/models/rh/paie-request.model';
 import { PersonnelRequest } from '../../../core/models/rh/personnel-request.model';
 import { PersonnelResponse } from '../../../core/models/rh/personnel-response.model';
@@ -28,6 +34,7 @@ export class RhResourceService {
   rhUrl = this.baseUrl_1 + '/rh';
   documentUrl = this.baseUrl_1 + '/v1/storage';
   congesUrl = `${this.baseUrl_1}/conges`;
+  ficheEmargementUrl = `${this.baseUrl_1}/emargements`;
 
   httpOptions = {
     headers: new HttpHeaders({
@@ -39,17 +46,17 @@ export class RhResourceService {
   constructor(private readonly http: HttpClient) { }
 
   getResourceList<T>(endpoint: string): Observable<T[]> {
-    const url = `${this.rhUrl}/${endpoint}`;
+    const url = `${this.baseUrl_1}/${endpoint}`;
     return this.http.get<T[]>(url, this.httpOptions);
   }
 
   getResourceListByElement<T>(endpoint: string, id: number): Observable<T[]> {
-    const url = `${this.rhUrl}/${endpoint}/${id}`;
+    const url = `${this.baseUrl_1}/${endpoint}/${id}`;
     return this.http.get<T[]>(url, this.httpOptions);
   }
 
   getResourcePaged<T>(endpoint: string, page: number, size: number): Observable<DataResult<T>> {
-    const url = `${this.rhUrl}/${endpoint}/page`;
+    const url = `${this.baseUrl_1}/${endpoint}/page`;
     const params = new HttpParams()
       .set('page', page.toString())
       .set('size', size.toString());
@@ -61,7 +68,7 @@ export class RhResourceService {
   }
 
   fetchFilterDataTable<T>(endpoint: string, page: number, size: number, filters?: any): Observable<DataResult<T>> {
-    let url = `${this.rhUrl}/${endpoint}`;
+    let url = `${this.baseUrl_1}/${endpoint}`;
 
     if (filters) {
       const encodedFilters = encodeURIComponent(JSON.stringify(filters));
@@ -224,15 +231,66 @@ export class RhResourceService {
       `${this.congesUrl}/${id}/refuser`,
       {},
       {
-        params: {
-          motifRejet
-        }
+        params: { motifRejet }
       }
     );
   }
 
   getCongesById(id: number): Observable<CongesResponse> {
     return this.http.get<CongesResponse>(`${this.congesUrl}/${id}`);
+  }
+
+  //
+
+  getFichesEmargement(mois: number, annee: number, anneeScolaireUuid: string, limite: number): Observable<FichesEmargementMensuellesResponse> {
+
+    return this.http.get<FichesEmargementMensuellesResponse>(
+      `${this.ficheEmargementUrl}`,
+      {
+        params: {
+          mois,
+          annee,
+          anneeScolaireUuid,
+          limite
+        }
+      }
+    );
+  }
+
+  getFicheEmargement(ficheUuid: string): Observable<FicheEmargementResponse> {
+    return this.http.get<FicheEmargementResponse>(
+      `${this.ficheEmargementUrl}/${ficheUuid}`
+    );
+  }
+
+  genererFichesEmargement(request: GenererFichesEmargementRequest): Observable<GenerationFichesEmargementResponse> {
+    return this.http.post<GenerationFichesEmargementResponse>(
+      `${this.ficheEmargementUrl}/generer`, request);
+  }
+
+  modifierEntreeFicheEmargement(ficheUuid: string, entreeUuid: string, request: ModifierEntreeEmargementRequest): Observable<void> {
+    return this.http.patch<void>(`${this.ficheEmargementUrl}/${ficheUuid}/entrees/${entreeUuid}`, request);
+  }
+
+  soumettreFicheEmargement(ficheUuid: string): Observable<void> {
+    return this.http.patch<void>(
+      `${this.ficheEmargementUrl}/${ficheUuid}/soumettre`, {});
+  }
+
+  retournerFicheEmargement(ficheUuid: string, request: RetourFicheEmargementRequest): Observable<void> {
+    return this.http.patch<void>(
+      `${this.ficheEmargementUrl}/${ficheUuid}/retourner`, request);
+  }
+
+  validerFicheEmargement(ficheUuid: string): Observable<void> {
+    return this.http.patch<void>(
+      `${this.ficheEmargementUrl}/${ficheUuid}/valider`, {});
+  }
+
+  getDetailsFicheEmargement(ficheUuid: string): Observable<FicheEmargementDetailResponseResponse> {
+    return this.http.get<FicheEmargementDetailResponseResponse>(
+      `${this.ficheEmargementUrl}/details/${ficheUuid}`
+    );
   }
 
 

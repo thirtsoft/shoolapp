@@ -75,13 +75,13 @@ export class ContratsComponent implements OnInit {
       const filtreParam = this.construireParametreDeFiltre();
 
       apiCall = this.rhResource.fetchFilterDataTable(
-        'contrats',
+        'rh/contrats',
         this.currentPage,
         this.pageSize,
         filtreParam)
 
     } else {
-      apiCall = this.rhResource.getResourcePaged('contrats', this.currentPage, this.pageSize);
+      apiCall = this.rhResource.getResourcePaged('rh/contrats', this.currentPage, this.pageSize);
     }
     apiCall.subscribe({
       next: (response) => {

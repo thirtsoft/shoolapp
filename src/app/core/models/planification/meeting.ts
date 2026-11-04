@@ -20,7 +20,7 @@ export interface Meeting {
 
     salle?: string;
 
-    createurId?: number;
+    cible?: string;
 
     actif?: number;
 

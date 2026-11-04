@@ -7,9 +7,7 @@ import { ToastrService } from 'ngx-toastr';
 import { Meeting } from '../../../../../../core/models/planification/meeting';
 import { Salle } from '../../../../../../core/models/referentiels/salle';
 import { TypeReunion } from '../../../../../../core/models/referentiels/type-reunion';
-import { Utilisateur } from '../../../../../../core/models/utilisateur/utilisateur';
 import { ReferentielResourceService } from '../../../../referentiel/service/referentiel-resource.service';
-import { UtilisateurService } from '../../../../utilisateur/service/utilisateur.service';
 import { PlanificationResourceService } from '../../../services/planification-resource.service';
 
 @Component({
@@ -31,8 +29,9 @@ export class CreateMeetingComponent implements OnInit {
 
   title = "Programmer une réunion";
 
+  ciblesReunion: string[] = ["ADMINISTRATION", "ENSEIGNANTS", "PARENTS", "TOUS"]
+
   private readonly planificationService = inject(PlanificationResourceService);
-  private readonly utilisateurService = inject(UtilisateurService);
   private readonly _formBuilder = inject(FormBuilder);
   private readonly toastService = inject(ToastrService);
   private readonly activeRoute = inject(ActivatedRoute);
@@ -95,6 +94,7 @@ export class CreateMeetingComponent implements OnInit {
       heureFin: [meeting?.heureFin ?? '', Validators.required],
       typeReunionId: [meeting?.typeReunionId ?? '', Validators.required],
       salleId: [meeting?.salleId ?? ''],
+      cible: [meeting?.cible ?? '', Validators.required],
       description: [meeting?.description ?? ''],
     });
 
@@ -139,7 +139,7 @@ export class CreateMeetingComponent implements OnInit {
   }
 
   goBack() {
-    this.router.navigate(['admin/planification/reunion'])
+    void this.router.navigate(['admin/planification/reunion'])
   }
 
 }

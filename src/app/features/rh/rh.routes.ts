@@ -14,6 +14,12 @@ import { ModificationInfoPersonnelComponent } from './pages/personnel/modificati
 import { PeronnelsComponent } from './pages/personnel/peronnels-component/peronnels-component';
 import { SuccessCreationPersonnelComponent } from './pages/personnel/success-creation-personnel-component/success-creation-personnel-component';
 import { RhComponent } from './rh.component';
+import { FichesEmargementComponent } from './pages/fiche/fiches-emargement-component/fiches-emargement-component';
+import { GenererFichesEmargementComponent } from './pages/fiche/generer-fiches-emargement-component/generer-fiches-emargement-component';
+import { EditerFicheEmargementComponent } from './pages/fiche/editer-fiche-emargement-component/editer-fiche-emargement-component';
+import { DetailsFicheEmargementComponent } from './pages/fiche/details-fiche-emargement-component/details-fiche-emargement-component';
+import { EntresFicheEmargementComponent } from './pages/fiche/entres-fiche-emargement-component/entres-fiche-emargement-component';
+import { TousFichesEmargementComponent } from './pages/fiche/tous-fiches-emargement-component/tous-fiches-emargement-component';
 
 export const RH_ROUTES: Routes = [
   {
@@ -84,6 +90,35 @@ export const RH_ROUTES: Routes = [
       {
         path: 'personnel/success-creation',
         component: SuccessCreationPersonnelComponent
+      },
+
+      //
+      {
+        path: 'fiches-emargement',
+        component: FichesEmargementComponent
+      },
+      {
+        path: 'fiche-emargement/generer',
+        component: GenererFichesEmargementComponent
+      },
+      {
+        path: 'fiche-emargement/edit/:uuid',
+        component: EditerFicheEmargementComponent
+      },
+
+      {
+        path: 'fiche-emargement/details/:uuid',
+        component: DetailsFicheEmargementComponent
+      },
+
+      {
+        path: 'fiche-emargement/entrees',
+        component: EntresFicheEmargementComponent
+      },
+
+      {
+        path: 'tous-fiches-emargements',
+        component: TousFichesEmargementComponent
       },
 
     ],

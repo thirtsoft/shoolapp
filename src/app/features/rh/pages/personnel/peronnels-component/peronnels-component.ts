@@ -75,13 +75,13 @@ export class PeronnelsComponent implements OnInit {
       const filtreParam = this.construireParametreDeFiltre();
 
       apiCall = this.rhResource.fetchFilterDataTable(
-        'personnels',
+        'rh/personnels',
         this.currentPage,
         this.pageSize,
         filtreParam)
 
     } else {
-      apiCall = this.rhResource.getResourcePaged('personnels', this.currentPage, this.pageSize);
+      apiCall = this.rhResource.getResourcePaged('rh/personnels', this.currentPage, this.pageSize);
     }
     apiCall.subscribe({
       next: (response) => {

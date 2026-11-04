@@ -1,0 +1,23 @@
+<app-generic-table-dossier
+  title="Mes fiches d'émargements"
+  titleFitre="Paies"
+  [tableColumns]="columns"
+  [tableData]="fichesEmargementsData"
+  [tableSizes]="tableSizes"
+  [totalElements]="totalElements"
+  [currentPage]="currentPage"
+  [pageSize]="pageSize"
+  [isEyesIcon]="true"
+  [isNoAjout]="true"
+  [isLoading]="isLoading"
+  (pageChange)="changePage($event)"
+  [deleteEndPoint]="deleteEndpoint"
+  [showSearch]="false"
+  [filtered]="tableFilters"
+  (filterChange)="onFilterChange($event.filter, $event.value)"
+  [showFilters]="true"
+  (resetFilters)="resetFilters()"
+  (sizeChange)="changeSize($event)"
+  detailButtonLink="/enseignant/fiche-emargement/details"
+>
+</app-generic-table-dossier>
