@@ -1,0 +1,1054 @@
+/* ============================================================
+   PAGE
+   ============================================================ */
+
+:host {
+  display: block;
+  width: 100%;
+
+  font-family:
+    Inter,
+    "Segoe UI",
+    Roboto,
+    Helvetica,
+    Arial,
+    sans-serif;
+
+  color: #071858;
+}
+
+.financial-page {
+  width: 100%;
+  max-width: 1500px;
+  margin: 0 auto;
+
+  padding: 26px 42px 34px;
+
+  box-sizing: border-box;
+
+  background: #ffffff;
+}
+
+
+/* ============================================================
+   HEADER
+   ============================================================ */
+
+.page-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+
+  gap: 25px;
+  margin-bottom: 30px;
+}
+
+.page-title-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.page-title-icon {
+  width: 56px;
+  height: 56px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  flex-shrink: 0;
+}
+
+.page-title-icon svg {
+  width: 56px;
+  height: 56px;
+}
+
+.page-header h1 {
+  margin: 0;
+
+  color: #071858;
+
+  font-size: 25px;
+  line-height: 1.2;
+  font-weight: 750;
+
+  letter-spacing: -0.5px;
+}
+
+.page-header p {
+  margin: 5px 0 0;
+
+  color: #53658f;
+
+  font-size: 13px;
+  line-height: 1.4;
+}
+
+
+/* ============================================================
+   FILTRES
+   ============================================================ */
+
+.page-filters {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+
+  flex-shrink: 0;
+}
+
+.filter-control {
+  height: 42px;
+
+  display: flex;
+  align-items: center;
+  gap: 7px;
+
+  padding: 0 12px;
+
+  border: 1px solid #d5deed;
+  border-radius: 9px;
+
+  background: #ffffff;
+
+  color: #163275;
+
+  font-size: 12px;
+
+  white-space: nowrap;
+
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease,
+    transform 0.2s ease;
+}
+
+.filter-control:hover {
+  border-color: #9eb8e8;
+
+  box-shadow: 0 3px 10px rgba(20, 55, 110, 0.07);
+
+  transform: translateY(-1px);
+}
+
+.filter-control>svg {
+  width: 17px;
+  height: 17px;
+
+  color: #062a9e;
+
+  flex-shrink: 0;
+}
+
+.filter-control strong {
+  font-weight: 700;
+}
+
+.filter-control .chevron {
+  width: 14px;
+  height: 14px;
+
+  margin-left: 2px;
+}
+
+.date-control {
+  padding-left: 13px;
+  padding-right: 13px;
+}
+
+
+/* ============================================================
+   KPI GRID
+   ============================================================ */
+
+.kpi-grid {
+  display: grid;
+
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+
+  gap: 17px;
+
+  margin-bottom: 20px;
+}
+
+.kpi-card {
+  min-height: 120px;
+
+  display: flex;
+  align-items: center;
+
+  gap: 15px;
+
+  padding: 17px 20px;
+
+  box-sizing: border-box;
+
+  border-radius: 12px;
+
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease,
+    border-color 0.2s ease;
+}
+
+.kpi-card:hover {
+  transform: translateY(-3px);
+
+  box-shadow: 0 8px 20px rgba(28, 61, 111, 0.09);
+}
+
+.kpi-schooling {
+  background: #f0f5ff;
+  border: 1px solid #d3e1fb;
+}
+
+.kpi-salary {
+  background: #f0faf5;
+  border: 1px solid #d4ecdf;
+}
+
+.kpi-expenses {
+  background: #fff7ed;
+  border: 1px solid #f3dfc5;
+}
+
+
+/* ============================================================
+   KPI ICON
+   ============================================================ */
+
+.kpi-icon {
+  width: 58px;
+  height: 58px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 50%;
+
+  flex-shrink: 0;
+
+  transition: transform 0.2s ease;
+}
+
+.kpi-card:hover .kpi-icon {
+  transform: scale(1.05);
+}
+
+.kpi-icon svg {
+  width: 43px;
+  height: 43px;
+}
+
+.kpi-schooling .kpi-icon {
+  background: #c6dafe;
+}
+
+.kpi-salary .kpi-icon {
+  background: #c9efd8;
+}
+
+.kpi-expenses .kpi-icon {
+  background: #ffe0b9;
+}
+
+
+/* ============================================================
+   KPI CONTENT
+   ============================================================ */
+
+.kpi-content {
+  min-width: 0;
+}
+
+.kpi-label {
+  margin-bottom: 4px;
+
+  color: #243867;
+
+  font-size: 13px;
+  line-height: 1.25;
+  font-weight: 600;
+}
+
+.kpi-value {
+  display: flex;
+  align-items: baseline;
+
+  gap: 5px;
+
+  color: #071858;
+
+  font-size: 25px;
+  line-height: 1.1;
+  font-weight: 750;
+
+  letter-spacing: -0.6px;
+
+  white-space: nowrap;
+}
+
+.kpi-value span {
+  font-size: 11px;
+  font-weight: 650;
+
+  letter-spacing: 0;
+}
+
+.kpi-evolution {
+  display: flex;
+  align-items: center;
+
+  gap: 6px;
+
+  margin-top: 6px;
+
+  color: #64749a;
+
+  font-size: 10px;
+}
+
+.evolution-badge {
+  display: inline-flex;
+  align-items: center;
+
+  padding: 3px 6px;
+
+  border-radius: 5px;
+
+  background: #d9f5e4;
+
+  color: #11834d;
+
+  font-size: 10px;
+  font-weight: 750;
+}
+
+.kpi-evolution.positive strong,
+.kpi-evolution.positive .evolution-arrow {
+  color: #149b5a;
+}
+
+
+/* ============================================================
+   SOLDE FINANCIER
+   ============================================================ */
+
+.balance-card {
+  min-height: 145px;
+
+  display: flex;
+  align-items: center;
+
+  padding: 23px 32px;
+
+  box-sizing: border-box;
+
+  border-radius: 13px;
+
+  background:
+    linear-gradient(105deg,
+      #173a73 0%,
+      #224d8e 100%);
+
+  color: #ffffff;
+
+  margin-bottom: 20px;
+
+  box-shadow:
+    0 5px 16px rgba(20, 52, 100, 0.10);
+
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.balance-card:hover {
+  transform: translateY(-2px);
+
+  box-shadow:
+    0 8px 22px rgba(20, 52, 100, 0.14);
+}
+
+.balance-icon {
+  width: 75px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  flex-shrink: 0;
+
+  margin-right: 25px;
+}
+
+.balance-icon svg {
+  width: 57px;
+  height: 57px;
+}
+
+.balance-main {
+  min-width: 0;
+  flex: 1;
+}
+
+.balance-label {
+  margin-bottom: 5px;
+
+  color: rgba(255, 255, 255, 0.82);
+
+  font-size: 14px;
+  font-weight: 550;
+}
+
+.balance-value {
+  display: flex;
+  align-items: baseline;
+
+  gap: 8px;
+
+  color: #ffffff;
+
+  font-size: 39px;
+  line-height: 1;
+  font-weight: 750;
+
+  letter-spacing: -1px;
+}
+
+.balance-value span {
+  font-size: 17px;
+  font-weight: 600;
+
+  letter-spacing: 0;
+}
+
+.balance-separator {
+  width: 1px;
+  height: 72px;
+
+  margin: 0 38px;
+
+  background: rgba(255, 255, 255, 0.25);
+}
+
+.balance-description {
+  width: 39%;
+  min-width: 280px;
+}
+
+.balance-description p {
+  margin: 0 0 9px;
+
+  max-width: 430px;
+
+  color: rgba(255, 255, 255, 0.88);
+
+  font-size: 13px;
+  line-height: 1.45;
+}
+
+.situation-badge {
+  width: fit-content;
+
+  display: inline-flex;
+  align-items: center;
+
+  gap: 6px;
+
+  padding: 6px 11px;
+
+  border-radius: 18px;
+
+  background: #b9f2cb;
+
+  color: #067a43;
+
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.badge-icon {
+  width: 18px;
+  height: 18px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 50%;
+
+  background: #29a967;
+
+  color: #ffffff;
+
+  font-size: 10px;
+  font-weight: 800;
+}
+
+.balance-negative {
+  background:
+    linear-gradient(105deg,
+      #753031 0%,
+      #9b4040 100%);
+}
+
+.balance-negative .situation-badge {
+  background: #ffe0e0;
+  color: #a52e2e;
+}
+
+.balance-negative .badge-icon {
+  background: #d84b4b;
+}
+
+.balance-zero {
+  background:
+    linear-gradient(105deg,
+      #495777 0%,
+      #5b6988 100%);
+}
+
+
+/* ============================================================
+   RECOUVREMENT
+   ============================================================ */
+
+.recovery-card {
+  min-height: 215px;
+
+  display: grid;
+
+  grid-template-columns:
+    minmax(0, 1.6fr) 190px minmax(280px, 1.1fr);
+
+  align-items: center;
+
+  border: 1px solid #d7e0f0;
+  border-radius: 13px;
+
+  background: #ffffff;
+
+  overflow: hidden;
+
+  margin-bottom: 20px;
+
+  box-shadow:
+    0 2px 8px rgba(21, 48, 91, 0.035);
+
+  transition:
+    box-shadow 0.2s ease,
+    transform 0.2s ease;
+}
+
+.recovery-card:hover {
+  transform: translateY(-2px);
+
+  box-shadow:
+    0 7px 20px rgba(21, 48, 91, 0.08);
+}
+
+
+/* ============================================================
+   RECOVERY DETAILS
+   ============================================================ */
+
+.recovery-details {
+  padding: 22px 28px;
+}
+
+.section-title {
+  display: flex;
+  align-items: center;
+
+  gap: 9px;
+
+  margin-bottom: 14px;
+}
+
+.section-title-icon {
+  width: 34px;
+  height: 34px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.section-title-icon svg {
+  width: 31px;
+  height: 31px;
+}
+
+.section-title h2 {
+  margin: 0;
+
+  color: #071858;
+
+  font-size: 17px;
+  font-weight: 750;
+
+  letter-spacing: -0.2px;
+}
+
+.recovery-rows {
+  width: 100%;
+}
+
+.recovery-row {
+  min-height: 37px;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  gap: 15px;
+
+  border-bottom: 1px solid #edf0f5;
+}
+
+.recovery-row:last-child {
+  border-bottom: 0;
+}
+
+.recovery-row span {
+  color: #53658c;
+
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.recovery-row strong {
+  color: #071858;
+
+  font-size: 13px;
+  font-weight: 750;
+
+  white-space: nowrap;
+}
+
+
+/* ============================================================
+   PROGRESSION
+   ============================================================ */
+
+.recovery-progress {
+  min-height: 180px;
+
+  display: flex;
+  flex-direction: column;
+
+  align-items: center;
+  justify-content: center;
+
+  padding: 15px 20px;
+
+  border-left: 1px solid #e1e7f1;
+  border-right: 1px solid #e1e7f1;
+
+  box-sizing: border-box;
+}
+
+.progress-circle {
+  --progress: 86%;
+
+  width: 110px;
+  height: 110px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 50%;
+
+  background:
+    conic-gradient(#35b66c var(--progress),
+      #e5ebf6 var(--progress));
+
+  position: relative;
+
+  transition: transform 0.3s ease;
+}
+
+.recovery-card:hover .progress-circle {
+  transform: scale(1.04) rotate(2deg);
+}
+
+.progress-circle::before {
+  content: "";
+
+  position: absolute;
+
+  width: 86px;
+  height: 86px;
+
+  border-radius: 50%;
+
+  background: #ffffff;
+}
+
+.progress-circle-inner {
+  position: relative;
+  z-index: 1;
+
+  color: #071858;
+
+  font-size: 24px;
+  font-weight: 750;
+}
+
+.progress-label {
+  margin-top: 8px;
+
+  color: #53658c;
+
+  font-size: 11px;
+  font-weight: 550;
+
+  text-align: center;
+}
+
+
+/* ============================================================
+   MESSAGE RECOUVREMENT
+   ============================================================ */
+
+.recovery-message {
+  min-height: 160px;
+
+  display: flex;
+  align-items: flex-start;
+
+  gap: 11px;
+
+  margin: 0 16px;
+
+  padding: 20px;
+
+  border: 1px solid #c3ead2;
+  border-radius: 11px;
+
+  background: #ecfaf2;
+
+  box-sizing: border-box;
+
+  transition:
+    background 0.2s ease,
+    transform 0.2s ease;
+}
+
+.recovery-message:hover {
+  background: #e7f8ee;
+
+  transform: translateX(2px);
+}
+
+.recovery-message-icon {
+  width: 34px;
+  height: 34px;
+
+  flex-shrink: 0;
+}
+
+.recovery-message-icon svg {
+  width: 34px;
+  height: 34px;
+}
+
+.recovery-message h3 {
+  margin: 1px 0 8px;
+
+  color: #062f1c;
+
+  font-size: 14px;
+  line-height: 1.3;
+  font-weight: 750;
+}
+
+.recovery-message p {
+  margin: 0;
+
+  color: #416351;
+
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+.recovery-message p strong {
+  color: #071858;
+  font-weight: 750;
+}
+
+
+/* ============================================================
+   BARRE INFORMATION
+   ============================================================ */
+
+.information-bar {
+  min-height: 52px;
+
+  display: flex;
+  align-items: center;
+
+  gap: 10px;
+
+  padding: 0 18px;
+
+  box-sizing: border-box;
+
+  border: 1px solid #c5d8f7;
+  border-radius: 10px;
+
+  background: #f0f5ff;
+
+  color: #31559c;
+
+  font-size: 11px;
+  font-weight: 500;
+}
+
+.information-icon {
+  width: 24px;
+  height: 24px;
+
+  flex-shrink: 0;
+}
+
+.information-icon svg {
+  width: 24px;
+  height: 24px;
+}
+
+
+/* ============================================================
+   ANIMATIONS
+   ============================================================ */
+
+.kpi-card,
+.balance-card,
+.recovery-card,
+.information-bar {
+  animation: financialFadeIn 0.35s ease both;
+}
+
+.kpi-card:nth-child(2) {
+  animation-delay: 0.05s;
+}
+
+.kpi-card:nth-child(3) {
+  animation-delay: 0.1s;
+}
+
+.balance-card {
+  animation-delay: 0.15s;
+}
+
+.recovery-card {
+  animation-delay: 0.2s;
+}
+
+.information-bar {
+  animation-delay: 0.25s;
+}
+
+@keyframes financialFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(5px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+
+/* ============================================================
+   RESPONSIVE
+   ============================================================ */
+
+@media (max-width: 1200px) {
+
+  .financial-page {
+    padding-left: 28px;
+    padding-right: 28px;
+  }
+
+  .page-header {
+    flex-direction: column;
+  }
+
+  .page-filters {
+    width: 100%;
+  }
+
+  .filter-control {
+    flex: 1;
+  }
+
+  .balance-separator {
+    margin-left: 25px;
+    margin-right: 25px;
+  }
+
+  .balance-description {
+    width: 42%;
+  }
+
+  .recovery-card {
+    grid-template-columns:
+      minmax(0, 1.5fr) 170px minmax(260px, 1fr);
+  }
+
+  .recovery-message {
+    margin-right: 12px;
+    margin-left: 12px;
+  }
+}
+
+
+@media (max-width: 900px) {
+
+  .kpi-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .kpi-card {
+    min-height: 110px;
+  }
+
+  .balance-card {
+    flex-wrap: wrap;
+    gap: 15px;
+  }
+
+  .balance-icon {
+    width: 60px;
+    margin-right: 0;
+  }
+
+  .balance-main {
+    flex: 1;
+  }
+
+  .balance-separator {
+    display: none;
+  }
+
+  .balance-description {
+    width: 100%;
+    min-width: 0;
+    padding-left: 75px;
+  }
+
+  .recovery-card {
+    grid-template-columns: 1fr;
+  }
+
+  .recovery-progress {
+    min-height: 180px;
+
+    border-top: 1px solid #e1e7f1;
+    border-bottom: 1px solid #e1e7f1;
+
+    border-left: 0;
+    border-right: 0;
+  }
+
+  .recovery-message {
+    margin: 16px;
+  }
+}
+
+
+@media (max-width: 650px) {
+
+  .financial-page {
+    padding: 20px 14px 28px;
+  }
+
+  .page-title-wrapper {
+    align-items: flex-start;
+  }
+
+  .page-title-icon,
+  .page-title-icon svg {
+    width: 48px;
+    height: 48px;
+  }
+
+  .page-header h1 {
+    font-size: 22px;
+  }
+
+  .page-header p {
+    font-size: 12px;
+  }
+
+  .page-filters {
+    flex-direction: column;
+  }
+
+  .filter-control {
+    width: 100%;
+    box-sizing: border-box;
+  }
+
+  .kpi-card {
+    padding: 16px;
+  }
+
+  .kpi-icon {
+    width: 54px;
+    height: 54px;
+  }
+
+  .kpi-icon svg {
+    width: 40px;
+    height: 40px;
+  }
+
+  .kpi-value {
+    font-size: 22px;
+  }
+
+  .balance-card {
+    padding: 22px 18px;
+  }
+
+  .balance-value {
+    font-size: 34px;
+  }
+
+  .balance-value span {
+    font-size: 16px;
+  }
+
+  .balance-description {
+    padding-left: 0;
+  }
+
+  .recovery-details {
+    padding: 20px 18px;
+  }
+
+  .recovery-row {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 3px;
+    padding: 8px 0;
+  }
+
+  .information-bar {
+    min-height: auto;
+    padding: 13px 15px;
+
+    align-items: flex-start;
+
+    line-height: 1.5;
+  }
+}

@@ -17,6 +17,7 @@ import { GenererFactureClasseComponent } from './pages/facture/generer-facture-c
 import { ListFactureComponent } from './pages/facture/list-facture/list-facture.component';
 import { CreatePaiementComponent } from './pages/paiement/create-paiement/create-paiement.component';
 import { ListPaiementComponent } from './pages/paiement/list-paiement/list-paiement.component';
+import { EtatsFinanciersEcoleComponent } from './pages/etatfinancier/etats-financiers-ecole-component/etats-financiers-ecole-component';
 
 export const COMPTA_ROUTES: Routes = [
   {
@@ -117,6 +118,10 @@ export const COMPTA_ROUTES: Routes = [
         component: DetailsDepotBancaireComponent
       },
 
+      {
+        path: 'etat-financier',
+        component: EtatsFinanciersEcoleComponent
+      },
     ],
   },
 ];
