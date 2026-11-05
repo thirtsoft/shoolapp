@@ -4,6 +4,7 @@ import { Observable, throwError } from 'rxjs';
 import { catchError, tap } from 'rxjs/operators';
 import { environment } from '../../../../environments/environment';
 import { DataResult } from '../../../core/datamodel/data-model';
+import { EtatFinancier } from '../../../core/models/comptabilite/etatfinancier/etat-financier-model';
 import { ResponseMessage } from '../../../core/response/response-message';
 
 @Injectable({
@@ -182,6 +183,10 @@ export class ComptabiliteResourceService {
   enregistrerResourcetWithFiles<T>(endpoint: string, formData: FormData) {
     const url = `${this.comptabiliteUrl}/${endpoint}/enregistrerwithfiles`;
     return this.http.post<ResponseMessage>(url, formData);
+  }
+
+  obtenirEtatFinancier(): Observable<EtatFinancier> {
+    return this.http.get<EtatFinancier>(`${this.comptabiliteUrl}/etat-financier`);
   }
 
 }

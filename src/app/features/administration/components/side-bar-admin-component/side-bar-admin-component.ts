@@ -34,7 +34,8 @@ export class SideBarAdminComponent {
     { route: '/admin/dashboard', ico: '📊', label: 'Tableau de bord', section: '', badge: '' },
 
     // FINANCES
-    { route: '/admin/comptabilite/facture', ico: '💰', label: 'Factures', section: 'FINANCES', badge: '' },
+    { route: '/admin/comptabilite/etat-financier', ico: '📊', label: 'État financier', section: 'FINANCES', badge: '' },
+    { route: '/admin/comptabilite/facture', ico: '💰', label: 'Factures', section: '', badge: '' },
     { route: '/admin/comptabilite/paiement', ico: '💳', label: 'Paiements', section: '', badge: '' },
     { route: '/admin/comptabilite/services', ico: '📋', label: 'Inscriptions services', section: '', badge: '' },
     { route: '/admin/comptabilite/depenses', ico: '💸', label: 'Dépenses', section: '', badge: '' },
