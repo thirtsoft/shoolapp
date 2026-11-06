@@ -12,6 +12,7 @@ import { FaireAppelRequest } from '../../../../core/models/dossiereleve/absence/
 import { ResponseMessage } from '../../../../core/response/response-message';
 import { CahierDeTexteDetailsResponse } from '../../../../core/models/cahier-texte/cahier-texte-details-response.model';
 import { CahierDeTexteResponse } from '../../../../core/models/cahier-texte/cahier-texte-response.model';
+import { CahierDeTexteRequest } from '../../../../core/models/cahier-texte/cahiers-textes-request.model';
 
 @Injectable({
   providedIn: 'root'
@@ -222,6 +223,15 @@ export class CahierTexteResourceService {
     return this.http.post<DataResult<T>>(url, resource);
   }
 
+  createCahierTexte(resource: CahierDeTexteRequest): Observable<CahierDeTexteResponse> {
+    const url = `${this.baseUrl_1}/cahier-texte`;
+    return this.http.post<CahierDeTexteResponse>(url, resource);
+  }
+
+  updateCahierTexte(id: number, value: CahierDeTexteRequest): Observable<CahierDeTexteResponse> {
+    const url = `${this.baseUrl_1}/cahier-texte/${id}`;
+    return this.http.patch<CahierDeTexteResponse>(url, value);
+  }
 
   updateUneReource(endpoint: string, id: number, value: any) {
     const url = `${this.baseUrl_1}/${endpoint}/update/${id}`;
