@@ -5,7 +5,6 @@ import { catchError, tap } from 'rxjs/operators';
 import { environment } from '../../../../../environments/environment';
 import { DataResult } from '../../../../core/datamodel/data-model';
 import { ResponseMessage } from '../../../../core/response/response-message';
-import { AnneeScolaireResponse } from '../../../../core/models/enseignant/cours-enseignant-calendrier.model';
 import { AnneeScolaireEncoursResponse } from '../../../../core/models/referentiels/annee-scolaire-encours-response';
 
 @Injectable({

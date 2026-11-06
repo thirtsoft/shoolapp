@@ -512,9 +512,8 @@
       #5b6988 100%);
 }
 
-
 /* ============================================================
-   RECOUVREMENT
+   DÉTAIL DES RECETTES
    ============================================================ */
 
 .recovery-card {
@@ -522,10 +521,15 @@
 
   display: grid;
 
+  /* IMPORTANT :
+     Le HTML contient maintenant uniquement :
+     1. .recovery-details
+     2. .recovery-message
+  */
   grid-template-columns:
-    minmax(0, 1.6fr) 190px minmax(280px, 1.1fr);
+    minmax(0, 1.6fr) minmax(320px, 0.9fr);
 
-  align-items: center;
+  align-items: stretch;
 
   border: 1px solid #d7e0f0;
   border-radius: 13px;
@@ -549,6 +553,180 @@
 
   box-shadow:
     0 7px 20px rgba(21, 48, 91, 0.08);
+}
+
+
+/* ============================================================
+   RECOVERY DETAILS
+   ============================================================ */
+
+.recovery-details {
+  min-width: 0;
+
+  padding: 22px 28px;
+
+  box-sizing: border-box;
+}
+
+.section-title {
+  display: flex;
+  align-items: center;
+
+  gap: 9px;
+
+  margin-bottom: 14px;
+}
+
+.section-title-icon {
+  width: 34px;
+  height: 34px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  flex-shrink: 0;
+}
+
+.section-title-icon svg {
+  width: 31px;
+  height: 31px;
+}
+
+.section-title h2 {
+  margin: 0;
+
+  color: #071858;
+
+  font-size: 17px;
+  font-weight: 750;
+
+  letter-spacing: -0.2px;
+}
+
+.recovery-rows {
+  width: 100%;
+}
+
+.recovery-row {
+  min-height: 37px;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  gap: 15px;
+
+  border-bottom: 1px solid #edf0f5;
+}
+
+.recovery-row:last-child {
+  border-bottom: 0;
+}
+
+.recovery-row span {
+  min-width: 0;
+
+  color: #53658c;
+
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.recovery-row strong {
+  color: #071858;
+
+  font-size: 13px;
+  font-weight: 750;
+
+  white-space: nowrap;
+}
+
+
+/* ============================================================
+   MESSAGE RECETTES DE L'ÉTABLISSEMENT
+   ============================================================ */
+
+.recovery-message {
+  min-width: 0;
+  width: auto;
+
+  min-height: 160px;
+
+  display: flex;
+  align-items: flex-start;
+
+  gap: 11px;
+
+  margin: 0 16px;
+
+  align-self: center;
+
+  padding: 20px;
+
+  border: 1px solid #c3ead2;
+  border-radius: 11px;
+
+  background: #ecfaf2;
+
+  box-sizing: border-box;
+
+  transition:
+    background 0.2s ease,
+    transform 0.2s ease;
+}
+
+.recovery-message:hover {
+  background: #e7f8ee;
+
+  transform: translateX(2px);
+}
+
+.recovery-message-icon {
+  width: 34px;
+  height: 34px;
+
+  flex-shrink: 0;
+}
+
+.recovery-message-icon svg {
+  width: 34px;
+  height: 34px;
+}
+
+.recovery-message-content {
+  min-width: 0;
+  flex: 1;
+}
+
+.recovery-message h3 {
+  margin: 1px 0 8px;
+
+  color: #062f1c;
+
+  font-size: 14px;
+  line-height: 1.3;
+  font-weight: 750;
+}
+
+.recovery-message p {
+  margin: 0;
+
+  color: #416351;
+
+  font-size: 12px;
+  line-height: 1.5;
+
+  /* Permet au texte de prendre toute la largeur disponible */
+  max-width: none;
+
+  overflow-wrap: break-word;
+  word-break: normal;
+}
+
+.recovery-message p strong {
+  color: #071858;
+  font-weight: 750;
 }
 
 

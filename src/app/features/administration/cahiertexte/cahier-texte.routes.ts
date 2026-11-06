@@ -21,7 +21,7 @@ export const CAHIER_TEXTE_ROUTES: Routes = [
         component: CreationCahierTexteComponent
       },
       {
-        path: 'edit/:uuid',
+        path: 'edit/:id',
         component: CreationCahierTexteComponent
       },
 

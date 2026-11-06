@@ -68,7 +68,7 @@ export class SideBarAdminComponent {
 
     // GESTION SCOLAIRE
     { route: '/admin/dossier-eleve/eleves', ico: '🎒', label: 'Élèves', section: 'GESTION SCOLAIRE', badge: '' },
-    { route: '/admin/dossier-eleve/Réinscriptions', ico: '📝', label: 'Inscriptions', section: '', badge: '' },
+    { route: '/admin/dossier-eleve/inscriptions', ico: '📝', label: 'Réinscriptions', section: '', badge: '' },
     { route: '/admin/dossier-eleve/parent', ico: '👪', label: 'Parents', section: '', badge: '' },
     { route: '/admin/utilisateur/enseignants', ico: '👨‍🏫', label: 'Enseignants' },
 

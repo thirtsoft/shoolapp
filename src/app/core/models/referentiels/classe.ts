@@ -20,3 +20,15 @@ export interface ListeClasse {
     capacite?: number;
 
 }
+
+
+export interface ClasseListResponse {
+    id?: number;
+
+    uuid?: string;
+
+    libelle?: string;
+
+    capacite?: number;
+
+}

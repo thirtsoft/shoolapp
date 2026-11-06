@@ -4,8 +4,6 @@ import { forkJoin } from 'rxjs';
 import { IFilterConfig } from '../../../../../core/filtered-config/FiltreConfiguration';
 import { GenericTableDossierComponent } from '../../../../../core/generic/generic-table-dossier/generic-table-dossier.component';
 import { CommonService } from '../../../../../core/services/common.service';
-import { DossierResourceService } from '../../../../administration/dossier-eleve/service/dossier-resource.service';
-import { ReferentielResourceService } from '../../../../administration/referentiel/service/referentiel-resource.service';
 import { ComptabiliteResourceService } from '../../../services/comptabilite-resource.service';
 
 @Component({
