@@ -49,19 +49,6 @@ export class DetailsDemandeAvanceSalaireComponent {
     }
     return name.trim().split(/\s+/).slice(0, 2).map(part => part.charAt(0).toUpperCase()).join('');
   }
-  /* 
-    getDureeConge(): number {
-      const debut = this.parseDateFrancaise(this.detailsConges.dateDebut);
-      const fin = this.parseDateFrancaise(this.detailsConges.dateFin);
-  
-      if (!debut || !fin) {
-        return 0;
-      }
-  
-      const difference = fin.getTime() - debut.getTime();
-  
-      return Math.floor(difference / (1000 * 60 * 60 * 24)) + 1;
-    } */
 
   private parseDateFrancaise(dateString?: string | null): Date | null {
     if (!dateString) {

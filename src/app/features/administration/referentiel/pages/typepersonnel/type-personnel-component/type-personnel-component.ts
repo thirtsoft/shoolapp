@@ -1,7 +1,7 @@
 import { Component, inject, OnInit } from '@angular/core';
 import { IFilterConfig } from '../../../../../../core/filtered-config/FiltreConfiguration';
-import { RhResourceService } from '../../../../../rh/services/rh-resource-service';
 import { GenericTableReferentielComponent } from '../../../../../../core/generic/generic-table-referentiel/generic-table-referentiel.component';
+import { RhResourceService } from '../../../../../rh/services/rh-resource-service';
 
 @Component({
   selector: 'app-type-personnel-component',
@@ -75,13 +75,13 @@ export class TypePersonnelComponent implements OnInit {
       const filtreParam = this.construireParametreDeFiltre();
 
       apiCall = this.rhResource.fetchFilterDataTable(
-        'types-personnel',
+        'rh/types-personnel',
         this.currentPage,
         this.pageSize,
         filtreParam)
 
     } else {
-      apiCall = this.rhResource.getResourcePaged('types-personnel', this.currentPage, this.pageSize);
+      apiCall = this.rhResource.getResourcePaged('rh/types-personnel', this.currentPage, this.pageSize);
     }
     apiCall.subscribe({
       next: (response) => {

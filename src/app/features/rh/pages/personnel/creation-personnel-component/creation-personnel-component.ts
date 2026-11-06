@@ -1,12 +1,12 @@
 import { Component, inject, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { Router } from '@angular/router';
+import { ToastrService } from 'ngx-toastr';
+import { PersonnelRequest } from '../../../../../core/models/rh/personnel-request.model';
 import { TypePersonnelResponse } from '../../../../../core/models/rh/type-personnel-response.model';
 import { RolesResponse } from '../../../../../core/models/role/roles-response.model';
-import { RhResourceService } from '../../../services/rh-resource-service';
 import { RoleTenantService } from '../../../../administration/role-tenant/services/role-tenant-service';
-import { ToastrService } from 'ngx-toastr';
-import { Router } from '@angular/router';
-import { PersonnelRequest } from '../../../../../core/models/rh/personnel-request.model';
+import { RhResourceService } from '../../../services/rh-resource-service';
 
 @Component({
   selector: 'app-creation-personnel-component',
@@ -70,7 +70,7 @@ export class CreationPersonnelComponent implements OnInit {
 
     this.loadingTypes = true;
 
-    this.personnelApiService.getResourceList('types-personnel')
+    this.personnelApiService.getResourceList('rh/types-personnel')
       .subscribe({
         next: (types: any) => {
 

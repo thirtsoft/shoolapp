@@ -102,7 +102,7 @@ export class AddEditPaieComponent implements OnInit {
   }
 
   private chargerPersonnels(): void {
-    this.rhResourceService.getResourceList('personnels')
+    this.rhResourceService.getResourceList('rh/personnels')
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: (response: any) => {
@@ -126,7 +126,7 @@ export class AddEditPaieComponent implements OnInit {
   }
 
   private chargerContrats(): void {
-    this.rhResourceService.getResourceList('contrats')
+    this.rhResourceService.getResourceList('rh/contrats')
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: (response: any) => {
@@ -145,7 +145,7 @@ export class AddEditPaieComponent implements OnInit {
   }
 
   private chargerDemandesAvance(): void {
-    this.rhResourceService.getResourceList('demandes-avance-salaire')
+    this.rhResourceService.getResourceList('rh/demandes-avance-salaire')
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: (response: any) => {

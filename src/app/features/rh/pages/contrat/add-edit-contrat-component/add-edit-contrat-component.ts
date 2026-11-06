@@ -20,24 +20,6 @@ interface TypeContratOption {
   libelle?: string;
 }
 
-interface ContratResponse {
-  uuid: string;
-  reference: string;
-  personnelUuid: string;
-  typeContratUuid: string;
-  typeContratCode: string;
-  typeContratLibelle: string;
-  modeRemuneration: string;
-  montantReference: number;
-  dateDebut: string;
-  dateFin?: string | null;
-  statut: string;
-  observation?: string | null;
-  pieceJointeUuid?: string | null;
-  nomFichier?: string | null;
-  recordStatus?: string;
-}
-
 @Component({
   selector: 'app-add-edit-contrat-component',
   standalone: true,
@@ -70,14 +52,8 @@ export class AddEditContratComponent implements OnInit {
 
   fichier: File | null = null;
 
-  /**
-   * UUID du fichier actuellement enregistré.
-   */
   fichierExistant = signal<string | null>(null);
 
-  /**
-   * Nom du fichier actuellement enregistré.
-   */
   fichierExistantNom = signal<string | null>(null);
 
   readonly maxFileSize = 10 * 1024 * 1024;
@@ -138,7 +114,7 @@ export class AddEditContratComponent implements OnInit {
 
   private chargerPersonnels(): void {
     this.contratService
-      .getResourceList('personnels')
+      .getResourceList('rh/personnels')
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: (response: any) => {
@@ -161,7 +137,7 @@ export class AddEditContratComponent implements OnInit {
 
   private chargerTypesContrat(): void {
     this.contratService
-      .getResourceList('types-contrat')
+      .getResourceList('rh/types-contrat')
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: (response: any) => {
@@ -210,9 +186,6 @@ export class AddEditContratComponent implements OnInit {
             observation: contrat.observation ?? ''
           });
 
-          /*
-           * Document existant.
-           */
           this.fichierExistant.set(
             contrat.pieceJointeUuid ?? null
           );
@@ -300,12 +273,6 @@ export class AddEditContratComponent implements OnInit {
     this.fichier = null;
   }
 
-  /**
-   * Consulte le document actuellement enregistré.
-   *
-   * Le fichier est récupéré via HttpClient afin de conserver
-   * l'authentification JWT de l'application.
-   */
   consulterFichierExistant(): void {
     const fichierUuid = this.fichierExistant();
 
