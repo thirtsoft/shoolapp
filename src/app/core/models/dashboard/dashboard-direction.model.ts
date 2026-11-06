@@ -8,6 +8,7 @@ export interface DashboardKpiPresence {
   nombreElevesAppeles: number;
   nombreElevesPresents: number;
   nombreElevesAbsents: number;
+  nombreElevesEnRetard: number;
   tauxPresence: number;
 }
 

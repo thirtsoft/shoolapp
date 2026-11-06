@@ -185,32 +185,6 @@ export class DashboardAdministrationComponent implements OnInit {
     },
   ];
 
-  /*
-  readonly evenements: EvenementDirection[] = [
-    {
-      jour: '27',
-      mois: 'OCT',
-      titre: 'Conseil pédagogique',
-      type: 'Pédagogie',
-      heure: '16:00',
-    },
-    {
-      jour: '29',
-      mois: 'OCT',
-      titre: 'Réunion parents-professeurs',
-      type: 'Vie scolaire',
-      heure: '17:30',
-    },
-    {
-      jour: '31',
-      mois: 'OCT',
-      titre: 'Évaluations du 1er trimestre',
-      type: 'Évaluation',
-      heure: '08:00',
-    },
-  ];
-  */
-
   ngOnInit(): void {
     this.loadOrganizationInfos();
     this.loadDashboardData();
@@ -257,7 +231,7 @@ export class DashboardAdministrationComponent implements OnInit {
           this.nombreReinscriptionsAtraiter.set(data.eleves.nombreReinscriptionsATraiter);
           this.tauxPresence.set(data.presence.tauxPresence);
           this.absencesAujourdHui.set(data.presence.nombreElevesAbsents);
-          this.retardsAujourdHui.set(0);
+          this.retardsAujourdHui.set(data.presence.nombreElevesEnRetard);
           this.tauxRecouvrement.set(data.encaissement.tauxRecouvrement);
           this.montantAttendu.set(data.encaissement.montantAttendu);
           this.montantEncaisse.set(data.encaissement.montantEncaisse);
