@@ -99,7 +99,7 @@ export class AddEditTypePersonnelComponent {
   }
 
   goBack() {
-    this.router.navigate(['admin/referentiel/type-personnels'])
+    void this.router.navigate(['admin/referentiel/type-personnels'])
   }
 
 
