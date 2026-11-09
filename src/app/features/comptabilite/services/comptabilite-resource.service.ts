@@ -5,6 +5,7 @@ import { catchError, tap } from 'rxjs/operators';
 import { environment } from '../../../../environments/environment';
 import { DataResult } from '../../../core/datamodel/data-model';
 import { EtatFinancier } from '../../../core/models/comptabilite/etatfinancier/etat-financier-model';
+import { RelanceCibleeRequest, RelanceCreationResponse, RelanceGlobaleRequest, RelanceGlobaleResponse, RelanceParentDashboard } from '../../../core/models/comptabilite/relance/relance-globale-request.model';
 import { ResponseMessage } from '../../../core/response/response-message';
 
 @Injectable({
@@ -187,6 +188,63 @@ export class ComptabiliteResourceService {
 
   obtenirEtatFinancier(): Observable<EtatFinancier> {
     return this.http.get<EtatFinancier>(`${this.comptabiliteUrl}/etat-financier`);
+  }
+  //
+  relancerGlobalement(request: RelanceGlobaleRequest): Observable<RelanceGlobaleResponse> {
+    return this.http.post<RelanceGlobaleResponse>(
+      `${this.comptabiliteUrl}/relances/global`,
+      request
+    );
+  }
+
+  creerRelanceCiblee(request: RelanceCibleeRequest): Observable<RelanceCreationResponse> {
+    return this.http.post<RelanceCreationResponse>(
+      `${this.comptabiliteUrl}/relances/ciblee`,
+      request
+    );
+  }
+
+  fetchRelancesFilteredDataTable(
+    page: number, size: number,
+    filtre: {
+      parentUuid?: string;
+      createurUuid?: string;
+      type?: string;
+      statut?: string;
+    }
+  ): Observable<any> {
+
+    let params = new HttpParams()
+      .set('page', page.toString())
+      .set('size', size.toString());
+
+    if (filtre.parentUuid) {
+      params = params.set('parentUuid', filtre.parentUuid);
+    }
+
+    if (filtre.createurUuid) {
+      params = params.set('createurUuid', filtre.createurUuid);
+    }
+
+    if (filtre.type) {
+      params = params.set('type', filtre.type);
+    }
+
+    if (filtre.statut) {
+      params = params.set('statut', filtre.statut);
+    }
+
+    return this.http.get<any>(
+      `${this.comptabiliteUrl}/relances/filtered/page`,
+      {
+        ...this.httpOptions,
+        params
+      }
+    );
+  }
+
+  dernierRelanceParents(): Observable<RelanceParentDashboard[]> {
+    return this.http.get<RelanceParentDashboard[]>(`${this.comptabiliteUrl}/relances/parents-relances`);
   }
 
 }

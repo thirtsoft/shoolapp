@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, DestroyRef, inject, OnInit, signal } from '@angular/core';
+import { Component, DestroyRef, inject, OnInit, signal, TemplateRef, ViewChild } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Router } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
@@ -7,16 +7,29 @@ import { forkJoin } from 'rxjs';
 
 import { OrganizationMiniResponse } from '../../../../core/models/onboarding/organization/organization-mini-response';
 import { ActiviteAVenir } from '../../../../core/models/planification/activite-a-venir';
+import { ComptabiliteResourceService } from '../../../comptabilite/services/comptabilite-resource.service';
 import { ConfigOrganizationService } from '../../configorganization/services/configorganization.service';
 import { DashboardService } from '../../dossier-eleve/service/dashboard.service';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 
 interface KpiDirection {
+  /*
   label: string;
   valeur: string;
   detail: string;
   icon: string;
   classe: string;
   action?: () => void;
+  */
+
+  label: string;
+  valeur: string;
+  detail: string;
+  icon: string;
+  classe: string;
+  action?: () => void;
+  actionSecondaire?: () => void;
+  libelleActionSecondaire?: string;
 }
 
 interface EleveSuivi {
@@ -50,54 +63,6 @@ interface SuiviPedagogique {
   niveau: 'normal' | 'attention' | 'alerte';
 }
 
-interface EvenementDirection {
-  jour: string;
-  mois: string;
-  titre: string;
-  type: string;
-  heure: string;
-}
-
-interface DashboardKpiElevesInscrits {
-  nombreElevesInscrits: number;
-  nombreReinscriptionsATraiter: number;
-}
-
-interface DashboardKpiPresence {
-  nombreElevesInscrits: number;
-  nombreElevesAppeles: number;
-  nombreElevesPresents: number;
-  nombreElevesAbsents: number;
-  tauxPresence: number;
-}
-
-interface DashboardKpiEncaissement {
-  montantAttendu: number;
-  montantEncaisse: number;
-  montantAEncaisser: number;
-  montantEnRetard: number;
-  tauxRecouvrement: number;
-  paiementsPrioritaires: PaiementPrioritaire[];
-}
-
-interface DashboardKpiEvaluations {
-  evaluationsACorriger: number;
-  classesNecessitantSuivi: number;
-}
-
-interface DashboardEleveSuiviResponse {
-  eleveId: number;
-  nom: string;
-  prenom: string;
-  nombreAbsences: number;
-  nombreRetards: number;
-}
-
-interface DashboardKpiPedagogie {
-  tauxCahierTexte: number;
-  classesPedagogiquesAverifier: number;
-}
-
 export interface ActiviteAdministrationResponse {
   date?: string;
   heureDebut?: string;
@@ -119,6 +84,8 @@ export class DashboardAdministrationComponent implements OnInit {
   private readonly organizationConfigService = inject(ConfigOrganizationService);
   private readonly toastService = inject(ToastrService);
   private readonly destroyRef = inject(DestroyRef);
+  private readonly comptaService = inject(ComptabiliteResourceService);
+  private readonly modalService = inject(NgbModal);
 
   loading = signal(false);
   organizationData: OrganizationMiniResponse = {};
@@ -154,6 +121,11 @@ export class DashboardAdministrationComponent implements OnInit {
 
   readonly totalEnseignants = 38;
   readonly totalClasses = 18;
+
+  @ViewChild('relanceParentsModal')
+  relanceParentsModal!: TemplateRef<any>;
+
+  relanceEnCours = false;
 
   private getDateDuJour(): string {
     const date = new Date();
@@ -313,6 +285,7 @@ export class DashboardAdministrationComponent implements OnInit {
         action: () => this.ouvrirAbsences(),
       },
 
+      /*
       {
         label: 'Recouvrement scolarité',
         valeur: `${this.tauxRecouvrement()}%`,
@@ -320,6 +293,17 @@ export class DashboardAdministrationComponent implements OnInit {
         icon: '💰',
         classe: 'orange',
         action: () => this.ouvrirFactures(),
+      },*/
+
+      {
+        label: 'Recouvrement scolarité',
+        valeur: `${this.tauxRecouvrement()}%`,
+        detail: `${this.formatMontant(this.montantAencaisser())} à encaisser`,
+        icon: '💰',
+        classe: 'orange',
+        action: () => this.ouvrirFactures(),
+        actionSecondaire: () => this.relancerImpayes(),
+        libelleActionSecondaire: 'Relancer parents',
       },
 
       {
@@ -392,6 +376,51 @@ export class DashboardAdministrationComponent implements OnInit {
 
   voirToutesLesReinscriptions(): void {
     void this.router.navigate(['/admin/dossier-eleve/inscription']);
+  }
+
+relancerImpayes(): void {
+  this.modalService.open(this.relanceParentsModal, {
+    centered: true,
+    backdrop: 'static',
+    keyboard: false,
+    windowClass: 'relance-parents-modal'
+  }).result.then(
+    (result) => {
+      if (result === 'confirm') {
+        this.confirmerRelanceParents();
+      }
+    },
+    () => {}
+  );
+}
+
+  private confirmerRelanceParents(): void {
+    if (this.relanceEnCours) {
+      return;
+    }
+    this.relanceEnCours = true;
+
+    this.comptaService.relancerGlobalement({ ignorerDoublons: true })
+      .subscribe({
+        next: (response) => {
+          this.relanceEnCours = false;
+
+          this.toastService.success(
+            `${response.nombreRelancesCreees} relance(s) créée(s) avec succès.`,
+            'Relances effectuées'
+          );
+        },
+
+        error: (error) => {
+          this.relanceEnCours = false;
+
+          this.toastService.error(
+            error?.error?.message ??
+            'Une erreur est survenue lors de la création des relances.',
+            'Erreur'
+          );
+        }
+      });
   }
 
   formatNombre(valeur: number): string {

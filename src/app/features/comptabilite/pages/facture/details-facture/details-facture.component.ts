@@ -1,5 +1,5 @@
 import { DatePipe, DecimalPipe, TitleCasePipe } from '@angular/common';
-import { Component, DestroyRef, inject, OnInit, signal } from '@angular/core';
+import { Component, DestroyRef, inject, OnInit, signal, TemplateRef, ViewChild } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
@@ -9,6 +9,7 @@ import { firstValueFrom } from 'rxjs';
 import { EtatLibelle } from '../../../../../core/constants/etat-libelle';
 import { DetailsFacture } from '../../../../../core/models/comptabilite/details-facture';
 import { DetailsLigneFacture } from '../../../../../core/models/comptabilite/details-ligne-facture';
+import { RelanceCibleeRequest, RelanceCreationResponse, TypeRelance } from '../../../../../core/models/comptabilite/relance/relance-globale-request.model';
 import { OrganizationMiniResponse } from '../../../../../core/models/onboarding/organization/organization-mini-response';
 import { MoyenPaiement } from '../../../../../core/models/referentiels/moyen-paiement';
 import { ParametresEtablissement } from '../../../../../core/models/referentiels/parametre-etablissement';
@@ -20,6 +21,7 @@ import { ComptabiliteResourceService } from '../../../services/comptabilite-reso
 
 declare const pdfMake: any;
 
+
 @Component({
   selector: 'app-details-facture',
   standalone: true,
@@ -28,6 +30,19 @@ declare const pdfMake: any;
   styleUrls: ['./details-facture.component.css']
 })
 export class DetailsFactureComponent implements OnInit {
+
+  private readonly pdfColors = {
+    navy: '#12386B',
+    blue: '#2F6FB5',
+    text: '#1F2A44',
+    muted: '#6B7A90',
+    softBg: '#EAF2FB',
+    border: '#D6E4F2',
+    waveLight: '#DCEBFA',
+    white: '#FFFFFF',
+    danger: '#B42318',
+    success: '#027A48'
+  };
 
   factureId!: number;
 
@@ -66,18 +81,10 @@ export class DetailsFactureComponent implements OnInit {
   organizationData: OrganizationMiniResponse = {};
   error = signal('');
 
-  private readonly pdfColors = {
-    navy: '#12386B',
-    blue: '#2F6FB5',
-    text: '#1F2A44',
-    muted: '#6B7A90',
-    softBg: '#EAF2FB',
-    border: '#D6E4F2',
-    waveLight: '#DCEBFA',
-    white: '#FFFFFF',
-    danger: '#B42318',
-    success: '#027A48'
-  };
+  relanceLoading = false;
+  relanceForm!: FormGroup;
+  @ViewChild('relanceParentModal')
+  relanceParentModal!: TemplateRef<any>;
 
 
   private readonly comptabiliteResource = inject(ComptabiliteResourceService);
@@ -92,16 +99,32 @@ export class DetailsFactureComponent implements OnInit {
   private readonly organizationConfigService = inject(ConfigOrganizationService);
   private readonly destroyRef = inject(DestroyRef);
 
+  readonly typesRelance = [
+    {
+      value: TypeRelance.ECHEANCE_DEPASSEE,
+      label: 'Échéance dépassée'
+    },
+    {
+      value: TypeRelance.PAIEMENT_EN_RETARD,
+      label: 'Paiement en retard'
+    },
+    {
+      value: TypeRelance.PAIEMENT_PARTIEL,
+      label: 'Paiement partiel'
+    }
+  ];
 
   constructor() {
     this.factureId = Number(this.activeRoute.snapshot.params['id']);
     this.initPaiementForm();
+
   }
 
   ngOnInit(): void {
-    this.getParametresEtablissement();
+    //  this.getParametresEtablissement();
     this.loadOrganizationInfos();
     this.getMoyenPaiementList();
+    this.initRelanceForm();
 
     if (this.factureId > 0) {
       this.getDetailsFacture(this.factureId);
@@ -109,12 +132,18 @@ export class DetailsFactureComponent implements OnInit {
     }
   }
 
+  initRelanceForm(): void {
+    this.relanceForm = this.formBuilder.group({
+      type: [null, Validators.required],
+      message: ['', [Validators.required, Validators.maxLength(5000)]]
+    });
+  }
+
   initActionForm(): void {
     this.actionForm = this.formBuilder.group({
       motif: ['']
     });
   }
-
 
   private loadOrganizationInfos(): void {
     const organizationUuid = localStorage.getItem('v2_organization_uuid');
@@ -290,10 +319,7 @@ export class DetailsFactureComponent implements OnInit {
   isMontantValide(): boolean {
     const montant = Number(this.paiementForm.get('montant')?.value || 0);
     const reste = this.getMontantRestantFacture();
-    return (
-      montant > 0 &&
-      montant <= reste
-    );
+    return (montant > 0 && montant <= reste);
   }
 
   getMontantRestantLabel(): string {
@@ -355,7 +381,7 @@ export class DetailsFactureComponent implements OnInit {
     }
 
     const payload = {
-       typePaiement: 'FACTURE',
+      typePaiement: 'FACTURE',
       facture: this.detailsFacture?.id,
       montant: montantRecu,
       moyenPaiement: this.paiementForm.get('moyenPaiement')?.value,
@@ -393,18 +419,11 @@ export class DetailsFactureComponent implements OnInit {
   }
 
   getTotalMontantFacture(): string {
-    const total =
-      (
-        this.detailsFacture
-          ?.detailsLigneFactureDTOS ?? []
-      ).reduce(
+    const total = (this.detailsFacture?.detailsLigneFactureDTOS ?? [])
+      .reduce(
         (sum, ligne) =>
           sum +
-          Number(
-            ligne.montantRemise ??
-            ligne.montantInitial ??
-            0
-          ),
+          Number(ligne.montantRemise ?? ligne.montantInitial ?? 0),
         0
       );
 
@@ -432,6 +451,124 @@ export class DetailsFactureComponent implements OnInit {
       default:
         return 'status-pending';
     }
+  }
+
+  peutRelancerParent(): boolean {
+    const montantRestant = this.getMontantRestantFacture();
+    const montantDejaPaye = this.getMontantDejaPaye();
+
+    return montantRestant > 0 && montantDejaPaye >= 0;
+  }
+
+  getTypeRelance(): TypeRelance {
+    const montantRestant = this.getMontantRestantFacture();
+    const montantDejaPaye = this.getMontantDejaPaye();
+    if (montantDejaPaye > 0 && montantRestant > 0) {
+      return TypeRelance.PAIEMENT_PARTIEL;
+    }
+    return TypeRelance.ECHEANCE_DEPASSEE;
+  }
+
+  ouvrirRelanceParent(): void {
+    if (!this.peutRelancerParent() || this.relanceLoading) {
+      return;
+    }
+
+    const factureId = this.detailsFacture?.id;
+
+    if (!factureId) {
+      this.toastService.error(
+        'Erreur',
+        'Impossible de déterminer la facture à relancer.'
+      );
+      return;
+    }
+
+    const montantRestant = this.getMontantRestantFacture();
+
+    const message = this.construireMessageRelance(montantRestant);
+
+    this.relanceForm.reset({
+      type: null,
+      message
+    });
+
+    this.modalService.open(this.relanceParentModal, {
+      centered: true,
+      backdrop: 'static',
+      size: 'lg'
+    }).result.then(
+      (result) => {
+        if (result === 'confirm') {
+          this.creerRelanceParent();
+        }
+      },
+      () => { }
+    );
+  }
+
+  private construireMessageRelance(montantRestant: number): string {
+    const numeroFacture = this.detailsFacture?.numeroFacture ?? '';
+    const libelleEtablissement = this.organizationData?.libelle ?? '';
+
+    return `Bonjour,
+
+    Nous vous informons que la facture ${numeroFacture} présente actuellement un solde restant de ${montantRestant.toLocaleString('fr-FR')} FCFA.
+
+    Nous vous remercions de bien vouloir procéder à la régularisation de votre situation auprès de l'administration de l'établissement.
+
+    Pour toute question concernant votre situation, nous vous invitons à contacter l'administration de l'établissement.
+
+    Nous vous remercions pour votre compréhension.
+
+    Cordialement,
+    ${libelleEtablissement}`;
+  }
+
+  creerRelanceParent(): void {
+    if (this.relanceForm.invalid || this.relanceLoading) {
+      this.relanceForm.markAllAsTouched();
+      return;
+    }
+
+    const factureId = this.detailsFacture?.id;
+
+    if (!factureId) {
+      this.toastService.error(
+        'Erreur',
+        'Impossible de déterminer la facture à relancer.'
+      );
+      return;
+    }
+
+    const payload: RelanceCibleeRequest = {
+      factureId,
+      type: this.relanceForm.get('type')?.value,
+      message: this.relanceForm.get('message')?.value?.trim()
+    };
+
+    this.relanceLoading = true;
+
+    this.comptabiliteResource
+      .creerRelanceCiblee(payload)
+      .subscribe({
+        next: (response: RelanceCreationResponse) => {
+          this.relanceLoading = false;
+
+          this.toastService.success(
+            'Succès',
+            `La relance ${response.code} a été créée avec succès.`
+          );
+        },
+        error: (error) => {
+          this.relanceLoading = false;
+
+          this.toastService.error(
+            'Erreur',
+            error?.error?.message || 'Impossible de créer la relance.'
+          );
+        }
+      });
   }
 
   private normalizePaiementStatus(status: string | undefined): string {

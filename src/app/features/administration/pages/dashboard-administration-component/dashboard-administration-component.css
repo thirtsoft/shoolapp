@@ -174,21 +174,15 @@
 .counter {
   min-width: 22px;
   height: 22px;
-
   display: inline-flex;
   align-items: center;
   justify-content: center;
-
   padding: 0 6px;
-
   border-radius: 20px;
-
   color: var(--primary);
   background: var(--primary-light);
-
   font-size: 11px;
 }
-
 
 /* ============================================================
    KPI
@@ -204,24 +198,14 @@
 
 .kpi-card {
   position: relative;
-
-  min-height: 155px;
-
-  padding: 19px;
-
+  height: 160px;
+  padding: 12px 16px;
   border: 1px solid var(--border);
   border-radius: 13px;
-
   background: var(--bg-card);
-
   text-align: left;
-
   cursor: pointer;
-
-  transition:
-    transform 0.18s ease,
-    box-shadow 0.18s ease,
-    border-color 0.18s ease;
+  transition: transform 0.18s ease, box-shadow 0.18s ease, border-color 0.18s ease;
 }
 
 .kpi-card:hover {
@@ -239,27 +223,27 @@
 }
 
 .kpi-icon {
-  width: 38px;
-  height: 38px;
+  width: 34px;
+  height: 34px;
 
   display: flex;
   align-items: center;
   justify-content: center;
 
-  border-radius: 10px;
+  border-radius: 9px;
 
-  font-size: 19px;
+  font-size: 18px;
 }
 
 .kpi-arrow {
   color: #c4cad4;
-  font-size: 17px;
+  font-size: 16px;
 }
 
 .kpi-value {
-  margin-top: 17px;
+  margin-top: 11px;
 
-  font-size: 27px;
+  font-size: 25px;
   line-height: 1;
 
   font-weight: 750;
@@ -267,7 +251,7 @@
 }
 
 .kpi-label {
-  margin-top: 7px;
+  margin-top: 6px;
 
   font-size: 13px;
   font-weight: 600;
@@ -276,11 +260,17 @@
 }
 
 .kpi-detail {
-  margin-top: 5px;
+  margin-top: 4px;
 
   font-size: 11px;
+  line-height: 1.25;
+
   color: var(--text-secondary);
 }
+
+/* ============================================================
+   COULEURS KPI
+   ============================================================ */
 
 .kpi-bleu .kpi-icon {
   background: var(--primary-light);
@@ -313,7 +303,6 @@
 .kpi-violet .kpi-value {
   color: var(--violet);
 }
-
 
 /* ============================================================
    SECTIONS
@@ -1133,7 +1122,395 @@
 
 
 /* ============================================================
-   RESPONSIVE
+   ÉTAT VIDE
+   ============================================================ */
+
+.empty-state {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+
+  padding: 24px 20px;
+
+  border: 1px dashed #d9dee7;
+  border-radius: 10px;
+
+  background: #fafbfc;
+}
+
+.empty-state-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  width: 42px;
+  height: 42px;
+
+  border-radius: 50%;
+
+  background: #f0f2f5;
+
+  font-size: 20px;
+
+  flex-shrink: 0;
+}
+
+.empty-state-content {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.empty-state-content strong {
+  font-size: 14px;
+  color: #374151;
+}
+
+.empty-state-content span {
+  font-size: 13px;
+  color: #6b7280;
+}
+
+
+/* ============================================================
+   ACTION SECONDAIRE KPI
+   ============================================================ */
+
+.kpi-secondary-action {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 4px;
+
+  margin-top: 8px;
+
+  font-size: 11px;
+  font-weight: 700;
+
+  color: #d97706;
+
+  cursor: pointer;
+
+  transition:
+    color 0.2s ease,
+    transform 0.2s ease;
+}
+
+.kpi-secondary-action:hover {
+  color: #b45309;
+  transform: translateX(2px);
+}
+
+.kpi-secondary-action span {
+  font-size: 12px;
+  font-weight: 700;
+}
+
+
+/* ============================================================
+   MODAL - RELANCER LES PARENTS
+   ============================================================ */
+
+.modal-custom-container {
+  width: 100%;
+  background: #ffffff;
+  border-radius: 14px;
+  overflow: hidden;
+
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.18);
+}
+
+
+/* ============================================================
+   MODAL - POSITIONNEMENT NGB
+   ============================================================ */
+
+/*
+ * IMPORTANT :
+ * Le modal est ouvert avec :
+ *
+ * windowClass: 'relance-parents-modal'
+ *
+ * On ne modifie pas .modal-dialog globalement afin de ne
+ * pas perturber les autres modals de l'application.
+ */
+
+::ng-deep .relance-parents-modal .modal-dialog {
+  position: absolute;
+
+  top: 50%;
+  left: 50%;
+
+  width: calc(100% - 32px);
+  max-width: 560px;
+
+  margin: 0;
+
+  transform: translate(-50%, -50%);
+}
+
+::ng-deep .relance-parents-modal .modal-content {
+  border: none;
+  background: transparent;
+  box-shadow: none;
+}
+
+
+/* ============================================================
+   MODAL - HEADER
+   ============================================================ */
+
+.modal-header-custom {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  padding: 20px 24px;
+
+  border-bottom: 1px solid #e5e7eb;
+
+  background: #ffffff;
+}
+
+.modal-title-custom {
+  margin: 0;
+
+  font-size: 18px;
+  font-weight: 700;
+
+  color: #1f2937;
+}
+
+.modal-title-custom i {
+  color: #d97706;
+}
+
+.btn-close-custom {
+  width: 32px;
+  height: 32px;
+
+  padding: 0;
+
+  border: none;
+  border-radius: 6px;
+
+  background: transparent;
+  color: #6b7280;
+
+  cursor: pointer;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  transition:
+    background 0.2s ease,
+    color 0.2s ease;
+}
+
+.btn-close-custom:hover {
+  background: #f3f4f6;
+  color: #111827;
+}
+
+
+/* ============================================================
+   MODAL - BODY
+   ============================================================ */
+
+.modal-body-custom {
+  padding: 24px;
+}
+
+.modal-message {
+  margin: 0;
+
+  color: #4b5563;
+
+  font-size: 14px;
+  line-height: 1.65;
+}
+
+.modal-question {
+  margin-top: 20px;
+
+  color: #1f2937;
+
+  font-weight: 700;
+}
+
+
+/* ============================================================
+   MODAL - INFORMATION
+   ============================================================ */
+
+.alert-info-action {
+  display: flex;
+  align-items: flex-start;
+
+  gap: 10px;
+
+  margin-top: 20px;
+  padding: 14px 16px;
+
+  border: 1px solid #fed7aa;
+  border-radius: 9px;
+
+  background: #fff7ed;
+
+  color: #9a3412;
+
+  font-size: 13px;
+  line-height: 1.55;
+}
+
+.alert-info-action i {
+  flex-shrink: 0;
+
+  margin-top: 2px;
+
+  color: #d97706;
+}
+
+
+/* ============================================================
+   MODAL - FOOTER
+   ============================================================ */
+
+.modal-footer-custom {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+
+  gap: 10px;
+
+  padding: 16px 24px;
+
+  border-top: 1px solid #e5e7eb;
+
+  background: #f9fafb;
+}
+
+
+/* ============================================================
+   MODAL - BOUTON ANNULER
+   ============================================================ */
+
+.btn-cancel {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  min-height: 40px;
+
+  padding: 0 17px;
+
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+
+  background: #ffffff;
+  color: #374151;
+
+  font-size: 13px;
+  font-weight: 600;
+
+  cursor: pointer;
+
+  transition:
+    background 0.2s ease,
+    border-color 0.2s ease;
+}
+
+.btn-cancel:hover:not(:disabled) {
+  background: #f3f4f6;
+  border-color: #9ca3af;
+}
+
+
+/* ============================================================
+   MODAL - BOUTON RELANCER
+   ============================================================ */
+
+.btn-confirm {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  min-height: 40px;
+
+  padding: 0 18px;
+
+  border: none;
+  border-radius: 8px;
+
+  font-size: 13px;
+  font-weight: 600;
+
+  cursor: pointer;
+
+  transition:
+    background 0.2s ease,
+    transform 0.2s ease;
+}
+
+.btn-relance {
+  background: #d97706;
+  color: #ffffff;
+}
+
+.btn-relance:hover:not(:disabled) {
+  background: #b45309;
+  transform: translateY(-1px);
+}
+
+.btn-confirm:disabled,
+.btn-cancel:disabled {
+  opacity: 0.6;
+
+  cursor: not-allowed;
+
+  transform: none;
+}
+
+
+/* ============================================================
+   MODAL - RESPONSIVE
+   ============================================================ */
+
+@media (max-width: 576px) {
+
+  ::ng-deep .relance-parents-modal .modal-dialog {
+    width: calc(100% - 24px);
+    max-width: none;
+  }
+
+  .modal-custom-container {
+    border-radius: 12px;
+  }
+
+  .modal-header-custom {
+    padding: 17px 18px;
+  }
+
+  .modal-body-custom {
+    padding: 19px 18px;
+  }
+
+  .modal-footer-custom {
+    padding: 14px 18px;
+
+    flex-direction: column-reverse;
+  }
+
+  .btn-cancel,
+  .btn-confirm {
+    width: 100%;
+  }
+}
+
+
+/* ============================================================
+   RESPONSIVE DASHBOARD
    ============================================================ */
 
 @media (max-width: 1200px) {
@@ -1241,42 +1618,4 @@
   .director-summary {
     align-items: flex-start;
   }
-}
-
-.empty-state {
-  display: flex;
-  align-items: center;
-  gap: 14px;
-  padding: 24px 20px;
-  border: 1px dashed #d9dee7;
-  border-radius: 10px;
-  background: #fafbfc;
-}
-
-.empty-state-icon {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 42px;
-  height: 42px;
-  border-radius: 50%;
-  background: #f0f2f5;
-  font-size: 20px;
-  flex-shrink: 0;
-}
-
-.empty-state-content {
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-}
-
-.empty-state-content strong {
-  font-size: 14px;
-  color: #374151;
-}
-
-.empty-state-content span {
-  font-size: 13px;
-  color: #6b7280;
 }

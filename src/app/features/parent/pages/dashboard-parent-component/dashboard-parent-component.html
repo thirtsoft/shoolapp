@@ -1,26 +1,80 @@
 <div class="parent-dashboard">
   <div class="top-row">
-    <section class="success-banner">
-      <div class="success-banner-icon">🎓</div>
+    @if (relances.length > 0) {
+      <section class="success-banner relance-banner">
+        <div class="success-banner-icon relance-banner-icon">⚠️</div>
 
-      <div class="success-banner-content">
-        <h3>Bonjour, {{ parent().civility }} {{ parent().nomComplet }} 👋</h3>
+        <div class="success-banner-content">
+          <h3>Relances de paiement</h3>
 
-        <p class="welcome-message">
-          Voici les informations importantes concernant votre enfant aujourd'hui.
-        </p>
+          <div class="relances-banner-list">
+            @for (relance of relances; track relance.type) {
+              <div
+                class="relance-banner-item"
+                [class.relance-warning]="relance.statut === 'WARNING'"
+                [class.relance-critique]="relance.statut === 'CRITIQUE'"
+              >
+                <span class="relance-type">
+                  {{ getRelanceTypeLabel(relance.type) }}
+                </span>
 
-        <p class="welcome-highlight">Ensemble pour la réussite de votre enfant !</p>
+                <span class="relance-separator">•</span>
 
-        <p class="welcome-description">
-          Suivez ses progrès, restez informée et accompagnez-le dans son parcours scolaire.
-        </p>
-      </div>
+                <span class="relance-montant">
+                  {{ relance.montantDu | number: '1.0-0' }} FCFA à régler
+                </span>
 
-      <div class="success-banner-illustration">
-        <div class="parent-illustration">👨‍👩‍👦</div>
-      </div>
-    </section>
+                <span class="relance-separator">•</span>
+
+                <span class="relance-retard">
+                  {{ getRelanceRetardLabel(relance.joursRetard) }}
+                </span>
+
+                <span class="relance-separator">•</span>
+
+                <span class="relance-echeance">
+                  Échéance : {{ relance.dateEcheance | date: 'd MMMM yyyy' }}
+                </span>
+              </div>
+            }
+          </div>
+
+          <div class="relance-banner-footer">
+            <span> Consultez vos paiements pour régulariser votre situation. </span>
+
+            <button type="button" class="relance-banner-action" (click)="voirPaiements()">
+              Voir les paiements →
+            </button>
+          </div>
+        </div>
+
+        <div class="success-banner-illustration">
+          <div class="parent-illustration relance-illustration">💳</div>
+        </div>
+      </section>
+    } @else {
+      <section class="success-banner">
+        <div class="success-banner-icon">🎓</div>
+
+        <div class="success-banner-content">
+          <h3>Bonjour, {{ parent().civility }} {{ parent().nomComplet }} 👋</h3>
+
+          <p class="welcome-message">
+            Voici les informations importantes concernant votre enfant aujourd'hui.
+          </p>
+
+          <p class="welcome-highlight">Ensemble pour la réussite de votre enfant !</p>
+
+          <p class="welcome-description">
+            Suivez ses progrès, restez informée et accompagnez-le dans son parcours scolaire.
+          </p>
+        </div>
+
+        <div class="success-banner-illustration">
+          <div class="parent-illustration">👨‍👩‍👦</div>
+        </div>
+      </section>
+    }
 
     <section class="success-banner">
       <div class="scoolli-banner-icon">💙</div>
@@ -155,7 +209,6 @@
       </div>
 
       <div class="two-column-row">
-
         <section class="dashboard-card">
           <div class="card-header">
             <div class="card-title-wrapper">
