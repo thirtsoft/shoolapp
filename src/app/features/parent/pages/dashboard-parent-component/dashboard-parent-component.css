@@ -158,17 +158,199 @@ button,
   pointer-events: none;
 }
 
+/* =========================================================
+   RELANCES DE PAIEMENT
+   ========================================================= */
+
+.relance-banner {
+  background:
+    linear-gradient(120deg,
+      #ffffff 0%,
+      #fff8f8 65%,
+      #fff1f1 100%);
+
+  border-color: #e7c4c4;
+}
+
+.relance-banner::before {
+  background: rgba(180, 45, 45, 0.07);
+}
+
+.relance-banner::after {
+  background: rgba(180, 45, 45, 0.045);
+}
+
+.relance-banner:hover {
+  border-color: #d9aaaa;
+}
+
+
+/* Icône */
+
+.relance-banner-icon {
+  background: var(--orange-light);
+  color: var(--orange-dark);
+  box-shadow: inset 0 0 0 1px rgba(247, 169, 40, 0.08), 0 5px 12px rgba(247, 169, 40, 0.07);
+}
+
+.relances-banner-list {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  margin-top: 10px;
+}
+
+.relance-banner-item {
+  display: flex;
+  align-items: center;
+  flex-wrap: nowrap;
+  gap: 8px;
+  color: var(--text-secondary);
+  font-size: 13px;
+  line-height: 1.5;
+  white-space: nowrap;
+}
+
+.relance-type {
+  color: var(--text-primary);
+  font-weight: 650;
+}
+
+.relance-montant {
+  color: var(--text-primary);
+  font-weight: 750;
+}
+
+.relance-retard {
+  color: var(--red);
+  font-weight: 700;
+}
+
+.relance-echeance {
+  color: var(--text-muted);
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.relance-separator {
+  color: var(--text-muted);
+  font-weight: 600;
+}
+
+.relance-warning .relance-type {
+  color: var(--orange-dark);
+}
+
+.relance-critique .relance-type {
+  color: var(--red);
+  animation: relanceStatutBlink 1.2s infinite;
+}
+
+.relance-banner-item strong {
+  color: var(--text-primary);
+  font-weight: 650;
+}
+
+
+/* Montant */
+
+.relance-banner-montant {
+  color: var(--text-primary);
+  font-weight: 750;
+}
+
+
+/* Retard */
+
+.relance-banner-retard {
+  color: var(--red);
+  font-weight: 700;
+}
+
+
+/* Statut */
+
+.relance-statut {
+  font-weight: 700;
+}
+
+.statut-acceptable {
+  color: var(--green-dark);
+}
+
+.statut-warning {
+  color: var(--orange-dark);
+}
+
+.statut-critique {
+  color: var(--red);
+
+  animation: relanceStatutBlink 1.2s infinite;
+}
+
+@keyframes relanceStatutBlink {
+
+  0%,
+  100% {
+    opacity: 1;
+  }
+
+  50% {
+    opacity: 0.3;
+  }
+}
+
+
+/* Bas du banner */
+
+.relance-banner-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 15px;
+  margin-top: 12px;
+  padding-top: 10px;
+  border-top: 1px solid #f1e3e3;
+  color: var(--text-muted);
+  font-size: 11px;
+}
+
+.relance-banner-action {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 6px;
+  border: 0;
+  border-radius: 6px;
+  background: transparent;
+  color: var(--primary);
+  font-size: 11px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.relance-banner-action:hover {
+  background: var(--primary-soft);
+  color: var(--primary-dark);
+}
+
+
+/* Illustration */
+
+.relance-illustration {
+  background: rgba(255, 255, 255, 0.85);
+
+  box-shadow:
+    0 6px 16px rgba(120, 45, 45, 0.07),
+    inset 0 0 0 1px rgba(169, 68, 66, 0.06);
+}
 
 /* ---------------------------------------------------------
    First banner : Welcome
    --------------------------------------------------------- */
 
 .top-row .success-banner:first-child {
-  background:
-    linear-gradient(120deg,
-      #ffffff 0%,
-      #f5f9ff 65%,
-      #eef6ff 100%);
+  background: linear-gradient(120deg, #ffffff 0%, #f5f9ff 65%, #eef6ff 100%);
 
   border-color: #d5e5f8;
 }

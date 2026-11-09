@@ -157,7 +157,7 @@
 
 .invoice-info {
   background: var(--gray-50);
- /*  padding: 1rem 1.25rem; */
+  /*  padding: 1rem 1.25rem; */
   padding: 0.8rem 1.1rem;
   border-radius: var(--radius-sm);
   border-left: 4px solid var(--primary);
@@ -179,7 +179,7 @@
 
 .invoice-details-left {
   margin: 0;
- /*  line-height: 1.6; */
+  /*  line-height: 1.6; */
   line-height: 1.5;
   color: var(--gray-700);
 }
@@ -1379,4 +1379,39 @@
   .btn-confirm {
     flex: 1;
   }
+}
+
+.btn-relance {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  padding: 9px 16px;
+  border: 1px solid #f0b429;
+  border-radius: 6px;
+
+  background: #fff8e1;
+  color: #9a6700;
+
+  font-size: 14px;
+  font-weight: 600;
+
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.btn-relance:hover:not(:disabled) {
+  background: #fff1c2;
+  border-color: #d99a00;
+  transform: translateY(-1px);
+}
+
+.btn-relance:disabled {
+  opacity: 0.65;
+  cursor: not-allowed;
+}
+
+.relance-parent-modal {
+  width: 720px;
+  max-width: 95vw;
 }

@@ -58,6 +58,16 @@
         <div class="kpi-detail">
           {{ kpi.detail }}
         </div>
+
+        @if (kpi.actionSecondaire && kpi.libelleActionSecondaire) {
+          <div
+            class="kpi-secondary-action"
+            (click)="kpi.actionSecondaire(); $event.stopPropagation()"
+          >
+            {{ kpi.libelleActionSecondaire }}
+            <span>→</span>
+          </div>
+        }
       </button>
     }
   </section>
@@ -341,46 +351,44 @@
     </div>
 
     <div class="event-list">
-        @if (evenements().length > 0) {
-      @for (evenement of evenements(); track evenement.titre) {
-        <div class="event-row">
-          <div class="event-date">
-            <strong>
-              {{ evenement.jour }}
-            </strong>
+      @if (evenements().length > 0) {
+        @for (evenement of evenements(); track evenement.titre) {
+          <div class="event-row">
+            <div class="event-date">
+              <strong>
+                {{ evenement.jour }}
+              </strong>
 
-            <span>
-              {{ evenement.mois }}
-            </span>
+              <span>
+                {{ evenement.mois }}
+              </span>
+            </div>
+
+            <div class="event-content">
+              <strong>
+                {{ evenement.titre }}
+              </strong>
+
+              <span>
+                {{ evenement.type }}
+              </span>
+            </div>
+
+            <div class="event-time">
+              {{ evenement.heure }}
+            </div>
           </div>
+        }
+      } @else {
+        <div class="empty-state">
+          <div class="empty-state-icon">📅</div>
 
-          <div class="event-content">
-            <strong>
-              {{ evenement.titre }}
-            </strong>
-
-            <span>
-              {{ evenement.type }}
-            </span>
-          </div>
-
-          <div class="event-time">
-            {{ evenement.heure }}
+          <div class="empty-state-content">
+            <strong>Aucune échéance à venir</strong>
+            <span>Aucune réunion ou événement n'est prévu prochainement.</span>
           </div>
         </div>
       }
-    }@else {
-
-    <div class="empty-state">
-      <div class="empty-state-icon">📅</div>
-
-      <div class="empty-state-content">
-        <strong>Aucune échéance à venir</strong>
-        <span>Aucune réunion ou événement n'est prévu prochainement.</span>
-      </div>
-    </div>
-
-  }
     </div>
   </section>
 
@@ -403,3 +411,62 @@
     </div>
   </section>
 </div>
+
+<ng-template #relanceParentsModal let-modal>
+  <div class="modal-custom-container">
+    <div class="modal-header-custom">
+      <h5 class="modal-title-custom">
+        <i class="fas fa-bell me-2"></i>
+        Relancer les parents
+      </h5>
+
+      <button type="button" class="btn-close-custom" (click)="modal.dismiss()">
+        <i class="fas fa-times"></i>
+      </button>
+    </div>
+
+    <div class="modal-body-custom">
+      <p class="modal-message">
+        Scoolli va analyser les situations de paiement en retard et créer une relance pour chaque
+        parent concerné.
+      </p>
+
+      <div class="alert-info-action">
+        <i class="fas fa-info-circle"></i>
+
+        <span>
+          Les parents déjà relancés aujourd'hui ne seront pas relancés une nouvelle fois.
+        </span>
+      </div>
+
+      <p class="modal-message modal-question">Souhaitez-vous continuer ?</p>
+    </div>
+
+    <div class="modal-footer-custom">
+      <button
+        type="button"
+        class="btn-cancel"
+        (click)="modal.dismiss()"
+        [disabled]="relanceEnCours"
+      >
+        <i class="fas fa-times me-2"></i>
+        Annuler
+      </button>
+
+      <button
+        type="button"
+        class="btn-confirm btn-relance"
+        [disabled]="relanceEnCours"
+        (click)="modal.close('confirm')"
+      >
+        @if (relanceEnCours) {
+          <span class="spinner-border spinner-border-sm me-2"></span>
+          Traitement...
+        } @else {
+          <i class="fas fa-bell me-2"></i>
+          Relancer les parents
+        }
+      </button>
+    </div>
+  </div>
+</ng-template>

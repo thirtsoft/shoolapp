@@ -425,6 +425,18 @@
               </div>
 
               <div class="action-buttons-right">
+                @if (peutRelancerParent()) {
+                  <button
+                    type="button"
+                    class="btn-relance"
+                    [disabled]="relanceLoading"
+                    (click)="ouvrirRelanceParent()"
+                  >
+                    <i class="fas fa-bell me-2"></i>
+                    Relancer le parent
+                  </button>
+                }
+
                 @if (peutEnregistrerPaiement()) {
                   <button type="button" class="btn-pay" (click)="openPaiementModal()">
                     <i class="fas fa-hand-holding-usd me-2"></i>
@@ -698,6 +710,171 @@
         >
           <i class="fas fa-check-circle me-2"></i>
           {{ modalActionLabel === 'confirmer' ? 'Confirmer' : 'Rejeter' }}
+        </button>
+      </div>
+    </div>
+  </div>
+</ng-template>
+
+<ng-template #relanceParentModal let-modal>
+  <div class="modal-custom-overlay" (click)="modal.dismiss()">
+    <div class="modal-custom-container relance-parent-modal" (click)="$event.stopPropagation()">
+      <!-- HEADER -->
+      <div class="modal-header-custom">
+        <h5 class="modal-title-custom">
+          <i class="fas fa-bell me-2"></i>
+          Relancer le parent
+        </h5>
+
+        <button
+          type="button"
+          class="btn-close-custom"
+          [disabled]="relanceLoading"
+          (click)="modal.dismiss()"
+        >
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
+
+      <!-- BODY -->
+      <div class="modal-body-custom">
+        <!-- RÉCAPITULATIF -->
+        <div class="relance-recap">
+          <div class="relance-recap-item">
+            <span class="relance-recap-label"> Facture </span>
+
+            <strong class="relance-recap-value">
+              {{ detailsFacture?.numeroFacture || '-' }}
+            </strong>
+          </div>
+
+          <div class="relance-recap-item">
+            <span class="relance-recap-label"> Élève </span>
+
+            <strong class="relance-recap-value">
+              {{ detailsFacture?.eleve?.prenom }}
+              {{ detailsFacture?.eleve?.nom }}
+            </strong>
+          </div>
+
+          <div class="relance-recap-item">
+            <span class="relance-recap-label"> Reste à payer </span>
+
+            <strong class="relance-recap-value relance-montant">
+              {{ getMontantRestantFacture() | number: '1.0-0' }}
+              FCFA
+            </strong>
+          </div>
+        </div>
+
+        <form [formGroup]="relanceForm">
+          <!-- TYPE -->
+          <div class="form-group-motif">
+            <label class="motif-label" for="typeRelance">
+              <i class="fas fa-tag me-1"></i>
+
+              Type de relance
+
+              <span class="text-danger">*</span>
+            </label>
+
+            <select
+              id="typeRelance"
+              class="form-select"
+              formControlName="type"
+              [class.is-invalid]="
+                relanceForm.get('type')?.invalid && relanceForm.get('type')?.touched
+              "
+            >
+              <option [ngValue]="null">— Sélectionnez un type de relance —</option>
+
+              @for (type of typesRelance; track type.value) {
+                <option [ngValue]="type.value">
+                  {{ type.label }}
+                </option>
+              }
+            </select>
+
+            @if (relanceForm.get('type')?.invalid && relanceForm.get('type')?.touched) {
+              <small class="error-message">
+                <i class="fas fa-info-circle me-1"></i>
+
+                Le type de relance est obligatoire.
+              </small>
+            }
+          </div>
+
+          <!-- MESSAGE -->
+          <div class="form-group-motif mt-4">
+            <label for="messageRelance" class="motif-label">
+              <i class="fas fa-comment-alt me-1"></i>
+
+              Message
+
+              <span class="text-danger">*</span>
+            </label>
+
+            <textarea
+              id="messageRelance"
+              class="form-control-motif"
+              rows="9"
+              formControlName="message"
+              maxlength="5000"
+              placeholder="Saisissez le message à envoyer au parent..."
+              [class.is-invalid]="
+                relanceForm.get('message')?.invalid && relanceForm.get('message')?.touched
+              "
+            ></textarea>
+
+            <div class="text-muted small mt-1 text-end">
+              {{ relanceForm.get('message')?.value?.length || 0 }}/5000
+            </div>
+
+            @if (relanceForm.get('message')?.invalid && relanceForm.get('message')?.touched) {
+              <small class="error-message">
+                <i class="fas fa-info-circle me-1"></i>
+
+                @if (relanceForm.get('message')?.hasError('required')) {
+                  Le message est obligatoire.
+                }
+
+                @if (relanceForm.get('message')?.hasError('maxlength')) {
+                  Le message ne doit pas dépasser 5000 caractères.
+                }
+              </small>
+            }
+          </div>
+        </form>
+      </div>
+
+      <!-- FOOTER -->
+      <div class="modal-footer-custom">
+        <button
+          type="button"
+          class="btn-cancel"
+          [disabled]="relanceLoading"
+          (click)="modal.dismiss()"
+        >
+          <i class="fas fa-times me-2"></i>
+
+          Annuler
+        </button>
+
+        <button
+          type="button"
+          class="btn-relance"
+          [disabled]="relanceForm.invalid || relanceLoading"
+          (click)="modal.close('confirm')"
+        >
+          @if (relanceLoading) {
+            <i class="fas fa-spinner fa-spin me-2"></i>
+
+            Création...
+          } @else {
+            <i class="fas fa-bell me-2"></i>
+
+            Créer la relance
+          }
         </button>
       </div>
     </div>

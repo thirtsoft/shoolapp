@@ -1,17 +1,18 @@
-import { CommonModule } from '@angular/common';
+import { DatePipe, DecimalPipe } from '@angular/common';
 import { Component, DestroyRef, inject, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Router } from '@angular/router';
 
+import { RelanceParentDashboard } from '../../../../core/models/comptabilite/relance/relance-globale-request.model';
 import { AssiduiteEleveParentResponse, DashboardFinancierParentResponse, DerniereAbsenceParentResponse, DerniereNoteParentResponse, EmploiDuTempsJourParentResponse, ProchaineActiviteParentResponse, ProchaineEvaluationParentResponse, ProchainExerciceParentResponse } from '../../../../core/models/dashboard/dashboard-parent.model';
+import { ComptabiliteResourceService } from '../../../comptabilite/services/comptabilite-resource.service';
 import { DashboardParentService } from '../../service/dashboard-parent.service';
 import { ParentSessionService } from '../../service/parent-session.service';
-
 
 @Component({
   selector: 'app-parent-dashboard',
   standalone: true,
-  imports: [CommonModule],
+  imports: [DatePipe, DecimalPipe],
   templateUrl: './dashboard-parent-component.html',
   styleUrl: './dashboard-parent-component.css'
 })
@@ -20,6 +21,7 @@ export class DashboardParentComponent {
   private readonly router = inject(Router);
   private readonly dashboardService = inject(DashboardParentService);
   private readonly sessionService = inject(ParentSessionService);
+  private readonly comptabiliteService = inject(ComptabiliteResourceService);
   private readonly destroyRef = inject(DestroyRef);
 
   readonly listeEleves = this.sessionService.listeEleves;
@@ -117,8 +119,11 @@ export class DashboardParentComponent {
     }
   ];
 
+  relances: RelanceParentDashboard[] = [];
+
   constructor() {
     this.chargerParent();
+    this.chargerDernieresRelances();
 
     this.sessionService.changement$
       .pipe(takeUntilDestroyed(this.destroyRef))
@@ -140,6 +145,45 @@ export class DashboardParentComponent {
       nomComplet: `${details.prenom || ''} ${details.nom || ''}`.trim(),
       civility: details.civility || ''
     });
+  }
+
+  private chargerDernieresRelances(): void {
+    this.comptabiliteService
+      .dernierRelanceParents()
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: response => {
+          this.relances = response ?? [];
+        },
+        error: error => {
+          console.error(
+            'Erreur lors du chargement des dernières relances',
+            error
+          );
+
+          this.relances = [];
+        }
+      });
+  }
+
+  getRelanceTypeLabel(type: RelanceParentDashboard['type']): string {
+    switch (type) {
+      case 'ECHEANCE_DEPASSEE':
+        return 'Échéance dépassée';
+
+      case 'PAIEMENT_EN_RETARD':
+        return 'Paiement en retard';
+
+      case 'PAIEMENT_PARTIEL':
+        return 'Paiement partiel';
+
+      default:
+        return type;
+    }
+  }
+
+  getRelanceRetardLabel(joursRetard: number): string {
+    return `${joursRetard} jour${joursRetard > 1 ? 's' : ''} de retard`;
   }
 
   private chargerDashboard(): void {

@@ -11,13 +11,14 @@ import { DepenseComponent } from './pages/depense/depense-component/depense-comp
 import { DetailsDepenseComponent } from './pages/depense/details-depense-component/details-depense-component';
 import { InscrireEleveServiceComponent } from './pages/eleveservice/inscrire-eleve-service/inscrire-eleve-service.component';
 import { ListInscrireEleveServiceComponent } from './pages/eleveservice/list-inscrire-eleve-service/list-inscrire-eleve-service.component';
+import { EtatsFinanciersEcoleComponent } from './pages/etatfinancier/etats-financiers-ecole-component/etats-financiers-ecole-component';
 import { CreateFactureComponent } from './pages/facture/create-facture/create-facture.component';
 import { DetailsFactureComponent } from './pages/facture/details-facture/details-facture.component';
 import { GenererFactureClasseComponent } from './pages/facture/generer-facture-classe/generer-facture-classe.component';
 import { ListFactureComponent } from './pages/facture/list-facture/list-facture.component';
 import { CreatePaiementComponent } from './pages/paiement/create-paiement/create-paiement.component';
 import { ListPaiementComponent } from './pages/paiement/list-paiement/list-paiement.component';
-import { EtatsFinanciersEcoleComponent } from './pages/etatfinancier/etats-financiers-ecole-component/etats-financiers-ecole-component';
+import { ListRelanceParentEleveComponent } from './pages/relance/list-relance-parent-eleve-component/list-relance-parent-eleve-component';
 
 export const COMPTA_ROUTES: Routes = [
   {
@@ -121,6 +122,11 @@ export const COMPTA_ROUTES: Routes = [
       {
         path: 'etat-financier',
         component: EtatsFinanciersEcoleComponent
+      },
+
+      {
+        path: 'relances',
+        component: ListRelanceParentEleveComponent
       },
     ],
   },
