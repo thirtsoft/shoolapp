@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, DestroyRef, inject, OnDestroy, OnInit } from '@angular/core';
+import { Component, computed, DestroyRef, inject, OnDestroy, OnInit, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -8,6 +8,8 @@ import { DetailsExercice } from '../../../../../../core/models/planification/det
 import { DateformatService } from '../../../../../../core/services/date-format.service';
 import { DossierEleveService } from '../../../../dossier-eleve/service/dossier-eleve.service';
 import { PlanificationResourceService } from '../../../services/planification-resource.service';
+
+type ActionExercice = | 'publier' | 'depublier' | 'cloturer';
 
 @Component({
   selector: 'app-details-exercice-component',
@@ -45,6 +47,16 @@ export class DetailsExerciceComponent implements OnInit, OnDestroy {
   private readonly toastService = inject(ToastrService);
   private readonly dossierEleveService = inject(DossierEleveService);
 
+  readonly actionEnCours = signal<ActionExercice | null>(null);
+  readonly traitementAction = signal(false);
+  readonly error = signal<string | null>(null);
+
+  readonly exercicePublie = computed(() => this.getEtatCode() === 'PUBLIE');
+
+  readonly exerciceDepublie = computed(() => this.getEtatCode() === 'DEPUBLIE');
+
+  readonly exerciceCloture = computed(() => this.getEtatCode() === 'CLOTURE');
+
   constructor() {
     const id = this.activeRoute.snapshot.params['id'];
     if (id) {
@@ -56,6 +68,31 @@ export class DetailsExerciceComponent implements OnInit, OnDestroy {
     if (this.exerciceId) {
       this.getDetailsExercice(this.exerciceId);
     }
+  }
+
+  getEtatCode(): string {
+    const details = this.detailsExercice;
+    if (!details) {
+      return '';
+    }
+    const etat = details.libelleEtat
+      ?.toUpperCase()
+      ?.normalize('NFD')
+      ?.replace(/[\u0300-\u036f]/g, '');
+
+    if (etat?.includes('CLOT')) {
+      return 'CLOTURE';
+    }
+
+    if (etat?.includes('DEPUBL')) {
+      return 'DEPUBLIE';
+    }
+
+    if (etat?.includes('PUBL')) {
+      return 'PUBLIE';
+    }
+
+    return etat ?? '';
   }
 
   getDetailsExercice(exerciceId: number): void {
@@ -108,6 +145,139 @@ export class DetailsExerciceComponent implements OnInit, OnDestroy {
       return 'status-draft';
     }
     return 'status-default';
+  }
+
+  ouvrirAction(action: ActionExercice): void {
+    if (this.exerciceCloture()) {
+      return;
+    }
+    this.actionEnCours.set(action);
+  }
+
+  fermerAction(): void {
+    if (!this.traitementAction()) {
+      this.actionEnCours.set(null);
+    }
+  }
+
+  confirmerAction(): void {
+    const action = this.actionEnCours();
+    if (!action) {
+      return;
+    }
+    const id = this.exerciceId;
+
+    if (!id) {
+      return;
+    }
+
+    this.traitementAction.set(true);
+
+    let request$;
+
+    switch (action) {
+
+      case 'publier':
+        request$ = this.planificationResource.changerEtatResource('planification/exercice', id);
+        break;
+
+      case 'depublier':
+        request$ = this.planificationResource.changerEtatResource('planification/exercice', id);
+        break;
+
+      case 'cloturer':
+        request$ = this.planificationResource.changerEtatResource('planification/exercice', id);
+        break;
+    }
+
+    request$.subscribe({
+
+      next: response => {
+
+        this.traitementAction.set(false);
+        this.actionEnCours.set(null);
+
+        this.afficherToastAction(action);
+
+        this.getDetailsExercice(this.exerciceId);
+      },
+
+      error: err => {
+
+        console.error(
+          'Erreur changement état cahier',
+          err
+        );
+
+        this.traitementAction.set(false);
+
+        this.error.set(
+          err?.error?.message ?? 'Impossible de modifier l’état de exercice'
+        );
+      }
+    });
+  }
+
+  private afficherToastAction(action: ActionExercice): void {
+    switch (action) {
+
+      case 'publier':
+        this.toastService.success(
+          'Exercice a été publié avec succès.',
+          'Publication réussie'
+        );
+        break;
+
+      case 'depublier':
+        this.toastService.success(
+          'Exercice a été dépublié avec succès.',
+          'Dépublication réussie'
+        );
+        break;
+
+      case 'cloturer':
+        this.toastService.success(
+          'Exercice a été clôturé avec succès.',
+          'Clôture réussie'
+        );
+        break;
+    }
+  }
+
+  getActionTitle(): string {
+
+    switch (this.actionEnCours()) {
+
+      case 'publier':
+        return 'Publier l\'exercice';
+
+      case 'depublier':
+        return 'Dépublier l\'exercice';
+
+      case 'cloturer':
+        return 'Clôturer l\'exercice';
+
+      default:
+        return '';
+    }
+  }
+
+  getActionMessage(): string {
+
+    switch (this.actionEnCours()) {
+
+      case 'publier':
+        return 'L\'exercice sera visible par les enseignants et élèves.';
+
+      case 'depublier':
+        return 'L\'exercice ne sera plus visible par les enseignants. Les données seront conservées.';
+
+      case 'cloturer':
+        return 'L\'exercice sera définitivement clôturé. Aucune modification ne sera ensuite possible, ni par les enseignants ni par les administrateurs.';
+
+      default:
+        return '';
+    }
   }
 
   hasDocument(): boolean {
@@ -296,7 +466,7 @@ export class DetailsExerciceComponent implements OnInit, OnDestroy {
   }
 
   goBack(): void {
-    void this.router.navigate(['/parent/exercices']);
+    void this.router.navigate(['/admin/planification/exercice']);
   }
 
 }

@@ -2,6 +2,7 @@ import { DatePipe } from '@angular/common';
 import { Component, computed, inject, OnInit, signal } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
+import { ToastrService } from 'ngx-toastr';
 import { CahierDeTexteDetailsResponse } from '../../../../../../core/models/cahier-texte/cahier-texte-details-response.model';
 import { DetailsEntreeCahierTexteResponse } from '../../../../../../core/models/cahier-texte/details-entrees-cahiers-texte-response.model';
 import { CahierTexteResourceService } from '../../../services/chaier-texte-resource.service';
@@ -32,6 +33,7 @@ export class DetailsCahierTexteComponent implements OnInit {
   private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
   private readonly cahierDeTexteService = inject(CahierTexteResourceService);
+  private readonly toastService = inject(ToastrService);
 
   readonly cahierTexteId = signal<number | null>(null);
 
@@ -187,6 +189,8 @@ export class DetailsCahierTexteComponent implements OnInit {
         this.traitementAction.set(false);
         this.actionEnCours.set(null);
 
+        this.afficherToastAction(action);
+
         this.chargerDetails();
       },
 
@@ -204,6 +208,32 @@ export class DetailsCahierTexteComponent implements OnInit {
         );
       }
     });
+  }
+
+  private afficherToastAction(action: ActionCahier): void {
+    switch (action) {
+
+      case 'publier':
+        this.toastService.success(
+          'Le cahier de texte a été publié avec succès.',
+          'Publication réussie'
+        );
+        break;
+
+      case 'depublier':
+        this.toastService.success(
+          'Le cahier de texte a été dépublié avec succès.',
+          'Dépublication réussie'
+        );
+        break;
+
+      case 'cloturer':
+        this.toastService.success(
+          'Le cahier de texte a été clôturé avec succès.',
+          'Clôture réussie'
+        );
+        break;
+    }
   }
 
   changerVue(vue: VuePeriode): void {

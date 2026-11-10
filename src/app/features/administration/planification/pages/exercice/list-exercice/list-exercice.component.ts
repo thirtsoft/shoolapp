@@ -194,13 +194,12 @@ export class ListExerciceComponent implements OnInit {
         this.totalElements = response.data?.totalElements || 0;
 
         this.columns = [
-          { key: 'titre', header: 'Titre' },
-          { key: 'livre', header: 'Livre' },
-          { key: 'classe', header: 'Classe' },
-          { key: 'matiere', header: 'Enseignant' },
-          { key: 'page', header: 'Page' },
           { key: 'numeroExercice', header: 'N°' },
-          { key: 'description', header: 'Description' },
+          { key: 'titre', header: 'Titre' },
+          { key: 'classe', header: 'Classe' },
+          { key: 'matiere', header: 'Matière' },
+          { key: 'etatLibelle', header: 'Etat' },
+          { key: 'enseignant', header: 'Enseignant' },
           { key: 'dateDebut', header: 'Date' },
         ];
         this.exerciceData = this.exerciceData.map((item: any) => ({
