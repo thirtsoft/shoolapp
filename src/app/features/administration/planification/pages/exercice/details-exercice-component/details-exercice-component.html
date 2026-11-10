@@ -83,7 +83,9 @@
 
       <div class="actions-buttons">
         @if (isBrouillon()) {
-          <button type="button" class="btn-publish" [disabled]="isActionLoading">
+          <button type="button" class="btn-publish" [disabled]="isActionLoading"
+          
+           (click)="ouvrirAction('publier')">
             @if (isActionLoading) {
               <span class="button-spinner"></span>
             } @else {
@@ -360,6 +362,93 @@
     </div>
   }
 </div>
+
+
+
+  @if (actionEnCours(); as action) {
+    <div class="modal-overlay" (click)="fermerAction()">
+      <div class="action-modal" (click)="$event.stopPropagation()">
+        <div
+          class="modal-icon"
+          [class.publish]="action === 'publier'"
+          [class.unpublish]="action === 'depublier'"
+          [class.close]="action === 'cloturer'"
+        >
+          @if (action === 'publier') {
+            <i class="fas fa-eye"></i>
+          }
+
+          @if (action === 'depublier') {
+            <i class="fas fa-eye-slash"></i>
+          }
+
+          @if (action === 'cloturer') {
+            <i class="fas fa-lock"></i>
+          }
+        </div>
+
+        <h3>
+          {{ getActionTitle() }}
+        </h3>
+
+        <p>
+          {{ getActionMessage() }}
+        </p>
+
+        @if (action === 'cloturer') {
+          <div class="modal-warning">
+            <i class="fas fa-exclamation-triangle"></i>
+
+            <span>
+              Cette action est définitive. Vérifiez que toutes les séances ont été correctement
+              renseignées avant de continuer.
+            </span>
+          </div>
+        }
+
+        <div class="modal-actions">
+          <button
+            type="button"
+            class="modal-cancel"
+            [disabled]="traitementAction()"
+            (click)="fermerAction()"
+          >
+            Annuler
+          </button>
+
+          <button
+            type="button"
+            class="modal-confirm"
+            [class.confirm-danger]="action === 'cloturer'"
+            [disabled]="traitementAction()"
+            (click)="confirmerAction()"
+          >
+            @if (traitementAction()) {
+              <span class="mini-spinner"></span>
+
+              Traitement...
+            } @else {
+              @if (action === 'publier') {
+                <i class="fas fa-eye"></i>
+                Publier
+              }
+
+              @if (action === 'depublier') {
+                <i class="fas fa-eye-slash"></i>
+                Dépublier
+              }
+
+              @if (action === 'cloturer') {
+                <i class="fas fa-lock"></i>
+                Clôturer
+              }
+            }
+          </button>
+        </div>
+      </div>
+    </div>
+  }
+
 
 @if (showPreviewModal) {
   <div class="modal-overlay" (click)="closePreviewModal()">

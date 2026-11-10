@@ -1097,3 +1097,162 @@
     transform: translateY(0) scale(1);
   }
 }
+
+/****/
+/* ============================================================
+   MODAL
+============================================================ */
+
+.modal-overlay {
+  position: fixed;
+
+  inset: 0;
+
+  z-index: 1000;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  padding: 1rem;
+
+  background:
+    rgba(15, 23, 42, 0.55);
+
+  backdrop-filter: blur(3px);
+}
+
+.action-modal {
+  width: 100%;
+  max-width: 470px;
+
+  padding: 1.5rem;
+
+  background: white;
+
+  border-radius: 18px;
+
+  box-shadow:
+    0 25px 60px rgba(15, 23, 42, 0.25);
+
+  text-align: center;
+}
+
+.modal-icon {
+  width: 54px;
+  height: 54px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  margin: 0 auto 1rem;
+
+  border-radius: 16px;
+
+  font-size: 1.2rem;
+}
+
+.modal-icon.publish {
+  background: #dcfce7;
+  color: #15803d;
+}
+
+.modal-icon.unpublish {
+  background: #ffedd5;
+  color: #c2410c;
+}
+
+.modal-icon.close {
+  background: #fee2e2;
+  color: #b91c1c;
+}
+
+.action-modal h3 {
+  margin: 0;
+
+  color: #1e293b;
+
+  font-size: 1.05rem;
+}
+
+.action-modal>p {
+  margin: 0.55rem auto 0;
+
+  max-width: 380px;
+
+  color: #64748b;
+
+  font-size: 0.78rem;
+
+  line-height: 1.55;
+}
+
+.modal-warning {
+  display: flex;
+
+  align-items: flex-start;
+
+  gap: 0.6rem;
+
+  margin-top: 1rem;
+
+  padding: 0.75rem;
+
+  text-align: left;
+
+  border:
+    1px solid #fecaca;
+
+  border-radius: 9px;
+
+  background: #fef2f2;
+
+  color: #991b1b;
+
+  font-size: 0.7rem;
+
+  line-height: 1.45;
+}
+
+.modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.5rem;
+  margin-top: 1.35rem;
+}
+
+.modal-cancel,
+.modal-confirm {
+  height: 38px;
+  padding: 0 0.9rem;
+  border-radius: 8px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.modal-cancel {
+  border: 1px solid #dbe2ea;
+  background: white;
+  color: #64748b;
+}
+
+.modal-confirm {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  border: none;
+  background: #2563eb;
+  color: white;
+}
+
+.modal-confirm.confirm-danger {
+  background: #dc2626;
+}
+
+.modal-confirm:disabled,
+.modal-cancel:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
