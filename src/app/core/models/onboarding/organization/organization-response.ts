@@ -1,4 +1,4 @@
-import { LogoOrganizationResponse } from "./logo-organization-response";
+import { DocumentOrganizationResponse, LogoOrganizationResponse } from "./logo-organization-response";
 
 export interface OrganizationResponse {
   id: number;
@@ -28,6 +28,8 @@ export interface OrganizationResponse {
   slogan: string;
   inspectionAcademique: string;
   inspectionEduFormation: string;
+
+  documents: DocumentOrganizationResponse[];
 
 
 }
