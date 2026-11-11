@@ -41,15 +41,9 @@ export class AnneeScolaireComponent implements OnInit {
     this.chargerLesAnneesScolaire();
   }
 
-  async chargerLesAnneesScolaire() {
-    try {
-      await Promise.all([
-      ]);
-      this.initialisationDesFiltres();
-      this.chargerLesDonnees(false);
-    } catch (error) {
-      console.error('Erreur chargement données:', error);
-    }
+  chargerLesAnneesScolaire() {
+    this.initialisationDesFiltres();
+    this.chargerLesDonnees(false);
   }
 
   initialisationDesFiltres() {

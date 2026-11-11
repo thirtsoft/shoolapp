@@ -97,12 +97,6 @@ export class ListMenuCantineComponent {
   initialisationDesFiltres() {
     this.tableFilters = [
       {
-        key: 'libelle',
-        label: 'Libelle',
-        type: 'text',
-        placeholder: 'Rechercher un évenement...'
-      },
-      {
         key: 'etat',
         label: 'Status',
         type: 'select',
@@ -183,10 +177,6 @@ export class ListMenuCantineComponent {
 
   construireLesParamereDeFiltre(): any {
     const filtreObj: any = {};
-
-    if (this.activeFilters.libelle) {
-      filtreObj.libelle = this.activeFilters.libelle;
-    }
     if (this.activeFilters.etat) {
       filtreObj.etat = this.activeFilters.etat;
     }
