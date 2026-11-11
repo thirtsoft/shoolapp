@@ -81,6 +81,13 @@ export const ADMIN_ROUTES: Routes = [
             .then(m => m.CONFIG_ORGANIZATION_ROUTES)
       },
 
+       {
+        path: 'examen',
+        loadChildren: () =>
+          import('./examen/examen.routes')
+            .then(m => m.EXAMEN_ROUTES)
+      },
+
       {
         path: 'roles',
         loadChildren: () =>
