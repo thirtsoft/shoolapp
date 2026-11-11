@@ -5,6 +5,7 @@ import { Router } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
 import { CountryResponse } from '../../../../../core/models/onboarding/country-response';
 import { DepartmentResponse } from '../../../../../core/models/onboarding/department-response';
+import { DocumentOrganizationResponse } from '../../../../../core/models/onboarding/organization/logo-organization-response';
 import { OrganizationResponse } from '../../../../../core/models/onboarding/organization/organization-response';
 import { RegionResponse } from '../../../../../core/models/onboarding/region-response';
 import { OnboardingReferentialService } from '../../../../onboarding/service/onboarding-referential.service';
@@ -28,7 +29,7 @@ export class MonOrganizationComponent implements OnInit {
 
   loading = signal(false);
   isEditing = signal(false);
-  editingSection = signal<'identification' | 'location' | 'logo' | null>(null);
+  editingSection = signal<'identification' | 'location' | 'logo' | 'documents' | null>(null);
   organizationData!: OrganizationResponse;
   error = signal('');
 
@@ -48,6 +49,21 @@ export class MonOrganizationComponent implements OnInit {
   readonly countries = signal<CountryResponse[]>([]);
   readonly regions = signal<RegionResponse[]>([]);
   readonly departments = signal<DepartmentResponse[]>([]);
+
+
+  selectedDocumentFiles: Record<string, File | null> = {
+    CACHET_ETABLISSEMENT: null,
+    SIGNATURE_RESPONSABLE_ETABLISSEMENT: null,
+    SIGNATURE_COMPTABLE: null
+  };
+
+  documentPreviews: Record<string, string | null> = {
+    CACHET_ETABLISSEMENT: null,
+    SIGNATURE_RESPONSABLE_ETABLISSEMENT: null,
+    SIGNATURE_COMPTABLE: null
+  };
+
+  uploadingDocument = signal<string | null>(null);
 
   ngOnInit(): void {
     this.initializeForms();
@@ -114,6 +130,7 @@ export class MonOrganizationComponent implements OnInit {
           this.organizationData = response;
           this.populateForms(this.organizationData);
           this.loadLogo(this.organizationData);
+          this.loadDocuments(this.organizationData);
           this.loading.set(false);
         },
         error: (error) => {
@@ -143,6 +160,180 @@ export class MonOrganizationComponent implements OnInit {
         }
       });
   }
+
+  getDocument(typeDocumentCode: string): DocumentOrganizationResponse | null {
+    return this.organizationData?.documents?.find(
+      document => document.typeDocumentCode === typeDocumentCode
+    ) ?? null;
+  }
+
+  hasDocument(typeDocumentCode: string): boolean {
+    return this.getDocument(typeDocumentCode)?.available === true;
+  }
+
+  private loadDocuments(organization: OrganizationResponse): void {
+
+    const documents = organization.documents || [];
+
+    documents.forEach(document => {
+
+      if (!document.available || !document.documentUuid) {
+        return;
+      }
+
+      this.organizationConfigService
+        .getDocumentContent(document.documentUuid)
+        .pipe(takeUntilDestroyed(this.destroyRef))
+        .subscribe({
+          next: (blob: Blob) => {
+
+            const oldPreview = this.documentPreviews[document.typeDocumentCode];
+
+            if (oldPreview) {
+              URL.revokeObjectURL(oldPreview);
+            }
+
+            this.documentPreviews[document.typeDocumentCode] = URL.createObjectURL(blob);
+          },
+
+          error: (error) => {
+            console.error(
+              `Erreur lors du chargement du document ${document.typeDocumentCode}`,
+              error
+            );
+
+            this.documentPreviews[document.typeDocumentCode] = null;
+          }
+        });
+    });
+  }
+
+  onDocumentSelected(event: Event, typeDocumentCode: string): void {
+
+    const input = event.target as HTMLInputElement;
+
+    if (!input.files || !input.files[0]) {
+      return;
+    }
+
+    const file = input.files[0];
+
+    if (file.size > 2 * 1024 * 1024) {
+      this.toastService.warning(
+        'Attention', 'Le fichier ne doit pas dépasser 2 Mo'
+      );
+      input.value = '';
+      return;
+    }
+
+    if (!file.type.match(/image\/(jpeg|png|jpg|svg\+xml)/)) {
+      this.toastService.warning(
+        'Attention', 'Format non supporté. Utilisez JPG, PNG ou SVG'
+      );
+      input.value = '';
+      return;
+    }
+
+    this.selectedDocumentFiles[typeDocumentCode] = file;
+
+    const reader = new FileReader();
+
+    reader.onload = (e) => {
+      this.documentPreviews[typeDocumentCode] = e.target?.result as string;
+    };
+
+    reader.readAsDataURL(file);
+  }
+
+
+  saveDocument(typeDocumentCode: string): void {
+
+    const file = this.selectedDocumentFiles[typeDocumentCode];
+
+    if (!file) {
+      this.toastService.warning('Attention', 'Veuillez sélectionner un fichier');
+      return;
+    }
+    const organizationUuid = localStorage.getItem('v2_organization_uuid');
+
+    if (!organizationUuid) {
+      this.toastService.error('Erreur', 'Organisation non trouvée');
+      return;
+    }
+
+    this.uploadingDocument.set(typeDocumentCode);
+
+    let request$;
+
+    switch (typeDocumentCode) {
+
+      case 'CACHET_ETABLISSEMENT':
+        request$ = this.organizationConfigService.modifierCachet(organizationUuid, file);
+        break;
+
+      case 'SIGNATURE_RESPONSABLE_ETABLISSEMENT':
+        request$ = this.organizationConfigService.modifierSignatureResponsable(organizationUuid, file);
+        break;
+
+      case 'SIGNATURE_COMPTABLE':
+        request$ = this.organizationConfigService.modifierSignatureComptable(organizationUuid, file);
+        break;
+
+      default:
+        this.uploadingDocument.set(null);
+        return;
+    }
+
+    request$
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+
+        next: (response) => {
+
+          if (!response.success) {
+            this.toastService.error(
+              'Erreur',
+              response.message || 'Impossible de mettre à jour le document'
+            );
+
+            this.uploadingDocument.set(null);
+            return;
+          }
+
+          this.toastService.success(
+            'Succès',
+            response.message || 'Document mis à jour avec succès'
+          );
+
+          this.selectedDocumentFiles[typeDocumentCode] = null;
+
+          this.uploadingDocument.set(null);
+
+          this.loadOrganizationInfos();
+
+          this.editingSection.set(null);
+          this.isEditing.set(false);
+        },
+
+        error: (error) => {
+
+          console.error(
+            `Erreur modification ${typeDocumentCode}`,
+            error
+          );
+
+          this.toastService.error(
+            'Erreur',
+            error?.error?.message ||
+            'Impossible de mettre à jour le document'
+          );
+
+          this.uploadingDocument.set(null);
+        }
+      });
+  }
+
+
 
   private populateForms(org: OrganizationResponse): void {
     this.identificationForm.patchValue({
@@ -361,25 +552,6 @@ export class MonOrganizationComponent implements OnInit {
 
     const organizationUuid = localStorage.getItem('v2_organization_uuid');
     if (!organizationUuid) return;
-
-    // TODO: Décommenter quand le service sera prêt
-    /*
-    this.uploadingLogo.set(true);
-    this.organizationConfigService.deleteLogo(organizationUuid)
-      .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe({
-        next: () => {
-          this.toastService.success('Succès', 'Logo supprimé');
-          this.organizationData.logoFileUid = null;
-          this.uploadingLogo.set(false);
-        },
-        error: (error) => {
-          console.error('Erreur suppression logo:', error);
-          this.toastService.error('Erreur', 'Impossible de supprimer le logo');
-          this.uploadingLogo.set(false);
-        }
-      });
-    */
   }
 
   cancelLogoEdit(): void {
@@ -389,7 +561,8 @@ export class MonOrganizationComponent implements OnInit {
     this.isEditing.set(false);
   }
 
-  enableEditing(section: 'identification' | 'location' | 'logo'): void {
+
+  enableEditing(section: 'identification' | 'location' | 'logo' | 'documents'): void {
     this.editingSection.set(section);
     this.isEditing.set(true);
   }
@@ -604,18 +777,24 @@ export class MonOrganizationComponent implements OnInit {
     return map[status] || { label: status, class: 'info' };
   }
 
-  getCountryLabel(uuid: string): string {
-    const country = this.countries().find(c => c.uuid === uuid);
-    return country ? country.libelle : '—';
+  getCountryLabel(uuid?: string): string {
+    if (!uuid) {
+      return '—';
+    }
+    return this.countries().find(c => c.uuid === uuid)?.libelle ?? 'Sénégal';
   }
 
-  getRegionLabel(uuid: string): string {
-    const region = this.regions().find(r => r.uuid === uuid);
-    return region ? region.libelle : '—';
+  getRegionLabel(uuid?: string): string {
+    if (!uuid) {
+      return '—';
+    }
+    return this.regions().find(r => r.uuid === uuid)?.libelle ?? 'Dakar';
   }
 
-  getDepartmentLabel(uuid: string): string {
-    const department = this.departments().find(d => d.uuid === uuid);
-    return department ? department.libelle : '—';
+  getDepartmentLabel(uuid?: string): string {
+    if (!uuid) {
+      return '—';
+    }
+    return this.departments().find(d => d.uuid === uuid)?.libelle ?? 'Almadie';
   }
 }

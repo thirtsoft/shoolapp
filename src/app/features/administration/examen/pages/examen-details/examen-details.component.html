@@ -1,0 +1,517 @@
+<div class="page-container">
+  @if (loading()) {
+    <div class="loading-state">
+      <i class="fas fa-spinner fa-spin"></i>
+
+      <span> Chargement des détails de l'examen... </span>
+    </div>
+
+  } @else if (errorMessage()) {
+    <div class="error-state">
+      <div class="error-icon">
+        <i class="fas fa-exclamation-triangle"></i>
+      </div>
+
+      <div>
+        <strong>Impossible de charger l'examen</strong>
+
+        <p>
+          {{ errorMessage() }}
+        </p>
+      </div>
+
+      <button type="button" class="btn btn-primary" (click)="retourListe()">
+        <i class="fas fa-arrow-left"></i>
+        Retour
+      </button>
+    </div>
+
+  } @else if (examenDetailsResponse) {
+    <div class="page-header">
+      <div class="header-left">
+        <button type="button" class="back-button" title="Retour" (click)="retourListe()">
+          <i class="fas fa-arrow-left"></i>
+        </button>
+
+        <div class="header-icon">
+          <i class="fas fa-award"></i>
+        </div>
+
+        <div class="header-content">
+          <div class="breadcrumb">
+            <span>Examens</span>
+
+            <i class="fas fa-chevron-right"></i>
+
+            <span>Examens nationaux</span>
+
+            <i class="fas fa-chevron-right"></i>
+
+            <span class="current"> Détail </span>
+          </div>
+
+          <h1>Examen national</h1>
+
+          <p>Suivi des candidats et renseignement des résultats</p>
+        </div>
+      </div>
+
+      <div
+        class="header-status"
+        [class.status-success]="
+          examenDetailsResponse.libelleEtat?.toLowerCase()?.includes('termin')
+        "
+        [class.status-warning]="
+          !examenDetailsResponse.libelleEtat?.toLowerCase()?.includes('termin')
+        "
+      >
+        <span class="status-dot"></span>
+
+        {{ examenDetailsResponse.libelleEtat }}
+      </div>
+    </div>
+
+    <section class="exam-summary-card">
+      <div class="summary-main">
+        <div class="summary-icon">
+          <i class="fas fa-award"></i>
+        </div>
+
+        <div class="summary-content">
+          <span class="summary-label"> EXAMEN NATIONAL </span>
+
+          <h2>
+            {{ examenDetailsResponse.libelle }}
+          </h2>
+
+          <p>
+            {{ examenDetailsResponse.description }}
+          </p>
+
+          <div class="summary-tags">
+            <span class="summary-tag">
+              <i class="fas fa-graduation-cap"></i>
+
+              {{ examenDetailsResponse.libelleNiveau }}
+            </span>
+
+            <span class="summary-tag">
+              <i class="fas fa-calendar-alt"></i>
+
+              {{ examenDetailsResponse.libelleAnneeScolaire }}
+            </span>
+          </div>
+        </div>
+      </div>
+
+      <div class="summary-stats">
+        <div class="summary-stat">
+          <div class="stat-icon blue">
+            <i class="fas fa-users"></i>
+          </div>
+
+          <div>
+            <strong>
+              {{ examenDetailsResponse.nombreEleves }}
+            </strong>
+
+            <span> Candidats </span>
+          </div>
+        </div>
+        <div class="summary-stat">
+          <div class="stat-icon green">
+            <i class="fas fa-check-circle"></i>
+          </div>
+
+          <div>
+            <strong>
+              {{ examenDetailsResponse.nombreResultats }}
+            </strong>
+
+            <span> Résultats saisis </span>
+          </div>
+        </div>
+
+        <div class="summary-progress">
+          <div
+            class="progress-circle"
+            [style.background]="
+              'conic-gradient(#ffffff ' +
+              examenDetailsResponse.progression +
+              '%, rgba(255,255,255,.20) 0)'
+            "
+          >
+            <span> {{ examenDetailsResponse.progression }}% </span>
+          </div>
+
+          <span> Progression </span>
+        </div>
+      </div>
+    </section>
+
+    <section class="tracking-card">
+      <div class="tracking-header">
+        <div>
+          <h3>
+            <i class="fas fa-chart-line"></i>
+
+            Suivi de l'examen
+          </h3>
+
+          <p>Résultats renseignés pour les candidats</p>
+        </div>
+
+        <div class="tracking-value">
+          <strong>
+            {{ examenDetailsResponse.nombreResultats }}
+          </strong>
+
+          <span> / {{ examenDetailsResponse.nombreEleves }} </span>
+        </div>
+      </div>
+
+      <div class="progress-container">
+        <div class="progress-track">
+          <div class="progress-bar" [style.width.%]="examenDetailsResponse.progression"></div>
+        </div>
+
+        <span class="progress-percent"> {{ examenDetailsResponse.progression }}% </span>
+      </div>
+
+      <div class="tracking-footer">
+        <span>
+          <i class="fas fa-check-circle"></i>
+
+          {{ examenDetailsResponse.nombreResultats }}
+          résultat{{ examenDetailsResponse.nombreResultats > 1 ? 's' : '' }} renseigné{{
+            examenDetailsResponse.nombreResultats > 1 ? 's' : ''
+          }}
+        </span>
+
+        <span>
+          <i class="fas fa-clock"></i>
+
+          {{ nombreRestants }}
+          résultat{{ nombreRestants > 1 ? 's' : '' }}
+          à renseigner
+        </span>
+      </div>
+    </section>
+
+    <section class="stats-grid">
+      <div class="stat-card">
+        <div class="stat-card-icon orange">
+          <i class="fas fa-clipboard-check"></i>
+        </div>
+
+        <div class="stat-card-content">
+          <span>Résultats</span>
+
+          <strong>
+            {{ examenDetailsResponse.nombreResultats }}
+          </strong>
+
+          <small>renseignés</small>
+        </div>
+      </div>
+
+      <div class="stat-card">
+        <div class="stat-card-icon green">
+          <i class="fas fa-check"></i>
+        </div>
+
+        <div class="stat-card-content">
+          <span>Admis</span>
+
+          <strong>
+            {{ examenDetailsResponse.nombreAdmis }}
+          </strong>
+
+          <small>candidats</small>
+        </div>
+      </div>
+
+      <div class="stat-card">
+        <div class="stat-card-icon red">
+          <i class="fas fa-exclamation-triangle"></i>
+        </div>
+
+        <div class="stat-card-content">
+          <span>Ajournés / Absents</span>
+
+          <strong>
+            {{ examenDetailsResponse.nombreAjournes }}
+            /
+            {{ examenDetailsResponse.nombreAbsents }}
+          </strong>
+
+          <small>candidats</small>
+        </div>
+      </div>
+
+      <div class="stat-card">
+        <div class="stat-card-icon blue">
+          <i class="fas fa-trophy"></i>
+        </div>
+
+        <div class="stat-card-content">
+          <span>Pourcentage</span>
+
+          <strong> {{ examenDetailsResponse.pourcentageReussite | number: '1.0-2' }}% </strong>
+
+          <small>de réussite</small>
+        </div>
+      </div>
+    </section>
+
+    <section class="candidates-card">
+      <div class="section-header candidates-header">
+        <div>
+          <div class="section-title-row">
+            <div class="section-title-icon">
+              <i class="fas fa-users"></i>
+            </div>
+
+            <div>
+              <h3>Candidats à l'examen</h3>
+
+              <p>Liste des élèves concernés par cet examen</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="candidate-count">
+          {{ examenDetailsResponse.nombreEleves }}
+          élève{{ examenDetailsResponse.nombreEleves > 1 ? 's' : '' }}
+        </div>
+      </div>
+
+      <div class="table-toolbar">
+        <div class="search-box">
+          <i class="fas fa-search"></i>
+
+          <input type="text" [(ngModel)]="recherche" placeholder="Rechercher un élève..." />
+        </div>
+
+        <select class="filter-select" [(ngModel)]="filtreSituation">
+          <option value="TOUTES">Toutes les situations</option>
+
+          <option value="NON_RENSEIGNE">Non renseigné</option>
+
+          <option value="ADMIS">Admis</option>
+
+          <option value="AJOURNE">Ajourné</option>
+
+          <option value="ABSENT">Absent</option>
+        </select>
+
+        <button
+          type="button"
+          class="btn btn-export"
+          [disabled]="exportingPdf()"
+          (click)="exporterPdf()"
+        >
+          @if (exportingPdf()) {
+            <i class="fas fa-spinner fa-spin"></i>
+            Génération...
+          } @else {
+            <i class="fas fa-file-pdf"></i>
+            Exporter PDF
+          }
+        </button>
+      </div>
+
+      <div class="table-wrapper">
+        <table class="candidates-table">
+          <thead>
+            <tr>
+              <th class="col-number">#</th>
+
+              <th>Élève</th>
+
+              <th>Matricule</th>
+
+              <th>Classe</th>
+
+              <th>Situation</th>
+            </tr>
+          </thead>
+
+          <tbody>
+            @for (eleve of elevesFiltres; track eleve.eleveUuid; let i = $index) {
+              <tr>
+                <td class="number-cell">
+                  {{ (i + 1).toString().padStart(2, '0') }}
+                </td>
+
+                <td>
+                  <div class="student-cell">
+                    <div class="student-avatar">
+                      {{ getInitiales(eleve.nom, eleve.prenom) }}
+                    </div>
+
+                    <div>
+                      <strong>
+                        {{ eleve.nom }}
+                        {{ eleve.prenom }}
+                      </strong>
+
+                      <span>
+                        {{ eleve.sexe }}
+                      </span>
+                    </div>
+                  </div>
+                </td>
+                <td>
+                  <span class="matricule">
+                    {{ eleve.matricule }}
+                  </span>
+                </td>
+                <td>
+                  <span class="class-badge">
+                    {{ eleve.libelleClasse }}
+                  </span>
+                </td>
+
+                <td>
+                  <select
+                    class="result-select"
+                    [class.result-admis]="eleve.resultatExamenStatut === 'ADMIS'"
+                    [class.result-ajourne]="eleve.resultatExamenStatut === 'AJOURNE'"
+                    [class.result-absent]="eleve.resultatExamenStatut === 'ABSENT'"
+                    [(ngModel)]="eleve.resultatExamenStatut"
+                  >
+                    <option [ngValue]="null">Sélectionner une situation</option>
+
+                    <option value="ADMIS">Admis</option>
+
+                    <option value="AJOURNE">Ajourné</option>
+
+                    <option value="ABSENT">Absent</option>
+                  </select>
+                </td>
+              </tr>
+            }
+
+            @if (elevesFiltres.length === 0) {
+              <tr>
+                <td colspan="5" class="empty-table">
+                  <i class="fas fa-search"></i>
+
+                  <span> Aucun candidat ne correspond aux critères. </span>
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+
+      <div class="table-footer">
+        <span>
+          Affichage de
+
+          <strong>
+            {{ elevesFiltres.length }}
+          </strong>
+
+          sur
+
+          <strong>
+            {{ examenDetailsResponse.nombreEleves }}
+          </strong>
+
+          candidat{{ examenDetailsResponse.nombreEleves > 1 ? 's' : '' }}
+        </span>
+
+        <span class="all-candidates">
+          <i class="fas fa-list"></i>
+
+          Tous les candidats
+        </span>
+      </div>
+    </section>
+
+    <div class="bottom-grid">
+      <section class="result-summary-card">
+        <div class="section-header">
+          <div>
+            <h3>
+              <i class="fas fa-chart-pie"></i>
+
+              Résumé des résultats
+            </h3>
+
+            <p>État du renseignement des résultats</p>
+          </div>
+        </div>
+
+        <div class="result-summary-content">
+          <div class="result-circle">
+            <strong> {{ examenDetailsResponse.progression }}% </strong>
+
+            <span> Taux de saisie </span>
+          </div>
+
+          <div class="result-legend">
+            <div>
+              <span class="legend-dot green"></span>
+
+              <span> Saisis </span>
+
+              <strong>
+                {{ examenDetailsResponse.nombreResultats }}
+              </strong>
+            </div>
+
+            <div>
+              <span class="legend-dot gray"></span>
+
+              <span> À saisir </span>
+
+              <strong>
+                {{ nombreRestants }}
+              </strong>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="actions-card">
+        <div class="section-header">
+          <div>
+            <h3>
+              <i class="fas fa-bolt"></i>
+
+              Actions
+            </h3>
+
+            <p>Gestion de l'examen</p>
+          </div>
+        </div>
+
+        <div class="actions-content">
+          <button type="button" class="btn btn-secondary" (click)="retourListe()">
+            <i class="fas fa-arrow-left"></i>
+
+            Retour à la liste
+          </button>
+
+          <button
+            type="button"
+            class="btn btn-primary"
+            [disabled]="saving()"
+            (click)="enregistrerResultats()"
+          >
+            @if (saving()) {
+              <i class="fas fa-spinner fa-spin"></i>
+              Enregistrement...
+            } @else {
+              <i class="fas fa-save"></i>
+              Enregistrer les résultats
+            }
+          </button>
+        </div>
+      </section>
+    </div>
+  }
+</div>

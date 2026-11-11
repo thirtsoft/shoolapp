@@ -79,13 +79,13 @@ export class SideBarAdminComponent {
     { route: '/admin/dossier-eleve/notes', ico: '📝', label: 'Notes', section: '', badge: '' },
     { route: '/admin/cahiers-textes', ico: '📖', label: 'Cahier de texte', section: '', badge: '' },
     { route: '/admin/dossier-eleve/bulletin', ico: '📋', label: 'Bulletins', section: '', badge: '' },
-    { route: '/admin/planification/exercice', ico: '📅', label: 'Exercice', section: '', badge: '' },
-
+    { route: '/admin/examen', ico: '🏆', label: 'Examens', section: '', badge: '' },
 
     // ═══════════ PLANIFICATION ═══════════
     { route: '/admin/planification/emploi-du-temps', ico: '🕐', label: 'Emplois du temps', section: 'PLANIFICATION', badge: '' },
     { route: '/admin/planification/cours', ico: '📖', label: 'Cours', section: '', badge: '' },
     { route: '/admin/planification/enseignement', ico: '👨‍🏫', label: 'Enseignements', section: '', badge: '' },
+    { route: '/admin/planification/exercice', ico: '📅', label: 'Exercice', section: '', badge: '' },
     { route: '/admin/referentiel/annee-scolaires', ico: '🏫', label: 'Années scolaires' },
     { route: '/admin/referentiel/sessions', ico: '⏱️', label: 'Session Semestres' },
     { route: '/admin/planification/cantine', ico: '🍽️', label: 'MenusPlats' },

@@ -1,417 +1,179 @@
 <div class="page-wrapper">
   <div class="content container-fluid">
-    <!-- En-tête -->
-    <div class="page-header">
-      <div class="row align-items-center">
-        <div class="col-sm-12">
-          <h3 class="page-title">🏢 Mon Organisation</h3>
-          <p class="text-muted mt-1 mb-0">
-            <i class="fas fa-building me-1"></i> Gérez les informations de votre établissement
-          </p>
-        </div>
-      </div>
-    </div>
-
-    <div class="row mb-3">
-      <div class="col-sm-12">
-        <div class="badge-container">
-          <span class="badge badge-primary">
-            <i class="fas fa-building me-1"></i> Organisation
-          </span>
-          @if (organizationData) {
-            <span
-              class="badge badge-status"
-              [class]="'badge-' + getStatusLabel(organizationData.status).class"
-            >
-              <i class="fas fa-circle me-1"></i>
-              {{ getStatusLabel(organizationData.status).label }}
-            </span>
-          }
-        </div>
-      </div>
-    </div>
-
     @if (loading()) {
-      <div class="text-center py-5">
+      <div class="organization-loading">
         <div class="spinner-border text-primary" role="status">
           <span class="visually-hidden">Chargement...</span>
         </div>
-        <p class="mt-2 text-muted">Chargement des informations...</p>
+
+        <p>Chargement des informations...</p>
       </div>
-    } @else {
-      <div class="card profile-card logo-card">
-        <div class="card-body">
-          <div class="card-section-header">
-            <div class="section-title-wrapper">
-              <span class="section-icon">🖼️</span>
-              <h5 class="section-title">Logo de l'organisation</h5>
-            </div>
-            @if (!isEditing() || editingSection() !== 'logo') {
-              <button class="btn btn-edit" (click)="enableEditing('logo')">
-                <i class="fas fa-pen me-1"></i> Modifier
-              </button>
-            }
-          </div>
-
-          <div class="logo-section">
-            <div class="logo-preview-container">
-              @if (logoPreview) {
-                <img [src]="logoPreview" alt="Logo de l'organisation" class="logo-preview" />
-              } @else if (organizationData.logo?.available) {
-                <img [src]="logoPreview" alt="Logo de l'organisation" class="logo-preview" />
-              } @else {
-                <div class="logo-placeholder">
-                  <span class="logo-placeholder-icon">🏢</span>
-                  <span class="logo-placeholder-text">Aucun logo</span>
-                </div>
-              }
-            </div>
-
-            @if (isEditing() && editingSection() === 'logo') {
-              <div
-                class="logo-upload-zone"
-                (dragover)="onLogoDragOver($event)"
-                (drop)="onLogoDrop($event)"
-              >
-                <input
-                  type="file"
-                  id="logoInput"
-                  accept="image/jpeg,image/png,image/jpg,image/svg+xml"
-                  (change)="onLogoSelected($event)"
-                  hidden
-                />
-                <label for="logoInput" class="logo-upload-label">
-                  <span class="upload-icon">📤</span>
-                  <span class="upload-text">
-                    <strong>Cliquez pour sélectionner</strong> ou glissez-déposez
-                  </span>
-                  <span class="upload-hint"
-                    >JPG, PNG ou SVG — Max 2 Mo — 512x512 px recommandé</span
-                  >
-                </label>
-              </div>
-
-              @if (selectedLogoFile) {
-                <div class="selected-file-info">
-                  <i class="fas fa-check-circle me-1"></i>
-                  Fichier sélectionné : <strong>{{ selectedLogoFile.name }}</strong>
-                </div>
-              }
-            }
-
-            <div class="logo-info">
-              <div class="info-row">
-                <span class="info-label">Nom de l'organisation</span>
-                <span class="info-value">{{ organizationData.libelle || '—' }}</span>
-              </div>
-              <div class="info-row">
-                <span class="info-label">Sigle</span>
-                <span class="info-value">{{ organizationData.sigle || '—' }}</span>
-              </div>
-            </div>
-          </div>
-
-          @if (isEditing() && editingSection() === 'logo') {
-            <div class="form-actions">
-              <button type="button" class="btn btn-secondary" (click)="cancelLogoEdit()">
-                <i class="fas fa-times me-2"></i>Annuler
-              </button>
-              @if (organizationData.logo?.available) {
-                <button
-                  type="button"
-                  class="btn btn-danger"
-                  (click)="deleteLogo()"
-                  [disabled]="uploadingLogo()"
-                >
-                  <i class="fas fa-trash me-2"></i>Supprimer le logo
-                </button>
-              }
-              <button
-                type="button"
-                class="btn btn-primary"
-                (click)="saveLogo()"
-                [disabled]="!selectedLogoFile || uploadingLogo()"
-              >
-                @if (uploadingLogo()) {
-                  <span class="spinner-border spinner-border-sm me-2"></span>
-                  Envoi...
-                } @else {
-                  <i class="fas fa-upload me-2"></i>Enregistrer le logo
-                }
-              </button>
+    } @else if (organizationData) {
+      <section class="organization-hero">
+        <div class="organization-hero-logo">
+          @if (logoPreview) {
+            <img [src]="logoPreview" alt="Logo de l'établissement" />
+          } @else {
+            <div class="organization-logo-placeholder">
+              <i class="fas fa-building"></i>
             </div>
           }
         </div>
-      </div>
 
-      <div class="cards-grid">
-        <div class="card profile-card">
-          <div class="card-body">
-            <div class="card-section-header">
-              <div class="section-title-wrapper">
-                <span class="section-icon">📋</span>
-                <h5 class="section-title">Identification</h5>
+        <div class="organization-hero-identity">
+          <div class="organization-title-line">
+            <h1>
+              {{ organizationData.libelle || 'Mon établissement' }}
+            </h1>
+
+            @if (organizationData.schoolType) {
+              <span class="organization-type">
+                <i class="fas fa-graduation-cap"></i>
+                {{ getSchoolTypeLabel(organizationData.schoolType) }}
+              </span>
+            }
+          </div>
+
+          <div class="organization-reference-line">
+            @if (organizationData.code) {
+              <span class="organization-code">
+                <span>Code</span>
+                <strong>{{ organizationData.code }}</strong>
+              </span>
+            }
+          </div>
+        </div>
+        <div class="organization-hero-image">
+          <img src="assets/img/organization-school.png" alt="Établissement scolaire" />
+        </div>
+      </section>
+
+      <div class="organization-main-grid">
+        <section class="organization-card">
+          <div class="organization-card-header">
+            <div class="section-heading">
+              <div class="section-icon blue">
+                <i class="fas fa-id-card"></i>
               </div>
-              @if (!isEditing() || editingSection() !== 'identification') {
-                <button class="btn btn-edit" (click)="enableEditing('identification')">
-                  <i class="fas fa-pen me-1"></i> Modifier
-                </button>
-              }
+
+              <div>
+                <h2>Informations générales</h2>
+              </div>
             </div>
 
-            <!--    <form [formGroup]="identificationForm">
-              <div class="form-group">
-                <label class="form-label">
-                  Code <span class="text-danger">*</span>
-                  <i class="fas fa-barcode ms-1 text-muted"></i>
-                </label>
-                <input
-                  type="text"
-                  class="form-control"
-                  formControlName="code"
-                  [readonly]="!isEditing() || editingSection() !== 'identification'"
-                  placeholder="WOKITE_BERTIN"
-                />
-              </div>
+            @if (!isEditing() || editingSection() !== 'identification') {
+              <button type="button" class="btn-edit" (click)="enableEditing('identification')">
+                <i class="fas fa-pen"></i>
+                Modifier
+              </button>
+            }
+          </div>
 
-              <div class="form-group">
-                <label class="form-label">
-                  Libellé <span class="text-danger">*</span>
-                  <i class="fas fa-tag ms-1 text-muted"></i>
-                </label>
-                <input
-                  type="text"
-                  class="form-control"
-                  formControlName="libelle"
-                  [readonly]="!isEditing() || editingSection() !== 'identification'"
-                  placeholder="Nom de l'établissement"
-                />
-              </div>
+          <div class="organization-card-body">
+            @if (isEditing() && editingSection() === 'identification') {
+              <form [formGroup]="identificationForm">
+                <div class="form-grid form-grid-2">
+                  <div class="form-group">
+                    <label>
+                      Nom / Libellé
+                      <span class="required">*</span>
+                    </label>
 
-              <div class="form-group">
-                <label class="form-label">
-                  Sigle <span class="text-danger">*</span>
-                  <i class="fas fa-font ms-1 text-muted"></i>
-                </label>
-                <input
-                  type="text"
-                  class="form-control"
-                  formControlName="sigle"
-                  [readonly]="!isEditing() || editingSection() !== 'identification'"
-                  placeholder="WOKITE-BERTIN"
-                />
-              </div>
+                    <input type="text" class="form-control" formControlName="libelle" />
+                  </div>
 
-              <div class="form-group">
-                <label class="form-label">
-                  Type d'école <span class="text-danger">*</span>
-                  <i class="fas fa-school ms-1 text-muted"></i>
-                </label>
-                <select
-                  class="form-select"
-                  formControlName="schoolType"
-                  [disabled]="!isEditing() || editingSection() !== 'identification'"
-                >
-                  <option value="" disabled>— Sélectionnez un type —</option>
-                  @for (type of schoolTypes; track type.value) {
-                    <option [value]="type.value">{{ type.label }}</option>
-                  }
-                </select>
-              </div>
+                  <div class="form-group">
+                    <label>
+                      Code
+                      <span class="required">*</span>
+                    </label>
 
-              <div class="form-group">
-                <label class="form-label">
-                  Année de création
-                  <i class="fas fa-calendar ms-1 text-muted"></i>
-                </label>
-                <input
-                  type="number"
-                  class="form-control"
-                  formControlName="anneeCreation"
-                  [readonly]="!isEditing() || editingSection() !== 'identification'"
-                  placeholder="2026"
-                />
-              </div>
-
-              <div class="form-group">
-                <label class="form-label">
-                  Description
-                  <i class="fas fa-align-left ms-1 text-muted"></i>
-                </label>
-                <textarea
-                  class="form-control"
-                  formControlName="description"
-                  [readonly]="!isEditing() || editingSection() !== 'identification'"
-                  rows="3"
-                  placeholder="Description de l'établissement"
-                ></textarea>
-              </div>
-
-              @if (isEditing() && editingSection() === 'identification') {
-                <div class="form-actions">
-                  <button type="button" class="btn btn-secondary" (click)="cancelEditing()">
-                    <i class="fas fa-times me-2"></i>Annuler
-                  </button>
-                  <button
-                    type="button"
-                    class="btn btn-primary"
-                    (click)="saveIdentification()"
-                    [disabled]="identificationForm.invalid"
-                  >
-                    <i class="fas fa-save me-2"></i>Enregistrer
-                  </button>
-                </div>
-              }
-            </form> -->
-
-            <form [formGroup]="identificationForm">
-              <!-- Code + Sigle -->
-              <div class="geo-grid geo-grid-2">
-                <div class="form-group">
-                  <label for="code">Code <span class="required">*</span></label>
-                  <input
-                    id="code"
-                    type="text"
-                    class="form-control"
-                    formControlName="code"
-                    [readonly]="!isEditing()"
-                  />
+                    <input type="text" class="form-control" formControlName="code" />
+                  </div>
                 </div>
 
-                <div class="form-group">
-                  <label for="sigle">Sigle <span class="required">*</span></label>
-                  <input
-                    id="sigle"
-                    type="text"
-                    class="form-control"
-                    formControlName="sigle"
-                    [readonly]="!isEditing()"
-                  />
-                </div>
-              </div>
+                <div class="form-grid form-grid-2">
+                  <div class="form-group">
+                    <label>
+                      Sigle
+                      <span class="required">*</span>
+                    </label>
 
-              <!-- Libellé -->
-              <div class="form-group">
-                <label for="libelle">Nom / Libellé <span class="required">*</span></label>
-                <input
-                  id="libelle"
-                  type="text"
-                  class="form-control"
-                  formControlName="libelle"
-                  [readonly]="!isEditing()"
-                />
-              </div>
+                    <input type="text" class="form-control" formControlName="sigle" />
+                  </div>
 
-              <!-- Type école + Année création -->
-              <div class="geo-grid geo-grid-2">
-                <div class="form-group">
-                  <label for="schoolType"> Type d'école <span class="required">*</span> </label>
+                  <div class="form-group">
+                    <label>
+                      Type d'établissement
+                      <span class="required">*</span>
+                    </label>
 
-                  @if (isEditing()) {
-                    <select id="schoolType" class="form-control" formControlName="schoolType">
+                    <select class="form-control" formControlName="schoolType">
                       <option value="">Sélectionner</option>
+
                       @for (type of schoolTypes; track type.value) {
                         <option [value]="type.value">
                           {{ type.label }}
                         </option>
                       }
                     </select>
-                  } @else {
+                  </div>
+                </div>
+
+                <div class="form-grid form-grid-2">
+                  <div class="form-group">
+                    <label> Année de création </label>
+
+                    <input type="number" class="form-control" formControlName="anneeCreation" />
+                  </div>
+
+                  <div class="form-group">
+                    <label>
+                      Slogan
+                      <span class="optional-label"> Optionnel </span>
+                    </label>
+
                     <input
                       type="text"
                       class="form-control"
-                      [value]="
-                        schoolTypes.find(
-                          (t) => t.value === identificationForm.get('schoolType')?.value
-                        )?.label || ''
-                      "
-                      readonly
+                      formControlName="slogan"
+                      placeholder="Ex. L'excellence au service de la réussite"
                     />
-                  }
+                  </div>
+                </div>
+
+                <div class="form-grid form-grid-2">
+                  <div class="form-group">
+                    <label> Inspection d'académie </label>
+
+                    <input
+                      type="text"
+                      class="form-control"
+                      formControlName="inspectionAcademique"
+                    />
+                  </div>
+
+                  <div class="form-group">
+                    <label> Inspection éducation formation </label>
+
+                    <input
+                      type="text"
+                      class="form-control"
+                      formControlName="inspectionEduFormation"
+                    />
+                  </div>
                 </div>
 
                 <div class="form-group">
-                  <label for="anneeCreation">Année de création</label>
-                  <input
-                    id="anneeCreation"
-                    type="number"
-                    class="form-control"
-                    formControlName="anneeCreation"
-                    [readonly]="!isEditing()"
-                  />
-                </div>
-              </div>
+                  <label>Description</label>
 
-              <!-- Slogan : ligne complète -->
-              <div class="form-group">
-                <label for="slogan">
-                  Slogan
-                  <span class="badge-new">Nouveau</span>
-                </label>
-
-                <input
-                  id="slogan"
-                  type="text"
-                  class="form-control"
-                  formControlName="slogan"
-                  [readonly]="!isEditing()"
-                  placeholder="Ex. L'excellence au service de la réussite"
-                />
-              </div>
-
-              <!-- Inspections -->
-              <div class="geo-grid geo-grid-2">
-                <div class="form-group">
-                  <label for="inspectionAcademique">
-                    Inspection d'académie (I.A)
-                    <span class="badge-new">Nouveau</span>
-                  </label>
-
-                  <input
-                    id="inspectionAcademique"
-                    type="text"
-                    class="form-control"
-                    formControlName="inspectionAcademique"
-                    [readonly]="!isEditing()"
-                      placeholder="Ex. Inspection académique de Dakar"
-                  />
+                  <textarea class="form-control" rows="3" formControlName="description"></textarea>
                 </div>
 
-                <div class="form-group">
-                  <label for="inspectionEduFormation">
-                    Inspection éducation formation (I.E.F)
-                    <span class="badge-new">Nouveau</span>
-                  </label>
-
-                  <input
-                    id="inspectionEduFormation"
-                    type="text"
-                    class="form-control"
-                    formControlName="inspectionEduFormation"
-                    [readonly]="!isEditing()"
-                    placeholder="Ex. Dakar"
-                  />
-                </div>
-              </div>
-
-              <!-- Description -->
-              <div class="form-group">
-                <label for="description">Description</label>
-                <textarea
-                  id="description"
-                  class="form-control"
-                  formControlName="description"
-                  rows="3"
-                  [readonly]="!isEditing()"
-                ></textarea>
-              </div>
-
-              <!-- Actions -->
-              @if (isEditing() && editingSection() === 'identification') {
                 <div class="form-actions">
                   <button
                     type="button"
-                    class="btn btn-secondary"
+                    class="btn-secondary-custom"
                     (click)="cancelEditing()"
                     [disabled]="loading()"
                   >
@@ -420,272 +182,752 @@
 
                   <button
                     type="button"
-                    class="btn btn-primary"
+                    class="btn-primary-custom"
                     (click)="saveIdentification()"
                     [disabled]="loading()"
                   >
                     @if (loading()) {
-                      <span class="spinner-border spinner-border-sm me-1"></span>
+                      <span class="spinner-border spinner-border-sm"></span>
                       Enregistrement...
                     } @else {
-                      <i class="fas fa-save me-1"></i>
+                      <i class="fas fa-save"></i>
                       Enregistrer
                     }
                   </button>
                 </div>
-              }
-            </form>
-          </div>
-        </div>
+              </form>
+            } @else {
 
-        <!-- CARD 2 : LOCALISATION & CONTACT -->
-        <div class="card profile-card">
-          <div class="card-body">
-            <div class="card-section-header">
-              <div class="section-title-wrapper">
-                <span class="section-icon">📍</span>
-                <h5 class="section-title">Localisation & Contact</h5>
+              <div class="info-grid">
+                <!-- LIGNE 1 -->
+
+                <div class="info-item">
+                  <span class="info-label">Nom</span>
+
+                  <strong>
+                    {{ organizationData.libelle || '—' }}
+                  </strong>
+                </div>
+
+                <div class="info-item">
+                  <span class="info-label">Code</span>
+
+                  <strong>
+                    {{ organizationData.code || '—' }}
+                  </strong>
+                </div>
+
+                <div class="info-item">
+                  <span class="info-label">Type</span>
+
+                  <strong>
+                    {{ getSchoolTypeLabel(organizationData.schoolType) || '—' }}
+                  </strong>
+                </div>
+
+                <!-- LIGNE 2 -->
+
+                <div class="info-item">
+                  <span class="info-label">Inspection</span>
+
+                  <strong>
+                    {{ organizationData.inspectionAcademique || '-' }}
+                  </strong>
+                </div>
+
+                <div class="info-item">
+                  <span class="info-label">Slogan</span>
+
+                  <strong>
+                    {{ organizationData.slogan || '—' }}
+                  </strong>
+                </div>
+
+                <div class="info-item">
+                  <span class="info-label">Année de création</span>
+
+                  <strong>
+                    {{ organizationData.anneeCreation || '—' }}
+                  </strong>
+                </div>
               </div>
-              @if (!isEditing() || editingSection() !== 'location') {
-                <button class="btn btn-edit" (click)="enableEditing('location')">
-                  <i class="fas fa-pen me-1"></i> Modifier
-                </button>
-              }
+            }
+          </div>
+        </section>
+        <section class="organization-card">
+          <div class="organization-card-header">
+            <div class="section-heading">
+              <div class="section-icon green">
+                <i class="fas fa-location-dot"></i>
+              </div>
+
+              <div>
+                <h2>Localisation & contact</h2>
+              </div>
             </div>
 
-            <form [formGroup]="locationForm">
-              <!-- ══ SECTION LOCALISATION GÉOGRAPHIQUE ══ -->
-              <div class="form-section-title">
-                <i class="fas fa-globe-africa me-2"></i>Localisation géographique
+            @if (!isEditing() || editingSection() !== 'location') {
+              <button type="button" class="btn-edit" (click)="enableEditing('location')">
+                <i class="fas fa-pen"></i>
+                Modifier
+              </button>
+            }
+          </div>
+
+          <div class="organization-card-body">
+            @if (isEditing() && editingSection() === 'location') {
+              <!-- ================= EDITION ================= -->
+
+              <form [formGroup]="locationForm">
+                <div class="form-section-label">
+                  <i class="fas fa-globe-africa"></i>
+                  Localisation géographique
+                </div>
+
+                <div class="form-grid form-grid-3">
+                  <div class="form-group">
+                    <label>
+                      Pays
+                      <span class="required">*</span>
+                    </label>
+
+                    <select
+                      class="form-control"
+                      formControlName="countryUuid"
+                      (change)="onCountryChange()"
+                    >
+                      <option value="">Sélectionner</option>
+
+                      @for (country of countries(); track country.uuid) {
+                        <option [value]="country.uuid">
+                          {{ country.libelle }}
+                        </option>
+                      }
+                    </select>
+                  </div>
+
+                  <div class="form-group">
+                    <label>Région</label>
+
+                    <select
+                      class="form-control"
+                      formControlName="regionUuid"
+                      (change)="onRegionChange()"
+                      [disabled]="!locationForm.get('countryUuid')?.value"
+                    >
+                      <option value="">Sélectionner</option>
+
+                      @for (region of regions(); track region.uuid) {
+                        <option [value]="region.uuid">
+                          {{ region.libelle }}
+                        </option>
+                      }
+                    </select>
+                  </div>
+
+                  <div class="form-group">
+                    <label>Département</label>
+
+                    <select
+                      class="form-control"
+                      formControlName="departmentUuid"
+                      [disabled]="!locationForm.get('regionUuid')?.value"
+                    >
+                      <option value="">Sélectionner</option>
+
+                      @for (department of departments(); track department.uuid) {
+                        <option [value]="department.uuid">
+                          {{ department.libelle }}
+                        </option>
+                      }
+                    </select>
+                  </div>
+                </div>
+
+                <div class="form-grid form-grid-2">
+                  <div class="form-group">
+                    <label>Adresse</label>
+
+                    <input
+                      type="text"
+                      class="form-control"
+                      formControlName="adresse"
+                      placeholder="Adresse de l'établissement"
+                    />
+                  </div>
+
+                  <div class="form-group">
+                    <label>Boîte postale</label>
+
+                    <input
+                      type="text"
+                      class="form-control"
+                      formControlName="boitePostale"
+                      placeholder="BP 1234 Dakar"
+                    />
+                  </div>
+                </div>
+
+                <div class="form-section-label">
+                  <i class="fas fa-address-book"></i>
+                  Coordonnées
+                </div>
+
+                <div class="form-group">
+                  <label>
+                    Email
+                    <span class="required">*</span>
+                  </label>
+
+                  <input
+                    type="email"
+                    class="form-control"
+                    formControlName="email"
+                    placeholder="contact@etablissement.sn"
+                  />
+                </div>
+
+                <div class="form-grid form-grid-2">
+                  <div class="form-group">
+                    <label>
+                      Mobile
+                      <span class="required">*</span>
+                    </label>
+
+                    <input
+                      type="text"
+                      class="form-control"
+                      formControlName="mobile"
+                      placeholder="+221 77 000 00 00"
+                    />
+                  </div>
+
+                  <div class="form-group">
+                    <label>Téléphone fixe</label>
+
+                    <input
+                      type="text"
+                      class="form-control"
+                      formControlName="telephone"
+                      placeholder="+221 33 000 00 00"
+                    />
+                  </div>
+                </div>
+
+                <div class="form-group">
+                  <label>Site web</label>
+
+                  <input
+                    type="url"
+                    class="form-control"
+                    formControlName="siteWeb"
+                    placeholder="https://www.etablissement.sn"
+                  />
+                </div>
+
+                <div class="form-actions">
+                  <button type="button" class="btn-secondary-custom" (click)="cancelEditing()">
+                    Annuler
+                  </button>
+
+                  <button
+                    type="button"
+                    class="btn-primary-custom"
+                    (click)="saveLocation()"
+                    [disabled]="loading()"
+                  >
+                    <i class="fas fa-save"></i>
+                    Enregistrer
+                  </button>
+                </div>
+              </form>
+            } @else {
+   
+              <div class="location-highlight">
+                <div class="location-icon">
+                  <i class="fas fa-map-marker-alt"></i>
+                </div>
+
+                <div>
+                  <span>Adresse</span>
+
+                  <strong>
+                    {{ organizationData.adresse || 'Adresse non renseignée' }}
+                  </strong>
+                </div>
               </div>
 
-              <!-- ══ SECTION LOCALISATION GÉOGRAPHIQUE ══ -->
+              <div class="info-grid">
+                <div class="info-item">
+                  <span class="info-label"> Pays </span>
 
-              <!-- Grille 3 colonnes pour Pays / Région / Département -->
-              <div class="geo-grid">
-                <!-- Pays -->
-                <div class="form-group">
-                  <label class="form-label">
-                    Pays <span class="text-danger">*</span>
-                    <i class="fas fa-flag ms-1 text-muted"></i>
-                  </label>
-                  <select
-                    class="form-select"
-                    formControlName="countryUuid"
-                    [disabled]="!isEditing() || editingSection() !== 'location'"
-                    (change)="onCountryChange()"
-                    [class.is-invalid]="
-                      locationForm.get('countryUuid')?.invalid &&
-                      locationForm.get('countryUuid')?.touched
-                    "
-                  >
-                    <option value="" disabled>— Sélectionnez un pays —</option>
-                    @for (country of countries(); track country.uuid) {
-                      <option [value]="country.uuid">{{ country.libelle }}</option>
-                    }
-                  </select>
-                  @if (
-                    locationForm.get('countryUuid')?.invalid &&
-                    locationForm.get('countryUuid')?.touched
-                  ) {
-                    <div class="invalid-feedback">Le pays est requis</div>
+                  <strong>
+                    {{ getCountryLabel(organizationData.countryUuid) }}
+                  </strong>
+                </div>
+
+                <div class="info-item">
+                  <span class="info-label"> Région </span>
+
+                  <strong>
+                    {{ getRegionLabel(organizationData.regionUuid) }}
+                  </strong>
+                </div>
+
+                <div class="info-item">
+                  <span class="info-label"> Département </span>
+
+                  <strong>
+                    {{ getDepartmentLabel(organizationData.departmentUuid) }}
+                  </strong>
+                </div>
+
+                <div class="info-item">
+                  <span class="info-label"> Téléphone </span>
+
+                  <strong>
+                    {{ organizationData.telephone || organizationData.mobile || '—' }}
+                  </strong>
+                </div>
+
+                <div class="info-item">
+                  <span class="info-label"> Email </span>
+
+                  <strong>
+                    {{ organizationData.email || '—' }}
+                  </strong>
+                </div>
+              </div>
+            }
+          </div>
+        </section>
+      </div>
+
+      <section class="organization-card documents-card">
+        <div class="organization-card-header">
+          <div class="section-heading">
+            <div class="section-icon purple">
+              <i class="fas fa-file-signature"></i>
+            </div>
+
+            <div>
+              <h2>Documents de l'établissement</h2>
+            </div>
+          </div>
+
+          @if (!isEditing() || editingSection() !== 'documents') {
+            <button type="button" class="btn-edit" (click)="enableEditing('documents')">
+              <i class="fas fa-pen"></i>
+              Modifier
+            </button>
+          }
+        </div>
+
+        <div class="organization-card-body">
+
+          <div class="documents-layout">
+            <div class="documents-identity">
+              <div class="documents-subsection-title">
+                <h3>Identité visuelle</h3>
+              </div>
+
+              <div class="logo-document-row">
+                <div class="logo-document-preview">
+                  @if (logoPreview) {
+                    <img [src]="logoPreview" alt="Logo de l'établissement" />
+                  } @else {
+                    <div class="document-empty-state">
+                      <i class="fas fa-building"></i>
+                      <span>Aucun logo</span>
+                    </div>
                   }
                 </div>
 
-                <!-- Région -->
-                <div class="form-group">
-                  <label class="form-label">
-                    Région
-                    <i class="fas fa-map ms-1 text-muted"></i>
-                  </label>
-                  <select
-                    class="form-select"
-                    formControlName="regionUuid"
-                    [disabled]="
-                      !isEditing() ||
-                      editingSection() !== 'location' ||
-                      !locationForm.get('countryUuid')?.value ||
-                      regions().length === 0
-                    "
-                    (change)="onRegionChange()"
-                  >
-                    <option value="">
-                      @if (!locationForm.get('countryUuid')?.value) {
-                        — Sélectionnez un pays —
-                      } @else if (regions().length === 0) {
-                        — Aucune région —
-                      } @else {
-                        — Sélectionnez une région —
-                      }
-                    </option>
-                    @for (region of regions(); track region.uuid) {
-                      <option [value]="region.uuid">{{ region.libelle }}</option>
+                <div class="logo-document-info">
+                  <h4>Logo</h4>
+
+                  <div class="document-status">
+                    @if (organizationData.logo?.available) {
+                      <span class="status-badge available">
+                        <span class="status-dot"></span>
+                        Disponible
+                      </span>
+                    } @else {
+                      <span class="status-badge unavailable">
+                        <span class="status-dot"></span>
+                        Non configuré
+                      </span>
                     }
-                  </select>
-                </div>
+                  </div>
 
-                <!-- Département -->
-                <div class="form-group">
-                  <label class="form-label">
-                    Département
-                    <i class="fas fa-map-pin ms-1 text-muted"></i>
-                  </label>
-                  <select
-                    class="form-select"
-                    formControlName="departmentUuid"
-                    [disabled]="
-                      !isEditing() ||
-                      editingSection() !== 'location' ||
-                      !locationForm.get('regionUuid')?.value ||
-                      departments().length === 0
-                    "
-                  >
-                    <option value="">
-                      @if (!locationForm.get('regionUuid')?.value) {
-                        — Sélectionnez une région —
-                      } @else if (departments().length === 0) {
-                        — Aucun département —
-                      } @else {
-                        — Sélectionnez un département —
+                  @if (isEditing() && editingSection() === 'logo') {
+                    <div class="document-edit-zone">
+                      <div
+                        class="logo-upload-zone"
+                        (dragover)="onLogoDragOver($event)"
+                        (drop)="onLogoDrop($event)"
+                      >
+                        <input
+                          type="file"
+                          id="logoInput"
+                          accept="image/jpeg,image/png,image/jpg,image/svg+xml"
+                          (change)="onLogoSelected($event)"
+                          hidden
+                        />
+
+                        <label for="logoInput" class="logo-upload-label">
+                          <i class="fas fa-cloud-upload-alt"></i>
+
+                          <strong> Cliquez pour sélectionner </strong>
+
+                          <span> ou glissez-déposez votre fichier ici </span>
+
+                          <small> JPG, PNG ou SVG · Max 2 Mo </small>
+                        </label>
+                      </div>
+
+                      @if (selectedLogoFile) {
+                        <div class="selected-file-info">
+                          <i class="fas fa-check-circle"></i>
+
+                          <span>
+                            {{ selectedLogoFile.name }}
+                          </span>
+                        </div>
                       }
-                    </option>
-                    @for (department of departments(); track department.uuid) {
-                      <option [value]="department.uuid">{{ department.libelle }}</option>
+
+                      <div class="form-actions">
+                        <button
+                          type="button"
+                          class="btn-secondary-custom"
+                          (click)="cancelLogoEdit()"
+                          [disabled]="uploadingLogo()"
+                        >
+                          <i class="fas fa-times"></i>
+                          Annuler
+                        </button>
+
+                        <button
+                          type="button"
+                          class="btn-primary-custom"
+                          (click)="saveLogo()"
+                          [disabled]="!selectedLogoFile || uploadingLogo()"
+                        >
+                          @if (uploadingLogo()) {
+                            <span class="spinner-border spinner-border-sm"></span>
+                            Envoi...
+                          } @else {
+                            <i class="fas fa-save"></i>
+                            Enregistrer
+                          }
+                        </button>
+                      </div>
+                    </div>
+                  } @else {
+                    <button
+                      type="button"
+                      class="document-action-btn"
+                      (click)="enableEditing('logo')"
+                    >
+                      <i class="fas fa-pen"></i>
+                      Modifier le logo
+                    </button>
+                  }
+                </div>
+              </div>
+            </div>
+
+
+            <div class="documents-official">
+              <div class="documents-subsection-title">
+                <h3>Documents officiels</h3>
+              </div>
+
+              <div class="documents-grid">
+                <!-- CACHEt -->
+                <div class="document-item">
+                  <div class="document-item-title">
+                    <i class="fas fa-stamp"></i>
+                    <span>Cachet</span>
+                  </div>
+
+                  <div class="document-preview">
+                    @if (documentPreviews['CACHET_ETABLISSEMENT']) {
+                      <img
+                        [src]="documentPreviews['CACHET_ETABLISSEMENT']"
+                        alt="Cachet de l'établissement"
+                      />
+                    } @else {
+                      <div class="document-empty-state">
+                        <i class="fas fa-stamp"></i>
+
+                        <span>
+                          @if (hasDocument('CACHET_ETABLISSEMENT')) {
+                            Document configuré
+                          } @else {
+                            Aucun cachet
+                          }
+                        </span>
+                      </div>
                     }
-                  </select>
-                </div>
-              </div>
+                  </div>
 
-              <!-- Adresse -->*
-              <div class="geo-grid geo-grid-2">
-                <div class="form-group">
-                  <label class="form-label">
-                    Adresse
-                    <i class="fas fa-map-marker-alt ms-1 text-muted"></i>
-                  </label>
-                  <input
-                    type="text"
-                    class="form-control"
-                    formControlName="adresse"
-                    [readonly]="!isEditing() || editingSection() !== 'location'"
-                    placeholder="Dakar, Sénégal"
-                  />
-                </div>
+                  <div class="document-item-footer">
+                    @if (hasDocument('CACHET_ETABLISSEMENT')) {
+                      <span class="status-badge available">
+                        <span class="status-dot"></span>
+                        Disponible
+                      </span>
+                    } @else {
+                      <span class="status-badge unavailable">
+                        <span class="status-dot"></span>
+                        Non configuré
+                      </span>
+                    }
+                  </div>
 
-                <!-- Boîte postale -->
-                <div class="form-group">
-                  <label class="form-label">
-                    Boîte postale
-                    <i class="fas fa-mailbox ms-1 text-muted"></i>
-                  </label>
-                  <input
-                    type="text"
-                    class="form-control"
-                    formControlName="boitePostale"
-                    [readonly]="!isEditing() || editingSection() !== 'location'"
-                    placeholder="1234 Dakar"
-                  />
-                </div>
-              </div>
+                  @if (isEditing() && editingSection() === 'documents') {
+                    <div class="document-upload">
+                      <input
+                        type="file"
+                        id="cachetInput"
+                        accept="image/jpeg,image/png,image/jpg,image/svg+xml"
+                        (change)="onDocumentSelected($event, 'CACHET_ETABLISSEMENT')"
+                        hidden
+                      />
 
-              <!-- ══ SECTION CONTACT ══ -->
-              <div class="form-section-title mt-3">
-                <i class="fas fa-address-book me-2"></i>Coordonnées
-              </div>
+                      <label for="cachetInput" class="document-upload-btn">
+                        <i class="fas fa-upload"></i>
+                        Choisir
+                      </label>
 
-              <!-- Email -->
-              <div class="form-group">
-                <label class="form-label">
-                  Email <span class="text-danger">*</span>
-                  <i class="fas fa-envelope ms-1 text-muted"></i>
-                </label>
-                <input
-                  type="email"
-                  class="form-control"
-                  formControlName="email"
-                  [readonly]="!isEditing() || editingSection() !== 'location'"
-                  placeholder="contact@etablissement.sn"
-                />
-                @if (locationForm.get('email')?.invalid && locationForm.get('email')?.touched) {
-                  <div class="invalid-feedback">Email invalide</div>
-                }
-              </div>
+                      @if (selectedDocumentFiles['CACHET_ETABLISSEMENT']) {
+                        <div class="document-selected-file">
+                          <i class="fas fa-file-image"></i>
 
-              <!-- Mobile -->
-              <div class="geo-grid geo-grid-2">
-                <div class="form-group">
-                  <label class="form-label">
-                    Mobile <span class="text-danger">*</span>
-                    <i class="fas fa-mobile-alt ms-1 text-muted"></i>
-                  </label>
-                  <input
-                    type="text"
-                    class="form-control"
-                    formControlName="mobile"
-                    [readonly]="!isEditing() || editingSection() !== 'location'"
-                    placeholder="+221 77 200 20 02"
-                  />
+                          <span>
+                            {{ selectedDocumentFiles['CACHET_ETABLISSEMENT']?.name }}
+                          </span>
+                        </div>
+                      }
+
+                      <button
+                        type="button"
+                        class="document-save-btn"
+                        (click)="saveDocument('CACHET_ETABLISSEMENT')"
+                        [disabled]="
+                          !selectedDocumentFiles['CACHET_ETABLISSEMENT'] ||
+                          uploadingDocument() === 'CACHET_ETABLISSEMENT'
+                        "
+                      >
+                        @if (uploadingDocument() === 'CACHET_ETABLISSEMENT') {
+                          <span class="spinner-border spinner-border-sm"></span>
+                        } @else {
+                          <i class="fas fa-save"></i>
+                          Enregistrer
+                        }
+                      </button>
+                    </div>
+                  }
                 </div>
 
-                <!-- Téléphone fixe -->
-                <div class="form-group">
-                  <label class="form-label">
-                    Téléphone fixe
-                    <i class="fas fa-phone ms-1 text-muted"></i>
-                  </label>
-                  <input
-                    type="text"
-                    class="form-control"
-                    formControlName="telephone"
-                    [readonly]="!isEditing() || editingSection() !== 'location'"
-                    placeholder="+221 33 800 00 00"
-                  />
-                </div>
-              </div>
-              <!-- Site web -->
-              <div class="form-group">
-                <label class="form-label">
-                  Site web
-                  <i class="fas fa-globe ms-1 text-muted"></i>
-                </label>
-                <input
-                  type="url"
-                  class="form-control"
-                  formControlName="siteWeb"
-                  [readonly]="!isEditing() || editingSection() !== 'location'"
-                  placeholder="https://www.myschool.sn"
-                />
-              </div>
+                <div class="document-item">
+                  <div class="document-item-title">
+                    <i class="fas fa-signature"></i>
+                    <span>Signature responsable</span>
+                  </div>
 
-              @if (isEditing() && editingSection() === 'location') {
-                <div class="form-actions">
-                  <button type="button" class="btn btn-secondary" (click)="cancelEditing()">
-                    <i class="fas fa-times me-2"></i>Annuler
-                  </button>
-                  <button
-                    type="button"
-                    class="btn btn-primary"
-                    (click)="saveLocation()"
-                    [disabled]="locationForm.invalid"
-                  >
-                    <i class="fas fa-save me-2"></i>Enregistrer
-                  </button>
+                  <div class="document-preview">
+                    @if (documentPreviews['SIGNATURE_RESPONSABLE_ETABLISSEMENT']) {
+                      <img
+                        [src]="documentPreviews['SIGNATURE_RESPONSABLE_ETABLISSEMENT']"
+                        alt="Signature du responsable"
+                      />
+                    } @else {
+                      <div class="document-empty-state">
+                        <i class="fas fa-signature"></i>
+
+                        <span>
+                          @if (hasDocument('SIGNATURE_RESPONSABLE_ETABLISSEMENT')) {
+                            Document configuré
+                          } @else {
+                            Aucune signature
+                          }
+                        </span>
+                      </div>
+                    }
+                  </div>
+
+                  <div class="document-item-footer">
+                    @if (hasDocument('SIGNATURE_RESPONSABLE_ETABLISSEMENT')) {
+                      <span class="status-badge available">
+                        <span class="status-dot"></span>
+                        Disponible
+                      </span>
+                    } @else {
+                      <span class="status-badge unavailable">
+                        <span class="status-dot"></span>
+                        Non configurée
+                      </span>
+                    }
+                  </div>
+
+                  @if (isEditing() && editingSection() === 'documents') {
+                    <div class="document-upload">
+                      <input
+                        type="file"
+                        id="signatureResponsableInput"
+                        accept="image/jpeg,image/png,image/jpg,image/svg+xml"
+                        (change)="onDocumentSelected($event, 'SIGNATURE_RESPONSABLE_ETABLISSEMENT')"
+                        hidden
+                      />
+
+                      <label for="signatureResponsableInput" class="document-upload-btn">
+                        <i class="fas fa-upload"></i>
+                        Choisir
+                      </label>
+
+                      @if (selectedDocumentFiles['SIGNATURE_RESPONSABLE_ETABLISSEMENT']) {
+                        <div class="document-selected-file">
+                          <i class="fas fa-file-image"></i>
+
+                          <span>
+                            {{ selectedDocumentFiles['SIGNATURE_RESPONSABLE_ETABLISSEMENT']?.name }}
+                          </span>
+                        </div>
+                      }
+
+                      <button
+                        type="button"
+                        class="document-save-btn"
+                        (click)="saveDocument('SIGNATURE_RESPONSABLE_ETABLISSEMENT')"
+                        [disabled]="
+                          !selectedDocumentFiles['SIGNATURE_RESPONSABLE_ETABLISSEMENT'] ||
+                          uploadingDocument() === 'SIGNATURE_RESPONSABLE_ETABLISSEMENT'
+                        "
+                      >
+                        @if (uploadingDocument() === 'SIGNATURE_RESPONSABLE_ETABLISSEMENT') {
+                          <span class="spinner-border spinner-border-sm"></span>
+                        } @else {
+                          <i class="fas fa-save"></i>
+                          Enregistrer
+                        }
+                      </button>
+                    </div>
+                  }
                 </div>
-              }
-            </form>
+
+                <div class="document-item">
+                  <div class="document-item-title">
+                    <i class="fas fa-file-signature"></i>
+                    <span>Signature comptable</span>
+                  </div>
+
+                  <div class="document-preview">
+                    @if (documentPreviews['SIGNATURE_COMPTABLE']) {
+                      <img
+                        [src]="documentPreviews['SIGNATURE_COMPTABLE']"
+                        alt="Signature du comptable"
+                      />
+                    } @else {
+                      <div class="document-empty-state">
+                        <i class="fas fa-file-signature"></i>
+
+                        <span>
+                          @if (hasDocument('SIGNATURE_COMPTABLE')) {
+                            Document configuré
+                          } @else {
+                            Aucune signature
+                          }
+                        </span>
+                      </div>
+                    }
+                  </div>
+
+                  <div class="document-item-footer">
+                    @if (hasDocument('SIGNATURE_COMPTABLE')) {
+                      <span class="status-badge available">
+                        <span class="status-dot"></span>
+                        Disponible
+                      </span>
+                    } @else {
+                      <span class="status-badge unavailable">
+                        <span class="status-dot"></span>
+                        Non configurée
+                      </span>
+                    }
+                  </div>
+
+                  @if (isEditing() && editingSection() === 'documents') {
+                    <div class="document-upload">
+                      <input
+                        type="file"
+                        id="signatureComptableInput"
+                        accept="image/jpeg,image/png,image/jpg,image/svg+xml"
+                        (change)="onDocumentSelected($event, 'SIGNATURE_COMPTABLE')"
+                        hidden
+                      />
+
+                      <label for="signatureComptableInput" class="document-upload-btn">
+                        <i class="fas fa-upload"></i>
+                        Choisir
+                      </label>
+
+                      @if (selectedDocumentFiles['SIGNATURE_COMPTABLE']) {
+                        <div class="document-selected-file">
+                          <i class="fas fa-file-image"></i>
+
+                          <span>
+                            {{ selectedDocumentFiles['SIGNATURE_COMPTABLE']?.name }}
+                          </span>
+                        </div>
+                      }
+
+                      <button
+                        type="button"
+                        class="document-save-btn"
+                        (click)="saveDocument('SIGNATURE_COMPTABLE')"
+                        [disabled]="
+                          !selectedDocumentFiles['SIGNATURE_COMPTABLE'] ||
+                          uploadingDocument() === 'SIGNATURE_COMPTABLE'
+                        "
+                      >
+                        @if (uploadingDocument() === 'SIGNATURE_COMPTABLE') {
+                          <span class="spinner-border spinner-border-sm"></span>
+                        } @else {
+                          <i class="fas fa-save"></i>
+                          Enregistrer
+                        }
+                      </button>
+                    </div>
+                  }
+                </div>
+              </div>
+            </div>
           </div>
+
+          @if (isEditing() && editingSection() === 'documents') {
+            <div class="documents-edit-actions">
+              <button type="button" class="btn-secondary-custom" (click)="cancelEditing()">
+                <i class="fas fa-times"></i>
+                Annuler
+              </button>
+            </div>
+          }
         </div>
-      </div>
+      </section>
 
       <div class="profile-actions">
-        <button class="btn-back" (click)="goBack()">
-          <i class="fas fa-arrow-left me-2"></i>Retour au tableau de bord
+        <button type="button" class="btn-back" (click)="goBack()">
+          <i class="fas fa-arrow-left"></i>
+          Retour au tableau de bord
         </button>
       </div>
 
-      <div class="alert-help mt-4" role="alert">
-        <i class="fas fa-info-circle me-2"></i>
-        <span>Les modifications sont appliquées immédiatement après validation.</span>
+      <div class="alert-help">
+        <i class="fas fa-circle-info"></i>
+
+        <span> Les modifications sont appliquées immédiatement après validation. </span>
       </div>
     }
   </div>

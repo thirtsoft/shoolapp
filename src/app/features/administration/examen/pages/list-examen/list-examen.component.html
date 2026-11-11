@@ -1,0 +1,248 @@
+<div class="page-wrapper">
+  <div class="content container-fluid">
+    <div class="page-header">
+      <div class="page-title-box">
+        <div class="page-icon">
+          <i class="fas fa-award"></i>
+        </div>
+
+        <div>
+          <h2>Examens & Concours</h2>
+
+          <p>Suivez les examens nationaux de votre établissement</p>
+        </div>
+      </div>
+
+      <div class="generation-action">
+        <div class="generation-year">
+          <span class="generation-label"> Année scolaire </span>
+
+          <strong>
+            {{ anneeScolaireEnCours()?.libelle || '—' }}
+          </strong>
+        </div>
+
+        <button
+          type="button"
+          class="btn btn-primary"
+          [disabled]="!anneeScolaireEnCours()"
+          (click)="genererExamens()"
+        >
+          <i class="feather-refresh-cw"></i>
+
+          <span> Générer les examens </span>
+        </button>
+      </div>
+    </div>
+
+    <div class="generation-info">
+      <div class="generation-info-icon">
+        <i class="fas fa-info-circle"></i>
+      </div>
+
+      <div>
+        <strong> Génération automatique des examens nationaux </strong>
+
+        <p>
+          CFEE, BFEM et BAC sont générés automatiquement selon les niveaux concernés dans votre
+          établissement.
+        </p>
+      </div>
+    </div>
+
+    <div class="section-header">
+      <div>
+        <h3>
+          Examens nationaux :
+
+          {{ anneeScolaireFiltre()?.libelle || '—' }}
+        </h3>
+      </div>
+    </div>
+
+    <div class="filters-card">
+      <div class="filter-group">
+        <label> Année scolaire </label>
+
+        <div class="select-wrapper">
+          <select
+            class="form-select"
+            [value]="anneeScolaireFiltre()?.anneeScolaireUuid"
+            (change)="changerAnneeScolaire($any($event.target).value)"
+          >
+            @for (annee of anneesScolaires(); track annee.anneeScolaireUuid) {
+              <option [value]="annee.anneeScolaireUuid">
+                {{ annee.libelle }}
+              </option>
+            }
+          </select>
+
+          <i class="fas fa-chevron-down"></i>
+        </div>
+      </div>
+
+      <div class="filter-group">
+        <label> Statut </label>
+
+        <div class="select-wrapper">
+          <select
+            class="form-select"
+            [value]="statutFiltre()"
+            (change)="changerStatut($any($event.target).value)"
+          >
+            <option value="TOUS">Tous</option>
+
+            <option value="A_COMPLETER">À compléter</option>
+
+            <option value="TERMINE">Terminé</option>
+          </select>
+
+          <i class="fas fa-chevron-down"></i>
+        </div>
+      </div>
+
+      <button type="button" class="btn btn-refresh" (click)="actualiser()">
+        <i class="feather-refresh-cw"></i>
+
+        <span> Actualiser </span>
+      </button>
+    </div>
+
+    <div class="examens-grid">
+      @for (examen of examensFiltres(); track examen.uuid) {
+        <div class="examen-card">
+          <div class="examen-card-header">
+            <div class="examen-title">
+              <div class="exam-icon">
+                <i class="fas fa-award"></i>
+              </div>
+
+              <div>
+                <h3>
+                  {{ examen.libelle }}
+                </h3>
+
+                <p class="exam-description">
+                  {{ examen.description }}
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <div class="exam-meta">
+            <div class="meta-item">
+              <span class="meta-label"> Niveau </span>
+
+              <span class="meta-value">
+                {{ examen.libelleNiveau }}
+              </span>
+            </div>
+
+            <div class="meta-separator"></div>
+
+            <div class="meta-item">
+              <span class="meta-label"> Année scolaire </span>
+
+              <span class="meta-value">
+                {{ examen.libelleAnneeScolaire }}
+              </span>
+            </div>
+          </div>
+
+          <div class="exam-progress-section">
+            <div class="progress-info">
+              <div>
+                <strong>
+                  {{ examen.nombreEleves }}
+                </strong>
+
+                <span> Candidats </span>
+              </div>
+
+              <div class="progress-result">
+                <strong>
+                  {{ examen.nombreResultats }}
+                  /
+                  {{ examen.nombreEleves }}
+                </strong>
+
+                <span> Renseignés </span>
+              </div>
+            </div>
+
+            <div class="progress-container">
+              <div class="progress-track">
+                <div
+                  class="progress-bar"
+                  [class.complete]="isExamenTermine(examen)"
+                  [style.width.%]="getProgression(examen)"
+                ></div>
+              </div>
+
+              <span class="progress-percent"> {{ getProgression(examen) }}% </span>
+            </div>
+          </div>
+
+          <div class="exam-card-footer">
+            @if (isExamenTermine(examen)) {
+              <div class="exam-status status-complete">
+                <span class="status-icon">
+                  <i class="fas fa-check"></i>
+                </span>
+
+                <span> Terminé </span>
+              </div>
+            } @else {
+              <div class="exam-status status-pending">
+                <span class="status-icon">
+                  <i class="fas fa-exclamation-triangle"></i>
+                </span>
+
+                <span> À compléter </span>
+              </div>
+            }
+
+            <button type="button" class="btn-detail" (click)="ouvrirDetailsExamen(examen.uuid)">
+              <span> Voir le détail </span>
+
+              <i class="fas fa-arrow-right"></i>
+            </button>
+          </div>
+        </div>
+      }
+
+      @if (examensFiltres().length === 0) {
+        <div class="empty-state">
+          <div class="empty-icon">
+            <i class="feather-award"></i>
+          </div>
+
+          <h3>Aucun examen national</h3>
+
+          <p>Aucun examen national ne correspond aux critères sélectionnés.</p>
+
+          @if (
+            anneeScolaireFiltre()?.anneeScolaireUuid === anneeScolaireEnCours()?.anneeScolaireUuid
+          ) {
+            <button
+              type="button"
+              class="btn btn-primary"
+              [disabled]="!anneeScolaireEnCours()"
+              (click)="genererExamens()"
+            >
+              <i class="fas fa-sync-alt"></i>
+
+              <span> Générer les examens </span>
+            </button>
+          } @else {
+            <button type="button" class="btn btn-secondary" (click)="actualiser()">
+              <i class="fas fa-sync-alt"></i>
+
+              <span> Actualiser </span>
+            </button>
+          }
+        </div>
+      }
+    </div>
+  </div>
+</div>

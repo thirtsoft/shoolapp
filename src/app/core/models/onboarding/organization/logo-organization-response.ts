@@ -3,3 +3,10 @@ export interface LogoOrganizationResponse {
   logoUuid?: string;
   url?: string;
 }
+
+export interface DocumentOrganizationResponse {
+  available: boolean;
+  documentUuid: string;
+  typeDocumentCode: string;
+}
+
