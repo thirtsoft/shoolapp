@@ -51,17 +51,10 @@ export class ListeEleveComponent implements OnInit {
 
   }
 
-  async chargerLaListeDesEleves() {
-    try {
-      await Promise.all([
-        this.getMedeccinTraitantList()
-      ]);
-
-      this.initialisationDesFiltres();
-      this.chargerLesDonnees(false);
-    } catch (error) {
-      console.error('Erreur chargement données:', error);
-    }
+  chargerLaListeDesEleves() {
+    //  this.getMedeccinTraitantList()
+    this.initialisationDesFiltres();
+    this.chargerLesDonnees(false);
   }
 
   getMedeccinTraitantList(): Promise<MedecinTraitant[]> {
@@ -98,15 +91,6 @@ export class ListeEleveComponent implements OnInit {
           value: s,
           label: s
         }))
-      },
-      {
-        key: 'medecin',
-        label: 'Medecin traitant',
-        type: 'select',
-        options: this.medeccinTraitantList.map(c => ({
-          value: c.id,
-          label: c.prenom + " " + c.nom
-        })),
       },
     ];
   }
@@ -181,10 +165,6 @@ export class ListeEleveComponent implements OnInit {
         from: this.activeFilters.dateNaissanceDebut,
         to: this.activeFilters.dateNaissanceFin
       };
-    }
-
-    if (this.activeFilters.medecin) {
-      filtreObj.medecin = this.activeFilters.medecin;
     }
     return Object.keys(filtreObj).length > 0 ? filtreObj : null;
 

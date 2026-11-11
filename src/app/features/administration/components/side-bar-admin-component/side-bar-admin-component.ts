@@ -101,7 +101,7 @@ export class SideBarAdminComponent {
     // ═══════════ PARAMÉTRAGE DE BASE (DROPDOWN) ═══════════
     {
       ico: '🔧',
-      label: 'Paramétrage de base',
+      label: 'Paramétrage',
       section: 'CONFIGURATION',
       badge: '',
       children: [
