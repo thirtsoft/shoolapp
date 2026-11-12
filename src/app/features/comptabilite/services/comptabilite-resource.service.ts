@@ -100,6 +100,29 @@ export class ComptabiliteResourceService {
     );
   }
 
+
+  filteredFilterDataTable<T, F>(endpoint: string, page: number, size: number, filters?: F | null): Observable<DataResult<T>> {
+    const url = `${this.comptabiliteUrl}/${endpoint}/filtered/page`;
+    const params = new HttpParams()
+      .set('page', page.toString())
+      .set('size', size.toString());
+
+    return this.http.post<DataResult<T>>(
+      url,
+      filters ?? {},
+      {
+        ...this.httpOptions,
+        params
+      }
+    ).pipe(
+      tap(response => console.log('Réponse API filtre:', response)),
+      catchError(error => {
+        console.error('Erreur API filtre:', error);
+        return throwError(() => error);
+      })
+    );
+  }
+
   recupererUneResource<T>(endpoint: string, id: number): Observable<T> {
     const url = `${this.comptabiliteUrl}/${endpoint}/${id}`;
     return this.http.get<T>(url, this.httpOptions);

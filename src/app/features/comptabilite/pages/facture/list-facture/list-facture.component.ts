@@ -3,6 +3,9 @@ import { IFilterConfig } from '../../../../../core/filtered-config/FiltreConfigu
 import { GenericTableDossierComponent } from '../../../../../core/generic/generic-table-dossier/generic-table-dossier.component';
 import { CommonService } from '../../../../../core/services/common.service';
 import { ComptabiliteResourceService } from '../../../services/comptabilite-resource.service';
+import { ListEtatResponse } from '../../../../../core/models/base/list-etat-response';
+import { RechercherFacture } from '../../../../../core/models/comptabilite/rechercher-facture';
+import { DataResult } from '../../../../../core/datamodel/data-model';
 
 @Component({
   selector: 'app-list-facture',
@@ -31,12 +34,12 @@ export class ListFactureComponent implements OnInit {
   totalElements = 0;
   tableSizes = [10, 20, 50, 100];
 
-  etatfactureOptions: any[] = [];
+  etatfactureOptions: ListEtatResponse[] = [];
   moisList: any[] = [];
   anneeList: any[] = [];
 
   tableFilters: IFilterConfig[] = [];
-  activeFilters: any = {};
+  activeFilters: Partial<RechercherFacture> = {};
   hasActiveFilters: boolean = false;
 
   private readonly comptabiliteResource = inject(ComptabiliteResourceService);
@@ -51,7 +54,7 @@ export class ListFactureComponent implements OnInit {
   async chargerLesFactures() {
     try {
       await Promise.all([
-        this.getStatusFactureList(),
+        this.getEtatsFactureList(),
         this.getMoisList(),
         this.getAnneesList()
       ]);
@@ -63,9 +66,9 @@ export class ListFactureComponent implements OnInit {
     }
   }
 
-  getStatusFactureList(): Promise<any[]> {
+  getEtatsFactureList(): Promise<any[]> {
     return new Promise((resolve, reject) => {
-      this.commonService.getAllStatusFactures().subscribe({
+      this.commonService.getEtatsFactures().subscribe({
         next: (data) => {
           this.etatfactureOptions = data;
           resolve(data);
@@ -100,29 +103,35 @@ export class ListFactureComponent implements OnInit {
     });
   }
 
-  initialisationDesFiltres() {
+
+  initialisationDesFiltres(): void {
+
     this.tableFilters = [
+
       {
         key: 'numeroFacture',
         label: 'N° facture',
         type: 'text',
         placeholder: 'Rechercher une facture...'
       },
+
       {
         key: 'nomPrenom',
-        label: 'Nom/Prénom',
+        label: 'Élève',
         type: 'text',
-        placeholder: 'Rechercher une facture...'
+        placeholder: 'Nom ou prénom...'
       },
+
       {
         key: 'etat',
-        label: 'Etat',
+        label: 'État',
         type: 'select',
         options: this.etatfactureOptions.map(e => ({
-          value: e.id,
-          label: e.status
+          value: e.etatUuid,
+          label: e.libelle
         }))
       },
+
       {
         key: 'mois',
         label: 'Mois',
@@ -132,6 +141,7 @@ export class ListFactureComponent implements OnInit {
           label: m.mois
         }))
       },
+
       {
         key: 'annee',
         label: 'Année',
@@ -140,85 +150,106 @@ export class ListFactureComponent implements OnInit {
           value: a.annee,
           label: a.annee
         }))
-      },
+      }
+
     ];
   }
 
-  onFilterChange(filter: IFilterConfig, value: any) {
-    this.activeFilters[filter.key] = value;
-    this.hasActiveFilters = Object.values(this.activeFilters).some(val =>
-      val !== null && val !== undefined && val !== ''
+  onFilterChange(filter: IFilterConfig, value: any): void {
+
+    this.activeFilters[filter.key as keyof RechercherFacture] = value;
+
+    this.hasActiveFilters = Object.values(this.activeFilters).some(
+      value => value !== null &&
+        value !== undefined &&
+        value !== ''
     );
+
     this.currentPage = 0;
+
     this.chargerLesDonnees(this.hasActiveFilters);
   }
 
-  chargerLesDonnees(useFilterApi: boolean) {
+  chargerLesDonnees(useFilterApi: boolean): void {
     this.isLoading = true;
-    let apiCall;
 
     if (useFilterApi) {
 
-      const filtreParam = this.construireLesParamereDeFiltre();
+      const filtreParam = this.construireLesParametresDeFiltre();
 
-      console.log('Param filtre', filtreParam);
+      console.log('Param filtre facture:', filtreParam);
 
-      apiCall = this.comptabiliteResource.fetchFilterDataTable(
-        'facture',
-        this.currentPage,
-        this.pageSize,
-        filtreParam)
+      this.comptabiliteResource.filteredFilterDataTable<any, RechercherFacture>(
+        'facture', this.currentPage, this.pageSize, filtreParam
+      )
+        .subscribe({
+          next: (response) => {
+            this.traiterReponseFactures(response);
+          },
+          error: (error) => {
+            console.error('Erreur chargement factures filtrées:', error);
+            this.isLoading = false;
+          }
+        });
 
     } else {
-      apiCall = this.comptabiliteResource.getResourcePaged('facture', this.currentPage, this.pageSize);
+
+      this.comptabiliteResource.getResourcePaged<any>('facture', this.currentPage, this.pageSize)
+        .subscribe({
+          next: (response) => {
+            this.traiterReponseFactures(response);
+          },
+          error: (error) => {
+            console.error('Erreur chargement factures:', error);
+            this.isLoading = false;
+          }
+        });
     }
-    apiCall.subscribe({
-      next: (response) => {
-        this.factureData = response.data?.content || [];
-        this.totalElements = response.data?.totalElements || 0;
-
-        this.columns = [
-          { key: 'numeroFacture', header: 'N° facture' },
-          { key: 'nomCompletEleve', header: 'Elève' },
-          { key: 'montant', header: 'Montant' },
-          { key: 'etat', header: 'Etat' },
-          { key: 'dateFacture', header: 'Date' },
-        ];
-
-        this.factureData = this.factureData.map((item: any) => ({
-          ...item,
-        }));
-
-        this.isLoading = false;
-      },
-      error: (error) => {
-        console.error("Erreur:", error);
-        this.isLoading = false;
-      }
-    });
   }
 
-  construireLesParamereDeFiltre(): any {
-    const filtreObj: any = {};
+  private traiterReponseFactures(response: DataResult<any>): void {
 
-    if (this.activeFilters.numeroFacture) {
-      filtreObj.numeroFacture = this.activeFilters.numeroFacture;
-    }
-    if (this.activeFilters.nomPrenom) {
-      filtreObj.nomPrenom = this.activeFilters.nomPrenom;
-    }
-    if (this.activeFilters.etat) {
-      filtreObj.etat = this.activeFilters.etat;
-    }
-    if (this.activeFilters.mois) {
-      filtreObj.mois = this.activeFilters.mois;
-    }
-    if (this.activeFilters.annee) {
-      filtreObj.annee = this.activeFilters.annee;
+    this.factureData = response.data?.content ?? [];
+    this.totalElements = response.data?.totalElements ?? 0;
+
+    this.columns = [
+      { key: 'numeroFacture', header: 'N° facture' },
+      { key: 'nomCompletEleve', header: 'Élève' },
+      { key: 'montant', header: 'Montant' },
+      { key: 'etat', header: 'État' },
+      { key: 'dateFacture', header: 'Date' }
+    ];
+
+    this.isLoading = false;
+  }
+
+  construireLesParametresDeFiltre(): RechercherFacture {
+
+    const filtre: RechercherFacture = {};
+
+    const { numeroFacture, nomPrenom, etat, mois, annee } = this.activeFilters;
+
+    if (numeroFacture?.trim()) {
+      filtre.numeroFacture = numeroFacture.trim();
     }
 
-    return Object.keys(filtreObj).length > 0 ? filtreObj : null;
+    if (nomPrenom?.trim()) {
+      filtre.nomPrenom = nomPrenom.trim();
+    }
 
+    if (etat) {
+      filtre.etat = etat;
+    }
+
+    if (mois !== null && mois !== undefined && mois !== '') {
+      filtre.mois = mois;
+    }
+
+    if (annee !== null && annee !== undefined && annee !== '') {
+      filtre.annee = annee;
+    }
+
+    return filtre;
   }
 
   get totalPages(): number {
@@ -241,7 +272,7 @@ export class ListFactureComponent implements OnInit {
     }
   }
 
-  resetFilters() {
+  resetFilters(): void {
     this.activeFilters = {};
     this.hasActiveFilters = false;
     this.initialisationDesFiltres();
