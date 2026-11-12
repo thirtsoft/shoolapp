@@ -52,6 +52,8 @@ export class SideBarProfesseurComponent {
 
     // vie scolaire
     { route: '/enseignant/activites', ico: '🗓️', label: 'Activités & Réunions', section: 'VIE SCOLAIRE' },
+
+    { route: '/enseignant/note-info', ico: '📢', label: 'Informations', section: '', badge: '' },
     { route: '/enseignant/mes-conges', ico: '🌴', label: 'Mes congés' },
 
     // compte

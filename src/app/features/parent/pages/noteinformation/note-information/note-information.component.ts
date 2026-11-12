@@ -1,13 +1,12 @@
 import { Component, inject, OnInit } from '@angular/core';
 import { IFilterConfig } from '../../../../../core/filtered-config/FiltreConfiguration';
-import { GenericTableReferentielComponent } from '../../../../../core/generic/generic-table-referentiel/generic-table-referentiel.component';
-import { CommonService } from '../../../../../core/services/common.service';
+import { GenericTableDossierComponent } from '../../../../../core/generic/generic-table-dossier/generic-table-dossier.component';
 import { PlanificationResourceService } from '../../../../administration/planification/services/planification-resource.service';
 
 @Component({
   selector: 'app-note-information',
   standalone: true,
-  imports: [GenericTableReferentielComponent],
+  imports: [GenericTableDossierComponent],
   templateUrl: './note-information.component.html',
   styleUrls: ['./note-information.component.css']
 })
@@ -15,6 +14,7 @@ export class NoteInformationComponent implements OnInit {
 
   errorMessage?: string;
   isLoading: boolean = false;
+  isPrinter: boolean = true;
   noteInformationData: any;
   isTable: boolean = true;
   columns: any = [];
@@ -24,14 +24,12 @@ export class NoteInformationComponent implements OnInit {
   totalElements = 0;
   tableSizes = [5, 10, 20, 50, 100];
 
-  moisList: any[] = [];
-
   tableFilters: IFilterConfig[] = [];
   activeFilters: any = {};
   hasActiveFilters: boolean = false;
 
   private readonly planificationResource = inject(PlanificationResourceService);
-  private readonly commonService = inject(CommonService);
+
 
   ngOnInit(): void {
     this.chargerLesNoteInformations();
@@ -39,18 +37,6 @@ export class NoteInformationComponent implements OnInit {
 
   private chargerLesNoteInformations() {
     this.chargerLesDonnees(false);
-  }
-
-  getMoisList(): Promise<any[]> {
-    return new Promise((resolve, reject) => {
-      this.commonService.getAllMois().subscribe({
-        next: (data) => {
-          this.moisList = data;
-          resolve(data);
-        },
-        error: (err) => reject(err)
-      });
-    });
   }
 
   onFilterChange(filter: IFilterConfig, value: any) {
@@ -85,8 +71,9 @@ export class NoteInformationComponent implements OnInit {
         this.totalElements = response.data?.totalElements || 0;
         this.columns = [
           { key: 'reference', header: 'Référence' },
+          { key: 'etat', header: 'Etat' },
           { key: 'dateCreation', header: 'Date' },
-
+          { key: 'description', header: 'Description' }
         ]
 
         this.noteInformationData = this.noteInformationData.map((item: any) => ({

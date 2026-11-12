@@ -512,5 +512,20 @@ export class PlanificationResourceService {
     return this.http.get<number>(`${this.planificationUrl}/planification/enseignement/enseignant/${id}/count`);
   }
 
+  publierNoteInfo(id: number): Observable<string> {
+  return this.http.patch(
+    `${this.planificationUrl}/planification/noteinformation/${id}/publier`,
+    {},
+    { responseType: 'text' }
+  );
+}
+
+dePublierNoteInfo(id: number): Observable<string> {
+  return this.http.patch(
+    `${this.planificationUrl}/planification/noteinformation/${id}/depublier`,
+    {},
+    { responseType: 'text' }
+  );
+}
 
 }
