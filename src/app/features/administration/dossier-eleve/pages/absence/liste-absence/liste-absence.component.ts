@@ -7,6 +7,7 @@ import { LocalStorageService } from '../../../../../../core/services/local-stora
 import { ReferentielResourceService } from '../../../../referentiel/service/referentiel-resource.service';
 import { ReferentielService } from '../../../../referentiel/service/referentiel.service';
 import { DossierResourceService } from '../../../service/dossier-resource.service';
+import { RechercheAbsence } from '../../../../../../core/models/dossiereleve/absence/rechercher-absence';
 
 @Component({
   selector: 'app-liste-absence',
@@ -40,21 +41,18 @@ export class ListeAbsenceComponent implements OnInit {
   classeList: any[] = [];
   moisList: any[] = [];
   anneeList: any[] = [];
+  typeAbsenceList: string[] = ['PRESENCE', 'ABSENCE', 'RETARD'];
 
   tableFilters: IFilterConfig[] = [];
-  activeFilters: any = {};
+  activeFilters: Partial<RechercheAbsence> = {};
   hasActiveFilters: boolean = false;
 
   private readonly dossierEleveService = inject(DossierResourceService);
-  private readonly referentielService = inject(ReferentielService);
   private readonly commonService = inject(CommonService);
   private readonly referentielResourceService = inject(ReferentielResourceService);
-  private readonly localStorage = inject(LocalStorageService);
   private readonly destroyRef = inject(DestroyRef);
 
   ngOnInit(): void {
-    this.userId = this.localStorage.getItem('id');
-    this.eleveId = this.localStorage.getItem('eleveId');
     this.chargerLesAttendRecordsEleve();
   }
 
@@ -96,13 +94,11 @@ export class ListeAbsenceComponent implements OnInit {
 
     if (useFilterApi) {
 
-      const filtreParam = this.construireLesParametreDeFiltre();
+      const filtreParam = this.construireLesParametresDeFiltre();
 
-      resultatAPI = this.dossierEleveService.fetchFilterDataTable(
-        'attendancerecord',
-        this.currentPage,
-        this.pageSize,
-        filtreParam)
+
+      resultatAPI = this.dossierEleveService.filteredFilterDataTable(
+        'attendancerecord', this.currentPage, this.pageSize, filtreParam)
 
     } else {
       resultatAPI = this.dossierEleveService.getResourcePaged('attendancerecord', this.currentPage, this.pageSize);
@@ -156,16 +152,16 @@ export class ListeAbsenceComponent implements OnInit {
           label: s.semestre
         })),
       },
-
       {
-        key: 'anneeScolaire',
-        label: 'Année scolaire',
+        key: 'status',
+        label: 'Type',
         type: 'select',
-        options: this.anneesScolairesList.map(a => ({
-          value: a.id,
-          label: `${a.libelle}`
+        options: this.typeAbsenceList.map(a => ({
+          value: a,
+          label: a
         }))
       },
+
       {
         key: 'mois',
         label: 'Mois',
@@ -176,49 +172,64 @@ export class ListeAbsenceComponent implements OnInit {
         }))
       },
       {
-        key: 'annee',
-        label: 'Année',
+        key: 'anneeScolaire',
+        label: 'Année scolaire',
         type: 'select',
-        options: this.anneeList.map(a => ({
-          value: a.annee,
-          label: a.annee
+        options: this.anneesScolairesList.map(a => ({
+          value: a.id,
+          label: `${a.libelle}`
         }))
       },
     ];
   }
 
-  onFilterChange(filter: IFilterConfig, value: any) {
-    this.activeFilters[filter.key] = value;
 
-    this.hasActiveFilters = Object.values(this.activeFilters).some(val =>
-      val !== null && val !== undefined && val !== ''
+  onFilterChange(filter: IFilterConfig, value: any): void {
+
+    this.activeFilters[filter.key as keyof RechercheAbsence] = value;
+
+    this.hasActiveFilters = Object.values(this.activeFilters).some(
+      value => value !== null &&
+        value !== undefined &&
+        value !== ''
     );
+
     this.currentPage = 0;
+
     this.chargerLesDonnees(this.hasActiveFilters);
   }
 
-  construireLesParametreDeFiltre(): any {
-    const filtreObj: any = {};
+  construireLesParametresDeFiltre(): RechercheAbsence {
 
-    if (this.activeFilters.nomPrenom) {
-      filtreObj.nomPrenom = this.activeFilters.nomPrenom;
+    const filtre: RechercheAbsence = {};
+
+    const { nomPrenom, sessionSemestre, status, mois, anneeScolaire } = this.activeFilters;
+
+    if (nomPrenom?.trim()) {
+      filtre.nomPrenom = nomPrenom.trim();
     }
 
-    if (this.activeFilters.sessionSemestre) {
-      filtreObj.sessionSemestre = this.activeFilters.sessionSemestre;
+    if (sessionSemestre) {
+      filtre.sessionSemestre = sessionSemestre;
     }
 
-    if (this.activeFilters?.anneeScolaire) {
-      filtreObj.anneeScolaire = this.activeFilters.anneeScolaire;
+    if (status?.trim()) {
+      filtre.status = status.trim();
     }
-    if (this.activeFilters.mois) {
-      filtreObj.mois = this.activeFilters.mois;
+
+    if (mois) {
+      filtre.mois = mois;
     }
-    if (this.activeFilters.annee) {
-      filtreObj.annee = this.activeFilters.annee;
+
+
+
+    if (anneeScolaire) {
+      filtre.anneeScolaire = anneeScolaire;
     }
-    return Object.keys(filtreObj).length > 0 ? filtreObj : null;
+
+    return filtre;
   }
+
 
   get totalPages(): number {
     return Math.ceil(this.totalElements / this.pageSize);

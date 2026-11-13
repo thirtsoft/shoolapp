@@ -1,11 +1,13 @@
 import { Component, inject, OnInit } from '@angular/core';
+import { DataResult } from '../../../../../core/datamodel/data-model';
 import { IFilterConfig } from '../../../../../core/filtered-config/FiltreConfiguration';
 import { GenericTableDossierComponent } from '../../../../../core/generic/generic-table-dossier/generic-table-dossier.component';
-import { CommonService } from '../../../../../core/services/common.service';
-import { ComptabiliteResourceService } from '../../../services/comptabilite-resource.service';
 import { ListEtatResponse } from '../../../../../core/models/base/list-etat-response';
 import { RechercherFacture } from '../../../../../core/models/comptabilite/rechercher-facture';
-import { DataResult } from '../../../../../core/datamodel/data-model';
+import { AnneeScolaireEncoursResponse } from '../../../../../core/models/referentiels/annee-scolaire-encours-response';
+import { CommonService } from '../../../../../core/services/common.service';
+import { ReferentielResourceService } from '../../../../administration/referentiel/service/referentiel-resource.service';
+import { ComptabiliteResourceService } from '../../../services/comptabilite-resource.service';
 
 @Component({
   selector: 'app-list-facture',
@@ -37,6 +39,7 @@ export class ListFactureComponent implements OnInit {
   etatfactureOptions: ListEtatResponse[] = [];
   moisList: any[] = [];
   anneeList: any[] = [];
+  anneeScolaireList: AnneeScolaireEncoursResponse[] = [];
 
   tableFilters: IFilterConfig[] = [];
   activeFilters: Partial<RechercherFacture> = {};
@@ -44,6 +47,7 @@ export class ListFactureComponent implements OnInit {
 
   private readonly comptabiliteResource = inject(ComptabiliteResourceService);
   private readonly commonService = inject(CommonService);
+  private readonly referentielService = inject(ReferentielResourceService);
 
 
   ngOnInit(): void {
@@ -56,7 +60,7 @@ export class ListFactureComponent implements OnInit {
       await Promise.all([
         this.getEtatsFactureList(),
         this.getMoisList(),
-        this.getAnneesList()
+        this.getAnneesScolaireList()
       ]);
       this.initialisationDesFiltres();
       this.chargerLesDonnees(false);
@@ -90,12 +94,12 @@ export class ListFactureComponent implements OnInit {
     });
   }
 
-  getAnneesList(): Promise<any[]> {
+  getAnneesScolaireList(): Promise<any[]> {
     return new Promise((resolve, reject) => {
-      this.commonService.getAllAnnees().subscribe({
+      this.referentielService.getResourceList('anneescolaire/response').subscribe({
         next: (data) => {
-          this.anneeList = data;
-          console.log('annees facture', this.anneeList);
+          this.anneeScolaireList = data as AnneeScolaireEncoursResponse[];
+          console.log('annees facture', this.anneeScolaireList);
           resolve(data);
         },
         error: (err) => reject(err)
@@ -141,14 +145,13 @@ export class ListFactureComponent implements OnInit {
           label: m.mois
         }))
       },
-
       {
-        key: 'annee',
-        label: 'Année',
+        key: 'anneeScolaire',
+        label: 'Année scolaire',
         type: 'select',
-        options: this.anneeList.map(a => ({
-          value: a.annee,
-          label: a.annee
+        options: this.anneeScolaireList.map(a => ({
+          value: a.anneeScolaireUuid,
+          label: a.libelle
         }))
       }
 
@@ -227,7 +230,7 @@ export class ListFactureComponent implements OnInit {
 
     const filtre: RechercherFacture = {};
 
-    const { numeroFacture, nomPrenom, etat, mois, annee } = this.activeFilters;
+    const { numeroFacture, nomPrenom, etat, mois, anneeScolaire } = this.activeFilters;
 
     if (numeroFacture?.trim()) {
       filtre.numeroFacture = numeroFacture.trim();
@@ -245,8 +248,8 @@ export class ListFactureComponent implements OnInit {
       filtre.mois = mois;
     }
 
-    if (annee !== null && annee !== undefined && annee !== '') {
-      filtre.annee = annee;
+    if (anneeScolaire !== null && anneeScolaire !== undefined && anneeScolaire !== '') {
+      filtre.anneeScolaire = anneeScolaire;
     }
 
     return filtre;

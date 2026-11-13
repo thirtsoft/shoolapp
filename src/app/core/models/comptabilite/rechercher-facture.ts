@@ -5,5 +5,6 @@ export interface RechercherFacture {
   etat?: string | null;
   mois?: string | number | null;
   annee?: string | number | null;
+  anneeScolaire?: string | null;
 
 }
