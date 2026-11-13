@@ -26,4 +26,6 @@ export interface Inscription {
     dateInscription?: Date;
 
     createdBy?: number;
+
+    moyenPaiement?: number;
 }
