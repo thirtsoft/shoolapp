@@ -5,6 +5,8 @@ import { MoyenPaiement } from '../../../../../core/models/referentiels/moyen-pai
 import { CommonService } from '../../../../../core/services/common.service';
 import { ReferentielResourceService } from '../../../../administration/referentiel/service/referentiel-resource.service';
 import { ComptabiliteResourceService } from '../../../services/comptabilite-resource.service';
+import { RechercherPaiement } from '../../../../../core/models/comptabilite/rechercher-paiement';
+import { DataResult } from '../../../../../core/datamodel/data-model';
 
 @Component({
   selector: 'app-list-paiement',
@@ -37,8 +39,13 @@ export class ListPaiementComponent implements OnInit {
   moyenPaiementList: MoyenPaiement[] = [];
 
   tableFilters: IFilterConfig[] = [];
-  activeFilters: any = {};
+  activeFilters: Partial<RechercherPaiement> = {};
   hasActiveFilters: boolean = false;
+
+
+  typePaiement: string[] = ['FACTURE', 'SALAIRE', 'AUTRE'];
+
+
 
   private readonly comptabiliteResource = inject(ComptabiliteResourceService);
   private readonly referentielResource = inject(ReferentielResourceService)
@@ -109,8 +116,8 @@ export class ListPaiementComponent implements OnInit {
         placeholder: 'Rechercher un paiement...'
       },
       {
-        key: 'nomPrenom',
-        label: 'Nom/Prénom',
+        key: 'beneficiaire',
+        label: 'Bénéficiaire',
         type: 'text',
         placeholder: 'Rechercher un paiement...'
       },
@@ -119,10 +126,20 @@ export class ListPaiementComponent implements OnInit {
         label: 'Moyen paiement',
         type: 'select',
         options: this.moyenPaiementList.map(m => ({
-          value: m.id,
+          value: m.uuid,
           label: m.libelle
         })),
       },
+      {
+        key: 'type',
+        label: 'Type',
+        type: 'select',
+        options: this.typePaiement.map(m => ({
+          value: m,
+          label: m
+        })),
+      },
+
       {
         key: 'mois',
         label: 'Mois',
@@ -144,93 +161,147 @@ export class ListPaiementComponent implements OnInit {
     ];
   }
 
-  onFilterChange(filter: IFilterConfig, value: any) {
-    this.activeFilters[filter.key] = value;
-    this.hasActiveFilters = Object.values(this.activeFilters).some(val =>
-      val !== null && val !== undefined && val !== ''
+  onFilterChange(filter: IFilterConfig, value: any): void {
+
+    this.activeFilters[filter.key as keyof RechercherPaiement] = value;
+
+    this.hasActiveFilters = Object.values(this.activeFilters).some(
+      value => value !== null &&
+        value !== undefined &&
+        value !== ''
     );
+
     this.currentPage = 0;
+
     this.chargerLesDonnees(this.hasActiveFilters);
   }
 
-  chargerLesDonnees(useFilterApi: boolean) {
+  chargerLesDonnees(useFilterApi: boolean): void {
     this.isLoading = true;
-    let apiCall;
 
     if (useFilterApi) {
 
-      const filtreParam = this.construireParametreFiltre();
+      const filtreParam = this.construireLesParametresDeFiltre();
 
-      apiCall = this.comptabiliteResource.fetchFilterDataTable(
-        'payement',
-        this.currentPage,
-        this.pageSize,
-        filtreParam)
+      console.log('Param filtre facture:', filtreParam);
+
+      this.comptabiliteResource.filteredFilterDataTable<any, RechercherPaiement>(
+        'payement', this.currentPage, this.pageSize, filtreParam
+      )
+        .subscribe({
+          next: (response) => {
+            this.traiterReponsePaiements(response);
+          },
+          error: (error) => {
+            console.error('Erreur chargement factures filtrées:', error);
+            this.isLoading = false;
+          }
+        });
 
     } else {
-      apiCall = this.comptabiliteResource.getResourcePaged('payement', this.currentPage, this.pageSize);
+
+      this.comptabiliteResource.getResourcePaged<any>('payement', this.currentPage, this.pageSize)
+        .subscribe({
+          next: (response) => {
+            this.traiterReponsePaiements(response);
+          },
+          error: (error) => {
+            console.error('Erreur chargement paiement:', error);
+            this.isLoading = false;
+          }
+        });
     }
-    apiCall.subscribe({
-      next: (response) => {
-        this.paiementData = response.data?.content || [];
-        this.totalElements = response.data?.totalElements || 0;
+  }
 
-        this.paiementData = this.paiementData.map((item: any) => ({
-          ...item,
+  private traiterReponsePaiements(response: DataResult<any>): void {
 
-          numeroDocument:
-            item.typePaiement === 'SALAIRE'
-              ? item.numeroPaie
-              : item.facture,
+    this.paiementData = response.data?.content || [];
+    this.totalElements = response.data?.totalElements || 0;
 
-          nomCompletBeneficiaire:
-            item.typePaiement === 'SALAIRE'
-              ? item.nomCompletPersonnel
-              : item.nomCompletEleve,
+    this.paiementData = this.paiementData.map((item: any) => ({
+      ...item,
 
-          pay: ''
-        }));
+      numeroDocument:
+        item.typePaiement === 'SALAIRE'
+          ? item.numeroPaie
+          : item.facture,
 
-        this.columns = [
-          { key: 'numeroDocument', header: 'N°' },
-          { key: 'typePaiement', header: 'Type' },
-          { key: 'nomCompletBeneficiaire', header: 'Bénéficiaire' },
-          { key: 'moyenPaiement', header: 'Moyen' },
-          { key: 'montant', header: 'Montant' },
-          { key: 'pay', header: 'Reçu' },
-          { key: 'datePaiement', header: 'Date' },
-        ];
-        this.isLoading = false;
-      },
-      error: (error) => {
-        console.error("Erreur:", error);
-        this.isLoading = false;
+      nomCompletBeneficiaire:
+        item.typePaiement === 'SALAIRE'
+          ? item.nomCompletPersonnel
+          : item.nomCompletEleve,
+
+      pay: ''
+    }));
+
+    this.columns = [
+      { key: 'numeroDocument', header: 'N°' },
+      { key: 'typePaiement', header: 'Type' },
+      { key: 'nomCompletBeneficiaire', header: 'Bénéficiaire' },
+      { key: 'moyenPaiement', header: 'Moyen' },
+      { key: 'montant', header: 'Montant' },
+      { key: 'pay', header: 'Reçu' },
+      { key: 'datePaiement', header: 'Date' },
+    ];
+    this.isLoading = false;
+  }
+
+
+
+  construireLesParametresDeFiltre(): RechercherPaiement {
+
+    const filtre: RechercherPaiement = {};
+
+    const { numeroFacture, beneficiaire, moyen, type, mois, annee } = this.activeFilters;
+
+    if (numeroFacture?.trim()) {
+      filtre.numeroFacture = numeroFacture.trim();
+    }
+
+    if (beneficiaire?.trim()) {
+      filtre.beneficiaire = beneficiaire.trim();
+    }
+
+    if (moyen) {
+      filtre.moyen = moyen;
+    }
+    if (type) {
+      filtre.type = type;
+    }
+
+    if (mois !== null && mois !== undefined && mois !== '') {
+      filtre.mois = mois;
+    }
+
+    if (annee !== null && annee !== undefined && annee !== '') {
+      filtre.annee = annee;
+    }
+
+    return filtre;
+  }
+
+  /*   construireParametreFiltre11(): any {
+      const filtreObj: any = {};
+  
+      if (this.activeFilters.numeroFacture) {
+        filtreObj.numeroFacture = this.activeFilters.numeroFacture;
       }
-    });
-  }
-
-  construireParametreFiltre(): any {
-    const filtreObj: any = {};
-
-    if (this.activeFilters.numeroFacture) {
-      filtreObj.numeroFacture = this.activeFilters.numeroFacture;
-    }
-
-    if (this.activeFilters.nomPrenom) {
-      filtreObj.nomPrenom = this.activeFilters.nomPrenom;
-    }
-
-    if (this.activeFilters.moyen) {
-      filtreObj.moyen = this.activeFilters.moyen;
-    }
-    if (this.activeFilters?.mois) {
-      filtreObj.mois = this.activeFilters.mois;
-    }
-    if (this.activeFilters.annee) {
-      filtreObj.annee = this.activeFilters.annee;
-    }
-    return Object.keys(filtreObj).length > 0 ? filtreObj : null;
-  }
+  
+      if (this.activeFilters.nomPrenom) {
+        filtreObj.nomPrenom = this.activeFilters.nomPrenom;
+      }
+  
+      if (this.activeFilters.moyen) {
+        filtreObj.moyen = this.activeFilters.moyen;
+      }
+      if (this.activeFilters?.mois) {
+        filtreObj.mois = this.activeFilters.mois;
+      }
+      if (this.activeFilters.annee) {
+        filtreObj.annee = this.activeFilters.annee;
+      }
+      return Object.keys(filtreObj).length > 0 ? filtreObj : null;
+    } */
 
   get totalPages(): number {
     return Math.ceil(this.totalElements / this.pageSize);

@@ -2,6 +2,7 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { environment } from '../../../environments/environment';
+import { ListEtatResponse } from '../models/base/list-etat-response';
 
 @Injectable({
   providedIn: 'root'
@@ -41,6 +42,10 @@ export class CommonService {
 
   getAllStatusFactures(): Observable<any[]> {
     return this.http.get<any[]>(`${this.baseUrl_1}/base/statusfacture`);
+  }
+
+  getEtatsFactures(): Observable<ListEtatResponse[]> {
+    return this.http.get<ListEtatResponse[]>(`${this.baseUrl_1}/base/etats-factures`);
   }
 
   getAllStatusEvenements(): Observable<any[]> {

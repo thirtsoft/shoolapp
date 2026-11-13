@@ -15,10 +15,8 @@ export class ListNoteInformationComponent implements OnInit {
 
   errorMessage?: string;
   today = new Date();
-  coursId?: number | null;
   isEdit: boolean = true;
   isLoading: boolean = false;
-  filteredDataNoteInformation: any;
   isLockable: boolean = true;
   isPrinter: boolean = true;
 
@@ -42,7 +40,7 @@ export class ListNoteInformationComponent implements OnInit {
 
   isSelected = false;
 
-  private readonly coursService = inject(PlanificationResourceService);
+  private readonly noteInfoService = inject(PlanificationResourceService);
   private readonly commonService = inject(CommonService);
 
   ngOnInit(): void {
@@ -134,14 +132,14 @@ export class ListNoteInformationComponent implements OnInit {
 
       const filtreParam = this.construireParametreDeFiltre();
 
-      apiCall = this.coursService.fetchFilterDataTable(
+      apiCall = this.noteInfoService.fetchFilterDataTable(
         'planification/noteinformation',
         this.currentPage,
         this.pageSize,
         filtreParam)
 
     } else {
-      apiCall = this.coursService.getResourcePaged('planification/noteinformation', this.currentPage, this.pageSize);
+      apiCall = this.noteInfoService.getResourcePaged('planification/noteinformation', this.currentPage, this.pageSize);
     }
     apiCall.subscribe({
       next: (response) => {
@@ -150,6 +148,7 @@ export class ListNoteInformationComponent implements OnInit {
 
         this.columns = [
           { key: 'reference', header: 'Référence' },
+          { key: 'etat', header: 'Etat' },
           { key: 'dateCreation', header: 'Date' },
           { key: 'description', header: 'Description' }
 

@@ -1,0 +1,222 @@
+<div class="page-wrapper">
+  <div class="content container-fluid">
+    <div class="page-header">
+      <div class="header-main">
+        <div class="header-title">
+          <button type="button" class="back-button" (click)="goBack()" aria-label="Retour">
+            <i class="fas fa-arrow-left"></i>
+          </button>
+
+          <div>
+            <div class="breadcrumb">
+              Planification
+              <span>/</span>
+              Notes d'information
+              <span>/</span>
+              Détails
+            </div>
+
+            <h3 class="page-title">
+              {{ title }}
+            </h3>
+          </div>
+        </div>
+
+        <div class="header-actions">
+          @if (isPublished()) {
+            <span class="publication-status published">
+              <span class="status-dot"></span>
+              Publiée
+            </span>
+
+            <button
+              type="button"
+              class="btn-action btn-unpublish"
+              (click)="ouvrirConfirmation(confirmPublicationModal, 'depublier')"
+            >
+              <i class="fas fa-eye-slash"></i>
+
+              Dépublier
+            </button>
+          } @else {
+            <span class="publication-status unpublished">
+              <span class="status-dot"></span>
+
+              {{ noteInformation?.etat }}
+            </span>
+
+            <button
+              type="button"
+              class="btn-action btn-publish"
+              (click)="ouvrirConfirmation(confirmPublicationModal, 'publier')"
+            >
+              <i class="fas fa-paper-plane"></i>
+
+              Publier
+            </button>
+          }
+        </div>
+      </div>
+    </div>
+
+    <div class="note-layout">
+      <div class="note-card">
+        <div class="note-card-header">
+          <div class="note-card-title">
+            <div class="note-icon">
+              <i class="fas fa-bullhorn"></i>
+            </div>
+
+            <div>
+              <span class="section-label"> NOTE D'INFORMATION </span>
+
+              <h4>Contenu de la note</h4>
+            </div>
+          </div>
+
+          @if (isPublished()) {
+            <div class="mini-status published">
+              <i class="fas fa-check-circle"></i>
+              Publiée
+            </div>
+          } @else if (isDepublished()) {
+            <div class="mini-status unpublished">
+              <i class="fas fa-eye-slash"></i>
+              Dépubliée
+            </div>
+          } @else {
+            <div class="mini-status pending">
+              <i class="fas fa-clock"></i>
+              En cours
+            </div>
+          }
+        </div>
+
+        <div class="note-editor-wrapper">
+          <form [formGroup]="noteInformationFormGroup">
+            <input type="hidden" formControlName="id" />
+
+            <div class="ngx-editor-word-wrapper">
+              <ngx-editor-menu [editor]="editor" [toolbar]="toolbar"> </ngx-editor-menu>
+
+              <div class="word-page-container">
+                <div class="word-document-page">
+                  <ngx-editor [editor]="editor" formControlName="description"> </ngx-editor>
+                </div>
+              </div>
+            </div>
+          </form>
+        </div>
+
+        <div class="note-card-footer">
+          <div class="footer-info">
+            <div class="footer-icon">
+              <i class="fas fa-info"></i>
+            </div>
+
+            <div>
+              <strong> Diffusion de l'information </strong>
+
+              <p>
+                Une note publiée peut être consultée par les destinataires concernés au sein de la
+                communauté scolaire.
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<ng-template #confirmPublicationModal let-modal>
+  <div class="modal-custom-overlay" (click)="modal.dismiss()">
+    <div class="modal-custom-container" (click)="$event.stopPropagation()">
+      <!-- HEADER -->
+      <div class="modal-header-custom">
+        <h5 class="modal-title-custom">
+          @if (actionPublication === 'publier') {
+            <i class="fas fa-paper-plane me-2"></i>
+            Publier la note d'information
+          } @else {
+            <i class="fas fa-eye-slash me-2"></i>
+            Dépublier la note d'information
+          }
+        </h5>
+
+        <button
+          type="button"
+          class="btn-close-custom"
+          (click)="modal.dismiss()"
+          [disabled]="actionEnCours"
+        >
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
+
+      <div class="modal-body-custom">
+        <p class="modal-message">
+          @if (actionPublication === 'publier') {
+            Vous êtes sur le point de publier cette note d'information.
+          } @else {
+            Vous êtes sur le point de dépublier cette note d'information.
+          }
+        </p>
+
+        @if (actionPublication === 'publier') {
+          <div class="alert-info-action">
+            <i class="fas fa-info-circle me-2"></i>
+
+            <span>
+              La note pourra être consultée par les destinataires concernés après sa publication.
+            </span>
+          </div>
+        } @else {
+          <div class="alert-warning-action">
+            <i class="fas fa-eye-slash me-2"></i>
+
+            <span>
+              La note ne sera plus visible par les destinataires concernés après sa dépublication.
+            </span>
+          </div>
+        }
+
+        <p class="modal-question">Voulez-vous continuer ?</p>
+      </div>
+
+      <div class="modal-footer-custom">
+        <button
+          type="button"
+          class="btn-cancel"
+          (click)="modal.dismiss()"
+          [disabled]="actionEnCours"
+        >
+          <i class="fas fa-times me-2"></i>
+          Annuler
+        </button>
+
+        <button
+          type="button"
+          class="btn-confirm"
+          [class.btn-confirm-publish]="actionPublication === 'publier'"
+          [class.btn-confirm-unpublish]="actionPublication === 'depublier'"
+          [disabled]="actionEnCours"
+          (click)="modal.close('confirm')"
+        >
+          @if (actionEnCours) {
+            <span class="spinner-border spinner-border-sm me-2"></span>
+            Traitement...
+          } @else {
+            @if (actionPublication === 'publier') {
+              <i class="fas fa-paper-plane me-2"></i>
+              Publier
+            } @else {
+              <i class="fas fa-eye-slash me-2"></i>
+              Dépublier
+            }
+          }
+        </button>
+      </div>
+    </div>
+  </div>
+</ng-template>

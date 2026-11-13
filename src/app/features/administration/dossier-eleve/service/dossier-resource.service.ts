@@ -128,6 +128,28 @@ export class DossierResourceService {
     );
   }
 
+  filteredFilterDataTable<T, F>(endpoint: string, page: number, size: number, filters?: F | null): Observable<DataResult<T>> {
+    const url = `${this.baseUrl_1}/${endpoint}/filtered/page`;
+    const params = new HttpParams()
+      .set('page', page.toString())
+      .set('size', size.toString());
+
+    return this.http.post<DataResult<T>>(
+      url,
+      filters ?? {},
+      {
+        ...this.httpOptions,
+        params
+      }
+    ).pipe(
+      tap(response => console.log('Réponse API filtre:', response)),
+      catchError(error => {
+        console.error('Erreur API filtre:', error);
+        return throwError(() => error);
+      })
+    );
+  }
+
   fetchFilterByElementDataTable<T>(endpoint: string, id: number, page: number, size: number, filters?: any): Observable<DataResult<T>> {
     let url = `${this.baseUrl_1}/${endpoint}/${id}`;
 

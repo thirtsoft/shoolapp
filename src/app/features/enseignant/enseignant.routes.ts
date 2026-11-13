@@ -27,6 +27,7 @@ import { MyAccountComponent } from './pages/mon-compte/my-account/my-account.com
 import { EditerUneNoteComponent } from './pages/note/editer-une-note-component/editer-une-note-component';
 import { ListNotesElevesComponent } from './pages/note/list-notes-eleves-component/list-notes-eleves-component';
 import { SaisirNotesEleveComponent } from './pages/note/saisir-notes-eleve-component/saisir-notes-eleve-component';
+import { NoteInofoComponent } from './pages/note-inofo-component/note-inofo-component';
 
 
 export const ENSEIGNANTS_ROUTES: Routes = [
@@ -170,6 +171,11 @@ export const ENSEIGNANTS_ROUTES: Routes = [
       },
 
       {
+        path: 'note-info',
+        component: NoteInofoComponent
+      },
+
+       {
         path: 'change-password',
         component: EditPasswordEnseignantComponent
       },

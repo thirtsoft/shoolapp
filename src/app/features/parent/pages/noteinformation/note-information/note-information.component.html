@@ -1,4 +1,4 @@
-<app-generic-table-referentiel
+<app-generic-table-dossier
   title="Liste des notes d'informations"
   titleFitre="Reunions"
   [tableColumns]="columns"
@@ -9,7 +9,7 @@
   [pageSize]="pageSize"
   [isLoading]="isLoading"
   [isNoAjout]="true"
-  [isEyesIcon]="true"
+  [isPrnterIcon]="isPrinter"
   (pageChange)="changePage($event)"
   [showSearch]="false"
   [filtered]="tableFilters"
@@ -17,6 +17,5 @@
   [showFilters]="true"
   (resetFilters)="resetFilters()"
   (sizeChange)="changeSize($event)"
-  detailButtonLink="/parent/information/details"
 >
-</app-generic-table-referentiel>
+</app-generic-table-dossier>

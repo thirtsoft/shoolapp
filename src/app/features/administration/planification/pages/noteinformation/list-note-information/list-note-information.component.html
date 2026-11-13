@@ -7,13 +7,12 @@
   [isLockableIcon]="isLockable"
   [isPrnterIcon]="isPrinter"
   [isEditIcon]="isEdit"
+  [isEyesIcon]="true"
   [tableSizes]="tableSizes"
   [totalElements]="totalElements"
   [currentPage]="currentPage"
   [pageSize]="pageSize"
   (pageChange)="changePage($event)"
-  addButtonLink="/admin/planification/noteinformation/create"
-  modifierButtonLink="/admin/planification/noteinformation/edit"
   [deleteEndPoint]="deleteEndpoint"
   [showSearch]="false"
   [filtered]="tableFilters"
@@ -21,5 +20,8 @@
   [showFilters]="true"
   (resetFilters)="resetFilters()"
   (sizeChange)="changeSize($event)"
+  addButtonLink="/admin/planification/noteinformation/create"
+  modifierButtonLink="/admin/planification/noteinformation/edit"
+  detailButtonLink="/admin/planification/noteinformation/details"
 >
 </app-generic-table-dossier>

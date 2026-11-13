@@ -6,13 +6,11 @@
   [isLoading]="isLoading"
   [isEditIcon]="true"
   [isNoAjout]="true"
-  [isLockableIcon]="isLockable"
   [tableSizes]="tableSizes"
   [totalElements]="totalElements"
   [currentPage]="currentPage"
   [pageSize]="pageSize"
   (pageChange)="changePage($event)"
-  modifierButtonLink="/admin/comptabilite/paiement/edit"
   [deleteEndPoint]="deleteEndpoint"
   [showSearch]="false"
   [filtered]="tableFilters"
@@ -20,5 +18,6 @@
   [showFilters]="true"
   (resetFilters)="resetFilters()"
   (sizeChange)="changeSize($event)"
+  modifierButtonLink="/admin/comptabilite/paiement/edit"
 >
 </app-generic-table-dossier>
