@@ -11,9 +11,7 @@ import { AnneeScolaire } from '../../../../../../core/models/referentiels/annee-
 import { ListeClasse } from '../../../../../../core/models/referentiels/classe';
 import { FraisInscription } from '../../../../../../core/models/referentiels/frais-inscription';
 import { MoyenPaiement } from '../../../../../../core/models/referentiels/moyen-paiement';
-import { LocalStorageService } from '../../../../../../core/services/local-storage.service';
 import { ReferentielService } from '../../../../referentiel/service/referentiel.service';
-import { UtilisateurService } from '../../../../utilisateur/service/utilisateur.service';
 import { DossierEleveService } from '../../../service/dossier-eleve.service';
 
 @Component({
@@ -57,8 +55,6 @@ export class CreationInscriptionComponent implements OnInit {
 
   private readonly dossierEleveService = inject(DossierEleveService);
   private readonly referentielService = inject(ReferentielService);
-  private readonly localStorage = inject(LocalStorageService);
-  private readonly utilisateurService = inject(UtilisateurService);
   private readonly toastService = inject(ToastrService);
   private readonly _formBuilder = inject(FormBuilder);
   private readonly route = inject(ActivatedRoute);
@@ -396,6 +392,7 @@ export class CreationInscriptionComponent implements OnInit {
 
   ajouterEditInscription() {
     const payload = this.inscriptionFormGroup.value;
+    console.log('pauload send', payload);
     if (!this.isEdit) {
       this.dossierEleveService.saveInscription(payload).subscribe({
         next: (data) => {
