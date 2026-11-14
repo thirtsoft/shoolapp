@@ -21,6 +21,7 @@ import { CreateEleveResponse, ResponseEleve, ResponseMessage } from '../../../..
 import { EleveInscritClasse } from '../../../../core/models/dossiereleve/eleve-inscrit-classe-response';
 import { InscriptionEleveAnneeCouranteResponse } from '../../../../core/models/dossiereleve/inscription-eleve-annee-courante-response';
 import { BulletinEleveResponse } from '../../../../core/models/dossiereleve/bulletin/bulletin-eleve-response';
+import { DetailsEleveResponse } from '../../../../core/models/dossiereleve/dossier-eleve';
 
 @Injectable({
   providedIn: 'root'
@@ -59,8 +60,13 @@ export class DossierEleveService {
     return this.http.get<DetailsEleve>(`${this.baseUrl}/eleve/details/${id}`);
   }
 
-  getDetailsDossierEleve(id: number): Observable<any> {
-    return this.http.get<any>(`${this.baseUrl}/eleve/${id}/details`);
+  getDetailsDossierEleve(eleveUuid: string, anneeScolaireUuid: string): Observable<DetailsEleveResponse> {
+    return this.http.get<DetailsEleveResponse>(
+      `${this.baseUrl}/dossiers-eleves/${eleveUuid}`,
+      {
+        params: { anneeScolaireUuid }
+      }
+    );
   }
 
   enregistrerEleveAvecPhotoFiles(formData: FormData): Observable<ApiResponse<CreateEleveResponse>> {

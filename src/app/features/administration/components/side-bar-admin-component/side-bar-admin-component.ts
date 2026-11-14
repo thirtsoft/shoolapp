@@ -42,16 +42,6 @@ export class SideBarAdminComponent {
     { route: '/admin/comptabilite/depenses', ico: '💸', label: 'Dépenses', section: '', badge: '' },
 
 
-    { route: '/admin/comptabilite/compte-bancaires', ico: '💳', label: 'Comptes bancaires', section: 'TRÉSORERIE', badge: '' },
-    { route: '/admin/comptabilite/depots-bancaires', ico: '🏦', label: 'Dépôts bancaires', section: '', badge: '' },
-
-
-
-    { route: '/admin/rh/personnels', ico: '👥', label: 'Personnel', section: 'RH', badge: '' },
-    { route: '/admin/rh/contrats', ico: '📄', label: 'Contrats' },
-    { route: '/admin/rh/paies', ico: '💵', label: 'Paie' },
-    { route: '/admin/rh/fiches-emargement', ico: '📝', label: 'Fiches d’émargement' },
-    { route: '/admin/rh/avances-salaires', ico: '💰', label: 'Demandes d’avance' },
     //
     /*
     {
@@ -80,6 +70,17 @@ export class SideBarAdminComponent {
     { route: '/admin/cahiers-textes', ico: '📖', label: 'Cahier de texte', section: '', badge: '' },
     { route: '/admin/dossier-eleve/bulletin', ico: '📋', label: 'Bulletins', section: '', badge: '' },
     { route: '/admin/examen', ico: '🏆', label: 'Examens', section: '', badge: '' },
+
+
+    { route: '/admin/comptabilite/compte-bancaires', ico: '💳', label: 'Comptes bancaires', section: 'TRÉSORERIE', badge: '' },
+    { route: '/admin/comptabilite/depots-bancaires', ico: '🏦', label: 'Dépôts bancaires', section: '', badge: '' },
+
+
+    { route: '/admin/rh/personnels', ico: '👥', label: 'Personnel', section: 'RH', badge: '' },
+    { route: '/admin/rh/contrats', ico: '📄', label: 'Contrats' },
+    { route: '/admin/rh/paies', ico: '💵', label: 'Paie' },
+    { route: '/admin/rh/fiches-emargement', ico: '📝', label: 'Fiches d’émargement' },
+    { route: '/admin/rh/avances-salaires', ico: '💰', label: 'Demandes d’avance' },
 
     // ═══════════ PLANIFICATION ═══════════
     { route: '/admin/planification/emploi-du-temps', ico: '🕐', label: 'Emplois du temps', section: 'PLANIFICATION', badge: '' },

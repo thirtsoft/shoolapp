@@ -9,4 +9,6 @@ export interface AnneeScolaireEncoursResponse {
 
     dateFin?: Date;
 
+    etat?: string;
+
 }
