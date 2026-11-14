@@ -39,7 +39,7 @@ export const DOSSIERS_ELEVES_ROUTES: Routes = [
         component: ModificationEleveComponent
       },
       {
-        path: 'eleve/details/:id',
+        path: 'eleve/details/:uuid',
         component: DetailsEleveComponent
       },
 
