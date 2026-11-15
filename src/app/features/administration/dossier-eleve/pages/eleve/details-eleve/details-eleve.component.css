@@ -666,14 +666,7 @@
 
 .card-header h2 {
   margin: 0;
-
-  color: #12295f;
-
-  font-family:
-    Georgia,
-    "Times New Roman",
-    serif;
-
+  font-family: Georgia, "Times New Roman", serif;
   font-size: 17px;
   line-height: 1.2;
 }
@@ -2517,5 +2510,177 @@
     left: 0;
     right: 0;
     width: 100%;
+  }
+}
+
+/* ============================================================
+   FILTRES DOSSIER ÉLÈVE
+============================================================ */
+
+.filter-panel {
+  display: flex;
+  flex-direction: row !important;
+  align-items: flex-end !important;
+  gap: 24px;
+
+  width: 100%;
+  padding: 14px 18px;
+  margin-bottom: 20px;
+
+  background: #f8fafc;
+  border: 1px solid #e5e7eb;
+  border-radius: 10px;
+
+  flex-wrap: nowrap;
+  box-sizing: border-box;
+}
+
+
+/* ============================================================
+   GROUPE FILTRE
+   LABEL + CHAMP SUR LA MÊME LIGNE
+============================================================ */
+
+.filter-panel .filter-group {
+  display: flex !important;
+  flex-direction: row !important;
+  align-items: center !important;
+
+  gap: 8px;
+
+  flex: 0 0 auto;
+  margin: 0;
+  padding: 0;
+
+  white-space: nowrap;
+}
+
+.filter-panel .filter-group label {
+  display: inline-flex;
+  align-items: center;
+
+  margin: 0;
+
+  color: #475569;
+  font-size: 13px;
+  font-weight: 600;
+
+  white-space: nowrap;
+}
+
+.filter-panel .filter-group label i {
+  margin-right: 5px;
+  color: #64748b;
+  font-size: 13px;
+}
+
+
+/* ============================================================
+   SELECT
+============================================================ */
+
+.filter-panel .filter-control {
+  width: 180px;
+  height: 38px;
+
+  padding: 0 12px;
+
+  border: 1px solid #d8dee7;
+  border-radius: 7px;
+
+  background: #ffffff;
+  color: #1e293b;
+
+  font-size: 13px;
+
+  outline: none;
+  cursor: pointer;
+
+  box-sizing: border-box;
+
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.filter-panel .filter-control:hover {
+  border-color: #b8c2d1;
+}
+
+.filter-panel .filter-control:focus {
+  border-color: #2563eb;
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.08);
+}
+
+
+/* ============================================================
+   ACTIONS
+============================================================ */
+
+.filter-panel .filter-actions {
+  display: flex !important;
+  flex-direction: row !important;
+  align-items: center !important;
+
+  flex: 0 0 auto;
+
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+.btn-filter-secondary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+
+  height: 38px;
+  padding: 0 14px;
+
+  border: 1px solid #d8dee7;
+  border-radius: 7px;
+
+  background: #ffffff;
+  color: #475569;
+
+  font-size: 13px;
+  font-weight: 600;
+
+  white-space: nowrap;
+  cursor: pointer;
+
+  box-sizing: border-box;
+
+  transition:
+    background-color 0.2s ease,
+    border-color 0.2s ease,
+    color 0.2s ease;
+}
+
+.btn-filter-secondary:hover {
+  background: #f1f5f9;
+  border-color: #c4ccd8;
+  color: #1e293b;
+}
+
+
+/* ============================================================
+   RESPONSIVE
+============================================================ */
+
+@media (max-width: 1100px) {
+  .filter-panel {
+    gap: 14px;
+  }
+
+  .filter-panel .filter-control {
+    width: 150px;
+  }
+}
+
+@media (max-width: 850px) {
+  .filter-panel {
+    flex-wrap: wrap;
+    align-items: center !important;
   }
 }

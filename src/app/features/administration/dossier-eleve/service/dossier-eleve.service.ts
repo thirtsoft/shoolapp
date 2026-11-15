@@ -1,16 +1,20 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
-import { Observable, of } from 'rxjs';
-import { catchError } from 'rxjs/operators';
+import { Observable, of, throwError } from 'rxjs';
+import { catchError, tap } from 'rxjs/operators';
 import { environment } from '../../../../../environments/environment';
 import { ApiResponse } from '../../../../core/datamodel/api-response.model';
 import { Paiement } from '../../../../core/models/comptabilite/paiement';
+import { BulletinEleveResponse } from '../../../../core/models/dossiereleve/bulletin/bulletin-eleve-response';
 import { DetailsEleve } from '../../../../core/models/dossiereleve/details-eleve';
 import { DetailsInscription } from '../../../../core/models/dossiereleve/details-inscription';
+import { DetailsEleveResponse, ParcoursScolaireEleve } from '../../../../core/models/dossiereleve/dossier-eleve';
+import { EleveInscritClasse } from '../../../../core/models/dossiereleve/eleve-inscrit-classe-response';
 import { GetEleveResponse } from '../../../../core/models/dossiereleve/eleve/get-eleve-response.model';
 import { ParentSearchToCreateEleve } from '../../../../core/models/dossiereleve/eleve/parent-search-to-create-eleve.model';
 import { UpdateElevePhotoResponse } from '../../../../core/models/dossiereleve/eleve/update-eleve-photo-response.model';
 import { UpdateEleveRequest } from '../../../../core/models/dossiereleve/eleve/update-eleve-request.model';
+import { InscriptionEleveAnneeCouranteResponse } from '../../../../core/models/dossiereleve/inscription-eleve-annee-courante-response';
 import { ListeEleve } from '../../../../core/models/dossiereleve/liste-eleve';
 import { Eleve } from '../../../../core/models/dossiereleve/request/eleve';
 import { EleveEdit } from '../../../../core/models/dossiereleve/request/eleve-edit';
@@ -18,10 +22,6 @@ import { Inscription } from '../../../../core/models/dossiereleve/request/inscri
 import { ListeInscription } from '../../../../core/models/dossiereleve/request/liste-inscription';
 import { PaiementAdd } from '../../../../core/models/dossiereleve/request/paiement-add';
 import { CreateEleveResponse, ResponseEleve, ResponseMessage } from '../../../../core/models/message/response/response-message';
-import { EleveInscritClasse } from '../../../../core/models/dossiereleve/eleve-inscrit-classe-response';
-import { InscriptionEleveAnneeCouranteResponse } from '../../../../core/models/dossiereleve/inscription-eleve-annee-courante-response';
-import { BulletinEleveResponse } from '../../../../core/models/dossiereleve/bulletin/bulletin-eleve-response';
-import { DetailsEleveResponse } from '../../../../core/models/dossiereleve/dossier-eleve';
 
 @Injectable({
   providedIn: 'root'
@@ -58,15 +58,6 @@ export class DossierEleveService {
 
   getDetailsEleve(id: number): Observable<DetailsEleve> {
     return this.http.get<DetailsEleve>(`${this.baseUrl}/eleve/details/${id}`);
-  }
-
-  getDetailsDossierEleve(eleveUuid: string, anneeScolaireUuid: string): Observable<DetailsEleveResponse> {
-    return this.http.get<DetailsEleveResponse>(
-      `${this.baseUrl}/dossiers-eleves/${eleveUuid}`,
-      {
-        params: { anneeScolaireUuid }
-      }
-    );
   }
 
   enregistrerEleveAvecPhotoFiles(formData: FormData): Observable<ApiResponse<CreateEleveResponse>> {
