@@ -7,6 +7,7 @@ import { DataResult } from '../../../../core/datamodel/data-model';
 import { ResponseMessage } from '../../../../core/response/response-message';
 import { FaireAppelRequest } from '../../../../core/models/dossiereleve/absence/faire-appel-request';
 import { AttendanceRecordResponse } from '../../../../core/models/dossiereleve/absence/attendance-record-response';
+import { DetailsEleveResponse, DossierPaiementEleve, ListeResultatEleve, ParcoursScolaireEleve, PresenceEleve, RechercheFactureEleve, RecherchePresenceEleve, RechercheResultatEleve } from '../../../../core/models/dossiereleve/dossier-eleve';
 
 @Injectable({
   providedIn: 'root'
@@ -145,6 +146,87 @@ export class DossierResourceService {
       tap(response => console.log('Réponse API filtre:', response)),
       catchError(error => {
         console.error('Erreur API filtre:', error);
+        return throwError(() => error);
+      })
+    );
+  }
+
+  getDetailsDossierEleve(eleveUuid: string, anneeScolaireUuid: string): Observable<DetailsEleveResponse> {
+    return this.http.get<DetailsEleveResponse>(
+      `${this.baseUrl_1}/dossiers-eleves/${eleveUuid}`,
+      {
+        params: { anneeScolaireUuid }
+      }
+    );
+  }
+
+  getParcoursScolaireEleve(eleveUuid: string): Observable<ParcoursScolaireEleve[]> {
+    const url = `${this.baseUrl_1}/dossiers-eleves/${eleveUuid}/parcours-scolaire`;
+    return this.http.get<ParcoursScolaireEleve[]>(
+      url, this.httpOptions
+    ).pipe(
+      tap(response =>
+        console.log('Parcours scolaire élève :', response)
+      ),
+      catchError(error => {
+        console.error(
+          'Erreur API parcours scolaire :',
+          error
+        );
+        return throwError(() => error);
+      })
+    );
+  }
+
+  getResultatsElevePaged(page: number, size: number, recherche: RechercheResultatEleve): Observable<DataResult<ListeResultatEleve>> {
+
+    return this.filteredFilterDataTable<
+      ListeResultatEleve,
+      RechercheResultatEleve
+    >(
+      'dossiers-eleves/resultat',
+      page,
+      size,
+      recherche
+    );
+  }
+
+  getPresencesElevePaged(page: number, size: number, recherche: RecherchePresenceEleve): Observable<DataResult<PresenceEleve>> {
+
+    return this.filteredFilterDataTable<
+      PresenceEleve,
+      RecherchePresenceEleve
+    >(
+      'dossiers-eleves/presence',
+      page,
+      size,
+      recherche
+    );
+  }
+
+
+  getPaiementEleve(page: number, size: number, recherche: RechercheFactureEleve): Observable<DossierPaiementEleve> {
+    const url = `${this.baseUrl_1}/dossiers-eleves/paiement/filtered/page`;
+    const params = new HttpParams()
+      .set('page', page.toString())
+      .set('size', size.toString());
+
+    return this.http.post<DossierPaiementEleve>(
+      url,
+      recherche ?? {},
+      {
+        ...this.httpOptions,
+        params
+      }
+    ).pipe(
+      tap(response => {
+        console.log('Réponse paiement élève :', response);
+      }),
+      catchError(error => {
+        console.error(
+          'Erreur API paiement élève :',
+          error
+        );
         return throwError(() => error);
       })
     );

@@ -1,16 +1,13 @@
 <div class="dossier-page">
-  <!-- ============================================================
-       EN-TÊTE
-  ============================================================ -->
   <div class="page-heading">
     <div class="heading-left">
       <button type="button" class="btn-retour" (click)="retour()">
-        <i class="bi bi-arrow-left"></i>
+        <i class="fas fa-arrow-left"></i>
         Retour
       </button>
 
       <div class="heading-icon">
-        <i class="bi bi-person-vcard"></i>
+        <i class="fa fa-folder-plus"></i>
       </div>
 
       <div class="heading-content">
@@ -26,9 +23,6 @@
       </div>
     </div>
 
-    <!-- ============================================================
-         ACTIONS EN-TÊTE
-    ============================================================ -->
     <div class="heading-actions">
       <div class="annee-selector-wrapper">
         <i class="bi bi-calendar3"></i>
@@ -48,7 +42,7 @@
           }
         </select>
 
-        <i class="bi bi-chevron-down annee-selector-chevron"></i>
+        <i class="fas fa-chevron-down annee-selector-chevron"></i>
       </div>
 
       <div class="actions-dropdown">
@@ -58,7 +52,7 @@
           (click)="toggleActionsMenu()"
           [attr.aria-expanded]="actionsMenuOuvert"
         >
-          <i class="bi bi-lightning"></i>
+          <i class="fas fa-lightning"></i>
 
           Actions
 
@@ -73,7 +67,7 @@
           <div class="actions-menu">
             <button type="button" class="action-menu-item" (click)="exporterDossierPdf()">
               <span class="action-menu-icon pdf">
-                <i class="bi bi-file-earmark-pdf-fill"></i>
+                <i class="fas fa-file-pdf"></i>
               </span>
 
               <span class="action-menu-content">
@@ -84,7 +78,7 @@
 
             <button type="button" class="action-menu-item" (click)="imprimerDossier()">
               <span class="action-menu-icon print">
-                <i class="bi bi-printer-fill"></i>
+                <i class="fas fa-print"></i>
               </span>
 
               <span class="action-menu-content">
@@ -98,9 +92,6 @@
     </div>
   </div>
 
-  <!-- ============================================================
-       BANDEAU ÉLÈVE
-  ============================================================ -->
   @if (eleveDetails; as eleve) {
     <section class="student-banner">
       <div class="student-identity">
@@ -148,11 +139,10 @@
         </div>
       </div>
 
-      <!-- KPIs ASSIDUITÉ -->
       <div class="student-kpis">
         <div class="student-kpi kpi-presence">
           <div class="kpi-icon">
-            <i class="bi bi-check-circle-fill"></i>
+            <i class="fas fa-check-circle"></i>
           </div>
 
           <div class="kpi-label">Présence</div>
@@ -164,7 +154,7 @@
 
         <div class="student-kpi kpi-absence">
           <div class="kpi-icon">
-            <i class="bi bi-x-lg"></i>
+            <i class="fas fa-x"></i>
           </div>
 
           <div class="kpi-label">Absences</div>
@@ -178,7 +168,7 @@
 
         <div class="student-kpi kpi-retard">
           <div class="kpi-icon">
-            <i class="bi bi-clock-fill"></i>
+            <i class="fas fa-clock"></i>
           </div>
 
           <div class="kpi-label">Retards</div>
@@ -193,9 +183,6 @@
     </section>
   }
 
-  <!-- ============================================================
-       NAVIGATION
-  ============================================================ -->
   <nav class="dossier-tabs">
     <button
       type="button"
@@ -203,7 +190,7 @@
       [class.active]="activeTab === 'overview'"
       (click)="setActiveTab('overview')"
     >
-      <i class="bi bi-house-fill"></i>
+      <i class="fas fa-house"></i>
       <span>Vue d'ensemble</span>
     </button>
 
@@ -213,7 +200,7 @@
       [class.active]="activeTab === 'parcours'"
       (click)="setActiveTab('parcours')"
     >
-      <i class="bi bi-mortarboard-fill"></i>
+      <i class="fas fa-mortar-board"></i>
       <span>Parcours scolaire</span>
     </button>
 
@@ -223,7 +210,7 @@
       [class.active]="activeTab === 'resultats'"
       (click)="setActiveTab('resultats')"
     >
-      <i class="bi bi-bar-chart-fill"></i>
+      <i class="fas fa-bar-chart"></i>
       <span>Résultats & évaluations</span>
     </button>
 
@@ -233,7 +220,7 @@
       [class.active]="activeTab === 'presence'"
       (click)="setActiveTab('presence')"
     >
-      <i class="bi bi-calendar-check"></i>
+      <i class="fas fa-calendar-check"></i>
       <span>Présence</span>
     </button>
 
@@ -243,7 +230,7 @@
       [class.active]="activeTab === 'paiements'"
       (click)="setActiveTab('paiements')"
     >
-      <i class="bi bi-credit-card-fill"></i>
+      <i class="fas fa-credit-card-alt"></i>
       <span>Paiements</span>
     </button>
 
@@ -253,35 +240,19 @@
       [class.active]="activeTab === 'documents'"
       (click)="setActiveTab('documents')"
     >
-      <i class="bi bi-file-earmark-text-fill"></i>
+      <i class="fas fa-file-archive"></i>
       <span>Documents</span>
-    </button>
-
-    <button
-      type="button"
-      class="dossier-tab tab-more"
-      [class.active]="activeTab === 'plus'"
-      (click)="setActiveTab('plus')"
-    >
-      <i class="bi bi-three-dots"></i>
-      <span>Plus</span>
     </button>
   </nav>
 
-  <!-- ============================================================
-       VUE D'ENSEMBLE
-  ============================================================ -->
   @if (activeTab === 'overview') {
     <div class="overview-grid">
-      <!-- ========================================================
-           INFORMATIONS GÉNÉRALES
-      ======================================================== -->
       @if (eleveDetails; as eleve) {
         <section class="content-card">
           <div class="card-header">
             <div class="card-title-wrapper">
               <div class="card-icon icon-blue">
-                <i class="bi bi-person-vcard"></i>
+                <i class="fas fa-person"></i>
               </div>
 
               <div>
@@ -295,7 +266,7 @@
             <div class="information-list">
               <div class="information-row">
                 <div class="information-label">
-                  <i class="bi bi-calendar3"></i>
+                  <i class="fas fa-calendar"></i>
                   Date de naissance
                 </div>
 
@@ -310,7 +281,7 @@
 
               <div class="information-row">
                 <div class="information-label">
-                  <i class="bi bi-geo-alt"></i>
+                  <i class="fas fa-marker"></i>
                   Lieu de naissance
                 </div>
 
@@ -322,7 +293,7 @@
               <div class="information-row">
                 <div class="information-label">
                   <i
-                    class="bi"
+                    class="fas fa-genderless"
                     [class.bi-gender-female]="eleve.sexe?.toLowerCase() === 'féminin'"
                     [class.bi-gender-male]="eleve.sexe?.toLowerCase() !== 'féminin'"
                   ></i>
@@ -337,7 +308,7 @@
 
               <div class="information-row">
                 <div class="information-label">
-                  <i class="bi bi-globe"></i>
+                  <i class="fas fa-globe"></i>
                   Nationalité
                 </div>
 
@@ -348,7 +319,7 @@
 
               <div class="information-row">
                 <div class="information-label">
-                  <i class="bi bi-house"></i>
+                  <i class="fas fa-house"></i>
                   Adresse
                 </div>
 
@@ -369,7 +340,7 @@
           <div class="card-header">
             <div class="card-title-wrapper">
               <div class="card-icon icon-blue">
-                <i class="bi bi-mortarboard-fill"></i>
+                <i class="fas fa-mortar-board"></i>
               </div>
 
               <div>
@@ -380,7 +351,7 @@
 
             <button type="button" class="btn-outline-action" (click)="setActiveTab('parcours')">
               Voir le parcours
-              <i class="bi bi-arrow-right"></i>
+              <i class="fas fa-arrow-right"></i>
             </button>
           </div>
 
@@ -388,7 +359,7 @@
             <div class="school-content">
               <div class="current-school">
                 <div class="class-icon">
-                  <i class="bi bi-mortarboard-fill"></i>
+                  <i class="fas fa-mortar-board"></i>
                 </div>
 
                 <div class="current-class-label">Classe actuelle</div>
@@ -398,7 +369,7 @@
                 </div>
 
                 <span class="badge-success">
-                  <i class="bi bi-check-circle-fill"></i>
+                  <i class="fas fa-check-circle"></i>
                   {{ eleve.statutInscription || 'Non renseignée' }}
                 </span>
 
@@ -462,15 +433,12 @@
         </section>
       }
 
-      <!-- ========================================================
-           INFO PARENT
-      ======================================================== -->
       @if (eleveDetails; as eleve) {
         <section class="content-card">
           <div class="card-header">
             <div class="card-title-wrapper">
               <div class="card-icon icon-purple">
-                <i class="bi bi-people-fill"></i>
+                <i class="fas fa-user-friends"></i>
               </div>
 
               <div>
@@ -504,14 +472,14 @@
 
                       @if (parent.telephone) {
                         <div class="responsible-contact">
-                          <i class="bi bi-telephone"></i>
+                          <i class="fas fa-phone"></i>
                           {{ parent.telephone }}
                         </div>
                       }
 
                       @if (parent.email) {
                         <div class="responsible-contact">
-                          <i class="bi bi-envelope"></i>
+                          <i class="fas fa-envelope"></i>
                           {{ parent.email }}
                         </div>
                       }
@@ -529,14 +497,11 @@
         </section>
       }
 
-      <!-- ========================================================
-           DERNIÈRES INFORMATIONS
-      ======================================================== -->
       <section class="content-card">
         <div class="card-header">
           <div class="card-title-wrapper">
             <div class="card-icon icon-orange">
-              <i class="bi bi-clock-history"></i>
+              <i class="fas fa-clock"></i>
             </div>
 
             <div>
@@ -551,7 +516,7 @@
           @if (eleveDetails?.dernieresInformations?.derniereNote; as note) {
             <div class="event-item">
               <div class="event-icon event-blue">
-                <i class="bi bi-journal-check"></i>
+                <i class="fas fa-book-journal-whills"></i>
               </div>
 
               <div class="event-content">
@@ -578,11 +543,10 @@
             </div>
           }
 
-          <!-- DERNIER PAIEMENT -->
           @if (eleveDetails?.dernieresInformations?.dernierPaiement; as paiement) {
             <div class="event-item">
               <div class="event-icon event-success">
-                <i class="bi bi-credit-card"></i>
+                <i class="fas fa-credit-card"></i>
               </div>
 
               <div class="event-content">
@@ -612,7 +576,6 @@
             </div>
           }
 
-          <!-- DERNIÈRE PRÉSENCE -->
           @if (eleveDetails?.dernieresInformations?.dernierePresence; as presence) {
             <div class="event-item">
               <div
@@ -621,7 +584,7 @@
                 [class.event-success]="presence.status !== 'ABSENCE'"
               >
                 <i
-                  class="bi"
+                  class="fas fa-check-circle"
                   [class.bi-person-x-fill]="presence.status === 'ABSENCE'"
                   [class.bi-calendar-check]="presence.status !== 'ABSENCE'"
                 ></i>
@@ -651,7 +614,6 @@
             </div>
           }
 
-          <!-- AUCUNE INFORMATION -->
           @if (
             !eleveDetails?.dernieresInformations?.derniereNote &&
             !eleveDetails?.dernieresInformations?.dernierPaiement &&
@@ -668,15 +630,12 @@
     </div>
   }
 
-  <!-- ============================================================
-       PARCOURS SCOLAIRE
-  ============================================================ -->
   @if (activeTab === 'parcours') {
     <section class="content-card full-width-card">
       <div class="card-header">
         <div class="card-title-wrapper">
           <div class="card-icon icon-blue">
-            <i class="bi bi-mortarboard-fill"></i>
+            <i class="fas fa-mortar-board"></i>
           </div>
 
           <div>
@@ -723,7 +682,7 @@
             </div>
           } @else {
             <div class="empty-state">
-              <i class="bi bi-mortarboard"></i>
+              <i class="fas fa-mortar-board"></i>
 
               <span> Aucune information scolaire disponible. </span>
             </div>
@@ -733,338 +692,664 @@
     </section>
   }
 
-  <!-- ============================================================
-       RESULTATS & ÉVALUATIONS
-  ============================================================ -->
   @if (activeTab === 'resultats') {
     <section class="content-card full-width-card">
       <div class="card-header">
         <div class="card-title-wrapper">
           <div class="card-icon icon-purple">
-            <i class="bi bi-bar-chart-fill"></i>
+            <span class="card-icon-symbol">▥</span>
           </div>
 
           <div>
             <h2>Résultats & évaluations</h2>
 
             <p>
-              Dernière évaluation de l'année scolaire
+              Résultats et évaluations de l'année scolaire
               {{ eleveDetails?.anneeScolaireLibelle || '-' }}
             </p>
           </div>
         </div>
 
         <div class="year-context">
-          <i class="bi bi-calendar3"></i>
+          <span class="year-context-icon">◷</span>
           {{ eleveDetails?.anneeScolaireLibelle || '-' }}
         </div>
       </div>
 
       <div class="card-body">
-        @if (eleveDetails?.dernieresInformations?.derniereNote; as note) {
+        <div class="filter-panel">
+          <div class="filter-group">
+            <label for="resultat-matiere"> Matière </label>
+
+            <select
+              id="resultat-matiere"
+              class="filter-control"
+              [(ngModel)]="filtreResultats.matiereUuid"
+              (ngModelChange)="loadResultats(0)"
+            >
+              <option [ngValue]="null">Toutes les matières</option>
+
+              @for (matiere of matieresEnseignees; track matiere.matiereUuid) {
+                <option [ngValue]="matiere.matiereUuid">
+                  {{ matiere.matiereLibelle }}
+                </option>
+              }
+            </select>
+          </div>
+
+          <div class="filter-group">
+            <label for="resultat-type"> Type </label>
+
+            <select
+              id="resultat-type"
+              class="filter-control"
+              [(ngModel)]="filtreResultats.type"
+              (ngModelChange)="loadResultats(0)"
+            >
+              <option [ngValue]="null">Tous les types</option>
+
+              <option value="DEVOIR">Devoir</option>
+
+              <option value="COMPOSITION">Composition</option>
+            </select>
+          </div>
+
+          <div class="filter-group">
+            <label for="resultat-mois"> Mois </label>
+
+            <select
+              id="resultat-mois"
+              class="filter-control"
+              [(ngModel)]="filtreResultats.mois"
+              (ngModelChange)="loadResultats(0)"
+            >
+              <option [ngValue]="null">Tous les mois</option>
+
+              @for (mois of moisList; track mois.id) {
+                <option [ngValue]="mois.id">
+                  {{ mois.mois }}
+                </option>
+              }
+            </select>
+          </div>
+
+          <div class="filter-actions">
+            <button
+              type="button"
+              class="btn-filter-secondary"
+              (click)="
+                filtreResultats.matiereUuid = null;
+                filtreResultats.type = null;
+                filtreResultats.mois = null;
+                loadResultats(0)
+              "
+            >
+              Réinitialiser
+            </button>
+          </div>
+        </div>
+
+        @if (loadingResultats) {
+          <div class="loading-state">
+            <span class="loading-spinner"></span>
+            <span>Chargement des résultats...</span>
+          </div>
+        } @else if (resultats.length > 0) {
           <div class="result-table">
             <div class="result-row result-header">
               <span>Matière</span>
+
               <span>Évaluation</span>
+
               <span>Type</span>
+
               <span>Date</span>
+
               <span>Note</span>
             </div>
 
-            <div class="result-row">
-              <span>
-                {{ note.matiere || '-' }}
-              </span>
+            @for (
+              resultat of resultats;
+              track resultat.matiere + '-' + resultat.evaluation + '-' + resultat.date
+            ) {
+              <div class="result-row">
+                <span>
+                  {{ resultat.matiere || '-' }}
+                </span>
 
-              <span>
-                {{ note.evaluation || '-' }}
-              </span>
+                <span>
+                  {{ resultat.evaluation || '-' }}
+                </span>
 
-              <span>
-                {{ note.type || '-' }}
-              </span>
+                <span>
+                  {{ resultat.type || '-' }}
+                </span>
 
-              <span>
-                {{ note.date ? (note.date | date: 'dd/MM/yyyy') : '-' }}
-              </span>
+                <span>
+                  {{ resultat.date ? (resultat.date | date: 'dd/MM/yyyy') : '-' }}
+                </span>
 
-              <strong>
-                {{ note?.note ?? '-' }}
+                <strong>
+                  {{ resultat?.note ?? '-' }}
 
-                @if (note.note !== null && note.note !== undefined) {
-                  /20
-                }
-              </strong>
-            </div>
+                  @if (resultat.note !== null && resultat.note !== undefined) {
+                    /20
+                  }
+                </strong>
+              </div>
+            }
           </div>
+
+          @if (resultatsTotalPages > 1) {
+            <div class="pagination-container">
+              <button
+                type="button"
+                class="pagination-btn"
+                [disabled]="resultatsPage === 0"
+                (click)="loadResultats(resultatsPage - 1)"
+                aria-label="Page précédente"
+                title="Page précédente"
+              >
+                ‹
+              </button>
+
+              <span class="pagination-info">
+                Page {{ resultatsPage + 1 }}
+                sur
+                {{ resultatsTotalPages }}
+              </span>
+
+              <button
+                type="button"
+                class="pagination-btn"
+                [disabled]="resultatsPage >= resultatsTotalPages - 1"
+                (click)="loadResultats(resultatsPage + 1)"
+                aria-label="Page suivante"
+                title="Page suivante"
+              >
+                ›
+              </button>
+            </div>
+          }
         } @else {
           <div class="empty-state">
-            <i class="bi bi-bar-chart"></i>
+            <span class="empty-state-icon">—</span>
 
-            <span> Aucune évaluation disponible pour cette année scolaire. </span>
+            <span> Aucun résultat ne correspond aux critères sélectionnés. </span>
           </div>
         }
       </div>
     </section>
   }
 
-  <!-- ============================================================
-       PRÉSENCE
-  ============================================================ -->
   @if (activeTab === 'presence') {
     <section class="content-card full-width-card">
       <div class="card-header">
         <div class="card-title-wrapper">
           <div class="card-icon icon-blue">
-            <i class="bi bi-calendar-check"></i>
+            <span class="card-icon-symbol">✓</span>
           </div>
 
           <div>
             <h2>Présence</h2>
 
-            <p>
-              Situation de présence de l'année scolaire
-              {{ eleveDetails?.anneeScolaireLibelle || '-' }}
-            </p>
+            <p>Historique de présence de l'élève</p>
           </div>
         </div>
 
         <div class="year-context">
-          <i class="bi bi-calendar3"></i>
+          <span class="year-context-icon">◷</span>
+
           {{ eleveDetails?.anneeScolaireLibelle || '-' }}
         </div>
       </div>
 
       <div class="card-body">
-        <!-- STATISTIQUES -->
-        @if (eleveDetails; as eleve) {
-          <div class="student-kpis">
-            <div class="student-kpi kpi-presence">
-              <div class="kpi-icon">
-                <i class="bi bi-check-circle-fill"></i>
-              </div>
+        <div class="filter-panel">
+          <div class="filter-group">
+            <label for="presence-cours"> Cours </label>
 
-              <div class="kpi-label">Présence</div>
-
-              <div class="kpi-value">{{ eleve.tauxPresence ?? 0 }} %</div>
-            </div>
-
-            <div class="student-kpi kpi-absence">
-              <div class="kpi-icon">
-                <i class="bi bi-x-lg"></i>
-              </div>
-
-              <div class="kpi-label">Absences</div>
-
-              <div class="kpi-value">
-                {{ eleve.nombreAbsences ?? 0 }}
-              </div>
-            </div>
-
-            <div class="student-kpi kpi-retard">
-              <div class="kpi-icon">
-                <i class="bi bi-clock-fill"></i>
-              </div>
-
-              <div class="kpi-label">Retards</div>
-
-              <div class="kpi-value">
-                {{ eleve.nombreRetards ?? 0 }}
-              </div>
-            </div>
+            <select
+              id="presence-cours"
+              class="filter-control"
+              [(ngModel)]="filtrePresences.coursUuid"
+              (ngModelChange)="loadPresences(0)"
+            >
+              <option [ngValue]="null">Tous les cours</option>
+              @for (cours of coursEnseignes; track cours.coursUuid) {
+                <option [ngValue]="cours.coursUuid">
+                  {{ cours.coursLibelle }}
+                </option>
+              }
+            </select>
           </div>
-        }
 
-        <!-- DERNIÈRE PRÉSENCE -->
-        @if (eleveDetails?.dernieresInformations?.dernierePresence; as presence) {
+          <div class="filter-group">
+            <label for="presence-mois"> Mois </label>
+
+            <select
+              id="presence-mois"
+              class="filter-control"
+              [(ngModel)]="filtrePresences.mois"
+              (ngModelChange)="loadPresences(0)"
+            >
+              <option [ngValue]="null">Tous les mois</option>
+
+              @for (mois of moisList; track mois.id) {
+                <option [ngValue]="mois.id">
+                  {{ mois.mois }}
+                </option>
+              }
+            </select>
+          </div>
+
+          <div class="filter-group">
+            <label for="presence-type"> Type </label>
+
+            <select
+              id="presence-type"
+              class="filter-control"
+              [(ngModel)]="filtrePresences.type"
+              (ngModelChange)="loadPresences(0)"
+            >
+              <option [ngValue]="null">Tous les types</option>
+
+              <option value="PRESENCE">Présence</option>
+
+              <option value="ABSENCE">Absence</option>
+
+              <option value="RETARD">Retard</option>
+            </select>
+          </div>
+
+          <div class="filter-actions">
+            <button
+              type="button"
+              class="btn-filter-secondary"
+              (click)="
+                filtrePresences.coursUuid = null;
+                filtrePresences.mois = null;
+                filtrePresences.type = null;
+                loadPresences(0)
+              "
+            >
+              Réinitialiser
+            </button>
+          </div>
+        </div>
+
+        @if (loadingPresences) {
+          <div class="loading-state">
+            <span class="loading-spinner"></span>
+
+            <span> Chargement des présences... </span>
+          </div>
+        } @else if (presences.length > 0) {
           <div class="attendance-list">
             <div class="attendance-row attendance-header">
               <span>Date</span>
+
               <span>Type</span>
-              <span>Cours / motif</span>
+
+              <span>Cours</span>
+
+              <span>Motif</span>
+
               <span>Statut</span>
             </div>
 
-            <div class="attendance-row">
-              <span>
-                {{ presence.date ? (presence.date | date: 'dd/MM/yyyy') : '-' }}
-              </span>
+            @for (presence of presences; track presence.presenceUuid) {
+              <div class="attendance-row">
+                <span>
+                  {{ presence.date ? (presence.date | date: 'dd/MM/yyyy') : '-' }}
+                </span>
 
-              <strong>
-                {{ presence.status || '-' }}
-              </strong>
+                <span>
+                  {{ presence.type || '-' }}
+                </span>
 
-              <span>
-                {{ presence.cours || '-' }}
+                <span>
+                  {{ presence.cours || '-' }}
+                </span>
 
-                @if (presence.lateMinutes !== null && presence.lateMinutes !== undefined) {
-                  ·
-                  {{ presence.lateMinutes }}
-                  minutes
-                }
-              </span>
+                <span>
+                  {{ presence.motif || '-' }}
 
-              <span
-                [class.badge-danger]="presence.status === 'ABSENCE' && !presence.justifiee"
-                [class.badge-success]="presence.status === 'ABSENCE' && presence.justifiee"
-                [class.badge-warning]="presence.status !== 'ABSENCE'"
-              >
-                @if (presence.status === 'ABSENCE') {
-                  {{ presence.justifiee ? 'Justifiée' : 'Non justifiée' }}
-                } @else {
-                  {{ presence.status || '-' }}
-                }
-              </span>
-            </div>
+                  @if (
+                    presence.dureeRetardMinutes !== null &&
+                    presence.dureeRetardMinutes !== undefined
+                  ) {
+                    <small> · {{ presence.dureeRetardMinutes }} min </small>
+                  }
+                </span>
+
+                <span
+                  [class.badge-danger]="presence.statut === 'ABSENCE'"
+                  [class.badge-success]="presence.statut === 'PRESENT'"
+                  [class.badge-warning]="presence.statut === 'RETARD'"
+                >
+                  {{ presence.statut || '-' }}
+                </span>
+              </div>
+            }
           </div>
+
+          @if (presencesTotalPages > 1) {
+            <div class="pagination-container">
+              <button
+                type="button"
+                class="pagination-btn"
+                [disabled]="presencesPage === 0"
+                (click)="loadPresences(presencesPage - 1)"
+                aria-label="Page précédente"
+                title="Page précédente"
+              >
+                ‹
+              </button>
+
+              <span class="pagination-info">
+                Page {{ presencesPage + 1 }}
+                sur
+                {{ presencesTotalPages }}
+              </span>
+
+              <button
+                type="button"
+                class="pagination-btn"
+                [disabled]="presencesPage >= presencesTotalPages - 1"
+                (click)="loadPresences(presencesPage + 1)"
+                aria-label="Page suivante"
+                title="Page suivante"
+              >
+                ›
+              </button>
+            </div>
+          }
         } @else {
           <div class="empty-state">
-            <i class="bi bi-calendar-check"></i>
+            <span class="empty-state-icon">—</span>
 
-            <span> Aucune présence enregistrée pour cette année scolaire. </span>
+            <span> Aucune présence ne correspond aux critères sélectionnés. </span>
           </div>
         }
       </div>
     </section>
   }
 
-  <!-- ============================================================
-       PAIEMENTS
-  ============================================================ -->
   @if (activeTab === 'paiements') {
     <div class="payment-layout">
-      <!-- DERNIER PAIEMENT -->
       <section class="content-card">
         <div class="card-header">
           <div class="card-title-wrapper">
             <div class="card-icon icon-orange">
-              <i class="bi bi-credit-card-fill"></i>
+              <span class="card-icon-symbol">✓</span>
             </div>
 
             <div>
-              <h2>Dernier paiement</h2>
-              <p>Dernier règlement enregistré</p>
+              <h2>Inscription</h2>
+
+              <p>Situation de l'inscription de l'élève</p>
             </div>
           </div>
         </div>
 
         <div class="card-body">
-          @if (eleveDetails?.dernieresInformations?.dernierPaiement; as paiement) {
+          @if (inscriptionEleve; as inscription) {
             <div class="registration-payment">
               <div class="registration-status">
-                <span class="status-check">
-                  <i class="bi bi-check-lg"></i>
-                </span>
+                <span class="status-check"> ✓ </span>
 
                 <div>
-                  <strong>Paiement enregistré</strong>
+                  <strong> Inscription enregistrée </strong>
 
                   <span>
-                    {{ paiement.datePaiement ? (paiement.datePaiement | date: 'dd/MM/yyyy') : '-' }}
+                    {{ inscription.anneeScolaire || '-' }}
                   </span>
                 </div>
               </div>
 
               <div class="registration-lines">
                 <div>
-                  <span>Montant</span>
+                  <span> Année scolaire </span>
 
                   <strong>
-                    {{ paiement.montant | number: '1.0-0' }}
+                    {{ inscription.anneeScolaire || '-' }}
+                  </strong>
+                </div>
+
+                <div>
+                  <span> Classe </span>
+
+                  <strong>
+                    {{ inscription.classe || '-' }}
+                  </strong>
+                </div>
+
+                <div>
+                  <span> Montant inscription </span>
+
+                  <strong>
+                    {{ inscription.montantInscription | number: '1.0-0' }}
                     FCFA
                   </strong>
                 </div>
 
                 <div>
-                  <span>Type de paiement</span>
+                  <span> Montant reçu </span>
 
                   <strong>
-                    {{ paiement.typePaiement || '-' }}
+                    {{ inscription.montantRecu | number: '1.0-0' }}
+                    FCFA
                   </strong>
                 </div>
 
                 <div>
-                  <span>Numéro de reçu</span>
+                  <span> Reste à payer </span>
 
-                  <strong>
-                    {{ paiement.numeroRecu || '-' }}
+                  <strong
+                    [class.text-danger]="
+                      (inscription.montantInscription || 0) - (inscription.montantRecu || 0) > 0
+                    "
+                    [class.text-success]="
+                      (inscription.montantInscription || 0) - (inscription.montantRecu || 0) <= 0
+                    "
+                  >
+                    {{
+                      (inscription.montantInscription || 0) - (inscription.montantRecu || 0)
+                        | number: '1.0-0'
+                    }}
+
+                    FCFA
                   </strong>
                 </div>
               </div>
             </div>
           } @else {
             <div class="empty-state">
-              <i class="bi bi-credit-card"></i>
+              <span class="empty-state-icon">—</span>
 
-              <span> Aucun paiement enregistré pour cette année scolaire. </span>
+              <span> Aucune inscription trouvée pour cette année scolaire. </span>
             </div>
           }
         </div>
       </section>
 
-      <!-- SITUATION FINANCIÈRE -->
-      <section class="content-card">
-        <div class="card-header">
-          <div class="card-title-wrapper">
-            <div class="card-icon icon-blue">
-              <i class="bi bi-receipt"></i>
-            </div>
-
-            <div>
-              <h2>Situation financière</h2>
-              <p>Informations financières disponibles</p>
-            </div>
-          </div>
-        </div>
-
-        <div class="card-body">
-          <div class="empty-state">
-            <i class="bi bi-info-circle"></i>
-
-            <span>
-              La situation détaillée des factures et des règlements nécessite les données
-              financières dédiées.
-            </span>
-          </div>
-        </div>
-      </section>
-
-      <!-- FACTURES -->
       <section class="content-card payment-invoices-card">
         <div class="card-header">
           <div class="card-title-wrapper">
             <div class="card-icon icon-blue">
-              <i class="bi bi-file-earmark-text"></i>
+              <span class="card-icon-symbol">▤</span>
             </div>
 
             <div>
               <h2>Factures</h2>
+
               <p>Factures associées à l'élève</p>
             </div>
           </div>
         </div>
 
         <div class="card-body">
-          <div class="empty-state">
-            <i class="bi bi-receipt"></i>
+          <div class="filter-panel">
+            <div class="filter-group">
+              <label for="paiement-mois"> Mois </label>
 
-            <span> Aucun historique de factures n'est fourni par cette API. </span>
+              <select
+                id="paiement-mois"
+                class="filter-control"
+                [(ngModel)]="filtrePaiements.mois"
+                (ngModelChange)="loadPaiements(0)"
+              >
+                <option [ngValue]="null">Tous les mois</option>
+
+                @for (mois of moisList; track mois.id) {
+                  <option [ngValue]="mois.id">
+                    {{ mois.mois }}
+                  </option>
+                }
+              </select>
+            </div>
+
+            <div class="filter-group">
+              <label for="paiement-etat"> État </label>
+
+              <select
+                id="paiement-etat"
+                class="filter-control"
+                [(ngModel)]="filtrePaiements.etatUuid"
+                (ngModelChange)="loadPaiements(0)"
+              >
+                <option [ngValue]="null">Tous les états</option>
+
+                @for (etat of etatFactureList; track etat.etatUuid) {
+                  <option [ngValue]="etat.etatUuid">
+                    {{ etat.libelle }}
+                  </option>
+                }
+              </select>
+            </div>
+
+            <div class="filter-actions">
+              <button
+                type="button"
+                class="btn-filter-secondary"
+                (click)="
+                  filtrePaiements.mois = null; filtrePaiements.etatUuid = null; loadPaiements(0)
+                "
+              >
+                Réinitialiser
+              </button>
+            </div>
           </div>
+
+          @if (loadingPaiements) {
+            <div class="loading-state">
+              <span class="loading-spinner"></span>
+
+              <span> Chargement des factures... </span>
+            </div>
+          } @else if (factures.length > 0) {
+            <div class="invoice-table">
+              <div class="invoice-row invoice-header">
+                <span>Facture</span>
+
+                <span>Montant</span>
+
+                <span>État</span>
+
+                <span>Date</span>
+
+                <span>Échéance</span>
+              </div>
+
+              @for (facture of factures; track facture.factureUuid) {
+                <div class="invoice-row">
+                  <span>
+                    <strong>
+                      {{ facture.numeroFacture || '-' }}
+                    </strong>
+                  </span>
+
+                  <span>
+                    {{ facture.montant | number: '1.0-0' }}
+
+                    FCFA
+                  </span>
+
+                  <span>
+                    <span
+                      class="invoice-status"
+                      [class.invoice-status-success]="facture.etat === 'PAYEE'"
+                      [class.invoice-status-warning]="facture.etat === 'PARTIELLEMENT_PAYEE'"
+                      [class.invoice-status-danger]="
+                        facture.etat === 'IMPAYEE' || facture.etat === 'EN_RETARD'
+                      "
+                    >
+                      {{ facture.etat || '-' }}
+                    </span>
+                  </span>
+
+                  <span>
+                    {{ facture.dateFacture ? (facture.dateFacture | date: 'dd/MM/yyyy') : '-' }}
+                  </span>
+
+                  <span>
+                    {{ facture.dateEcheance ? (facture.dateEcheance | date: 'dd/MM/yyyy') : '-' }}
+                  </span>
+                </div>
+              }
+            </div>
+
+            @if (facturesTotalPages > 1) {
+              <div class="pagination-container">
+                <button
+                  type="button"
+                  class="pagination-btn"
+                  [disabled]="facturesPage === 0"
+                  (click)="loadPaiements(facturesPage - 1)"
+                  aria-label="Page précédente"
+                  title="Page précédente"
+                >
+                  ‹
+                </button>
+
+                <span class="pagination-info">
+                  Page {{ facturesPage + 1 }}
+                  sur
+                  {{ facturesTotalPages }}
+                </span>
+
+                <button
+                  type="button"
+                  class="pagination-btn"
+                  [disabled]="facturesPage >= facturesTotalPages - 1"
+                  (click)="loadPaiements(facturesPage + 1)"
+                  aria-label="Page suivante"
+                  title="Page suivante"
+                >
+                  ›
+                </button>
+              </div>
+            }
+          } @else {
+            <div class="empty-state">
+              <span class="empty-state-icon">—</span>
+
+              <span> Aucune facture ne correspond aux critères sélectionnés. </span>
+            </div>
+          }
         </div>
       </section>
     </div>
   }
 
-  <!-- ============================================================
-       DOCUMENTS
-  ============================================================ -->
   @if (activeTab === 'documents') {
     <div class="documents-layout">
       <section class="content-card">
         <div class="card-header">
           <div class="card-title-wrapper">
             <div class="card-icon icon-blue">
-              <i class="bi bi-file-earmark-check"></i>
+              <i class="fas fa-file-circle-check"></i>
             </div>
 
             <div>
@@ -1076,7 +1361,7 @@
 
         <div class="card-body">
           <div class="empty-state">
-            <i class="bi bi-file-earmark-text"></i>
+            <i class="fas fa-file-circle-check"></i>
 
             <span> Aucun document généré n'est fourni par cette API. </span>
           </div>
@@ -1102,145 +1387,6 @@
             <i class="bi bi-folder2-open"></i>
 
             <span> Aucun document usuel n'est disponible dans cette réponse. </span>
-          </div>
-        </div>
-      </section>
-    </div>
-  }
-
-  <!-- ============================================================
-       PLUS
-  ============================================================ -->
-  @if (activeTab === 'plus') {
-    <div class="overview-grid">
-      @if (eleveDetails; as eleve) {
-        <!-- INFORMATIONS COMPLÉMENTAIRES -->
-        <section class="content-card">
-          <div class="card-header">
-            <div class="card-title-wrapper">
-              <div class="card-icon icon-blue">
-                <i class="bi bi-info-circle"></i>
-              </div>
-
-              <div>
-                <h2>Informations complémentaires</h2>
-                <p>Informations administratives complémentaires</p>
-              </div>
-            </div>
-          </div>
-
-          <div class="card-body">
-            <div class="information-list">
-              <div class="information-row">
-                <div class="information-label">
-                  <i class="bi bi-person-badge"></i>
-                  Matricule
-                </div>
-
-                <div class="information-value">
-                  {{ eleve.matricule || '-' }}
-                </div>
-              </div>
-
-              <div class="information-row">
-                <div class="information-label">
-                  <i class="bi bi-person-check"></i>
-                  Statut
-                </div>
-
-                <div class="information-value">
-                  {{ eleve.statut || '-' }}
-                </div>
-              </div>
-
-              <div class="information-row">
-                <div class="information-label">
-                  <i class="bi bi-calendar-check"></i>
-                  Date d'entrée
-                </div>
-
-                <div class="information-value">
-                  {{ eleve.dateEntree ? (eleve.dateEntree | date: 'dd/MM/yyyy') : '-' }}
-                </div>
-              </div>
-
-              <div class="information-row">
-                <div class="information-label">
-                  <i class="bi bi-calendar-plus"></i>
-                  Date d'inscription
-                </div>
-
-                <div class="information-value">
-                  {{ eleve.dateInscription ? (eleve.dateInscription | date: 'dd/MM/yyyy') : '-' }}
-                </div>
-              </div>
-
-              <div class="information-row">
-                <div class="information-label">
-                  <i class="bi bi-building"></i>
-                  Établissement précédent
-                </div>
-
-                <div class="information-value">
-                  {{ eleve.etablissementPrecedent || '-' }}
-                </div>
-              </div>
-
-              <div class="information-row">
-                <div class="information-label">
-                  <i class="bi bi-arrow-left-right"></i>
-                  Origine
-                </div>
-
-                <div class="information-value">
-                  {{ eleve.origine || '-' }}
-                </div>
-              </div>
-            </div>
-          </div>
-        </section>
-      }
-
-      <!-- AUTRES INFORMATIONS -->
-      <section class="content-card">
-        <div class="card-header">
-          <div class="card-title-wrapper">
-            <div class="card-icon icon-purple">
-              <i class="bi bi-grid"></i>
-            </div>
-
-            <div>
-              <h2>Autres informations</h2>
-              <p>Accès aux autres éléments du dossier</p>
-            </div>
-          </div>
-        </div>
-
-        <div class="card-body">
-          <div class="quick-links">
-            <button type="button" class="quick-link">
-              <i class="bi bi-calendar3"></i>
-              <span>Emploi du temps</span>
-              <i class="bi bi-chevron-right"></i>
-            </button>
-
-            <button type="button" class="quick-link">
-              <i class="bi bi-journal-text"></i>
-              <span>Cahier de texte</span>
-              <i class="bi bi-chevron-right"></i>
-            </button>
-
-            <button type="button" class="quick-link">
-              <i class="bi bi-pencil-square"></i>
-              <span>Exercices</span>
-              <i class="bi bi-chevron-right"></i>
-            </button>
-
-            <button type="button" class="quick-link">
-              <i class="bi bi-calendar-event"></i>
-              <span>Événements</span>
-              <i class="bi bi-chevron-right"></i>
-            </button>
           </div>
         </div>
       </section>

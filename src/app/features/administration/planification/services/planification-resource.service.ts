@@ -24,6 +24,7 @@ import { ListeExercie } from '../../../../core/models/planification/liste-exerci
 import { Meeting } from '../../../../core/models/planification/meeting';
 import { ResponseMessage } from '../../../../core/response/response-message';
 import { CoursParentAbsenceResponse } from '../../../../core/models/parent/cours-parent-absence-response.model';
+import { CoursEnseigne, MatiereEnseignee } from '../../../../core/models/dossiereleve/dossier-eleve';
 
 @Injectable({
   providedIn: 'root'
@@ -513,19 +514,48 @@ export class PlanificationResourceService {
   }
 
   publierNoteInfo(id: number): Observable<string> {
-  return this.http.patch(
-    `${this.planificationUrl}/planification/noteinformation/${id}/publier`,
-    {},
-    { responseType: 'text' }
-  );
-}
+    return this.http.patch(
+      `${this.planificationUrl}/planification/noteinformation/${id}/publier`,
+      {},
+      { responseType: 'text' }
+    );
+  }
 
-dePublierNoteInfo(id: number): Observable<string> {
-  return this.http.patch(
-    `${this.planificationUrl}/planification/noteinformation/${id}/depublier`,
-    {},
-    { responseType: 'text' }
-  );
-}
+  dePublierNoteInfo(id: number): Observable<string> {
+    return this.http.patch(
+      `${this.planificationUrl}/planification/noteinformation/${id}/depublier`,
+      {},
+      { responseType: 'text' }
+    );
+  }
+
+  /****************    Matières et cours d'une classe           ****/
+
+  getMatieresEnseignees(classeUuid: string,
+    anneeScolaireUuid: string): Observable<MatiereEnseignee[]> {
+    const params = new HttpParams()
+      .set('classeUuid', classeUuid)
+      .set('anneeScolaireUuid', anneeScolaireUuid);
+    return this.http.get<MatiereEnseignee[]>(
+      `${this.planificationUrl}/planification/matieres-enseignees`,
+      {
+        ...this.httpOptions,
+        params
+      }
+    );
+  }
+
+  getCoursEnseignes(classeUuid: string, anneeScolaireUuid: string): Observable<CoursEnseigne[]> {
+    const params = new HttpParams()
+      .set('classeUuid', classeUuid)
+      .set('anneeScolaireUuid', anneeScolaireUuid);
+    return this.http.get<CoursEnseigne[]>(
+      `${this.planificationUrl}/planification/cours-enseignes`,
+      {
+        ...this.httpOptions,
+        params
+      }
+    );
+  }
 
 }

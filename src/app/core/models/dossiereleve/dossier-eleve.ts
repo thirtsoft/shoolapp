@@ -81,3 +81,105 @@ export interface DetailsEleveResponse {
 
   photo?: PhotoEleveResponse | null;
 }
+
+export interface ParcoursScolaireEleve {
+  inscriptionUuid: string;
+  anneeScolaireUuid: string;
+  anneeScolaireLibelle: string;
+  classeUuid: string;
+  classeLibelle: string;
+  dateInscription: string;
+  statut: string;
+  anneeEnCours: boolean;
+}
+
+export interface ListeResultatEleve {
+  matiere: string;
+  evaluation: string;
+  type: string;
+  note: number;
+  date: string;
+}
+
+export interface RechercheResultatEleve {
+  eleveUuid: string;
+  anneeScolaireUuid?: string | null;
+  matiereUuid?: string | null;
+  type?: string | null;
+  mois?: number | null;
+}
+
+export interface PresenceEleve {
+  presenceUuid: string;
+  date: string;
+  type: string;
+  coursUuid: string | null;
+  cours: string | null;
+  motif: string | null;
+  statut: string;
+  dureeRetardMinutes: number | null;
+}
+
+export interface RecherchePresenceEleve {
+  eleveUuid: string;
+  anneeScolaireUuid?: string | null;
+  coursUuid?: string | null;
+  mois?: number | null;
+  type?: string | null;
+}
+
+export interface DossierPaiementEleve {
+  inscription: InscriptionEleve | null;
+  factures: Data<FactureEleve>;
+}
+
+export interface Data<T> {
+  content: T[];
+  totalPages: number;
+  totalElements: number;
+  numberOfElements: number;
+}
+
+export interface InscriptionEleve {
+  inscriptionUuid: string;
+  anneeScolaireUuid: string;
+  anneeScolaire: string;
+  classeUuid: string;
+  classe: string;
+  montantInscription: number;
+  montantRecu: number;
+
+}
+
+export interface FactureEleve {
+  factureUuid: string;
+  numeroFacture: string;
+  montant: number;
+  etat: string;
+  dateFacture: string;
+  dateEcheance: string | null;
+}
+
+export interface RechercheFactureEleve {
+  eleveUuid: string;
+  anneeScolaireUuid?: string | null;
+  mois?: number | null;
+  etatUuid?: string | null;
+}
+
+export interface MatiereEnseignee {
+  matiereUuid: string;
+  matiereLibelle: string;
+}
+
+export interface CoursEnseigne {
+  coursUuid: string;
+  coursLibelle: string;
+}
+
+
+
+
+
+
+
