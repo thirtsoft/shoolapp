@@ -1476,9 +1476,6 @@ export class DetailsInscriptionComponent implements OnInit, OnDestroy {
   }
 
   async imprimerCarteScolaire(): Promise<void> {
-    /*    const document = await this.getDocumentCarteScolaire();
-       pdfMake.createPdf(document).print(); */
-
     const document = await this.getDocumentCarteScolaire();
     const code = this.detailsInscription?.code || 'inscription';
     pdfMake.createPdf(document).download(`Carte_${code}.pdf`);

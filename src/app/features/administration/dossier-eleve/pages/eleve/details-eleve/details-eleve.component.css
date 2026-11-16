@@ -126,12 +126,7 @@
 
 .heading-title {
   color: #173366;
-
-  font-family:
-    Georgia,
-    "Times New Roman",
-    serif;
-
+  font-family: Georgia, "Times New Roman", serif;
   font-size: 24px;
   font-weight: 700;
   line-height: 1.1;
@@ -284,12 +279,10 @@
 
 .student-main-info h1 {
   margin: 0 0 5px;
-
   font-size: 26px;
   line-height: 1.1;
-
   font-weight: 700;
-
+  color: #f9fafb;
   letter-spacing: -.4px;
 }
 
@@ -2682,5 +2675,903 @@
   .filter-panel {
     flex-wrap: wrap;
     align-items: center !important;
+  }
+}
+
+.document-row {
+  display: grid;
+  grid-template-columns: 1fr 1.4fr auto;
+  align-items: center;
+  gap: 20px;
+  padding: 14px 0;
+  border-bottom: 1px solid #edf0f5;
+}
+
+.document-row:last-child {
+  border-bottom: none;
+}
+
+.document-type {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 0;
+}
+
+.document-icon {
+  width: 38px;
+  height: 38px;
+  border-radius: 9px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.document-icon-blue {
+  background: #eef5ff;
+  color: #2563eb;
+}
+
+.document-icon-purple {
+  background: #f4efff;
+  color: #7c3aed;
+}
+
+.document-label {
+  display: block;
+  font-size: 14px;
+  font-weight: 600;
+  color: #263238;
+}
+
+.document-type small {
+  display: block;
+  margin-top: 3px;
+  font-size: 12px;
+  color: #8a94a6;
+}
+
+.document-name {
+  min-width: 0;
+  font-size: 14px;
+  color: #596579;
+}
+
+.document-name span {
+  display: block;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.document-action {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.document-download-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 8px 13px;
+  border: 1px solid #dce3ed;
+  border-radius: 7px;
+  background: #fff;
+  color: #2563eb;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.document-download-btn:hover {
+  background: #f4f8ff;
+  border-color: #2563eb;
+}
+
+.empty-state {
+  min-height: 150px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  color: #8a94a6;
+  text-align: center;
+}
+
+.empty-state i {
+  font-size: 28px;
+  opacity: 0.65;
+}
+
+@media (max-width: 768px) {
+
+  .document-row {
+    grid-template-columns: 1fr;
+    gap: 10px;
+    padding: 16px 0;
+  }
+
+  .document-action {
+    justify-content: flex-start;
+  }
+
+  .document-download-btn {
+    width: 100%;
+    justify-content: center;
+  }
+}
+
+/* =========================================================
+   DOCUMENTS USUELS - ACTION AJOUT
+   ========================================================= */
+
+.document-add-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 14px;
+  border: 1px solid #6f42c1;
+  border-radius: 7px;
+  background: #6f42c1;
+  color: #fff;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.document-add-btn:hover {
+  background: #5d35a5;
+  border-color: #5d35a5;
+}
+
+.document-add-btn i {
+  font-size: 12px;
+}
+
+
+/* =========================================================
+   DOCUMENT ROW
+   ========================================================= */
+
+.document-row {
+  display: grid;
+  grid-template-columns: minmax(220px, 1fr) minmax(180px, 1.4fr) auto;
+  align-items: center;
+  gap: 20px;
+  padding: 14px 0;
+  border-bottom: 1px solid #edf0f4;
+}
+
+.document-row:last-child {
+  border-bottom: none;
+}
+
+
+/* =========================================================
+   TYPE DOCUMENT
+   ========================================================= */
+
+.document-type {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 0;
+}
+
+.document-label {
+  display: block;
+  font-size: 14px;
+  font-weight: 600;
+  color: #343a40;
+}
+
+
+/* =========================================================
+   NOM FICHIER
+   ========================================================= */
+
+.document-name {
+  min-width: 0;
+}
+
+.document-name span {
+  display: block;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: #6c757d;
+  font-size: 13px;
+}
+
+
+/* =========================================================
+   ICON
+   ========================================================= */
+
+.document-icon {
+  width: 38px;
+  height: 38px;
+  min-width: 38px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 8px;
+}
+
+.document-icon-purple {
+  background: #f1ebfb;
+  color: #6f42c1;
+}
+
+.document-icon i {
+  font-size: 16px;
+}
+
+
+/* =========================================================
+   ACTIONS
+   ========================================================= */
+
+.document-action {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 8px;
+}
+
+.document-download-btn,
+.document-replace-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  height: 34px;
+  padding: 0 11px;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.document-download-btn {
+  border: 1px solid #dfe3e8;
+  background: #fff;
+  color: #495057;
+}
+
+.document-download-btn:hover {
+  background: #f8f9fa;
+  border-color: #c8ced6;
+}
+
+.document-replace-btn {
+  border: 1px solid #6f42c1;
+  background: #fff;
+  color: #6f42c1;
+}
+
+.document-replace-btn:hover {
+  background: #6f42c1;
+  color: #fff;
+}
+
+
+/* =========================================================
+   EMPTY STATE
+   ========================================================= */
+
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 35px 20px;
+  text-align: center;
+}
+
+.empty-state>i {
+  font-size: 28px;
+  color: #adb5bd;
+}
+
+.empty-state>div {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.empty-state strong {
+  color: #495057;
+  font-size: 14px;
+}
+
+.empty-state span {
+  color: #8a929a;
+  font-size: 13px;
+}
+
+.document-add-empty-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  margin-top: 5px;
+  padding: 8px 13px;
+  border: 1px solid #6f42c1;
+  border-radius: 6px;
+  background: #fff;
+  color: #6f42c1;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.document-add-empty-btn:hover {
+  background: #6f42c1;
+  color: #fff;
+}
+
+
+/* =========================================================
+   MOBILE
+   ========================================================= */
+
+@media (max-width: 768px) {
+
+  .content-card .card-header {
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+
+  .document-add-btn {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .document-row {
+    grid-template-columns: 1fr;
+    gap: 10px;
+    padding: 16px 0;
+  }
+
+  .document-action {
+    justify-content: flex-start;
+    flex-wrap: wrap;
+  }
+
+  .document-download-btn,
+  .document-replace-btn {
+    flex: 1;
+  }
+}
+
+/* =========================================================
+   POPUP DOCUMENT
+   ========================================================= */
+
+.document-modal-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  padding: 20px;
+
+  background: rgba(15, 23, 42, 0.55);
+  backdrop-filter: blur(3px);
+}
+
+/* CONTENEUR */
+.document-modal {
+  width: 100%;
+  max-width: 560px;
+
+  max-height: calc(100vh - 40px);
+
+  display: flex;
+  flex-direction: column;
+
+  background: #ffffff;
+  border-radius: 16px;
+
+  box-shadow: 0 20px 60px rgba(15, 23, 42, 0.25);
+
+  overflow: hidden;
+
+  animation: documentModalAppear 0.2s ease-out;
+}
+
+@keyframes documentModalAppear {
+  from {
+    opacity: 0;
+    transform: translateY(-15px) scale(0.98);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+
+/* =========================================================
+   HEADER
+   ========================================================= */
+
+.document-modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  padding: 20px 22px;
+
+  border-bottom: 1px solid #eef0f4;
+}
+
+.document-modal-title {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.document-modal-title h3 {
+  margin: 0;
+
+  font-size: 18px;
+  font-weight: 700;
+
+  color: #1f2937;
+}
+
+.document-modal-title p {
+  margin: 4px 0 0;
+
+  font-size: 13px;
+  color: #6b7280;
+}
+
+
+/* ICÔNE HEADER */
+
+.document-modal-icon {
+  width: 42px;
+  height: 42px;
+
+  flex-shrink: 0;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 10px;
+
+  font-size: 18px;
+}
+
+.document-modal-icon-purple {
+  color: #7c3aed;
+  background: #f3e8ff;
+}
+
+.document-modal-icon-orange {
+  color: #ea580c;
+  background: #ffedd5;
+}
+
+
+/* BOUTON FERMER */
+
+.document-modal-close {
+  width: 34px;
+  height: 34px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border: none;
+  border-radius: 8px;
+
+  background: transparent;
+
+  color: #6b7280;
+
+  cursor: pointer;
+
+  transition: all 0.2s ease;
+}
+
+.document-modal-close:hover {
+  background: #f3f4f6;
+  color: #111827;
+}
+
+
+/* =========================================================
+   BODY
+   ========================================================= */
+
+.document-modal-body {
+  padding: 22px;
+
+  overflow-y: auto;
+}
+
+
+/* FORM GROUP */
+
+.document-form-group {
+  margin-bottom: 20px;
+}
+
+.document-form-group:last-child {
+  margin-bottom: 0;
+}
+
+.document-form-group>label {
+  display: block;
+
+  margin-bottom: 8px;
+
+  font-size: 13px;
+  font-weight: 600;
+
+  color: #374151;
+}
+
+
+/* =========================================================
+   TYPE DOCUMENT
+   ========================================================= */
+
+.document-current-type {
+  min-height: 52px;
+
+  display: flex;
+  align-items: center;
+  gap: 12px;
+
+  padding: 8px 12px;
+
+  border: 1px solid #e5e7eb;
+  border-radius: 10px;
+
+  background: #f9fafb;
+
+  font-size: 14px;
+  font-weight: 500;
+
+  color: #374151;
+}
+
+.document-current-type .document-icon {
+  width: 34px;
+  height: 34px;
+
+  flex-shrink: 0;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 8px;
+
+  font-size: 14px;
+}
+
+.document-icon-purple {
+  color: #7c3aed;
+  background: #f3e8ff;
+}
+
+
+/* =========================================================
+   DOCUMENT ACTUEL
+   ========================================================= */
+
+.document-current-file {
+  min-height: 48px;
+
+  display: flex;
+  align-items: center;
+  gap: 10px;
+
+  padding: 10px 13px;
+
+  border: 1px solid #e5e7eb;
+  border-radius: 10px;
+
+  background: #f9fafb;
+
+  color: #4b5563;
+
+  font-size: 13px;
+}
+
+.document-current-file>i {
+  color: #6b7280;
+  font-size: 17px;
+}
+
+.document-current-file span {
+  overflow: hidden;
+
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+
+/* =========================================================
+   FILE PICKER
+   ========================================================= */
+
+.document-file-picker {
+  min-height: 100px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  gap: 14px;
+
+  padding: 18px;
+
+  border: 1.5px dashed #c4b5fd;
+  border-radius: 12px;
+
+  background: #faf8ff;
+
+  cursor: pointer;
+
+  transition: all 0.2s ease;
+}
+
+.document-file-picker:hover {
+  border-color: #8b5cf6;
+  background: #f5f3ff;
+}
+
+.document-file-picker>i {
+  width: 42px;
+  height: 42px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 10px;
+
+  background: #ede9fe;
+  color: #7c3aed;
+
+  font-size: 18px;
+}
+
+.document-file-picker>div {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.document-file-picker strong {
+  font-size: 14px;
+  font-weight: 600;
+
+  color: #374151;
+}
+
+.document-file-picker small {
+  font-size: 12px;
+  color: #6b7280;
+}
+
+
+/* =========================================================
+   FICHIER SÉLECTIONNÉ
+   ========================================================= */
+
+.document-selected-file {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+
+  margin-top: 12px;
+  padding: 12px;
+
+  border: 1px solid #e5e7eb;
+  border-radius: 10px;
+
+  background: #ffffff;
+}
+
+.selected-file-icon {
+  width: 38px;
+  height: 38px;
+
+  flex-shrink: 0;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 8px;
+
+  background: #f3f4f6;
+  color: #6b7280;
+}
+
+.selected-file-info {
+  min-width: 0;
+
+  flex: 1;
+
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.selected-file-info strong {
+  overflow: hidden;
+
+  font-size: 13px;
+  font-weight: 600;
+
+  color: #374151;
+
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.selected-file-info small {
+  font-size: 11px;
+  color: #9ca3af;
+}
+
+.selected-file-remove {
+  width: 30px;
+  height: 30px;
+
+  flex-shrink: 0;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border: none;
+  border-radius: 7px;
+
+  background: #fef2f2;
+
+  color: #dc2626;
+
+  cursor: pointer;
+
+  transition: all 0.2s ease;
+}
+
+.selected-file-remove:hover {
+  background: #fee2e2;
+}
+
+
+/* =========================================================
+   FOOTER
+   ========================================================= */
+
+.document-modal-footer {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 10px;
+
+  padding: 16px 22px;
+
+  border-top: 1px solid #eef0f4;
+
+  background: #fafafa;
+}
+
+
+/* BOUTONS */
+
+.document-modal-btn {
+  min-height: 40px;
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  gap: 7px;
+
+  padding: 0 17px;
+
+  border: none;
+  border-radius: 8px;
+
+  font-size: 13px;
+  font-weight: 600;
+
+  cursor: pointer;
+
+  transition: all 0.2s ease;
+}
+
+.document-modal-btn-secondary {
+  background: #f3f4f6;
+  color: #374151;
+}
+
+.document-modal-btn-secondary:hover {
+  background: #e5e7eb;
+}
+
+.document-modal-btn-primary {
+  background: #7c3aed;
+  color: #ffffff;
+}
+
+.document-modal-btn-primary:hover {
+  background: #6d28d9;
+}
+
+.document-modal-btn-warning {
+  background: #ea580c;
+  color: #ffffff;
+}
+
+.document-modal-btn-warning:hover {
+  background: #c2410c;
+}
+
+
+/* =========================================================
+   RESPONSIVE
+   ========================================================= */
+
+@media (max-width: 576px) {
+
+  .document-modal-backdrop {
+    padding: 12px;
+  }
+
+  .document-modal {
+    max-height: calc(100vh - 24px);
+    border-radius: 14px;
+  }
+
+  .document-modal-header {
+    padding: 16px;
+  }
+
+  .document-modal-body {
+    padding: 18px 16px;
+  }
+
+  .document-modal-footer {
+    padding: 14px 16px;
+  }
+
+  .document-modal-title h3 {
+    font-size: 16px;
+  }
+
+  .document-modal-title p {
+    font-size: 12px;
+  }
+
+  .document-modal-footer {
+    flex-direction: column-reverse;
+  }
+
+  .document-modal-btn {
+    width: 100%;
   }
 }

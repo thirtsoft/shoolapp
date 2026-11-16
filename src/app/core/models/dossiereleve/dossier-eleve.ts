@@ -1,3 +1,4 @@
+import { DocumentResponse } from "../../piecejointe/document-response.model";
 import { AttendanceStatus } from "./absence/attendance-status";
 
 export interface DerniereNoteDTO {
@@ -176,6 +177,31 @@ export interface CoursEnseigne {
   coursUuid: string;
   coursLibelle: string;
 }
+
+export interface DossierDocumentsEleveResponse {
+  documentsGeneres: DocumentGenereResponse;
+  documentsStockes: DocumentResponse[];
+}
+
+export interface DocumentGenereResponse {
+  documentInscriptionResponse: DocumentInscriptionResponse;
+  documentBulletinResponse: DocumentBulletinResponse[];
+}
+
+export interface DocumentInscriptionResponse {
+  id: number;
+  eleveUuid: string;
+  anneeScolaireLibelle: string;
+}
+
+export interface DocumentBulletinResponse {
+  id: number;
+  eleveUuid: string;
+  sessionSemestreCode: string;
+  sessionSemestre: string;
+  anneeScolaireLibelle: string;
+}
+
 
 
 

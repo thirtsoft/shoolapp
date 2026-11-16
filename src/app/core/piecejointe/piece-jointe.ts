@@ -17,3 +17,28 @@ export interface PieceJointe {
 
   content?: string;
 }
+
+export interface PieceJointeResponse {
+  uuid: number;
+
+  storageFileUuid: string;
+
+  typeDocumentUuid: string;
+
+  typeDocumentCode: string;
+
+  entityName: string;
+
+  entityUid: string;
+
+  entityReference: string;
+
+  libelle: string;
+
+  commentaire: string;
+
+  principale: string;
+
+  ordre: string;
+}
+

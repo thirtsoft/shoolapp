@@ -1345,6 +1345,7 @@
 
   @if (activeTab === 'documents') {
     <div class="documents-layout">
+      <!-- ================= DOCUMENTS GÉNÉRÉS ================= -->
       <section class="content-card">
         <div class="card-header">
           <div class="card-title-wrapper">
@@ -1360,11 +1361,87 @@
         </div>
 
         <div class="card-body">
-          <div class="empty-state">
-            <i class="fas fa-file-circle-check"></i>
+          @if (documentsEleve?.documentsGeneres?.documentInscriptionResponse) {
+            <div class="document-row">
+              <div class="document-type">
+                <div class="document-icon document-icon-blue">
+                  <i class="fas fa-file-signature"></i>
+                </div>
 
-            <span> Aucun document généré n'est fourni par cette API. </span>
-          </div>
+                <div>
+                  <small>
+                    {{
+                      documentsEleve?.documentsGeneres?.documentInscriptionResponse
+                        ?.anneeScolaireLibelle
+                    }}
+                  </small>
+                </div>
+              </div>
+
+              <div class="document-name">
+                <span>Certificat / reçu d'inscription</span>
+              </div>
+
+              <div class="document-action">
+                <button
+                  type="button"
+                  class="document-download-btn"
+                  (click)="
+                    telechargerInscription(
+                      documentsEleve!.documentsGeneres.documentInscriptionResponse!.id
+                    )
+                  "
+                >
+                  <i class="fas fa-download"></i>
+                  <span>Télécharger</span>
+                </button>
+              </div>
+            </div>
+          }
+
+          @for (
+            bulletin of documentsEleve?.documentsGeneres?.documentBulletinResponse ?? [];
+            track bulletin.id
+          ) {
+            <div class="document-row">
+              <div class="document-type">
+                <div class="document-icon document-icon-blue">
+                  <i class="fas fa-file-lines"></i>
+                </div>
+
+                <div>
+                  <small>
+                    {{ bulletin.sessionSemestre }}
+                  </small>
+                </div>
+              </div>
+
+              <div class="document-name">
+                <span> Bulletin {{ bulletin.sessionSemestre }} </span>
+              </div>
+
+              <div class="document-action">
+                <button
+                  type="button"
+                  class="document-download-btn"
+                  (click)="telechargerBulletin(bulletin.id)"
+                >
+                  <i class="fas fa-download"></i>
+                  <span>Télécharger</span>
+                </button>
+              </div>
+            </div>
+          }
+
+          @if (
+            !documentsEleve?.documentsGeneres?.documentInscriptionResponse &&
+            !documentsEleve?.documentsGeneres?.documentBulletinResponse?.length
+          ) {
+            <div class="empty-state">
+              <i class="fas fa-file-circle-check"></i>
+              <span> Aucun document généré n'est disponible. </span>
+            </div>
+          }
         </div>
       </section>
 
@@ -1372,7 +1449,7 @@
         <div class="card-header">
           <div class="card-title-wrapper">
             <div class="card-icon icon-purple">
-              <i class="bi bi-folder2-open"></i>
+              <i class="fas fa-folder-open"></i>
             </div>
 
             <div>
@@ -1380,16 +1457,367 @@
               <p>Pièces déposées dans le dossier de l'élève</p>
             </div>
           </div>
+
+          <!-- AJOUTER -->
+          <button type="button" class="document-add-btn" (click)="ouvrirPopupAjoutDocument()">
+            <i class="fas fa-plus"></i>
+            <span>Ajouter un document</span>
+          </button>
         </div>
 
         <div class="card-body">
-          <div class="empty-state">
-            <i class="bi bi-folder2-open"></i>
+          @for (document of documentsEleve?.documentsStockes ?? []; track document.documentUuid) {
+            @if (document.available) {
+              <div class="document-row">
+                <div class="document-type">
+                  <div class="document-icon document-icon-purple">
+                    <i class="fas fa-file"></i>
+                  </div>
 
-            <span> Aucun document usuel n'est disponible dans cette réponse. </span>
-          </div>
+                  <div>
+                    <span class="document-label">
+                      {{ getTypeDocumentLibelle(document.typeDocument) }}
+                    </span>
+                  </div>
+                </div>
+
+                <!-- ACTIONS -->
+                <div class="document-action">
+                  <button
+                    type="button"
+                    class="document-download-btn"
+                    (click)="telechargerDocumentStocke(document)"
+                  >
+                    <i class="fas fa-download"></i>
+                    <span>Télécharger</span>
+                  </button>
+
+                  <!-- REMPLACER -->
+                  <button
+                    type="button"
+                    class="document-replace-btn"
+                    (click)="ouvrirPopupRemplacementDocument(document)"
+                  >
+                    <i class="fas fa-rotate"></i>
+                    <span>Remplacer</span>
+                  </button>
+                </div>
+              </div>
+            }
+          }
+
+          <!-- AUCUN DOCUMENT -->
+          @if (!documentsEleve?.documentsStockes?.length) {
+            <div class="empty-state">
+              <i class="fas fa-folder-open"></i>
+
+              <div>
+                <strong>Aucun document usuel</strong>
+
+                <span> Vous pouvez ajouter les pièces du dossier de l'élève. </span>
+              </div>
+
+              <!-- AJOUTER DEPUIS L'EMPTY STATE -->
+              <button
+                type="button"
+                class="document-add-empty-btn"
+                (click)="ouvrirPopupAjoutDocument()"
+              >
+                <i class="fas fa-plus"></i>
+                <span>Ajouter un document</span>
+              </button>
+            </div>
+          }
         </div>
       </section>
     </div>
   }
 </div>
+
+<!-- =========================================================
+     POPUP : AJOUTER UN DOCUMENT
+     ========================================================= -->
+@if (showPopupAjoutDocument) {
+  <div class="document-modal-backdrop" (click)="fermerPopupAjoutDocument()">
+    <div class="document-modal" (click)="$event.stopPropagation()">
+      <!-- HEADER -->
+      <div class="document-modal-header">
+        <div class="document-modal-title">
+          <div class="document-modal-icon document-modal-icon-purple">
+            <i class="fas fa-file-circle-plus"></i>
+          </div>
+
+          <div>
+            <h3>Ajouter un document</h3>
+            <p>Ajouter une nouvelle pièce au dossier de l'élève</p>
+          </div>
+        </div>
+
+        <button
+          type="button"
+          class="document-modal-close"
+          (click)="fermerPopupAjoutDocument()"
+          aria-label="Fermer"
+        >
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
+
+      <!-- BODY -->
+      <div class="document-modal-body">
+        <!-- TYPE DOCUMENT -->
+        <div class="document-form-group">
+          <label for="typeDocumentAjout">
+            Type de document
+            <span class="text-danger">*</span>
+          </label>
+
+          <select id="typeDocumentAjout" class="form-select" [(ngModel)]="typeDocumentAjout">
+            <option value="">— Sélectionnez un type de document —</option>
+
+            <option value="EXTRAIT_NAISSANCE">Extrait de naissance</option>
+
+            <option value="PHOTOS_IDENTITE">Photos d'identité</option>
+
+            <option value="PIECE_IDENTITE_PARENT">Pièce d'identité parent</option>
+
+            <option value="CARNET_VACCINATION">Carnet de vaccination</option>
+
+            <option value="CERTIFICAT_MEDICAL">Certificat médical</option>
+
+            <option value="FICHE_RENSEIGNEMENTS">Fiche de renseignements</option>
+          </select>
+        </div>
+
+        <!-- FICHIER -->
+        <div class="document-form-group">
+          <label>
+            Fichier
+            <span class="text-danger">*</span>
+          </label>
+
+          <div class="document-file-picker" (click)="documentFileInputAjout.click()">
+            <i class="fas fa-cloud-arrow-up"></i>
+
+            <div>
+              <strong>
+                @if (fichierDocumentAjout) {
+                  {{ fichierDocumentAjout.name }}
+                } @else {
+                  Choisir un fichier
+                }
+              </strong>
+
+              <small> PDF, JPG ou PNG — 5 MB maximum </small>
+            </div>
+          </div>
+
+          <input
+            #documentFileInputAjout
+            type="file"
+            hidden
+            accept=".pdf,.jpg,.jpeg,.png"
+            (change)="selectionnerFichierAjout($event)"
+          />
+        </div>
+
+        <!-- FICHIER SÉLECTIONNÉ -->
+        @if (fichierDocumentAjout) {
+          <div class="document-selected-file">
+            <div class="selected-file-icon">
+              <i class="fas fa-file"></i>
+            </div>
+
+            <div class="selected-file-info">
+              <strong>
+                {{ fichierDocumentAjout.name }}
+              </strong>
+
+              <small>
+                {{ formatFileSize(fichierDocumentAjout.size) }}
+              </small>
+            </div>
+
+            <button type="button" class="selected-file-remove" (click)="supprimerFichierAjout()">
+              <i class="fas fa-times"></i>
+            </button>
+          </div>
+        }
+      </div>
+
+      <!-- FOOTER -->
+      <div class="document-modal-footer">
+        <button
+          type="button"
+          class="document-modal-btn document-modal-btn-secondary"
+          (click)="fermerPopupAjoutDocument()"
+        >
+          Annuler
+        </button>
+
+        <button
+          type="button"
+          class="btn-actions"
+          [disabled]="uploadingDocument"
+          (click)="ajouterDocument()"
+        >
+          @if (uploadingDocument) {
+            <i class="fas fa-spinner fa-spin"></i>
+            Ajout...
+          } @else {
+            <i class="fas fa-plus"></i>
+            Ajouter
+          }
+        </button>
+      </div>
+    </div>
+  </div>
+}
+
+<!-- =========================================================
+     POPUP : REMPLACER UN DOCUMENT
+     ========================================================= -->
+@if (showPopupRemplacementDocument) {
+  <div class="document-modal-backdrop" (click)="fermerPopupRemplacementDocument()">
+    <div class="document-modal" (click)="$event.stopPropagation()">
+      <!-- HEADER -->
+      <div class="document-modal-header">
+        <div class="document-modal-title">
+          <div class="document-modal-icon document-modal-icon-orange">
+            <i class="fas fa-file-pen"></i>
+          </div>
+
+          <div>
+            <h3>Remplacer le document</h3>
+            <p>Remplacer la pièce actuellement déposée</p>
+          </div>
+        </div>
+
+        <button
+          type="button"
+          class="document-modal-close"
+          (click)="fermerPopupRemplacementDocument()"
+          aria-label="Fermer"
+        >
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
+
+      <!-- BODY -->
+      <div class="document-modal-body">
+        <!-- TYPE -->
+        <div class="document-form-group">
+          <label> Type de document </label>
+
+          <div class="document-current-type">
+            <div class="document-icon document-icon-purple">
+              <i class="fas fa-file"></i>
+            </div>
+
+            <span>
+              {{ getTypeDocumentLibelle(documentEnCoursRemplacement?.typeDocument!) }}
+            </span>
+          </div>
+        </div>
+
+        <!-- DOCUMENT ACTUEL -->
+        <div class="document-form-group">
+          <label> Document actuel </label>
+
+          <div class="document-current-file">
+            <i class="fas fa-file-lines"></i>
+
+            <span>
+              {{ documentEnCoursRemplacement?.nomFichier }}
+            </span>
+          </div>
+        </div>
+
+        <!-- NOUVEAU FICHIER -->
+        <div class="document-form-group">
+          <label>
+            Nouveau fichier
+            <span class="text-danger">*</span>
+          </label>
+
+          <div class="document-file-picker" (click)="documentFileInputRemplacement.click()">
+            <i class="fas fa-cloud-arrow-up"></i>
+
+            <div>
+              <strong>
+                @if (fichierDocumentRemplacement) {
+                  {{ fichierDocumentRemplacement.name }}
+                } @else {
+                  Choisir le nouveau fichier
+                }
+              </strong>
+
+              <small> PDF, JPG ou PNG — 5 MB maximum </small>
+            </div>
+          </div>
+
+          <input
+            #documentFileInputRemplacement
+            type="file"
+            hidden
+            accept=".pdf,.jpg,.jpeg,.png"
+            (change)="selectionnerFichierRemplacement($event)"
+          />
+        </div>
+
+        <!-- NOUVEAU FICHIER SÉLECTIONNÉ -->
+        @if (fichierDocumentRemplacement) {
+          <div class="document-selected-file">
+            <div class="selected-file-icon">
+              <i class="fas fa-file"></i>
+            </div>
+
+            <div class="selected-file-info">
+              <strong>
+                {{ fichierDocumentRemplacement.name }}
+              </strong>
+
+              <small>
+                {{ formatFileSize(fichierDocumentRemplacement.size) }}
+              </small>
+            </div>
+
+            <button
+              type="button"
+              class="selected-file-remove"
+              (click)="supprimerFichierRemplacement()"
+            >
+              <i class="fas fa-times"></i>
+            </button>
+          </div>
+        }
+      </div>
+
+      <!-- FOOTER -->
+      <div class="document-modal-footer">
+        <button
+          type="button"
+          class="document-modal-btn document-modal-btn-secondary"
+          (click)="fermerPopupRemplacementDocument()"
+        >
+          Annuler
+        </button>
+
+        <button
+          type="button"
+          class="btn-actions"
+          [disabled]="uploadingDocument"
+          (click)="remplacerDocument()"
+        >
+          @if (uploadingDocument) {
+            <i class="fas fa-spinner fa-spin"></i>
+            Remplacement...
+          } @else {
+            <i class="fas fa-rotate"></i>
+            Remplacer
+          }
+        </button>
+      </div>
+    </div>
+  </div>
+}

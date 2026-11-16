@@ -932,3 +932,236 @@
     font-size: 14px;
   }
 }
+
+/* =========================================================
+   ÉTAPE DOCUMENTS
+   ========================================================= */
+
+.documents-step {
+  width: 100%;
+}
+
+.documents-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 1.25rem;
+}
+
+.documents-header .section-title {
+  margin-bottom: 0.4rem;
+}
+
+.documents-optional {
+  flex-shrink: 0;
+  padding: 0.4rem 0.75rem;
+  border-radius: 999px;
+  background: #f1f5f9;
+  color: #64748b;
+  font-size: 0.72rem;
+  font-weight: 600;
+}
+
+.documents-info {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.5rem;
+  border: 1px solid #bfdbfe;
+  background: #eff6ff;
+  color: #1e40af;
+  border-radius: 12px;
+  padding: 0.8rem 1rem;
+  font-size: 0.78rem;
+  margin-bottom: 1.5rem;
+}
+
+.documents-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1rem;
+}
+
+.document-card {
+  display: flex;
+  gap: 1rem;
+  padding: 1rem;
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 14px;
+  transition: all 0.2s ease;
+}
+
+.document-card:hover {
+  border-color: #bfdbfe;
+  box-shadow: 0 4px 14px rgba(30, 58, 95, 0.06);
+}
+
+.document-card-icon {
+  width: 42px;
+  height: 42px;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 10px;
+  background: #eff6ff;
+  color: #2c5282;
+  font-size: 1rem;
+}
+
+.document-card-content {
+  flex: 1;
+  min-width: 0;
+}
+
+.document-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 0.75rem;
+}
+
+.document-card-header h5 {
+  margin: 0 0 0.2rem;
+  color: #1e3a5f;
+  font-size: 0.88rem;
+  font-weight: 600;
+}
+
+.document-card-header small {
+  display: block;
+  color: #718096;
+  font-size: 0.7rem;
+}
+
+.document-upload-zone {
+  min-height: 72px;
+  border: 1px dashed #cbd5e0;
+  border-radius: 10px;
+  background: #f8fafc;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  padding: 0.75rem;
+}
+
+.document-upload-zone:hover {
+  border-color: #4299e1;
+  background: #eff6ff;
+}
+
+.document-upload-zone i {
+  color: #4299e1;
+  font-size: 1.1rem;
+  margin-bottom: 0.3rem;
+}
+
+.document-upload-zone span {
+  color: #2c5282;
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+.document-upload-zone small {
+  color: #718096;
+  font-size: 0.65rem;
+  margin-top: 0.15rem;
+}
+
+.documents-later {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+  margin-top: 1.5rem;
+  padding: 0.9rem 1rem;
+  border-radius: 12px;
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  color: #64748b;
+  font-size: 0.75rem;
+}
+
+.documents-later>i {
+  color: #4299e1;
+  margin-top: 2px;
+}
+
+.documents-later strong {
+  display: block;
+  color: #475569;
+  margin-bottom: 0.15rem;
+}
+
+.documents-later span {
+  display: block;
+}
+
+@media (max-width: 768px) {
+  .documents-header {
+    flex-direction: column;
+  }
+
+  .documents-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .documents-optional {
+    align-self: flex-start;
+  }
+}
+
+.photo-error-message {
+  margin-top: 8px;
+  color: #dc3545;
+  font-size: 13px;
+  font-weight: 500;
+}
+
+.identity-photos-preview {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+  margin-top: 12px;
+}
+
+.identity-photo-item {
+  min-width: 0;
+  border: 1px solid #e5e7eb;
+  border-radius: 10px;
+  overflow: hidden;
+  background: #f8fafc;
+}
+
+.identity-photo-item>img {
+  display: block;
+  width: 100%;
+  height: 150px;
+  object-fit: contain;
+  background: #f8fafc;
+}
+
+.identity-photo-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 10px;
+  border-top: 1px solid #e5e7eb;
+  background: #fff;
+}
+
+.identity-photo-footer span {
+  font-size: 13px;
+  font-weight: 600;
+  color: #475569;
+}
+
+.identity-photo-item>img {
+  display: block;
+  width: 100%;
+  height: 160px;
+  object-fit: cover;
+}

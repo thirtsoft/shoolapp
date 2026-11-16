@@ -20,3 +20,13 @@ export interface CreateEleveResponse {
     photoStored: boolean;
 }
 
+
+export interface DocumentEleveUploadResponse {
+    photoMessage?: string;
+    eleveUuid?: string;
+    eleveId: number
+    photoProvided: boolean;
+    photoStored: boolean;
+}
+
+
