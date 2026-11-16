@@ -3,11 +3,13 @@ import { inject, Injectable } from '@angular/core';
 import { Observable, throwError } from 'rxjs';
 import { catchError, tap } from 'rxjs/operators';
 import { environment } from '../../../../../environments/environment';
+import { ApiResponse } from '../../../../core/datamodel/api-response.model';
 import { DataResult } from '../../../../core/datamodel/data-model';
-import { ResponseMessage } from '../../../../core/response/response-message';
-import { FaireAppelRequest } from '../../../../core/models/dossiereleve/absence/faire-appel-request';
 import { AttendanceRecordResponse } from '../../../../core/models/dossiereleve/absence/attendance-record-response';
-import { DetailsEleveResponse, DossierPaiementEleve, ListeResultatEleve, ParcoursScolaireEleve, PresenceEleve, RechercheFactureEleve, RecherchePresenceEleve, RechercheResultatEleve } from '../../../../core/models/dossiereleve/dossier-eleve';
+import { FaireAppelRequest } from '../../../../core/models/dossiereleve/absence/faire-appel-request';
+import { DetailsEleveResponse, DossierDocumentsEleveResponse, DossierPaiementEleve, ListeResultatEleve, ParcoursScolaireEleve, PresenceEleve, RechercheFactureEleve, RecherchePresenceEleve, RechercheResultatEleve } from '../../../../core/models/dossiereleve/dossier-eleve';
+import { PieceJointeResponse } from '../../../../core/piecejointe/piece-jointe';
+import { ResponseMessage } from '../../../../core/response/response-message';
 
 @Injectable({
   providedIn: 'root'
@@ -229,6 +231,35 @@ export class DossierResourceService {
         );
         return throwError(() => error);
       })
+    );
+  }
+
+  getDocumentsEleve(eleveUuid: string, anneeScolaireUuid: string): Observable<DossierDocumentsEleveResponse> {
+    return this.http.get<DossierDocumentsEleveResponse>(
+      `${this.baseUrl_1}/dossiers-eleves/${eleveUuid}/documents`,
+      {
+        ...this.httpOptions,
+        params: { anneeScolaireUuid }
+      }
+    );
+  }
+
+  ajouterDocumentEleve(eleveUuid: string, typeDocument: string, file: File): Observable<ApiResponse<PieceJointeResponse>> {
+    const formData = new FormData();
+    formData.append('typeDocument', typeDocument);
+    formData.append('file', file);
+    return this.http.post<ApiResponse<PieceJointeResponse>>(
+      `${this.baseUrl_1}/eleve/${eleveUuid}/ajout-documents`,
+      formData
+    );
+  }
+
+  remplacerDocumentEleve(eleveUuid: string, documentUuid: string, file: File): Observable<ApiResponse<PieceJointeResponse>> {
+    const formData = new FormData();
+    formData.append('file', file);
+    return this.http.put<ApiResponse<PieceJointeResponse>>(
+      `${this.baseUrl_1}/eleve/${eleveUuid}/documents/${documentUuid}`,
+      formData
     );
   }
 

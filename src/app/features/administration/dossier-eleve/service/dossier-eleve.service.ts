@@ -21,7 +21,7 @@ import { EleveEdit } from '../../../../core/models/dossiereleve/request/eleve-ed
 import { Inscription } from '../../../../core/models/dossiereleve/request/inscription';
 import { ListeInscription } from '../../../../core/models/dossiereleve/request/liste-inscription';
 import { PaiementAdd } from '../../../../core/models/dossiereleve/request/paiement-add';
-import { CreateEleveResponse, ResponseEleve, ResponseMessage } from '../../../../core/models/message/response/response-message';
+import { CreateEleveResponse, DocumentEleveUploadResponse, ResponseEleve, ResponseMessage } from '../../../../core/models/message/response/response-message';
 
 @Injectable({
   providedIn: 'root'
@@ -225,5 +225,13 @@ export class DossierEleveService {
     return this.http.get<BulletinEleveResponse[]>(
       `${this.baseUrl}/bulletin/eleve/${eleveId}/bulletins-annee-courante`
     );
+  }
+
+  uploadDocuments(eleveUuid: string, typeDocument: string, files: File[]): Observable<ApiResponse<DocumentEleveUploadResponse[]>> {
+    const formData = new FormData();
+    formData.append('typeDocument', typeDocument);
+    files.forEach(file => { formData.append('files', file); });
+    return this.http.post<ApiResponse<DocumentEleveUploadResponse[]>>(
+      `${this.baseUrl}/eleve/${eleveUuid}/documents`, formData);
   }
 }

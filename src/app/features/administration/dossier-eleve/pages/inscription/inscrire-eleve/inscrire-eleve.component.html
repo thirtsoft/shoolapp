@@ -36,12 +36,12 @@
                 <div class="step-line" [class.active]="currentStep >= 3"></div>
                 <div class="step" [class.active]="currentStep >= 3">
                   <span class="step-number">3</span>
-                  <span class="step-label">Médecin</span>
+                  <span class="step-label">Inscription</span>
                 </div>
                 <div class="step-line" [class.active]="currentStep >= 4"></div>
                 <div class="step" [class.active]="currentStep >= 4">
                   <span class="step-number">4</span>
-                  <span class="step-label">Inscription</span>
+                  <span class="step-label">Documents</span>
                 </div>
               </div>
             </div>
@@ -163,6 +163,12 @@
                       </div>
                     </div>
                   </div>
+
+                  @if (message) {
+                    <div class="photo-error-message">
+                      {{ message }}
+                    </div>
+                  }
 
                   <div class="photo-column">
                     <div class="photo-card">
@@ -614,7 +620,7 @@
               </form>
             }
 
-            @if (currentStep === 3) {
+            <!--   @if (currentStep === 3) {
               <form [formGroup]="medecinTraitantFormGroup">
                 <div class="form-grid">
                   <div class="form-group">
@@ -661,9 +667,9 @@
                   </div>
                 </div>
               </form>
-            }
+            } -->
 
-            @if (currentStep === 4) {
+            @if (currentStep === 3) {
               <form [formGroup]="inscriptionFormGroup">
                 <div class="form-grid">
                   <div class="form-group">
@@ -853,6 +859,559 @@
                   </div>
                 </div>
               </form>
+            }
+
+            @if (currentStep === 4) {
+              <div class="documents-step">
+                <div class="documents-header">
+                  <div>
+                    <h4 class="section-title mb-1">
+                      <i class="fas fa-folder-open me-2"></i>
+                      Documents du dossier
+                    </h4>
+
+                    <p class="text-muted mb-0">
+                      Ajoutez les documents déjà disponibles. Vous pourrez compléter le dossier
+                      ultérieurement depuis le dossier de l'élève.
+                    </p>
+                  </div>
+
+                  <span class="documents-optional"> Étape facultative </span>
+                </div>
+
+                <div class="alert alert-info documents-info">
+                  <i class="fas fa-info-circle me-2"></i>
+
+                  <span>
+                    Les documents qui ne sont pas disponibles aujourd'hui pourront être ajoutés plus
+                    tard dans <strong>Dossier élève → Documents</strong>.
+                  </span>
+                </div>
+
+                <div class="documents-grid">
+                  <!-- EXTRAIT DE NAISSANCE -->
+                  <div class="document-card">
+                    <div class="document-card-icon">
+                      <i class="fas fa-file-lines"></i>
+                    </div>
+
+                    <div class="document-card-content">
+                      <div class="document-card-header">
+                        <div>
+                          <h5>Extrait de naissance</h5>
+                          <small>Généralement datant de moins de 3 mois</small>
+                        </div>
+                      </div>
+
+                      @if (!getDocument('EXTRAIT_NAISSANCE')) {
+                        <div class="document-upload">
+                          <input
+                            type="file"
+                            id="extraitNaissance"
+                            accept=".pdf,.jpg,.jpeg,.png"
+                            hidden
+                            (change)="onDocumentSelected($event, 'EXTRAIT_NAISSANCE')"
+                          />
+
+                          <label for="extraitNaissance" class="document-upload-zone">
+                            <i class="fas fa-cloud-arrow-up"></i>
+                            <span>Ajouter le document</span>
+                            <small>PDF, JPG ou PNG · 50 Mo max</small>
+                          </label>
+                        </div>
+                      } @else {
+                        @let document = getDocument('EXTRAIT_NAISSANCE');
+
+                        <div class="document-selected">
+                          @if (document?.apercus?.[0]) {
+                            <div class="document-image-preview">
+                              <img
+                                [src]="document?.apercus![0]"
+                                alt="Aperçu extrait de naissance"
+                              />
+                            </div>
+                          } @else {
+                            <div class="document-pdf-preview">
+                              <i class="fas fa-file-pdf"></i>
+                              <span>PDF</span>
+                            </div>
+                          }
+
+                          <div class="document-file-info">
+                            <strong>
+                              {{ document?.fichiers?.[0]?.name }}
+                            </strong>
+
+                            <small>
+                              {{
+                                (document?.fichiers?.[0]?.size ?? 0) / 1024 / 1024 | number: '1.1-2'
+                              }}
+                              Mo
+                            </small>
+                          </div>
+
+                          <div class="document-actions">
+                            <label for="extraitNaissance" class="btn-document-change">
+                              <i class="fas fa-sync-alt"></i>
+                              Remplacer
+                            </label>
+
+                            <button
+                              type="button"
+                              class="btn-document-delete"
+                              (click)="supprimerDocument('EXTRAIT_NAISSANCE')"
+                            >
+                              <i class="fas fa-trash"></i>
+                            </button>
+                          </div>
+
+                          <input
+                            type="file"
+                            id="extraitNaissance"
+                            accept=".pdf,.jpg,.jpeg,.png"
+                            hidden
+                            (change)="onDocumentSelected($event, 'EXTRAIT_NAISSANCE')"
+                          />
+                        </div>
+                      }
+                    </div>
+                  </div>
+
+                  <!-- PHOTOS D'IDENTITÉ -->
+                  <div class="document-card">
+                    <div class="document-card-icon">
+                      <i class="fas fa-images"></i>
+                    </div>
+
+                    <div class="document-card-content">
+                      <div class="document-card-header">
+                        <div>
+                          <h5>Photos d'identité</h5>
+                          <small>Deux photos récentes</small>
+                        </div>
+
+                        <span class="document-counter">
+                          {{ getNombreDocuments('PHOTOS_IDENTITE') }}/2
+                        </span>
+                      </div>
+
+                      @if (!getDocument('PHOTOS_IDENTITE')) {
+                        <div class="document-upload">
+                          <input
+                            type="file"
+                            id="photosIdentite"
+                            accept=".jpg,.jpeg,.png"
+                            multiple
+                            hidden
+                            (change)="onDocumentSelected($event, 'PHOTOS_IDENTITE')"
+                          />
+
+                          <label for="photosIdentite" class="document-upload-zone">
+                            <i class="fas fa-cloud-arrow-up"></i>
+                            <span>Ajouter les photos</span>
+                            <small>JPG ou PNG · 2 photos maximum</small>
+                          </label>
+                        </div>
+                      } @else {
+                        @let document = getDocument('PHOTOS_IDENTITE');
+
+                        <div class="identity-photos-preview">
+                          @for (fichier of document?.fichiers ?? []; track $index) {
+                            <div class="identity-photo-item">
+                              @if (document?.apercus?.[$index]) {
+                                <img [src]="document?.apercus![$index]" alt="Photo d'identité" />
+                              }
+
+                              <div class="identity-photo-footer">
+                                <span> Photo {{ $index + 1 }} </span>
+
+                                <button
+                                  type="button"
+                                  class="btn-document-delete"
+                                  (click)="supprimerDocument('PHOTOS_IDENTITE', $index)"
+                                >
+                                  <i class="fas fa-trash"></i>
+                                </button>
+                              </div>
+                            </div>
+                          }
+                        </div>
+
+                        @if ((document?.fichiers?.length ?? 0) < 2) {
+                          <input
+                            type="file"
+                            id="photosIdentite"
+                            accept=".jpg,.jpeg,.png"
+                            multiple
+                            hidden
+                            (change)="onDocumentSelected($event, 'PHOTOS_IDENTITE')"
+                          />
+
+                          <label for="photosIdentite" class="btn-document-add-more">
+                            <i class="fas fa-plus"></i>
+                            Ajouter une photo
+                          </label>
+                        }
+                      }
+                    </div>
+                  </div>
+
+                  <!-- CNI / PASSEPORT PARENT -->
+                  <!-- CNI / PASSEPORT PARENT -->
+                  <div class="document-card">
+                    <div class="document-card-icon">
+                      <i class="fas fa-id-card"></i>
+                    </div>
+
+                    <div class="document-card-content">
+                      <div class="document-card-header">
+                        <div>
+                          <h5>CNI / Passeport du parent</h5>
+                          <small>Parent ou tuteur légal</small>
+                        </div>
+                      </div>
+
+                      @if (!getDocument('PIECE_IDENTITE_PARENT')) {
+                        <div class="document-upload">
+                          <input
+                            type="file"
+                            id="pieceParent"
+                            accept=".pdf,.jpg,.jpeg,.png"
+                            hidden
+                            (change)="onDocumentSelected($event, 'PIECE_IDENTITE_PARENT')"
+                          />
+
+                          <label for="pieceParent" class="document-upload-zone">
+                            <i class="fas fa-cloud-arrow-up"></i>
+                            <span>Ajouter le document</span>
+                            <small>PDF, JPG ou PNG</small>
+                          </label>
+                        </div>
+                      } @else {
+                        @let document = getDocument('PIECE_IDENTITE_PARENT');
+
+                        <div class="document-selected">
+                          @if (document?.apercus?.[0]) {
+                            <div class="document-image-preview">
+                              <img [src]="document?.apercus![0]" alt="Pièce d'identité du parent" />
+                            </div>
+                          } @else {
+                            <div class="document-pdf-preview">
+                              <i class="fas fa-file-pdf"></i>
+                              <span>PDF</span>
+                            </div>
+                          }
+
+                          <div class="document-file-info">
+                            <strong>
+                              {{ document?.fichiers?.[0]?.name }}
+                            </strong>
+
+                            <small>
+                              {{
+                                (document?.fichiers?.[0]?.size ?? 0) / 1024 / 1024 | number: '1.1-2'
+                              }}
+                              Mo
+                            </small>
+                          </div>
+
+                          <div class="document-actions">
+                            <label for="pieceParent" class="btn-document-change">
+                              <i class="fas fa-sync-alt"></i>
+                              Remplacer
+                            </label>
+
+                            <button
+                              type="button"
+                              class="btn-document-delete"
+                              (click)="supprimerDocument('PIECE_IDENTITE_PARENT')"
+                            >
+                              <i class="fas fa-trash"></i>
+                            </button>
+                          </div>
+
+                          <input
+                            type="file"
+                            id="pieceParent"
+                            accept=".pdf,.jpg,.jpeg,.png"
+                            hidden
+                            (change)="onDocumentSelected($event, 'PIECE_IDENTITE_PARENT')"
+                          />
+                        </div>
+                      }
+                    </div>
+                  </div>
+
+                  <!-- CARNET VACCINATION -->
+                  <!-- CARNET VACCINATION -->
+                  <div class="document-card">
+                    <div class="document-card-icon">
+                      <i class="fas fa-book-medical"></i>
+                    </div>
+
+                    <div class="document-card-content">
+                      <div class="document-card-header">
+                        <div>
+                          <h5>Carnet de vaccination</h5>
+                          <small>Photocopie ou scan</small>
+                        </div>
+                      </div>
+
+                      @if (!getDocument('CARNET_VACCINATION')) {
+                        <div class="document-upload">
+                          <input
+                            type="file"
+                            id="carnetVaccination"
+                            accept=".pdf,.jpg,.jpeg,.png"
+                            hidden
+                            (change)="onDocumentSelected($event, 'CARNET_VACCINATION')"
+                          />
+
+                          <label for="carnetVaccination" class="document-upload-zone">
+                            <i class="fas fa-cloud-arrow-up"></i>
+                            <span>Ajouter le document</span>
+                            <small>PDF, JPG ou PNG</small>
+                          </label>
+                        </div>
+                      } @else {
+                        @let document = getDocument('CARNET_VACCINATION');
+
+                        <div class="document-selected">
+                          @if (document?.apercus?.[0]) {
+                            <div class="document-image-preview">
+                              <img [src]="document?.apercus![0]" alt="Carnet de vaccination" />
+                            </div>
+                          } @else {
+                            <div class="document-pdf-preview">
+                              <i class="fas fa-file-pdf"></i>
+                              <span>PDF</span>
+                            </div>
+                          }
+
+                          <div class="document-file-info">
+                            <strong>
+                              {{ document?.fichiers?.[0]?.name }}
+                            </strong>
+
+                            <small>
+                              {{
+                                (document?.fichiers?.[0]?.size ?? 0) / 1024 / 1024 | number: '1.1-2'
+                              }}
+                              Mo
+                            </small>
+                          </div>
+
+                          <div class="document-actions">
+                            <label for="carnetVaccination" class="btn-document-change">
+                              <i class="fas fa-sync-alt"></i>
+                              Remplacer
+                            </label>
+
+                            <button
+                              type="button"
+                              class="btn-document-delete"
+                              (click)="supprimerDocument('CARNET_VACCINATION')"
+                            >
+                              <i class="fas fa-trash"></i>
+                            </button>
+                          </div>
+
+                          <input
+                            type="file"
+                            id="carnetVaccination"
+                            accept=".pdf,.jpg,.jpeg,.png"
+                            hidden
+                            (change)="onDocumentSelected($event, 'CARNET_VACCINATION')"
+                          />
+                        </div>
+                      }
+                    </div>
+                  </div>
+
+                  <!-- CERTIFICAT MÉDICAL -->
+                  <!-- CERTIFICAT MÉDICAL -->
+                  <div class="document-card">
+                    <div class="document-card-icon">
+                      <i class="fas fa-file-medical"></i>
+                    </div>
+
+                    <div class="document-card-content">
+                      <div class="document-card-header">
+                        <div>
+                          <h5>Certificat médical</h5>
+                          <small>Certificat fourni par la famille</small>
+                        </div>
+                      </div>
+
+                      @if (!getDocument('CERTIFICAT_MEDICAL')) {
+                        <div class="document-upload">
+                          <input
+                            type="file"
+                            id="certificatMedical"
+                            accept=".pdf,.jpg,.jpeg,.png"
+                            hidden
+                            (change)="onDocumentSelected($event, 'CERTIFICAT_MEDICAL')"
+                          />
+
+                          <label for="certificatMedical" class="document-upload-zone">
+                            <i class="fas fa-cloud-arrow-up"></i>
+                            <span>Ajouter le document</span>
+                            <small>PDF, JPG ou PNG</small>
+                          </label>
+                        </div>
+                      } @else {
+                        @let document = getDocument('CERTIFICAT_MEDICAL');
+
+                        <div class="document-selected">
+                          @if (document?.apercus?.[0]) {
+                            <div class="document-image-preview">
+                              <img [src]="document?.apercus![0]" alt="Certificat médical" />
+                            </div>
+                          } @else {
+                            <div class="document-pdf-preview">
+                              <i class="fas fa-file-pdf"></i>
+                              <span>PDF</span>
+                            </div>
+                          }
+
+                          <div class="document-file-info">
+                            <strong>
+                              {{ document?.fichiers?.[0]?.name }}
+                            </strong>
+
+                            <small>
+                              {{
+                                (document?.fichiers?.[0]?.size ?? 0) / 1024 / 1024 | number: '1.1-2'
+                              }}
+                              Mo
+                            </small>
+                          </div>
+
+                          <div class="document-actions">
+                            <label for="certificatMedical" class="btn-document-change">
+                              <i class="fas fa-sync-alt"></i>
+                              Remplacer
+                            </label>
+
+                            <button
+                              type="button"
+                              class="btn-document-delete"
+                              (click)="supprimerDocument('CERTIFICAT_MEDICAL')"
+                            >
+                              <i class="fas fa-trash"></i>
+                            </button>
+                          </div>
+
+                          <input
+                            type="file"
+                            id="certificatMedical"
+                            accept=".pdf,.jpg,.jpeg,.png"
+                            hidden
+                            (change)="onDocumentSelected($event, 'CERTIFICAT_MEDICAL')"
+                          />
+                        </div>
+                      }
+                    </div>
+                  </div>
+                  <!-- FICHE RENSEIGNEMENTS -->
+                  <!-- FICHE RENSEIGNEMENTS -->
+                  <div class="document-card">
+                    <div class="document-card-icon">
+                      <i class="fas fa-file-signature"></i>
+                    </div>
+
+                    <div class="document-card-content">
+                      <div class="document-card-header">
+                        <div>
+                          <h5>Fiche de renseignements</h5>
+                          <small>Fiche de renseignements signée par le parent</small>
+                        </div>
+                      </div>
+
+                      @if (!getDocument('FICHE_RENSEIGNEMENTS')) {
+                        <div class="document-upload">
+                          <input
+                            type="file"
+                            id="ficheRenseignements"
+                            accept=".pdf,.jpg,.jpeg,.png"
+                            hidden
+                            (change)="onDocumentSelected($event, 'FICHE_RENSEIGNEMENTS')"
+                          />
+
+                          <label for="ficheRenseignements" class="document-upload-zone">
+                            <i class="fas fa-cloud-arrow-up"></i>
+                            <span>Ajouter le document</span>
+                            <small>PDF, JPG ou PNG</small>
+                          </label>
+                        </div>
+                      } @else {
+                        @let document = getDocument('FICHE_RENSEIGNEMENTS');
+
+                        <div class="document-selected">
+                          @if (document?.apercus?.[0]) {
+                            <div class="document-image-preview">
+                              <img [src]="document?.apercus![0]" alt="Fiche de renseignements" />
+                            </div>
+                          } @else {
+                            <div class="document-pdf-preview">
+                              <i class="fas fa-file-pdf"></i>
+                              <span>PDF</span>
+                            </div>
+                          }
+
+                          <div class="document-file-info">
+                            <strong>
+                              {{ document?.fichiers?.[0]?.name }}
+                            </strong>
+
+                            <small>
+                              {{
+                                (document?.fichiers?.[0]?.size ?? 0) / 1024 / 1024 | number: '1.1-2'
+                              }}
+                              Mo
+                            </small>
+                          </div>
+
+                          <div class="document-actions">
+                            <label for="ficheRenseignements" class="btn-document-change">
+                              <i class="fas fa-sync-alt"></i>
+                              Remplacer
+                            </label>
+
+                            <button
+                              type="button"
+                              class="btn-document-delete"
+                              (click)="supprimerDocument('FICHE_RENSEIGNEMENTS')"
+                            >
+                              <i class="fas fa-trash"></i>
+                            </button>
+                          </div>
+
+                          <input
+                            type="file"
+                            id="ficheRenseignements"
+                            accept=".pdf,.jpg,.jpeg,.png"
+                            hidden
+                            (change)="onDocumentSelected($event, 'FICHE_RENSEIGNEMENTS')"
+                          />
+                        </div>
+                      }
+                    </div>
+                  </div>
+                </div>
+
+                <div class="documents-later">
+                  <i class="fas fa-clock me-2"></i>
+
+                  <div>
+                    <strong>Vous n'avez pas encore tous les documents ?</strong>
+                    <span>
+                      Aucun problème. Vous pourrez compléter le dossier de l'élève après son
+                      inscription.
+                    </span>
+                  </div>
+                </div>
+              </div>
             }
 
             <div class="form-actions">

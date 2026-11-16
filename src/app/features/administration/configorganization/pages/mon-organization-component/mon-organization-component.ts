@@ -88,8 +88,6 @@ export class MonOrganizationComponent implements OnInit {
 
   private initializeForms(): void {
     this.identificationForm = this.formBuilder.group({
-      tenantUuid: ['', [Validators.required]],
-      organizationTypeUuid: ['', [Validators.required]],
       code: ['', [Validators.required]],
       libelle: ['', [Validators.required]],
       sigle: ['', [Validators.required]],
@@ -574,7 +572,6 @@ export class MonOrganizationComponent implements OnInit {
   }
 
   saveIdentification(): void {
-
     if (this.identificationForm.invalid) {
       this.identificationForm.markAllAsTouched();
 
