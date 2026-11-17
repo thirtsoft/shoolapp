@@ -9,6 +9,8 @@ import { Classe } from '../../../../../../core/models/referentiels/classe';
 import { Semestre } from '../../../../../../core/models/referentiels/semestre';
 import { ReferentielService } from '../../../../referentiel/service/referentiel.service';
 import { DossierResourceService } from '../../../service/dossier-resource.service';
+import { ClasseResponse } from '../../../../../../core/models/planification/cours-calendrier-response';
+import { PlanificationResourceService } from '../../../../planification/services/planification-resource.service';
 
 
 @Component({
@@ -25,7 +27,7 @@ export class AjoutNoteComponent implements OnInit {
   noteId?: number;
   eleveList: ListeEleve[] = [];
   evaluationList: EvaluationEditNote[] = [];
-  classeList: Classe[] = [];
+  classeList: ClasseResponse[] = [];
   semestreList: Semestre[] = [];
 
   typeNoteList: string[] = ['DEVOIR', 'COMPOSITION'];
@@ -44,13 +46,15 @@ export class AjoutNoteComponent implements OnInit {
   private readonly dossierResource = inject(DossierResourceService);
   private readonly referentielService = inject(ReferentielService);
   private readonly toastService = inject(ToastrService);
+  
+    private readonly planificationResource = inject(PlanificationResourceService);
 
   ngOnInit(): void {
     this.getClasseList();
   }
 
   getClasseList() {
-    this.referentielService.getAllClasses().subscribe(
+    this.planificationResource.getClassesDisponiblesPourAnneeScolaire().subscribe(
       (data: any[]) => {
         this.classeList = data;
       },
@@ -74,7 +78,6 @@ export class AjoutNoteComponent implements OnInit {
     this.dossierResource.getResourceListByElement('evaluation/add-note-classe', classId).subscribe({
       next: (data: any[]) => {
         this.evaluationList = data;
-        console.log('Évaluations chargées:', this.evaluationList);
       },
       error: (error) => {
         console.error('Erreur chargement évaluations:', error);
@@ -121,8 +124,6 @@ export class AjoutNoteComponent implements OnInit {
       });
     });
 
-    console.log('Map des élèves:', eleveMap);
-
     const notesFormatees = evaluation.noteEditRequestDTOList.map((note: any) => {
 
       const eleveInfo = eleveMap.get(note.eleve);
@@ -139,8 +140,6 @@ export class AjoutNoteComponent implements OnInit {
 
     this.notesData.set(notesFormatees);
     this.calculerStatistiques();
-
-    console.log('Notes chargées:', this.notesData());
   }
 
   updateNote(eleveId: number, newNote: number) {
@@ -195,7 +194,6 @@ export class AjoutNoteComponent implements OnInit {
     this.dossierResource.getResourceListByElement('inscription/classe', classId)?.subscribe({
       next: (data: any) => {
         this.eleveList = data;
-        console.log('Liste eleves {}', this.eleveList);
       }
     });
   }
@@ -257,15 +255,10 @@ export class AjoutNoteComponent implements OnInit {
       }))
     };
 
-    console.log('Payload:', payload);
-
     delete payload.noteEditRequestDTOListOld;
-
-    console.log('Payload:', payload);
 
     this.dossierResource.updateNotesEvaluationsReource('evaluation', this.selectedEvaluationForNotes.id, payload).subscribe({
       next: (response) => {
-        console.log('response:', response);
         this.toastService.success('Succès', 'Notes sauvegardées avec succès');
         this.updateEvaluationNotesInList();
         this.goBack();

@@ -49,8 +49,8 @@
               </label>
               <select class="form-select" formControlName="classeUuid" required>
                 <option value="" disabled selected>— Sélectionnez une classe —</option>
-                @for (classItem of classes; track classItem.uuid) {
-                  <option [value]="classItem.uuid">{{ classItem.libelle }}</option>
+                @for (classItem of classes; track classItem.classeUuid) {
+                  <option [value]="classItem.classeUuid">{{ classItem.libelle }}</option>
                 }
               </select>
               @if (

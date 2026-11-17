@@ -12,6 +12,7 @@ import { SessionSemestre } from '../../../../../../core/models/referentiels/sess
 import { PlanificationResourceService } from '../../../../planification/services/planification-resource.service';
 import { ReferentielResourceService } from '../../../../referentiel/service/referentiel-resource.service';
 import { DossierResourceService } from '../../../service/dossier-resource.service';
+import { ClasseResponse } from '../../../../../../core/models/planification/cours-calendrier-response';
 
 @Component({
   selector: 'app-edit-evaluation',
@@ -38,7 +39,7 @@ export class EditEvaluationComponent implements OnInit {
   disableAddButton = false;
   elevesList?: ListeEleve[] = [];
   enseignement?: Enseignement = {};
-  classeList: ListeClasse[] = [];
+  classeList: ClasseResponse[] = [];
 
   private readonly dossierResource = inject(DossierResourceService);
   private readonly planification = inject(PlanificationResourceService);
@@ -54,7 +55,6 @@ export class EditEvaluationComponent implements OnInit {
     this.evaluationId = this.activeRoute.snapshot.params['id'];
     this.initialiserFormGroup();
     this.chargerLesDonnees();
-    //  this.getEnseignementList();
     if (this.evaluationId != null && this.evaluationId != undefined) {
       this.getEvaluationByID(this.evaluationId);
       this.title = 'Modifier les notes de l\'évaluation';
@@ -69,7 +69,7 @@ export class EditEvaluationComponent implements OnInit {
       }
     });
 
-    this.referentielService.getResourceList('classe').pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
+    this.planification.getClassesDisponiblesPourAnneeScolaire().pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
       next: (data: any) => this.classeList = data
     });
   }

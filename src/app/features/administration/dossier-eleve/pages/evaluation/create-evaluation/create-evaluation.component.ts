@@ -5,11 +5,11 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ToastrService } from 'ngx-toastr';
 import { Evaluation } from '../../../../../../core/models/dossiereleve/evaluation/evaluation';
 import { ListeEnseignement } from '../../../../../../core/models/planification/liste-enseignement';
-import { ListeClasse } from '../../../../../../core/models/referentiels/classe';
 import { SessionSemestre } from '../../../../../../core/models/referentiels/session-semestre';
 import { PlanificationResourceService } from '../../../../planification/services/planification-resource.service';
 import { ReferentielResourceService } from '../../../../referentiel/service/referentiel-resource.service';
 import { DossierResourceService } from '../../../service/dossier-resource.service';
+import { ClasseResponse } from '../../../../../../core/models/planification/cours-calendrier-response';
 
 @Component({
   selector: 'app-create-evaluation',
@@ -27,7 +27,7 @@ export class CreateEvaluationComponent implements OnInit {
   enseignementList: ListeEnseignement[] = [];
   typeEvaluations: string[] = ['DEVOIR', 'COMPOSITION'];
   modeEvaluations: string[] = ['NORMAL', 'RATTRAPAGE'];
-  classeList: ListeClasse[] = [];
+  classeList: ClasseResponse[] = [];
   sessionSemestreList: SessionSemestre[] = [];
 
   addEditEvaluation: any;
@@ -58,7 +58,7 @@ export class CreateEvaluationComponent implements OnInit {
       }
     });
 
-    this.referentielService.getResourceList('classe').pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
+    this.planification.getClassesDisponiblesPourAnneeScolaire().pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
       next: (data: any) => this.classeList = data
     });
   }

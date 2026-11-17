@@ -16,6 +16,7 @@ import { ReferentielResourceService } from '../../../../referentiel/service/refe
 import { ReferentielService } from '../../../../referentiel/service/referentiel.service';
 
 import { DossierResourceService } from '../../../service/dossier-resource.service';
+import { ClasseResponse } from '../../../../../../core/models/planification/cours-calendrier-response';
 
 @Component({
   selector: 'app-list-evaluation',
@@ -48,7 +49,7 @@ export class ListEvaluationComponent implements OnInit {
   tableSizes = [10, 20, 50, 100];
 
   matieresList: any[] = [];
-  classesList: ListeClasse[] = [];
+  classesList: ClasseResponse[] = [];
 
   sessionSemestreList: SessionSemestre[] = [];
 
@@ -86,7 +87,6 @@ export class ListEvaluationComponent implements OnInit {
     this.chargerLesEvaluations();
   }
 
-
   async chargerLesEvaluations(): Promise<void> {
 
     try {
@@ -115,21 +115,14 @@ export class ListEvaluationComponent implements OnInit {
   }
 
   getClassList(): Promise<ListeClasse[]> {
-
     return new Promise((resolve, reject) => {
-
-      this.referentielService.getAllClasses().subscribe({
-
-        next: (data: ListeClasse[]) => {
-
+      this.planification.getClassesDisponiblesPourAnneeScolaire().subscribe({
+        next: (data: ClasseResponse[]) => {
           this.classesList = data ?? [];
-
           resolve(this.classesList);
         },
 
-        error: (err: any) => {
-          reject(err);
-        }
+        error: (err: any) => {          reject(err);}
 
       });
 

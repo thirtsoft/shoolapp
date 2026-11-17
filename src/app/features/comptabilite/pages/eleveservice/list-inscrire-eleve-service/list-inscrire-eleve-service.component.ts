@@ -6,6 +6,8 @@ import { ListeClasse } from '../../../../../core/models/referentiels/classe';
 import { CommonService } from '../../../../../core/services/common.service';
 import { ReferentielService } from '../../../../administration/referentiel/service/referentiel.service';
 import { ComptabiliteResourceService } from '../../../services/comptabilite-resource.service';
+import { ClasseResponse } from '../../../../../core/models/planification/cours-calendrier-response';
+import { PlanificationResourceService } from '../../../../administration/planification/services/planification-resource.service';
 
 @Component({
   selector: 'app-list-inscrire-eleve-service',
@@ -18,7 +20,6 @@ export class ListInscrireEleveServiceComponent implements OnInit {
   errorMessage?: string;
   isEdit: boolean = true;
   isLoading: boolean = false;
-  filteredEleveServiceData: any;
   isLockable: boolean = true;
   isTable: boolean = true;
   deleteEndpoint = "eleveService";
@@ -31,7 +32,7 @@ export class ListInscrireEleveServiceComponent implements OnInit {
   tableSizes = [10, 20, 50, 100];
 
   anneesScolairesList: any[] = [];
-  classesList: any[] = [];
+  classesList: ClasseResponse[] = [];
   moisList: any[] = [];
 
   tableFilters: IFilterConfig[] = [];
@@ -41,6 +42,7 @@ export class ListInscrireEleveServiceComponent implements OnInit {
   private readonly comptabiliteResource = inject(ComptabiliteResourceService);
   private readonly referentielService = inject(ReferentielService);
   private readonly commonService = inject(CommonService);
+    private readonly planificationResource = inject(PlanificationResourceService);
 
 
   ngOnInit(): void {
@@ -75,7 +77,7 @@ export class ListInscrireEleveServiceComponent implements OnInit {
 
   getClassList(): Promise<ListeClasse[]> {
     return new Promise((resolve, reject) => {
-      this.referentielService.getAllClasses().subscribe({
+      this.planificationResource.getClassesDisponiblesPourAnneeScolaire().subscribe({
         next: (data) => {
           this.classesList = data;
           resolve(data);
@@ -270,7 +272,7 @@ export class ListInscrireEleveServiceComponent implements OnInit {
   handleFilterChange(filterValue: string) {
     const value = filterValue.trim().toLowerCase();
     if (value) {
-      this.filteredEleveServiceData = this.eleveServiceData.filter((item: any) =>
+      this.eleveServiceData = this.eleveServiceData.filter((item: any) =>
         Object.values(item).some((field) =>
           String(field).toLowerCase().includes(value)
         )

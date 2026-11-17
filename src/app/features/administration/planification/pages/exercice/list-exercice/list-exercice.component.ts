@@ -5,6 +5,7 @@ import { ListeClasse } from '../../../../../../core/models/referentiels/classe';
 import { CommonService } from '../../../../../../core/services/common.service';
 import { ReferentielService } from '../../../../referentiel/service/referentiel.service';
 import { PlanificationResourceService } from '../../../services/planification-resource.service';
+import { ClasseResponse } from '../../../../../../core/models/planification/cours-calendrier-response';
 
 @Component({
   selector: 'app-list-exercice',
@@ -66,9 +67,9 @@ export class ListExerciceComponent implements OnInit {
     }
   }
 
-  getClassList(): Promise<ListeClasse[]> {
+  getClassList(): Promise<ClasseResponse[]> {
     return new Promise((resolve, reject) => {
-      this.referentielService.getAllClasses().subscribe({
+      this.planificationResource.getClassesDisponiblesPourAnneeScolaire().subscribe({
         next: (data) => {
           this.classesList = data;
           resolve(data);

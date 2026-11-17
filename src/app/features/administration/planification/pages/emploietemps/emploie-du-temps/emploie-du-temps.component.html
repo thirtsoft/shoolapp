@@ -74,7 +74,6 @@
     </div>
 
     <div class="filter-card">
-      <!-- CLASSE -->
       <div class="filter-item">
         <label>
           <i class="fas fa-users"></i>
@@ -190,14 +189,12 @@
                       {{ coursJour.matiere?.libelle }}
                     </div>
 
-                    <!-- LIBELLE DU COURS -->
                     @if (coursJour.libelle) {
                       <div class="course-label">
                         {{ coursJour.libelle }}
                       </div>
                     }
 
-                    <!-- ENSEIGNANT - SALLE -->
                     <div class="course-meta">
                       <span class="course-teacher">
                         <i class="fas fa-user"></i>
@@ -214,8 +211,6 @@
                   </div>
                 </div>
               }
-
-              <!-- Aucun cours -->
               @if (obtenirCoursJour(jour.code).length === 0) {
                 <div class="empty-day">
                   <i class="fas fa-calendar-times"></i>
@@ -228,9 +223,6 @@
         </div>
       </div>
 
-      <!-- ===================================================
-           CHARGEMENT COURS
-      ==================================================== -->
       @if (isLoadingCours) {
         <div class="calendar-loading small">
           <i class="fas fa-spinner fa-spin"></i>
@@ -238,10 +230,6 @@
           <span> Chargement des cours... </span>
         </div>
       }
-
-      <!-- ===================================================
-           FOOTER
-      ==================================================== -->
       @if (!isLoadingCours) {
         <div class="calendar-footer">
           <div class="footer-info">
@@ -308,9 +296,6 @@
   </div>
 </div>
 
-<!-- =========================================================
-     VERSION EXPORT PDF
-========================================================= -->
 <div id="print-shadow-element" class="print-matrix-target">
   <div class="timetable-outer-header">
     <div class="title-badge-scolaire">
@@ -384,8 +369,6 @@
       }
     </tbody>
   </table>
-
-  <!-- RÉPARTITION VOLUME HORAIRE -->
 
   <div class="volume-footer-ribbon">
     <div class="ribbon-title">Répartition du volume horaire</div>

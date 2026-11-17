@@ -6,13 +6,11 @@ import { ToastrService } from 'ngx-toastr';
 import { EnseigantList } from '../../../../../../core/models/enseignant/enseignant-list';
 import { Enseignement } from '../../../../../../core/models/planification/enseignement';
 import { AnneeScolaire } from '../../../../../../core/models/referentiels/annee-scolaire';
-import { ListeClasse } from '../../../../../../core/models/referentiels/classe';
 import { Matiere } from '../../../../../../core/models/referentiels/matiere';
-import { Utilisateur } from '../../../../../../core/models/utilisateur/utilisateur';
 import { EnseignantService } from '../../../../../enseignant/service/enseignant.service';
 import { ReferentielService } from '../../../../referentiel/service/referentiel.service';
-import { UtilisateurService } from '../../../../utilisateur/service/utilisateur.service';
 import { PlanificationResourceService } from '../../../services/planification-resource.service';
+import { ClasseResponse } from '../../../../../../core/models/planification/cours-calendrier-response';
 
 @Component({
   selector: 'app-planifier-enseignement',
@@ -29,7 +27,7 @@ export class PlanifierEnseignementComponent implements OnInit {
   enseignement: any;
   isEdit: boolean = false;
 
-  classeList: ListeClasse[] = [];
+  classeList: ClasseResponse[] = [];
   matiereList: Matiere[] = [];
   enseigantList: EnseigantList[] = [];
   anneeScolaireList: AnneeScolaire[] = [];
@@ -43,7 +41,6 @@ export class PlanifierEnseignementComponent implements OnInit {
   private readonly planification = inject(PlanificationResourceService);
   private readonly referentielService = inject(ReferentielService);
   private readonly enseignantService = inject(EnseignantService);
-  private readonly utilisateurService = inject(UtilisateurService);
   private readonly _formBuilder = inject(FormBuilder);
   private readonly toastService = inject(ToastrService);
   private readonly activeRoute = inject(ActivatedRoute);
@@ -66,7 +63,7 @@ export class PlanifierEnseignementComponent implements OnInit {
   }
 
   private loadReferentiels() {
-    this.referentielService.getAllClasses().pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
+    this.planification.getClassesDisponiblesPourAnneeScolaire().pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
       next: data => this.classeList = data
     });
 
@@ -154,7 +151,6 @@ export class PlanifierEnseignementComponent implements OnInit {
   }
 
   addEnseignementItem(enseignement: Enseignement | null = null) {
-    // this.enseignementsArray.insert(0, this.createEnseignementItem(enseignement));
     this.enseignementsArray.push(this.createEnseignementItem(enseignement));
   }
 
@@ -191,7 +187,7 @@ export class PlanifierEnseignementComponent implements OnInit {
       next: (data) => {
         if (data.statut === 'OK') {
           this.toastService.success('Succès', `${enseignements.length} enseignement(s) créé(s) avec succès !`);
-          this.router.navigate(['admin/planification/enseignement']);
+           this.goBack();
         } else if (data.statut === 'FAILED') {
           this.toastService.error('Erreur', 'Erreur lors de la création : ' + data.message);
         }
@@ -225,7 +221,7 @@ export class PlanifierEnseignementComponent implements OnInit {
       next: (data) => {
         if (data.statut === 'OK') {
           this.toastService.success('Succès', 'L\'enseignement a été modifié avec succès !');
-          this.router.navigate(['admin/planification/enseignement']);
+          this.goBack();
         } else if (data.statut === 'FAILED') {
           this.toastService.error('Erreur', 'Erreur lors de la modification : ' + data.message);
         }
@@ -250,7 +246,7 @@ export class PlanifierEnseignementComponent implements OnInit {
   }
 
   goBack() {
-    this.router.navigate(['admin/planification/enseignement'])
+   void this.router.navigate(['admin/planification/enseignement'])
   }
 
 
