@@ -5,9 +5,11 @@ import { catchError, tap } from 'rxjs/operators';
 import { environment } from '../../../../../environments/environment';
 import { ApiResponse } from '../../../../core/datamodel/api-response.model';
 import { DataResult } from '../../../../core/datamodel/data-model';
-import { CoursEnseignantCalendrier } from '../../../../core/models/enseignant/cours-enseignant-calendrier.model';
+import { CoursEnseigne, MatiereEnseignee } from '../../../../core/models/dossiereleve/dossier-eleve';
+import { CoursParentAbsenceResponse } from '../../../../core/models/parent/cours-parent-absence-response.model';
 import { ActiviteAVenir } from '../../../../core/models/planification/activite-a-venir';
 import { Cours } from '../../../../core/models/planification/cours';
+import { CalendrierAdministrationResponse, ClasseResponse, CoursCalendrier } from '../../../../core/models/planification/cours-calendrier-response';
 import { EmploiDuTemps } from '../../../../core/models/planification/emploi-du-temp';
 import { Enseignement } from '../../../../core/models/planification/enseignement';
 import { Evenement } from '../../../../core/models/planification/evenement';
@@ -23,8 +25,6 @@ import { ListeEnseignement } from '../../../../core/models/planification/liste-e
 import { ListeExercie } from '../../../../core/models/planification/liste-exercice';
 import { Meeting } from '../../../../core/models/planification/meeting';
 import { ResponseMessage } from '../../../../core/response/response-message';
-import { CoursParentAbsenceResponse } from '../../../../core/models/parent/cours-parent-absence-response.model';
-import { CoursEnseigne, MatiereEnseignee } from '../../../../core/models/dossiereleve/dossier-eleve';
 
 @Injectable({
   providedIn: 'root'
@@ -431,8 +431,8 @@ export class PlanificationResourceService {
     );
   }
 
-  getMesCoursEnseignant(): Observable<CoursEnseignantCalendrier[]> {
-    return this.http.get<CoursEnseignantCalendrier[]>(`${this.planificationUrl}/planification/enseignant/me/cours`);
+  getMesCoursEnseignant(): Observable<CoursCalendrier[]> {
+    return this.http.get<CoursCalendrier[]>(`${this.planificationUrl}/planification/enseignant/me/cours`);
   }
 
   getMesEnseignements(): Observable<ListeEnseignement[]> {
@@ -551,6 +551,36 @@ export class PlanificationResourceService {
       .set('anneeScolaireUuid', anneeScolaireUuid);
     return this.http.get<CoursEnseigne[]>(
       `${this.planificationUrl}/planification/cours-enseignes`,
+      {
+        ...this.httpOptions,
+        params
+      }
+    );
+  }
+
+  /*************     Calendrier Administration      ***********/
+
+  getClassesDisponiblesPourAnneeScolaire(): Observable<ClasseResponse[]> {
+    return this.http.get<ClasseResponse[]>(
+      `${this.planificationUrl}/planification/classes-disponible-annee-scolaire`,
+      this.httpOptions
+    );
+  }
+
+  getContexteCalendrier(): Observable<CalendrierAdministrationResponse> {
+    return this.http.get<CalendrierAdministrationResponse>(
+      `${this.planificationUrl}/planification/calendrier/contexte`,
+      this.httpOptions
+    );
+  }
+
+  getCoursCalendrierAdministration(classeId: number, anneeScolaireId: number): Observable<CoursCalendrier[]> {
+    const params = new HttpParams()
+      .set('classeId', classeId.toString())
+      .set('anneeScolaireId', anneeScolaireId.toString());
+
+    return this.http.get<CoursCalendrier[]>(
+      `${this.planificationUrl}/planification/emplois-temps-classe`,
       {
         ...this.httpOptions,
         params

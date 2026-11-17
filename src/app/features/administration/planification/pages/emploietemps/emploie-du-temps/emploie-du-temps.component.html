@@ -1,4 +1,4 @@
-<app-generic-table-dossier
+<!-- <app-generic-table-dossier
   title="Liste des emploies du temps"
   titleFitre="Emploiedutemps"
   [tableColumns]="columns"
@@ -24,3 +24,393 @@
   detailButtonLink="/admin/planification/emploi-du-temps/details"
 >
 </app-generic-table-dossier>
+ -->
+
+<div class="page-wrapper">
+  <div class="content container-fluid">
+    <div class="page-header">
+      <div class="page-title-box">
+        <div class="page-title-icon">
+          <i class="fas fa-calendar-alt"></i>
+        </div>
+
+        <div>
+          <h3 class="page-title">Emploi du temps</h3>
+          <p class="page-subtitle">Planning annuel récurrent du lundi au samedi</p>
+        </div>
+      </div>
+
+      <div class="page-header-actions">
+        <button
+          type="button"
+          class="btn btn-print-header"
+          (click)="imprimer()"
+          [disabled]="isLoading || isLoadingCours"
+        >
+          <i class="fas fa-print"></i>
+          <span>Imprimer</span>
+        </button>
+
+        <button
+          type="button"
+          class="btn btn-pdf-header"
+          (click)="exporterPDF()"
+          [disabled]="isLoading || isLoadingCours"
+        >
+          <i class="fas fa-file-pdf"></i>
+          <span>Télécharger PDF</span>
+        </button>
+
+        <button
+          type="button"
+          class="btn btn-add-header"
+          (click)="ajouterEmploie()"
+          [disabled]="isLoading || isLoadingCours"
+        >
+          <i class="fas fa-plus"></i>
+          <span>Ajouter un emploi du temps</span>
+        </button>
+      </div>
+    </div>
+
+    <div class="filter-card">
+      <!-- CLASSE -->
+      <div class="filter-item">
+        <label>
+          <i class="fas fa-users"></i>
+          Classe
+        </label>
+
+        <div class="select-wrapper">
+          <select
+            class="form-control"
+            [(ngModel)]="classeSelectionnee"
+            (ngModelChange)="changerClasse($event)"
+            [disabled]="isLoading || classesList.length === 0"
+          >
+            @for (classe of classesList; track classe.id) {
+              <option [ngValue]="classe.id">
+                {{ classe.libelle }}
+              </option>
+            }
+          </select>
+
+          <i class="fas fa-chevron-down select-icon"></i>
+        </div>
+      </div>
+
+      <div class="filter-item">
+        <label>
+          <i class="fas fa-calendar"></i>
+          Année scolaire
+        </label>
+
+        <div class="select-wrapper">
+          <select
+            class="form-control"
+            [(ngModel)]="anneeScolaireSelectionnee"
+            (ngModelChange)="changerAnneeScolaire($event)"
+            [disabled]="isLoading || anneesScolaires.length === 0"
+          >
+            @for (annee of anneesScolaires; track annee.id) {
+              <option [ngValue]="annee.id">
+                {{ annee.libelle }}
+              </option>
+            }
+          </select>
+
+          <i class="fas fa-chevron-down select-icon"></i>
+        </div>
+      </div>
+
+      <div class="filter-item filter-item-emploi">
+        <label>
+          <i class="fas fa-calendar-check"></i>
+          Emploi du temps
+        </label>
+
+        <div class="emploi-value">
+          {{ titreEmploiDuTemps || '-' }}
+        </div>
+      </div>
+    </div>
+
+    @if (errorMessage) {
+      <div class="alert alert-warning calendar-alert">
+        <i class="fas fa-exclamation-triangle"></i>
+        {{ errorMessage }}
+      </div>
+    }
+
+    @if (isLoading) {
+      <div class="calendar-loading">
+        <i class="fas fa-spinner fa-spin"></i>
+        <span>Chargement du calendrier...</span>
+      </div>
+    } @else {
+      <div></div>
+
+      <div class="calendar-card" id="calendar-pdf">
+        <div class="calendar-header">
+          <div class="hour-header">Heure</div>
+
+          @for (jour of jours; track jour.code) {
+            <div class="day-header">
+              <strong>
+                {{ jour.libelle }}
+              </strong>
+            </div>
+          }
+        </div>
+
+        <div class="calendar-body">
+          <div class="hours-column">
+            @for (heure of heures; track heure) {
+              <div class="hour-cell">
+                {{ formaterHeure(heure) }}
+              </div>
+            }
+          </div>
+
+          @for (jour of jours; track jour.code) {
+            <div class="day-column">
+              @for (heure of heures; track heure) {
+                <div class="hour-background"></div>
+              }
+
+              @for (coursJour of obtenirCoursJour(jour.code); track coursJour.courseUuid) {
+                <div
+                  class="course-card"
+                  [ngClass]="getClasseCours(coursJour)"
+                  [style.top]="calculerTop(coursJour)"
+                  [style.height]="calculerHauteur(coursJour)"
+                >
+                  <div class="course-content">
+                    <div class="course-title">
+                      {{ coursJour.matiere?.libelle }}
+                    </div>
+
+                    <!-- LIBELLE DU COURS -->
+                    @if (coursJour.libelle) {
+                      <div class="course-label">
+                        {{ coursJour.libelle }}
+                      </div>
+                    }
+
+                    <!-- ENSEIGNANT - SALLE -->
+                    <div class="course-meta">
+                      <span class="course-teacher">
+                        <i class="fas fa-user"></i>
+                        {{ coursJour.enseignant }}
+                      </span>
+
+                      <span class="course-separator">-</span>
+
+                      <span class="course-room">
+                        <i class="fas fa-door-open"></i>
+                        {{ coursJour.salle?.libelle }}
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              }
+
+              <!-- Aucun cours -->
+              @if (obtenirCoursJour(jour.code).length === 0) {
+                <div class="empty-day">
+                  <i class="fas fa-calendar-times"></i>
+
+                  <span> Aucun cours </span>
+                </div>
+              }
+            </div>
+          }
+        </div>
+      </div>
+
+      <!-- ===================================================
+           CHARGEMENT COURS
+      ==================================================== -->
+      @if (isLoadingCours) {
+        <div class="calendar-loading small">
+          <i class="fas fa-spinner fa-spin"></i>
+
+          <span> Chargement des cours... </span>
+        </div>
+      }
+
+      <!-- ===================================================
+           FOOTER
+      ==================================================== -->
+      @if (!isLoadingCours) {
+        <div class="calendar-footer">
+          <div class="footer-info">
+            <i class="fas fa-users"></i>
+
+            <div>
+              <span>Classe</span>
+
+              <strong>
+                {{ classeActuelle?.libelle || '-' }}
+              </strong>
+            </div>
+          </div>
+
+          <div class="footer-separator"></div>
+
+          <div class="footer-info">
+            <i class="fas fa-calendar-alt"></i>
+
+            <div>
+              <span>Année scolaire</span>
+
+              <strong>
+                {{ anneeActuelle?.libelle || '-' }}
+              </strong>
+            </div>
+          </div>
+
+          <div class="footer-separator"></div>
+
+          <div class="footer-info">
+            <i class="fas fa-chalkboard-teacher"></i>
+
+            <div>
+              <span>Enseignants</span>
+
+              <strong>
+                {{ nombreEnseignants }}
+              </strong>
+            </div>
+          </div>
+
+          <div class="footer-separator"></div>
+
+          <div class="footer-info">
+            <i class="fas fa-book"></i>
+
+            <div>
+              <span>Matières</span>
+
+              <strong>
+                {{ nombreMatieres }}
+              </strong>
+            </div>
+          </div>
+
+          <button type="button" class="btn-print" (click)="imprimer()">
+            <i class="fas fa-print"></i>
+            Imprimer
+          </button>
+        </div>
+      }
+    }
+  </div>
+</div>
+
+<!-- =========================================================
+     VERSION EXPORT PDF
+========================================================= -->
+<div id="print-shadow-element" class="print-matrix-target">
+  <div class="timetable-outer-header">
+    <div class="title-badge-scolaire">
+      Emploi :
+      {{ classeActuelle?.libelle || '-' }}
+    </div>
+
+    <div class="subtitle-scolaire">
+      Année scolaire :
+      {{ anneeActuelle?.libelle || '-' }}
+    </div>
+  </div>
+
+  <table class="timetable-grid">
+    <thead>
+      <tr>
+        <th class="time-header-cell">Horaire</th>
+
+        @for (jour of joursSemaine; track jour) {
+          <th>
+            {{ jour }}
+            <br />
+            <span class="sub-class"></span>
+          </th>
+        }
+      </tr>
+    </thead>
+
+    <tbody>
+      @for (row of gridData; track row.horaire; let r = $index) {
+        <tr>
+          <td class="time-cell">
+            {{ row.horaire }}
+          </td>
+
+          @for (jour of joursSemaine; track jour) {
+            @if (rowSpans[jour.toLowerCase()] && rowSpans[jour.toLowerCase()][r]?.span! > 0) {
+              <td
+                [attr.rowspan]="rowSpans[jour.toLowerCase()][r].span"
+                [ngClass]="getCellClass(rowSpans[jour.toLowerCase()][r].course?.matiere?.libelle!)"
+              >
+                @if (rowSpans[jour.toLowerCase()][r].course; as cours) {
+                  <div class="course-box-content">
+                    <div class="course-subject">
+                      <strong>
+                        {{ cours.matiere?.libelle }}
+                      </strong>
+                    </div>
+
+                    <div class="course-title-sub">
+                      {{ cours.libelle }}
+                    </div>
+
+                    <div class="course-details">
+                      {{ cours.enseignant }}
+
+                      -
+
+                      <span>
+                        {{ cours.salle?.libelle }}
+                      </span>
+                    </div>
+                  </div>
+                } @else {
+                  <div class="empty-cell-dash">-</div>
+                }
+              </td>
+            }
+          }
+        </tr>
+      }
+    </tbody>
+  </table>
+
+  <!-- RÉPARTITION VOLUME HORAIRE -->
+
+  <div class="volume-footer-ribbon">
+    <div class="ribbon-title">Répartition du volume horaire</div>
+
+    <div class="ribbon-flex">
+      @for (item of repartitionHoraire; track item.matiere) {
+        <div class="ribbon-item">
+          <span class="color-dot" [style.background-color]="item.color"></span>
+
+          <span class="label-text">
+            <strong>
+              {{ item.matiere }}
+            </strong>
+
+            :
+            {{ item.volume }}
+          </span>
+        </div>
+      }
+
+      @if (repartitionHoraire.length === 0) {
+        <div class="ribbon-item">
+          <span class="label-text text-muted"> Aucune donnée de volume horaire disponible </span>
+        </div>
+      }
+    </div>
+  </div>
+</div>

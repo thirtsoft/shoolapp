@@ -83,10 +83,10 @@ export class SideBarAdminComponent {
     { route: '/admin/rh/avances-salaires', ico: '💰', label: 'Demandes d’avance' },
 
     // ═══════════ PLANIFICATION ═══════════
-    { route: '/admin/planification/emploi-du-temps', ico: '🕐', label: 'Emplois du temps', section: 'PLANIFICATION', badge: '' },
-    { route: '/admin/planification/cours', ico: '📖', label: 'Cours', section: '', badge: '' },
+    { route: '/admin/planification/emploi-du-temps', ico: '📅', label: 'Emplois du temps', section: 'PLANIFICATION', badge: '' },
+    //  { route: '/admin/planification/cours', ico: '📖', label: 'Cours', section: '', badge: '' },
     { route: '/admin/planification/enseignement', ico: '👨‍🏫', label: 'Enseignements', section: '', badge: '' },
-    { route: '/admin/planification/exercice', ico: '📅', label: 'Exercice', section: '', badge: '' },
+    { route: '/admin/planification/exercice', ico: '📝', label: 'Exercice', section: '', badge: '' },
     { route: '/admin/referentiel/annee-scolaires', ico: '🏫', label: 'Années scolaires' },
     { route: '/admin/referentiel/sessions', ico: '⏱️', label: 'Session Semestres' },
     { route: '/admin/planification/cantine', ico: '🍽️', label: 'MenusPlats' },

@@ -70,7 +70,7 @@ export class DetailsEmploiDuTempsAdminComponent implements OnInit {
     });
   }
 
-  construireMatriceDynamiqueV1() {
+/*   construireMatriceDynamiqueV1() {
     this.gridData = [];
 
     this.joursSemaine.forEach(j => {
@@ -133,7 +133,7 @@ export class DetailsEmploiDuTempsAdminComponent implements OnInit {
         i += span;
       }
     });
-  }
+  } */
 
   construireMatriceDynamique() {
     this.gridData = [];
@@ -200,20 +200,6 @@ export class DetailsEmploiDuTempsAdminComponent implements OnInit {
     });
   }
 
-  private normalizeJour(jour: string): string {
-    const map: { [key: string]: string } = {
-      'lun': 'LUNDI',
-      'mar': 'MARDI',
-      'mer': 'MERCREDI',
-      'jeu': 'JEUDI',
-      'ven': 'VENDREDI',
-      'sam': 'SAMEDI',
-      'dim': 'DIMANCHE'
-    };
-
-    const upper = jour.toUpperCase();
-    return map[upper] || upper;
-  }
 
   calculerRepartitionHoraire() {
     const mapMatieres = new Map<string, number>();
@@ -288,7 +274,7 @@ export class DetailsEmploiDuTempsAdminComponent implements OnInit {
   }
 
   goBack() {
-    this.router.navigate(['admin/planification/emploi-du-temps'])
+    void this.router.navigate(['admin/planification/emploi-du-temps'])
   }
 
 }
