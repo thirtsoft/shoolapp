@@ -5,12 +5,12 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
 import { InscriptionEleveTypeService } from '../../../../../core/models/comptabilite/inscrire-eleve-service';
 import { ListeInscription } from '../../../../../core/models/dossiereleve/request/liste-inscription';
+import { ClasseResponse } from '../../../../../core/models/planification/cours-calendrier-response';
 import { AnneeScolaire } from '../../../../../core/models/referentiels/annee-scolaire';
 import { TypeServiceOffert } from '../../../../../core/models/referentiels/type-service-offert';
-import { Utilisateur } from '../../../../../core/models/utilisateur/utilisateur';
 import { DossierResourceService } from '../../../../administration/dossier-eleve/service/dossier-resource.service';
+import { PlanificationResourceService } from '../../../../administration/planification/services/planification-resource.service';
 import { ReferentielResourceService } from '../../../../administration/referentiel/service/referentiel-resource.service';
-import { UtilisateurService } from '../../../../administration/utilisateur/service/utilisateur.service';
 import { ComptabiliteResourceService } from '../../../services/comptabilite-resource.service';
 
 @Component({
@@ -33,7 +33,7 @@ export class InscrireEleveServiceComponent implements OnInit, AfterViewInit {
 
   eleveList?: ListeInscription[];
   anneeScolaires: AnneeScolaire[] = [];
-  classList?: any[];
+  classList?: ClasseResponse[];
   selectedPrimary: number | null = null;
   selectedSecondary: number | null = null;
 
@@ -46,9 +46,9 @@ export class InscrireEleveServiceComponent implements OnInit, AfterViewInit {
   private readonly eleveService = inject(DossierResourceService);
   private readonly _formBuilder = inject(FormBuilder);
   private readonly toastService = inject(ToastrService);
-  private readonly utilisateurService = inject(UtilisateurService);
   private readonly activeRoute = inject(ActivatedRoute);
   private readonly router = inject(Router);
+  private readonly planificationResource = inject(PlanificationResourceService);
 
   constructor() {
     this.eleveinscrireId = this.activeRoute.snapshot.params['id'];
@@ -108,7 +108,7 @@ export class InscrireEleveServiceComponent implements OnInit, AfterViewInit {
   }
 
   getClassList() {
-    this.referentielResource.getResourceList('classe').subscribe({
+    this.planificationResource.getClassesDisponiblesPourAnneeScolaire().subscribe({
       next: (data) => {
         this.classList = data;
       }

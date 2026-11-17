@@ -7,8 +7,10 @@ import { RechercheNote } from '../../../../../../core/models/dossiereleve/note/r
 import { ListeClasse } from '../../../../../../core/models/referentiels/classe';
 import { Semestre } from '../../../../../../core/models/referentiels/semestre';
 
+import { ClasseResponse } from '../../../../../../core/models/planification/cours-calendrier-response';
 import { SessionSemestre } from '../../../../../../core/models/referentiels/session-semestre';
 import { CommonService } from '../../../../../../core/services/common.service';
+import { PlanificationResourceService } from '../../../../planification/services/planification-resource.service';
 import { ReferentielResourceService } from '../../../../referentiel/service/referentiel-resource.service';
 import { DossierResourceService } from '../../../service/dossier-resource.service';
 
@@ -43,7 +45,7 @@ export class ListNotesComponent implements OnInit {
   totalElements = 0;
   tableSizes = [10, 20, 50, 100];
 
-  classesList: ListeClasse[] = [];
+  classesList: ClasseResponse[] = [];
   matieresList: any[] = [];
   sessionSemestreList: Semestre[] = [];
 
@@ -62,6 +64,7 @@ export class ListNotesComponent implements OnInit {
   private readonly dossierResource = inject(DossierResourceService);
   private readonly referentielService = inject(ReferentielResourceService);
   private readonly commonService = inject(CommonService);
+  private readonly planificationResource = inject(PlanificationResourceService);
 
 
   ngOnInit(): void {
@@ -94,30 +97,17 @@ export class ListNotesComponent implements OnInit {
     }
   }
 
-
   getClassList(): Promise<ListeClasse[]> {
-
     return new Promise((resolve, reject) => {
-
-      this.referentielService
-        .getResourceList('classe')
+      this.planificationResource
+        .getClassesDisponiblesPourAnneeScolaire()
         .subscribe({
-
           next: (data: any[]) => {
-
             this.classesList = data ?? [];
-
             resolve(this.classesList);
-
           },
-
           error: (err: any) => {
-
-            console.error(
-              'Erreur chargement classes :',
-              err
-            );
-
+            console.error(              'Erreur chargement classes :',err            );
             reject(err);
 
           }
@@ -131,7 +121,6 @@ export class ListNotesComponent implements OnInit {
   getMatiereList(): Promise<any[]> {
 
     return new Promise((resolve, reject) => {
-
       this.referentielService
         .getResourceList('matiere')
         .subscribe({

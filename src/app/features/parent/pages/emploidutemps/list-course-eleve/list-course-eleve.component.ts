@@ -1,13 +1,12 @@
 import { Component, computed, inject, OnInit, signal } from '@angular/core';
 import { CalendarOptions, EventInput, FullCalendarModule } from '@fullcalendar/angular';
-import { PlanificationResourceService } from '../../../../administration/planification/services/planification-resource.service';
 
 import dayGridPlugin from '@fullcalendar/angular/daygrid';
 import interactionPlugin from '@fullcalendar/angular/interaction';
 import listPlugin from '@fullcalendar/angular/list';
 import classicThemePlugin from '@fullcalendar/angular/themes/classic';
 import timeGridPlugin from '@fullcalendar/angular/timegrid';
-import { CoursParentCalendrier } from '../../../../../core/models/parent/cours-parent-calendrier-response.model';
+import { CoursCalendrier } from '../../../../../core/models/planification/cours-calendrier-response';
 import { ParentSessionService } from '../../../service/parent-session.service';
 import { ParentService } from '../../../service/parent.service';
 @Component({
@@ -19,18 +18,15 @@ import { ParentService } from '../../../service/parent.service';
 })
 export class ListCourseEleveComponent implements OnInit {
 
-
-  private readonly planificationService = inject(PlanificationResourceService);
-
   private readonly parentService = inject(ParentService);
   private readonly parentSessionService = inject(ParentSessionService);
   readonly eleveActif = this.parentSessionService.eleveActif;
 
-  coursParent = signal<CoursParentCalendrier[]>([]);
+  coursParent = signal<CoursCalendrier[]>([]);
 
   showDetailsCoursModal = false;
 
-  coursSelectionne = signal<CoursParentCalendrier | null>(null);
+  coursSelectionne = signal<CoursCalendrier | null>(null);
 
   coursDuJour = computed(() => {
 
@@ -153,15 +149,15 @@ export class ListCourseEleveComponent implements OnInit {
       });
   }
 
-  private convertirCoursEnEvenements(cours: CoursParentCalendrier[]): EventInput[] {
+  private convertirCoursEnEvenements(cours: CoursCalendrier[]): EventInput[] {
     return cours.map(c => {
       const couleur = this.getCouleurMatiere(c.matiere?.id);
       return {
         id: String(c.coursId),
         title: c.libelle,
-        daysOfWeek: [this.convertirJourSemaine(c.jourSemaine)],
-        startTime: this.normaliserHeure(c.heureDebut),
-        endTime: this.normaliserHeure(c.heureFin),
+        daysOfWeek: [this.convertirJourSemaine(c?.jourSemaine)],
+        startTime: this.normaliserHeure(c?.heureDebut),
+        endTime: this.normaliserHeure(c?.heureFin),
         startRecur: c.dateDebut ?? undefined,
         endRecur: c.dateFin
           ? this.ajouterUnJour(c.dateFin)
@@ -191,7 +187,7 @@ export class ListCourseEleveComponent implements OnInit {
     });
   }
 
-  private convertirJourSemaine(jour: string): number {
+  private convertirJourSemaine(jour?: string): number {
     const jours: Record<string, number> = {
       DIMANCHE: 0,
       LUNDI: 1,
@@ -202,16 +198,14 @@ export class ListCourseEleveComponent implements OnInit {
       SAMEDI: 6
     };
 
-    return jours[jour?.trim().toUpperCase()] ?? 1;
+    return jours[jour!.trim().toUpperCase()] ?? 1;
   }
 
-  private normaliserHeure(heure: string): string {
+  private normaliserHeure(heure?: string): string {
     if (!heure) {
       return '00:00:00';
     }
-    return heure.length >= 8
-      ? heure.substring(0, 8)
-      : `${heure.substring(0, 5)}:00`;
+    return heure.length >= 8 ? heure.substring(0, 8) : `${heure.substring(0, 5)}:00`;
   }
 
   private ajouterUnJour(date: string): string {
@@ -287,20 +281,10 @@ export class ListCourseEleveComponent implements OnInit {
     return heures * 60 + minutes;
   }
 
-  getStatutCours(cours: CoursParentCalendrier): 'termine' | 'en_cours' | 'a_venir' {
+  getStatutCours(cours: CoursCalendrier): 'termine' | 'en_cours' | 'a_venir' {
     const maintenant = new Date();
-    const [heureDebut, minuteDebut] =
-      cours.heureDebut
-        .substring(0, 5)
-        .split(':')
-        .map(Number);
-
-    const [heureFin, minuteFin] =
-      cours.heureFin
-        .substring(0, 5)
-        .split(':')
-        .map(Number);
-
+    const [heureDebut, minuteDebut] = cours.heureDebut!.substring(0, 5).split(':').map(Number);
+    const [heureFin, minuteFin] = cours.heureFin!.substring(0, 5).split(':').map(Number);
     const debut = new Date();
 
     debut.setHours(heureDebut, minuteDebut, 0, 0);
@@ -317,7 +301,7 @@ export class ListCourseEleveComponent implements OnInit {
     return 'termine';
   }
 
-  getStatutCoursLabel(cours: CoursParentCalendrier): string {
+  getStatutCoursLabel(cours: CoursCalendrier): string {
     const statut = this.getStatutCours(cours);
     const labels = {
       termine: 'Terminé',
@@ -327,7 +311,7 @@ export class ListCourseEleveComponent implements OnInit {
     return labels[statut];
   }
 
-  getDureeCours(cours: CoursParentCalendrier): string {
+  getDureeCours(cours: CoursCalendrier): string {
     const h1 = this.convertirEnMinutes(cours.heureDebut);
     const h2 = this.convertirEnMinutes(cours.heureFin);
     const minutes = h2 - h1;

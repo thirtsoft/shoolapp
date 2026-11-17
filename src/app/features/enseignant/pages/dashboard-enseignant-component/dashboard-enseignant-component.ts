@@ -1,6 +1,5 @@
 import { Component, computed, inject, OnInit, signal } from '@angular/core';
 import { Router } from '@angular/router';
-import { CoursEnseignantCalendrier } from '../../../../core/models/enseignant/cours-enseignant-calendrier.model';
 import { DetailsEnseignantUtilisateur } from '../../../../core/models/enseignant/details-enseignant-utilisateur';
 import { AgendaSemaine } from '../../../../core/models/planification/agenda-semaine';
 import { ListeCours } from '../../../../core/models/planification/liste-cours';
@@ -22,6 +21,7 @@ import timeGridPlugin from '@fullcalendar/angular/timegrid';
 import { ActiviteAVenir } from '../../../../core/models/planification/activite-a-venir';
 import { ListeEnseignement } from '../../../../core/models/planification/liste-enseignement';
 import { EnseignementContextService, GestionClasseContext } from '../../service/enseignement-contexte.service';
+import { CoursCalendrier } from '../../../../core/models/planification/cours-calendrier-response';
 
 interface MessageProfesseur {
   id: string;
@@ -52,7 +52,7 @@ export class DashboardEnseignantComponent implements OnInit {
   mesResponsabilites = signal<ResponsabiliteClasseEnseignant[]>([]);
   notesARemplir = signal<NoteASaisirEnseignant[]>([]);
 
-  coursEnseignant = signal<CoursEnseignantCalendrier[]>([]);
+  coursEnseignant = signal<CoursCalendrier[]>([]);
 
   mesEnseignements = signal<ListeEnseignement[]>([]);
 
@@ -73,14 +73,14 @@ export class DashboardEnseignantComponent implements OnInit {
 
     return this.coursEnseignant()
       .filter(cours => cours.jourSemaine === jourActuel)
-      .sort((a, b) => a.heureDebut.localeCompare(b.heureDebut)
+      .sort((a, b) => a.heureDebut!.localeCompare(b.heureDebut!)
       );
   });
 
 
   showDetailsCoursModal = false;
 
-  coursSelectionne = signal<CoursEnseignantCalendrier | null>(null);
+  coursSelectionne = signal<CoursCalendrier | null>(null);
 
   calendarOptions: CalendarOptions = {
     initialView: 'timeGridDay',
@@ -222,7 +222,7 @@ export class DashboardEnseignantComponent implements OnInit {
     });
   }
 
-  private trouverCoursDuContexte(enseignement: ListeEnseignement): CoursEnseignantCalendrier | undefined {
+  private trouverCoursDuContexte(enseignement: ListeEnseignement): CoursCalendrier | undefined {
     const coursCompatibles = this.coursEnseignant().filter(cours => {
       const memeEnseignement = Number(cours.enseignementId) === Number(enseignement.id);
       const memeClasse = Number(cours.classe?.id) === Number(enseignement.classId);
@@ -323,15 +323,15 @@ export class DashboardEnseignantComponent implements OnInit {
     void this.router.navigate(['/enseignant/gestion-classe', enseignement.classId]);
   }
 
-  private convertirCoursEnEvenements(cours: CoursEnseignantCalendrier[]): EventInput[] {
+  private convertirCoursEnEvenements(cours: CoursCalendrier[]): EventInput[] {
     return cours.map(c => {
       const couleur = this.getCouleurClasse(c.classe?.id);
       return {
         id: String(c.coursId),
         title: c.libelle,
-        daysOfWeek: [this.convertirJourSemaine(c.jourSemaine)],
-        startTime: this.normaliserHeure(c.heureDebut),
-        endTime: this.normaliserHeure(c.heureFin),
+        daysOfWeek: [this.convertirJourSemaine(c?.jourSemaine)],
+        startTime: this.normaliserHeure(c?.heureDebut),
+        endTime: this.normaliserHeure(c?.heureFin),
         startRecur: c.dateDebut,
         endRecur: this.ajouterUnJour(c.dateFin!),
 
@@ -372,7 +372,7 @@ export class DashboardEnseignantComponent implements OnInit {
   }
 
 
-  private convertirJourSemaine(jour: string): number {
+  private convertirJourSemaine(jour?: string): number {
     const jours: Record<string, number> = {
       DIMANCHE: 0,
       LUNDI: 1,
@@ -382,10 +382,10 @@ export class DashboardEnseignantComponent implements OnInit {
       VENDREDI: 5,
       SAMEDI: 6
     };
-    return jours[jour?.trim().toUpperCase()] ?? 1;
+    return jours[jour!.trim().toUpperCase()] ?? 1;
   }
 
-  private normaliserHeure(heure: string): string {
+  private normaliserHeure(heure?: string): string {
     if (!heure) {
       return '00:00:00';
     }
@@ -457,10 +457,10 @@ export class DashboardEnseignantComponent implements OnInit {
     return { domNodes: [container] };
   }
 
-  getStatutCours(cours: CoursEnseignantCalendrier): 'termine' | 'en_cours' | 'a_venir' {
+  getStatutCours(cours: CoursCalendrier): 'termine' | 'en_cours' | 'a_venir' {
     const maintenant = new Date();
-    const [heureDebut, minuteDebut] = cours.heureDebut.substring(0, 5).split(':').map(Number);
-    const [heureFin, minuteFin] = cours.heureFin.substring(0, 5).split(':').map(Number);
+    const [heureDebut, minuteDebut] = cours.heureDebut!.substring(0, 5).split(':').map(Number);
+    const [heureFin, minuteFin] = cours.heureFin!.substring(0, 5).split(':').map(Number);
     const debut = new Date();
     debut.setHours(heureDebut, minuteDebut, 0, 0);
     const fin = new Date();
@@ -475,15 +475,15 @@ export class DashboardEnseignantComponent implements OnInit {
     return 'termine';
   }
 
-  getStatutCoursLabel(cours: CoursEnseignantCalendrier): string {
+  getStatutCoursLabel(cours: CoursCalendrier): string {
     const statut = this.getStatutCours(cours);
     const labels = { termine: 'Terminé', en_cours: 'En cours', a_venir: 'À venir' };
     return labels[statut];
   }
 
-  getDureeCours(cours: CoursEnseignantCalendrier): string {
-    const [h1, m1] = cours.heureDebut.substring(0, 5).split(':').map(Number);
-    const [h2, m2] = cours.heureFin.substring(0, 5).split(':').map(Number);
+  getDureeCours(cours: CoursCalendrier): string {
+    const [h1, m1] = cours.heureDebut!.substring(0, 5).split(':').map(Number);
+    const [h2, m2] = cours.heureFin!.substring(0, 5).split(':').map(Number);
     const minutes = (h2 * 60 + m2) - (h1 * 60 + m1);
     const heures = Math.floor(minutes / 60);
     const reste = minutes % 60;

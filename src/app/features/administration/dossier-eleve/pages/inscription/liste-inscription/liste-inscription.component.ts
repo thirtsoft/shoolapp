@@ -5,12 +5,15 @@ import { IFilterConfig } from '../../../../../../core/filtered-config/FiltreConf
 import { GenericTableDossierComponent } from '../../../../../../core/generic/generic-table-dossier/generic-table-dossier.component';
 
 import { AnneeScolaire } from '../../../../../../core/models/referentiels/annee-scolaire';
-import { ListeClasse } from '../../../../../../core/models/referentiels/classe';
+import { ClasseListResponse, ListeClasse } from '../../../../../../core/models/referentiels/classe';
 import { Niveau } from '../../../../../../core/models/referentiels/niveau';
 
+import { RechercherInscription } from '../../../../../../core/models/dossiereleve/inscription/rechercher-inscription';
+import { ClasseResponse } from '../../../../../../core/models/planification/cours-calendrier-response';
+import { PlanificationResourceService } from '../../../../planification/services/planification-resource.service';
+import { ReferentielResourceService } from '../../../../referentiel/service/referentiel-resource.service';
 import { ReferentielService } from '../../../../referentiel/service/referentiel.service';
 import { DossierResourceService } from '../../../service/dossier-resource.service';
-import { RechercherInscription } from '../../../../../../core/models/dossiereleve/inscription/rechercher-inscription';
 
 @Component({
   selector: 'app-liste-inscription',
@@ -56,7 +59,7 @@ export class ListeInscriptionComponent implements OnInit {
   tableSizes = [10, 20, 50, 100];
 
   anneesScolairesList: AnneeScolaire[] = [];
-  classesList: ListeClasse[] = [];
+  classesList: ClasseResponse[] = [];
   niveauList: Niveau[] = [];
 
   sexesOptions: string[] = ['Masculin', 'Féminin'];
@@ -71,6 +74,8 @@ export class ListeInscriptionComponent implements OnInit {
 
   private readonly dossierResource = inject(DossierResourceService);
   private readonly referentielService = inject(ReferentielService);
+  private readonly referentielResource = inject(ReferentielResourceService);
+  private readonly planificationResource = inject(PlanificationResourceService);
 
   ngOnInit(): void {
     this.loadInitialData();
@@ -110,12 +115,12 @@ export class ListeInscriptionComponent implements OnInit {
     });
   }
 
-  getClassList(): Promise<ListeClasse[]> {
+  getClassList(): Promise<ClasseListResponse[]> {
     return new Promise((resolve, reject) => {
-      this.referentielService
-        .getAllClasses()
+      this.planificationResource
+        .getClassesDisponiblesPourAnneeScolaire()
         .subscribe({
-          next: (data: ListeClasse[]) => {
+          next: (data: any[]) => {
             this.classesList = data;
             resolve(data);
           },

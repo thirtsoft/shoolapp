@@ -4,8 +4,9 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
 import { CahierDeTexteResponse } from '../../../../../../core/models/cahier-texte/cahier-texte-response.model';
 import { CahierDeTexteRequest } from '../../../../../../core/models/cahier-texte/cahiers-textes-request.model';
+import { ClasseResponse } from '../../../../../../core/models/planification/cours-calendrier-response';
 import { AnneeScolaireEncoursResponse } from '../../../../../../core/models/referentiels/annee-scolaire-encours-response';
-import { ClasseListResponse } from '../../../../../../core/models/referentiels/classe';
+import { PlanificationResourceService } from '../../../../planification/services/planification-resource.service';
 import { ReferentielResourceService } from '../../../../referentiel/service/referentiel-resource.service';
 import { CahierTexteResourceService } from '../../../services/chaier-texte-resource.service';
 
@@ -21,6 +22,10 @@ export class CreationCahierTexteComponent implements OnInit {
   private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
   private readonly cahierDeTexteService = inject(CahierTexteResourceService);
+  private readonly planificationResource = inject(PlanificationResourceService);
+  private readonly referentielService = inject(ReferentielResourceService);
+  private readonly toastService = inject(ToastrService);
+  private readonly _formBuilder = inject(FormBuilder);
 
   cahiertexte?: CahierDeTexteResponse;
   cahiertexteId?: number;
@@ -35,13 +40,9 @@ export class CreationCahierTexteComponent implements OnInit {
 
   today = new Date();
 
-  classes: ClasseListResponse[] = [];
+  classes: ClasseResponse[] = [];
   anneeScolaires: AnneeScolaireEncoursResponse[] = [];
 
-
-  private readonly referentielService = inject(ReferentielResourceService);
-  private readonly toastService = inject(ToastrService);
-  private readonly _formBuilder = inject(FormBuilder);
 
   ngOnInit(): void {
     this.initializeCahierTexetForm(null);
@@ -69,7 +70,7 @@ export class CreationCahierTexteComponent implements OnInit {
 
 
   getClasses() {
-    this.referentielService.getResourceList('classe/response').subscribe(
+    this.planificationResource.getClassesDisponiblesPourAnneeScolaire().subscribe(
       (data: any[]) => {
         this.classes = data;
       },
@@ -82,7 +83,7 @@ export class CreationCahierTexteComponent implements OnInit {
     if (!classeUuid || !this.classes || this.classes.length === 0) {
       return '';
     }
-    const classe = this.classes.find(c => Number(c.uuid) === Number(classeUuid));
+    const classe = this.classes.find(c => Number(c.classeUuid) === Number(classeUuid));
     return classe?.libelle ?? '';
   }
 

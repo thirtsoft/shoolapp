@@ -7,7 +7,7 @@ import { ParentDetails } from '../../../core/models/parent/parent-details';
 import { ParentElevesResponse } from '../../../core/models/parent/parent-eleves-response.model';
 import { DataResult } from '../../../core/datamodel/data-model';
 import { ResponseMessage } from '../../../core/response/response-message';
-import { CoursParentCalendrier } from '../../../core/models/parent/cours-parent-calendrier-response.model';
+import { CoursCalendrier } from '../../../core/models/planification/cours-calendrier-response';
 
 @Injectable({
   providedIn: 'root'
@@ -110,11 +110,11 @@ export class ParentService {
     return this.http.delete<ResponseMessage>(url, this.httpOptions);
   }
 
-  getEmploiDuTempsEleveParent(eleveId: number): Observable<CoursParentCalendrier[]> {
-    return this.http.get<CoursParentCalendrier[]>(
+  getEmploiDuTempsEleveParent(eleveId: number): Observable<CoursCalendrier[]> {
+    return this.http.get<CoursCalendrier[]>(
       `${this.planificationUrl}/parent/me/cours`,
       {
-        params: { eleveId}
+        params: { eleveId }
       }
     );
   }

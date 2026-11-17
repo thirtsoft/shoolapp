@@ -4,18 +4,14 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
-import { Constants } from '../../../../../../core/constants/constants';
+import { ClasseResponse } from '../../../../../../core/models/planification/cours-calendrier-response';
 import { ExerciceAddEdit } from '../../../../../../core/models/planification/exercice';
-import { ListeEnseignement } from '../../../../../../core/models/planification/liste-enseignement';
-import { ListeClasse } from '../../../../../../core/models/referentiels/classe';
-import { Utilisateur } from '../../../../../../core/models/utilisateur/utilisateur';
-import { PieceJointeService } from '../../../../../../core/services/piece-jointe';
-import { ReferentielResourceService } from '../../../../referentiel/service/referentiel-resource.service';
-import { UtilisateurService } from '../../../../utilisateur/service/utilisateur.service';
-import { PlanificationResourceService } from '../../../services/planification-resource.service';
 import { CreationExerciceRequest } from '../../../../../../core/models/planification/exercice/creation-exercice-request.model';
-import { UpdateExerciceDTO } from '../../../../../../core/models/planification/exercice/update-exercice-dto.model';
 import { GetExerciceResponse } from '../../../../../../core/models/planification/exercice/get-exercice-response.model';
+import { UpdateExerciceDTO } from '../../../../../../core/models/planification/exercice/update-exercice-dto.model';
+import { ListeEnseignement } from '../../../../../../core/models/planification/liste-enseignement';
+import { ReferentielResourceService } from '../../../../referentiel/service/referentiel-resource.service';
+import { PlanificationResourceService } from '../../../services/planification-resource.service';
 
 @Component({
   selector: 'app-create-exercice',
@@ -36,18 +32,15 @@ export class CreateExerciceComponent implements OnInit {
 
   livreList: any[] = [];
   enseignementList: ListeEnseignement[] = [];
-  classeList: ListeClasse[] = [];
+  classeList: ClasseResponse[] = [];
 
   currentFile: File | null = null;
 
   existingFileRemoved = false;
 
-  utilisateur: Utilisateur = {};
-
   title = 'Ajouter un exercice';
 
   private readonly planification = inject(PlanificationResourceService);
-  private readonly utilisateurService = inject(UtilisateurService);
   private readonly referentielService = inject(ReferentielResourceService);
   private readonly formBuilder = inject(FormBuilder);
   private readonly toastService = inject(ToastrService);
@@ -72,24 +65,7 @@ export class CreateExerciceComponent implements OnInit {
   }
 
   private chargerLesDonnees(): void {
-    const userId = Number(localStorage.getItem('id'));
-    if (userId) {
-      this.utilisateurService.getUtilisateur(userId)
-        .pipe(takeUntilDestroyed(this.destroyRef))
-        .subscribe({
-          next: data => {
-            this.utilisateur = data;
-          },
-          error: error => {
-            console.error(
-              'Erreur lors du chargement de l’utilisateur',
-              error
-            );
-          }
-        });
-    }
-
-    this.referentielService.getResourceList('classe')
+    this.planification.getClassesDisponiblesPourAnneeScolaire()
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: (data: any) => {

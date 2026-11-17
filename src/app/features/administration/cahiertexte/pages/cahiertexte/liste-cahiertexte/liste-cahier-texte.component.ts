@@ -7,6 +7,8 @@ import { AnneeScolaire } from '../../../../../../core/models/referentiels/annee-
 import { ListeClasse } from '../../../../../../core/models/referentiels/classe';
 import { ReferentielService } from '../../../../referentiel/service/referentiel.service';
 import { CahierTexteResourceService } from '../../../services/chaier-texte-resource.service';
+import { ClasseResponse } from '../../../../../../core/models/planification/cours-calendrier-response';
+import { PlanificationResourceService } from '../../../../planification/services/planification-resource.service';
 
 
 @Component({
@@ -43,7 +45,7 @@ export class ListeCahierTexteComponent implements OnInit {
   tableSizes = [10, 20, 50, 100];
 
   anneesScolairesList: any[] = [];
-  classesList: any[] = [];
+  classesList: ClasseResponse[] = [];
 
   tableFilters: IFilterConfig[] = [];
   activeFilters: any = {};
@@ -51,14 +53,12 @@ export class ListeCahierTexteComponent implements OnInit {
 
   isSelected = false;
 
-  apiData = {
-    anneesScolaires: [],
-    classes: [],
-  };
+  apiData = { anneesScolaires: [], classes: [], };
 
   private readonly router = inject(Router);
   private readonly cahierTexteResource = inject(CahierTexteResourceService);
   private readonly referentielService = inject(ReferentielService);
+    private readonly planificationResource = inject(PlanificationResourceService);
 
   ngOnInit(): void {
     this.loadInitialData();
@@ -92,7 +92,7 @@ export class ListeCahierTexteComponent implements OnInit {
 
   getClassList(): Promise<ListeClasse[]> {
     return new Promise((resolve, reject) => {
-      this.referentielService.getAllClasses().subscribe({
+      this.planificationResource.getClassesDisponiblesPourAnneeScolaire().subscribe({
         next: (data: any) => {
           this.classesList = data;
           resolve(data);

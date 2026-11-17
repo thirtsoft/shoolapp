@@ -4,9 +4,10 @@ import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
 import { GenerationBulletinClasse } from '../../../../../../core/models/dossiereleve/bulletin/generation-bulletin-classe';
+import { ClasseResponse } from '../../../../../../core/models/planification/cours-calendrier-response';
 import { AnneeScolaire } from '../../../../../../core/models/referentiels/annee-scolaire';
-import { ListeClasse } from '../../../../../../core/models/referentiels/classe';
 import { SessionSemestre } from '../../../../../../core/models/referentiels/session-semestre';
+import { PlanificationResourceService } from '../../../../planification/services/planification-resource.service';
 import { ReferentielResourceService } from '../../../../referentiel/service/referentiel-resource.service';
 import { DossierResourceService } from '../../../service/dossier-resource.service';
 
@@ -26,7 +27,7 @@ interface Mois {
 export class GenererBulletinClasseComponent implements OnInit {
 
   errorMessage?: string;
-  classList?: ListeClasse[] = [];
+  classList?: ClasseResponse[] = [];
   sessionSemestreList: SessionSemestre[] = [];
   anneeScolaireList?: AnneeScolaire[] = [];
   selectedClasse: any;
@@ -39,6 +40,7 @@ export class GenererBulletinClasseComponent implements OnInit {
   private readonly toastService = inject(ToastrService);
   private readonly router = inject(Router);
   private readonly destroyRef = inject(DestroyRef);
+  private readonly planificationResource = inject(PlanificationResourceService);
 
   ngOnInit(): void {
     this.chargerLesDonnees();
@@ -51,7 +53,7 @@ export class GenererBulletinClasseComponent implements OnInit {
       }
     });
 
-    this.referentielResource.getResourceList('classe').pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
+    this.planificationResource.getClassesDisponiblesPourAnneeScolaire().pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
       next: (data: any) => this.classList = data
     });
 
@@ -119,7 +121,7 @@ export class GenererBulletinClasseComponent implements OnInit {
   }
 
   goBack() {
-    this.router.navigate(['admin/dossier-eleve/bulletin'])
+    void this.router.navigate(['admin/dossier-eleve/bulletin'])
   }
 
 

@@ -1,0 +1,1090 @@
+/* =========================================================
+   PAGE
+========================================================= */
+
+.page-wrapper {
+  background: #f5f8fc;
+  min-height: 100vh;
+}
+
+.content {
+  padding-bottom: 20px;
+}
+
+
+/* =========================================================
+   HEADER
+========================================================= */
+
+.page-header {
+  min-height: 54px;
+  margin-bottom: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 15px;
+}
+
+.page-title-box {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.page-title-icon {
+  width: 38px;
+  height: 38px;
+  border-radius: 9px;
+  background: #e8f1ff;
+  color: #1769e0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 17px;
+}
+
+.page-title {
+  margin: 0;
+  color: #16396f;
+  font-size: 20px;
+  font-weight: 700;
+}
+
+.page-subtitle {
+  margin: 2px 0 0;
+  color: #718096;
+  font-size: 11px;
+}
+
+/* =========================================================
+   ACTIONS HEADER
+========================================================= */
+
+.page-header-actions {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+}
+
+.page-header-actions .btn {
+  height: 34px;
+
+  padding: 0 11px;
+
+  border-radius: 7px;
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+
+  font-size: 10px;
+  font-weight: 600;
+
+  white-space: nowrap;
+
+  transition:
+    background 0.15s ease,
+    border-color 0.15s ease,
+    color 0.15s ease,
+    box-shadow 0.15s ease,
+    transform 0.15s ease;
+}
+
+.page-header-actions .btn i {
+  font-size: 11px;
+}
+
+
+.btn-print-header {
+  border: 1px solid #1769e0;
+  background: #1769e0;
+  color: #ffffff;
+  box-shadow: 0 2px 5px rgba(23, 105, 224, 0.18);
+}
+
+.btn-print-header:hover:not(:disabled) {
+  background: #1259bd;
+  border-color: #1259bd;
+  transform: translateY(-1px);
+  box-shadow: 0 3px 8px rgba(23, 105, 224, 0.24);
+}
+
+
+.btn-pdf-header {
+  border: 1px solid #d9e1ec;
+
+  background: #ffffff;
+  color: #34445b;
+}
+
+.btn-pdf-header i {
+  color: #dc3545;
+  font-size: 12px;
+}
+
+.btn-pdf-header:hover:not(:disabled) {
+  background: #fff5f5;
+  border-color: #efb4b9;
+  color: #b4232d;
+}
+
+.btn-add-header {
+  border: 1px solid #198754;
+
+  background: #198754;
+  color: #ffffff;
+
+  box-shadow: 0 2px 5px rgba(25, 135, 84, 0.16);
+}
+
+.btn-add-header i {
+  font-size: 10px;
+}
+
+.btn-add-header:hover:not(:disabled) {
+  background: #157347;
+  border-color: #157347;
+
+  transform: translateY(-1px);
+
+  box-shadow: 0 3px 8px rgba(25, 135, 84, 0.22);
+}
+
+
+/* =========================================================
+   DISABLED
+========================================================= */
+
+.page-header-actions .btn:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+
+  transform: none;
+  box-shadow: none;
+}
+
+
+/* =========================================================
+   FILTRES / CONTEXTE
+========================================================= */
+
+.filter-card {
+  background: #ffffff;
+  border: 1px solid #e6edf5;
+  border-radius: 9px;
+  padding: 10px 12px;
+
+  display: grid;
+  grid-template-columns: 220px 220px minmax(220px, 1fr);
+
+  gap: 14px;
+  align-items: end;
+
+  box-shadow: 0 2px 8px rgba(30, 64, 120, 0.03);
+}
+
+.filter-item label {
+  display: block;
+  margin-bottom: 4px;
+  color: #253858;
+  font-size: 10px;
+  font-weight: 600;
+}
+
+.filter-item label i {
+  color: #1769e0;
+  margin-right: 4px;
+}
+
+.select-wrapper {
+  position: relative;
+}
+
+.select-wrapper .form-control {
+  height: 34px;
+  border: 1px solid #d9e2ee;
+  border-radius: 6px;
+
+  padding: 0 32px 0 10px;
+
+  color: #26364d;
+  background: #fff;
+
+  font-size: 11px;
+  font-weight: 500;
+
+  box-shadow: none;
+  appearance: none;
+}
+
+.select-wrapper .form-control:focus {
+  border-color: #1769e0;
+  box-shadow: 0 0 0 2px rgba(23, 105, 224, 0.08);
+}
+
+.select-icon {
+  position: absolute;
+  right: 10px;
+  top: 50%;
+
+  transform: translateY(-50%);
+
+  pointer-events: none;
+
+  color: #8492a6;
+  font-size: 9px;
+}
+
+.filter-item-emploi {
+  min-width: 0;
+}
+
+.emploi-value {
+  height: 34px;
+
+  display: flex;
+  align-items: center;
+
+  padding: 0 10px;
+
+  border-radius: 6px;
+
+  background: #f3f7fd;
+  border: 1px solid #e1eaf5;
+
+  color: #203b68;
+
+  font-size: 11px;
+  font-weight: 600;
+
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+
+/* =========================================================
+   ALERT
+========================================================= */
+
+.calendar-alert {
+  margin-top: 8px;
+  margin-bottom: 8px;
+  padding: 7px 10px;
+  font-size: 11px;
+}
+
+
+/* =========================================================
+   BARRE INFORMATION
+========================================================= */
+
+.calendar-info-bar {
+  margin-top: 8px;
+  margin-bottom: 7px;
+
+  min-height: 30px;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  padding: 5px 9px;
+
+  background: #ffffff;
+  border: 1px solid #e6edf5;
+  border-radius: 7px;
+
+  color: #66758a;
+  font-size: 10px;
+}
+
+.calendar-legend {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+
+  font-weight: 600;
+}
+
+.legend-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+}
+
+.legend-dot.course {
+  background: #1d78e8;
+}
+
+.calendar-repeat-info {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.calendar-repeat-info i {
+  color: #1769e0;
+}
+
+
+/* =========================================================
+   CALENDRIER
+========================================================= */
+
+.calendar-card {
+  background: #ffffff;
+  border: 1px solid #dfe7f1;
+  border-radius: 8px;
+  overflow: hidden;
+
+  box-shadow: 0 2px 10px rgba(30, 64, 120, 0.03);
+}
+
+
+/* =========================================================
+   HEADER JOURS
+========================================================= */
+
+.calendar-header {
+  display: grid;
+  grid-template-columns: 68px repeat(6, minmax(130px, 1fr));
+
+  background: #edf4ff;
+  border-bottom: 1px solid #ccd8e7;
+}
+
+.hour-header {
+  height: 38px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border-right: 1px solid #ccd8e7;
+
+  color: #253858;
+  font-size: 10px;
+  font-weight: 700;
+}
+
+.day-header {
+  height: 38px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border-right: 1px solid #ccd8e7;
+
+  color: #183966;
+}
+
+.day-header:last-child {
+  border-right: none;
+}
+
+.day-header strong {
+  font-size: 11px;
+  font-weight: 700;
+}
+
+
+/* =========================================================
+   CORPS
+========================================================= */
+
+.calendar-body {
+  display: grid;
+  grid-template-columns: 68px repeat(6, minmax(130px, 1fr));
+
+  position: relative;
+}
+
+.hours-column {
+  background: #fbfcfe;
+}
+
+.hour-cell {
+  height: 59px;
+  box-sizing: border-box;
+  border-right: 1px solid #d7e0eb;
+  border-bottom: 1px solid #d7e0eb;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  padding-top: 7px;
+  color: #31445e;
+  font-size: 9px;
+  font-weight: 700;
+}
+
+.day-column {
+  position: relative;
+  border-right: 1px solid #d7e0eb;
+  overflow: hidden;
+  background: #ffffff;
+}
+
+.day-column:last-child {
+  border-right: none;
+}
+
+.hour-background {
+  height: 59px;
+  box-sizing: border-box;
+  border-bottom: 1px solid #d7e0eb;
+}
+
+
+/* =========================================================
+   COURS
+========================================================= */
+
+.course-card {
+  position: absolute;
+
+  left: 3px;
+  right: 3px;
+
+  border-radius: 6px;
+
+  padding: 5px 5px;
+
+  box-sizing: border-box;
+
+  overflow: hidden;
+
+  cursor: pointer;
+
+  transition:
+    transform 0.15s ease,
+    box-shadow 0.15s ease;
+}
+
+.course-card:hover {
+  transform: translateY(-1px);
+
+  box-shadow:
+    0 3px 9px rgba(30, 80, 140, 0.18);
+
+  z-index: 10;
+}
+
+
+/* =========================================================
+   COULEURS
+========================================================= */
+
+.course-card.course-blue {
+  background: #dcecff;
+  border: 1px solid #9fc7f6;
+  color: #173e72;
+}
+
+.course-card.course-pink {
+  background: #f8dfe4;
+  border: 1px solid #efb8c3;
+  color: #71333d;
+}
+
+.course-card.course-green {
+  background: #ddf2e6;
+  border: 1px solid #a9dabb;
+  color: #245c3b;
+}
+
+.course-card.course-purple {
+  background: #eadffc;
+  border: 1px solid #cdb7f2;
+  color: #50317e;
+}
+
+.course-card.course-orange {
+  background: #fff0d9;
+  border: 1px solid #f0cf98;
+  color: #76511d;
+}
+
+
+/* =========================================================
+   CONTENU COURS
+========================================================= */
+
+.course-content {
+  height: 100%;
+
+  display: flex;
+  flex-direction: column;
+
+  justify-content: center;
+
+  text-align: center;
+}
+
+
+/* Matière */
+
+.course-title {
+  font-size: 10px;
+  line-height: 12px;
+
+  font-weight: 700;
+}
+
+
+/* Libellé du cours */
+
+.course-label {
+  margin-top: 2px;
+
+  font-size: 9px;
+  line-height: 11px;
+
+  font-weight: 500;
+
+  opacity: 0.85;
+
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.course-meta {
+  margin-top: 4px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+
+  font-size: 8px;
+  line-height: 10px;
+
+  white-space: nowrap;
+  overflow: hidden;
+}
+
+.course-teacher,
+.course-room {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+
+  min-width: 0;
+
+  overflow: hidden;
+  text-overflow: ellipsis;
+
+  opacity: 0.9;
+}
+
+.course-teacher span,
+.course-room span {
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.course-teacher i,
+.course-room i {
+  flex-shrink: 0;
+  font-size: 7px;
+}
+
+.course-separator {
+  flex-shrink: 0;
+  opacity: 0.6;
+}
+
+/* =========================================================
+   JOUR VIDE
+========================================================= */
+
+.empty-day {
+  position: absolute;
+
+  inset: 0;
+
+  display: flex;
+  flex-direction: column;
+
+  align-items: center;
+  justify-content: center;
+
+  gap: 5px;
+
+  color: #b8c2ce;
+
+  font-size: 9px;
+}
+
+.empty-day i {
+  font-size: 13px;
+}
+
+
+/* =========================================================
+   LOADING
+========================================================= */
+
+.calendar-loading {
+  min-height: 80px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  gap: 8px;
+
+  color: #64748b;
+
+  font-size: 11px;
+}
+
+.calendar-loading.small {
+  min-height: 45px;
+}
+
+
+/* =========================================================
+   FOOTER
+========================================================= */
+
+.calendar-footer {
+  margin-top: 8px;
+
+  background: #edf5ff;
+  border: 1px solid #d7e7fb;
+  border-radius: 8px;
+
+  padding: 7px 10px;
+
+  min-height: 48px;
+
+  display: flex;
+  align-items: center;
+
+  gap: 14px;
+}
+
+.footer-info {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+
+  min-width: 120px;
+}
+
+.footer-info>i {
+  width: 27px;
+  height: 27px;
+
+  border-radius: 6px;
+
+  background: #d5e8ff;
+  color: #1769e0;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  font-size: 11px;
+}
+
+.footer-info span {
+  display: block;
+
+  color: #718096;
+  font-size: 8px;
+}
+
+.footer-info strong {
+  display: block;
+
+  color: #203b68;
+  font-size: 10px;
+
+  margin-top: 1px;
+}
+
+.footer-separator {
+  width: 1px;
+  height: 25px;
+
+  background: #cddced;
+}
+
+.btn-print {
+  margin-left: auto;
+
+  height: 30px;
+
+  padding: 0 11px;
+
+  border-radius: 6px;
+
+  border: 1px solid #1769e0;
+
+  background: #ffffff;
+  color: #1769e0;
+
+  font-size: 10px;
+  font-weight: 600;
+
+  cursor: pointer;
+}
+
+.btn-print:hover {
+  background: #1769e0;
+  color: #ffffff;
+}
+
+
+/* =========================================================
+   RESPONSIVE
+========================================================= */
+
+@media (max-width: 1200px) {
+
+  .filter-card {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .filter-item-emploi {
+    grid-column: 1 / -1;
+  }
+
+  .calendar-card {
+    overflow-x: auto;
+  }
+
+  .calendar-header,
+  .calendar-body {
+    min-width: 900px;
+  }
+
+  .calendar-info-bar {
+    min-width: 900px;
+  }
+}
+
+
+@media (max-width: 768px) {
+
+  .page-header {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .page-header-actions {
+    width: 100%;
+    justify-content: flex-start;
+  }
+
+  .filter-card {
+    grid-template-columns: 1fr;
+  }
+
+  .filter-item-emploi {
+    grid-column: auto;
+  }
+
+  .calendar-info-bar {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 5px;
+  }
+
+  .calendar-footer {
+    flex-wrap: wrap;
+  }
+
+  .footer-separator {
+    display: none;
+  }
+
+}
+
+/* ==========================================================
+   EXPORT PDF - EMPLOI DU TEMPS
+   ========================================================== */
+
+/*
+ * Conteneur hors écran utilisé uniquement
+ * pour html2canvas / export PDF.
+ */
+.print-matrix-target {
+  position: absolute;
+  left: -9999px;
+  top: 0;
+
+  width: 1100px;
+
+  background-color: #ffffff;
+
+  padding: 15px;
+
+  font-family: 'Helvetica Neue', Arial, sans-serif;
+}
+
+
+/* ==========================================================
+   EN-TÊTE DU PDF
+   ========================================================== */
+
+.print-matrix-target .timetable-outer-header {
+  text-align: center;
+  margin-bottom: 15px;
+}
+
+.print-matrix-target .title-badge-scolaire {
+  display: inline-block;
+
+  border: 2px solid #000000;
+  border-radius: 20px;
+
+  padding: 5px 30px;
+
+  font-weight: bold;
+  font-size: 16px;
+
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+
+  background-color: #ffffff;
+  color: #000000;
+}
+
+.print-matrix-target .subtitle-scolaire {
+  font-size: 12px;
+
+  margin-top: 6px;
+
+  color: #444444;
+  font-weight: 500;
+}
+
+
+/* ==========================================================
+   TABLEAU PRINCIPAL
+   ========================================================== */
+
+.print-matrix-target .timetable-grid {
+  width: 100%;
+
+  border-collapse: collapse;
+
+  table-layout: fixed;
+}
+
+.print-matrix-target .timetable-grid th,
+.print-matrix-target .timetable-grid td {
+  border: 1px solid #333333;
+
+  text-align: center;
+  vertical-align: middle;
+
+  padding: 6px 4px;
+}
+
+.print-matrix-target .timetable-grid th {
+  background-color: #fcfcfc;
+
+  font-size: 13px;
+  font-weight: bold;
+}
+
+.print-matrix-target .sub-class {
+  font-size: 10px;
+
+  font-weight: normal;
+
+  color: #555555;
+}
+
+.print-matrix-target .time-header-cell {
+  width: 12%;
+}
+
+.print-matrix-target .time-cell {
+  font-weight: bold;
+
+  background-color: #ffffff;
+
+  font-size: 11px;
+
+  width: 12%;
+}
+
+
+/* ==========================================================
+   CONTENU D'UN COURS
+   ========================================================== */
+
+.print-matrix-target .course-box-content {
+  display: flex;
+
+  flex-direction: column;
+
+  gap: 2px;
+
+  justify-content: center;
+}
+
+.print-matrix-target .course-subject {
+  font-size: 11.5px;
+
+  color: #000000;
+}
+
+.print-matrix-target .course-title-sub {
+  font-size: 9.5px;
+
+  font-style: italic;
+
+  color: #333333;
+}
+
+.print-matrix-target .course-details {
+  font-size: 9px;
+
+  color: #555555;
+
+  margin-top: 1px;
+}
+
+.print-matrix-target .empty-cell-dash {
+  color: #aaaaaa;
+
+  font-size: 12px;
+}
+
+
+/* ==========================================================
+   COULEURS DES MATIÈRES
+   ========================================================== */
+
+.print-matrix-target .math-cell {
+  background-color: #cce5ff !important;
+}
+
+.print-matrix-target .french-cell {
+  background-color: #f8d7da !important;
+}
+
+.print-matrix-target .eps-cell {
+  background-color: #ffe8cc !important;
+
+  font-weight: bold;
+}
+
+.print-matrix-target .art-cell {
+  background-color: #fff3cd !important;
+}
+
+.print-matrix-target .langue-cell {
+  background-color: #e8dbff !important;
+}
+
+.print-matrix-target .monde-cell {
+  background-color: #d1ecf1 !important;
+}
+
+.print-matrix-target .emc-cell {
+  background-color: #fff3cd !important;
+}
+
+.print-matrix-target .default-course-cell {
+  background-color: #e2e3e5 !important;
+}
+
+
+/* ==========================================================
+   RUBAN - VOLUME HORAIRE
+   ========================================================== */
+
+.print-matrix-target .volume-footer-ribbon {
+  margin-top: 15px;
+
+  border: 1px solid #222222;
+  border-radius: 4px;
+
+  padding: 8px 12px;
+
+  background-color: #ffffff;
+}
+
+.print-matrix-target .ribbon-title {
+  font-weight: bold;
+
+  font-size: 12px;
+
+  margin-bottom: 6px;
+
+  text-decoration: underline;
+}
+
+.print-matrix-target .ribbon-flex {
+  display: flex;
+
+  flex-wrap: wrap;
+
+  gap: 12px;
+}
+
+.print-matrix-target .ribbon-item {
+  display: flex;
+
+  align-items: center;
+
+  font-size: 11px;
+}
+
+.print-matrix-target .color-dot {
+  display: inline-block;
+
+  width: 12px;
+  height: 12px;
+
+  margin-right: 6px;
+
+  border-radius: 2px;
+
+  border: 1px solid #333333;
+}
+
+.print-matrix-target .label-text {
+  color: #000000;
+}
+
+
+/* ==========================================================
+   IMPRESSION SYSTÈME
+   ========================================================== */
+
+@media print {
+
+  @page {
+    size: A4 landscape;
+    margin: 6mm;
+  }
+
+  body * {
+    visibility: hidden !important;
+  }
+
+  .print-matrix-target,
+  .print-matrix-target * {
+    visibility: visible !important;
+  }
+
+  .print-matrix-target {
+    position: absolute !important;
+
+    left: 0 !important;
+    top: 0 !important;
+
+    width: 100% !important;
+  }
+}

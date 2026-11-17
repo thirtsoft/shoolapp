@@ -3,7 +3,8 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
 import { GenereFactureClasse } from '../../../../../core/models/comptabilite/generer-facture-classe';
-import { ListeClasse } from '../../../../../core/models/referentiels/classe';
+import { ClasseResponse } from '../../../../../core/models/planification/cours-calendrier-response';
+import { PlanificationResourceService } from '../../../../administration/planification/services/planification-resource.service';
 import { ReferentielResourceService } from '../../../../administration/referentiel/service/referentiel-resource.service';
 import { ComptabiliteResourceService } from '../../../services/comptabilite-resource.service';
 
@@ -19,7 +20,7 @@ export class GenererFactureClasseComponent implements OnInit {
   errorMessage?: string;
   isEdit: boolean = false;
 
-  classList?: ListeClasse[];
+  classList?: ClasseResponse[];
   moisList?: any[] = [];
   anneesList?: any[] = [];
   echeanceDate: any;
@@ -35,6 +36,7 @@ export class GenererFactureClasseComponent implements OnInit {
   private readonly referentielResource = inject(ReferentielResourceService);
   private readonly toastService = inject(ToastrService);
   private readonly router = inject(Router);
+  private readonly planificationResource = inject(PlanificationResourceService);
 
   constructor() { }
 
@@ -45,7 +47,7 @@ export class GenererFactureClasseComponent implements OnInit {
   }
 
   getClassList() {
-    this.referentielResource.getResourceList('classe')?.subscribe({
+    this.planificationResource.getClassesDisponiblesPourAnneeScolaire()?.subscribe({
       next: (data: any) => {
         this.classList = data;
       }
@@ -121,14 +123,13 @@ export class GenererFactureClasseComponent implements OnInit {
       annee: this.selectedAnnee,
       echeanceDate: this.echeanceDate,
     };
-    //  this.comptabiliteResource.genererUneResource('facture', this.selectedClasse, this.selectedMois, this.selectedAnnee).subscribe({
     this.comptabiliteResource.genererUneResourceClasse('facture', payload).subscribe({
       next: (data) => {
         if (data.statut === 'OK') {
           this.toastService.success('succès', data.message);
-          this.router.navigate(['admin/comptabilite/facture'])
+          this.goBack();
         } else if (data.statut === 'NOCONTENT') {
-          this.router.navigate(['admin/comptabilite/facture'])
+          this.goBack();
         }
         else if (data.statut === 'FAILED') {
           this.toastService.error('error', 'Erreur lors de la création : ' + data.message);
@@ -143,7 +144,7 @@ export class GenererFactureClasseComponent implements OnInit {
   }
 
   goBack() {
-    this.router.navigate(['admin/comptabilite/facture'])
+    void this.router.navigate(['admin/comptabilite/facture'])
   }
 
 }

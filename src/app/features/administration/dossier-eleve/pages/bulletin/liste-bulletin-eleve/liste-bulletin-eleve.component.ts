@@ -1,9 +1,10 @@
 import { Component, inject, OnInit } from '@angular/core';
 import { IFilterConfig } from '../../../../../../core/filtered-config/FiltreConfiguration';
 import { GenericTableDossierComponent } from '../../../../../../core/generic/generic-table-dossier/generic-table-dossier.component';
+import { ClasseResponse } from '../../../../../../core/models/planification/cours-calendrier-response';
 import { AnneeScolaire } from '../../../../../../core/models/referentiels/annee-scolaire';
-import { ListeClasse } from '../../../../../../core/models/referentiels/classe';
 import { Semestre } from '../../../../../../core/models/referentiels/semestre';
+import { PlanificationResourceService } from '../../../../planification/services/planification-resource.service';
 import { ReferentielService } from '../../../../referentiel/service/referentiel.service';
 import { DossierResourceService } from '../../../service/dossier-resource.service';
 
@@ -37,7 +38,7 @@ export class ListeBulletinEleveComponent implements OnInit {
 
   anneesScolairesList: any[] = [];
   semestreList: any[] = [];
-  classeList: any[] = [];
+  classeList: ClasseResponse[] = [];
 
   tableFilters: IFilterConfig[] = [];
   activeFilters: any = {};
@@ -45,6 +46,7 @@ export class ListeBulletinEleveComponent implements OnInit {
 
   private readonly dossierEleveService = inject(DossierResourceService);
   private readonly referentielService = inject(ReferentielService);
+  private readonly planificationResource = inject(PlanificationResourceService);
 
   ngOnInit(): void {
     this.chargerLesBulletins();
@@ -66,9 +68,9 @@ export class ListeBulletinEleveComponent implements OnInit {
   }
 
 
-  getClasseList(): Promise<ListeClasse[]> {
+  getClasseList(): Promise<ClasseResponse[]> {
     return new Promise((resolve, reject) => {
-      this.referentielService.getAllClasses().subscribe({
+      this.planificationResource.getClassesDisponiblesPourAnneeScolaire().subscribe({
         next: (data: any) => {
           this.classeList = data;
           resolve(data);
