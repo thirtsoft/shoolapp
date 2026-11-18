@@ -15,7 +15,6 @@ export class EvenementComponent implements OnInit {
   errorMessage?: string;
   isEdit: boolean = true;
   isLoading: boolean = false;
-  filteredDataEvenement: any;
   isLockable: boolean = true;
   isTable: boolean = true;
   deleteEndpoint = "evenement";

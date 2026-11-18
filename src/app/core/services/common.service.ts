@@ -52,6 +52,11 @@ export class CommonService {
     return this.http.get<any[]>(`${this.baseUrl_1}/base/statusevenement`);
   }
 
+  getEtatsActivites(): Observable<ListEtatResponse[]> {
+    return this.http.get<ListEtatResponse[]>(`${this.baseUrl_1}/base/etats-activites`);
+  }
+
+
   getEtatEvaluations(): Observable<any[]> {
     return this.http.get<any[]>(`${this.baseUrl_1}/base/etatevaluation`);
   }

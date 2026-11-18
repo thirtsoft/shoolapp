@@ -1,4 +1,5 @@
 import { Routes } from "@angular/router";
+import { ActivitesScolaireComponent } from "./pages/activites-scolaire.component/activites-scolaire.component";
 import { DemandeCongesComponent } from "./pages/conges/demande-conges-component/demande-conges-component";
 import { DetailsCongesComponent } from "./pages/conges/details-conges-component/details-conges-component";
 import { ListCongesComponent } from "./pages/conges/list-conges-component/list-conges-component";
@@ -13,6 +14,7 @@ import { CreateEvenementComponent } from "./pages/evenement/create-evenement/cre
 import { DetailEvenementComponent } from "./pages/evenement/detail-evenement/detail-evenement.component";
 import { EvenementComponent } from "./pages/evenement/evenement.component";
 import { CreateExerciceComponent } from "./pages/exercice/create-exercice/create-exercice.component";
+import { DetailsExerciceComponent } from "./pages/exercice/details-exercice-component/details-exercice-component";
 import { ListExerciceComponent } from "./pages/exercice/list-exercice/list-exercice.component";
 import { CreateLeconComponent } from "./pages/lecon/create-lecon/create-lecon.component";
 import { LeconsComponent } from "./pages/lecon/lecons/lecons.component";
@@ -22,13 +24,12 @@ import { CreateMeetingComponent } from "./pages/meeting/create-meeting/create-me
 import { DetailsMeetingComponent } from "./pages/meeting/details-meeting-component/details-meeting-component";
 import { MeetingComponent } from "./pages/meeting/meeting.component";
 import { CreateEditNoteInformationComponent } from "./pages/noteinformation/create-edit-note-information/create-edit-note-information.component";
+import { DetailsNoteInformationComponent } from "./pages/noteinformation/details-note-information-component/details-note-information-component";
 import { ListNoteInformationComponent } from "./pages/noteinformation/list-note-information/list-note-information.component";
-import { PlanificationComponent } from "./planification.component";
+import { DetailsMenuCantineComponent } from "./pages/planning-menu/details-menu-cantine-component/details-menu-cantine-component";
 import { ListMenuCantineComponent } from "./pages/planning-menu/list-menu-cantine-component/list-menu-cantine-component";
 import { PlanifierMenuCantineComponent } from "./pages/planning-menu/planifier-menu-cantine-component/planifier-menu-cantine-component";
-import { DetailsMenuCantineComponent } from "./pages/planning-menu/details-menu-cantine-component/details-menu-cantine-component";
-import { DetailsExerciceComponent } from "./pages/exercice/details-exercice-component/details-exercice-component";
-import { DetailsNoteInformationComponent } from "./pages/noteinformation/details-note-information-component/details-note-information-component";
+import { PlanificationComponent } from "./planification.component";
 
 
 export const PLANIFICATION_ROUTES: Routes = [
@@ -102,7 +103,7 @@ export const PLANIFICATION_ROUTES: Routes = [
         path: 'exercice/edit/:id',
         component: CreateExerciceComponent
       },
-       {
+      {
         path: 'exercice/details/:id',
         component: DetailsExerciceComponent
       },
@@ -153,6 +154,11 @@ export const PLANIFICATION_ROUTES: Routes = [
       },
 
       {
+        path: 'activites',
+        component: ActivitesScolaireComponent
+      },
+
+      {
         path: 'noteinformations',
         component: ListNoteInformationComponent
       },
@@ -165,7 +171,7 @@ export const PLANIFICATION_ROUTES: Routes = [
         component: CreateEditNoteInformationComponent
       },
 
-       {
+      {
         path: 'noteinformation/details/:id',
         component: DetailsNoteInformationComponent
       },
@@ -187,7 +193,7 @@ export const PLANIFICATION_ROUTES: Routes = [
         component: DetailsCongesComponent
       },
 
-       {
+      {
         path: 'cantine',
         component: ListMenuCantineComponent
       },

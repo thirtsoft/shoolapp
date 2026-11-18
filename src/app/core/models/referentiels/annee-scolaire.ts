@@ -8,6 +8,4 @@ export interface AnneeScolaire {
 
     dateFin?: Date;
 
-    ecole?: number;
-
 }
