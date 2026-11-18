@@ -1,12 +1,11 @@
 import { Component, inject } from '@angular/core';
-import { IFilterConfig } from '../../../../../core/filtered-config/FiltreConfiguration';
-import { GenericTableReferentielComponent } from '../../../../../core/generic/generic-table-referentiel/generic-table-referentiel.component';
-import { ListEtatResponse } from '../../../../../core/models/base/list-etat-response';
-import { AnneeScolaireResponse } from '../../../../../core/models/planification/cours-calendrier-response';
-import { CommonService } from '../../../../../core/services/common.service';
-import { ReferentielResourceService } from '../../../referentiel/service/referentiel-resource.service';
-import { PlanificationResourceService } from '../../services/planification-resource.service';
-import { ActiviteScolaireRechercheRequest, TypeActiviteScolaire } from '../../../../../core/models/planification/activite-scolaire-recherche.model';
+import { IFilterConfig } from '../../../../../../core/filtered-config/FiltreConfiguration';
+import { GenericTableReferentielComponent } from '../../../../../../core/generic/generic-table-referentiel/generic-table-referentiel.component';
+import { ListEtatResponse } from '../../../../../../core/models/base/list-etat-response';
+import { ActiviteScolaireRechercheRequest, TypeActiviteScolaire } from '../../../../../../core/models/planification/activite-scolaire-recherche.model';
+import { CommonService } from '../../../../../../core/services/common.service';
+import { ReferentielResourceService } from '../../../../referentiel/service/referentiel-resource.service';
+import { PlanificationResourceService } from '../../../services/planification-resource.service';
 
 /* export interface ActiviteScolaireRechercheRequest {
   type?: TypeActiviteScolaire;

@@ -94,10 +94,8 @@ export class SideBarAdminComponent {
 
 
     // COMMUNICATION
-    { route: '/admin/planification/reunion', ico: '👥', label: 'Réunions', section: 'COMMUNICATION', badge: '' },
-     { route: '/admin/planification/activites', ico: '🎪', label: 'Activités scolaire', section: '' },
+     { route: '/admin/planification/activites', ico: '📅', label: 'Activités scolaire', section: 'COMMUNICATION', badge: '' },
     { route: '/admin/planification/noteinformations', ico: '📢', label: 'Notes d\'info', section: '' },
-    { route: '/admin/planification/evenement', ico: '🎪', label: 'Événements', section: '' },
     { route: '/admin/planification/conges', ico: '🌴', label: 'Congés' },
 
     // ═══════════ PARAMÉTRAGE DE BASE (DROPDOWN) ═══════════

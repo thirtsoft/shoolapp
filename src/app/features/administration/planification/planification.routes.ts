@@ -1,5 +1,5 @@
 import { Routes } from "@angular/router";
-import { ActivitesScolaireComponent } from "./pages/activites-scolaire.component/activites-scolaire.component";
+import { ActivitesScolaireComponent } from "./pages/activites/activites-scolaire.component/activites-scolaire.component";
 import { DemandeCongesComponent } from "./pages/conges/demande-conges-component/demande-conges-component";
 import { DetailsCongesComponent } from "./pages/conges/details-conges-component/details-conges-component";
 import { ListCongesComponent } from "./pages/conges/list-conges-component/list-conges-component";
@@ -10,9 +10,6 @@ import { DetailsEmploiDuTempsAdminComponent } from "./pages/emploietemps/details
 import { EmploieDuTempsComponent } from "./pages/emploietemps/emploie-du-temps/emploie-du-temps.component";
 import { ListEnseignementComponent } from "./pages/enseignement/list-enseignement/list-enseignement.component";
 import { PlanifierEnseignementComponent } from "./pages/enseignement/planifier-enseignement/planifier-enseignement.component";
-import { CreateEvenementComponent } from "./pages/evenement/create-evenement/create-evenement.component";
-import { DetailEvenementComponent } from "./pages/evenement/detail-evenement/detail-evenement.component";
-import { EvenementComponent } from "./pages/evenement/evenement.component";
 import { CreateExerciceComponent } from "./pages/exercice/create-exercice/create-exercice.component";
 import { DetailsExerciceComponent } from "./pages/exercice/details-exercice-component/details-exercice-component";
 import { ListExerciceComponent } from "./pages/exercice/list-exercice/list-exercice.component";
@@ -20,9 +17,6 @@ import { CreateLeconComponent } from "./pages/lecon/create-lecon/create-lecon.co
 import { LeconsComponent } from "./pages/lecon/lecons/lecons.component";
 import { CreateLivreComponent } from "./pages/livre/create-livre/create-livre.component";
 import { LivresComponent } from "./pages/livre/livres/livres.component";
-import { CreateMeetingComponent } from "./pages/meeting/create-meeting/create-meeting.component";
-import { DetailsMeetingComponent } from "./pages/meeting/details-meeting-component/details-meeting-component";
-import { MeetingComponent } from "./pages/meeting/meeting.component";
 import { CreateEditNoteInformationComponent } from "./pages/noteinformation/create-edit-note-information/create-edit-note-information.component";
 import { DetailsNoteInformationComponent } from "./pages/noteinformation/details-note-information-component/details-note-information-component";
 import { ListNoteInformationComponent } from "./pages/noteinformation/list-note-information/list-note-information.component";
@@ -30,6 +24,8 @@ import { DetailsMenuCantineComponent } from "./pages/planning-menu/details-menu-
 import { ListMenuCantineComponent } from "./pages/planning-menu/list-menu-cantine-component/list-menu-cantine-component";
 import { PlanifierMenuCantineComponent } from "./pages/planning-menu/planifier-menu-cantine-component/planifier-menu-cantine-component";
 import { PlanificationComponent } from "./planification.component";
+import { DetailsActiviteComponent } from "./pages/activites/details-activite.component/details-activite.component";
+import { AjoutEditActiviteScolaireComponent } from "./pages/activites/ajout-edit-activite-scolaire.component/ajout-edit-activite-scolaire.component";
 
 
 export const PLANIFICATION_ROUTES: Routes = [
@@ -119,43 +115,24 @@ export const PLANIFICATION_ROUTES: Routes = [
         path: 'enseignement/edit/:id',
         component: PlanifierEnseignementComponent
       },
-      {
-        path: 'evenement',
-        component: EvenementComponent
-      },
-      {
-        path: 'evenement/create',
-        component: CreateEvenementComponent
-      },
-      {
-        path: 'evenement/edit/:id',
-        component: CreateEvenementComponent
-      },
-      {
-        path: 'evenement/details/:id',
-        component: DetailEvenementComponent
-      },
-      {
-        path: 'reunion',
-        component: MeetingComponent
-      },
-      {
-        path: 'reunion/create',
-        component: CreateMeetingComponent
-      },
-      {
-        path: 'reunion/edit/:id',
-        component: CreateMeetingComponent
-      },
-
-      {
-        path: 'reunion/details/:id',
-        component: DetailsMeetingComponent
-      },
 
       {
         path: 'activites',
         component: ActivitesScolaireComponent
+      },
+
+       {
+        path: 'activite/create',
+        component: AjoutEditActiviteScolaireComponent
+      },
+      {
+        path: 'activite/edit/:id',
+        component: AjoutEditActiviteScolaireComponent
+      },
+
+      {
+        path: 'activite/details/:id',
+        component: DetailsActiviteComponent
       },
 
       {
