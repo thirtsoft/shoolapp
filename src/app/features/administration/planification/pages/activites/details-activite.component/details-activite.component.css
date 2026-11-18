@@ -1,0 +1,1506 @@
+/* =========================================================
+   PAGE
+========================================================= */
+
+.activite-detail-page {
+  width: 100%;
+  padding: 24px;
+  background: #f5f8ff;
+  min-height: 100%;
+  box-sizing: border-box;
+  color: #14245a;
+}
+
+
+/* =========================================================
+   RETOUR
+========================================================= */
+
+.back-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+
+  border: 1px solid #c9d8ff;
+  background: #ffffff;
+  color: #17327c;
+
+  padding: 11px 20px;
+  border-radius: 28px;
+
+  font-size: 15px;
+  font-weight: 600;
+
+  cursor: pointer;
+  transition: all 0.2s ease;
+
+  margin-bottom: 20px;
+}
+
+.back-button:hover {
+  background: #f1f5ff;
+  border-color: #9eb8ff;
+}
+
+.back-icon {
+  font-size: 24px;
+  line-height: 1;
+}
+
+
+/* =========================================================
+   HEADER
+========================================================= */
+
+.activity-header {
+  background: #ffffff;
+  border: 1px solid #cbdcff;
+  border-radius: 16px;
+
+  padding: 24px 26px 20px;
+
+  box-shadow: 0 3px 12px rgba(40, 75, 145, 0.04);
+
+  margin-bottom: 20px;
+}
+
+.activity-header-main {
+  display: flex;
+  align-items: flex-start;
+  gap: 22px;
+}
+
+.activity-icon {
+  width: 108px;
+  height: 108px;
+
+  flex: 0 0 108px;
+
+  border-radius: 50%;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  background: #e8efff;
+  color: #1764d8;
+
+  font-size: 46px;
+}
+
+.activity-title-area {
+  flex: 1;
+  min-width: 0;
+}
+
+.activity-badges {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+
+  margin-bottom: 8px;
+}
+
+.badge-type {
+  display: inline-flex;
+  align-items: center;
+
+  background: #e7e6ff;
+  color: #4b3dcc;
+
+  border-radius: 20px;
+
+  padding: 6px 14px;
+
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.2px;
+}
+
+.badge-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+
+  border-radius: 20px;
+
+  padding: 6px 14px;
+
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.status-published {
+  background: #e3f8ec;
+  color: #159447;
+}
+
+.status-draft {
+  background: #fff5d8;
+  color: #a46b00;
+}
+
+.status-finished {
+  background: #e5edff;
+  color: #2558b5;
+}
+
+.status-cancelled {
+  background: #ffe8e8;
+  color: #c62828;
+}
+
+.status-dot {
+  width: 9px;
+  height: 9px;
+
+  border-radius: 50%;
+  background: currentColor;
+}
+
+.activity-title-area h1 {
+  margin: 0;
+
+  color: #112b72;
+
+  font-size: 28px;
+  line-height: 1.25;
+  font-weight: 700;
+}
+
+.activity-description {
+  margin: 8px 0 0;
+
+  max-width: 720px;
+
+  color: #17275a;
+
+  font-size: 16px;
+  line-height: 1.55;
+}
+
+.activity-header-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+
+  margin-left: auto;
+}
+
+.btn-action {
+  border: none;
+  border-radius: 10px;
+
+  min-height: 44px;
+  padding: 0 18px;
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+
+  font-size: 14px;
+  font-weight: 600;
+
+  cursor: pointer;
+
+  transition: all 0.2s ease;
+}
+
+.btn-unpublish {
+  background: #1462d5;
+  color: #ffffff;
+}
+
+.btn-unpublish:hover {
+  background: #0e50b7;
+}
+
+.btn-finish {
+  background: #16a05b;
+  color: #ffffff;
+}
+
+.btn-finish:hover {
+  background: #11864b;
+}
+
+.btn-publish {
+  background: #1462d5;
+  color: #ffffff;
+}
+
+.btn-more {
+  width: 44px;
+  height: 44px;
+
+  border: none;
+  border-radius: 10px;
+
+  background: #edf2ff;
+  color: #17327c;
+
+  font-size: 25px;
+
+  cursor: pointer;
+}
+
+
+/* =========================================================
+   META
+========================================================= */
+
+.activity-meta {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+
+  margin-top: 22px;
+
+  color: #17275a;
+}
+
+.meta-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+
+  font-size: 15px;
+  font-weight: 500;
+}
+
+.meta-icon {
+  color: #143f9f;
+  font-size: 20px;
+  font-weight: 700;
+}
+
+.meta-separator {
+  width: 1px;
+  height: 24px;
+
+  background: #dce4f5;
+}
+
+
+/* =========================================================
+   LAYOUT
+========================================================= */
+
+.activity-content {
+  display: grid;
+
+  grid-template-columns: minmax(0, 1.05fr) minmax(360px, 0.95fr);
+
+  gap: 20px;
+
+  align-items: start;
+}
+
+.content-left,
+.content-right {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+
+/* =========================================================
+   CARD
+========================================================= */
+
+.info-card {
+  background: #ffffff;
+
+  border: 1px solid #cbdcff;
+
+  border-radius: 15px;
+
+  padding: 20px;
+
+  box-shadow: 0 3px 12px rgba(40, 75, 145, 0.035);
+}
+
+.card-title {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.card-title h2 {
+  margin: 0;
+
+  color: #123c91;
+
+  font-size: 19px;
+  font-weight: 700;
+}
+
+.title-icon {
+  width: 34px;
+  height: 34px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 50%;
+
+  font-size: 20px;
+  font-weight: 700;
+}
+
+.title-icon.blue {
+  background: #e8f0ff;
+  color: #1764d8;
+}
+
+.card-divider {
+  height: 1px;
+  background: #dce5f7;
+
+  margin: 14px 0 18px;
+}
+
+
+/* =========================================================
+   INFORMATIONS GÉNÉRALES
+========================================================= */
+
+.general-info-grid {
+  display: grid;
+
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+
+  column-gap: 32px;
+  row-gap: 22px;
+}
+
+.info-item {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+}
+
+.info-label {
+  color: #60709c;
+
+  font-size: 13px;
+  font-weight: 500;
+}
+
+.info-item strong {
+  color: #16265b;
+
+  font-size: 15px;
+  font-weight: 650;
+}
+
+
+/* =========================================================
+   DESCRIPTION
+========================================================= */
+
+.description-text {
+  margin: 0;
+
+  color: #17275a;
+
+  font-size: 15px;
+  line-height: 1.65;
+}
+
+
+/* =========================================================
+   DOCUMENTS
+========================================================= */
+
+.empty-documents {
+  min-height: 135px;
+
+  border: 1.5px dashed #b9cefa;
+
+  border-radius: 12px;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+
+  text-align: center;
+
+  padding: 20px;
+}
+
+.upload-icon {
+  width: 42px;
+  height: 42px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  margin-bottom: 8px;
+
+  border-radius: 50%;
+
+  background: #edf4ff;
+  color: #2571df;
+
+  font-size: 25px;
+  font-weight: 700;
+}
+
+.empty-documents strong {
+  color: #19357c;
+  font-size: 14px;
+}
+
+.empty-documents span {
+  margin-top: 5px;
+
+  color: #6d7ca1;
+
+  font-size: 13px;
+}
+
+
+/* =========================================================
+   PUBLICATION
+========================================================= */
+
+.publication-list {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.publication-row {
+  display: grid;
+
+  grid-template-columns: 14px minmax(110px, 1fr) auto;
+
+  align-items: center;
+
+  column-gap: 10px;
+
+  font-size: 14px;
+}
+
+.publication-status {
+  width: 11px;
+  height: 11px;
+
+  border-radius: 50%;
+}
+
+.publication-status.published {
+  background: #20bd61;
+}
+
+.publication-status.unpublished {
+  background: #bcc7dd;
+}
+
+.publication-label {
+  color: #26376c;
+}
+
+.publication-row strong {
+  color: #15285d;
+  font-weight: 600;
+}
+
+.publication-divider {
+  height: 1px;
+  background: #dce5f7;
+}
+
+.publication-icon {
+  color: #1764d8;
+  font-size: 18px;
+}
+
+
+/* =========================================================
+   TIMELINE ÉTAT
+========================================================= */
+
+.state-timeline {
+  position: relative;
+
+  padding-left: 8px;
+}
+
+.timeline-item {
+  position: relative;
+
+  display: flex;
+
+  gap: 14px;
+
+  min-height: 58px;
+
+  padding-left: 0;
+}
+
+.timeline-item:not(:last-child)::before {
+  content: '';
+
+  position: absolute;
+
+  left: 7px;
+  top: 17px;
+  bottom: -1px;
+
+  width: 2px;
+
+  background: #d6deef;
+}
+
+.timeline-dot {
+  position: relative;
+  z-index: 2;
+
+  width: 15px;
+  height: 15px;
+
+  flex: 0 0 15px;
+
+  margin-top: 2px;
+
+  border: 3px solid #aebbd4;
+
+  border-radius: 50%;
+
+  background: #ffffff;
+}
+
+.timeline-dot.active {
+  width: 17px;
+  height: 17px;
+
+  flex-basis: 17px;
+
+  border: none;
+
+  background: #22bd61;
+
+  box-shadow: 0 0 0 5px #e1f8eb;
+}
+
+.timeline-content {
+  display: flex;
+  flex-direction: column;
+
+  gap: 3px;
+
+  margin-top: -2px;
+}
+
+.timeline-content strong {
+  color: #1b2d65;
+
+  font-size: 14px;
+}
+
+.timeline-content span {
+  color: #7180a2;
+
+  font-size: 13px;
+}
+
+.timeline-item.current .timeline-content {
+  background: #eaf9f0;
+
+  border-radius: 9px;
+
+  padding: 10px 14px;
+
+  margin-top: -8px;
+
+  margin-bottom: 8px;
+}
+
+.timeline-item.current .timeline-content strong {
+  color: #159447;
+}
+
+
+/* =========================================================
+   ACTIONS
+========================================================= */
+
+.action-message {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+
+  background: #edf5ff;
+
+  border-radius: 9px;
+
+  padding: 10px 12px;
+
+  color: #24509d;
+
+  font-size: 13px;
+
+  margin-bottom: 14px;
+}
+
+.action-message-icon {
+  color: #1764d8;
+}
+
+.action-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.secondary-action {
+  border: 1px solid transparent;
+
+  min-height: 38px;
+
+  padding: 0 14px;
+
+  border-radius: 8px;
+
+  font-size: 13px;
+  font-weight: 600;
+
+  cursor: pointer;
+}
+
+.secondary-action.publish {
+  background: #1764d8;
+  color: #ffffff;
+}
+
+.secondary-action.unpublish {
+  background: #1764d8;
+  color: #ffffff;
+}
+
+.secondary-action.finish {
+  background: #ffffff;
+  border-color: #1764d8;
+  color: #1764d8;
+}
+
+.secondary-action:hover {
+  opacity: 0.9;
+}
+
+
+/* =========================================================
+   MODAL ACTIVITÉ
+========================================================= */
+
+.modal-custom-container {
+  width: 100%;
+  background: #ffffff;
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+
+/* =========================================================
+   MODAL - HEADER
+========================================================= */
+
+.modal-header-custom {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+
+  padding: 18px 20px;
+
+  background: #ffffff;
+  border-bottom: 1px solid #e9ecef;
+}
+
+.modal-title-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+
+  min-width: 0;
+}
+
+.modal-title-custom {
+  margin: 0;
+
+  color: #1f2937;
+
+  font-size: 16px;
+  font-weight: 600;
+  line-height: 1.3;
+}
+
+.modal-subtitle-custom {
+  margin: 3px 0 0;
+
+  color: #6b7280;
+
+  font-size: 12px;
+  line-height: 1.4;
+
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+
+  max-width: 340px;
+}
+
+
+/* =========================================================
+   MODAL - ICÔNE
+========================================================= */
+
+.modal-icon {
+  width: 38px;
+  height: 38px;
+
+  flex: 0 0 38px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 50%;
+
+  font-size: 17px;
+}
+
+.modal-icon-success {
+  background: #ecfdf3;
+  color: #16a34a;
+}
+
+.modal-icon-warning {
+  background: #fff7ed;
+  color: #d97706;
+}
+
+.modal-icon-primary {
+  background: #eff6ff;
+  color: #2563eb;
+}
+
+.modal-icon-danger {
+  background: #fef2f2;
+  color: #dc2626;
+}
+
+
+/* =========================================================
+   MODAL - FERMETURE
+========================================================= */
+
+.btn-close-custom {
+  width: 32px;
+  height: 32px;
+
+  flex: 0 0 32px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  padding: 0;
+
+  border: 0;
+  border-radius: 6px;
+
+  background: transparent;
+
+  color: #64748b;
+
+  cursor: pointer;
+
+  transition:
+    background-color 0.2s ease,
+    color 0.2s ease;
+}
+
+.btn-close-custom:hover {
+  background: #f1f5f9;
+  color: #1e293b;
+}
+
+
+/* =========================================================
+   MODAL - BODY
+========================================================= */
+
+.modal-body-custom {
+  padding: 20px;
+
+  background: #ffffff;
+}
+
+
+/* =========================================================
+   MODAL - ALERT INFORMATION
+========================================================= */
+
+.alert-info-action {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+
+  padding: 13px 14px;
+
+  margin-bottom: 18px;
+
+  border: 1px solid;
+  border-radius: 8px;
+}
+
+.alert-info-action>i {
+  flex: 0 0 auto;
+
+  margin-top: 2px;
+
+  font-size: 16px;
+}
+
+.alert-info-action strong {
+  display: block;
+
+  margin-bottom: 3px;
+
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.alert-info-action p {
+  margin: 0;
+
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+
+/* Publication */
+.alert-success-action {
+  background: #f0fdf4;
+  border-color: #bbf7d0;
+  color: #166534;
+}
+
+
+/* Dépublication */
+.alert-warning-action {
+  background: #fffbeb;
+  border-color: #fde68a;
+  color: #92400e;
+}
+
+
+/* Terminer / Republier */
+.alert-primary-action {
+  background: #eff6ff;
+  border-color: #bfdbfe;
+  color: #1e40af;
+}
+
+
+/* Annulation */
+.alert-danger-action {
+  background: #fef2f2;
+  border-color: #fecaca;
+  color: #991b1b;
+}
+
+
+/* =========================================================
+   MODAL - QUESTION
+========================================================= */
+
+.modal-question {
+  margin-top: 4px;
+
+  color: #334155;
+
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 1.5;
+}
+
+
+/* =========================================================
+   MODAL - FORMULAIRE ANNULATION
+========================================================= */
+
+.modal-form-group {
+  margin-top: 18px;
+}
+
+.modal-form-label {
+  display: block;
+
+  margin-bottom: 7px;
+
+  color: #334155;
+
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.modal-form-label .required {
+  color: #dc2626;
+  margin-left: 2px;
+}
+
+.modal-textarea {
+  display: block;
+
+  width: 100%;
+  min-height: 105px;
+
+  box-sizing: border-box;
+
+  padding: 10px 12px;
+
+  resize: vertical;
+
+  border: 1px solid #d1d5db;
+  border-radius: 7px;
+
+  background: #ffffff;
+
+  color: #1f2937;
+
+  font-family: inherit;
+  font-size: 13px;
+  line-height: 1.5;
+
+  outline: none;
+
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.modal-textarea::placeholder {
+  color: #9ca3af;
+}
+
+.modal-textarea:focus {
+  border-color: #2563eb;
+
+  box-shadow:
+    0 0 0 3px rgba(37, 99, 235, 0.08);
+}
+
+.modal-textarea.is-invalid {
+  border-color: #dc2626;
+}
+
+.modal-textarea.is-invalid:focus {
+  box-shadow:
+    0 0 0 3px rgba(220, 38, 38, 0.08);
+}
+
+.modal-form-error {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+
+  margin-top: 6px;
+
+  color: #dc2626;
+
+  font-size: 12px;
+}
+
+
+/* =========================================================
+   MODAL - FOOTER
+========================================================= */
+
+.modal-footer-custom {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+
+  gap: 8px;
+
+  padding: 14px 20px;
+
+  border-top: 1px solid #e9ecef;
+
+  background: #ffffff;
+}
+
+
+/* =========================================================
+   MODAL - BOUTON ANNULER
+========================================================= */
+
+.btn-cancel {
+  min-height: 36px;
+
+  padding: 7px 15px;
+
+  border: 1px solid #d1d5db;
+  border-radius: 7px;
+
+  background: #ffffff;
+
+  color: #475569;
+
+  font-size: 13px;
+  font-weight: 500;
+
+  cursor: pointer;
+
+  transition:
+    background-color 0.2s ease,
+    border-color 0.2s ease;
+}
+
+.btn-cancel:hover {
+  background: #f8fafc;
+  border-color: #cbd5e1;
+}
+
+
+/* =========================================================
+   MODAL - BOUTON CONFIRMATION
+========================================================= */
+
+.btn-confirm {
+  min-height: 36px;
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+
+  padding: 7px 15px;
+
+  border: 1px solid #2563eb;
+  border-radius: 7px;
+
+  background: #2563eb;
+
+  color: #ffffff;
+
+  font-size: 13px;
+  font-weight: 500;
+
+  cursor: pointer;
+
+  transition:
+    background-color 0.2s ease,
+    border-color 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.btn-confirm:hover:not(:disabled) {
+  background: #1d4ed8;
+  border-color: #1d4ed8;
+}
+
+.btn-confirm:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+
+/* =========================================================
+   MODAL - CONFIRMATION ANNULATION
+========================================================= */
+
+.btn-confirm-danger {
+  background: #dc2626;
+  border-color: #dc2626;
+}
+
+.btn-confirm-danger:hover:not(:disabled) {
+  background: #b91c1c;
+  border-color: #b91c1c;
+}
+
+
+/* =========================================================
+   NG-BOOTSTRAP - CONTENEUR DU MODAL
+========================================================= */
+
+/*
+ * IMPORTANT :
+ *
+ * windowClass: 'etat-activite-modal'
+ *
+ * est appliqué sur le .modal généré par NgbModal.
+ *
+ * On doit donc cibler :
+ *
+ * .modal.etat-activite-modal
+ *
+ * et non uniquement .etat-activite-modal.
+ */
+
+::ng-deep .modal.etat-activite-modal {
+  position: fixed !important;
+
+  top: 0 !important;
+  right: 0 !important;
+  bottom: 0 !important;
+  left: 0 !important;
+
+  z-index: 1055 !important;
+
+  display: flex !important;
+
+  align-items: center !important;
+  justify-content: center !important;
+
+  width: 100% !important;
+  height: 100% !important;
+
+  padding: 20px !important;
+
+  overflow-x: hidden !important;
+  overflow-y: auto !important;
+
+  outline: 0 !important;
+}
+
+
+/* =========================================================
+   NG-BOOTSTRAP - DIALOGUE
+========================================================= */
+
+::ng-deep .modal.etat-activite-modal .modal-dialog {
+  position: relative !important;
+
+  width: 650px !important;
+  max-width: calc(100vw - 40px) !important;
+
+  margin: 0 !important;
+
+  pointer-events: auto !important;
+
+  transform: none !important;
+}
+
+
+/* =========================================================
+   NG-BOOTSTRAP - CONTENU
+========================================================= */
+
+::ng-deep .modal.etat-activite-modal .modal-content {
+  position: relative !important;
+
+  width: 100% !important;
+
+  border: 0 !important;
+
+  border-radius: 12px !important;
+
+  background: #ffffff !important;
+
+  overflow: hidden !important;
+
+  box-shadow:
+    0 20px 50px rgba(15, 23, 42, 0.20) !important;
+}
+
+
+/* =========================================================
+   NG-BOOTSTRAP - ÉLÉMENTS NATIFS
+========================================================= */
+
+::ng-deep .modal.etat-activite-modal .modal-header {
+  padding: 0 !important;
+
+  border: 0 !important;
+}
+
+::ng-deep .modal.etat-activite-modal .modal-body {
+  padding: 0 !important;
+}
+
+::ng-deep .modal.etat-activite-modal .modal-footer {
+  padding: 0 !important;
+
+  border: 0 !important;
+}
+
+
+/* =========================================================
+   BACKDROP
+========================================================= */
+
+::ng-deep .modal-backdrop.show {
+  opacity: 0.45 !important;
+}
+
+
+/* =========================================================
+   RESPONSIVE TABLETTE
+========================================================= */
+
+@media (max-width: 1100px) {
+
+  .activity-header-main {
+    flex-wrap: wrap;
+  }
+
+  .activity-header-actions {
+    width: 100%;
+
+    margin-left: 130px;
+  }
+
+  .activity-content {
+    grid-template-columns: 1fr;
+  }
+
+  .content-right {
+    display: grid;
+
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+
+    align-items: start;
+  }
+}
+
+
+/* =========================================================
+   RESPONSIVE MOBILE
+========================================================= */
+
+@media (max-width: 700px) {
+
+  .activite-detail-page {
+    padding: 14px;
+  }
+
+  .back-button {
+    margin-bottom: 14px;
+
+    padding: 9px 15px;
+
+    font-size: 14px;
+  }
+
+  .activity-header {
+    padding: 18px;
+
+    border-radius: 13px;
+  }
+
+  .activity-header-main {
+    gap: 14px;
+  }
+
+  .activity-icon {
+    width: 64px;
+    height: 64px;
+
+    flex-basis: 64px;
+
+    font-size: 28px;
+  }
+
+  .activity-title-area {
+    width: calc(100% - 78px);
+  }
+
+  .activity-badges {
+    flex-wrap: wrap;
+    gap: 7px;
+  }
+
+  .badge-type,
+  .badge-status {
+    padding: 5px 10px;
+
+    font-size: 11px;
+  }
+
+  .activity-title-area h1 {
+    font-size: 20px;
+  }
+
+  .activity-description {
+    font-size: 14px;
+
+    line-height: 1.45;
+  }
+
+  .activity-header-actions {
+    margin-left: 0;
+
+    width: 100%;
+
+    display: grid;
+
+    grid-template-columns: 1fr 1fr auto;
+  }
+
+  .btn-action {
+    padding: 0 10px;
+
+    font-size: 12px;
+  }
+
+  .btn-more {
+    width: 42px;
+  }
+
+  .activity-meta {
+    flex-direction: column;
+    align-items: flex-start;
+
+    gap: 12px;
+
+    margin-top: 18px;
+  }
+
+  .meta-separator {
+    display: none;
+  }
+
+  .meta-item {
+    font-size: 13px;
+  }
+
+  .activity-content {
+    grid-template-columns: 1fr;
+
+    gap: 14px;
+  }
+
+  .content-left,
+  .content-right {
+    gap: 14px;
+  }
+
+  .content-right {
+    display: flex;
+  }
+
+  .info-card {
+    padding: 16px;
+
+    border-radius: 12px;
+  }
+
+  .card-title h2 {
+    font-size: 17px;
+  }
+
+  .general-info-grid {
+    grid-template-columns: 1fr;
+
+    row-gap: 17px;
+  }
+
+  .publication-row {
+    grid-template-columns: 12px 1fr;
+
+    row-gap: 4px;
+  }
+
+  .publication-row strong {
+    grid-column: 2;
+  }
+
+  .action-buttons {
+    flex-direction: column;
+  }
+
+  .secondary-action {
+    width: 100%;
+  }
+}
+
+
+/* =========================================================
+   PETIT MOBILE
+========================================================= */
+
+@media (max-width: 430px) {
+
+  .activity-header-actions {
+    grid-template-columns: 1fr auto;
+  }
+
+  .activity-header-actions .btn-finish {
+    grid-column: 1 / -1;
+  }
+
+  .activity-header-actions .btn-publish {
+    grid-column: 1;
+  }
+
+  .activity-header-actions .btn-more {
+    grid-column: 2;
+  }
+
+  .activity-meta {
+    gap: 10px;
+  }
+
+  .meta-item {
+    width: 100%;
+  }
+}
+
+
+/* =========================================================
+   MODAL - MOBILE
+========================================================= */
+
+@media (max-width: 576px) {
+
+  ::ng-deep .modal.etat-activite-modal {
+    padding: 10px !important;
+  }
+
+  ::ng-deep .modal.etat-activite-modal .modal-dialog {
+    width: 100% !important;
+
+    max-width: 100% !important;
+
+    margin: 0 !important;
+  }
+
+  ::ng-deep .modal.etat-activite-modal .modal-content {
+    width: 100% !important;
+
+    max-width: 100% !important;
+
+    border-radius: 10px !important;
+  }
+
+  .modal-header-custom {
+    padding: 16px;
+  }
+
+  .modal-body-custom {
+    padding: 16px;
+  }
+
+  .modal-footer-custom {
+    padding: 13px 16px;
+  }
+
+  .modal-subtitle-custom {
+    max-width: 220px;
+  }
+
+  .btn-cancel,
+  .btn-confirm {
+    min-height: 38px;
+  }
+}

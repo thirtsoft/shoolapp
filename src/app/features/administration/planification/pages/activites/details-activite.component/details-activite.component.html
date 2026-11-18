@@ -1,0 +1,755 @@
+<div class="activite-detail-page">
+  <button class="back-button" type="button" (click)="goBack()">
+    <span class="back-icon">←</span>
+    Retour aux activités
+  </button>
+
+  @if (activite) {
+    <section class="activity-header">
+      <div class="activity-header-main">
+        <div class="activity-icon">
+          <span>
+            {{ activite.type === 'REUNION' ? '♟' : '▣' }}
+          </span>
+        </div>
+
+        <div class="activity-title-area">
+          <div class="activity-badges">
+            <span class="badge-type">
+              {{ activite.type === 'REUNION' ? 'RÉUNION' : 'ÉVÉNEMENT' }}
+            </span>
+
+            <span class="badge-status" [ngClass]="getEtatClass()">
+              <span class="status-dot"></span>
+              {{ getEtatLabel() }}
+            </span>
+          </div>
+
+          <h1>
+            {{ activite.libelle }}
+          </h1>
+
+          <p class="activity-description">
+            {{ activite.description || 'Aucune description.' }}
+          </p>
+        </div>
+      </div>
+
+      <div class="activity-header-actions">
+        @if (isEtat(codeEtat.ETAT_BROUILLON)) {
+          <button
+            type="button"
+            class="btn-action btn-publish"
+            (click)="openEtatModal(etatModal, 'publier', codeEtat.ETAT_PUBLIE)"
+          >
+            <span>✓</span>
+            Publier
+          </button>
+
+          <button
+            type="button"
+            class="btn-action btn-danger"
+            (click)="openEtatModal(etatModal, 'annuler', codeEtat.ETAT_ANNULE)"
+          >
+            <span>×</span>
+            Annuler
+          </button>
+        }
+
+        @if (isEtat(codeEtat.ETAT_PUBLIE)) {
+          <button
+            type="button"
+            class="btn-action btn-unpublish"
+            (click)="openEtatModal(etatModal, 'dépublier', codeEtat.ETAT_DEPUBLIE)"
+          >
+            <span>◉</span>
+            Dépublier
+          </button>
+
+          <button
+            type="button"
+            class="btn-action btn-finish"
+            (click)="openEtatModal(etatModal, 'terminer', codeEtat.ETAT_TERMINE)"
+          >
+            <span>✓</span>
+            Terminer
+          </button>
+
+          <button
+            type="button"
+            class="btn-action btn-danger"
+            (click)="openEtatModal(etatModal, 'annuler', codeEtat.ETAT_ANNULE)"
+          >
+            <span>×</span>
+            Annuler
+          </button>
+        }
+
+        @if (isEtat(codeEtat.ETAT_DEPUBLIE)) {
+          <button
+            type="button"
+            class="btn-action btn-publish"
+            (click)="openEtatModal(etatModal, 'reprogrammer', codeEtat.ETAT_PUBLIE)"
+          >
+            <span>↻</span>
+            Republier
+          </button>
+
+          <button
+            type="button"
+            class="btn-action btn-danger"
+            (click)="openEtatModal(etatModal, 'annuler', codeEtat.ETAT_ANNULE)"
+          >
+            <span>×</span>
+            Annuler
+          </button>
+        }
+
+        <button type="button" class="btn-more" aria-label="Plus d'actions">⋮</button>
+      </div>
+
+      <div class="activity-meta">
+        <div class="meta-item">
+          <span class="meta-icon"> ▣ </span>
+
+          <span>
+            {{ formatDate(activite.dateActivite) }}
+          </span>
+        </div>
+
+        <div class="meta-separator"></div>
+
+        <div class="meta-item">
+          <span class="meta-icon"> ◷ </span>
+
+          <span>
+            {{ formatHeure(activite.heureDebut) }}
+
+            @if (activite.heureFin) {
+              – {{ formatHeure(activite.heureFin) }}
+            }
+          </span>
+        </div>
+
+        <div class="meta-separator"></div>
+
+        <div class="meta-item">
+          <span class="meta-icon"> ◆ </span>
+
+          <span>
+            Année scolaire :
+            {{ activite.anneeScolaire || '—' }}
+          </span>
+        </div>
+      </div>
+    </section>
+
+    <div class="activity-content">
+      <div class="content-left">
+        <section class="info-card">
+          <div class="card-title">
+            <div class="title-icon blue">ⓘ</div>
+
+            <h2>Informations générales</h2>
+          </div>
+
+          <div class="card-divider"></div>
+
+          <div class="general-info-grid">
+            <div class="info-item">
+              <span class="info-label"> Libellé </span>
+
+              <strong>
+                {{ activite.libelle || '—' }}
+              </strong>
+            </div>
+
+            <div class="info-item">
+              <span class="info-label"> Année scolaire </span>
+
+              <strong>
+                {{ activite.anneeScolaire || '—' }}
+              </strong>
+            </div>
+
+            <div class="info-item">
+              <span class="info-label"> Type d'activité </span>
+
+              <strong>
+                {{ activite.type === 'REUNION' ? 'Réunion' : 'Événement' }}
+              </strong>
+            </div>
+
+            <div class="info-item">
+              <span class="info-label"> Date </span>
+
+              <strong>
+                {{ formatDate(activite.dateActivite) }}
+              </strong>
+            </div>
+
+            <div class="info-item">
+              <span class="info-label"> Heure de début </span>
+
+              <strong>
+                {{ formatHeure(activite.heureDebut) }}
+              </strong>
+            </div>
+
+            <div class="info-item">
+              <span class="info-label"> Heure de fin </span>
+
+              <strong>
+                {{ formatHeure(activite.heureFin) }}
+              </strong>
+            </div>
+
+            @if (activite.type === 'REUNION') {
+              <div class="info-item">
+                <span class="info-label"> Type de réunion </span>
+
+                <strong>
+                  {{ activite.typeReunion || '—' }}
+                </strong>
+              </div>
+
+              <div class="info-item">
+                <span class="info-label"> Cible </span>
+
+                <strong>
+                  {{ activite.cible || '—' }}
+                </strong>
+              </div>
+
+              <div class="info-item">
+                <span class="info-label"> Salle </span>
+
+                <strong>
+                  {{ activite.salle || '—' }}
+                </strong>
+              </div>
+            }
+          </div>
+        </section>
+
+        <section class="info-card description-card">
+          <div class="card-title">
+            <div class="title-icon blue">▤</div>
+
+            <h2>Description</h2>
+          </div>
+
+          <div class="card-divider"></div>
+
+          <p class="description-text">
+            {{ activite.description || 'Aucune description.' }}
+          </p>
+        </section>
+
+        @if (isEtat(codeEtat.ETAT_ANNULE) && activite.motifAnnulation) {
+          <section class="info-card cancellation-card">
+            <div class="card-title">
+              <div class="title-icon red">!</div>
+
+              <h2>Motif d'annulation</h2>
+            </div>
+
+            <div class="card-divider"></div>
+
+            <p class="description-text">
+              {{ activite.motifAnnulation }}
+            </p>
+          </section>
+        }
+
+        <section class="info-card actions-card">
+          <div class="card-title">
+            <div class="title-icon blue">ϟ</div>
+
+            <h2>Actions</h2>
+          </div>
+
+          <div class="card-divider"></div>
+
+          <div class="action-message">
+            <span class="action-message-icon"> ● </span>
+
+            <span>
+              {{ getActionMessage() }}
+            </span>
+          </div>
+
+          <div class="action-buttons">
+            @if (isEtat(codeEtat.ETAT_BROUILLON)) {
+              <button
+                type="button"
+                class="secondary-action publish"
+                (click)="openEtatModal(etatModal, 'publier', codeEtat.ETAT_PUBLIE)"
+              >
+                <span>✓</span>
+                Publier
+              </button>
+
+              <button
+                type="button"
+                class="secondary-action danger"
+                (click)="openEtatModal(etatModal, 'annuler', codeEtat.ETAT_ANNULE)"
+              >
+                <span>×</span>
+                Annuler
+              </button>
+            }
+
+            @if (isEtat(codeEtat.ETAT_PUBLIE)) {
+              <button
+                type="button"
+                class="secondary-action unpublish"
+                (click)="openEtatModal(etatModal, 'dépublier', codeEtat.ETAT_DEPUBLIE)"
+              >
+                <span>◉</span>
+                Dépublier
+              </button>
+
+              <button
+                type="button"
+                class="secondary-action finish"
+                (click)="openEtatModal(etatModal, 'terminer', codeEtat.ETAT_TERMINE)"
+              >
+                <span>✓</span>
+                Terminer
+              </button>
+
+              <button
+                type="button"
+                class="secondary-action danger"
+                (click)="openEtatModal(etatModal, 'annuler', codeEtat.ETAT_ANNULE)"
+              >
+                <span>×</span>
+                Annuler
+              </button>
+            }
+
+            @if (isEtat(codeEtat.ETAT_DEPUBLIE)) {
+              <button
+                type="button"
+                class="secondary-action publish"
+                (click)="openEtatModal(etatModal, 'reprogrammer', codeEtat.ETAT_PUBLIE)"
+              >
+                <span>↻</span>
+                Republier
+              </button>
+
+              <button
+                type="button"
+                class="secondary-action danger"
+                (click)="openEtatModal(etatModal, 'annuler', codeEtat.ETAT_ANNULE)"
+              >
+                <span>×</span>
+                Annuler
+              </button>
+            }
+
+            @if (isEtat(codeEtat.ETAT_TERMINE) || isEtat(codeEtat.ETAT_ANNULE)) {
+              <div class="no-action-message">Aucune action disponible pour cette activité.</div>
+            }
+          </div>
+        </section>
+      </div>
+
+      <div class="content-right">
+        <section class="info-card publication-card">
+          <div class="card-title">
+            <div class="title-icon blue">➤</div>
+
+            <h2>Publication</h2>
+          </div>
+
+          <div class="card-divider"></div>
+
+          <div class="publication-list">
+            <div class="publication-row">
+              <span class="publication-status published"></span>
+
+              <span class="publication-label"> Publiée le </span>
+
+              <strong>
+                {{ activite.datePublication ? formatDate(activite.datePublication) : '—' }}
+              </strong>
+            </div>
+
+            <div class="publication-row">
+              <span class="publication-status unpublished"></span>
+
+              <span class="publication-label"> Dépubliée le </span>
+
+              <strong>
+                {{ activite.dateDepublication ? formatDate(activite.dateDepublication) : '—' }}
+              </strong>
+            </div>
+
+            <div class="publication-divider"></div>
+
+            <div class="publication-row">
+              <span class="publication-icon"> ▣ </span>
+
+              <span class="publication-label"> Date de l'activité </span>
+
+              <strong>
+                {{ formatDate(activite.dateActivite) }}
+              </strong>
+            </div>
+          </div>
+        </section>
+
+        <section class="info-card state-card">
+          <div class="card-title">
+            <div class="title-icon blue">◔</div>
+
+            <h2>État de l'activité</h2>
+          </div>
+
+          <div class="card-divider"></div>
+
+          <div class="state-timeline">
+            <div class="timeline-item" [class.current]="isEtat(codeEtat.ETAT_BROUILLON)">
+              <span class="timeline-dot" [class.active]="isEtat(codeEtat.ETAT_BROUILLON)"></span>
+
+              <div class="timeline-content">
+                <strong> Brouillon </strong>
+
+                @if (isEtat(codeEtat.ETAT_BROUILLON)) {
+                  <span> Activité non publiée </span>
+                } @else {
+                  <span> Étape précédente </span>
+                }
+              </div>
+            </div>
+
+            <div class="timeline-item" [class.current]="isEtat(codeEtat.ETAT_PUBLIE)">
+              <span class="timeline-dot" [class.active]="isEtat(codeEtat.ETAT_PUBLIE)"></span>
+
+              <div class="timeline-content">
+                <strong> Publié </strong>
+
+                @if (activite.datePublication) {
+                  <span>
+                    Publié le
+                    {{ formatDate(activite.datePublication) }}
+                  </span>
+                } @else {
+                  <span> Non applicable </span>
+                }
+              </div>
+            </div>
+
+            <div class="timeline-item" [class.current]="isEtat(codeEtat.ETAT_DEPUBLIE)">
+              <span class="timeline-dot" [class.active]="isEtat(codeEtat.ETAT_DEPUBLIE)"></span>
+
+              <div class="timeline-content">
+                <strong> Dépublié </strong>
+
+                @if (activite.dateDepublication) {
+                  <span>
+                    Dépublié le
+                    {{ formatDate(activite.dateDepublication) }}
+                  </span>
+                } @else {
+                  <span> Non applicable </span>
+                }
+              </div>
+            </div>
+
+            <div class="timeline-item" [class.current]="isEtat(codeEtat.ETAT_TERMINE)">
+              <span class="timeline-dot" [class.active]="isEtat(codeEtat.ETAT_TERMINE)"></span>
+
+              <div class="timeline-content">
+                <strong> Terminé </strong>
+
+                @if (isEtat(codeEtat.ETAT_TERMINE)) {
+                  <span> Activité terminée </span>
+                } @else {
+                  <span> Non applicable </span>
+                }
+              </div>
+            </div>
+
+            <div class="timeline-item" [class.current]="isEtat(codeEtat.ETAT_ANNULE)">
+              <span class="timeline-dot" [class.active]="isEtat(codeEtat.ETAT_ANNULE)"></span>
+
+              <div class="timeline-content">
+                <strong> Annulé </strong>
+
+                @if (isEtat(codeEtat.ETAT_ANNULE)) {
+                  <span>
+                    {{ activite.motifAnnulation || 'Activité annulée' }}
+                  </span>
+                } @else {
+                  <span> Non applicable </span>
+                }
+              </div>
+            </div>
+          </div>
+        </section>
+      </div>
+    </div>
+  }
+</div>
+
+
+<ng-template #etatModal let-modal>
+
+  <div class="modal-custom-container">
+
+    <div class="modal-header-custom">
+
+      <div class="modal-title-wrapper">
+        <div
+          class="modal-icon"
+          [ngClass]="{
+            'modal-icon-danger': modalActionLabel === 'annuler',
+            'modal-icon-success': modalActionLabel === 'publier',
+            'modal-icon-warning': modalActionLabel === 'dépublier',
+            'modal-icon-primary': modalActionLabel === 'terminer' || modalActionLabel === 'reprogrammer'
+          }"
+        >
+          @if (modalActionLabel === 'annuler') {
+            <i class="bi bi-exclamation-triangle"></i>
+          } @else if (modalActionLabel === 'publier') {
+            <i class="bi bi-send"></i>
+          } @else if (modalActionLabel === 'dépublier') {
+            <i class="bi bi-eye-slash"></i>
+          } @else if (modalActionLabel === 'terminer') {
+            <i class="bi bi-check-circle"></i>
+          } @else {
+            <i class="bi bi-arrow-repeat"></i>
+          }
+        </div>
+
+        <div>
+          <h5 class="modal-title-custom">
+            @if (modalActionLabel === 'publier') {
+              Publier l'activité
+            } @else if (modalActionLabel === 'dépublier') {
+              Dépublier l'activité
+            } @else if (modalActionLabel === 'terminer') {
+              Terminer l'activité
+            } @else if (modalActionLabel === 'reprogrammer') {
+              Republier l'activité
+            } @else {
+              Annuler l'activité
+            }
+          </h5>
+
+          <p class="modal-subtitle-custom">
+            {{ activite?.libelle }}
+          </p>
+        </div>
+      </div>
+
+      <button
+        type="button"
+        class="btn-close-custom"
+        aria-label="Fermer"
+        (click)="modal.dismiss()"
+      >
+        <i class="bi bi-x-lg"></i>
+      </button>
+
+    </div>
+
+    <div class="modal-body-custom">
+      @if (modalActionLabel === 'publier') {
+
+        <div class="alert-info-action alert-success-action">
+          <i class="bi bi-check-circle-fill"></i>
+
+          <div>
+            <strong>Publication de l'activité</strong>
+
+            <p>
+              Cette activité sera publiée et deviendra visible
+              selon les règles de diffusion configurées.
+            </p>
+          </div>
+        </div>
+
+        <div class="modal-question">
+          Voulez-vous vraiment publier cette activité ?
+        </div>
+
+      }
+
+      @else if (modalActionLabel === 'dépublier') {
+
+        <div class="alert-info-action alert-warning-action">
+          <i class="bi bi-exclamation-triangle-fill"></i>
+
+          <div>
+            <strong>Dépublication de l'activité</strong>
+
+            <p>
+              Cette activité ne sera plus considérée comme publiée.
+              Vous pourrez la republier ultérieurement.
+            </p>
+          </div>
+        </div>
+
+        <div class="modal-question">
+          Voulez-vous vraiment dépublier cette activité ?
+        </div>
+
+      }
+
+      @else if (modalActionLabel === 'terminer') {
+
+        <div class="alert-info-action alert-primary-action">
+          <i class="bi bi-check-circle-fill"></i>
+
+          <div>
+            <strong>Terminer l'activité</strong>
+
+            <p>
+              L'activité sera marquée comme terminée.
+              Cette action met fin à son cycle de traitement.
+            </p>
+          </div>
+        </div>
+
+        <div class="modal-question">
+          Voulez-vous vraiment terminer cette activité ?
+        </div>
+
+      }
+
+      @else if (modalActionLabel === 'reprogrammer') {
+
+        <div class="alert-info-action alert-primary-action">
+          <i class="bi bi-arrow-repeat"></i>
+
+          <div>
+            <strong>Republier l'activité</strong>
+
+            <p>
+              Cette activité sera de nouveau publiée.
+            </p>
+          </div>
+        </div>
+
+        <div class="modal-question">
+          Voulez-vous vraiment republier cette activité ?
+        </div>
+
+      }
+
+
+      <!-- ANNULER -->
+      @else if (modalActionLabel === 'annuler') {
+
+        <div class="alert-info-action alert-danger-action">
+          <i class="bi bi-exclamation-triangle-fill"></i>
+
+          <div>
+            <strong>Annulation de l'activité</strong>
+
+            <p>
+              Cette action est définitive. Le motif d'annulation
+              doit obligatoirement être renseigné.
+            </p>
+          </div>
+        </div>
+
+        <form [formGroup]="actionForm">
+
+          <div class="modal-form-group">
+
+            <label class="modal-form-label">
+              Motif d'annulation
+              <span class="required">*</span>
+            </label>
+
+            <textarea
+              class="modal-textarea"
+              formControlName="motifAnnulation"
+              rows="4"
+              placeholder="Saisissez le motif d'annulation..."
+              [class.is-invalid]="
+                actionForm.get('motifAnnulation')?.invalid &&
+                actionForm.get('motifAnnulation')?.touched
+              "
+            ></textarea>
+
+            @if (
+              actionForm.get('motifAnnulation')?.invalid &&
+              actionForm.get('motifAnnulation')?.touched
+            ) {
+              <div class="modal-form-error">
+                <i class="bi bi-exclamation-circle"></i>
+
+                @if (actionForm.get('motifAnnulation')?.hasError('required')) {
+                  Le motif d'annulation est obligatoire.
+                } @else if (
+                  actionForm.get('motifAnnulation')?.hasError('minlength')
+                ) {
+                  Le motif doit contenir au moins 5 caractères.
+                }
+              </div>
+            }
+
+          </div>
+
+        </form>
+
+      }
+
+    </div>
+
+
+    <!-- FOOTER -->
+    <div class="modal-footer-custom">
+
+      <button
+        type="button"
+        class="btn-cancel"
+        (click)="modal.dismiss()"
+      >
+        Annuler
+      </button>
+
+      <button
+        type="button"
+        class="btn-confirm"
+        [ngClass]="{
+          'btn-confirm-danger': modalActionLabel === 'annuler'
+        }"
+        [disabled]="
+          isMotifRequired &&
+          actionForm.get('motifAnnulation')?.invalid
+        "
+        (click)="modal.close('confirm')"
+      >
+
+        @if (modalActionLabel === 'publier') {
+          <i class="bi bi-send"></i>
+          Confirmer la publication
+        } @else if (modalActionLabel === 'dépublier') {
+          <i class="bi bi-eye-slash"></i>
+          Confirmer la dépublication
+        } @else if (modalActionLabel === 'terminer') {
+          <i class="bi bi-check-circle"></i>
+          Confirmer la fin
+        } @else if (modalActionLabel === 'reprogrammer') {
+          <i class="bi bi-arrow-repeat"></i>
+          Republier
+        } @else {
+          <i class="bi bi-x-circle"></i>
+          Confirmer l'annulation
+        }
+
+      </button>
+
+    </div>
+
+  </div>
+
+</ng-template>
+

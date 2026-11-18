@@ -69,7 +69,7 @@ export class DossierEleveService {
 
   modifierEleve(eleveUuid: string, request: UpdateEleveRequest): Observable<ApiResponse<ListeEleve>> {
     return this.http.patch<ApiResponse<ListeEleve>>(
-      `${this.baseUrl}/eleve/${eleveUuid}`,
+      `${this.baseUrl}/eleve/edit/${eleveUuid}`,
       request
     );
   }

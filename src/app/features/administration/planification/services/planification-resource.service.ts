@@ -233,6 +233,27 @@ export class PlanificationResourceService {
     );
   }
 
+  filteredFilterDataTable<T, F>(endpoint: string, page: number, size: number, filters?: F | null): Observable<DataResult<T>> {
+    const url = `${this.planificationUrl}/${endpoint}/filtered/page`;
+    const params = new HttpParams()
+      .set('page', page.toString())
+      .set('size', size.toString());
+
+    return this.http.post<DataResult<T>>(
+      url,
+      filters ?? {},
+      {
+        ...this.httpOptions,
+        params
+      }
+    ).pipe(
+      tap(response => console.log('Réponse API filtre:', response)),
+      catchError(error => {
+        console.error('Erreur API filtre:', error);
+        return throwError(() => error);
+      })
+    );
+  }
 
   /*************     Meeting      ***********/
 
