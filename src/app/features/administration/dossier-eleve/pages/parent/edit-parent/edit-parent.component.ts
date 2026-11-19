@@ -3,8 +3,8 @@ import { Component, inject, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
-import { Parent } from '../../../../../../core/models/parent/parent';
-import { UtilisateurService } from '../../../../utilisateur/service/utilisateur.service';
+import { Parent, ParentUtilisateurAddEdit } from '../../../../../../core/models/parent/parent';
+import { ParentService } from '../../../service/parent.service';
 
 
 @Component({
@@ -18,14 +18,13 @@ export class EditParentComponent implements OnInit {
 
   errorMessage?: string;
   parentFormGroup!: FormGroup;
-  parent?: any;
+  parent?: ParentUtilisateurAddEdit;
   parentId?: number;
   civilites?: string[] = ["M.", "Me"];
-  userId?: any;
 
   title = "Ajouter un parent";
 
-  private readonly utilisateurService = inject(UtilisateurService);
+  private readonly parentService = inject(ParentService)
   private readonly toastService = inject(ToastrService);
   private readonly router = inject(Router);
   private readonly _formBuilder = inject(FormBuilder);
@@ -50,17 +49,14 @@ export class EditParentComponent implements OnInit {
       address: [parent?.address ? parent.address : ''],
       email: [parent?.email ? parent.email : '', Validators.required],
       telephone: [parent?.telephone ? parent.telephone : '', Validators.required],
-      username: [parent?.username ? parent.username : '', Validators.required],
       profession: [parent?.profession ? parent.profession : ''],
     });
   }
 
   getParentById(parentId: number) {
-    this.utilisateurService.getUtilisateur(parentId).subscribe({
+    this.parentService.getParent(parentId).subscribe({
       next: (data) => {
         this.parent = data;
-        this.userId = this.parent.userId;
-
         this.parentFormGroup.patchValue({
           id: this.parent?.id || '',
           civility: this.parent?.civility || '',
@@ -69,7 +65,6 @@ export class EditParentComponent implements OnInit {
           address: this.parent?.address || '',
           email: this.parent?.email || '',
           telephone: this.parent?.telephone || '',
-          username: this.parent?.username || '',
           profession: this.parent?.profession || '',
         });
       },
@@ -80,7 +75,11 @@ export class EditParentComponent implements OnInit {
     });
   }
 
-  ajoutereditParent() {
+  ajouterEditParent() {
+    if (!this.parentId) {
+      this.toastService.warning('Attention', 'Identitifiant du parent non récupéré');
+      return;
+    }
     if (this.parentFormGroup.invalid) {
       this.toastService.warning('Attention', 'Veuillez remplir tous les champs obligatoires');
       return;
@@ -94,18 +93,16 @@ export class EditParentComponent implements OnInit {
       address: this.parentFormGroup.get("address")!.value,
       email: this.parentFormGroup.get("email")!.value,
       telephone: this.parentFormGroup.get("telephone")!.value,
-      username: this.parentFormGroup.get("username")!.value,
       profession: this.parentFormGroup.get("profession")!.value,
     }
-    payload.userId = this.userId;
 
-    this.utilisateurService.updateParent(this.parentId!, payload).subscribe({
+    this.parentService.updateParent(this.parentId!, payload).subscribe({
       next: data => {
-        if (data.statut === 'OK') {
+        if (data.matricule) {
           this.toastService.success('success', 'Le compte du parent a été modifié avec succès.');
-          this.router.navigate(['/admin/dossier-eleve/parent']);
-        } else if (data.statut === 'FAILED') {
-          this.toastService.warning('error', 'Erreur lors de la modification : ' + data.message);
+          this.gotBack();
+        } else if (!data.matricule) {
+          this.toastService.warning('error', 'Erreur lors de la modification : ' + data);
         }
       },
       error: (data) => {
@@ -113,6 +110,10 @@ export class EditParentComponent implements OnInit {
         this.toastService.warning('error', 'Erreur lors de la modification : ' + data.error);
       }
     });
+  }
+
+  gotBack() {
+    void this.router.navigate(['/admin/dossier-eleve/parent']);
   }
 
 }

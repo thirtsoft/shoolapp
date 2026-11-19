@@ -16,46 +16,25 @@
 
     <div class="card">
       <div class="card-body p-4 p-md-5">
-        <form [formGroup]="parentFormGroup" (ngSubmit)="ajoutereditParent()">
+        <form [formGroup]="parentFormGroup" (ngSubmit)="ajouterEditParent()">
           <input type="hidden" formControlName="id" />
 
-          <div class="two-columns-row">
-            <div class="form-group">
-              <label class="form-label">
-                Civilité <span class="text-danger">*</span>
-                <i class="fas fa-user-tie ms-1 text-muted"></i>
-              </label>
-              <select class="form-select" formControlName="civility" required>
-                <option value="" disabled selected>— Sélectionnez une civilité —</option>
-                @for (item of civilites; track item) {
-                  <option [value]="item">{{ item }}</option>
-                }
-              </select>
-              @if (
-                parentFormGroup.get('civility')?.invalid && parentFormGroup.get('civility')?.touched
-              ) {
-                <small class="form-text text-danger">Veuillez sélectionner une civilité</small>
+          <div class="form-group">
+            <label class="form-label">
+              Civilité <span class="text-danger">*</span>
+              <i class="fas fa-user-tie ms-1 text-muted"></i>
+            </label>
+            <select class="form-select" formControlName="civility" required>
+              <option value="" disabled selected>— Sélectionnez une civilité —</option>
+              @for (item of civilites; track item) {
+                <option [value]="item">{{ item }}</option>
               }
-            </div>
-
-            <div class="form-group">
-              <label class="form-label">
-                Nom utilisateur <span class="text-danger">*</span>
-                <i class="fas fa-user-circle ms-1 text-muted"></i>
-              </label>
-              <input
-                type="text"
-                class="form-control"
-                formControlName="username"
-                placeholder="Nom d'utilisateur"
-                required
-              />
-              @if (
-                parentFormGroup.get('username')?.invalid && parentFormGroup.get('username')?.touched
-              ) {
-                <small class="form-text text-danger">Le nom d'utilisateur est obligatoire</small>
-              }
-            </div>
+            </select>
+            @if (
+              parentFormGroup.get('civility')?.invalid && parentFormGroup.get('civility')?.touched
+            ) {
+              <small class="form-text text-danger">Veuillez sélectionner une civilité</small>
+            }
           </div>
 
           <div class="two-columns-row">

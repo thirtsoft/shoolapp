@@ -73,6 +73,42 @@ export interface Eleve {
     parentExist?: boolean;
 }
 
+export interface ParentUtilisateurAddEdit {
+    id?: number;
+
+    parentUuid?: string;
+
+    civility?: string;
+
+    nom?: string;
+
+    prenom?: string;
+
+    profession?: string;
+
+    address?: string;
+
+    telephone?: string;
+
+    email?: string;
+}
+
+export interface ParentMini {
+    id?: number;
+
+    uuid?: string;
+
+    userUuid?: string;
+
+    matricule?: string;
+
+    nom?: string;
+
+    prenom?: string;
+
+    telephone?: string;
+}
+
 
 
 export interface MedecinTraitant {

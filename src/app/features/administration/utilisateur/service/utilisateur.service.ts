@@ -44,10 +44,6 @@ export class UtilisateurService {
     return this.http.put<ResponseMessage>(`${this.baseUrl_1}/utilisateur/edit/${id}`, value);
   }
 
-  updateParent(id: number, value: Utilisateur) {
-    return this.http.patch<ResponseMessage>(`${this.baseUrl_1}/utilisateur/parent/edit/${id}`, value);
-  }
-
   activatedAccount(userId: number) {
     return this.http.post<ResponseMessage>(`${this.baseUrl_1}/utilisateur/activated/${userId}`, {});
   }
