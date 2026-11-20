@@ -10,6 +10,7 @@ import { FaireAppelRequest } from '../../../../core/models/dossiereleve/absence/
 import { DetailsEleveResponse, DossierDocumentsEleveResponse, DossierPaiementEleve, ListeResultatEleve, ParcoursScolaireEleve, PresenceEleve, RechercheFactureEleve, RecherchePresenceEleve, RechercheResultatEleve } from '../../../../core/models/dossiereleve/dossier-eleve';
 import { PieceJointeResponse } from '../../../../core/piecejointe/piece-jointe';
 import { ResponseMessage } from '../../../../core/response/response-message';
+import { EvaluationDetailResponse } from '../../../../core/models/dossiereleve/evaluation/evaluation-details-response';
 
 @Injectable({
   providedIn: 'root'
@@ -376,4 +377,12 @@ export class DossierResourceService {
     return this.getResourceList(`attendancerecord/course/${courseId}/date/${attendanceDate}`);
   }
 
+
+
+  getDetailsEvaluation(evalId: number): Observable<EvaluationDetailResponse> {
+    return this.http.get<EvaluationDetailResponse>(
+      `${this.baseUrl_1}/evaluation/${evalId}/details`,
+
+    );
+  }
 }

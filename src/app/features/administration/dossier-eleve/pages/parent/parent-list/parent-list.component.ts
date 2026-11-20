@@ -2,7 +2,6 @@ import { Component, inject, OnInit } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
 import { IFilterConfig } from '../../../../../../core/filtered-config/FiltreConfiguration';
 import { GenericTableReferentielComponent } from '../../../../../../core/generic/generic-table-referentiel/generic-table-referentiel.component';
-import { UtilisateurResourceService } from '../../../../utilisateur/service/utilisateur-resource.service';
 import { ParentService } from '../../../../../parent/service/parent.service';
 
 @Component({
@@ -17,7 +16,6 @@ export class ParentListComponent implements OnInit {
   errorMessage?: string;
   isEdit: boolean = true;
   isLoading: boolean = false;
-  filteredDataParent: any;
   isLockable: boolean = true;
   isTable: boolean = true;
   deleteEndpoint = "parent";
@@ -25,14 +23,13 @@ export class ParentListComponent implements OnInit {
   parentData: any = [];
 
   currentPage = 0;
-  pageSize = 10;
+  pageSize = 20;
   totalElements = 0;
-  tableSizes = [10, 20, 50, 100];
+  tableSizes = [20, 30, 50, 100];
   tableFilters: IFilterConfig[] = [];
   activeFilters: any = {};
   hasActiveFilters: boolean = false;
 
-  private readonly utilisateurService = inject(UtilisateurResourceService);
   private readonly parentService = inject(ParentService)
 
 
@@ -54,6 +51,12 @@ export class ParentListComponent implements OnInit {
 
   initialisationDesFiltres() {
     this.tableFilters = [
+      {
+        key: 'matricule',
+        label: 'Matricule',
+        type: 'text',
+        placeholder: 'Rechercher par matricule'
+      },
       {
         key: 'nomPrenom',
         label: 'Nom/Prénom',
@@ -101,11 +104,11 @@ export class ParentListComponent implements OnInit {
         this.totalElements = response.data?.totalElements || 0;
         this.columns = [
           { key: 'matricule', header: 'Matricule' },
+          { key: 'civility', header: 'Civilité' },
           { key: 'nomComplet', header: 'Nom complet' },
           { key: 'telephone', header: 'Téléphone' },
           { key: 'email', header: 'Email' },
           { key: 'profession', header: 'Profession' },
-          { key: 'username', header: 'Nom utilisateur' },
 
         ];
         this.parentData = this.parentData?.map((item: any) => ({
@@ -122,6 +125,9 @@ export class ParentListComponent implements OnInit {
 
   construireParametreDeFiltre(): any {
     const filtreObj: any = {};
+    if (this.activeFilters.matricule) {
+      filtreObj.matricule = this.activeFilters.matricule;
+    }
     if (this.activeFilters.nomPrenom) {
       filtreObj.nomPrenom = this.activeFilters.nomPrenom;
     }

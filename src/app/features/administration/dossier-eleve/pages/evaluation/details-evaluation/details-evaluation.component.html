@@ -1,168 +1,785 @@
-<div class="page-wrapper">
-  <div class="content container-fluid">
-    <!-- Page Header -->
-    <div class="page-header">
-      <div class="row">
-        <div class="col-sm-12">
-          <h3 class="page-title">Détails évaluation</h3>
-          <p class="text-muted mt-1 mb-0">
-            <i class="fas fa-clipboard-list me-1"></i> Visualisation des informations de
-            l'évaluation
-          </p>
-        </div>
+<div class="evaluation-detail-page">
+  <!-- =========================================================
+       EN-TÊTE
+       ========================================================= -->
+  <div class="page-heading">
+    <div class="heading-left">
+      <div class="heading-icon">✓</div>
+
+      <div>
+        <h1>Détails de l’évaluation</h1>
+
+        <p>Consultation et gestion des résultats de l'évaluation</p>
       </div>
     </div>
 
-    <div class="action-bar">
-      <div class="action-left">
-        <button class="btn-back" (click)="goBack()">
-          <i class="fas fa-arrow-left me-2"></i>Retour
-        </button>
-        @if (['Remise', 'Envoyée'].includes(detailsEvaluation.etat!)) {
-          <button class="btn-validate" (click)="openConfirmationDialog('valider')">
-            <i class="fas fa-check-circle me-2"></i>Valider
-          </button>
-        }
+    <button type="button" class="back-button" (click)="retourListe()">
+      <span>←</span>
+      Retour à la liste
+    </button>
+  </div>
 
-        <button class="btn-print" (click)="imprimerUneEvaluation()">
-          <i class="fas fa-print me-2"></i>Imprimer
-        </button>
-
-         <button class="btn-print" (click)="telechargerEvaluationPdf()">
-          <i class="fas fa-print me-2"></i>Télécharger
-        </button>
-
-      </div>
-      <div class="action-right">
-        <span class="status-badge" [class]="getStatusClass()">
-          <i class="fas fa-info-circle me-1"></i>
-          État : {{ detailsEvaluation.etat || 'Brouillon' }}
-        </span>
-      </div>
+  <!-- =========================================================
+       CHARGEMENT
+       ========================================================= -->
+  @if (loading()) {
+    <div class="loading-state">
+      <div class="spinner"></div>
+      <span>Chargement de l'évaluation...</span>
     </div>
-
-    <div class="two-cards-grid">
-      <div class="info-card">
-        <div class="card-header-custom">
-          <i class="fas fa-clipboard-list"></i>
-          <h4>Détails évaluation</h4>
+  } @else {
+    <!-- =======================================================
+         INFORMATIONS PRINCIPALES
+         ======================================================= -->
+    <div class="evaluation-header-grid">
+      <!-- Évaluation -->
+      <div class="evaluation-card">
+        <div class="evaluation-icon">
+          <div class="math-icon">
+            <span>+</span>
+            <span>−</span>
+            <span>×</span>
+            <span>÷</span>
+          </div>
         </div>
-        <div class="info-list">
+
+        <div class="evaluation-main-info">
+          <h2>
+            {{ detailsEvaluation.titre || 'Évaluation' }}
+          </h2>
+
+          <!-- Matière / Classe / Type -->
           <div class="info-row">
-            <div class="info-label">Titre</div>
-            <div class="info-value">{{ detailsEvaluation.titre || '-' }}</div>
-          </div>
-          <div class="info-row">
-            <div class="info-label">Date évaluation</div>
-            <div class="info-value">
-              {{ detailsEvaluation.dateEvaluation | date: 'dd/MM/yyyy' }}
-            </div>
-          </div>
-          <div class="info-row">
-            <div class="info-label">Heure début</div>
-            <div class="info-value">{{ detailsEvaluation.heureDebut || '-' }}</div>
-          </div>
-          <div class="info-row">
-            <div class="info-label">Heure fin</div>
-            <div class="info-value">{{ detailsEvaluation.heureFin || '-' }}</div>
-          </div>
-          <div class="info-row">
-            <div class="info-label">État</div>
-            <div class="info-value">
-              <span class="status-inline" [class]="getStatusClass()">
-                {{ detailsEvaluation.etat || 'Brouillon' }}
+            @if (detailsEvaluation.evaluationInformationsResponse?.matiereLibelle) {
+              <span class="info-item">
+                <span class="small-icon">◆</span>
+
+                {{ detailsEvaluation.evaluationInformationsResponse?.matiereLibelle }}
               </span>
-            </div>
+            }
+
+            @if (
+              detailsEvaluation.evaluationInformationsResponse?.matiereLibelle &&
+              detailsEvaluation.evaluationInformationsResponse?.classeLibelle
+            ) {
+              <span class="vertical-separator"></span>
+            }
+
+            @if (detailsEvaluation.evaluationInformationsResponse?.classeLibelle) {
+              <span class="info-item">
+                <span class="small-icon">♟</span>
+
+                {{ detailsEvaluation.evaluationInformationsResponse?.classeLibelle }}
+              </span>
+            }
+
+            @if (
+              detailsEvaluation.evaluationInformationsResponse?.classeLibelle &&
+              detailsEvaluation.typeEvaluation
+            ) {
+              <span class="vertical-separator"></span>
+            }
+
+            @if (detailsEvaluation.typeEvaluation) {
+              <span class="info-item">
+                <span class="small-icon">▤</span>
+
+                {{ detailsEvaluation.typeEvaluation }}
+              </span>
+            }
           </div>
+
+          <!-- Date / Heure / Durée -->
           <div class="info-row">
-            <div class="info-label">Type</div>
-            <div class="info-value">{{ detailsEvaluation.evaluationType || '-' }}</div>
+            @if (detailsEvaluation.dateEvaluation) {
+              <span class="info-item">
+                <span class="small-icon">▣</span>
+
+                {{ detailsEvaluation.dateEvaluation | date: 'EEEE d MMMM yyyy' : '' : 'fr' }}
+              </span>
+            }
+
+            @if (detailsEvaluation.heureDebut && detailsEvaluation.heureFin) {
+              <span class="vertical-separator"></span>
+
+              <span class="info-item">
+                <span class="small-icon">◷</span>
+
+                {{ detailsEvaluation.heureDebut }}
+                –
+                {{ detailsEvaluation.heureFin }}
+              </span>
+            }
+
+            @if (detailsEvaluation.dureeMinutes !== undefined) {
+              <span class="vertical-separator"></span>
+
+              <span class="info-item">
+                <span class="small-icon">⌛</span>
+
+                Durée :
+                {{ detailsEvaluation.dureeMinutes }} min
+              </span>
+            }
           </div>
+
+          <!-- Enseignant / Année / Semestre -->
           <div class="info-row">
-            <div class="info-label">Mode évaluation</div>
-            <div class="info-value">{{ detailsEvaluation.evaluationMode || '-' }}</div>
-          </div>
-          <div class="info-row">
-            <div class="info-label">Description</div>
-            <div class="info-value description-text">
-              {{ detailsEvaluation.description || '-' }}
-            </div>
+            @if (detailsEvaluation.evaluationInformationsResponse?.enseignantNomComplet) {
+              <span class="info-item">
+                <span class="small-icon">♙</span>
+
+                {{ detailsEvaluation.evaluationInformationsResponse?.enseignantNomComplet }}
+              </span>
+            }
+
+            @if (
+              detailsEvaluation.evaluationInformationsResponse?.enseignantNomComplet &&
+              detailsEvaluation.evaluationInformationsResponse?.anneeScolaireLibelle
+            ) {
+              <span class="vertical-separator"></span>
+            }
+
+            @if (detailsEvaluation.evaluationInformationsResponse?.anneeScolaireLibelle) {
+              <span class="info-item">
+                <span class="small-icon">▣</span>
+
+                Année scolaire :
+                {{ detailsEvaluation.evaluationInformationsResponse?.anneeScolaireLibelle }}
+              </span>
+            }
+
+            @if (detailsEvaluation.evaluationInformationsResponse?.sessionSemestreLibelle) {
+              <span class="vertical-separator"></span>
+
+              <span class="info-item">
+                <span class="small-icon">◫</span>
+
+                {{ detailsEvaluation.evaluationInformationsResponse?.sessionSemestreLibelle }}
+              </span>
+            }
           </div>
         </div>
       </div>
 
-      <div class="info-card">
-        <div class="card-header-custom">
-          <i class="fas fa-school"></i>
-          <h4>Autres informations</h4>
+      <!-- =====================================================
+           STATUT
+           ===================================================== -->
+      <div class="status-card">
+        <div class="status-title">
+          <div class="status-check">✓</div>
+
+          <div>
+            <h2>
+              {{ detailsEvaluation.etat || '—' }}
+            </h2>
+
+            <p>
+              {{ detailsEvaluation.description || 'État actuel de l’évaluation' }}
+            </p>
+          </div>
         </div>
-        <div class="info-list">
-          <div class="info-row">
-            <div class="info-label">Classe</div>
-            <div class="info-value">{{ detailsEvaluation.libelleClasse || '-' }}</div>
-          </div>
-          <div class="info-row">
-            <div class="info-label">Année scolaire</div>
-            <div class="info-value">{{ detailsEvaluation.anneeScolaire || '-' }}</div>
-          </div>
-          <div class="info-row">
-            <div class="info-label">Matière</div>
-            <div class="info-value">{{ detailsEvaluation.matiere || '-' }}</div>
-          </div>
-          <div class="info-row">
-            <div class="info-label">Semestre</div>
-            <div class="info-value">{{ detailsEvaluation.sessionSemestre || '-' }}</div>
-          </div>
-          <div class="info-row">
-            <div class="info-label">Enseignant</div>
-            <div class="info-value">{{ detailsEvaluation.nomCompletEnseignant || '-' }}</div>
-          </div>
+
+        <div class="status-separator"></div>
+
+        <div class="status-date">
+          @if (detailsEvaluation.dateTerminee) {
+            Terminée le :
+
+            <strong>
+              {{ detailsEvaluation.dateTerminee | date: "dd/MM/yyyy à HH'h'mm" }}
+            </strong>
+          } @else if (detailsEvaluation.dateDebutCorrection) {
+            Correction commencée le :
+
+            <strong>
+              {{ detailsEvaluation.dateDebutCorrection | date: "dd/MM/yyyy à HH'h'mm" }}
+            </strong>
+          } @else if (detailsEvaluation.datePassage) {
+            Passée le :
+
+            <strong>
+              {{ detailsEvaluation.datePassage | date: "dd/MM/yyyy à HH'h'mm" }}
+            </strong>
+          } @else if (detailsEvaluation.datePlanification) {
+            Planifiée le :
+
+            <strong>
+              {{ detailsEvaluation.datePlanification | date: "dd/MM/yyyy à HH'h'mm" }}
+            </strong>
+          } @else if (detailsEvaluation.dateCreation) {
+            Créée le :
+
+            <strong>
+              {{ detailsEvaluation.dateCreation | date: "dd/MM/yyyy à HH'h'mm" }}
+            </strong>
+          }
         </div>
       </div>
     </div>
 
-    <div class="info-card full-width">
-      <div class="card-header-custom">
-        <i class="fas fa-star"></i>
-        <h4>Notes des élèves</h4>
-      </div>
-      <div class="table-responsive">
-        <table class="data-table">
-          <thead>
-            <tr>
-              <th>Nom & Prénom</th>
-              <th>Type note</th>
-              <th>Note /20</th>
-              <th>Appréciation</th>
-            </tr>
-          </thead>
-          <tbody>
-            @for (note of detailsEvaluation.detailsNoteEleveDTOList; track $index) {
-              <tr>
-                <td class="eleve-cell">
-                  <div class="eleve-avatar">
-                    <div class="avatar-circle">
-                      {{ (note?.nomCompletEleve || '?').charAt(0) }}
-                    </div>
-                    <span>{{ note?.nomCompletEleve || '-' }}</span>
-                  </div>
-                </td>
-                <td class="type-cell">
-                  <span class="badge-type">{{ note?.type || '-' }}</span>
-                </td>
-                <td class="note-value">{{ note?.note || '-' }}</td>
-                <td class="appreciation-cell">{{ note?.appreciation || '-' }}</td>
-              </tr>
+    <!-- =======================================================
+         WORKFLOW
+         ======================================================= -->
+    <div class="workflow-card">
+      @for (step of workflowSteps; track step.label; let last = $last) {
+        <div class="workflow-step" [class.completed]="step.active">
+          <div class="workflow-top">
+            <div class="workflow-circle" [class.last]="last" [class.inactive]="!step.active">
+              @if (last && step.active) {
+                🏆
+              } @else if (step.active) {
+                ✓
+              } @else {
+                {{ $index + 1 }}
+              }
+            </div>
+
+            @if (!last) {
+              <div class="workflow-line" [class.completed]="step.active"></div>
             }
-          </tbody>
-        </table>
-      </div>
-      @if (!detailsEvaluation.detailsNoteEleveDTOList?.length) {
-        <div class="empty-state">
-          <i class="fas fa-chart-line"></i>
-          <p>Aucune note disponible pour cette évaluation</p>
+          </div>
+
+          <div class="workflow-label">
+            {{ step.label }}
+          </div>
+
+          @if (step.date) {
+            <div class="workflow-date">
+              {{ step.date }}
+            </div>
+          }
         </div>
       }
     </div>
-  </div>
+
+    <!-- =======================================================
+         KPI
+         ======================================================= -->
+    <div class="stats-grid">
+      <!-- Élèves -->
+      <div class="stat-card">
+        <div class="stat-icon blue">♟</div>
+
+        <div class="stat-content">
+          <div class="stat-value">
+            {{ nombreEleves }}
+          </div>
+
+          <div class="stat-label">Élèves</div>
+        </div>
+      </div>
+
+      <!-- Copies saisies -->
+      <div class="stat-card">
+        <div class="stat-icon green">✓</div>
+
+        <div class="stat-content">
+          <div class="stat-value">
+            {{ copiesSaisies }}
+            /
+            {{ nombreEleves }}
+
+            <span class="stat-badge"> {{ pourcentageCopies }}% </span>
+          </div>
+
+          <div class="stat-label">Copies saisies</div>
+        </div>
+      </div>
+
+      <!-- Moyenne -->
+      <div class="stat-card">
+        <div class="stat-icon purple">★</div>
+
+        <div class="stat-content">
+          <div class="stat-value">
+            {{ moyenne | number: '1.2-2' }}
+            / 20
+          </div>
+
+          <div class="stat-label">Moyenne</div>
+        </div>
+      </div>
+
+      <!-- Minimum -->
+      <div class="stat-card">
+        <div class="stat-icon blue">▥</div>
+
+        <div class="stat-content">
+          <div class="stat-value">
+            {{ noteMinimale | number: '1.2-2' }}
+          </div>
+
+          <div class="stat-label">Note minimale</div>
+        </div>
+      </div>
+
+      <!-- Maximum -->
+      <div class="stat-card">
+        <div class="stat-icon orange">🏆</div>
+
+        <div class="stat-content">
+          <div class="stat-value">
+            {{ noteMaximale | number: '1.2-2' }}
+          </div>
+
+          <div class="stat-label">Note maximale</div>
+        </div>
+      </div>
+
+      <!-- Absents -->
+      <div class="stat-card">
+        <div class="stat-icon red">♙</div>
+
+        <div class="stat-content">
+          <div class="stat-value">
+            {{ nombreAbsents }}
+          </div>
+
+          <div class="stat-label">Absents</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- =======================================================
+         CONTENU PRINCIPAL
+         ======================================================= -->
+    <div class="content-grid">
+      <!-- =====================================================
+           FEUILLE DE NOTES
+           ===================================================== -->
+      <section class="notes-card">
+        <div class="card-header">
+          <div class="card-title">
+            <div class="title-icon">▤</div>
+
+            <div>
+              <h3>Feuille de notes</h3>
+
+              <span class="table-subtitle">
+                {{ nombreEleves }}
+                élève(s)
+              </span>
+            </div>
+          </div>
+
+          <div class="table-tools">
+            <!-- Recherche -->
+            <div class="search-box">
+              <span>⌕</span>
+
+              <input
+                type="text"
+                placeholder="Rechercher un élève..."
+                [value]="recherche"
+                (input)="rechercher($event)"
+              />
+
+              @if (recherche) {
+                <button type="button" class="clear-search" (click)="effacerRecherche()">×</button>
+              }
+            </div>
+
+            <!-- Lecture -->
+            @if (!modeEdition) {
+              <button type="button" class="edit-notes-button" (click)="activerEdition()">
+                <span>✎</span>
+
+                Modifier les notes
+              </button>
+            }
+
+            <!-- Édition -->
+            @if (modeEdition) {
+              <button type="button" class="cancel-button" (click)="annulerModification()">
+                <span>×</span>
+
+                Annuler
+              </button>
+
+              <button type="button" class="save-notes-button" (click)="enregistrerNotes()">
+                <span>✓</span>
+
+                Enregistrer les notes
+              </button>
+            }
+          </div>
+        </div>
+
+        <!-- Message mode édition -->
+        @if (modeEdition) {
+          <div class="edit-mode-banner">
+            <div class="edit-mode-message">
+              <span class="edit-mode-icon"> ✎ </span>
+
+              <div>
+                <strong> Mode modification activé </strong>
+
+                <span> Vous pouvez modifier plusieurs notes avant d'enregistrer. </span>
+              </div>
+            </div>
+
+            <span class="unsaved-badge"> Modifications non enregistrées </span>
+          </div>
+        }
+
+        <!-- ===================================================
+             TABLEAU
+             =================================================== -->
+        <div class="table-wrapper">
+          <table>
+            <thead>
+              <tr>
+                <th class="number-column">#</th>
+
+                <th>Élève</th>
+
+                <th>Matricule</th>
+
+                <th>Note</th>
+
+                <th>Statut</th>
+
+                <th>Observation</th>
+              </tr>
+            </thead>
+
+            <tbody>
+              @if (notesFiltrees.length === 0) {
+                <tr>
+                  <td colspan="6" class="empty-state">
+                    <div class="empty-icon">⌕</div>
+
+                    <strong> Aucun élève trouvé </strong>
+
+                    <span> Aucun élève ne correspond à votre recherche. </span>
+                  </td>
+                </tr>
+              } @else {
+                @for (
+                  noteEvaluation of notesFiltrees;
+                  track noteEvaluation.eleveUuid || noteEvaluation.eleve;
+                  let index = $index
+                ) {
+                  <tr [class.editing-row]="modeEdition">
+                    <!-- Numéro -->
+                    <td>
+                      {{ debutPagination + index + 1 }}
+                    </td>
+
+                    <!-- Élève -->
+                    <td class="student-name">
+                      {{ noteEvaluation.nomComplet || '-' }}
+                    </td>
+
+                    <!-- Matricule -->
+                    <td>
+                      {{ noteEvaluation.matricule || '-' }}
+                    </td>
+
+                    <!-- Note -->
+                    <td class="note-cell">
+                      @if (modeEdition) {
+                        <div class="note-input-wrapper">
+                          <input
+                            class="note-input"
+                            type="number"
+                            min="0"
+                            max="20"
+                            step="0.5"
+                            [value]="
+                              noteEvaluation.note === null || noteEvaluation.note === undefined
+                                ? ''
+                                : noteEvaluation.note
+                            "
+                            (input)="modifierNote(noteEvaluation, $event)"
+                          />
+
+                          <span> / 20 </span>
+                        </div>
+                      } @else {
+                        @if (noteEvaluation.note !== null && noteEvaluation.note !== undefined) {
+                          <span class="note">
+                            {{ noteEvaluation.note | number: '1.2-2' }}
+
+                            / 20
+                          </span>
+                        } @else {
+                          <span class="note absent-note"> Absent </span>
+                        }
+                      }
+                    </td>
+
+                    <!-- Statut -->
+                    <td>
+                      @if (modeEdition) {
+                        <select
+                          class="status-select"
+                          [value]="getStatutNote(noteEvaluation)"
+                          (change)="modifierStatut(noteEvaluation, $event)"
+                        >
+                          <option value="PRESENT">Présent</option>
+
+                          <option value="ABSENT">Absent</option>
+                        </select>
+                      } @else {
+                        @if (getStatutNote(noteEvaluation) === 'PRESENT') {
+                          <span class="present-badge"> Présent </span>
+                        } @else {
+                          <span class="absent-badge"> Absent </span>
+                        }
+                      }
+                    </td>
+
+                    <!-- Observation -->
+                    <td class="observation">
+                      @if (modeEdition) {
+                        <input
+                          type="text"
+                          class="observation-input"
+                          placeholder="Observation..."
+                          [value]="noteEvaluation.appreciation || ''"
+                          (input)="modifierObservation(noteEvaluation, $event)"
+                        />
+                      } @else {
+                        {{ noteEvaluation.appreciation || '-' }}
+                      }
+                    </td>
+                  </tr>
+                }
+              }
+            </tbody>
+          </table>
+        </div>
+
+        <!-- ===================================================
+             FOOTER TABLEAU
+             =================================================== -->
+        <div class="table-footer">
+          <div class="display-info">
+            @if (notesFiltrees.length > 0) {
+              Affichage de
+              {{ debutPagination + 1 }}
+              à
+              {{ finPagination }}
+              sur
+              {{ detailsEvaluation.notes?.totalElements ?? nombreEleves }}
+              élèves
+            } @else {
+              Aucun résultat
+            }
+          </div>
+
+          @if (nombrePages > 1) {
+            <div class="pagination">
+              <button
+                type="button"
+                class="page-button"
+                [disabled]="pageCourante === 1"
+                (click)="pagePrecedente()"
+              >
+                «
+              </button>
+
+              @for (page of pages; track page) {
+                <button
+                  type="button"
+                  class="page-button"
+                  [class.current]="page === pageCourante"
+                  (click)="allerPage(page)"
+                >
+                  {{ page }}
+                </button>
+              }
+
+              <button
+                type="button"
+                class="page-button"
+                [disabled]="pageCourante === nombrePages"
+                (click)="pageSuivante()"
+              >
+                »
+              </button>
+            </div>
+          }
+        </div>
+      </section>
+
+      <!-- =====================================================
+           COLONNE DROITE
+           ===================================================== -->
+      <aside class="right-column">
+        <!-- ===================================================
+             INFORMATIONS COMPLÉMENTAIRES
+             =================================================== -->
+        <section class="information-card">
+          <div class="side-card-title">
+            <div class="side-title-icon">●</div>
+
+            <h3>Informations complémentaires</h3>
+          </div>
+
+          <div class="information-list">
+            <!-- Créateur -->
+            @if (detailsEvaluation.createurNomComplet) {
+              <div class="information-item">
+                <div class="information-icon">♙</div>
+
+                <div class="information-content">
+                  <div class="information-label">Créée par</div>
+
+                  <div class="information-value">
+                    {{ detailsEvaluation.createurNomComplet }}
+                  </div>
+                </div>
+              </div>
+            }
+
+            <!-- Date création -->
+            @if (detailsEvaluation.dateCreation) {
+              <div class="information-item">
+                <div class="information-icon">▣</div>
+
+                <div class="information-content">
+                  <div class="information-label">Date de création</div>
+
+                  <div class="information-value">
+                    {{ detailsEvaluation.dateCreation | date: "dd/MM/yyyy à HH'h'mm" }}
+                  </div>
+                </div>
+              </div>
+            }
+
+            <!-- Dernier modificateur -->
+            @if (detailsEvaluation.dernierModificateurNomComplet) {
+              <div class="information-item">
+                <div class="information-icon">◈</div>
+
+                <div class="information-content">
+                  <div class="information-label">Dernier modificateur</div>
+
+                  <div class="information-value">
+                    {{ detailsEvaluation.dernierModificateurNomComplet }}
+                  </div>
+                </div>
+              </div>
+            }
+
+            <!-- Début correction -->
+            @if (detailsEvaluation.dateDebutCorrection) {
+              <div class="information-item">
+                <div class="information-icon">▣</div>
+
+                <div class="information-content">
+                  <div class="information-label">Début de correction</div>
+
+                  <div class="information-value">
+                    {{ detailsEvaluation.dateDebutCorrection | date: "dd/MM/yyyy à HH'h'mm" }}
+                  </div>
+                </div>
+              </div>
+            }
+          </div>
+        </section>
+
+        <!-- ===================================================
+             DOCUMENTS
+             =================================================== -->
+        <section class="documents-card">
+          <div class="side-card-title">
+            <div class="side-title-icon document-icon">▤</div>
+
+            <h3>Documents</h3>
+
+            <span class="document-count">
+              {{ documents.length }}
+            </span>
+          </div>
+
+          @if (documents.length > 0) {
+            <div class="documents-list">
+              @for (document of documents; track document.documentUuid) {
+                <div class="document-item">
+                  <div
+                    class="document-type-icon"
+                    [class.pdf]="document.typeDocument === 'TYPE_DOCUMENT_SUJET_EVALUATION'"
+                    [class.excel]="document.typeDocument === 'TYPE_DOCUMENT_FEUILLE_NOTES'"
+                  >
+                    @if (document.typeDocument === 'TYPE_DOCUMENT_SUJET_EVALUATION') {
+                      PDF
+                    } @else {
+                      XLS
+                    }
+                  </div>
+
+                  <div class="document-content">
+                    <div class="document-name">
+                      {{ document.nomFichier || 'Document' }}
+                    </div>
+
+                    <div class="document-meta">
+                      {{ document.typeDocument || 'Document' }}
+                    </div>
+                  </div>
+
+                  <div class="document-actions">
+                    <button
+                      type="button"
+                      class="document-action"
+                      title="Consulter"
+                      (click)="consulterDocument(document)"
+                    >
+                      👁
+                    </button>
+
+                    <button
+                      type="button"
+                      class="document-action"
+                      title="Télécharger"
+                      (click)="telechargerDocument(document)"
+                    >
+                      ↓
+                    </button>
+                  </div>
+                </div>
+              }
+            </div>
+          } @else {
+            <div class="empty-document-state">
+              <span> Aucun document associé à cette évaluation. </span>
+            </div>
+          }
+
+          <button type="button" class="add-document-button" (click)="ajouterDocument()">
+            <span>+</span>
+
+            Ajouter un document
+          </button>
+        </section>
+
+        <!-- ===================================================
+             ACTIONS
+             =================================================== -->
+        <section class="actions-card">
+          <div class="side-card-title action-title">
+            <div class="side-title-icon lightning">⚡</div>
+
+            <h3>Actions disponibles</h3>
+          </div>
+
+          <button type="button" class="action-button secondary" (click)="modifierEvaluation()">
+            <span>✎</span>
+
+            Modifier l'évaluation
+          </button>
+
+          <button type="button" class="action-button print" (click)="telechargerEvaluationPdf()">
+            <span>▣</span>
+
+            Imprimer la feuille de notes
+          </button>
+        </section>
+      </aside>
+    </div>
+  }
 </div>

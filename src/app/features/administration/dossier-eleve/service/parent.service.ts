@@ -4,6 +4,8 @@ import { Observable } from 'rxjs';
 import { environment } from '../../../../../environments/environment';
 import { ParentList } from '../../../../core/models/parent/parent-list';
 import { ParentDetails } from '../../../../core/models/parent/parent-details';
+import { ResponseMessage } from '../../../../core/response/response-message';
+import { Parent, ParentMini, ParentUtilisateurAddEdit } from '../../../../core/models/parent/parent';
 
 @Injectable({
   providedIn: 'root'
@@ -23,6 +25,14 @@ export class ParentService {
 
   getAllParents(): Observable<ParentList[]> {
     return this.http.get<ParentList[]>(`${this.baseUrl}/parent/list`, this.httpOptions);
+  }
+
+  getParent(id: number): Observable<ParentUtilisateurAddEdit> {
+    return this.http.get<ParentUtilisateurAddEdit>(`${this.baseUrl}/parent/${id}`);
+  }
+
+  updateParent(id: number, value: ParentUtilisateurAddEdit): Observable<ParentMini> {
+    return this.http.patch<ParentMini>(`${this.baseUrl}/parent/edit/${id}`, value);
   }
 
   getDetailsParent(id: number): Observable<ParentDetails> {

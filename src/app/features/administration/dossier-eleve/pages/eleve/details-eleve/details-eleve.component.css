@@ -208,32 +208,16 @@
 .student-banner {
   height: 138px;
   min-height: 138px;
-
   padding: 14px 18px;
-
   border-radius: 18px;
-
-  background:
-    linear-gradient(110deg,
-      #18366d 0%,
-      #1e4389 45%,
-      #3269dc 100%);
-
+  background: linear-gradient(110deg, #18366d 0%, #1e4389 45%, #3269dc 100%);
   display: grid;
-
-  grid-template-columns:
-    minmax(350px, 1fr) auto;
-
+  grid-template-columns: minmax(350px, 1fr) auto;
   gap: 24px;
-
   align-items: center;
-
   color: #fff;
-
   overflow: hidden;
-
-  box-shadow:
-    0 10px 22px rgba(29, 70, 143, .10);
+  box-shadow: 0 10px 22px rgba(29, 70, 143, .10);
 }
 
 .student-identity {

@@ -7,18 +7,6 @@ import { CommonService } from '../../../../../../core/services/common.service';
 import { ReferentielResourceService } from '../../../../referentiel/service/referentiel-resource.service';
 import { PlanificationResourceService } from '../../../services/planification-resource.service';
 
-/* export interface ActiviteScolaireRechercheRequest {
-  type?: TypeActiviteScolaire;
-  etatId?: number;
-  libelle?: string;
-  anneeScolaireId?: number;
-}
-
-export enum TypeActiviteScolaire {
-  EVENEMENT = 'EVENEMENT',
-  MEETING = 'MEETING'
-} */
-
 @Component({
   selector: 'app-activites-scolaire.component',
   standalone: true,
@@ -62,6 +50,7 @@ export class ActivitesScolaireComponent {
     this.chargerLesDonnees(false);
     this.chargerLesFiltres();
   }
+
   chargerLesFiltres(): void {
 
     this.getStatusActivites().then(() => { this.initialisationDesFiltres(); })
