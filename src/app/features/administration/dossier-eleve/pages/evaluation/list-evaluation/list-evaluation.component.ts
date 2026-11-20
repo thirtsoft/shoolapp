@@ -4,9 +4,9 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { IFilterConfig } from '../../../../../../core/filtered-config/FiltreConfiguration';
 import { GenericTableDossierComponent } from '../../../../../../core/generic/generic-table-dossier/generic-table-dossier.component';
 
+import { RechercheEvaluation } from '../../../../../../core/models/dossiereleve/evaluation/rechercher-evaluation';
 import { ListeClasse } from '../../../../../../core/models/referentiels/classe';
 import { SessionSemestre } from '../../../../../../core/models/referentiels/session-semestre';
-import { RechercheEvaluation } from '../../../../../../core/models/dossiereleve/evaluation/rechercher-evaluation';
 
 import { CommonService } from '../../../../../../core/services/common.service';
 
@@ -15,8 +15,8 @@ import { PlanificationResourceService } from '../../../../planification/services
 import { ReferentielResourceService } from '../../../../referentiel/service/referentiel-resource.service';
 import { ReferentielService } from '../../../../referentiel/service/referentiel.service';
 
-import { DossierResourceService } from '../../../service/dossier-resource.service';
 import { ClasseResponse } from '../../../../../../core/models/planification/cours-calendrier-response';
+import { DossierResourceService } from '../../../service/dossier-resource.service';
 
 @Component({
   selector: 'app-list-evaluation',
@@ -122,7 +122,7 @@ export class ListEvaluationComponent implements OnInit {
           resolve(this.classesList);
         },
 
-        error: (err: any) => {          reject(err);}
+        error: (err: any) => { reject(err); }
 
       });
 
@@ -511,7 +511,7 @@ export class ListEvaluationComponent implements OnInit {
           },
 
           {
-            key: 'evaluationType',
+            key: 'type',
             header: 'Type'
           },
 
@@ -549,9 +549,9 @@ export class ListEvaluationComponent implements OnInit {
       filtre.classe = this.activeFilters.classe;
     }
 
- /*    if (this.activeFilters.enseignement) {
-      filtre.enseignement = this.activeFilters.enseignement;
-    } */
+    /*    if (this.activeFilters.enseignement) {
+         filtre.enseignement = this.activeFilters.enseignement;
+       } */
 
     if (this.activeFilters.matiere) {
       filtre.matiere = this.activeFilters.matiere;
