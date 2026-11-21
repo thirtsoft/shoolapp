@@ -199,7 +199,6 @@ export class DetailsDepenseComponent implements OnInit, OnDestroy {
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: (blob: Blob) => {
-          console.log('Document dépense chargé :', blob);
           this.isDocumentLoading = false;
           this.revokeDocumentUrl();
 
@@ -291,7 +290,7 @@ export class DetailsDepenseComponent implements OnInit, OnDestroy {
     this.revokeDocumentUrl();
     document.body.style.overflow = '';
   }
-  
+
   goBack(): void {
     void this.router.navigate([this.REDIRECT_PATH,]);
   }

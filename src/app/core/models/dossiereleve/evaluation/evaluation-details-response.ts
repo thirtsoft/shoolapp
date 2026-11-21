@@ -58,7 +58,6 @@ export interface EvaluationDetailResponse {
 
   notes?: PageResponse<NoteEvaluationResponse>;
 
-
   documents?: DocumentResponse[];
 
 }
@@ -80,6 +79,8 @@ export interface EvaluationInformationsResponse {
 
 
 export interface NoteEvaluationResponse {
+
+  id?: number;
 
   eleve?: number;
 

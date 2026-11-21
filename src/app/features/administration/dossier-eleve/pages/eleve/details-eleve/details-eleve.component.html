@@ -332,9 +332,6 @@
         </section>
       }
 
-      <!-- ========================================================
-           SITUATION SCOLAIRE
-      ======================================================== -->
       @if (eleveDetails; as eleve) {
         <section class="content-card">
           <div class="card-header">
@@ -1345,7 +1342,6 @@
 
   @if (activeTab === 'documents') {
     <div class="documents-layout">
-      <!-- ================= DOCUMENTS GÉNÉRÉS ================= -->
       <section class="content-card">
         <div class="card-header">
           <div class="card-title-wrapper">
@@ -1457,8 +1453,6 @@
               <p>Pièces déposées dans le dossier de l'élève</p>
             </div>
           </div>
-
-          <!-- AJOUTER -->
           <button type="button" class="document-add-btn" (click)="ouvrirPopupAjoutDocument()">
             <i class="fas fa-plus"></i>
             <span>Ajouter un document</span>
@@ -1481,7 +1475,6 @@
                   </div>
                 </div>
 
-                <!-- ACTIONS -->
                 <div class="document-action">
                   <button
                     type="button"
@@ -1492,7 +1485,6 @@
                     <span>Télécharger</span>
                   </button>
 
-                  <!-- REMPLACER -->
                   <button
                     type="button"
                     class="document-replace-btn"
@@ -1506,7 +1498,6 @@
             }
           }
 
-          <!-- AUCUN DOCUMENT -->
           @if (!documentsEleve?.documentsStockes?.length) {
             <div class="empty-state">
               <i class="fas fa-folder-open"></i>
@@ -1517,7 +1508,6 @@
                 <span> Vous pouvez ajouter les pièces du dossier de l'élève. </span>
               </div>
 
-              <!-- AJOUTER DEPUIS L'EMPTY STATE -->
               <button
                 type="button"
                 class="document-add-empty-btn"
@@ -1534,9 +1524,6 @@
   }
 </div>
 
-<!-- =========================================================
-     POPUP : AJOUTER UN DOCUMENT
-     ========================================================= -->
 @if (showPopupAjoutDocument) {
   <div class="document-modal-backdrop" (click)="fermerPopupAjoutDocument()">
     <div class="document-modal" (click)="$event.stopPropagation()">
@@ -1563,9 +1550,7 @@
         </button>
       </div>
 
-      <!-- BODY -->
       <div class="document-modal-body">
-        <!-- TYPE DOCUMENT -->
         <div class="document-form-group">
           <label for="typeDocumentAjout">
             Type de document
@@ -1589,7 +1574,6 @@
           </select>
         </div>
 
-        <!-- FICHIER -->
         <div class="document-form-group">
           <label>
             Fichier
@@ -1621,7 +1605,6 @@
           />
         </div>
 
-        <!-- FICHIER SÉLECTIONNÉ -->
         @if (fichierDocumentAjout) {
           <div class="document-selected-file">
             <div class="selected-file-icon">
@@ -1645,7 +1628,6 @@
         }
       </div>
 
-      <!-- FOOTER -->
       <div class="document-modal-footer">
         <button
           type="button"
@@ -1674,9 +1656,6 @@
   </div>
 }
 
-<!-- =========================================================
-     POPUP : REMPLACER UN DOCUMENT
-     ========================================================= -->
 @if (showPopupRemplacementDocument) {
   <div class="document-modal-backdrop" (click)="fermerPopupRemplacementDocument()">
     <div class="document-modal" (click)="$event.stopPropagation()">
@@ -1703,9 +1682,7 @@
         </button>
       </div>
 
-      <!-- BODY -->
       <div class="document-modal-body">
-        <!-- TYPE -->
         <div class="document-form-group">
           <label> Type de document </label>
 
@@ -1720,7 +1697,6 @@
           </div>
         </div>
 
-        <!-- DOCUMENT ACTUEL -->
         <div class="document-form-group">
           <label> Document actuel </label>
 
@@ -1733,7 +1709,7 @@
           </div>
         </div>
 
-        <!-- NOUVEAU FICHIER -->
+
         <div class="document-form-group">
           <label>
             Nouveau fichier
@@ -1765,7 +1741,6 @@
           />
         </div>
 
-        <!-- NOUVEAU FICHIER SÉLECTIONNÉ -->
         @if (fichierDocumentRemplacement) {
           <div class="document-selected-file">
             <div class="selected-file-icon">
@@ -1793,7 +1768,6 @@
         }
       </div>
 
-      <!-- FOOTER -->
       <div class="document-modal-footer">
         <button
           type="button"
