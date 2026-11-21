@@ -264,6 +264,9 @@ export class DossierResourceService {
     );
   }
 
+  //
+  
+
   fetchFilterByElementDataTable<T>(endpoint: string, id: number, page: number, size: number, filters?: any): Observable<DataResult<T>> {
     let url = `${this.baseUrl_1}/${endpoint}/${id}`;
 

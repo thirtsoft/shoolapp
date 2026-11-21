@@ -929,7 +929,6 @@ export class DetailsEleveComponent implements OnInit, OnDestroy {
 
           this.fermerPopupAjoutDocument();
 
-          // Recharge la liste
           this.loadDocumentsEleve();
         },
 

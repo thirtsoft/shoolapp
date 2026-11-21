@@ -1,7 +1,4 @@
 <div class="evaluation-detail-page">
-  <!-- =========================================================
-       EN-TÊTE
-       ========================================================= -->
   <div class="page-heading">
     <div class="heading-left">
       <div class="heading-icon">✓</div>
@@ -13,26 +10,38 @@
       </div>
     </div>
 
-    <button type="button" class="back-button" (click)="retourListe()">
-      <span>←</span>
-      Retour à la liste
-    </button>
+    <div class="heading-actions">
+      @if (actionEtat) {
+        <button
+          type="button"
+          class="change-state-button"
+          [disabled]="isChangingEtat || modeEdition"
+          (click)="confirmerChangementEtat(changeEtatModal)"
+        >
+          @if (isChangingEtat) {
+            <span class="button-spinner"></span>
+          } @else {
+            <span>{{ actionEtat.icon }}</span>
+          }
+
+          {{ actionEtat.label }}
+        </button>
+      }
+
+      <button type="button" class="back-button" [disabled]="isChangingEtat" (click)="retourListe()">
+        <span>←</span>
+        Retour à la liste
+      </button>
+    </div>
   </div>
 
-  <!-- =========================================================
-       CHARGEMENT
-       ========================================================= -->
   @if (loading()) {
     <div class="loading-state">
       <div class="spinner"></div>
       <span>Chargement de l'évaluation...</span>
     </div>
   } @else {
-    <!-- =======================================================
-         INFORMATIONS PRINCIPALES
-         ======================================================= -->
     <div class="evaluation-header-grid">
-      <!-- Évaluation -->
       <div class="evaluation-card">
         <div class="evaluation-icon">
           <div class="math-icon">
@@ -48,7 +57,6 @@
             {{ detailsEvaluation.titre || 'Évaluation' }}
           </h2>
 
-          <!-- Matière / Classe / Type -->
           <div class="info-row">
             @if (detailsEvaluation.evaluationInformationsResponse?.matiereLibelle) {
               <span class="info-item">
@@ -89,7 +97,6 @@
             }
           </div>
 
-          <!-- Date / Heure / Durée -->
           <div class="info-row">
             @if (detailsEvaluation.dateEvaluation) {
               <span class="info-item">
@@ -123,7 +130,6 @@
             }
           </div>
 
-          <!-- Enseignant / Année / Semestre -->
           <div class="info-row">
             @if (detailsEvaluation.evaluationInformationsResponse?.enseignantNomComplet) {
               <span class="info-item">
@@ -162,9 +168,6 @@
         </div>
       </div>
 
-      <!-- =====================================================
-           STATUT
-           ===================================================== -->
       <div class="status-card">
         <div class="status-title">
           <div class="status-check">✓</div>
@@ -218,9 +221,6 @@
       </div>
     </div>
 
-    <!-- =======================================================
-         WORKFLOW
-         ======================================================= -->
     <div class="workflow-card">
       @for (step of workflowSteps; track step.label; let last = $last) {
         <div class="workflow-step" [class.completed]="step.active">
@@ -236,7 +236,7 @@
             </div>
 
             @if (!last) {
-              <div class="workflow-line" [class.completed]="step.active"></div>
+              <div class="workflow-line" [class.completed]="step.lineCompleted"></div>
             }
           </div>
 
@@ -253,11 +253,7 @@
       }
     </div>
 
-    <!-- =======================================================
-         KPI
-         ======================================================= -->
     <div class="stats-grid">
-      <!-- Élèves -->
       <div class="stat-card">
         <div class="stat-icon blue">♟</div>
 
@@ -270,7 +266,6 @@
         </div>
       </div>
 
-      <!-- Copies saisies -->
       <div class="stat-card">
         <div class="stat-icon green">✓</div>
 
@@ -301,7 +296,6 @@
         </div>
       </div>
 
-      <!-- Minimum -->
       <div class="stat-card">
         <div class="stat-icon blue">▥</div>
 
@@ -314,7 +308,6 @@
         </div>
       </div>
 
-      <!-- Maximum -->
       <div class="stat-card">
         <div class="stat-icon orange">🏆</div>
 
@@ -327,7 +320,6 @@
         </div>
       </div>
 
-      <!-- Absents -->
       <div class="stat-card">
         <div class="stat-icon red">♙</div>
 
@@ -341,13 +333,7 @@
       </div>
     </div>
 
-    <!-- =======================================================
-         CONTENU PRINCIPAL
-         ======================================================= -->
     <div class="content-grid">
-      <!-- =====================================================
-           FEUILLE DE NOTES
-           ===================================================== -->
       <section class="notes-card">
         <div class="card-header">
           <div class="card-title">
@@ -364,49 +350,69 @@
           </div>
 
           <div class="table-tools">
-            <!-- Recherche -->
             <div class="search-box">
-              <span>⌕</span>
+              <span> ⌕ </span>
 
               <input
                 type="text"
                 placeholder="Rechercher un élève..."
                 [value]="recherche"
                 (input)="rechercher($event)"
+                [disabled]="isSavingNotes"
               />
 
               @if (recherche) {
-                <button type="button" class="clear-search" (click)="effacerRecherche()">×</button>
+                <button
+                  type="button"
+                  class="clear-search"
+                  (click)="effacerRecherche()"
+                  [disabled]="isSavingNotes"
+                >
+                  ×
+                </button>
               }
             </div>
 
-            <!-- Lecture -->
             @if (!modeEdition) {
               <button type="button" class="edit-notes-button" (click)="activerEdition()">
-                <span>✎</span>
+                <span> ✎ </span>
 
                 Modifier les notes
               </button>
             }
 
-            <!-- Édition -->
             @if (modeEdition) {
-              <button type="button" class="cancel-button" (click)="annulerModification()">
-                <span>×</span>
+              <button
+                type="button"
+                class="cancel-button"
+                (click)="annulerModification()"
+                [disabled]="isSavingNotes"
+              >
+                <span> × </span>
 
                 Annuler
               </button>
 
-              <button type="button" class="save-notes-button" (click)="enregistrerNotes()">
-                <span>✓</span>
+              <button
+                type="button"
+                class="save-notes-button"
+                (click)="enregistrerNotes()"
+                [disabled]="isSavingNotes"
+              >
+                @if (isSavingNotes) {
+                  <span class="saving-spinner"> ⟳ </span>
 
-                Enregistrer les notes
+                  Enregistrement...
+                } @else {
+                  <span> ✓ </span>
+
+                  Enregistrer les notes
+                }
               </button>
             }
           </div>
         </div>
 
-        <!-- Message mode édition -->
         @if (modeEdition) {
           <div class="edit-mode-banner">
             <div class="edit-mode-message">
@@ -423,24 +429,19 @@
           </div>
         }
 
-        <!-- ===================================================
-             TABLEAU
-             =================================================== -->
         <div class="table-wrapper">
           <table>
             <thead>
               <tr>
                 <th class="number-column">#</th>
 
-                <th>Élève</th>
-
                 <th>Matricule</th>
+
+                <th>Élève</th>
 
                 <th>Note</th>
 
-                <th>Statut</th>
-
-                <th>Observation</th>
+                <th>Appréciation</th>
               </tr>
             </thead>
 
@@ -462,22 +463,18 @@
                   let index = $index
                 ) {
                   <tr [class.editing-row]="modeEdition">
-                    <!-- Numéro -->
                     <td>
                       {{ debutPagination + index + 1 }}
                     </td>
 
-                    <!-- Élève -->
-                    <td class="student-name">
-                      {{ noteEvaluation.nomComplet || '-' }}
-                    </td>
-
-                    <!-- Matricule -->
                     <td>
                       {{ noteEvaluation.matricule || '-' }}
                     </td>
 
-                    <!-- Note -->
+                    <td class="student-name">
+                      {{ noteEvaluation.nomComplet || '-' }}
+                    </td>
+
                     <td class="note-cell">
                       @if (modeEdition) {
                         <div class="note-input-wrapper">
@@ -493,6 +490,7 @@
                                 : noteEvaluation.note
                             "
                             (input)="modifierNote(noteEvaluation, $event)"
+                            [disabled]="isSavingNotes"
                           />
 
                           <span> / 20 </span>
@@ -510,28 +508,6 @@
                       }
                     </td>
 
-                    <!-- Statut -->
-                    <td>
-                      @if (modeEdition) {
-                        <select
-                          class="status-select"
-                          [value]="getStatutNote(noteEvaluation)"
-                          (change)="modifierStatut(noteEvaluation, $event)"
-                        >
-                          <option value="PRESENT">Présent</option>
-
-                          <option value="ABSENT">Absent</option>
-                        </select>
-                      } @else {
-                        @if (getStatutNote(noteEvaluation) === 'PRESENT') {
-                          <span class="present-badge"> Présent </span>
-                        } @else {
-                          <span class="absent-badge"> Absent </span>
-                        }
-                      }
-                    </td>
-
-                    <!-- Observation -->
                     <td class="observation">
                       @if (modeEdition) {
                         <input
@@ -540,6 +516,7 @@
                           placeholder="Observation..."
                           [value]="noteEvaluation.appreciation || ''"
                           (input)="modifierObservation(noteEvaluation, $event)"
+                          [disabled]="isSavingNotes"
                         />
                       } @else {
                         {{ noteEvaluation.appreciation || '-' }}
@@ -552,9 +529,6 @@
           </table>
         </div>
 
-        <!-- ===================================================
-             FOOTER TABLEAU
-             =================================================== -->
         <div class="table-footer">
           <div class="display-info">
             @if (notesFiltrees.length > 0) {
@@ -575,7 +549,7 @@
               <button
                 type="button"
                 class="page-button"
-                [disabled]="pageCourante === 1"
+                [disabled]="pageCourante === 1 || isSavingNotes"
                 (click)="pagePrecedente()"
               >
                 «
@@ -586,6 +560,7 @@
                   type="button"
                   class="page-button"
                   [class.current]="page === pageCourante"
+                  [disabled]="isSavingNotes"
                   (click)="allerPage(page)"
                 >
                   {{ page }}
@@ -595,7 +570,7 @@
               <button
                 type="button"
                 class="page-button"
-                [disabled]="pageCourante === nombrePages"
+                [disabled]="pageCourante === nombrePages || isSavingNotes"
                 (click)="pageSuivante()"
               >
                 »
@@ -605,13 +580,7 @@
         </div>
       </section>
 
-      <!-- =====================================================
-           COLONNE DROITE
-           ===================================================== -->
       <aside class="right-column">
-        <!-- ===================================================
-             INFORMATIONS COMPLÉMENTAIRES
-             =================================================== -->
         <section class="information-card">
           <div class="side-card-title">
             <div class="side-title-icon">●</div>
@@ -620,7 +589,6 @@
           </div>
 
           <div class="information-list">
-            <!-- Créateur -->
             @if (detailsEvaluation.createurNomComplet) {
               <div class="information-item">
                 <div class="information-icon">♙</div>
@@ -635,7 +603,6 @@
               </div>
             }
 
-            <!-- Date création -->
             @if (detailsEvaluation.dateCreation) {
               <div class="information-item">
                 <div class="information-icon">▣</div>
@@ -650,7 +617,6 @@
               </div>
             }
 
-            <!-- Dernier modificateur -->
             @if (detailsEvaluation.dernierModificateurNomComplet) {
               <div class="information-item">
                 <div class="information-icon">◈</div>
@@ -665,7 +631,6 @@
               </div>
             }
 
-            <!-- Début correction -->
             @if (detailsEvaluation.dateDebutCorrection) {
               <div class="information-item">
                 <div class="information-icon">▣</div>
@@ -682,9 +647,6 @@
           </div>
         </section>
 
-        <!-- ===================================================
-             DOCUMENTS
-             =================================================== -->
         <section class="documents-card">
           <div class="side-card-title">
             <div class="side-title-icon document-icon">▤</div>
@@ -702,10 +664,10 @@
                 <div class="document-item">
                   <div
                     class="document-type-icon"
-                    [class.pdf]="document.typeDocument === 'TYPE_DOCUMENT_SUJET_EVALUATION'"
-                    [class.excel]="document.typeDocument === 'TYPE_DOCUMENT_FEUILLE_NOTES'"
+                    [class.pdf]="document.typeDocument === 'SUJET_EVALUATION'"
+                    [class.excel]="document.typeDocument === 'FEUILLE_NOTES'"
                   >
-                    @if (document.typeDocument === 'TYPE_DOCUMENT_SUJET_EVALUATION') {
+                    @if (document.typeDocument === 'SUJET_EVALUATION') {
                       PDF
                     } @else {
                       XLS
@@ -727,7 +689,7 @@
                       type="button"
                       class="document-action"
                       title="Consulter"
-                      (click)="consulterDocument(document)"
+                      (click)="openPreviewModal(document)"
                     >
                       👁
                     </button>
@@ -740,6 +702,15 @@
                     >
                       ↓
                     </button>
+
+                    <button
+                      type="button"
+                      class="document-action"
+                      title="Remplacer la pièce jointe"
+                      (click)="ouvrirPopupRemplacementDocument(document)"
+                    >
+                      <i class="fas fa-rotate"></i>
+                    </button>
                   </div>
                 </div>
               }
@@ -750,16 +721,13 @@
             </div>
           }
 
-          <button type="button" class="add-document-button" (click)="ajouterDocument()">
-            <span>+</span>
+          <button type="button" class="add-document-button" (click)="ouvrirPopupAjoutDocument()">
+            <span> + </span>
 
             Ajouter un document
           </button>
         </section>
 
-        <!-- ===================================================
-             ACTIONS
-             =================================================== -->
         <section class="actions-card">
           <div class="side-card-title action-title">
             <div class="side-title-icon lightning">⚡</div>
@@ -768,13 +736,13 @@
           </div>
 
           <button type="button" class="action-button secondary" (click)="modifierEvaluation()">
-            <span>✎</span>
+            <span> ✎ </span>
 
             Modifier l'évaluation
           </button>
 
           <button type="button" class="action-button print" (click)="telechargerEvaluationPdf()">
-            <span>▣</span>
+            <span> ▣ </span>
 
             Imprimer la feuille de notes
           </button>
@@ -783,3 +751,425 @@
     </div>
   }
 </div>
+
+<ng-template #changeEtatModal let-modal>
+  <div class="state-confirmation-modal">
+    <div class="confirmation-header">
+      <div class="confirmation-icon">
+        @if (actionEtat?.code === 'TERMINEE') {
+          ✓
+        } @else if (actionEtat?.code === 'EN_COURS_DE_CORRECTION') {
+          ✎
+        } @else if (actionEtat?.code === 'PASSEE') {
+          ✓
+        } @else {
+          ◷
+        }
+      </div>
+
+      <div class="confirmation-title">
+        <h3>
+          {{ actionEtat?.label }}
+        </h3>
+
+        <p>Changement d'état de l'évaluation</p>
+      </div>
+    </div>
+
+    <div class="confirmation-body">
+      <p>
+        Voulez-vous vraiment
+        <strong>{{ actionEtat?.label?.toLowerCase() }}</strong>
+        cette évaluation ?
+      </p>
+
+      @if (actionEtat?.description) {
+        <div class="confirmation-info">
+          <span class="confirmation-info-icon">ⓘ</span>
+
+          <span>
+            {{ actionEtat?.description }}
+          </span>
+        </div>
+      }
+
+      <div class="evaluation-state-transition">
+        <div class="state-transition-item">
+          <span class="transition-label"> État actuel </span>
+
+          <span class="state-badge current">
+            {{ detailsEvaluation.etat }}
+          </span>
+        </div>
+
+        <span class="transition-arrow"> → </span>
+
+        <div class="state-transition-item">
+          <span class="transition-label"> Nouvel état </span>
+
+          <span class="state-badge next">
+            @if (actionEtat?.code === 'PLANIFIEE') {
+              Planifiée
+            } @else if (actionEtat?.code === 'PASSEE') {
+              Passée
+            } @else if (actionEtat?.code === 'EN_COURS_DE_CORRECTION') {
+              En cours de correction
+            } @else if (actionEtat?.code === 'TERMINEE') {
+              Terminée
+            }
+          </span>
+        </div>
+      </div>
+    </div>
+
+    <div class="confirmation-footer">
+      <button
+        type="button"
+        class="modal-cancel-button"
+        [disabled]="isChangingEtat"
+        (click)="modal.dismiss('cancel')"
+      >
+        Annuler
+      </button>
+
+      <button
+        type="button"
+        class="modal-confirm-button"
+        [disabled]="isChangingEtat"
+        (click)="modal.close('confirm')"
+      >
+        @if (isChangingEtat) {
+          <span class="button-spinner"></span>
+          Traitement...
+        } @else {
+          <span>{{ actionEtat?.icon }}</span>
+          Confirmer
+        }
+      </button>
+    </div>
+  </div>
+</ng-template>
+
+@if (showPopupAjoutDocument) {
+  <div class="document-modal-backdrop" (click)="fermerPopupAjoutDocument()">
+    <div class="document-modal" (click)="$event.stopPropagation()">
+      <div class="document-modal-header">
+        <div class="document-modal-title">
+          <div class="document-modal-icon document-modal-icon-purple">
+            <i class="fas fa-file-circle-plus"></i>
+          </div>
+
+          <div>
+            <h3>Ajouter un document</h3>
+            <p>Ajouter une nouvelle pièce au dossier de l'élève</p>
+          </div>
+        </div>
+
+        <button
+          type="button"
+          class="document-modal-close"
+          (click)="fermerPopupAjoutDocument()"
+          aria-label="Fermer"
+        >
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
+
+      <div class="document-modal-body">
+        <div class="document-form-group">
+          <label for="typeDocumentAjout">
+            Type de document
+            <span class="text-danger">*</span>
+          </label>
+
+          <select id="typeDocumentAjout" class="form-select" [(ngModel)]="typeDocumentAjout">
+            <option value="">— Sélectionnez un type de document —</option>
+
+            <option value="SUJET_EVALUATION">Sujet évaluation</option>
+            <option value="FEUILLE_NOTES">Feuille des notes</option>
+          </select>
+        </div>
+
+        <div class="document-form-group">
+          <label>
+            Fichier
+            <span class="text-danger">*</span>
+          </label>
+
+          <div class="document-file-picker" (click)="documentFileInputAjout.click()">
+            <i class="fas fa-cloud-arrow-up"></i>
+
+            <div>
+              <strong>
+                @if (fichierDocumentAjout) {
+                  {{ fichierDocumentAjout.name }}
+                } @else {
+                  Choisir un fichier
+                }
+              </strong>
+
+              <small> PDF, JPG ou PNG — 5 MB maximum </small>
+            </div>
+          </div>
+
+          <input
+            #documentFileInputAjout
+            type="file"
+            hidden
+            accept=".pdf,.jpg,.jpeg,.png"
+            (change)="selectionnerFichierAjout($event)"
+          />
+        </div>
+
+        @if (fichierDocumentAjout) {
+          <div class="document-selected-file">
+            <div class="selected-file-icon">
+              <i class="fas fa-file"></i>
+            </div>
+
+            <div class="selected-file-info">
+              <strong>
+                {{ fichierDocumentAjout.name }}
+              </strong>
+
+              <small>
+                {{ formatFileSize(fichierDocumentAjout.size) }}
+              </small>
+            </div>
+
+            <button type="button" class="selected-file-remove" (click)="supprimerFichierAjout()">
+              <i class="fas fa-times"></i>
+            </button>
+          </div>
+        }
+      </div>
+
+      <div class="document-modal-footer">
+        <button
+          type="button"
+          class="document-modal-btn document-modal-btn-secondary"
+          (click)="fermerPopupAjoutDocument()"
+        >
+          Annuler
+        </button>
+
+        <button
+          type="button"
+          class="change-state-button"
+          [disabled]="uploadingDocument"
+          (click)="ajouterDocument()"
+        >
+          @if (uploadingDocument) {
+            <i class="fas fa-spinner fa-spin"></i>
+            Ajout...
+          } @else {
+            <i class="fas fa-plus"></i>
+            Ajouter
+          }
+        </button>
+      </div>
+    </div>
+  </div>
+}
+
+@if (showPopupRemplacementDocument) {
+  <div class="document-modal-backdrop" (click)="fermerPopupRemplacementDocument()">
+    <div class="document-modal" (click)="$event.stopPropagation()">
+      <div class="document-modal-header">
+        <div class="document-modal-title">
+          <div class="document-modal-icon document-modal-icon-orange">
+            <i class="fas fa-file-pen"></i>
+          </div>
+
+          <div>
+            <h3>Remplacer le document</h3>
+            <p>Remplacer la pièce actuellement déposée</p>
+          </div>
+        </div>
+
+        <button
+          type="button"
+          class="document-modal-close"
+          (click)="fermerPopupRemplacementDocument()"
+          aria-label="Fermer"
+        >
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
+
+      <div class="document-modal-body">
+        <div class="document-form-group">
+          <label> Type de document </label>
+
+          <div class="document-current-type">
+            <div class="document-icon document-icon-purple">
+              <i class="fas fa-file"></i>
+            </div>
+
+            <span>
+              {{ documentEnCoursRemplacement?.typeDocument }}
+            </span>
+          </div>
+        </div>
+
+        <div class="document-form-group">
+          <label> Document actuel </label>
+
+          <div class="document-current-file">
+            <i class="fas fa-file-lines"></i>
+
+            <span>
+              {{ documentEnCoursRemplacement?.nomFichier }}
+            </span>
+          </div>
+        </div>
+
+        <div class="document-form-group">
+          <label>
+            Nouveau fichier
+            <span class="text-danger">*</span>
+          </label>
+
+          <div class="document-file-picker" (click)="documentFileInputRemplacement.click()">
+            <i class="fas fa-cloud-arrow-up"></i>
+
+            <div>
+              <strong>
+                @if (fichierDocumentRemplacement) {
+                  {{ fichierDocumentRemplacement.name }}
+                } @else {
+                  Choisir le nouveau fichier
+                }
+              </strong>
+
+              <small> PDF, JPG ou PNG — 5 MB maximum </small>
+            </div>
+          </div>
+
+          <input
+            #documentFileInputRemplacement
+            type="file"
+            hidden
+            accept=".pdf,.jpg,.jpeg,.png"
+            (change)="selectionnerFichierRemplacement($event)"
+          />
+        </div>
+
+        @if (fichierDocumentRemplacement) {
+          <div class="document-selected-file">
+            <div class="selected-file-icon">
+              <i class="fas fa-file"></i>
+            </div>
+
+            <div class="selected-file-info">
+              <strong>
+                {{ fichierDocumentRemplacement.name }}
+              </strong>
+
+              <small>
+                {{ formatFileSize(fichierDocumentRemplacement.size) }}
+              </small>
+            </div>
+
+            <button
+              type="button"
+              class="selected-file-remove"
+              (click)="supprimerFichierRemplacement()"
+            >
+              <i class="fas fa-times"></i>
+            </button>
+          </div>
+        }
+      </div>
+
+      <div class="document-modal-footer">
+        <button
+          type="button"
+          class="document-modal-btn document-modal-btn-secondary"
+          (click)="fermerPopupRemplacementDocument()"
+        >
+          Annuler
+        </button>
+
+        <button
+          type="button"
+          class="change-state-button"
+          [disabled]="uploadingDocument"
+          (click)="remplacerDocument()"
+        >
+          @if (uploadingDocument) {
+            <i class="fas fa-spinner fa-spin"></i>
+            Remplacement...
+          } @else {
+            <i class="fas fa-rotate"></i>
+            Remplacer
+          }
+        </button>
+      </div>
+    </div>
+  </div>
+}
+
+@if (showPreviewModal) {
+  <div class="modal-overlay" (click)="closePreviewModal()">
+    <div class="modal-container" (click)="$event.stopPropagation()">
+      <!-- Header du modal avec les infos clés -->
+      <div class="modal-header">
+        <div class="modal-header-info">
+          <h5 class="modal-title">
+            <i class="fas fa-file-alt me-2"></i>
+            {{ documentName || 'Aperçu du fichier' }}
+          </h5>
+          <div class="modal-header-summary">
+            <span class="modal-header-item">
+              <i class="fas fa-hashtag me-1"></i>
+              <strong>N°</strong> {{ detailsEvaluation.numeroEvaluation }}
+            </span>
+            <span class="modal-header-separator">•</span>
+            <span class="modal-header-item">
+              <i class="fas fa-user me-1"></i>
+              <strong>Désignation :</strong> {{ detailsEvaluation.titre }}
+            </span>
+            <span class="modal-header-separator">•</span>
+            <span class="modal-header-item highlight">
+              <i class="fas fa-money-bill-wave me-1"></i>
+              <strong>Matiere :</strong>
+              {{ detailsEvaluation.evaluationInformationsResponse?.matiereLibelle }} FCFA
+            </span>
+          </div>
+        </div>
+        <div class="modal-header-actions">
+          <button class="btn-close" (click)="closePreviewModal()">
+            <i class="fas fa-times"></i>
+          </button>
+        </div>
+      </div>
+
+      <div class="modal-body">
+        @if (isDocumentLoading) {
+          <div class="d-flex flex-column align-items-center justify-content-center h-100">
+            <i class="fas fa-spinner fa-spin fa-2x mb-3"></i>
+
+            <p class="mb-0">Chargement du document...</p>
+          </div>
+        } @else if (documentPreviewUrl) {
+          @if (isImageFile()) {
+            <img [src]="documentPreviewUrl" [alt]="documentName" class="modal-preview-image" />
+          } @else {
+            <iframe
+              [src]="documentPreviewUrl"
+              class="modal-preview-iframe"
+              frameborder="0"
+            ></iframe>
+          }
+        } @else {
+          <div class="d-flex flex-column align-items-center justify-content-center h-100">
+            <i class="fas fa-file-excel fa-2x mb-3"></i>
+
+            <p>Impossible d'afficher le document.</p>
+          </div>
+        }
+      </div>
+    </div>
+  </div>
+}
