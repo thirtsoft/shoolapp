@@ -57,7 +57,6 @@
             {{ detailsEvaluation.titre || 'Évaluation' }}
           </h2>
 
-          <!-- Matière / Classe / Type -->
           <div class="info-row">
             @if (detailsEvaluation.evaluationInformationsResponse?.matiereLibelle) {
               <span class="info-item">
@@ -1124,17 +1123,18 @@
           <div class="modal-header-summary">
             <span class="modal-header-item">
               <i class="fas fa-hashtag me-1"></i>
-              <strong>N°</strong> {{ detailsEvaluation?.numeroEvaluation }}
+              <strong>N°</strong> {{ detailsEvaluation.numeroEvaluation }}
             </span>
             <span class="modal-header-separator">•</span>
             <span class="modal-header-item">
               <i class="fas fa-user me-1"></i>
-              <strong>Désignation :</strong> {{ detailsEvaluation?.titre }}
+              <strong>Désignation :</strong> {{ detailsEvaluation.titre }}
             </span>
             <span class="modal-header-separator">•</span>
             <span class="modal-header-item highlight">
               <i class="fas fa-money-bill-wave me-1"></i>
-              <strong>Matiere :</strong> {{ detailsEvaluation?.evaluationInformationsResponse?.matiereLibelle }} FCFA
+              <strong>Matiere :</strong>
+              {{ detailsEvaluation.evaluationInformationsResponse?.matiereLibelle }} FCFA
             </span>
           </div>
         </div>
@@ -1167,7 +1167,6 @@
             <i class="fas fa-file-excel fa-2x mb-3"></i>
 
             <p>Impossible d'afficher le document.</p>
-
           </div>
         }
       </div>
