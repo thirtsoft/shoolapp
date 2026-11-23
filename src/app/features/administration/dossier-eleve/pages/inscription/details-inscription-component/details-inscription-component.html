@@ -1,72 +1,66 @@
-<div class="page-wrapper">
-  <div class="content container-fluid">
-    <div class="page-header-custom">
-      <div class="header-main">
-        <button type="button" class="back-link" (click)="goBack()">
-          <i class="fas fa-arrow-left"></i>
-          <span>Retour aux inscriptions</span>
-        </button>
+<div class="inscription-detail-page">
+  <header class="inscription-detail-header">
+    <div class="inscription-detail-header-left">
+      <button type="button" class="inscription-detail-back" (click)="retourInscriptions()">
+        <span class="inscription-detail-back-icon"> ← </span>
 
-        <div class="header-title-block">
-          <div class="title-line">
-            <h3>Dossier d'inscription</h3>
+        Retour aux inscriptions
+      </button>
 
-            <span class="status-badge" [class]="getStatusClass()">
-              <i class="fas" [class]="getStatusIcon()"></i>
+      <div class="inscription-detail-title-block">
+        <div class="inscription-detail-title-row">
+          <h1>Dossier d'inscription</h1>
 
-              {{ detailsInscription.etat || 'État inconnu' }}
-            </span>
-          </div>
+          <span class="inscription-detail-validation-badge">
+            <span class="inscription-detail-validation-dot"></span>
 
-          <div class="header-meta">
-            <span>
-              <i class="fas fa-folder-open"></i>
-              {{ detailsInscription.code || '-' }}
-            </span>
+            {{ detailsInscription.etat }}
+          </span>
+        </div>
 
-            <span class="meta-separator"></span>
+        <div class="inscription-detail-meta">
+          <span>
+            ▣
+            {{ detailsInscription.code }}
+          </span>
 
-            <span>
-              <i class="fas fa-calendar-alt"></i>
-              {{ anneeScolaireLabel }}
-            </span>
-          </div>
+          <span class="inscription-detail-meta-separator"> | </span>
+
+          <span>
+            ▣
+            {{ anneeScolaire?.libelle }}
+          </span>
         </div>
       </div>
     </div>
 
-    <div class="action-bar">
-      <div class="action-section">
-        <div class="action-section-title">
-          <i class="fas fa-file-alt"></i>
-          Documents
-        </div>
+    <div class="inscription-detail-header-actions">
+      <button
+        type="button"
+        class="inscription-detail-header-btn inscription-detail-header-btn-print"
+        (click)="imprimer()"
+      >
+        <span>▣</span>
+        Imprimer
+      </button>
 
-        <div class="action-buttons">
-          <button
-            type="button"
-            class="action-btn action-btn-neutral"
-            (click)="imprimerUneInscription()"
-          >
-            <i class="fas fa-print"></i>
-            <span>Imprimer</span>
-          </button>
+      <button
+        type="button"
+        class="inscription-detail-header-btn inscription-detail-header-btn-download"
+        (click)="telecharger()"
+      >
+        <span>▣</span>
+        Télécharger
+      </button>
 
-          <button type="button" class="action-btn action-btn-primary" (click)="DownloadPdfRecu()">
-            <i class="fas fa-file-pdf"></i>
-            <span>Télécharger</span>
-          </button>
-
-          <button
-            type="button"
-            class="action-btn action-btn-school"
-            (click)="imprimerCarteScolaire()"
-          >
-            <i class="fas fa-id-card"></i>
-            <span>Carte scolaire</span>
-          </button>
-        </div>
-      </div>
+      <button
+        type="button"
+        class="inscription-detail-header-btn inscription-detail-header-btn-school"
+        (click)="imprimerCarteScolaire()"
+      >
+        <span>▣</span>
+        Carte scolaire
+      </button>
 
       @if (isAConfirmee) {
         <div class="action-divider"></div>
@@ -99,31 +93,24 @@
         </div>
       }
     </div>
+  </header>
 
-    <!-- ===================================================== -->
-    <!-- PROFIL ÉLÈVE + INSCRIPTION -->
-    <!-- ===================================================== -->
+  <main class="inscription-detail-content">
+    <section class="inscription-detail-card">
+      <div class="inscription-detail-card-header">
+        <div class="inscription-detail-card-title">
+          <div class="inscription-detail-card-icon inscription-detail-card-icon-blue">◆</div>
 
-    <div class="main-grid">
-      <!-- ================================================= -->
-      <!-- PROFIL ÉLÈVE -->
-      <!-- ================================================= -->
+          <div>
+            <h2>Élève</h2>
 
-      <div class="card-custom student-card">
-        <div class="card-header-custom">
-          <div class="card-title-wrapper">
-            <div class="card-icon student-icon">
-              <i class="fas fa-user-graduate"></i>
-            </div>
-
-            <div>
-              <h4>Élève</h4>
-              <span>Informations personnelles</span>
-            </div>
+            <p>Informations personnelles</p>
           </div>
         </div>
+      </div>
 
-        <div class="student-profile">
+      <div class="inscription-detail-student-content">
+        <div class="inscription-detail-student-photo">
           <div class="student-photo-wrapper">
             <img
               [src]="photoPreview || getPhotoFallback()"
@@ -131,347 +118,584 @@
               class="student-photo"
             />
           </div>
+        </div>
 
-          <div class="student-main-info">
-            <h2>{{ fullName }}</h2>
+        <div class="inscription-detail-student-main">
+          <div class="inscription-detail-student-name">
+            {{ eleve?.prenom }}
+            {{ eleve?.nom }}
+          </div>
 
-            <div class="student-matricule">
-              <i class="fas fa-id-badge"></i>
-              {{ eleve?.matricule || '-' }}
+          <div class="inscription-detail-student-matricule">
+            {{ eleve?.matricule }}
+          </div>
+
+          <div class="inscription-detail-student-infos">
+            <div class="inscription-detail-info-line">
+              <span class="inscription-detail-info-icon">♙</span>
+              <span>Sexe :</span>
+              <strong>{{ eleve?.sexe }}</strong>
             </div>
 
-            <div class="student-info-grid">
-              <div class="profile-info">
-                <span class="profile-label">Sexe</span>
-                <span class="profile-value">
-                  {{ eleve?.sexe || '-' }}
-                </span>
-              </div>
+            <div class="inscription-detail-info-line">
+              <span class="inscription-detail-info-icon">◉</span>
+              <span>Nationalité :</span>
+              <strong>{{ eleve?.nationalite }}</strong>
+            </div>
 
-              <div class="profile-info">
-                <span class="profile-label">Nationalité</span>
-                <span class="profile-value">
-                  {{ eleve?.nationalite || '-' }}
-                </span>
-              </div>
+            <div class="inscription-detail-info-line">
+              <span class="inscription-detail-info-icon">▣</span>
+              <span>Date de naissance :</span>
+              <strong>
+                {{ eleve?.dateNaissance | date: 'dd/MM/yyyy' : '-' }}
+              </strong>
+            </div>
 
-              <div class="profile-info">
-                <span class="profile-label">Date de naissance</span>
-                <span class="profile-value">
-                  {{ eleve?.dateNaissance ? (eleve?.dateNaissance | date: 'dd/MM/yyyy') : '-' }}
-                </span>
-              </div>
+            <div class="inscription-detail-info-line">
+              <span class="inscription-detail-info-icon">●</span>
+              <span>Lieu de naissance :</span>
+              <strong>{{ eleve?.lieuNaissance }}</strong>
+            </div>
 
-              <div class="profile-info">
-                <span class="profile-label">Lieu de naissance</span>
-                <span class="profile-value">
-                  {{ eleve?.lieuNaissance || '-' }}
-                </span>
-              </div>
-
-              <div class="profile-info profile-info-full">
-                <span class="profile-label">Adresse</span>
-                <span class="profile-value">
-                  {{ eleve?.address || '-' }}
-                </span>
-              </div>
+            <div class="inscription-detail-info-line">
+              <span class="inscription-detail-info-icon">⊙</span>
+              <span>Adresse :</span>
+              <strong>{{ eleve?.address }}</strong>
             </div>
           </div>
         </div>
       </div>
+    </section>
 
-      <!-- ================================================= -->
-      <!-- INSCRIPTION -->
-      <!-- ================================================= -->
-
-      <div class="card-custom">
-        <div class="card-header-custom">
-          <div class="card-title-wrapper">
-            <div class="card-icon school-icon">
-              <i class="fas fa-school"></i>
-            </div>
-
-            <div>
-              <h4>Inscription</h4>
-              <span>Informations scolaires</span>
-            </div>
-          </div>
-        </div>
-
-        <div class="details-list">
-          <div class="detail-item">
-            <span class="detail-label"> Dossier </span>
-
-            <span class="detail-value strong">
-              {{ detailsInscription.code || '-' }}
-            </span>
-          </div>
-
-          <div class="detail-item">
-            <span class="detail-label"> Classe </span>
-
-            <span class="detail-value">
-              {{ classLabel }}
-            </span>
-          </div>
-
-          <div class="detail-item">
-            <span class="detail-label"> Niveau </span>
-
-            <span class="detail-value">
-              {{ niveauLabel }}
-            </span>
-          </div>
-
-          @if (serieLabel !== '-') {
-            <div class="detail-item">
-              <span class="detail-label"> Série </span>
-
-              <span class="detail-value">
-                {{ serieLabel }}
-              </span>
-            </div>
-          }
-
-          <div class="detail-item">
-            <span class="detail-label"> Année scolaire </span>
-
-            <span class="detail-value">
-              {{ anneeScolaireLabel }}
-            </span>
-          </div>
-
-          <div class="detail-item">
-            <span class="detail-label"> Date d'inscription </span>
-
-            <span class="detail-value">
-              {{ dateInscriptionParsed | date: 'dd/MM/yyyy' }}
-            </span>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- ===================================================== -->
-    <!-- SITUATION FINANCIÈRE -->
-    <!-- ===================================================== -->
-
-    <div class="card-custom financial-card">
-      <div class="card-header-custom">
-        <div class="card-title-wrapper">
-          <div class="card-icon financial-icon">
-            <i class="fas fa-wallet"></i>
-          </div>
+    <section class="inscription-detail-card">
+      <div class="inscription-detail-card-header">
+        <div class="inscription-detail-card-title">
+          <div class="inscription-detail-card-icon inscription-detail-card-icon-green">◆</div>
 
           <div>
-            <h4>Situation financière</h4>
-            <span>État du règlement des frais d'inscription</span>
+            <h2>Inscription</h2>
+
+            <p>Informations scolaires</p>
           </div>
         </div>
 
-        <div
-          class="payment-status"
-          [class.payment-status-paid]="isPaid"
-          [class.payment-status-pending]="!isPaid"
-        >
-          <i class="fas" [class.fa-check-circle]="isPaid" [class.fa-clock]="!isPaid"></i>
-
-          {{ isPaid ? 'Soldé' : 'Paiement partiel' }}
-        </div>
+        <span class="inscription-detail-code-badge">
+          {{ detailsInscription.code }}
+        </span>
       </div>
 
-      <div class="financial-grid">
-        <!-- FRAIS -->
-
-        <div class="financial-item">
-          <span class="financial-label"> Frais d'inscription </span>
-
-          <div class="financial-amount">
-            {{ montantInscription | number: '1.0-0' }}
-            <small>F CFA</small>
-          </div>
+      <div class="inscription-detail-school-info">
+        <div class="inscription-detail-school-row">
+          <span>Dossier :</span>
+          <strong>{{ detailsInscription.code }}</strong>
         </div>
 
-        <!-- REÇU -->
-
-        <div class="financial-item">
-          <span class="financial-label"> Montant reçu </span>
-
-          <div class="financial-amount amount-success">
-            {{ montantRecu | number: '1.0-0' }}
-            <small>F CFA</small>
-          </div>
+        <div class="inscription-detail-school-row">
+          <span>Classe :</span>
+          <strong>{{ detailsInscription.classe }}</strong>
         </div>
 
-        <!-- RESTE -->
-
-        <div class="financial-item">
-          <span class="financial-label"> Reste à payer </span>
-
-          <div
-            class="financial-amount"
-            [class.amount-success]="isPaid"
-            [class.amount-danger]="!isPaid"
-          >
-            {{ resteAPaye | number: '1.0-0' }}
-            <small>F CFA</small>
-          </div>
+        <div class="inscription-detail-school-row">
+          <span>Niveau :</span>
+          <strong>{{ detailsInscription.niveau }}</strong>
         </div>
 
-        <!-- MOYEN -->
+        <div class="inscription-detail-school-row">
+          <span>Série :</span>
+          <strong>{{ detailsInscription.serie }}</strong>
+        </div>
 
-        <div class="financial-item">
-          <span class="financial-label"> Moyen de paiement </span>
+        <div class="inscription-detail-school-row">
+          <span>Année scolaire :</span>
+          <strong>{{ anneeScolaire?.libelle }}</strong>
+        </div>
 
-          <div class="payment-method">
-            <span class="payment-method-icon">
-              <i class="fas fa-money-bill-wave"></i>
-            </span>
-
-            {{ paymentMethod }}
-          </div>
+        <div class="inscription-detail-school-row">
+          <span>Date d'inscription :</span>
+          <strong>{{ detailsInscription.dateInscription }}</strong>
         </div>
       </div>
+    </section>
 
-      <!-- PROGRESSION PAIEMENT -->
+    <section class="inscription-detail-financial-card">
+      <div class="inscription-detail-financial-header">
+        <div class="inscription-detail-financial-title">
+          <div class="inscription-detail-financial-icon">▰</div>
 
-      <div class="payment-progress-section">
-        <div class="progress-header">
-          <span> Paiement effectué </span>
+          <div>
+            <h2>Situation financière</h2>
+
+            <p>État du règlement des frais d'inscription</p>
+          </div>
+        </div>
+
+        <span class="inscription-detail-financial-status">
+          <span class="inscription-detail-financial-status-icon"> ✓ </span>
+
+          Soldé
+        </span>
+      </div>
+
+      <div class="inscription-detail-financial-body">
+        <div class="inscription-detail-financial-metric">
+          <span> Frais d'inscription </span>
 
           <strong>
-            {{
-              montantInscription > 0
-                ? ((montantRecu / montantInscription) * 100 | number: '1.0-0')
-                : 0
-            }}
-            %
+            {{ formatMontant(detailsInscription.montantInscription!) }}
           </strong>
         </div>
 
-        <div class="progress-track">
-          <div class="progress-bar-fill" [style.width.%]="paymentProgress"></div>
+        <div class="inscription-detail-financial-metric">
+          <span> Montant reçu </span>
+
+          <strong class="inscription-detail-success-text">
+            {{ formatMontant(detailsInscription.montantRecu!) }}
+          </strong>
+        </div>
+
+        <div class="inscription-detail-financial-metric">
+          <span> Reste à payer </span>
+
+          <strong class="inscription-detail-success-text">
+            {{ formatMontant(detailsInscription.resteAPaye!) }}
+          </strong>
+        </div>
+
+        <div class="inscription-detail-financial-metric">
+          <span> Moyen de paiement </span>
+
+          <strong>
+            {{ detailsInscription.moyenPaiement }}
+          </strong>
         </div>
       </div>
-    </div>
 
-    <!-- ===================================================== -->
-    <!-- MOTIF DE REJET -->
-    <!-- ===================================================== -->
+      <div class="inscription-detail-payment-progress">
+        <strong>
+          Paiement effectué :
+          {{ tauxPaiement }} %
+        </strong>
 
-    @if (detailsInscription.motifAnnulation) {
-      <div class="rejection-card">
-        <div class="rejection-icon">
-          <i class="fas fa-exclamation-circle"></i>
+        <div class="inscription-detail-progress-track">
+          <div class="inscription-detail-progress-value" [style.width.%]="tauxPaiement"></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="inscription-detail-services-card">
+      <div class="inscription-detail-services-header">
+        <div class="inscription-detail-services-title">
+          <div class="inscription-detail-services-icon">★</div>
+
+          <div>
+            <h2>Services & remises</h2>
+
+            <p>Services souscrits et avantages accordés</p>
+          </div>
         </div>
 
-        <div>
-          <div class="rejection-title">Motif du rejet</div>
+        <button
+          type="button"
+          class="inscription-detail-services-action"
+          [disabled]="loadingServices()"
+          (click)="ouvrirGestionServices()"
+        >
+          <span>⚙</span>
 
-          <div class="rejection-text">
-            {{ detailsInscription.motifAnnulation }}
+          @if (loadingServices()) {
+            Chargement...
+          } @else {
+            Gérer les services & remises
+          }
+        </button>
+      </div>
+
+      @if (loadingServices()) {
+        <div class="inscription-detail-services-loading">
+          <span>Chargement des services...</span>
+        </div>
+      } @else if (servicesAffiches.length === 0) {
+        <div class="inscription-detail-services-empty">
+          <span>i</span>
+
+          <div>
+            <strong>Aucun service configuré</strong>
+
+            <p>
+              Aucun service avec un tarif n'est actuellement configuré pour le niveau de cet élève.
+            </p>
+          </div>
+        </div>
+      } @else {
+        <div class="inscription-detail-services-table-wrapper">
+          <table class="inscription-detail-services-table">
+            <thead>
+              <tr>
+                <th>Service</th>
+                <th>Tarif configuré</th>
+                <th>Remise</th>
+                <th>Montant facturé</th>
+                <th>Statut</th>
+              </tr>
+            </thead>
+
+            <tbody>
+              @for (service of servicesAffiches; track service.id) {
+                <tr>
+                  <td>
+                    <div class="inscription-detail-service-name">
+                      <span class="inscription-detail-service-icon">
+                        @if (service.code === 'MENSUALITE') {
+                          ▣
+                        } @else if (service.code === 'CANTINE') {
+                          ♜
+                        } @else {
+                          ●
+                        }
+                      </span>
+
+                      <strong>
+                        {{ service.libelle }}
+                      </strong>
+                    </div>
+                  </td>
+
+                  <td>
+                    <strong class="inscription-detail-service-amount">
+                      {{ formatMontant(service.tarif) }}
+                    </strong>
+                  </td>
+
+                  <td>
+                    @if (service.beneficiaireRemise) {
+                      <span class="inscription-detail-discount"> {{ service.remise }} % </span>
+                    } @else {
+                      <span class="inscription-detail-no-discount"> Aucune </span>
+                    }
+                  </td>
+
+                  <td>
+                    <strong class="inscription-detail-billed-amount">
+                      {{ formatMontant(calculerMontantFinal(service)) }}
+                    </strong>
+                  </td>
+
+                  <td>
+                    @if (service.beneficiaireRemise) {
+                      <span class="inscription-detail-service-status">
+                        <span>✓</span>
+                        Avec remise
+                      </span>
+                    } @else {
+                      <span
+                        class="inscription-detail-service-status inscription-detail-service-status-normal"
+                      >
+                        <span>✓</span>
+                        Tarif normal
+                      </span>
+                    }
+                  </td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      }
+
+      <div class="inscription-detail-services-info">
+        <span class="inscription-detail-services-info-icon"> i </span>
+
+        <span>
+          La mensualité est obligatoire pour tous les élèves. Une remise peut être accordée selon la
+          situation de l'élève.
+        </span>
+      </div>
+    </section>
+
+    @if (modalServicesVisible) {
+      <div class="inscription-detail-modal-overlay" (click)="fermerGestionServices()">
+        <div class="inscription-detail-services-modal" (click)="$event.stopPropagation()">
+          <div class="inscription-detail-modal-header">
+            <div>
+              <h2>Services & remises</h2>
+
+              <p>
+                {{ eleve?.prenom }}
+                {{ eleve?.nom }}
+                ·
+                {{ detailsInscription.classe }}
+              </p>
+            </div>
+
+            <button
+              type="button"
+              class="inscription-detail-modal-close"
+              (click)="fermerGestionServices()"
+            >
+              ×
+            </button>
+          </div>
+
+          <div class="inscription-detail-modal-body">
+            <div class="inscription-detail-modal-services-list">
+              <div class="inscription-detail-modal-section-title">Services</div>
+
+              @if (loadingServices()) {
+                <div class="inscription-detail-modal-loading">Chargement des services...</div>
+              } @else {
+                @for (service of services; track service.id) {
+                  <button
+                    type="button"
+                    class="inscription-detail-modal-service"
+                    [class.inscription-detail-modal-service-selected]="
+                      serviceSelectionne?.id === service.id
+                    "
+                    (click)="selectionnerService(service)"
+                  >
+                    <span class="inscription-detail-modal-service-icon">
+                      {{ service.libelle.charAt(0) }}
+                    </span>
+
+                    <span class="inscription-detail-modal-service-text">
+                      <strong>
+                        {{ service.libelle }}
+                      </strong>
+
+                      @if (service.obligatoire) {
+                        <small> Obligatoire </small>
+                      } @else if (service.souscrit) {
+                        <small class="inscription-detail-modal-subscribed"> Souscrit </small>
+                      } @else {
+                        <small> Non souscrit </small>
+                      }
+                    </span>
+
+                    <span class="inscription-detail-modal-service-price">
+                      {{ formatMontant(service.tarif) }}
+                    </span>
+                  </button>
+                }
+              }
+            </div>
+
+            @if (serviceSelectionne) {
+              <div class="inscription-detail-remise-editor">
+                <div class="inscription-detail-editor-header">
+                  <div>
+                    <span>Configuration</span>
+
+                    <h3>
+                      {{ serviceSelectionne.libelle }}
+                    </h3>
+                  </div>
+
+                  @if (serviceSelectionne.obligatoire) {
+                    <span class="inscription-detail-mandatory-badge"> Obligatoire </span>
+                  } @else {
+                    <button
+                      type="button"
+                      class="inscription-detail-subscription-toggle"
+                      [class.active]="serviceSelectionne.souscrit"
+                      (click)="toggleSouscription(serviceSelectionne)"
+                    >
+                      {{ serviceSelectionne.souscrit ? 'Souscrit' : 'Non souscrit' }}
+                    </button>
+                  }
+                </div>
+
+                @if (serviceSelectionne.obligatoire || serviceSelectionne.souscrit) {
+                  <div class="inscription-detail-remise-tarif">
+                    <div>
+                      <span>Tarif configuré</span>
+
+                      <strong>
+                        {{ formatMontant(serviceSelectionne.tarif) }}
+                      </strong>
+                    </div>
+
+                    <span class="inscription-detail-remise-arrow"> → </span>
+
+                    <div>
+                      <span>Après remise</span>
+
+                      <strong class="inscription-detail-after-discount">
+                        {{ formatMontant(montantFinalModal) }}
+                      </strong>
+                    </div>
+                  </div>
+
+                  <div class="inscription-detail-remise-option">
+                    <div>
+                      <strong> Cet élève bénéficie d'une remise </strong>
+
+                      <p>Appliquer une réduction individuelle sur ce service.</p>
+                    </div>
+
+                    <label class="inscription-detail-switch">
+                      <input type="checkbox" [(ngModel)]="formulaireRemise.beneficiaireRemise" />
+
+                      <span></span>
+                    </label>
+                  </div>
+
+                  @if (formulaireRemise.beneficiaireRemise) {
+                    <div class="inscription-detail-remise-input">
+                      <label> Pourcentage de remise </label>
+
+                      <div class="inscription-detail-percentage">
+                        <input
+                          type="number"
+                          min="0"
+                          max="100"
+                          [(ngModel)]="formulaireRemise.remise"
+                        />
+
+                        <span>%</span>
+                      </div>
+                    </div>
+
+                    <div class="inscription-detail-remise-result">
+                      <span> Remise accordée : </span>
+
+                      <strong>
+                        -
+                        {{ formatMontant(montantRemiseModal) }}
+                      </strong>
+                    </div>
+                  }
+                } @else {
+                  <div class="inscription-detail-not-subscribed">
+                    Ce service n'est pas souscrit pour cet élève. Il ne sera pas facturé.
+                  </div>
+                }
+              </div>
+            }
+          </div>
+
+          <div class="inscription-detail-modal-footer">
+            <button
+              type="button"
+              class="inscription-detail-modal-cancel"
+              [disabled]="savingServices()"
+              (click)="fermerGestionServices()"
+            >
+              Annuler
+            </button>
+
+            <button
+              type="button"
+              class="inscription-detail-modal-save"
+              [disabled]="savingServices() || loadingServices() || !services.length"
+              (click)="enregistrerServices()"
+            >
+              @if (savingServices()) {
+                Enregistrement...
+              } @else {
+                Enregistrer
+              }
+            </button>
           </div>
         </div>
       </div>
     }
-  </div>
-</div>
+  </main>
 
-<!-- ========================================================= -->
-<!-- MODAL CONFIRMATION / REJET                                -->
-<!-- ========================================================= -->
+  <ng-template #etatModal>
+    <div class="workflow-modal">
+      <div class="modal-header-custom">
+        <div
+          class="modal-icon"
+          [class.modal-icon-confirm]="modalActionLabel === 'confirmer'"
+          [class.modal-icon-reject]="modalActionLabel === 'rejeter'"
+        >
+          <i
+            class="fas"
+            [class.fa-check-circle]="modalActionLabel === 'confirmer'"
+            [class.fa-times-circle]="modalActionLabel === 'rejeter'"
+          ></i>
+        </div>
 
-<ng-template #etatModal>
-  <div class="workflow-modal">
-    <div class="modal-header-custom">
-      <div
-        class="modal-icon"
-        [class.modal-icon-confirm]="modalActionLabel === 'confirmer'"
-        [class.modal-icon-reject]="modalActionLabel === 'rejeter'"
-      >
-        <i
-          class="fas"
-          [class.fa-check-circle]="modalActionLabel === 'confirmer'"
-          [class.fa-times-circle]="modalActionLabel === 'rejeter'"
-        ></i>
+        <div>
+          <h4>
+            {{
+              modalActionLabel === 'confirmer' ? 'Confirmer l’inscription' : 'Rejeter l’inscription'
+            }}
+          </h4>
+
+          <p>
+            {{
+              modalActionLabel === 'confirmer'
+                ? 'Vous êtes sur le point de confirmer cette inscription.'
+                : 'Vous êtes sur le point de rejeter cette inscription.'
+            }}
+          </p>
+        </div>
       </div>
 
-      <div>
-        <h4>
-          {{
-            modalActionLabel === 'confirmer' ? 'Confirmer l’inscription' : 'Rejeter l’inscription'
-          }}
-        </h4>
+      <div class="modal-body-custom">
+        @if (modalActionLabel === 'confirmer') {
+          <div class="confirmation-message">
+            <i class="fas fa-info-circle"></i>
 
-        <p>
-          {{
-            modalActionLabel === 'confirmer'
-              ? 'Vous êtes sur le point de confirmer cette inscription.'
-              : 'Vous êtes sur le point de rejeter cette inscription.'
-          }}
-        </p>
+            <span>
+              Après confirmation, l’inscription sera considérée comme
+              <strong>validée</strong>.
+            </span>
+          </div>
+        }
+
+        @if (modalActionLabel === 'rejeter') {
+          <div class="form-group-custom">
+            <label for="motifAnnulation">
+              Motif du rejet
+              <span>*</span>
+            </label>
+
+            <textarea
+              id="motifAnnulation"
+              class="form-control"
+              rows="4"
+              placeholder="Saisissez le motif du rejet..."
+              formControlName="motifAnnulation"
+            ></textarea>
+
+            @if (
+              actionForm.get('motifAnnulation')?.touched &&
+              actionForm.get('motifAnnulation')?.invalid
+            ) {
+              <div class="field-error">
+                Le motif du rejet est obligatoire et doit contenir au moins 5 caractères.
+              </div>
+            }
+          </div>
+        }
+      </div>
+
+      <div class="modal-footer-custom">
+        <button
+          type="button"
+          class="modal-btn modal-btn-cancel"
+          (click)="modalService.dismissAll()"
+        >
+          Annuler
+        </button>
+
+        <button
+          type="button"
+          class="modal-btn"
+          [class.modal-btn-confirm]="modalActionLabel === 'confirmer'"
+          [class.modal-btn-reject]="modalActionLabel === 'rejeter'"
+          [disabled]="modalActionLabel === 'rejeter' && actionForm.get('motifAnnulation')?.invalid"
+          (click)="modalService.dismissAll('confirm')"
+        >
+          <i
+            class="fas"
+            [class.fa-check]="modalActionLabel === 'confirmer'"
+            [class.fa-times]="modalActionLabel === 'rejeter'"
+          ></i>
+
+          {{ modalActionLabel === 'confirmer' ? 'Confirmer' : 'Rejeter' }}
+        </button>
       </div>
     </div>
-
-    <div class="modal-body-custom">
-      @if (modalActionLabel === 'confirmer') {
-        <div class="confirmation-message">
-          <i class="fas fa-info-circle"></i>
-
-          <span>
-            Après confirmation, l’inscription sera considérée comme
-            <strong>validée</strong>.
-          </span>
-        </div>
-      }
-
-      @if (modalActionLabel === 'rejeter') {
-        <div class="form-group-custom">
-          <label for="motifAnnulation">
-            Motif du rejet
-            <span>*</span>
-          </label>
-
-          <textarea
-            id="motifAnnulation"
-            class="form-control"
-            rows="4"
-            placeholder="Saisissez le motif du rejet..."
-            formControlName="motifAnnulation"
-          ></textarea>
-
-          @if (
-            actionForm.get('motifAnnulation')?.touched && actionForm.get('motifAnnulation')?.invalid
-          ) {
-            <div class="field-error">
-              Le motif du rejet est obligatoire et doit contenir au moins 5 caractères.
-            </div>
-          }
-        </div>
-      }
-    </div>
-
-    <div class="modal-footer-custom">
-      <button type="button" class="modal-btn modal-btn-cancel" (click)="modalService.dismissAll()">
-        Annuler
-      </button>
-
-      <button
-        type="button"
-        class="modal-btn"
-        [class.modal-btn-confirm]="modalActionLabel === 'confirmer'"
-        [class.modal-btn-reject]="modalActionLabel === 'rejeter'"
-        [disabled]="modalActionLabel === 'rejeter' && actionForm.get('motifAnnulation')?.invalid"
-        (click)="modalService.dismissAll('confirm')"
-      >
-        <i
-          class="fas"
-          [class.fa-check]="modalActionLabel === 'confirmer'"
-          [class.fa-times]="modalActionLabel === 'rejeter'"
-        ></i>
-
-        {{ modalActionLabel === 'confirmer' ? 'Confirmer' : 'Rejeter' }}
-      </button>
-    </div>
-  </div>
-</ng-template>
+  </ng-template>

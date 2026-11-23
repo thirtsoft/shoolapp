@@ -1,13 +1,14 @@
-import { DatePipe, DecimalPipe } from '@angular/common';
+import { DatePipe } from '@angular/common';
 import { Component, DestroyRef, inject, OnDestroy, OnInit, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ToastrService } from 'ngx-toastr';
 import { firstValueFrom } from 'rxjs';
 import { EtatLibelle } from '../../../../../../core/constants/etat-libelle';
 import { DetailsInscription } from '../../../../../../core/models/dossiereleve/details-inscription';
+import { InscrireEleveServiceRequest, ServiceEleveResponse } from '../../../../../../core/models/dossiereleve/service-eleve-response';
 import { OrganizationMiniResponse } from '../../../../../../core/models/onboarding/organization/organization-mini-response';
 import { Eleve } from '../../../../../../core/models/parent/parent';
 import { AnneeScolaire } from '../../../../../../core/models/referentiels/annee-scolaire';
@@ -16,10 +17,26 @@ import { DossierEleveService } from '../../../service/dossier-eleve.service';
 import { DossierResourceService } from '../../../service/dossier-resource.service';
 declare const pdfMake: any;
 
+interface ServiceRemise {
+  id: number;
+  code: string;
+  libelle: string;
+  obligatoire: boolean;
+  souscrit: boolean;
+  tarif: number;
+  beneficiaireRemise: boolean;
+  remise: number;
+  montantRemise: number;
+  montantFinal: number;
+  inscriptionServiceId: number | null;
+  actif: boolean;
+}
+
+
 @Component({
   selector: 'app-details-inscription-component',
   standalone: true,
-  imports: [ReactiveFormsModule, DatePipe, DecimalPipe],
+  imports: [ReactiveFormsModule, FormsModule, DatePipe],
   templateUrl: './details-inscription-component.html',
   styleUrl: './details-inscription-component.css',
 })
@@ -52,6 +69,24 @@ export class DetailsInscriptionComponent implements OnInit, OnDestroy {
   error = signal('');
 
   logoPreview: string | null = null;
+
+  loadingServices = signal(false);
+  savingServices = signal(false);
+
+
+  services: ServiceRemise[] = [];
+
+  modalServicesVisible = false;
+
+  serviceSelectionne: ServiceRemise | null = null;
+
+  formulaireRemise = { beneficiaireRemise: false, remise: 0 };
+
+  modalWorkflowVisible = false;
+
+  workflowAction: 'CONFIRMER' | 'REJETER' | null = null;
+
+  motifRejet = '';
 
   public readonly modalService = inject(NgbModal);
   private readonly dossierResource = inject(DossierResourceService);
@@ -120,118 +155,6 @@ export class DetailsInscriptionComponent implements OnInit, OnDestroy {
       });
   }
 
-  ngOnDestroy(): void {
-    if (this.photoPreview) {
-      URL.revokeObjectURL(this.photoPreview);
-    }
-  }
-
-  get fullName(): string {
-    const prenom = this.eleve?.prenom || '';
-    const nom = this.eleve?.nom || '';
-
-    return `${prenom} ${nom}`.trim() || 'Élève';
-  }
-
-  get classLabel(): string {
-    return (this.detailsInscription?.classe || '-');
-  }
-
-  get niveauLabel(): string {
-    return (this.detailsInscription?.niveau || '-');
-  }
-
-  get paymentProgress(): number {
-    if (this.montantInscription <= 0) {
-      return 0;
-    }
-    return Math.min(
-      100,
-      (this.montantRecu / this.montantInscription) * 100
-    );
-  }
-
-  get serieLabel(): string {
-    const serie = this.detailsInscription.serie;
-    return serie?.trim() || '-';
-  }
-
-  get anneeScolaireLabel(): string {
-    return (
-      this.detailsInscription?.anneeScolaireDTO?.libelle ||
-      this.anneeScolaire?.libelle ||
-      '-'
-    );
-  }
-
-  get montantInscription(): number {
-    return Number((this.detailsInscription as any)?.montantInscription || 0);
-  }
-
-  get montantRecu(): number {
-    return Number((this.detailsInscription as any)?.montantRecu || 0);
-  }
-
-  get resteAPaye(): number {
-    return Number((this.detailsInscription as any)?.resteAPaye || 0);
-  }
-
-  get isPaid(): boolean {
-    return this.resteAPaye <= 0;
-  }
-
-  get isAConfirmee(): boolean {
-    return this.normalizeEtat(
-      this.detailsInscription?.etat
-    ) === this.normalizeEtat(
-      this.libelleEtat.LIBELLE_ETAT_A_CONFIRMEE
-    );
-  }
-
-  get isValidee(): boolean {
-    return this.normalizeEtat(
-      this.detailsInscription?.etat
-    ) === this.normalizeEtat(
-      this.libelleEtat.LIBELLE_ETAT_VALIDEE
-    );
-  }
-
-  get paymentMethod(): string {
-    return (this.detailsInscription?.moyenPaiement || '-');
-  }
-
-  get dateInscription() {
-    return (this.detailsInscription?.dateInscription);
-  }
-
-  parseDate(value: string | Date | null | undefined): Date | null {
-    if (!value) {
-      return null;
-    }
-    if (value instanceof Date) {
-      return value;
-    }
-    const match = /^(\d{2})-(\d{2})-(\d{4})$/.exec(value);
-
-    if (match) {
-      const [, day, month, year] = match;
-
-      return new Date(
-        Number(year),
-        Number(month) - 1,
-        Number(day)
-      );
-    }
-
-    const date = new Date(value);
-
-    return isNaN(date.getTime()) ? null : date;
-  }
-
-  get dateInscriptionParsed(): Date | null {
-    return this.parseDate(this.detailsInscription?.dateInscription);
-  }
-
   getDetailsInscription(inscriptionId: number): void {
     this.dossierResource
       .afficherDetailsResource('inscription', inscriptionId)
@@ -243,6 +166,8 @@ export class DetailsInscriptionComponent implements OnInit, OnDestroy {
           this.loadPhotoEleve();
           this.anneeScolaire = this.detailsInscription?.anneeScolaireDTO;
           this.classe = this.detailsInscription?.classe;
+
+          this.chargerServicesEleve();
         },
 
         error: (err: any) => {
@@ -281,8 +206,7 @@ export class DetailsInscriptionComponent implements OnInit, OnDestroy {
 
   getPhotoFallback(): string {
     const sexe = this.normalizeText((this.eleve as any)?.sexe);
-
-    if (sexe === 'feminin' || sexe === 'femme' || sexe === 'f') {
+    if (sexe === 'Feminin' || sexe === 'Femme' || sexe === 'f') {
       return 'assets/img/femme.png';
     }
     return 'assets/img/homme.png';
@@ -335,10 +259,7 @@ export class DetailsInscriptionComponent implements OnInit, OnDestroy {
           if (result === 'confirm') {
             const payload = {
               nouvelEtatCode: this.targetEtatCode,
-              motifAnnulation:
-                this.isMotifRequired
-                  ? this.actionForm.value.motifAnnulation || null
-                  : null
+              motifAnnulation: this.isMotifRequired ? this.actionForm.value.motifAnnulation || null : null
             };
             this.changerEtat(action, Number(this.inscriptionId), payload);
           }
@@ -354,16 +275,11 @@ export class DetailsInscriptionComponent implements OnInit, OnDestroy {
         next: () => {
 
           const successMessages = {
-            confirmer:
-              'L’inscription a été confirmée avec succès.',
-            rejeter:
-              'L’inscription a été rejetée avec succès.'
+            confirmer: 'L’inscription a été confirmée avec succès.',
+            rejeter: 'L’inscription a été rejetée avec succès.'
           };
 
-          this.toastService.success(
-            successMessages[action],
-            'Succès'
-          );
+          this.toastService.success(successMessages[action], 'Succès');
 
           this.getDetailsInscription(Number(this.inscriptionId));
         },
@@ -393,6 +309,80 @@ export class DetailsInscriptionComponent implements OnInit, OnDestroy {
     return 'status-default';
   }
 
+
+  ngOnDestroy(): void {
+    if (this.photoPreview) {
+      URL.revokeObjectURL(this.photoPreview);
+    }
+  }
+
+  get fullName(): string {
+    const prenom = this.eleve?.prenom || '';
+    const nom = this.eleve?.nom || '';
+
+    return `${prenom} ${nom}`.trim() || 'Élève';
+  }
+
+  get classLabel(): string {
+    return (this.detailsInscription?.classe || '-');
+  }
+
+  get niveauLabel(): string {
+    return (this.detailsInscription?.niveau || '-');
+  }
+
+  get paymentProgress(): number {
+    if (this.montantInscription <= 0) {
+      return 0;
+    }
+    return Math.min(100, (this.montantRecu / this.montantInscription) * 100);
+  }
+
+  get serieLabel(): string {
+    const serie = this.detailsInscription.serie;
+    return serie?.trim() || '-';
+  }
+
+  get anneeScolaireLabel(): string {
+    return (
+      this.detailsInscription?.anneeScolaireDTO?.libelle ||
+      this.anneeScolaire?.libelle ||
+      '-'
+    );
+  }
+
+  get montantInscription(): number {
+    return Number((this.detailsInscription as any)?.montantInscription || 0);
+  }
+
+  get montantRecu(): number {
+    return Number((this.detailsInscription as any)?.montantRecu || 0);
+  }
+
+  get resteAPaye(): number {
+    return Number((this.detailsInscription as any)?.resteAPaye || 0);
+  }
+
+  get isPaid(): boolean {
+    return this.resteAPaye <= 0;
+  }
+
+  get isAConfirmee(): boolean {
+    return this.normalizeEtat(this.detailsInscription?.etat) === this.normalizeEtat(this.libelleEtat.LIBELLE_ETAT_A_CONFIRMEE);
+  }
+
+  get isValidee(): boolean {
+    return this.normalizeEtat(this.detailsInscription?.etat) === this.normalizeEtat(this.libelleEtat.LIBELLE_ETAT_VALIDEE);
+  }
+
+  get paymentMethod(): string {
+    return (this.detailsInscription?.moyenPaiement || '-');
+  }
+
+  get dateInscription() {
+    return (this.detailsInscription?.dateInscription);
+  }
+
   getStatusIcon(): string {
     if (this.isValidee) {
       return 'fa-check-circle';
@@ -408,20 +398,376 @@ export class DetailsInscriptionComponent implements OnInit, OnDestroy {
   }
 
   private normalizeText(value?: string | null): string {
-    return (value || '')
-      .normalize('NFD')
-      .replace(/[\u0300-\u036f]/g, '')
-      .trim()
-      .toLowerCase();
+    return (value || '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').trim().toLowerCase();
+  }
+
+  private chargerServicesEleve(codeServiceASelectionner: string = 'MENSUALITE'): void {
+
+    if (!this.inscriptionId) {
+      return;
+    }
+
+    this.loadingServices.set(true);
+
+    this.dossierResource
+      .getServicesEleve(this.inscriptionId)
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+
+        next: (response: ServiceEleveResponse[]) => {
+
+          this.services = (response || []).map(service => this.mapServiceResponse(service));
+
+          this.loadingServices.set(false);
+
+
+          const serviceASelectionner = this.services.find(
+            service => service.code === codeServiceASelectionner
+          ) ??
+            this.services[0] ??
+            null;
+
+          if (this.modalServicesVisible && serviceASelectionner) {
+            this.selectionnerService(serviceASelectionner);
+          }
+        },
+
+        error: (error: any) => {
+
+          console.error('Erreur chargement services élève :', error);
+
+          this.services = [];
+          this.serviceSelectionne = null;
+
+          this.loadingServices.set(false);
+
+          this.toastService.error(
+            error?.error?.message || 'Impossible de charger les services de l’élève.',
+            'Erreur'
+          );
+        }
+      });
+  }
+
+  private mapServiceResponse(service: ServiceEleveResponse): ServiceRemise {
+    return {
+      id: service.typeServiceOffertId,
+      code: service.code,
+      libelle: service.libelle,
+      obligatoire: service.obligatoire,
+      souscrit: service.souscrit,
+      tarif: Number(service.tarif || 0),
+      beneficiaireRemise: service.beneficieRemise,
+      remise: Number(service.remise || 0),
+      montantRemise: Number(service.montantRemise || 0),
+      montantFinal: Number(service.montantFinal || 0),
+      inscriptionServiceId: service.inscriptionServiceId ?? null,
+      actif: true
+    };
+  }
+
+  get servicesAffiches(): ServiceRemise[] {
+    return this.services.filter(service =>
+      service.actif &&
+      (service.obligatoire || service.souscrit)
+    );
+  }
+
+  get montantTotalRemises(): number {
+    return this.servicesAffiches.reduce(
+      (total, service) =>
+        total + this.calculerMontantRemise(service),
+      0
+    );
+  }
+
+  get montantTotalServices(): number {
+    return this.servicesAffiches.reduce(
+      (total, service) =>
+        total + this.calculerMontantFinal(service),
+      0
+    );
+  }
+
+  ouvrirGestionServices(): void {
+    if (this.loadingServices() || this.savingServices()) {
+      return;
+    }
+    this.modalServicesVisible = true;
+
+    this.serviceSelectionne = null;
+
+    this.formulaireRemise = {
+      beneficiaireRemise: false,
+      remise: 0
+    };
+
+    this.chargerServicesEleve('MENSUALITE');
+  }
+
+  fermerGestionServices(): void {
+    if (this.savingServices()) {
+      return;
+    }
+    this.modalServicesVisible = false;
+    this.serviceSelectionne = null;
+
+    this.formulaireRemise = {
+      beneficiaireRemise: false,
+      remise: 0
+    };
+  }
+
+  selectionnerService(service: ServiceRemise): void {
+
+    this.serviceSelectionne = service;
+
+    this.formulaireRemise = {
+      beneficiaireRemise: service.beneficiaireRemise,
+      remise: service.remise
+    };
+  }
+
+  toggleSouscription(service: ServiceRemise): void {
+
+    if (service.obligatoire) {
+      return;
+    }
+
+    service.souscrit = !service.souscrit;
+
+    if (!service.souscrit) {
+
+      service.beneficiaireRemise = false;
+      service.remise = 0;
+      service.montantRemise = 0;
+      service.montantFinal = service.tarif;
+
+      this.formulaireRemise = {
+        beneficiaireRemise: false,
+        remise: 0
+      };
+
+      return;
+    }
+
+    this.formulaireRemise = {
+      beneficiaireRemise: service.beneficiaireRemise,
+      remise: service.remise
+    };
+  }
+
+  enregistrerServices(): void {
+    if (!this.eleve?.id) {
+
+      this.toastService.error(
+        'Élève introuvable.',
+        'Erreur'
+      );
+
+      return;
+    }
+
+    if (!this.serviceSelectionne) {
+
+      this.toastService.warning(
+        'Sélectionnez un service.',
+        'Attention'
+      );
+
+      return;
+    }
+
+    const service = this.serviceSelectionne;
+
+    let remise = Number(this.formulaireRemise.remise || 0);
+    remise = Math.max(0, Math.min(100, remise));
+    const beneficieRemise = this.formulaireRemise.beneficiaireRemise;
+    service.beneficiaireRemise = beneficieRemise;
+
+    service.remise = beneficieRemise ? remise : 0;
+
+    this.recalculerService(service);
+
+    const request: InscrireEleveServiceRequest = {
+      eleveId: this.eleve.id,
+      anneeScolaireId: this.anneeScolaire?.id!,
+      typeServiceOffertId: service.id,
+      souscrit: service.obligatoire ? true : service.souscrit,
+      beneficieRemise: beneficieRemise ? 1 : 0,
+      remise: beneficieRemise ? remise : 0
+    };
+
+    this.savingServices.set(true);
+
+    this.dossierResource
+      .inscrireEleveService(request)
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+
+        next: () => {
+
+          this.savingServices.set(false);
+
+          this.toastService.success(
+            service.code === 'MENSUALITE'
+              ? 'La remise sur la mensualité a été enregistrée avec succès.'
+              : service.souscrit
+                ? `${service.libelle} a été souscrit avec succès.`
+                : `${service.libelle} a été désinscrit avec succès.`,
+            'Succès'
+          );
+
+          this.modalServicesVisible = false;
+          this.serviceSelectionne = null;
+
+          this.formulaireRemise = {
+            beneficiaireRemise: false,
+            remise: 0
+          };
+
+          this.chargerServicesEleve();
+        },
+
+        error: (error: any) => {
+
+          this.savingServices.set(false);
+
+          console.error(
+            'Erreur enregistrement service élève :',
+            error
+          );
+
+          this.toastService.error(
+            error?.error?.message ??
+            error?.message ??
+            'Impossible d’enregistrer le service.',
+            'Erreur'
+          );
+        }
+      });
+  }
+
+  supprimerRemise(): void {
+
+    if (!this.serviceSelectionne) {
+      return;
+    }
+
+    this.serviceSelectionne.beneficiaireRemise = false;
+    this.serviceSelectionne.remise = 0;
+
+    this.formulaireRemise = {
+      beneficiaireRemise: false,
+      remise: 0
+    };
+
+    this.recalculerService(
+      this.serviceSelectionne
+    );
+  }
+
+  private recalculerService(service: ServiceRemise): void {
+    service.montantRemise = this.calculerMontantRemise(service);
+    service.montantFinal = this.calculerMontantFinal(service);
+  }
+
+  enregistrerRemise(): void {
+    if (!this.serviceSelectionne) {
+      return;
+    }
+
+    let remise = Number(this.formulaireRemise.remise || 0);
+
+    remise = Math.max(0, Math.min(100, remise));
+    this.serviceSelectionne.beneficiaireRemise = this.formulaireRemise.beneficiaireRemise;
+    this.serviceSelectionne.remise = this.formulaireRemise.beneficiaireRemise ? remise : 0;
+
+    this.recalculerService(this.serviceSelectionne);
+  }
+
+  get montantFinalModal(): number {
+    if (!this.serviceSelectionne) {
+      return 0;
+    }
+
+    if (!this.formulaireRemise.beneficiaireRemise) {
+      return this.serviceSelectionne.tarif;
+    }
+
+    return this.calculerMontantAvecRemise(
+      this.serviceSelectionne.tarif,
+      this.formulaireRemise.remise
+    );
+  }
+
+  get montantRemiseModal(): number {
+    if (!this.serviceSelectionne) {
+      return 0;
+    }
+
+    return Math.max(0, this.serviceSelectionne.tarif - this.montantFinalModal);
+  }
+
+  calculerMontantAvecRemise(montant: number, remise: number): number {
+    if (montant <= 0) {
+      return 0;
+    }
+
+    if (remise <= 0) {
+      return montant;
+    }
+
+    if (remise >= 100) {
+      return 0;
+    }
+
+    return Math.round(montant * (1 - remise / 100));
+  }
+
+  calculerMontantFinal(service: ServiceRemise): number {
+    if (!service.beneficiaireRemise) {
+      return service.tarif;
+    }
+
+    return this.calculerMontantAvecRemise(service.tarif, service.remise);
+  }
+
+  calculerMontantRemise(service: ServiceRemise): number {
+    if (!service.beneficiaireRemise) {
+      return 0;
+    }
+
+    return Math.max(0, service.tarif - this.calculerMontantFinal(service));
+  }
+
+  get tauxPaiement(): number {
+    if (!this.detailsInscription) {
+      return 0;
+    }
+    if (Number(this.detailsInscription.montantInscription) <= 0) {
+      return 0;
+    }
+    return Math.min(100, Math.round((Number(this.detailsInscription.montantRecu) / Number(this.detailsInscription.montantInscription)) * 100));
   }
 
 
-  async imprimerUneInscription(): Promise<void> {
+  fermerWorkflow() {
+
+  }
+
+  confirmerWorkflow() { }
+
+  formatMontant(montant: number): string {
+    return new Intl.NumberFormat('fr-FR').format(montant) + ' F CFA';
+  }
+
+  async imprimer(): Promise<void> {
     const document = await this.getDocumentRecuInscription();
     pdfMake.createPdf(document).print();
   }
 
-  async DownloadPdfRecu() {
+  async telecharger() {
     const document = await this.getDocumentRecuInscription();
     const code = this.detailsInscription?.code || 'inscription';
     pdfMake.createPdf(document).download(`Recu_${code}.pdf`);
@@ -436,17 +782,11 @@ export class DetailsInscriptionComponent implements OnInit, OnDestroy {
     const inscription = this.detailsInscription;
     const organization = this.organizationData || {};
     const eleve = this.detailsInscription?.getEleveResponse;
-
-    const nomOrganisation = organization.libelle?.trim() || 'ÉCOLE LES DAUPHINS';
-    const adresseOrganisation = organization.adresse?.trim() ||
-      'Derrière le casino du cap vert, Dakar';
-
-    const telephoneOrganisation = organization.telephone?.trim() ||
-      '33 820 10 92 - BP 6268 Dakar étoile';
-
+    const nomOrganisation = organization.libelle?.trim() || 'ÉCOLE SCOOLLI';
+    const adresseOrganisation = organization.adresse?.trim() || 'Wokite Sénégal, Dakar';
+    const telephoneOrganisation = organization.telephone?.trim() || '33 820 10 92 - BP 6268 Dakar étoile';
     const emailOrganisation = organization.email?.trim() || '';
-    const sloganOrganisation = organization.slogan?.trim() ||
-      'L’école pour grandir';
+    const sloganOrganisation = organization.slogan?.trim() || 'L’école pour connaissance';
 
     let logoBase64: string | null = await this.getOrganizationLogoBase64();
 
@@ -1046,8 +1386,7 @@ export class DetailsInscriptionComponent implements OnInit, OnDestroy {
 
               },
 
-            vLineColor: () =>
-              '#E5E7E9',
+            vLineColor: () => '#E5E7E9',
 
             paddingLeft: () => 10,
 
@@ -1209,10 +1548,7 @@ export class DetailsInscriptionComponent implements OnInit, OnDestroy {
 
       },
 
-      footer: (
-        currentPage: number,
-        pageCount: number
-      ) => {
+      footer: (currentPage: number, pageCount: number) => {
 
         return {
 
@@ -1276,8 +1612,7 @@ export class DetailsInscriptionComponent implements OnInit, OnDestroy {
 
                 {
 
-                  text:
-                    `Page ${currentPage} / ${pageCount}`,
+                  text: `Page ${currentPage} / ${pageCount}`,
 
                   fontSize: 7,
 
@@ -1293,8 +1628,7 @@ export class DetailsInscriptionComponent implements OnInit, OnDestroy {
 
             {
 
-              text:
-                'Une solution Wokite Technologies & Innovation',
+              text: 'Une solution Wokite Technologies & Innovation',
 
               fontSize: 6.5,
 
@@ -1327,9 +1661,7 @@ export class DetailsInscriptionComponent implements OnInit, OnDestroy {
     }
 
     try {
-      const blob = await firstValueFrom(
-        this.organizationConfigService.getLogoContent(logoUuid));
-
+      const blob = await firstValueFrom(this.organizationConfigService.getLogoContent(logoUuid));
       return await new Promise<string>((resolve, reject) => {
         const reader = new FileReader();
         reader.onloadend = () => {
@@ -1431,33 +1763,20 @@ export class DetailsInscriptionComponent implements OnInit, OnDestroy {
         canvas.width = image.naturalWidth;
         canvas.height = image.naturalHeight;
 
-        if (
-          canvas.width <= 0 ||
-          canvas.height <= 0
-        ) {
+        if (canvas.width <= 0 || canvas.height <= 0) {
           throw new Error(
             'Dimensions de l’image invalides'
           );
         }
-
-        const context =
-          canvas.getContext('2d');
+        const context = canvas.getContext('2d');
 
         if (!context) {
           throw new Error(
             'Impossible de créer le contexte Canvas'
           );
         }
-
-        context.drawImage(
-          image,
-          0,
-          0
-        );
-
-        return canvas.toDataURL(
-          'image/png'
-        );
+        context.drawImage(image, 0, 0);
+        return canvas.toDataURL('image/png');
 
       } finally {
 
@@ -1481,7 +1800,6 @@ export class DetailsInscriptionComponent implements OnInit, OnDestroy {
     pdfMake.createPdf(document).download(`Carte_${code}.pdf`);
   }
 
-
   async getDocumentCarteScolaire(): Promise<any> {
 
     const eleve: any = this.eleve || {};
@@ -1490,59 +1808,21 @@ export class DetailsInscriptionComponent implements OnInit, OnDestroy {
     const nom = (eleve.nom || '').toString().trim();
     const prenom = (eleve.prenom || '').toString().trim();
     const matricule = (eleve.matricule || '-').toString().trim();
-
-    const classe = (
-      this.classLabel ||
-      eleve.classe?.libelle ||
-      '-'
-    ).toString().trim();
-
+    const classe = (this.classLabel || eleve.classe?.libelle || '-').toString().trim();
     const sexe = (eleve.sexe || '-').toString().trim();
+    const dateNaissance = eleve.dateNaissance ? new Date(eleve.dateNaissance).toLocaleDateString('fr-FR') : '-';
+    const lieuNaissance = (eleve.lieuNaissance || '-').toString().trim();
+    const anneeScolaire = (this.anneeScolaireLabel || '-').toString().trim();
+    const nomEcole = (organization.libelle || 'Établissement scolaire').toString().trim();
 
-    const dateNaissance = eleve.dateNaissance
-      ? new Date(eleve.dateNaissance).toLocaleDateString('fr-FR')
-      : '-';
-
-    const lieuNaissance =
-      (eleve.lieuNaissance || '-').toString().trim();
-
-    const anneeScolaire =
-      (this.anneeScolaireLabel || '-').toString().trim();
-
-    // ============================================================
-    // INFORMATIONS ÉCOLE
-    // ============================================================
-
-    const nomEcole = (
-      organization.libelle ||
-      'Établissement scolaire'
-    ).toString().trim();
-
-    // ============================================================
-    // LOGO ÉCOLE
-    // ============================================================
-
-    let logoBase64: string | null =
-      await this.getOrganizationLogoBase64();
+    let logoBase64: string | null = await this.getOrganizationLogoBase64();
 
     if (!logoBase64) {
-      logoBase64 =
-        await this.getScoolliLogoBase64();
+      logoBase64 = await this.getScoolliLogoBase64();
     }
 
-    // ============================================================
-    // DRAPEAU DU SÉNÉGAL
-    // ============================================================
-
-    const drapeauSenegal =
-      await this.getAssetBase64('assets/img/Senegal.png');
-
-    // ============================================================
-    // PHOTO ÉLÈVE
-    // ============================================================
-
+    const drapeauSenegal = await this.getAssetBase64('assets/img/Senegal.png');
     let photoBase64: string | null = null;
-
     const photo = eleve.photo;
     const photoUuid = photo?.photoUuid;
 
@@ -1550,9 +1830,7 @@ export class DetailsInscriptionComponent implements OnInit, OnDestroy {
 
       try {
 
-        const blob = await firstValueFrom(
-          this.dossierEleveService.getPhotoContent(photoUuid)
-        );
+        const blob = await firstValueFrom(this.dossierEleveService.getPhotoContent(photoUuid));
 
         photoBase64 = await new Promise<string>(
           (resolve, reject) => {
@@ -1580,37 +1858,24 @@ export class DetailsInscriptionComponent implements OnInit, OnDestroy {
       }
     }
 
-    // ============================================================
-    // PHOTO PAR DÉFAUT
-    // ============================================================
 
     if (!photoBase64) {
 
-      const sexeNormalise =
-        this.normalizeText(sexe);
+      const sexeNormalise = this.normalizeText(sexe);
 
       const fallbackPhoto =
         (
-          sexeNormalise === 'feminin' ||
+          sexeNormalise === 'FEMININ' ||
           sexeNormalise === 'femme' ||
           sexeNormalise === 'f'
         )
           ? 'assets/img/femme.png'
           : 'assets/img/homme.png';
 
-      photoBase64 =
-        await this.getAssetBase64(fallbackPhoto);
+      photoBase64 = await this.getAssetBase64(fallbackPhoto);
     }
 
-    // ============================================================
-    // DOCUMENT
-    // ============================================================
-
     return {
-
-      // ==========================================================
-      // FORMAT CARTE
-      // ==========================================================
 
       pageSize: {
         width: 242.65,
@@ -1624,14 +1889,8 @@ export class DetailsInscriptionComponent implements OnInit, OnDestroy {
         12
       ],
 
-      // ==========================================================
-      // FOND
-      // ==========================================================
-
       background: () => ({
         canvas: [
-
-          // Fond blanc
           {
             type: 'rect',
             x: 3,
@@ -1640,8 +1899,6 @@ export class DetailsInscriptionComponent implements OnInit, OnDestroy {
             h: 147.07,
             color: '#FFFFFF'
           },
-
-          // Bordure extérieure
           {
             type: 'rect',
             x: 3,
@@ -1654,22 +1911,10 @@ export class DetailsInscriptionComponent implements OnInit, OnDestroy {
         ]
       }),
 
-      // ==========================================================
-      // CONTENU
-      // ==========================================================
-
       content: [
-
-        // ========================================================
-        // EN-TÊTE INSTITUTIONNEL
-        // ========================================================
 
         {
           columns: [
-
-            // ----------------------------------------------------
-            // LOGO ÉCOLE
-            // ----------------------------------------------------
 
             {
               width: 34,
@@ -1685,10 +1930,6 @@ export class DetailsInscriptionComponent implements OnInit, OnDestroy {
                 ]
                 : []
             },
-
-            // ----------------------------------------------------
-            // INFORMATIONS INSTITUTIONNELLES
-            // ----------------------------------------------------
 
             {
               width: '*',
@@ -1750,8 +1991,7 @@ export class DetailsInscriptionComponent implements OnInit, OnDestroy {
                 },
 
                 {
-                  text:
-                    'INSPECTION D’ACADÉMIE DE DAKAR – I.E.F. DE DAKAR',
+                  text: 'INSPECTION D’ACADÉMIE DE DAKAR – I.E.F. DE DAKAR',
 
                   fontSize: 4.7,
                   bold: true,
@@ -1771,10 +2011,6 @@ export class DetailsInscriptionComponent implements OnInit, OnDestroy {
                 }
               ]
             },
-
-            // ----------------------------------------------------
-            // DRAPEAU DU SÉNÉGAL
-            // ----------------------------------------------------
 
             {
               width: 32,
@@ -1810,10 +2046,6 @@ export class DetailsInscriptionComponent implements OnInit, OnDestroy {
           ]
         },
 
-        // ========================================================
-        // NOM DE L'ÉTABLISSEMENT
-        // ========================================================
-
         {
           text: nomEcole,
 
@@ -1832,10 +2064,6 @@ export class DetailsInscriptionComponent implements OnInit, OnDestroy {
             1
           ]
         },
-
-        // ========================================================
-        // TITRE : CARTE D'IDENTITÉ SCOLAIRE
-        // ========================================================
 
         {
           table: {
@@ -1898,16 +2126,8 @@ export class DetailsInscriptionComponent implements OnInit, OnDestroy {
           ]
         },
 
-        // ========================================================
-        // CORPS DE LA CARTE
-        // ========================================================
-
         {
           columns: [
-
-            // ----------------------------------------------------
-            // PHOTO
-            // ----------------------------------------------------
 
             {
               width: 53,
@@ -1962,18 +2182,10 @@ export class DetailsInscriptionComponent implements OnInit, OnDestroy {
               ]
             },
 
-            // ----------------------------------------------------
-            // INFORMATIONS ÉLÈVE
-            // ----------------------------------------------------
-
             {
               width: '*',
 
               stack: [
-
-                // ------------------------------------------------
-                // ANNÉE / MATRICULE
-                // ------------------------------------------------
 
                 {
                   columns: [
@@ -2025,10 +2237,6 @@ export class DetailsInscriptionComponent implements OnInit, OnDestroy {
                   ]
                 },
 
-                // ------------------------------------------------
-                // NOM / SEXE
-                // ------------------------------------------------
-
                 {
                   columns: [
 
@@ -2079,10 +2287,6 @@ export class DetailsInscriptionComponent implements OnInit, OnDestroy {
                   ]
                 },
 
-                // ------------------------------------------------
-                // PRÉNOM / CLASSE
-                // ------------------------------------------------
-
                 {
                   columns: [
 
@@ -2132,10 +2336,6 @@ export class DetailsInscriptionComponent implements OnInit, OnDestroy {
                     1.2
                   ]
                 },
-
-                // ------------------------------------------------
-                // DATE / LIEU DE NAISSANCE
-                // ------------------------------------------------
 
                 {
                   columns: [
@@ -2207,10 +2407,6 @@ export class DetailsInscriptionComponent implements OnInit, OnDestroy {
           ]
         },
 
-        // ========================================================
-        // LIGNE DE SÉPARATION
-        // ========================================================
-
         {
           canvas: [
 
@@ -2237,13 +2433,8 @@ export class DetailsInscriptionComponent implements OnInit, OnDestroy {
           ]
         },
 
-        // ========================================================
-        // MENTION
-        // ========================================================
-
         {
-          text:
-            'Cette carte est strictement personnelle et reste la propriété de l’établissement.',
+          text: 'Cette carte est strictement personnelle et reste la propriété de l’établissement.',
 
           fontSize: 4.0,
 
@@ -2261,13 +2452,8 @@ export class DetailsInscriptionComponent implements OnInit, OnDestroy {
           ]
         },
 
-        // ========================================================
-        // RESPONSABLE DE L'ÉTABLISSEMENT
-        // ========================================================
-
         {
-          text:
-            'Le Responsable de l’établissement',
+          text: 'Le Responsable de l’établissement',
 
           fontSize: 4.2,
 
@@ -2290,10 +2476,6 @@ export class DetailsInscriptionComponent implements OnInit, OnDestroy {
         }
       ],
 
-      // ==========================================================
-      // PIED DE PAGE
-      // ==========================================================
-
       footer: (
         currentPage: number,
         pageCount: number
@@ -2311,8 +2493,7 @@ export class DetailsInscriptionComponent implements OnInit, OnDestroy {
           columns: [
 
             {
-              text:
-                'Document généré avec Scoolli · scoolli.com',
+              text: 'Document généré avec Scoolli · scoolli.com',
 
               fontSize: 3.6,
 
@@ -2335,10 +2516,6 @@ export class DetailsInscriptionComponent implements OnInit, OnDestroy {
         };
       },
 
-      // ==========================================================
-      // STYLES
-      // ==========================================================
-
       styles: {
 
         defaultStyle: {
@@ -2349,8 +2526,11 @@ export class DetailsInscriptionComponent implements OnInit, OnDestroy {
     };
   }
 
+  retourInscriptions(): void {
+    this.goBack();
+  }
+
   goBack(): void {
     window.history.back();
   }
-
 }

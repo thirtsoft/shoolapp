@@ -172,7 +172,7 @@ export class ListInscrireEleveServiceComponent implements OnInit {
 
         this.columns = [
           { key: 'eleve', header: 'Elève' },
-          { key: 'libelleClasse', header: 'Classe' },
+          { key: 'typeServiceLibelle', header: 'Service' },
           { key: 'anneeScolaire', header: 'Année scolaire' },
           { key: 'dateInscription', header: 'Date' },
         ];
