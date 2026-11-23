@@ -1,932 +1,1640 @@
-/* ============================================================
-   PAGE
-   ============================================================ */
-
-.page-wrapper {
-  min-height: 100vh;
-  background: #f6f8fa;
+.inscription-detail-page {
+  min-height: 100%;
+  background: #f5f7fb;
+  color: #101b45;
 }
 
-.content {
-  padding-bottom: 40px;
-}
 
-/* ============================================================
-   HEADER
-   ============================================================ */
+.inscription-detail-header {
+  min-height: 88px;
+  padding: 18px 30px;
 
-.page-header-custom {
-  padding: 22px 0 18px;
-}
-
-.header-main {
-  display: flex;
-  align-items: flex-start;
-  gap: 20px;
-}
-
-.back-link {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  border: 0;
-  background: transparent;
-  color: #667085;
-  font-size: 13px;
-  font-weight: 600;
-  padding: 7px 0;
-  cursor: pointer;
-  white-space: nowrap;
-  transition: color 0.2s ease;
-}
-
-.back-link:hover {
-  color: #1a5276;
-}
-
-.back-link i {
-  font-size: 12px;
-}
-
-.header-title-block {
-  flex: 1;
-}
-
-.title-line {
-  display: flex;
-  align-items: center;
-  gap: 14px;
-  flex-wrap: wrap;
-}
-
-.title-line h3 {
-  margin: 0;
-  color: #172b4d;
-  font-size: 23px;
-  font-weight: 700;
-  letter-spacing: -0.3px;
-}
-
-.header-meta {
-  display: flex;
-  align-items: center;
-  gap: 11px;
-  margin-top: 7px;
-  color: #7a869a;
-  font-size: 12.5px;
-}
-
-.header-meta span {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-}
-
-.header-meta i {
-  font-size: 11px;
-}
-
-.meta-separator {
-  width: 4px;
-  height: 4px;
-  background: #c7cdd4;
-  border-radius: 50%;
-}
-
-/* ============================================================
-   STATUS
-   ============================================================ */
-
-.status-badge {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  min-height: 29px;
-  padding: 5px 11px;
-  border-radius: 20px;
-  font-size: 11px;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.2px;
-}
-
-.status-validated {
-  background: #eaf8ef;
-  color: #198754;
-}
-
-.status-pending {
-  background: #fff6df;
-  color: #a66a00;
-}
-
-.status-rejected {
-  background: #fdecec;
-  color: #c0392b;
-}
-
-.status-default {
-  background: #edf1f4;
-  color: #667085;
-}
-
-/* ============================================================
-   ACTION BAR
-   ============================================================ */
-
-.action-bar {
-  display: flex;
-  align-items: center;
-  gap: 22px;
-  background: #ffffff;
-  border: 1px solid #e5e9ed;
-  border-radius: 10px;
-  padding: 13px 16px;
-  margin-bottom: 20px;
-  box-shadow: 0 2px 8px rgba(16, 24, 40, 0.035);
-}
-
-.action-section {
-  display: flex;
-  align-items: center;
-  gap: 14px;
-}
-
-.action-section-title {
-  display: inline-flex;
-  align-items: center;
-  gap: 7px;
-  color: #667085;
-  font-size: 11px;
-  font-weight: 700;
-  text-transform: uppercase;
-  white-space: nowrap;
-  letter-spacing: 0.25px;
-}
-
-.action-section-title i {
-  font-size: 12px;
-  color: #8291a5;
-}
-
-.action-buttons {
-  display: flex;
-  align-items: center;
-  gap: 7px;
-}
-
-.action-btn {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 7px;
-  min-height: 34px;
-  border: 1px solid transparent;
-  border-radius: 7px;
-  padding: 7px 12px;
-  font-size: 12px;
-  font-weight: 600;
-  cursor: pointer;
-  transition:
-    background-color 0.2s ease,
-    border-color 0.2s ease,
-    color 0.2s ease,
-    transform 0.15s ease;
-}
-
-.action-btn:hover {
-  transform: translateY(-1px);
-}
-
-.action-btn i {
-  font-size: 11px;
-}
-
-.action-btn-neutral {
-  background: #ffffff;
-  border-color: #d9dfe5;
-  color: #475467;
-}
-
-.action-btn-neutral:hover {
-  background: #f8fafb;
-  border-color: #c5cdd5;
-}
-
-.action-btn-primary {
-  background: #1a5276;
-  color: #ffffff;
-}
-
-.action-btn-primary:hover {
-  background: #154665;
-}
-
-.action-btn-school {
-  background: #f3f7fa;
-  border-color: #d8e3ea;
-  color: #1a5276;
-}
-
-.action-btn-school:hover {
-  background: #e9f1f6;
-}
-
-.action-btn-confirm {
-  background: #198754;
-  color: #ffffff;
-}
-
-.action-btn-confirm:hover {
-  background: #157347;
-}
-
-.action-btn-reject {
-  background: #ffffff;
-  border-color: #e0a0a0;
-  color: #c0392b;
-}
-
-.action-btn-reject:hover {
-  background: #fff5f5;
-}
-
-.action-divider {
-  width: 1px;
-  height: 34px;
-  background: #e5e9ed;
-}
-
-.workflow-section {
-  margin-left: auto;
-}
-
-/* ============================================================
-   CARDS
-   ============================================================ */
-
-.main-grid {
-  display: grid;
-  grid-template-columns: minmax(0, 1.35fr) minmax(330px, 0.85fr);
-  gap: 18px;
-  margin-bottom: 18px;
-}
-
-.card-custom {
-  background: #ffffff;
-  border: 1px solid #e5e9ed;
-  border-radius: 12px;
-  box-shadow: 0 2px 8px rgba(16, 24, 40, 0.035);
-  overflow: hidden;
-}
-
-.card-header-custom {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 16px 19px;
-  border-bottom: 1px solid #edf0f2;
+  gap: 25px;
+
+  background: #ffffff;
+  border-bottom: 1px solid #e4e9f1;
 }
 
-.card-title-wrapper {
+.inscription-detail-header-left {
   display: flex;
   align-items: center;
-  gap: 11px;
+  gap: 22px;
 }
 
-.card-icon {
-  width: 34px;
-  height: 34px;
-  border-radius: 8px;
+.inscription-detail-back {
+  height: 50px;
+  padding: 0 18px;
+
   display: flex;
   align-items: center;
-  justify-content: center;
-  font-size: 13px;
+  gap: 10px;
+
+  border: 1px solid #d9e0ed;
+  border-radius: 10px;
+
+  background: #ffffff;
+  color: #111b45;
+
+  font-size: 15px;
+  font-weight: 500;
+
+  cursor: pointer;
 }
 
-.student-icon {
-  background: #edf5fb;
-  color: #1a5276;
+.inscription-detail-back:hover {
+  background: #f7f9fc;
 }
 
-.school-icon {
-  background: #eef7f1;
-  color: #198754;
+.inscription-detail-back-icon {
+  font-size: 27px;
+  line-height: 1;
 }
 
-.financial-icon {
-  background: #fff5e8;
-  color: #b76e00;
+.inscription-detail-title-block {
+  min-width: 0;
 }
 
-.card-header-custom h4 {
+.inscription-detail-title-row {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.inscription-detail-title-row h1 {
   margin: 0;
-  color: #344054;
+
+  color: #10183e;
+
+  font-size: 30px;
+  font-weight: 800;
+  letter-spacing: -1px;
+}
+
+.inscription-detail-validation-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+
+  padding: 7px 13px;
+
+  border-radius: 20px;
+
+  background: #d7f6e8;
+  color: #08733d;
+
   font-size: 14px;
   font-weight: 700;
 }
 
-.card-header-custom span {
-  display: block;
-  color: #98a2b3;
-  font-size: 10.5px;
-  margin-top: 2px;
+.inscription-detail-validation-dot {
+  width: 8px;
+  height: 8px;
+
+  border-radius: 50%;
+  background: #16a765;
 }
 
-/* ============================================================
-   PROFIL ÉLÈVE
-   ============================================================ */
-
-.student-profile {
+.inscription-detail-meta {
   display: flex;
-  gap: 22px;
-  padding: 20px;
+  align-items: center;
+  gap: 12px;
+
+  margin-top: 5px;
+
+  color: #263665;
+
+  font-size: 14px;
 }
 
-.student-photo-wrapper {
-  flex: 0 0 104px;
-  width: 104px;
-  height: 122px;
-  border-radius: 10px;
+.inscription-detail-meta-separator {
+  color: #9aa5bc;
+}
+
+.inscription-detail-header-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.inscription-detail-header-btn {
+  height: 44px;
+  padding: 0 17px;
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+
+  border-radius: 9px;
+
+  font-size: 14px;
+  font-weight: 700;
+
+  cursor: pointer;
+}
+
+.inscription-detail-header-btn-print {
+  border: 1px solid #bac8dd;
+  background: #ffffff;
+  color: #172044;
+}
+
+.inscription-detail-header-btn-download {
+  border: 1px solid #dc454b;
+  background: #dc454b;
+  color: #ffffff;
+}
+
+.inscription-detail-header-btn-school {
+  border: 1px solid #0753a3;
+  background: #0753a3;
+  color: #ffffff;
+}
+
+.inscription-detail-content {
+  padding: 20px 30px 40px;
+
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 22px;
+
+  max-width: 1600px;
+  margin: 0 auto;
+}
+
+.inscription-detail-card {
+  min-width: 0;
+
+  background: #ffffff;
+
+  border: 1px solid #dfe5ef;
+  border-radius: 11px;
+
+  box-shadow: 0 2px 7px rgba(24, 45, 80, .04);
+
   overflow: hidden;
-  background: #f1f4f6;
-  border: 1px solid #e2e7eb;
+}
+
+.inscription-detail-card-header {
+  min-height: 83px;
+  padding: 14px 18px;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  border-bottom: 1px solid #e6ebf2;
+}
+
+.inscription-detail-card-title {
+  display: flex;
+  align-items: center;
+  gap: 13px;
+}
+
+.inscription-detail-card-icon {
+  width: 50px;
+  height: 50px;
+
   display: flex;
   align-items: center;
   justify-content: center;
+
+  border-radius: 15px;
+
+  font-size: 22px;
+  font-weight: 700;
+}
+
+.inscription-detail-card-icon-blue {
+  background: #e6f0ff;
+  color: #0875ed;
+}
+
+.inscription-detail-card-icon-green {
+  background: #e3f7ed;
+  color: #159b5c;
+}
+
+.inscription-detail-card-header h2 {
+  margin: 0;
+
+  color: #111b45;
+
+  font-size: 20px;
+  font-weight: 800;
+}
+
+.inscription-detail-card-header p {
+  margin: 2px 0 0;
+
+  color: #3e5383;
+
+  font-size: 14px;
+}
+
+.inscription-detail-code-badge {
+  padding: 8px 11px;
+
+  border-radius: 7px;
+
+  background: #f4f6fa;
+
+  color: #40527b;
+
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.inscription-detail-student-content {
+  min-height: 290px;
+  padding: 22px 35px;
+  display: flex;
+  gap: 24px;
+}
+
+.inscription-detail-student-photo {
+  width: 205px;
+  height: 235px;
+  flex: 0 0 205px;
+  border-radius: 11px;
+  background: linear-gradient(135deg, #e8eef8, #d7e4f2);
+  overflow: hidden;
+}
+
+.inscription-detail-student-initials {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #1261a7;
+  font-size: 42px;
+  font-weight: 800;
+}
+
+.inscription-detail-student-main {
+  min-width: 0;
+  padding-top: 1px;
+}
+
+.inscription-detail-student-name {
+  color: #101a42;
+
+  font-size: 20px;
+  font-weight: 800;
+}
+
+.inscription-detail-student-matricule {
+  display: inline-block;
+  margin-top: 5px;
+  padding: 5px 9px;
+  border-radius: 6px;
+  background: #edf2fa;
+  color: #223764;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.inscription-detail-student-infos {
+  margin-top: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 9px;
+}
+
+.inscription-detail-info-line {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #263969;
+  font-size: 14px;
+}
+
+.inscription-detail-info-line strong {
+  color: #172247;
+  font-weight: 600;
+}
+
+.inscription-detail-info-icon {
+  width: 17px;
+
+  color: #123c7a;
+
+  font-size: 15px;
+  text-align: center;
+}
+
+.inscription-detail-school-info {
+  padding: 10px 18px 16px;
+}
+
+.inscription-detail-school-row {
+  min-height: 45px;
+  display: grid;
+  grid-template-columns: 190px minmax(0, 1fr);
+  align-items: center;
+  border-bottom: 1px solid #edf0f5;
+  color: #17264c;
+  font-size: 14px;
+}
+
+.inscription-detail-school-row:last-child {
+  border-bottom: 0;
+}
+
+.inscription-detail-school-row span {
+  color: #40527b;
+}
+
+.inscription-detail-school-row strong {
+  color: #111a42;
+  font-size: 15px;
+}
+
+.inscription-detail-financial-card {
+  grid-column: 1 / -1;
+  background: #ffffff;
+  border: 1px solid #8dbcfb;
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0 2px 7px rgba(25, 91, 170, .04);
+}
+
+.inscription-detail-financial-header {
+  min-height: 76px;
+  padding: 12px 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: #edf5ff;
+  border-bottom: 1px solid #d1e3fa;
+}
+
+.inscription-detail-financial-title {
+  display: flex;
+  align-items: center;
+  gap: 13px;
+}
+
+.inscription-detail-financial-icon {
+  width: 43px;
+  height: 43px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 9px;
+  background: #ffffff;
+  color: #0753a3;
+  font-size: 20px;
+}
+
+.inscription-detail-financial-header h2 {
+  margin: 0;
+
+  color: #111c47;
+
+  font-size: 20px;
+  font-weight: 800;
+}
+
+.inscription-detail-financial-header p {
+  margin: 2px 0 0;
+
+  color: #354b7c;
+
+  font-size: 14px;
+}
+
+.inscription-detail-financial-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+
+  padding: 8px 13px;
+
+  border: 1px solid #a7e7ca;
+  border-radius: 20px;
+
+  background: #d9f8e9;
+  color: #08733d;
+
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.inscription-detail-financial-status-icon {
+  width: 21px;
+  height: 21px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 50%;
+
+  background: #16a765;
+  color: #ffffff;
+
+  font-size: 12px;
+}
+
+.inscription-detail-financial-body {
+  padding: 14px 20px;
+
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+}
+
+.inscription-detail-financial-metric {
+  min-height: 70px;
+
+  padding: 5px 26px;
+
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 6px;
+
+  border-right: 1px solid #d9dfeb;
+}
+
+.inscription-detail-financial-metric:first-child {
+  padding-left: 14px;
+}
+
+.inscription-detail-financial-metric:last-child {
+  border-right: 0;
+}
+
+.inscription-detail-financial-metric>span {
+  color: #40527b;
+  font-size: 13px;
+}
+
+.inscription-detail-financial-metric>strong {
+  color: #111a45;
+  font-size: 24px;
+  font-weight: 800;
+}
+
+.inscription-detail-success-text {
+  color: #079b52 !important;
+}
+
+.inscription-detail-payment-progress {
+  margin: 0 35px;
+  padding: 12px 0 15px;
+
+  display: flex;
+  align-items: center;
+  gap: 18px;
+
+  border-top: 1px solid #dce3ee;
+}
+
+.inscription-detail-payment-progress strong {
+  flex: 0 0 auto;
+
+  color: #111a42;
+
+  font-size: 14px;
+}
+
+.inscription-detail-progress-track {
+  height: 12px;
+  flex: 1;
+
+  border-radius: 20px;
+
+  background: #e4e8ee;
+
+  overflow: hidden;
+}
+
+.inscription-detail-progress-value {
+  height: 100%;
+
+  border-radius: inherit;
+
+  background: #0ba653;
+}
+
+.inscription-detail-services-card {
+  grid-column: 1 / -1;
+
+  background: #ffffff;
+
+  border: 1px solid #d8e1ed;
+  border-radius: 10px;
+
+  overflow: hidden;
+
+  box-shadow: 0 2px 7px rgba(24, 45, 80, .04);
+}
+
+.inscription-detail-services-header {
+  min-height: 76px;
+  padding: 11px 18px;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+
+  background: #edf5ff;
+
+  border-bottom: 1px solid #d7e3f2;
+}
+
+.inscription-detail-services-title {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+}
+
+.inscription-detail-services-icon {
+  width: 39px;
+  height: 39px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 8px;
+
+  color: #e4a900;
+  background: #fff8df;
+
+  font-size: 21px;
+}
+
+.inscription-detail-services-header h2 {
+  margin: 0;
+
+  color: #111c47;
+
+  font-size: 20px;
+  font-weight: 800;
+}
+
+.inscription-detail-services-header p {
+  margin: 2px 0 0;
+
+  color: #354b7c;
+
+  font-size: 14px;
+}
+
+.inscription-detail-services-action {
+  min-height: 45px;
+
+  padding: 0 17px;
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+
+  border: 1px solid #064b9c;
+  border-radius: 8px;
+
+  background: #0753a3;
+  color: #ffffff;
+
+  font-size: 14px;
+  font-weight: 700;
+
+  cursor: pointer;
+
+  box-shadow: 0 2px 3px rgba(4, 60, 130, .15);
+}
+
+.inscription-detail-services-action:hover {
+  background: #06498f;
+}
+
+.inscription-detail-services-action span {
+  font-size: 17px;
+}
+
+.inscription-detail-services-table-wrapper {
+  padding: 0 17px;
+
+  overflow-x: auto;
+}
+
+.inscription-detail-services-table {
+  width: 100%;
+
+  border-collapse: separate;
+  border-spacing: 0;
+
+  border: 1px solid #e1e7f0;
+  border-radius: 8px;
+
+  overflow: hidden;
+}
+
+.inscription-detail-services-table thead th {
+  padding: 10px 16px;
+
+  background: #f4f6fb;
+
+  color: #101a42;
+
+  font-size: 13px;
+  font-weight: 800;
+
+  text-align: left;
+
+  border-bottom: 1px solid #dfe5ef;
+}
+
+.inscription-detail-services-table tbody td {
+  padding: 10px 16px;
+
+  color: #17264c;
+
+  font-size: 13px;
+
+  border-bottom: 1px solid #e8edf4;
+}
+
+.inscription-detail-services-table tbody tr:last-child td {
+  border-bottom: 0;
+}
+
+.inscription-detail-service-name {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.inscription-detail-service-icon {
+  width: 25px;
+  height: 25px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  color: #126be0;
+
+  font-size: 15px;
+}
+
+.inscription-detail-service-name strong {
+  color: #172247;
+  font-size: 14px;
+}
+
+.inscription-detail-service-amount {
+  color: #18234a;
+  font-size: 14px;
+}
+
+.inscription-detail-discount {
+  color: #18234a;
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.inscription-detail-no-discount {
+  color: #8b96a9;
+  font-size: 13px;
+}
+
+.inscription-detail-billed-amount {
+  color: #101a42;
+  font-size: 14px;
+}
+
+.inscription-detail-service-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+
+  padding: 6px 10px;
+
+  border: 1px solid #a9e8cb;
+  border-radius: 18px;
+
+  background: #e0f9ed;
+  color: #07804a;
+
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.inscription-detail-service-status-normal {
+  border-color: #dce2ea;
+  background: #f4f6f8;
+  color: #67748a;
+}
+
+.inscription-detail-services-info {
+  margin: 8px 17px 13px;
+  padding: 8px 12px;
+
+  display: flex;
+  align-items: center;
+  gap: 9px;
+
+  border: 1px solid #b9d5fa;
+  border-radius: 7px;
+
+  background: #eaf4ff;
+
+  color: #1b376b;
+
+  font-size: 12px;
+}
+
+.inscription-detail-services-info-icon {
+  width: 20px;
+  height: 20px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  flex: 0 0 20px;
+
+  border-radius: 50%;
+
+  background: #1475df;
+  color: #ffffff;
+
+  font-size: 11px;
+  font-weight: 800;
+}
+
+.inscription-detail-modal-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+
+  padding: 20px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  background: rgba(10, 24, 50, .52);
+
+  backdrop-filter: blur(2px);
+}
+
+.inscription-detail-services-modal {
+  width: min(900px, 100%);
+  max-height: calc(100vh - 40px);
+
+  display: flex;
+  flex-direction: column;
+
+  background: #ffffff;
+
+  border-radius: 12px;
+
+  box-shadow: 0 20px 60px rgba(12, 32, 65, .25);
+
+  overflow: hidden;
+}
+
+.inscription-detail-workflow-modal {
+  width: min(520px, 100%);
+
+  display: flex;
+  flex-direction: column;
+
+  background: #ffffff;
+
+  border-radius: 12px;
+
+  box-shadow: 0 20px 60px rgba(12, 32, 65, .25);
+
+  overflow: hidden;
+}
+
+.inscription-detail-modal-header {
+  min-height: 70px;
+  padding: 15px 20px;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  border-bottom: 1px solid #e5eaf1;
+}
+
+.inscription-detail-modal-header h2 {
+  margin: 0;
+
+  color: #111b45;
+
+  font-size: 18px;
+  font-weight: 800;
+}
+
+.inscription-detail-modal-header p {
+  margin: 3px 0 0;
+
+  color: #7d89a0;
+
+  font-size: 12px;
+}
+
+.inscription-detail-modal-close {
+  width: 34px;
+  height: 34px;
+
+  border: 0;
+  border-radius: 7px;
+
+  background: #f2f5f8;
+
+  color: #68758a;
+
+  font-size: 22px;
+
+  cursor: pointer;
+}
+
+.inscription-detail-modal-body {
+  min-height: 0;
+
+  padding: 18px;
+
+  display: grid;
+  grid-template-columns: 280px minmax(0, 1fr);
+  gap: 18px;
+
+  overflow-y: auto;
+}
+
+.inscription-detail-modal-services-list {
+  border: 1px solid #e1e7ef;
+  border-radius: 8px;
+
+  overflow: hidden;
+}
+
+.inscription-detail-modal-section-title {
+  padding: 12px 13px;
+
+  background: #f5f7fa;
+
+  border-bottom: 1px solid #e1e7ef;
+
+  color: #17264c;
+
+  font-size: 12px;
+  font-weight: 800;
+  text-transform: uppercase;
+}
+
+.inscription-detail-modal-service {
+  width: 100%;
+  min-height: 67px;
+
+  padding: 10px 12px;
+
+  display: flex;
+  align-items: center;
+  gap: 10px;
+
+  border: 0;
+  border-bottom: 1px solid #edf0f4;
+
+  background: #ffffff;
+
+  text-align: left;
+
+  cursor: pointer;
+}
+
+.inscription-detail-modal-service:last-child {
+  border-bottom: 0;
+}
+
+.inscription-detail-modal-service:hover {
+  background: #f8fbff;
+}
+
+.inscription-detail-modal-service-selected {
+  background: #eef6ff !important;
+  box-shadow: inset 3px 0 #0870dc;
+}
+
+.inscription-detail-modal-service-icon {
+  width: 32px;
+  height: 32px;
+
+  flex: 0 0 32px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 7px;
+
+  background: #edf3fb;
+  color: #1b63ae;
+
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.inscription-detail-modal-service-text {
+  min-width: 0;
+
+  flex: 1;
+}
+
+.inscription-detail-modal-service-text strong {
+  display: block;
+
+  color: #17264c;
+
+  font-size: 12px;
+}
+
+.inscription-detail-modal-service-text small {
+  display: block;
+
+  margin-top: 3px;
+
+  color: #8c98a9;
+
+  font-size: 10px;
+}
+
+.inscription-detail-modal-subscribed {
+  color: #07824a !important;
+}
+
+.inscription-detail-modal-service-price {
+  color: #4d5c74;
+
+  font-size: 10px;
+  font-weight: 700;
+
+  white-space: nowrap;
+}
+
+.inscription-detail-remise-editor {
+  border: 1px solid #e1e7ef;
+  border-radius: 8px;
+
+  overflow: hidden;
+}
+
+.inscription-detail-editor-header {
+  min-height: 67px;
+
+  padding: 12px 15px;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 15px;
+
+  background: #f7f9fc;
+
+  border-bottom: 1px solid #e3e8ef;
+}
+
+.inscription-detail-editor-header>div>span {
+  color: #8c98aa;
+
+  font-size: 9px;
+  font-weight: 800;
+
+  text-transform: uppercase;
+}
+
+.inscription-detail-editor-header h3 {
+  margin: 3px 0 0;
+
+  color: #18254c;
+
+  font-size: 15px;
+}
+
+.inscription-detail-mandatory-badge {
+  padding: 6px 9px;
+
+  border-radius: 6px;
+
+  background: #e8f2ff;
+  color: #1265b8;
+
+  font-size: 10px;
+  font-weight: 700;
+}
+
+.inscription-detail-subscription-toggle {
+  padding: 6px 10px;
+
+  border: 1px solid #d9e1eb;
+  border-radius: 15px;
+
+  background: #ffffff;
+  color: #65738a;
+
+  font-size: 10px;
+  font-weight: 700;
+
+  cursor: pointer;
+}
+
+.inscription-detail-subscription-toggle.active {
+  border-color: #b9e5cf;
+
+  background: #e7f8ef;
+  color: #07804a;
+}
+
+.inscription-detail-remise-tarif {
+  margin: 16px;
+
+  padding: 14px;
+
+  display: grid;
+  grid-template-columns: 1fr 35px 1fr;
+  align-items: center;
+
+  border: 1px solid #e2e8ef;
+  border-radius: 8px;
+
+  background: #f8fafc;
+}
+
+.inscription-detail-remise-tarif div {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.inscription-detail-remise-tarif span {
+  color: #8995a7;
+  font-size: 10px;
+}
+
+.inscription-detail-remise-tarif strong {
+  color: #263454;
+  font-size: 14px;
+}
+
+.inscription-detail-remise-arrow {
+  color: #a1aab8;
+  font-size: 18px;
+  text-align: center;
+}
+
+.inscription-detail-after-discount {
+  color: #07834a !important;
+}
+
+.inscription-detail-remise-option {
+  margin: 0 16px;
+
+  padding: 14px;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 15px;
+
+  border: 1px solid #e1e6ed;
+  border-radius: 8px;
+}
+
+.inscription-detail-remise-option strong {
+  display: block;
+
+  color: #3d4c63;
+
+  font-size: 12px;
+}
+
+.inscription-detail-remise-option p {
+  margin: 3px 0 0;
+
+  color: #909baa;
+
+  font-size: 10px;
+}
+
+.inscription-detail-switch {
+  position: relative;
+
+  width: 43px;
+  height: 24px;
+
+  flex: 0 0 43px;
+
+  cursor: pointer;
+}
+
+.inscription-detail-switch input {
+  position: absolute;
+
+  width: 0;
+  height: 0;
+
+  opacity: 0;
+}
+
+.inscription-detail-switch span {
+  position: absolute;
+  inset: 0;
+
+  border-radius: 20px;
+
+  background: #d8dee7;
+
+  transition: .2s;
+}
+
+.inscription-detail-switch span::before {
+  content: "";
+
+  position: absolute;
+
+  width: 18px;
+  height: 18px;
+
+  top: 3px;
+  left: 3px;
+
+  border-radius: 50%;
+
+  background: #ffffff;
+
+  box-shadow: 0 1px 3px rgba(0, 0, 0, .15);
+
+  transition: .2s;
+}
+
+.inscription-detail-switch input:checked+span {
+  background: #0a9d54;
+}
+
+.inscription-detail-switch input:checked+span::before {
+  transform: translateX(19px);
+}
+
+.inscription-detail-remise-input {
+  margin: 16px;
+
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+}
+
+.inscription-detail-remise-input label {
+  color: #44536b;
+
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.inscription-detail-percentage {
+  width: 120px;
+  height: 38px;
+
+  display: flex;
+  align-items: center;
+
+  border: 1px solid #d8e0ea;
+  border-radius: 7px;
+
+  overflow: hidden;
+}
+
+.inscription-detail-percentage input {
+  width: 100%;
+  height: 100%;
+
+  padding: 0 10px;
+
+  border: 0;
+  outline: none;
+
+  color: #18254c;
+
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.inscription-detail-percentage span {
+  padding-right: 9px;
+
+  color: #7d899b;
+
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.inscription-detail-remise-result {
+  margin: 0 16px 16px;
+  padding: 10px 12px;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  border: 1px solid #f0d4d0;
+  border-radius: 7px;
+
+  background: #fff7f6;
+
+  color: #8a6c68;
+
+  font-size: 11px;
+}
+
+.inscription-detail-remise-result strong {
+  color: #c33e36;
+}
+
+.inscription-detail-not-subscribed {
+  margin: 16px;
+
+  padding: 15px;
+
+  border: 1px dashed #d5dce5;
+  border-radius: 8px;
+
+  background: #fafbfc;
+
+  color: #78859a;
+
+  font-size: 11px;
+}
+
+.inscription-detail-modal-footer {
+  min-height: 64px;
+
+  padding: 11px 18px;
+
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 8px;
+
+  border-top: 1px solid #e3e8ef;
+
+  background: #f8fafc;
+}
+
+.inscription-detail-modal-cancel,
+.inscription-detail-modal-save {
+  min-height: 38px;
+
+  padding: 0 15px;
+
+  border-radius: 7px;
+
+  font-size: 12px;
+  font-weight: 700;
+
+  cursor: pointer;
+}
+
+.inscription-detail-modal-cancel {
+  border: 1px solid #d5dce6;
+
+  background: #ffffff;
+  color: #526178;
+}
+
+.inscription-detail-modal-save {
+  border: 1px solid #0753a3;
+
+  background: #0753a3;
+  color: #ffffff;
+}
+
+.inscription-detail-modal-save:disabled {
+  opacity: .45;
+  cursor: not-allowed;
+}
+
+.inscription-detail-confirm-btn {
+  background: #168b52;
+  border-color: #168b52;
+}
+
+.inscription-detail-reject-btn {
+  background: #c83b35;
+  border-color: #c83b35;
+}
+
+.inscription-detail-workflow-body {
+  padding: 20px;
+}
+
+.inscription-detail-workflow-success,
+.inscription-detail-workflow-danger {
+  padding: 14px;
+
+  display: flex;
+  gap: 11px;
+
+  border-radius: 8px;
+}
+
+.inscription-detail-workflow-success {
+  background: #eaf8f0;
+  border: 1px solid #ccebd9;
+}
+
+.inscription-detail-workflow-danger {
+  background: #fff5f4;
+  border: 1px solid #f0d4d0;
+}
+
+.inscription-detail-workflow-success>span,
+.inscription-detail-workflow-danger>span {
+  width: 28px;
+  height: 28px;
+
+  flex: 0 0 28px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 50%;
+
+  font-weight: 800;
+}
+
+.inscription-detail-workflow-success>span {
+  background: #d2f0df;
+  color: #07804a;
+}
+
+.inscription-detail-workflow-danger>span {
+  background: #f8dbd8;
+  color: #c0392b;
+}
+
+.inscription-detail-workflow-success strong,
+.inscription-detail-workflow-danger strong {
+  display: block;
+
+  color: #3f4c62;
+
+  font-size: 12px;
+}
+
+.inscription-detail-workflow-success p,
+.inscription-detail-workflow-danger p {
+  margin: 4px 0 0;
+
+  color: #8490a0;
+
+  font-size: 10px;
+  line-height: 1.5;
+}
+
+.inscription-detail-workflow-field {
+  margin-top: 16px;
+}
+
+.inscription-detail-workflow-field label {
+  display: block;
+
+  margin-bottom: 7px;
+
+  color: #45536a;
+
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.inscription-detail-workflow-field textarea {
+  width: 100%;
+
+  padding: 10px;
+
+  resize: vertical;
+
+  border: 1px solid #d8e0e9;
+  border-radius: 7px;
+
+  outline: none;
+
+  color: #28364f;
+
+  font-family: inherit;
+  font-size: 12px;
+}
+
+.inscription-detail-workflow-field textarea:focus {
+  border-color: #1a66b3;
+}
+
+
+@media (max-width: 1200px) {
+
+  .inscription-detail-header {
+    align-items: flex-start;
+  }
+
+  .inscription-detail-header-actions {
+    flex-wrap: wrap;
+    justify-content: flex-end;
+  }
+
+  .inscription-detail-student-content {
+    padding: 20px;
+  }
+
+  .inscription-detail-student-photo {
+    width: 170px;
+    flex-basis: 170px;
+  }
+
+}
+
+
+@media (max-width: 900px) {
+
+  .inscription-detail-header {
+    flex-direction: column;
+  }
+
+  .inscription-detail-header-left {
+    width: 100%;
+  }
+
+  .inscription-detail-header-actions {
+    width: 100%;
+    justify-content: flex-start;
+  }
+
+  .inscription-detail-content {
+    grid-template-columns: 1fr;
+  }
+
+  .inscription-detail-financial-card,
+  .inscription-detail-services-card {
+    grid-column: auto;
+  }
+
+  .inscription-detail-modal-body {
+    grid-template-columns: 1fr;
+  }
+
+}
+
+
+@media (max-width: 650px) {
+
+  .inscription-detail-header {
+    padding: 15px;
+  }
+
+  .inscription-detail-header-left {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .inscription-detail-title-row {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 7px;
+  }
+
+  .inscription-detail-title-row h1 {
+    font-size: 24px;
+  }
+
+  .inscription-detail-content {
+    padding: 15px 12px 30px;
+  }
+
+  .inscription-detail-student-content {
+    flex-direction: column;
+  }
+
+  .inscription-detail-student-photo {
+    width: 150px;
+    height: 170px;
+    flex-basis: 170px;
+  }
+
+  .inscription-detail-school-row {
+    grid-template-columns: 1fr;
+    gap: 4px;
+    padding: 9px 0;
+  }
+
+  .inscription-detail-financial-body {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .inscription-detail-financial-metric {
+    padding: 10px !important;
+    border-bottom: 1px solid #d9dfeb;
+  }
+
+  .inscription-detail-financial-metric:nth-child(2) {
+    border-right: 0;
+  }
+
+  .inscription-detail-payment-progress {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .inscription-detail-services-header {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .inscription-detail-services-action {
+    width: 100%;
+  }
+
+  .inscription-detail-services-table {
+    min-width: 720px;
+  }
+
+}
+
+
+@media (max-width: 430px) {
+
+  .inscription-detail-header-actions {
+    display: grid;
+    grid-template-columns: 1fr;
+  }
+
+  .inscription-detail-header-btn {
+    width: 100%;
+  }
+
+  .inscription-detail-financial-body {
+    grid-template-columns: 1fr;
+  }
+
+  .inscription-detail-financial-metric {
+    border-right: 0 !important;
+  }
+
+  .inscription-detail-modal-overlay {
+    padding: 8px;
+  }
+
+  .inscription-detail-services-modal,
+  .inscription-detail-workflow-modal {
+    max-height: calc(100vh - 16px);
+  }
+
+}
+
+.inscription-detail-student-photo {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.student-photo-wrapper {
+  width: 170px;
+  height: 210px;
+  border-radius: 12px;
+  overflow: hidden;
+  background: #f1f5f9;
+  border: 1px solid #e2e8f0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
 }
 
 .student-photo {
   width: 100%;
   height: 100%;
+  display: block;
   object-fit: cover;
-  display: block;
+  object-position: center;
 }
 
-.student-main-info {
-  flex: 1;
-  min-width: 0;
-}
-
-.student-main-info h2 {
-  margin: 1px 0 5px;
-  color: #172b4d;
-  font-size: 20px;
-  font-weight: 700;
-  text-transform: capitalize;
-}
-
-.student-matricule {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  color: #7a869a;
-  font-size: 11.5px;
-  margin-bottom: 16px;
-}
-
-.student-matricule i {
-  font-size: 10px;
-}
-
-.student-info-grid {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 12px 22px;
-}
-
-.profile-info {
-  min-width: 0;
-}
-
-.profile-info-full {
-  grid-column: 1 / -1;
-}
-
-.profile-label {
-  display: block;
-  color: #98a2b3;
-  font-size: 10px;
-  margin-bottom: 3px;
-}
-
-.profile-value {
-  display: block;
-  color: #344054;
-  font-size: 12px;
-  font-weight: 600;
-  overflow-wrap: anywhere;
-}
-
-/* ============================================================
-   INSCRIPTION DETAILS
-   ============================================================ */
-
-.details-list {
-  padding: 8px 19px 13px;
-}
-
-.detail-item {
-  min-height: 43px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 15px;
-  border-bottom: 1px solid #f0f2f4;
-}
-
-.detail-item:last-child {
-  border-bottom: 0;
-}
-
-.detail-label {
-  color: #98a2b3;
-  font-size: 11px;
-}
-
-.detail-value {
-  color: #344054;
-  font-size: 12px;
-  font-weight: 600;
-  text-align: right;
-}
-
-.detail-value.strong {
-  color: #1a5276;
-}
-
-/* ============================================================
-   FINANCE
-   ============================================================ */
-
-.financial-card {
-  margin-bottom: 18px;
-}
-
-.payment-status {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  padding: 6px 10px;
-  border-radius: 20px;
-  font-size: 10.5px;
-  font-weight: 700;
-}
-
-.payment-status-paid {
-  background: #eaf8ef;
-  color: #198754;
-}
-
-.payment-status-pending {
-  background: #fff5e8;
-  color: #b76e00;
-}
-
-.financial-grid {
-  display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
-}
-
-.financial-item {
-  min-height: 96px;
-  padding: 17px 19px;
-  border-right: 1px solid #edf0f2;
-}
-
-.financial-item:last-child {
-  border-right: 0;
-}
-
-.financial-label {
-  display: block;
-  color: #98a2b3;
-  font-size: 10.5px;
-  margin-bottom: 9px;
-}
-
-.financial-amount {
-  color: #344054;
-  font-size: 18px;
-  font-weight: 700;
-  line-height: 1.1;
-}
-
-.financial-amount small {
-  color: #7a869a;
-  font-size: 10px;
-  font-weight: 600;
-}
-
-.amount-success {
-  color: #198754;
-}
-
-.amount-danger {
-  color: #c0392b;
-}
-
-.payment-method {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  color: #344054;
-  font-size: 12px;
-  font-weight: 600;
-}
-
-.payment-method-icon {
-  width: 27px;
-  height: 27px;
-  border-radius: 7px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: #f2f6f8;
-  color: #1a5276;
-  font-size: 11px;
-}
-
-.payment-progress-section {
-  padding: 0 19px 18px;
-}
-
-.progress-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-bottom: 7px;
-  color: #7a869a;
-  font-size: 10.5px;
-}
-
-.progress-header strong {
-  color: #344054;
-  font-size: 11px;
-}
-
-.progress-track {
-  width: 100%;
-  height: 6px;
-  background: #edf0f2;
-  border-radius: 10px;
-  overflow: hidden;
-}
-
-.progress-bar-custom {
-  height: 100%;
-  min-width: 0;
-  background: #198754;
-  border-radius: 10px;
-  transition: width 0.3s ease;
-}
-
-/* ============================================================
-   REJET
-   ============================================================ */
-
-.rejection-card {
-  display: flex;
-  align-items: flex-start;
-  gap: 12px;
-  background: #fff7f7;
-  border: 1px solid #f3d2d2;
-  border-radius: 10px;
-  padding: 14px 16px;
-  margin-bottom: 18px;
-}
-
-.rejection-icon {
-  width: 30px;
-  height: 30px;
-  flex: 0 0 30px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: #fdecec;
-  border-radius: 50%;
-  color: #c0392b;
-  font-size: 12px;
-}
-
-.rejection-title {
-  color: #9d2c2c;
-  font-size: 11px;
-  font-weight: 700;
-  margin-bottom: 4px;
-}
-
-.rejection-text {
-  color: #667085;
-  font-size: 12px;
-  line-height: 1.5;
-}
-
-/* ============================================================
-   MODAL
-   ============================================================ */
-
-.workflow-modal {
-  background: #ffffff;
-  border-radius: 12px;
-  overflow: hidden;
-}
-
-.modal-header-custom {
-  display: flex;
-  align-items: flex-start;
-  gap: 12px;
-  padding: 19px 20px 15px;
-  border-bottom: 1px solid #edf0f2;
-}
-
-.modal-icon {
-  width: 39px;
-  height: 39px;
-  flex: 0 0 39px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 9px;
-  font-size: 16px;
-}
-
-.modal-icon-confirm {
-  background: #eaf8ef;
-  color: #198754;
-}
-
-.modal-icon-reject {
-  background: #fdecec;
-  color: #c0392b;
-}
-
-.modal-header-custom h4 {
-  margin: 1px 0 4px;
-  color: #344054;
-  font-size: 15px;
-  font-weight: 700;
-}
-
-.modal-header-custom p {
-  margin: 0;
-  color: #98a2b3;
-  font-size: 11px;
-  line-height: 1.5;
-}
-
-.modal-body-custom {
-  padding: 17px 20px;
-}
-
-.confirmation-message {
-  display: flex;
-  align-items: flex-start;
-  gap: 9px;
-  padding: 12px;
-  background: #f5f9fc;
-  border: 1px solid #e2edf3;
-  border-radius: 8px;
-  color: #667085;
-  font-size: 11.5px;
-  line-height: 1.5;
-}
-
-.confirmation-message i {
-  color: #1a5276;
-  margin-top: 2px;
-}
-
-.form-group-custom label {
-  display: block;
-  color: #344054;
-  font-size: 11px;
-  font-weight: 600;
-  margin-bottom: 6px;
-}
-
-.form-group-custom label span {
-  color: #c0392b;
-}
-
-.form-control {
-  width: 100%;
-  resize: vertical;
-  border: 1px solid #d9dfe5;
-  border-radius: 7px;
-  padding: 9px 10px;
-  color: #344054;
-  font-size: 12px;
-  outline: none;
-  box-shadow: none;
-}
-
-.form-control:focus {
-  border-color: #1a5276;
-  box-shadow: 0 0 0 3px rgba(26, 82, 118, 0.08);
-}
-
-.field-error {
-  margin-top: 5px;
-  color: #c0392b;
-  font-size: 10.5px;
-}
-
-.modal-footer-custom {
-  display: flex;
-  justify-content: flex-end;
-  gap: 8px;
-  padding: 13px 20px 17px;
-  border-top: 1px solid #edf0f2;
-}
-
-.modal-btn {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 6px;
-  min-width: 95px;
-  min-height: 34px;
-  border: 0;
-  border-radius: 7px;
-  padding: 7px 13px;
-  font-size: 11.5px;
-  font-weight: 600;
-  cursor: pointer;
-}
-
-.modal-btn:disabled {
-  opacity: 0.55;
-  cursor: not-allowed;
-}
-
-.modal-btn-cancel {
-  background: #f2f4f7;
-  color: #475467;
-}
-
-.modal-btn-cancel:hover {
-  background: #e8ebef;
-}
-
-.modal-btn-confirm {
-  background: #198754;
-  color: #ffffff;
-}
-
-.modal-btn-confirm:hover {
-  background: #157347;
-}
-
-.modal-btn-reject {
-  background: #c0392b;
-  color: #ffffff;
-}
-
-.modal-btn-reject:hover {
-  background: #a93226;
-}
-
-/* ============================================================
-   RESPONSIVE
-   ============================================================ */
-
-@media (max-width: 1100px) {
-
-  .main-grid {
-    grid-template-columns: 1fr;
-  }
-
-  .financial-grid {
-    grid-template-columns: repeat(2, 1fr);
-  }
-
-  .financial-item:nth-child(2) {
-    border-right: 0;
-  }
-
-  .financial-item:nth-child(-n + 2) {
-    border-bottom: 1px solid #edf0f2;
-  }
-
-  .action-bar {
-    flex-wrap: wrap;
-  }
-
-  .workflow-section {
-    margin-left: 0;
-  }
-
-  .action-divider {
-    display: none;
-  }
-}
-
+/* Mobile */
 @media (max-width: 768px) {
-
-  .content {
-    padding-left: 12px;
-    padding-right: 12px;
-  }
-
-  .header-main {
-    flex-direction: column;
-    gap: 8px;
-  }
-
-  .title-line h3 {
-    font-size: 20px;
-  }
-
-  .header-meta {
-    flex-wrap: wrap;
-  }
-
-  .action-bar {
-    align-items: flex-start;
-    flex-direction: column;
-  }
-
-  .action-section {
-    width: 100%;
-    align-items: flex-start;
-    flex-direction: column;
-    gap: 8px;
-  }
-
-  .action-buttons {
-    width: 100%;
-    flex-wrap: wrap;
-  }
-
-  .workflow-section {
-    margin-left: 0;
-  }
-
-  .student-profile {
-    flex-direction: column;
-    align-items: flex-start;
-  }
-
-  .student-info-grid {
-    grid-template-columns: 1fr;
-  }
-
-  .profile-info-full {
-    grid-column: auto;
-  }
-
-  .financial-grid {
-    grid-template-columns: 1fr;
-  }
-
-  .financial-item {
-    border-right: 0;
-    border-bottom: 1px solid #edf0f2;
-  }
-
-  .financial-item:last-child {
-    border-bottom: 0;
-  }
-
-  .card-header-custom {
-    padding: 14px;
-  }
-
-  .details-list {
-    padding-left: 14px;
-    padding-right: 14px;
-  }
-}
-
-@media (max-width: 480px) {
-
-  .action-btn {
-    flex: 1 1 auto;
-  }
-
   .student-photo-wrapper {
-    width: 90px;
-    height: 105px;
-  }
-
-  .student-main-info h2 {
-    font-size: 18px;
-  }
-
-  .detail-item {
-    align-items: flex-start;
-    flex-direction: column;
-    justify-content: center;
-    gap: 3px;
-    padding: 9px 0;
-  }
-
-  .detail-value {
-    text-align: left;
-  }
-
-  .payment-status {
-    display: none;
+    width: 120px;
+    height: 120px;
+    border-radius: 10px;
   }
 }

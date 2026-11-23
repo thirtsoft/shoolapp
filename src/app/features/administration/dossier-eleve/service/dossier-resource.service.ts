@@ -11,6 +11,7 @@ import { DetailsEleveResponse, DossierDocumentsEleveResponse, DossierPaiementEle
 import { PieceJointeResponse } from '../../../../core/piecejointe/piece-jointe';
 import { ResponseMessage } from '../../../../core/response/response-message';
 import { EvaluationDetailResponse } from '../../../../core/models/dossiereleve/evaluation/evaluation-details-response';
+import { InscrireEleveServiceRequest, ServiceEleveResponse } from '../../../../core/models/dossiereleve/service-eleve-response';
 
 @Injectable({
   providedIn: 'root'
@@ -265,7 +266,7 @@ export class DossierResourceService {
   }
 
   //
-  
+
 
   fetchFilterByElementDataTable<T>(endpoint: string, id: number, page: number, size: number, filters?: any): Observable<DataResult<T>> {
     let url = `${this.baseUrl_1}/${endpoint}/${id}`;
@@ -380,12 +381,52 @@ export class DossierResourceService {
     return this.getResourceList(`attendancerecord/course/${courseId}/date/${attendanceDate}`);
   }
 
-
-
   getDetailsEvaluation(evalId: number): Observable<EvaluationDetailResponse> {
     return this.http.get<EvaluationDetailResponse>(
       `${this.baseUrl_1}/evaluation/${evalId}/details`,
 
+    );
+  }
+
+  getServicesEleve(inscriptionId: number): Observable<ServiceEleveResponse[]> {
+    const url = `${this.baseUrl_1}/inscriptions/${inscriptionId}/services`;
+
+    return this.http.get<ServiceEleveResponse[]>(
+      url,
+      this.httpOptions
+    ).pipe(
+      tap(response =>
+        console.log('Services élève :', response)
+      ),
+      catchError(error => {
+        console.error(
+          'Erreur API services élève :',
+          error
+        );
+        return throwError(() => error);
+      })
+    );
+  }
+
+  inscrireEleveService(request: InscrireEleveServiceRequest): Observable<void> {
+
+    const url = `${this.baseUrl_1}/inscriptions/services`;
+
+    return this.http.post<void>(
+      url,
+      request,
+      this.httpOptions
+    ).pipe(
+      tap(() =>
+        console.log('Souscriptions et remises élève enregistrées.')
+      ),
+      catchError(error => {
+        console.error(
+          'Erreur API inscription services élève :',
+          error
+        );
+        return throwError(() => error);
+      })
     );
   }
 }
