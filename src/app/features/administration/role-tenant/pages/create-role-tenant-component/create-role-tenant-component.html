@@ -66,9 +66,6 @@
             </div>
 
             <form [formGroup]="roleForm" novalidate>
-              <!-- ================================================= -->
-              <!-- STEP 1 -->
-              <!-- ================================================= -->
 
               @if (currentStep === 1) {
                 <div class="enseignement-item">
@@ -78,7 +75,6 @@
                   </div>
 
                   <div class="row form-row">
-                    <!-- LIBELLE -->
                     <div class="col-lg-6 col-sm-12">
                       <div class="form-group">
                         <label class="form-label">
@@ -107,7 +103,6 @@
                       </div>
                     </div>
 
-                    <!-- CODE -->
                     <div class="col-lg-6 col-sm-12">
                       <div class="form-group">
                         <label class="form-label">
@@ -137,7 +132,6 @@
                     </div>
                   </div>
 
-                  <!-- DESCRIPTION -->
                   <div class="row form-row">
                     <div class="col-12">
                       <div class="form-group">
@@ -195,10 +189,6 @@
                   </button>
                 </div>
               }
-
-              <!-- ================================================= -->
-              <!-- STEP 2 -->
-              <!-- ================================================= -->
 
               @if (currentStep === 2) {
                 <div class="enseignement-item">
@@ -278,7 +268,6 @@
                             </button>
                           </div>
 
-                          <!-- PERMISSIONS -->
                           <div class="permissions-list">
                             @for (permission of group.permissions; track permission.uuid) {
                               <label
@@ -342,8 +331,6 @@
                     </div>
                   }
                 </div>
-
-                <!-- ACTIONS -->
 
                 <div class="form-actions">
                   <button

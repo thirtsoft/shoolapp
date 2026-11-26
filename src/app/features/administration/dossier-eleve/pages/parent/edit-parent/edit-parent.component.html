@@ -85,7 +85,7 @@
                 type="text"
                 class="form-control"
                 formControlName="address"
-                placeholder="Adresse complète"
+                placeholder="Hann-mariste"
                 required
               />
               @if (
@@ -108,15 +108,31 @@
                   type="tel"
                   class="form-control"
                   formControlName="telephone"
-                  placeholder="77 123 45 67"
+                  placeholder="773452112"
+                  maxlength="9"
+                  inputmode="numeric"
+                  [class.is-invalid]="
+                    parentFormGroup.get('telephone')?.invalid &&
+                    parentFormGroup.get('telephone')?.touched
+                  "
                   required
                 />
               </div>
+
               @if (
-                parentFormGroup.get('telephone')?.invalid &&
+                parentFormGroup.get('telephone')?.hasError('required') &&
                 parentFormGroup.get('telephone')?.touched
               ) {
-                <small class="form-text text-danger">Le numéro de téléphone est obligatoire</small>
+                <small class="form-text text-danger">
+                  Le numéro de téléphone est obligatoire.
+                </small>
+              }
+
+              @if (
+                parentFormGroup.get('telephone')?.hasError('pattern') &&
+                parentFormGroup.get('telephone')?.touched
+              ) {
+                <small class="form-text text-danger"> Format invalide. Exemple : 773452112. </small>
               }
             </div>
           </div>
@@ -124,7 +140,7 @@
           <div class="two-columns-row">
             <div class="form-group">
               <label class="form-label">
-                Email <span class="text-danger">*</span>
+                Email
                 <i class="fas fa-envelope ms-1 text-muted"></i>
               </label>
               <div class="input-group">
@@ -136,17 +152,22 @@
                   class="form-control"
                   formControlName="email"
                   placeholder="exemple@email.com"
-                  required
                 />
               </div>
-              @if (parentFormGroup.get('email')?.invalid && parentFormGroup.get('email')?.touched) {
-                <small class="form-text text-danger">Email valide est obligatoire</small>
+
+              @if (
+                parentFormGroup.get('email')?.hasError('email') &&
+                parentFormGroup.get('email')?.touched
+              ) {
+                <small class="form-text text-danger">
+                  Veuillez saisir une adresse email valide.
+                </small>
               }
             </div>
 
             <div class="form-group">
               <label class="form-label">
-                Profession <span class="text-danger">*</span>
+                Profession
                 <i class="fas fa-briefcase ms-1 text-muted"></i>
               </label>
               <input
@@ -154,14 +175,7 @@
                 class="form-control"
                 formControlName="profession"
                 placeholder="Profession"
-                required
               />
-              @if (
-                parentFormGroup.get('profession')?.invalid &&
-                parentFormGroup.get('profession')?.touched
-              ) {
-                <small class="form-text text-danger">La profession est obligatoire</small>
-              }
             </div>
           </div>
 

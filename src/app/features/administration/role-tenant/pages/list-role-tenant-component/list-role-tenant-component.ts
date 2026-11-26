@@ -93,7 +93,6 @@ export class ListRoleTenantComponent implements OnInit {
         this.columns = [
           { key: 'code', header: 'Code' },
           { key: 'libelle', header: 'Libellé' },
-          { key: 'description', header: 'Description' },
         ];
         this.roleData = this.roleData?.map((item: any) => ({
           ...item,

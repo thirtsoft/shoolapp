@@ -43,13 +43,19 @@ export class EditParentComponent implements OnInit {
   initializeForm(parent: Parent | null) {
     this.parentFormGroup = this._formBuilder.group({
       id: [parent?.id ? parent.id : ''],
-      civility: [parent?.civility ? parent.civility : ''],
+      civility: [parent?.civility ? parent.civility : '', Validators.required],
       nom: [parent?.nom ? parent.nom : '', Validators.required],
       prenom: [parent?.prenom ? parent.prenom : '', Validators.required],
-      address: [parent?.address ? parent.address : ''],
-      email: [parent?.email ? parent.email : '', Validators.required],
-      telephone: [parent?.telephone ? parent.telephone : '', Validators.required],
+      address: [parent?.address ? parent.address : '', Validators.required],
+      email: [parent?.email ? parent.email : '', Validators.email],
       profession: [parent?.profession ? parent.profession : ''],
+      telephone: [
+        parent?.telephone ? parent.telephone : '',
+        [
+          Validators.required,
+          Validators.pattern(/^(7[0678]\d{7}|3[03]\d{7})$/)
+        ]
+      ],
     });
   }
 
