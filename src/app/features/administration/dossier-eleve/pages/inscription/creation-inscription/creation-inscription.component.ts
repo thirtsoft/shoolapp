@@ -7,12 +7,13 @@ import { debounceTime, distinctUntilChanged, Observable, of, Subject, switchMap 
 import { Inscription } from '../../../../../../core/models/dossiereleve/request/inscription';
 import { InscriptionRequest } from '../../../../../../core/models/dossiereleve/request/inscription-request';
 import { Eleve } from '../../../../../../core/models/parent/parent';
-import { AnneeScolaire } from '../../../../../../core/models/referentiels/annee-scolaire';
-import { ListeClasse } from '../../../../../../core/models/referentiels/classe';
+import { ClasseListResponse } from '../../../../../../core/models/referentiels/classe';
 import { FraisInscription } from '../../../../../../core/models/referentiels/frais-inscription';
 import { MoyenPaiement } from '../../../../../../core/models/referentiels/moyen-paiement';
+import { ReferentielResourceService } from '../../../../referentiel/service/referentiel-resource.service';
 import { ReferentielService } from '../../../../referentiel/service/referentiel.service';
 import { DossierEleveService } from '../../../service/dossier-eleve.service';
+import { AnneeScolaireResponse } from '../../../../../../core/models/planification/cours-calendrier-response';
 
 @Component({
   selector: 'app-creation-inscription',
@@ -36,8 +37,8 @@ export class CreationInscriptionComponent implements OnInit {
   inscriptionId?: number;
   isEdit: boolean = false;
 
-  classes: ListeClasse[] = [];
-  anneeScolaires: AnneeScolaire[] = [];
+  classes: ClasseListResponse[] = [];
+  anneeScolaires: AnneeScolaireResponse[] = [];
   eleves: Eleve[] = [];
   moyenPaiementList: MoyenPaiement[] = [];
 
@@ -55,6 +56,7 @@ export class CreationInscriptionComponent implements OnInit {
 
   private readonly dossierEleveService = inject(DossierEleveService);
   private readonly referentielService = inject(ReferentielService);
+  private readonly referentielResource = inject(ReferentielResourceService);
   private readonly toastService = inject(ToastrService);
   private readonly _formBuilder = inject(FormBuilder);
   private readonly route = inject(ActivatedRoute);
@@ -169,7 +171,6 @@ export class CreationInscriptionComponent implements OnInit {
         const anneeScolaireId = this.inscriptionFormGroup.get('anneeScolaireId')?.value;
 
         if (classeId && anneeScolaireId) {
-          console.log('Mode édition - Chargement initial des frais:', { classeId, anneeScolaireId });
           this.chargerFrais(Number(classeId), Number(anneeScolaireId));
         }
       }
@@ -195,7 +196,7 @@ export class CreationInscriptionComponent implements OnInit {
 
 
   getClasses() {
-    this.referentielService.getAllClasses().subscribe(
+    this.referentielResource.getResourceList('classe/annee-encours').subscribe(
       (data: any[]) => {
         this.classes = data;
       },
@@ -213,7 +214,7 @@ export class CreationInscriptionComponent implements OnInit {
   }
 
   getAnneeScolaires() {
-    this.referentielService.getAllAnneeScolaires().subscribe(
+    this.referentielResource.getResourceList('anneescolaire/response').subscribe(
       (data: any[]) => {
         this.anneeScolaires = data;
       },
@@ -231,7 +232,7 @@ export class CreationInscriptionComponent implements OnInit {
   }
 
   getMoyenPaiementList() {
-    this.referentielService.getAllTypeMoyenPaiements().subscribe(
+    this.referentielResource.getResourceList('moyenpaiement').subscribe(
       (data: any[]) => {
         this.moyenPaiementList = data;
       },
@@ -250,7 +251,7 @@ export class CreationInscriptionComponent implements OnInit {
       debounceTime(300)
     ).subscribe(classeId => {
       const anneeScolaireId = this.inscriptionFormGroup.get('anneeScolaireId')?.value;
-      console.log('Changement de classe détecté:', { classeId, anneeScolaireId });
+
       if (classeId && anneeScolaireId) {
         this.chargerFrais(Number(classeId), Number(anneeScolaireId));
       }
@@ -261,7 +262,7 @@ export class CreationInscriptionComponent implements OnInit {
       debounceTime(300)
     ).subscribe(anneeScolaireId => {
       const classeId = this.inscriptionFormGroup.get('classeId')?.value;
-      console.log('Changement d\'année scolaire détecté:', { classeId, anneeScolaireId });
+
       if (classeId && anneeScolaireId) {
         this.chargerFrais(Number(classeId), Number(anneeScolaireId));
       }
@@ -269,7 +270,6 @@ export class CreationInscriptionComponent implements OnInit {
   }
 
   chargerFrais(classeId: number, anneeScolaireId: number): void {
-    console.log('Appel à chargerFrais:', { classeId, anneeScolaireId });
 
     if (!classeId || !anneeScolaireId) {
       this.erreur.set('Veuillez sélectionner une classe et une année scolaire valides.');
