@@ -7,8 +7,7 @@ import { debounceTime, distinctUntilChanged, Observable, of, Subject, switchMap 
 import { Inscription } from '../../../../../../core/models/dossiereleve/request/inscription';
 import { InscriptionRequest } from '../../../../../../core/models/dossiereleve/request/inscription-request';
 import { Eleve } from '../../../../../../core/models/parent/parent';
-import { AnneeScolaire } from '../../../../../../core/models/referentiels/annee-scolaire';
-import { ClasseListResponse, ListeClasse } from '../../../../../../core/models/referentiels/classe';
+import { ClasseListResponse } from '../../../../../../core/models/referentiels/classe';
 import { FraisInscription } from '../../../../../../core/models/referentiels/frais-inscription';
 import { MoyenPaiement } from '../../../../../../core/models/referentiels/moyen-paiement';
 import { ReferentielResourceService } from '../../../../referentiel/service/referentiel-resource.service';

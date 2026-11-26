@@ -13,16 +13,7 @@ import {
 } from '@angular/forms';
 import { Router } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
-import {
-  catchError,
-  debounceTime,
-  distinctUntilChanged,
-  map,
-  of,
-  Subject,
-  switchMap
-} from 'rxjs';
-
+import { catchError, debounceTime, distinctUntilChanged, map, of, Subject, switchMap } from 'rxjs';
 import { CreateEleveRequest } from '../../../../../../core/models/dossiereleve/eleve/create-eleve-request.model';
 import { ParentSearchToCreateEleve } from '../../../../../../core/models/dossiereleve/eleve/parent-search-to-create-eleve.model';
 import { TypeRelationParent } from '../../../../../../core/models/dossiereleve/eleve/type-relation-parent.model';
@@ -30,14 +21,14 @@ import { EleveRequest } from '../../../../../../core/models/dossiereleve/request
 import { Inscription } from '../../../../../../core/models/dossiereleve/request/inscription';
 import { InscriptionRequest } from '../../../../../../core/models/dossiereleve/request/inscription-request';
 import { Eleve, Parent } from '../../../../../../core/models/parent/parent';
-import { AnneeScolaire } from '../../../../../../core/models/referentiels/annee-scolaire';
-import { ListeClasse } from '../../../../../../core/models/referentiels/classe';
+import { ClasseListResponse } from '../../../../../../core/models/referentiels/classe';
 import { FraisInscription } from '../../../../../../core/models/referentiels/frais-inscription';
 import { MoyenPaiement } from '../../../../../../core/models/referentiels/moyen-paiement';
 
 import { ReferentielResourceService } from '../../../../referentiel/service/referentiel-resource.service';
 import { ReferentielService } from '../../../../referentiel/service/referentiel.service';
 import { DossierEleveService } from '../../../service/dossier-eleve.service';
+import { AnneeScolaireResponse } from '../../../../../../core/models/planification/cours-calendrier-response';
 
 interface ParentSearchState {
   loading: boolean;
@@ -54,11 +45,7 @@ interface DocumentSelectionne {
 @Component({
   selector: 'app-inscrire-eleve',
   standalone: true,
-  imports: [
-    ReactiveFormsModule,
-    FormsModule,
-    DecimalPipe
-  ],
+  imports: [ReactiveFormsModule, FormsModule, DecimalPipe],
   templateUrl: './inscrire-eleve.component.html',
   styleUrls: ['./inscrire-eleve.component.css']
 })
@@ -88,9 +75,9 @@ export class InscrireEleveComponent implements OnInit {
 
   inscriptionId?: number;
 
-  classes: ListeClasse[] = [];
+  classes: ClasseListResponse[] = [];
 
-  anneeScolaires: AnneeScolaire[] = [];
+  anneeScolaires: AnneeScolaireResponse[] = [];
 
   moyenPaiementList: MoyenPaiement[] = [];
 
@@ -106,15 +93,9 @@ export class InscrireEleveComponent implements OnInit {
 
   endStep = false;
 
-  typeSexe: string[] = [
-    'Masculin',
-    'Féminin'
-  ];
+  typeSexe: string[] = ['Masculin', 'Féminin'];
 
-  civilites: string[] = [
-    'M.',
-    'Me'
-  ];
+  civilites: string[] = ['M.', 'Me'];
 
   today = new Date();
 
@@ -153,9 +134,7 @@ export class InscrireEleveComponent implements OnInit {
     query: string;
   }>();
 
-  parentSearchState: ParentSearchState[] = [
-    this.createParentSearchState()
-  ];
+  parentSearchState: ParentSearchState[] = [this.createParentSearchState()];
 
   typeRelationsParent = [
     {
@@ -269,75 +248,31 @@ export class InscrireEleveComponent implements OnInit {
 
     return this._formBuilder.group({
 
-      parentExist: [
-        parentExist
-      ],
+      parentExist: [parentExist],
+      parentUuid: ['', parentExist ? Validators.required : []],
 
-      parentUuid: [
-        '',
-        parentExist
-          ? Validators.required
-          : []
-      ],
+      rechercheParent: ['', parentExist ? Validators.required : []],
 
-      rechercheParent: [
-        '',
-        parentExist
-          ? Validators.required
-          : []
-      ],
+      telephone: [''],
 
-      telephone: [
-        ''
-      ],
+      email: [''],
 
-      email: [
-        ''
-      ],
+      nom: ['', parentExist ? [] : Validators.required],
 
-      nom: [
-        '',
-        parentExist
-          ? []
-          : Validators.required
-      ],
+      prenom: ['', parentExist ? [] : Validators.required],
 
-      prenom: [
-        '',
-        parentExist
-          ? []
-          : Validators.required
-      ],
+      civilite: ['', parentExist ? [] : Validators.required],
 
-      civilite: [
-        '',
-        parentExist
-          ? []
-          : Validators.required
-      ],
+      address: [''],
 
-      address: [
-        ''
-      ],
+      profession: [''],
 
-      profession: [
-        ''
-      ],
-
-      typeRelation: [
-        '',
-        Validators.required
-      ]
+      typeRelation: ['', Validators.required]
     });
   }
 
   private createParentSearchState(): ParentSearchState {
-
-    return {
-      loading: false,
-      results: [],
-      selected: null
-    };
+    return { loading: false, results: [], selected: null };
   }
 
   onAddParentItem(): void {
@@ -352,40 +287,23 @@ export class InscrireEleveComponent implements OnInit {
       return;
     }
 
-    this.parents().push(
-      this.createParentItem(false)
-    );
+    this.parents().push(this.createParentItem(false));
 
-    this.parentSearchState.push(
-      this.createParentSearchState()
-    );
+    this.parentSearchState.push(this.createParentSearchState());
   }
 
   removeParentItem(index: number): void {
-
     if (this.parents().length <= 1) {
       return;
     }
 
     this.parents().removeAt(index);
-
-    this.parentSearchState.splice(
-      index,
-      1
-    );
+    this.parentSearchState.splice(index, 1);
   }
 
-  onParentExistChange(
-    index: number,
-    parentExist: boolean
-  ): void {
-
-    const parent =
-      this.parents().at(index) as FormGroup;
-
-    const state =
-      this.parentSearchState[index];
-
+  onParentExistChange(index: number, parentExist: boolean): void {
+    const parent = this.parents().at(index) as FormGroup;
+    const state = this.parentSearchState[index];
     if (!state) {
       return;
     }
@@ -409,21 +327,12 @@ export class InscrireEleveComponent implements OnInit {
 
     state.selected = null;
 
-    const parentUuidControl =
-      parent.get('parentUuid');
-
-    const rechercheParentControl =
-      parent.get('rechercheParent');
+    const parentUuidControl = parent.get('parentUuid');
+    const rechercheParentControl = parent.get('rechercheParent');
 
     if (parentExist) {
-
-      parentUuidControl?.setValidators(
-        Validators.required
-      );
-
-      rechercheParentControl?.setValidators(
-        Validators.required
-      );
+      parentUuidControl?.setValidators(Validators.required);
+      rechercheParentControl?.setValidators(Validators.required);
 
     } else {
 
@@ -438,7 +347,6 @@ export class InscrireEleveComponent implements OnInit {
   }
 
   private initParentSearch(): void {
-
     this.searchSubject
       .pipe(
 
@@ -452,30 +360,18 @@ export class InscrireEleveComponent implements OnInit {
 
         switchMap(({ index, query }) => {
 
-          const state =
-            this.parentSearchState[index];
+          const state = this.parentSearchState[index];
 
           if (!state) {
-            return of({
-              index,
-              results: []
-            });
+            return of({ index, results: [] });
           }
 
           state.loading = true;
 
-          if (
-            !query ||
-            query.trim().length < 3
-          ) {
-
+          if (!query || query.trim().length < 3) {
             state.loading = false;
 
-            return of({
-              index,
-              results:
-                [] as ParentSearchToCreateEleve[]
-            });
+            return of({ index, results: [] as ParentSearchToCreateEleve[] });
           }
 
           return this.dossierEleveService
@@ -483,9 +379,7 @@ export class InscrireEleveComponent implements OnInit {
             .pipe(
 
               map(
-                (
-                  results: ParentSearchToCreateEleve[]
-                ) => ({
+                (results: ParentSearchToCreateEleve[]) => ({
                   index,
                   results
                 })
@@ -498,11 +392,7 @@ export class InscrireEleveComponent implements OnInit {
                   error
                 );
 
-                return of({
-                  index,
-                  results:
-                    [] as ParentSearchToCreateEleve[]
-                });
+                return of({ index, results: [] as ParentSearchToCreateEleve[] });
               })
             );
         })
@@ -510,45 +400,28 @@ export class InscrireEleveComponent implements OnInit {
       )
       .subscribe(({ index, results }) => {
 
-        const state =
-          this.parentSearchState[index];
-
+        const state = this.parentSearchState[index];
         if (!state) {
           return;
         }
 
         state.results = results;
-
         state.loading = false;
       });
   }
 
   onParentSearch(index: number): void {
 
-    const parent =
-      this.parents().at(index) as FormGroup;
+    const parent = this.parents().at(index) as FormGroup;
 
-    const query =
-      parent.get('rechercheParent')
-        ?.value
-        ?.trim() ?? '';
+    const query = parent.get('rechercheParent')?.value?.trim() ?? '';
 
-    this.searchSubject.next({
-      index,
-      query
-    });
+    this.searchSubject.next({ index, query });
   }
 
-  selectParent(
-    index: number,
-    parentResult: ParentSearchToCreateEleve
-  ): void {
-
-    const parent =
-      this.parents().at(index) as FormGroup;
-
-    const state =
-      this.parentSearchState[index];
+  selectParent(index: number, parentResult: ParentSearchToCreateEleve): void {
+    const parent = this.parents().at(index) as FormGroup;
+    const state = this.parentSearchState[index];
 
     if (!state) {
       return;
@@ -563,9 +436,7 @@ export class InscrireEleveComponent implements OnInit {
       civilite: parentResult.civilite,
       address: parentResult.address ?? '',
       profession: parentResult.profession ?? '',
-      rechercheParent:
-        parentResult.telephone ||
-        parentResult.email
+      rechercheParent: parentResult.telephone || parentResult.email
     });
 
     state.selected = parentResult;
@@ -574,23 +445,16 @@ export class InscrireEleveComponent implements OnInit {
 
     state.loading = false;
 
-    parent
-      .get('parentUuid')
-      ?.markAsTouched();
+    parent.get('parentUuid')?.markAsTouched();
 
-    parent
-      .get('parentUuid')
-      ?.updateValueAndValidity();
+    parent.get('parentUuid')?.updateValueAndValidity();
   }
 
   get isFormValid(): boolean {
-
     return (
       this.parents().length > 0 &&
       this.parents().length <= 2 &&
-      this.parents().controls.every(
-        control => control.valid
-      )
+      this.parents().controls.every(control => control.valid)
     );
   }
 
@@ -609,8 +473,7 @@ export class InscrireEleveComponent implements OnInit {
     if (!file.type.match(/^image\/(jpeg|jpg|png)$/)) {
       this.currentFile = undefined;
       this.preview = '';
-      this.message =
-        'Format non supporté. Veuillez sélectionner une image JPG ou PNG.';
+      this.message = 'Format non supporté. Veuillez sélectionner une image JPG ou PNG.';
       input.value = '';
       return;
     }
@@ -618,8 +481,7 @@ export class InscrireEleveComponent implements OnInit {
     if (file.size > tailleMax) {
       this.currentFile = undefined;
       this.preview = '';
-      this.message =
-        `La photo est trop volumineuse. La taille maximale autorisée est de 2 Mo. Votre fichier fait ${this.formatFileSize(file.size)}.`;
+      this.message = `La photo est trop volumineuse. La taille maximale autorisée est de 2 Mo. Votre fichier fait ${this.formatFileSize(file.size)}.`;
       input.value = '';
       return;
     }
@@ -644,11 +506,8 @@ export class InscrireEleveComponent implements OnInit {
   }
 
   deletePhoto(): void {
-
     const confirmDelete =
-      confirm(
-        'Voulez-vous vraiment supprimer cette photo ?'
-      );
+      confirm('Voulez-vous vraiment supprimer cette photo ?');
 
     if (!confirmDelete) {
       return;
@@ -1009,9 +868,7 @@ export class InscrireEleveComponent implements OnInit {
 
       if (montantRecuCtrl.hasError('montantDepasse')) {
 
-        const errors = {
-          ...(montantRecuCtrl.errors ?? {})
-        };
+        const errors = { ...(montantRecuCtrl.errors ?? {}) };
 
         delete errors['montantDepasse'];
 
@@ -1028,62 +885,33 @@ export class InscrireEleveComponent implements OnInit {
       .pipe(distinctUntilChanged())
       .subscribe(classeId => {
 
-        const anneeScolaireId =
-          this.inscriptionFormGroup
-            .get('anneeScolaireId')
-            ?.value;
+        const anneeScolaireId = this.inscriptionFormGroup.get('anneeScolaireId')?.value;
 
-        if (
-          classeId &&
-          anneeScolaireId
-        ) {
+        if (classeId && anneeScolaireId) {
 
-          this.chargerFrais(
-            Number(classeId),
-            Number(anneeScolaireId)
-          );
+          this.chargerFrais(Number(classeId), Number(anneeScolaireId));
         }
       });
 
     this.inscriptionFormGroup
-      .get('anneeScolaireId')
-      ?.valueChanges
-      .pipe(
-        distinctUntilChanged()
-      )
+      .get('anneeScolaireId')?.valueChanges
+      .pipe(distinctUntilChanged())
       .subscribe(anneeScolaireId => {
 
-        const classeId =
-          this.inscriptionFormGroup
-            .get('classeId')
-            ?.value;
+        const classeId = this.inscriptionFormGroup.get('classeId')?.value;
 
-        if (
-          classeId &&
-          anneeScolaireId
-        ) {
+        if (classeId && anneeScolaireId) {
 
-          this.chargerFrais(
-            Number(classeId),
-            Number(anneeScolaireId)
-          );
+          this.chargerFrais(Number(classeId), Number(anneeScolaireId));
         }
       });
   }
 
-  chargerFrais(
-    classeId: number,
-    anneeScolaireId: number
-  ): void {
+  chargerFrais(classeId: number, anneeScolaireId: number): void {
 
-    if (
-      !classeId ||
-      !anneeScolaireId
-    ) {
+    if (!classeId || !anneeScolaireId) {
 
-      this.erreur.set(
-        'Veuillez sélectionner une classe et une année scolaire valides.'
-      );
+      this.erreur.set('Veuillez sélectionner une classe et une année scolaire valides.');
 
       return;
     }
@@ -1097,10 +925,7 @@ export class InscrireEleveComponent implements OnInit {
     this.erreur.set(null);
 
     this.referentielService
-      .obtenirFraisInscription(
-        classeId,
-        anneeScolaireId
-      )
+      .obtenirFraisInscription(classeId, anneeScolaireId)
       .subscribe({
 
         next: data => {
@@ -1109,28 +934,20 @@ export class InscrireEleveComponent implements OnInit {
 
           this.chargement.set(false);
 
-          if (
-            data &&
-            data.montant !== undefined
-          ) {
+          if (data && data.montant !== undefined) {
 
             this.inscriptionFormGroup.patchValue(
               {
-                montantInscription:
-                  data.montant,
+                montantInscription: data.montant,
 
-                montantRecu:
-                  data.montant
+                montantRecu: data.montant
               },
               {
                 emitEvent: false
               }
             );
 
-            this.inscriptionFormGroup
-              .updateValueAndValidity({
-                emitEvent: false
-              });
+            this.inscriptionFormGroup.updateValueAndValidity({ emitEvent: false });
           }
         },
 
@@ -1141,9 +958,7 @@ export class InscrireEleveComponent implements OnInit {
             err
           );
 
-          this.erreur.set(
-            "Impossible de récupérer les frais d'inscription."
-          );
+          this.erreur.set("Impossible de récupérer les frais d'inscription.");
 
           this.chargement.set(false);
 
@@ -1162,122 +977,67 @@ export class InscrireEleveComponent implements OnInit {
 
   trackMoyenPaiementChanges(): void {
 
-    this.inscriptionFormGroup
-      .get('moyenPaiement')
-      ?.valueChanges
+    this.inscriptionFormGroup.get('moyenPaiement')?.valueChanges
       .subscribe(() => {
 
-        const refCtrl =
-          this.inscriptionFormGroup
-            .get('reference');
+        const refCtrl = this.inscriptionFormGroup.get('reference');
 
         if (this.doitAfficherReference()) {
 
-          refCtrl?.setValidators(
-            Validators.required
-          );
+          refCtrl?.setValidators(Validators.required);
 
         } else {
 
           refCtrl?.clearValidators();
         }
 
-        refCtrl?.updateValueAndValidity({
-          emitEvent: false
-        });
+        refCtrl?.updateValueAndValidity({ emitEvent: false });
       });
   }
 
   doitAfficherReference(): boolean {
+    const moyenId = this.inscriptionFormGroup.get('moyenPaiement')?.value;
 
-    const moyenId =
-      this.inscriptionFormGroup
-        .get('moyenPaiement')
-        ?.value;
-
-    if (
-      !moyenId ||
-      this.moyenPaiementList.length === 0
-    ) {
+    if (!moyenId || this.moyenPaiementList.length === 0) {
       return false;
     }
 
-    const moyen =
-      this.moyenPaiementList.find(
-        m =>
-          String(m.id) ===
-          String(moyenId)
-      );
+    const moyen = this.moyenPaiementList.find(m => String(m.id) === String(moyenId));
 
     if (!moyen?.libelle) {
       return false;
     }
 
-    const nomMoyen =
-      moyen.libelle.toLowerCase();
+    const nomMoyen = moyen.libelle.toLowerCase();
 
-    return (
-      !nomMoyen.includes('espèce') &&
-      !nomMoyen.includes('espece')
-    );
+    return (!nomMoyen.includes('espèce') && !nomMoyen.includes('espece'));
   }
 
   isMontantInsuffisant(): boolean {
 
-    const du =
-      this.inscriptionFormGroup
-        .get('montantInscription')
-        ?.value;
+    const du = this.inscriptionFormGroup.get('montantInscription')?.value;
 
-    const recu =
-      this.inscriptionFormGroup
-        .get('montantRecu')
-        ?.value;
+    const recu = this.inscriptionFormGroup.get('montantRecu')?.value;
 
-    return !!(
-      du &&
-      recu &&
-      Number(recu) < Number(du)
-    );
+    return !!(du && recu && Number(recu) < Number(du));
   }
 
   getReliquat(): number {
 
-    const du =
-      this.inscriptionFormGroup
-        .get('montantInscription')
-        ?.value ?? 0;
+    const du = this.inscriptionFormGroup.get('montantInscription')?.value ?? 0;
 
-    const recu =
-      this.inscriptionFormGroup
-        .get('montantRecu')
-        ?.value ?? 0;
+    const recu = this.inscriptionFormGroup.get('montantRecu')?.value ?? 0;
 
-    const reliquat =
-      Number(du) - Number(recu);
+    const reliquat = Number(du) - Number(recu);
 
-    return reliquat > 0
-      ? reliquat
-      : 0;
+    return reliquat > 0 ? reliquat : 0;
   }
 
-  updateInscriptionFormWithEleveId(
-    eleveId: number
-  ): void {
-
-    this.inscriptionFormGroup.patchValue({
-      eleveId
-    });
-
-    console.log(
-      'eleveId mis à jour dans le formulaire inscription:',
-      eleveId
-    );
+  updateInscriptionFormWithEleveId(eleveId: number): void {
+    this.inscriptionFormGroup.patchValue({ eleveId });
   }
 
-  getInscriptionByCodeEleve(
-    code: string
-  ): void {
+  getInscriptionByCodeEleve(code: string): void {
 
     this.dossierEleveService
       .getInscriptionByCodeEleve(code)
@@ -1287,12 +1047,9 @@ export class InscrireEleveComponent implements OnInit {
 
           this.inscription = data;
 
-          this.inscriptionId =
-            this.inscription.id;
+          this.inscriptionId = this.inscription.id;
 
-          this.initializeInscriptionForm(
-            this.inscription
-          );
+          this.initializeInscriptionForm(this.inscription);
         }
       });
   }
@@ -1332,17 +1089,14 @@ export class InscrireEleveComponent implements OnInit {
             return;
           }
 
-          this.toastService.error('Erreur',
-            'Réponse inattendue du serveur.'
-          );
+          this.toastService.error('Erreur', 'Réponse inattendue du serveur.');
         },
 
         error: error => {
           console.error("Erreur lors de la création de l'inscription:", error);
 
           this.toastService.error('Erreur',
-            error?.error?.message ||
-            error?.message || "Erreur lors de la création de l'inscription."
+            error?.error?.message || error?.message || "Erreur lors de la création de l'inscription."
           );
         }
       });
@@ -1378,9 +1132,7 @@ export class InscrireEleveComponent implements OnInit {
 
       if (fichiers.length > 2) {
 
-        this.toastService.warning('Nombre de fichiers limité',
-          'Vous pouvez sélectionner au maximum 2 photos d’identité.'
-        );
+        this.toastService.warning('Nombre de fichiers limité', 'Vous pouvez sélectionner au maximum 2 photos d’identité.');
 
         input.value = '';
 
@@ -1398,9 +1150,7 @@ export class InscrireEleveComponent implements OnInit {
 
       if (fichierNonAutorise) {
 
-        this.toastService.warning('Format non supporté',
-          'Utilisez uniquement des fichiers PDF, JPG, JPEG ou PNG.'
-        );
+        this.toastService.warning('Format non supporté', 'Utilisez uniquement des fichiers PDF, JPG, JPEG ou PNG.');
 
         input.value = '';
 
@@ -1424,9 +1174,7 @@ export class InscrireEleveComponent implements OnInit {
 
     const fichiersSelectionnes = type === 'PHOTOS_IDENTITE' ? fichiers : [fichiers[0]];
 
-    const documentExistant = this.documentsSelectionnes.find(
-      document => document.type === type
-    );
+    const documentExistant = this.documentsSelectionnes.find(document => document.type === type);
 
     if (documentExistant) {
 
@@ -1471,14 +1219,11 @@ export class InscrireEleveComponent implements OnInit {
   }
 
   getDocument(type: string): DocumentSelectionne | undefined {
-    return this.documentsSelectionnes.find(
-      document => document.type === type
-    );
+    return this.documentsSelectionnes.find(document => document.type === type);
   }
 
   supprimerDocument(type: string, index = 0): void {
     const document = this.getDocument(type);
-
     if (!document) {
       return;
     }
@@ -1487,10 +1232,7 @@ export class InscrireEleveComponent implements OnInit {
     document.apercus.splice(index, 1);
 
     if (document.fichiers.length === 0) {
-      this.documentsSelectionnes =
-        this.documentsSelectionnes.filter(
-          item => item.type !== type
-        );
+      this.documentsSelectionnes = this.documentsSelectionnes.filter(item => item.type !== type);
     }
   }
 
@@ -1500,10 +1242,7 @@ export class InscrireEleveComponent implements OnInit {
 
   terminerInscription(): void {
     if (!this.eleveUuid) {
-      this.toastService.error('Erreur',
-        "Impossible d'associer les documents : l'élève n'a pas été créé."
-      );
-
+      this.toastService.error('Erreur', "Impossible d'associer les documents : l'élève n'a pas été créé.");
       return;
     }
 
@@ -1596,11 +1335,10 @@ export class InscrireEleveComponent implements OnInit {
   }
 
   getClasses(): void {
-    this.referentielService
-      .getAllClasses()
+    this.referentielResource.getResourceList('classe/annee-encours')
       .subscribe({
         next: data => {
-          this.classes = data;
+          this.classes = data as ClasseListResponse[];
         },
         error: error => {
           this.errorMessage = error;
@@ -1609,11 +1347,10 @@ export class InscrireEleveComponent implements OnInit {
   }
 
   getAnneeScolaires(): void {
-    this.referentielResource
-      .getResourceList('anneescolaire')
+    this.referentielResource.getResourceList('anneescolaire/response')
       .subscribe({
-        next: (data: any) => {
-          this.anneeScolaires = data;
+        next: data => {
+          this.anneeScolaires = data as AnneeScolaireResponse[];
         },
         error: error => {
           this.errorMessage = error;
