@@ -49,13 +49,7 @@ export class EditParentComponent implements OnInit {
       address: [parent?.address ? parent.address : '', Validators.required],
       email: [parent?.email ? parent.email : '', Validators.email],
       profession: [parent?.profession ? parent.profession : ''],
-      telephone: [
-        parent?.telephone ? parent.telephone : '',
-        [
-          Validators.required,
-          Validators.pattern(/^(7[0678]\d{7}|3[03]\d{7})$/)
-        ]
-      ],
+      telephone: [parent?.telephone ? parent.telephone : '', Validators.required],
     });
   }
 
