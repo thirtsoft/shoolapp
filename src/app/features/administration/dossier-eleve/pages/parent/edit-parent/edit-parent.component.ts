@@ -46,7 +46,7 @@ export class EditParentComponent implements OnInit {
       civility: [parent?.civility ? parent.civility : '', Validators.required],
       nom: [parent?.nom ? parent.nom : '', Validators.required],
       prenom: [parent?.prenom ? parent.prenom : '', Validators.required],
-      address: [parent?.address ? parent.address : '', Validators.required],
+      address: [parent?.address ? parent.address : ''],
       email: [parent?.email ? parent.email : '', Validators.email],
       profession: [parent?.profession ? parent.profession : ''],
       telephone: [
