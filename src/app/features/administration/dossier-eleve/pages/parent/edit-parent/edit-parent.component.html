@@ -78,7 +78,7 @@
           <div class="two-columns-row">
             <div class="form-group">
               <label class="form-label">
-                Adresse <span class="text-danger">*</span>
+                Adresse
                 <i class="fas fa-map-marker-alt ms-1 text-muted"></i>
               </label>
               <input
@@ -86,13 +86,7 @@
                 class="form-control"
                 formControlName="address"
                 placeholder="Hann-mariste"
-                required
               />
-              @if (
-                parentFormGroup.get('address')?.invalid && parentFormGroup.get('address')?.touched
-              ) {
-                <small class="form-text text-danger">L'adresse est obligatoire</small>
-              }
             </div>
 
             <div class="form-group">
