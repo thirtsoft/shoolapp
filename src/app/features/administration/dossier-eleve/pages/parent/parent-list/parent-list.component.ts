@@ -25,7 +25,7 @@ export class ParentListComponent implements OnInit {
   currentPage = 0;
   pageSize = 20;
   totalElements = 0;
-  tableSizes = [20, 30, 50, 100];
+  tableSizes = [35, 45, 50, 100];
   tableFilters: IFilterConfig[] = [];
   activeFilters: any = {};
   hasActiveFilters: boolean = false;

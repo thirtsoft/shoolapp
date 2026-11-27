@@ -128,12 +128,6 @@
                 </small>
               }
 
-              @if (
-                parentFormGroup.get('telephone')?.hasError('pattern') &&
-                parentFormGroup.get('telephone')?.touched
-              ) {
-                <small class="form-text text-danger"> Format invalide. Exemple : 773452112. </small>
-              }
             </div>
           </div>
 
